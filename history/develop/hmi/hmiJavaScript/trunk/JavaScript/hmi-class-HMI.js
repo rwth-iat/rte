@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -113,7 +113,7 @@ function HMI(debug, error, warning, info, trace) {
 	this._currentDragger = null;
 	this.KSClient = null;
 	this.cshmi = null;
-	this.Path = null;
+	
 	this.KSGateway_Path = null;
 	this.HMIDOMParser = null;
 	
@@ -202,13 +202,21 @@ HMI.prototype = {
 			if (!(this.PossServers = $('idServers'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
-				addEventSimple(HMI.PossServers, "change", function () {HMI.showSheets(HMI.PossServers.options[HMI.PossServers.selectedIndex].value);});
+				addEventSimple(HMI.PossServers, "change", 
+					function () {
+						HMI.showSheets(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value);
+					}
+				);
 			}
 			//Object of Sheet-Selectbox
 			if (!(this.PossSheets = $('idSheets'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
-				addEventSimple(HMI.PossSheets, "change", function () {HMI.showSheet(HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);});
+				addEventSimple(HMI.PossSheets, "change", 
+					function () {
+						HMI.showSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
+					}
+				);
 			}
 			//Element of SVG insertion (div for firefox, container for IE < v9)
 			if (!(this.Playground = $('idPlayground'))){
@@ -269,7 +277,7 @@ HMI.prototype = {
 		
 		//init the optional Buttons
 		if ($('idRefresh')){
-			addEventSimple($('idRefresh'),'click',function(){HMI.refreshSheet();});
+			addEventSimple($('idRefresh'),'click',function(){HMI.cbrefreshSheet();});
 		}
 		if ($('idStopRefresh')){
 			addEventSimple($('idStopRefresh'),'click',function(){
@@ -281,7 +289,7 @@ HMI.prototype = {
 		
 		if ($('idStartRefresh')){
 			addEventSimple($('idStartRefresh'),'click',function(){
-				HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, HMI.InputRefreshTime.value);});
+				HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.cbrefreshSheet();}, HMI.InputRefreshTime.value);});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
@@ -474,7 +482,7 @@ HMI.prototype = {
 		//publish this date on website
 		if ("undefined" != typeof HMIdate){
 			HMI.HMI_Constants.HMIdate = HMIdate;
-			var dateTextNode = document.createTextNode("Version: 2.1 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
+			var dateTextNode = document.createTextNode("Version: 2.5 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
 			
 			var DateOutput;
 			if ((DateOutput = document.getElementById("idDateOutput"))){
@@ -599,16 +607,12 @@ HMI.prototype = {
 			||	HMI_Parameter_Liste.Sheet !== undefined)
 			){
 			//correct host in website with user wish
-			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0 && HMI_Parameter_Liste.Host == window.location.hostname){
-				//we faked the host to the hostname in some cases (empty input field)
+			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				HMI.InputHost.value = HMI_Parameter_Liste.Host;
-				HMI_Parameter_Liste.Host = "localhost";
-			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
-				HMI.InputHost.value = HMI_Parameter_Liste.Host;
-			}else{
-				//allow shorten of the deep link, fall back to localhost (server view)
-				HMI_Parameter_Liste.Host = "localhost";
 			}
+			//request sanitised name
+			var Host = this.getHostname();
+			
 			//correct RefreshTime in website with user wish
 			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
 				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
@@ -643,16 +647,11 @@ HMI.prototype = {
 				HMI.PossServers.disabled = true;
 				HMI.PossSheets.disabled = true;
 				
-				//an init generates a new Handle, needed cause we communicate to the Server the first time
-				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
-				if (this.KSClient.TCLKSHandle === null){
-						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
-				}else{
-					//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
-					this.KSClient.getHMIManagerPointer();
-					//spaces in objectname are encoded as %20 within OV
-					HMI.showSheet(encodeURI(HMI_Parameter_Liste.Sheet));
-				}
+				//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
+				this.KSClient.getHMIManagerPointer(Host, HMI_Parameter_Liste.Server);
+				//spaces in objectname are encoded as %20 within OV
+				HMI.showSheet(Host, HMI_Parameter_Liste.Server, encodeURI(HMI_Parameter_Liste.Sheet));
+				
 				HMI.ButShowServers.value = "Reload Serverlist";
 			}else if (	HMI_Parameter_Liste.Server
 				&&	HMI_Parameter_Liste.Server.length !== 0){
@@ -662,13 +661,8 @@ HMI.prototype = {
 				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', '');
 				
-				//an init generates a new Handle, needed cause we communicate to the Server the first time
-				this.KSClient.init(HMI_Parameter_Liste.Host + '/' + HMI_Parameter_Liste.Server, window.location.host + HMI.KSGateway_Path);
-				if (this.KSClient.TCLKSHandle === null){
-						HMI.hmi_log_onwebsite('Requested Host or FB-Server on Host not available.');
-				}else{
-					HMI.showSheets(HMI_Parameter_Liste.Server);
-				}
+				HMI.showSheets(Host, HMI_Parameter_Liste.Server);
+				
 				HMI.ButShowServers.value = "Reload Serverlist";
 			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
 				//no server and sheet specified, but a host => load serverlist
@@ -939,9 +933,29 @@ HMI.prototype = {
 		
 		//if an auto refresh is active, reset to new value
 		if (HMI.RefreshTimeoutID !== null){
-			HMI.refreshSheet();
+			HMI.cbrefreshSheet();
 			HMI.hmi_log_info_onwebsite('Refreshtime set to '+(HMI.RefreshTime/1000)+'s.');
 		}
+	},
+	
+	/**
+	 * returns the correct hostname
+	 */
+	getHostname: function () {
+		//get rid of spaces in the textinput
+		HMI.InputHost.value = HMI.InputHost.value.trim();
+		if (HMI.InputHost.value.length === 0){
+			HMI.InputHost.value = window.location.hostname;
+		}
+		
+		//if the hostname is identical to the http server, translate into "localhost"
+		var Host;
+		if (HMI.InputHost.value == window.location.hostname){
+			Host = "localhost";
+		}else{
+			Host = HMI.InputHost.value;
+		}
+		return Host;
 	},
 	
 	/**
@@ -960,20 +974,6 @@ HMI.prototype = {
 		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
 		
-		//get rid of spaces in the textinput
-		HMI.InputHost.value = HMI.InputHost.value.trim();
-		if (HMI.InputHost.value.length === 0){
-			HMI.InputHost.value = window.location.hostname;
-		}
-		
-		//if the hostname is identical to the http server, translate into "localhost"
-		var KSServer;
-		if (HMI.InputHost.value == window.location.hostname){
-			KSServer = "localhost";
-		}else{
-			KSServer = HMI.InputHost.value;
-		}
-		
 		HMI.ChangeRefreshTime();
 		
 		//clean old Server and Sheet entrys, an old SVG display and displayed errors in website
@@ -990,16 +990,10 @@ HMI.prototype = {
 		//Set a neutral title
 		document.title = "Startcenter - ACPLT/HMI";
 		
-		//Gateway could not be another host without violating Same Origin Policy
-		var KSGateway = window.location.host;
-		//an init generates a new Handle, needed cause we communicate to the Manager the first time
-		this.KSClient.init(KSServer + '/MANAGER', KSGateway + HMI.KSGateway_Path);
-		if (this.KSClient.TCLKSHandle !== null){
-			this.KSClient.getServers();
-		}else{
-			HMI.PossServers.setAttribute("title", "No MANAGER available");
-			HMI.hmi_log_info_onwebsite("Requested Host has no MANAGER available.");
-		}
+		this.KSClient.getServers(this.getHostname());
+		
+		
+		//todo move this to call back
 		
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
@@ -1015,10 +1009,9 @@ HMI.prototype = {
 		//
 		if (this.WebmagellanPath !== null){
 			$("idWebmagellan").style.display = '';
-			//todo gefälscher ksserver dings
-			$("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+KSServer : "");
+			//todo gefälscher host dings
+			$("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+this.getHostname() : "");
 		}
-		KSServer = null;
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
@@ -1027,7 +1020,7 @@ HMI.prototype = {
 	 * clears active display and loads a new sheetlist from server
 	 * @param {String} Server Name of server to ask for sheets
 	 */
-	showSheets: function (Server) {
+	showSheets: function (Host, Server) {
 		this.hmi_log_trace("HMI.prototype.showSheets - Start, requested Server: "+Server);
 		
 		//clean old Sheet entrys, an old SVG display and displayed errors in website
@@ -1049,7 +1042,7 @@ HMI.prototype = {
 			return false;
 		}
 		
-		var SheetList = this.KSClient.getSheets(Server);
+		var SheetList = this.KSClient.getSheets(Host, Server);
 		
 		this.hmi_log_trace("HMI.prototype.showSheets - number of sheets: "+SheetList.length);
 		if (SheetList.length === 0){
@@ -1064,7 +1057,7 @@ HMI.prototype = {
 			if (SheetList.length === 1){
 				//selecting the option does not trigger the EventListener
 				HMI.PossSheets.selectedIndex = 1;
-				HMI.showSheet(SheetList[0]);
+				HMI.showSheet(Host, Server, SheetList[0]);
 			}
 			HMI.PossSheets.disabled = false;
 		}
@@ -1081,7 +1074,7 @@ HMI.prototype = {
 	 * clears active display and loads a new sheet from server
 	 * @param {String} Sheet Name of sheet to load
 	 */
-	showSheet: function (Sheet) {
+	showSheet: function (Host, Server, Sheet) {
 		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
 		
 		//present a "deep link" to the state
@@ -1101,18 +1094,14 @@ HMI.prototype = {
 			return;
 		}
 		
-		if (HMI.KSClient.TCLKSHandle !== null)
-		{
-			HMI.Path = Sheet;
-			
-			//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
-			HMI.KSClient.checkSheetProperty(HMI.Path);
-			
-			this.refreshSheet();
-		};
+		//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
+		HMI.KSClient.checkSheetProperty(Host, Server, Sheet);
+		
+		this.refreshSheet(Host, Server, Sheet);
+		
 		//show fb-server name when known
 		//spaces in objectname are encoded as %20 within OV
-		document.title = ((HMI.PossServers.options.length !==1)?"//"+HMI.PossServers.options[HMI.PossServers.selectedIndex].value:"")+decodeURI(Sheet)+" - ACPLT/HMI";
+		document.title = Server+decodeURI(Sheet)+" - ACPLT/HMI";
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			if (!HMI.InfoOutput){
 				//no info output available => hide
@@ -1138,7 +1127,7 @@ HMI.prototype = {
 	/**
 	 * gets a new sheet from a server and displays it
 	 */
-	refreshSheet: function () {
+	refreshSheet: function (Host, Server, Sheet) {
 		this.hmi_log_trace("HMI.prototype.refreshSheet - Start");
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1159,35 +1148,39 @@ HMI.prototype = {
 			var skipRefresh = true;
 		}
 		//load hmi if playground is empty or with empty view (load in background)
-		if (HMI.KSClient.TCLKSHandle !== null && (skipRefresh === false || HMI.Playground.childNodes.length === 0)){
+		if (skipRefresh === false || HMI.Playground.childNodes.length === 0){
 			var SVGRequestURI = "";
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 			if (HMI.ServerProperty.SheetHasStyleDescription){
 				//spaces in objectname are encoded as %20 within OV
-				SVGRequestURI = '{' + encodeURI(HMI.Path) + '.GraphicDescription' + '%20' + encodeURI(HMI.Path) + '.StyleDescription' + '}';
+				SVGRequestURI = '{' + encodeURI(Sheet) + '.GraphicDescription' + '%20' + encodeURI(Sheet) + '.StyleDescription' + '}';
 			}else if (HMI.KSClient.HMIMANAGER_PATH !== null){
 				//spaces in objectname are encoded as %20 within OV
-				SVGRequestURI = encodeURI(HMI.Path) + '.GraphicDescription';
+				SVGRequestURI = encodeURI(Sheet) + '.GraphicDescription';
 			}
 			
 			var ComponentText = null;
 			if (SVGRequestURI !== ""){
 				//	get GraphicDescription
 				//
-				ComponentText = this.KSClient.getVar(null, SVGRequestURI, null);
+				ComponentText = this.KSClient.getVar_NG("//"+Host+"/"+Server+SVGRequestURI, null);
 			}
 			
 			//check if we have an cshmi target, no hmimanager at all or an error
 			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1)){
+				//save for later use
+				this.KSClient.ResourceList.ModelHost = Host;
+				this.KSClient.ResourceList.ModelServer = Server;
+				
 				this.cshmi = new cshmi();
-				this.cshmi.instanciateCshmi(HMI.Path);
+				this.cshmi.instanciateCshmi(Host, Server, Sheet);
 				HMI.cyclicRequestNeeded = false;
 			}else{
 				//hmi target
 				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
 				if (SplitComponent === null){
-					//logging not required, allready done by prepareComponentText
+					//logging not required, already done by prepareComponentText
 					return;
 				}
 				
@@ -1196,7 +1189,7 @@ HMI.prototype = {
 				var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
 				
 				if (Component != null){
-					this._showComponent(Component);
+					this._showComponent(Host, Server, Component);
 				}
 				
 				HMI.cyclicRequestNeeded = true;
@@ -1220,8 +1213,13 @@ HMI.prototype = {
 			ComponentText = null;
 		}
 		if(HMI.cyclicRequestNeeded == true){
+			//the Host, Server and Path has to be cached for use in an eventhandler
+			HMI.KSClient.ResourceList.Host = Host;
+			HMI.KSClient.ResourceList.Server = Server;
+			HMI.KSClient.ResourceList.Sheet = Sheet;
+			
 			//	refresh the sheet again later
-			this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, this.RefreshTime);
+			this.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet(Host, Server, Sheet);}, this.RefreshTime);
 		}
 		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
@@ -1229,11 +1227,12 @@ HMI.prototype = {
 	
 	/**
 	 * request a reload of the active sheet
+	 * The caller does not know the Host, Server, Sheet so we detect it
 	 */
 	cbrefreshSheet: function (client, req) {
 		HMI.hmi_log_trace("HMI.prototype.cbrefreshSheet - Start");
 		
-		HMI.refreshSheet();
+		HMI.refreshSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
 		
 		HMI.hmi_log_trace("HMI.prototype.cbrefreshSheet - End");
 	},
@@ -1252,7 +1251,7 @@ HMI.prototype = {
 		}
 		if (HMI.RefreshTimeoutID === null){
 			//reactivate the Refresh
-			HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.refreshSheet();}, HMI.RefreshTime);
+			HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.cbrefreshSheet();}, HMI.RefreshTime);
 		}
 		
 		//this function is called by mouseup event or mousemove => cleanup
@@ -1334,7 +1333,7 @@ HMI.prototype = {
 	/*********************************
 		_showComponent
 	*********************************/	
-	_showComponent: function (Component) {
+	_showComponent: function (Host, Server, Component) {
 		this.hmi_log_trace("HMI.prototype._showComponent - Start");
 		
 		if (Component === null){
@@ -1371,6 +1370,10 @@ HMI.prototype = {
 		}
 		
 		if(this.Playground.firstChild === null){
+			//save for later use
+			this.KSClient.ResourceList.ModelHost = Host;
+			this.KSClient.ResourceList.ModelServer = Server;
+			
 			//we have no display => append
 			this.Playground.appendChild(Component);
 		}else if(this.Playground.firstChild !== null){

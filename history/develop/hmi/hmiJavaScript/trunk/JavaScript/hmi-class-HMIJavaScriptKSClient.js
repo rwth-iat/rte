@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2012
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -77,13 +77,16 @@
 
 function HMIJavaScriptKSClient() {
 	/** Public **********************/
-	this.KSServer = null;
-	this.TCLKSGateway = null;
-	this.TCLKSHandle = null;
-	this.HMIMANAGER_PATH = null;
 	
 	//object to cache communication details
 	this.ResourceList = Object();
+	
+	//needed in the gestures and SHOWSHEETS
+	this.HMIMANAGER_PATH = null;
+	
+	//needed for absolute ks path on the same ksserver
+	this.ResourceList.ModelHost = null;
+	this.ResourceList.ModelServer = null;
 	this.ResourceList.Handles = Object();
 	
 	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
@@ -105,61 +108,53 @@ function HMIJavaScriptKSClient() {
 ***********************************************************************/
 
 HMIJavaScriptKSClient.prototype = {
-	
-	/*********************************
-		init
-	*********************************/
-	init: function(HostAndServer, TCLKSGateway) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - Start");
-		
-		window.clearInterval(HMI.RefreshTimeoutID);
-		HMI.RefreshTimeoutID = null;
-		
-		this.KSServer		= HostAndServer;
-		this.TCLKSGateway	= TCLKSGateway;
-		this.TCLKSHandle	= null;
-		this.HMIMANAGER_PATH	= null;
-		
-		this.TCLKSHandle = this.getHandleID(this.KSServer);
-		
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.init - End");
-	},
-	
 	/**
 	 * usage example:
 	 *		this.getEP(null, '/servers%20*', this._cbGetServers);
 	 * @param Handle requires own Handle, null if uses the normal global Handle
 	 * @param path command to process of the command
 	 * @param cbfnc callback function
-	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null
+	 * @param async request async communication
+	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
+	 * 
+	 * @todo tksparameter dienst neutral definieren
 	 */
-	getEP: function(Handle, path, tksparameter, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path+" Handle: "+Handle);
-		if(!path || path.length === 0 || path.charAt(0) !== "/"){
+	getEP: function(Handle, path, tksparameter, cbfnc, async) {
+		//wrapper function for old hmi gestures
+		return this.getEP_NG(path, tksparameter, cbfnc, async);
+	},
+	getEP_NG: function(path, tksparameter, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no path found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no valid path found, path was: "+path);
 			return null;
-		}else if (path.charAt(0) === "/" && path.charAt(1) === "/"){
-			//String begins with // so it is a fullpath with Host and servername
-			var servername = path.split("/")[2]+"/"+path.split("/")[3];
-			Handle = this.getHandleID(servername);
-			path = path.substring(servername.length+2);
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-		}else if (Handle === null){
-			//String begins with / so it is a fullpath in the main server
-			Handle = this.TCLKSHandle;
-		}
-		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
-			path = path + tksparameter;
-			urlparameter = 'obj='+Handle + '&args=getep%20' +path;
+			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1] + tksparameter;
 		}else if (HMI.GatewayTypePHP === true){
-			//todo php should get similar interface
-			path = path;
-			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +path;
+			//todo php should get similar filtering interface
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +ServerAndPath[1];
 		}
-		if (cbfnc !== null){
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -168,23 +163,25 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
+		return true;
 	},
 	
 	/**
 	 * usage example:
 	 *		getHandle("localhost/MANAGER", this._cbInit);
 	 *		getHandle("localhost/fb_hmi1", null);
-	 * @param host Name of requested Host
+	 * @param {String} HostAndServername Host and Servername concat with a slash
 	 * @param cbfnc callback function
-	 * @return response "TksS-0042" or null
+	 * @param async request async communication
+	 * @return {String} TKS Handle of the requested Server or null
 	 */
-	getHandle: function(host, cbfnc) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandle - Start");
+	_getHandle: function(HostAndServer, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._getHandle - Start on "+HostAndServer);
 		
 		//fixme auf async umstellen
 		var urlparameter;
 		var newhost;
-		var hostArray = host.split("/");
+		var hostArray = HostAndServer.split("/");
 		if (hostArray.length !== 2){
 			return null;
 		}
@@ -192,13 +189,13 @@ HMIJavaScriptKSClient.prototype = {
 			//add default port if the request did not set it
 			newhost = hostArray[0]+ ':7509/' + hostArray[1];
 		}else{
-			newhost = host;
+			newhost = HostAndServer;
 		}
 		
 		if (HMI.GatewayTypeTCL === true){
-			urlparameter = 'obj=tks-server&args='+newhost;
+			urlparameter = "obj=tks-server&args="+newhost;
 		}else if(HMI.GatewayTypePHP === true){
-			urlparameter = 'cmd=tks-server&args='+newhost;
+			urlparameter = "cmd=tks-server&args="+newhost;
 		}
 		var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
 		
@@ -208,12 +205,12 @@ HMIJavaScriptKSClient.prototype = {
 		}else if(ReturnText === true){
 			//no async communication. oops
 			return null;
-		}else if (ReturnText.indexOf("KS_ERR") !== -1 && host !== newhost){
+		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
 			//on error retest without default acplt port
 			if (HMI.GatewayTypeTCL === true){
-				urlparameter = 'obj=tks-server&args='+host;
+				urlparameter = 'obj=tks-server&args='+HostAndServer;
 			}else if(HMI.GatewayTypePHP === true){
-				urlparameter = 'cmd=tks-server&args='+host;
+				urlparameter = 'cmd=tks-server&args='+HostAndServer;
 			}
 			ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
 		}
@@ -229,38 +226,48 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param Handle requires own Handle, null if uses the normal global Handle
 	 * @param path command to process of the command, multiple commands are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
 	 * @param cbfnc callback function
+	 * @param async request async communication
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	 */
-	getVar: function(Handle, path, cbfnc) {
+	getVar: function(Handle, path, cbfnc, async) {
+		//wrapper function for old hmi gestures
+		return this.getVar_NG(path, cbfnc, async)
+	},
+	getVar_NG: function(path, cbfnc, async) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
 		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no path found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid path found, path was: "+path);
 			return null;
 		}
-		if(path.charAt(0) !== "{"){
-			path = "{"+path+"}";
-		}
-		if (path.charAt(1) === "/" && path.charAt(2) === "/"){
-			//String begins with // so it is a fullpath with Host and servername
-			var servername = path.split("/")[2]+"/"+path.split("/")[3];
-			Handle = this.getHandleID(servername);
-			path = "{"+path.substring(servername.length+3);
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-		}else if (Handle === null){
-			//String begins with / so it is a fullpath in the main server
-			Handle = this.TCLKSHandle;
-		}
-		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
 			path = path + "%20-output%20$::TKS::OP_VALUE";
-			urlparameter = 'obj='+Handle + '&args=getvar%20' +path;
+			urlparameter = 'obj='+Handle + '&args=getvar%20' +
+				"{"+ServerAndPath[1]+"}"+
+				"%20-output%20$::TKS::OP_VALUE";
 		}else if (HMI.GatewayTypePHP === true){
-			path = path;
-			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' + path;
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' +
+				"{"+ServerAndPath[1]+"}";
 		}
-		if (cbfnc !== null){
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -269,47 +276,58 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - End");
+		return true;
 	},
 	
-	/*********************************
-		setVar
-		Handle:	requires own Handle, null if uses the normal global Handle
-		path:	command to process of the command
-		value:	value to set (StringVec are {part1} {part2} {part3} coded
-		cbfnc: callback function
-		usage example:
-			this.setVar(null, '/TechUnits/HMIManager.Command ', "{1} {010} {/TechUnits/HMIManager} {SHOWSHEETS}", null);
-			response: ""
-	*********************************/
-	setVar: function(Handle, path, value, cbfnc) {
+	/**
+	 * usage example:
+	 *		this.setVar(null, '/TechUnits/HMIManager.Command ', "{1} {010} {/TechUnits/HMIManager} {SHOWSHEETS}", null);
+	 * 
+	 * @param Handle requires own Handle, null if uses the normal global Handle
+	 * @param path command to process of the command
+	 * @param {String} value to set (StringVec are {part1} {part2} {part3} coded
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return "" or null
+	 */
+	setVar: function(Handle, path, value, cbfnc, async) {
+		//wrapper function for old hmi gestures
+		return this.setVar_NG(path, value, cbfnc, async)
+	},
+	setVar_NG: function(path, value, cbfnc, async) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
 		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no valid path found, path was: "+path);
 			return null;
 		}
-		if(path.charAt(0) !== "{"){
-			path = "{"+path+"}";
-		}
-		if (path.charAt(1) === "/" && path.charAt(2) === "/"){
-			//String begins with // so it is a fullpath with Host and servername
-			var servername = path.split("/")[2]+"/"+path.split("/")[3];
-			Handle = this.getHandleID(servername);
-			path = "{"+path.substring(servername.length+3);
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-		}else if(Handle === null){
-			//String begins with / so it is a fullpath in the main server
-			Handle = this.TCLKSHandle;
-		}
-		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
-			path = '{'+path+'%20{'+value+'}}';
-			urlparameter = 'obj='+Handle + '&args=setvar%20' +path;
+			urlparameter = 'obj='+Handle + '&args=setvar%20'+
+			'{'+ServerAndPath[1]+'%20{'+value+'}}';
 		}else if (HMI.GatewayTypePHP === true){
-			urlparameter = 'obj='+Handle + '&cmd=setvar&path=' + path + "&val=" + value;
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=setvar"+
+				"&path=" + ServerAndPath[1] +
+				"&val=" + value;
 		}
-		if (cbfnc !== null){
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
 			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
@@ -318,6 +336,7 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
+		return true;
 	},
 	/**
 	 * usage example:
@@ -333,20 +352,21 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&cmd=destroy';
 		}
 		if (Handle !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, null);
+			//the result is not interesting, so can be ignored (async, no callback)
+			this._sendRequest(this, 'GET', true, urlparameter, null);
 		}
 	},
 	
 	/**
 	 * @param {String} HostAndServername Host and Servername concat with a slash
 	 * @return {String} TKS Handle of the requested Server or null
-	 * @todo add timeout für delHandle
+	 * @todo add timeout für unused delHandle
 	 */
 	getHandleID: function(HostAndServername) {
 		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== undefined){
 			return this.ResourceList.Handles[HostAndServername].HandleString;
 		}else{
-			var HandleString = this.getHandle(HostAndServername, null);
+			var HandleString = this._getHandle(HostAndServername, null);
 			if (HandleString === null || HandleString === false){
 				//occures in shutdown
 				return null;
@@ -354,7 +374,7 @@ HMIJavaScriptKSClient.prototype = {
 				//the Manager sometimes reject connection to a valid server, so retry once
 				//HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
 				
-				//fixme retry disabled!
+				//retry disabled for performance reasons!
 				//HandleString = this._getHandle(HostAndServername, null);
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
@@ -379,18 +399,23 @@ HMIJavaScriptKSClient.prototype = {
 		}
 	},
 	
+	_cbSetDefaultHandle: function(Client, req) {
+		//fixme work in progress
+		Client.ResourceList.Handles[HostAndServername] = Object();
+		Client.ResourceList.Handles[HostAndServername].HandleString = HandleString;
+	},
+	
 	/*********************************
 		getServers
 	*********************************/
-	getServers: function(KSServer) {
+	getServers: function(Host) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
-		if (this.TCLKSHandle !== null){
-			//The Handle points to the Manager wich can provide us with a list of OV servers (detection of HMI Servers are made in the callback)
-			this.getEP(null, '/servers%20*', "%20-output%20$::TKS::OP_NAME", this._cbGetServers);
-		} else {
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End - No TCLKSHandle");
-			return false;
+		//fixme async
+		var result = this.getEP_NG("//"+Host+"/"+'MANAGER'+'/servers%20*', "%20-output%20$::TKS::OP_NAME", this._cbGetServers, false);
+		if (result === null){
+			HMI.PossServers.setAttribute("title", "No MANAGER available");
+			HMI.hmi_log_info_onwebsite("Requested Host has no MANAGER available.");
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - End");
 		return true;
@@ -418,11 +443,10 @@ HMIJavaScriptKSClient.prototype = {
 			//put first select option with a description
 			HMI.PossServers.options[0] = new Option('loading...', '');
 			
-			for (i = 0; i < Server.length; i++)
-			{
+			var Host = HMI.getHostname();
+			for (i = 0; i < Server.length; i++){
 				//test all potential servers if they are HMI Servers
-				if (HMI.KSClient.pingServer(Server[i]) === true)
-				{
+				if (HMI.KSClient.pingServer(Host, Server[i]) === true){
 					//put server into the dropdown box
 					HMI.PossServers.options[HMI.PossServers.options.length] = new Option(Server[i], Server[i]);
 				};
@@ -435,7 +459,7 @@ HMIJavaScriptKSClient.prototype = {
 				//it is allways the second/last <option>...
 				HMI.PossServers.selectedIndex = 1;
 				HMI.PossServers.disabled = false;
-				HMI.showSheets(HMI.PossServers.options[1].value);
+				HMI.showSheets(HMI.getHostname(), HMI.PossServers.options[1].value);
 			}else{
 				HMI.PossServers.options[0] = new Option('- select server -', '');
 				//replacing option[0] drops us into the first server
@@ -447,21 +471,15 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - End");
 	},
 	
-	/*********************************
-		pingServer
-	*********************************/
-	pingServer: function(Server) {
+	/**
+	 * Test if a given server on a host is a cshmi or hmi server
+	 * @param Host Hostname on wich the server runs
+	 * @param Server Servername on the Host
+	 */
+	pingServer: function(Host, Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
-		
-		//we need a new handle since we talk to another OV server
-		var TCLKSHandle = this.getHandleID(HMI.KSClient.KSServer.substring(0, HMI.KSClient.KSServer.indexOf('/')) + '/' + Server);
-		if (TCLKSHandle === null){
-			//generic error
-			return false;
-		}
-		
 		//get a list of all loaded ov libraries of this server
-		var Response = this.getVar(TCLKSHandle, "/acplt/ov/library.instance", null);
+		var Response = this.getVar_NG("//"+Host+"/"+Server+"/acplt/ov/library.instance", null);
 		if (!Response){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - communication problem, so no hmi and no cshmi server");
 			return false;
@@ -479,12 +497,14 @@ HMIJavaScriptKSClient.prototype = {
 		}
 	},
 	
-	/*********************************
-		getHMIManagerPointer
-	*********************************/
-	getHMIManagerPointer: function(Server) {
+	/**
+	 * remember the path of the HMI Manger
+	 * @param Host Hostname on wich the server runs
+	 * @param Server Servername on the Host
+	 */
+	getHMIManagerPointer: function(Host, Server) {
 		//the path of the HMI Manager could be different in every OV Server
-		var ManagerResponse = this.getVar(null, "/Libraries/hmi/Manager.instance", null);
+		var ManagerResponse = this.getVar_NG("//"+Host+"/"+Server+"/Libraries/hmi/Manager.instance", null);
 		
 		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
 		if (ManagerResponseArray.length === 0){
@@ -512,22 +532,16 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		getSheets
 	*********************************/
-	getSheets: function(Server) {
+	getSheets: function(Host, Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - Start");
 		
 		var SheetList = new Array();
-		
-		//an init generates a new Handle, needed cause we communicate to this server the first time
-		this.init(this.KSServer.substring(0, this.KSServer.indexOf('/')) + '/' + Server, this.TCLKSGateway);
-		if (this.TCLKSHandle === null){
-			return false;
-		}
 		
 		//get Sheets from cshmi library
 		var responseArray;
 		var lastEntry;
 		var sortedList = Array();
-		var cshmiString = this.getVar(null, '/Libraries/cshmi/Group.instance', null);
+		var cshmiString = this.getVar_NG("//"+Host+"/"+Server+'/Libraries/cshmi/Group.instance', null);
 		if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 			responseArray = this.splitKsResponse(cshmiString);
 			//the array could be [""]
@@ -535,7 +549,7 @@ HMIJavaScriptKSClient.prototype = {
 				sortedList = responseArray[0].split(" ").sort();
 			}
 		}else{
-			cshmiString = this.getVar(null, '/acplt/cshmi/Group.instance', null);
+			cshmiString = this.getVar_NG("//"+Host+"/"+Server+'/acplt/cshmi/Group.instance', null);
 			if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 				responseArray = this.splitKsResponse(cshmiString);
 				//the array could be [""]
@@ -570,8 +584,8 @@ HMIJavaScriptKSClient.prototype = {
 		//get Sheets from hmi library
 		
 		//the path of the HMI Manager could be different in every OV Server
-		this.getHMIManagerPointer(Server);
-		if (HMI.KSClient.HMIMANAGER_PATH === null){
+		this.getHMIManagerPointer(Host, Server);
+		if (this.HMIMANAGER_PATH === null){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - No HMI Manager found on this Server.");
 			return SheetList;
 		}
@@ -588,11 +602,11 @@ HMIJavaScriptKSClient.prototype = {
 				'{' + this.HMIMANAGER_PATH + '}%20' + 
 				'{SHOWSHEETS}';
 		}
-		this.setVar(null, this.HMIMANAGER_PATH
+		this.setVar_NG("//"+Host+"/"+Server+this.HMIMANAGER_PATH
 				+ '.Command',
 				Command,
 				null);
-		var Sheetstring = this.getVar(null, this.HMIMANAGER_PATH + '.CommandReturn', null);
+		var Sheetstring = this.getVar_NG("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.CommandReturn', null);
 		Command = null;
 		
 		var responseArray = this.splitKsResponse(Sheetstring);
@@ -654,8 +668,7 @@ HMIJavaScriptKSClient.prototype = {
 			//only send POST to non tcl servers!
 			
 			req.open(method,
-				window.location.protocol+'//'
-				+ HMI.KSClient.TCLKSGateway
+				HMI.KSGateway_Path
 				+ '?'
 				+ urlparameter, async);
 			
@@ -767,7 +780,7 @@ HMIJavaScriptKSClient.prototype = {
 	/*********************************
 		checkSheetProperty
 	*********************************/
-	checkSheetProperty: function(ComponentPath) {
+	checkSheetProperty: function(Host, Server, ComponentPath) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
 		
 		if (this.HMIMANAGER_PATH === null){
@@ -777,7 +790,7 @@ HMIJavaScriptKSClient.prototype = {
 			return;
 		}
 		//spaces in objectname are encoded as %20 within OV
-		var StyleResponse = this.getVar(null, encodeURI(ComponentPath) + '.StyleDescription', null);
+		var StyleResponse = this.getVar_NG("//"+Host+"/"+Server+encodeURI(ComponentPath) + '.StyleDescription', null);
 		
 		if (StyleResponse.indexOf("KS_ERR_BADPATH") !== -1){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
@@ -908,14 +921,14 @@ HMIJavaScriptKSClient.prototype = {
 			}
 		}
 	},
-	/*********************************
-		getChildObjArray
-			returns the childs of an Object as an Array, or an empty Array
-	*********************************/
+	
+	/**
+	 * returns the childs of an Object as an Array, or an empty Array
+	 */
 	getChildObjArray: function (ObjectPath, cachingTarget) {
 		var responseArray;
 		if (!(cachingTarget.ResourceList.ChildList && cachingTarget.ResourceList.ChildList[ObjectPath] !== undefined)){
-			var response = this.getEP(null, encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
+			var response = this.getEP_NG(encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
 			
 			//no caching with an communication error
 			if (response === false){
@@ -941,6 +954,36 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		return responseArray;
 	},
+	
+	/**
+	 * returns a valid HostAndServer, Path Array
+	 * @return Array with HostAndServer and Path as String or null (in Error) in Array
+	 */
+	_splitKSPath: function(FullKSpath){
+		if (typeof FullKSpath !== "string" || FullKSpath.length === 0){
+			return Array(null, "");
+		}
+		if (FullKSpath.charAt(0) === "/" && FullKSpath.charAt(1) === "/"){
+			//find the 3rd "/"
+			var slashIndexAfterHost = FullKSpath.indexOf("/", 2);
+			//find the 4th "/"
+			var slashIndexAfterServer = FullKSpath.indexOf("/", slashIndexAfterHost+1);
+			//only keep the String before 4th "/"
+			//var Host = FullKSpath.slice(2, slashIndexAfterHost);
+			//var Server = FullKSpath.slice(slashIndexAfterHost+1, slashIndexAfterServer);
+			var HostAndServer = FullKSpath.slice(2, slashIndexAfterServer);
+			var KSPath = FullKSpath.slice(slashIndexAfterServer);
+			
+			return Array(HostAndServer, KSPath);
+		}else if (FullKSpath.charAt(0) === "/"){
+			//no Host and Server found, so replace with Model location
+			return Array(this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer, FullKSpath);
+		}else{
+			//ups kaputt
+			return Array(null, "");
+		}
+	},
+	
 	/*********************************
 		destroy
 	*********************************/
