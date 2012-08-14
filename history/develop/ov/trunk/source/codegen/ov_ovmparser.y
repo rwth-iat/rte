@@ -1076,8 +1076,8 @@ OV_BOOL ov_codegen_checksemantics_library(
 	*	check for unique name
 	*/
 	if(plib != ov_codegen_getlibdef(plib->identifier)) {
-		fprintf(stderr, "library \"%s\": identifier already used.\n",
-			plib->identifier);
+		fprintf(stderr, "ERROR: %s: library \"%s\": identifier already used.\n",
+			filename, plib->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1122,8 +1122,8 @@ OV_BOOL ov_codegen_checksemantics_structure(
 	*	check for unique name
 	*/
 	if(pstruct != ov_codegen_getstructdef(plib, pstruct->identifier)) {
-		fprintf(stderr, "structure \"%s\": identifier already used.\n",
-			pstruct->identifier);
+		fprintf(stderr, "ERROR: %s: structure \"%s\": identifier already used.\n",
+			filename, pstruct->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1165,8 +1165,8 @@ OV_BOOL ov_codegen_checksemantics_class(
 	if(pclass != ov_codegen_getclassdef(plib, pclass->identifier)
 		|| ov_codegen_getstructdef(plib, pclass->identifier)
 	) {
-		fprintf(stderr, "class \"%s\": identifier already used.\n",
-			pclass->identifier);
+		fprintf(stderr, "ERROR: %s: class \"%s\": identifier already used.\n",
+			filename, pclass->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1180,20 +1180,20 @@ OV_BOOL ov_codegen_checksemantics_class(
 			*	the base class must not be final
 			*/
 			if(pbaseclass->classprops & OV_CP_FINAL) {
-				fprintf(stderr, "class \"%s\": class may not inherit from a final class.\n",
-					pclass->identifier);
+				fprintf(stderr, "ERROR: %s: class \"%s\": class may not inherit from a final class.\n",
+					filename, pclass->identifier);
 				result = FALSE;
 			}
 			/*
 			*	the base class has to be defined prior to the derived classes
 			*/
 			if(pclass->defnum == pbaseclass->defnum) {
-				fprintf(stderr, "class \"%s\": class may not inherit from itself.\n",
-					pclass->identifier);
+				fprintf(stderr, "ERROR: %s: class \"%s\": class may not inherit from itself.\n",
+					filename, pclass->identifier);
 				result = FALSE;
 			} else if(pclass->defnum < pbaseclass->defnum) {
-				fprintf(stderr, "class \"%s\": definition prior to definition "
-					"of base class \"%s\".\n", pclass->identifier,
+				fprintf(stderr, "ERROR: %s: class \"%s\": definition prior to definition "
+					"of base class \"%s\".\n", filename, pclass->identifier,
 					pclass->baseclassname);
 				result = FALSE;
 			} else {
@@ -1203,7 +1203,7 @@ OV_BOOL ov_codegen_checksemantics_class(
 				pclass->numoperations = pbaseclass->numoperations;
 			}
 		} else {
-			fprintf(stderr, "%s: class \"%s\": base class \"%s\" not defined.\n",
+			fprintf(stderr, "ERROR: %s: class \"%s\": base class \"%s\" not defined.\n",
 				filename, pclass->identifier, pclass->baseclassname);
 			result = FALSE;
 		}
@@ -1213,8 +1213,8 @@ OV_BOOL ov_codegen_checksemantics_class(
 		*	the top level class "object"
 		*/
 		if(strcmp(pclass->identifier, OV_OBJNAME_OBJECT)) {
-			fprintf(stderr, "class \"%s\": not derived from a base class.\n",
-				pclass->identifier);
+			fprintf(stderr, "ERROR: %s: class \"%s\": not derived from a base class.\n",
+				filename, pclass->identifier);
 			result = FALSE;
 		}
 	}
@@ -1222,8 +1222,8 @@ OV_BOOL ov_codegen_checksemantics_class(
 	*	final but not instaniable classes do not seem to make any sense
 	*/
 	if((pclass->classprops & OV_CP_FINAL) && !(pclass->classprops & OV_CP_INSTANTIABLE)) {
-		fprintf(stderr, "class \"%s\": final classes must be instantiable.\n",
-			pclass->identifier);
+		fprintf(stderr, "ERROR: %s: class \"%s\": final classes must be instantiable.\n",
+			filename, pclass->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1255,8 +1255,8 @@ OV_BOOL ov_codegen_checksemantics_class(
 		}
 	}
 	if((pclass->classprops & OV_CP_INSTANTIABLE) && !instantiable) {
-		fprintf(stderr, "class \"%s\": class has abstract operations "
-			"and cannot be instantiated.\n", pclass->identifier);
+		fprintf(stderr, "ERROR: %s: class \"%s\": class has abstract operations "
+			"and cannot be instantiated.\n", filename, pclass->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1290,8 +1290,8 @@ OV_BOOL ov_codegen_checksemantics_association(
 		|| ov_codegen_getstructdef(plib, passoc->identifier)
 		|| ov_codegen_getclassdef(plib, passoc->identifier)
 	) {
-		fprintf(stderr, "association \"%s\": identifier already used.\n",
-			passoc->identifier);
+		fprintf(stderr, "ERROR: %s: association \"%s\": identifier already used.\n",
+			filename, passoc->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1300,22 +1300,22 @@ OV_BOOL ov_codegen_checksemantics_association(
 	if((passoc->assoctype == OV_AT_MANY_TO_MANY) 
 		&& (passoc->assocprops & OV_AP_LOCAL)
 	) {
-		fprintf(stderr, "association \"%s\": n:m associations cannot be local.\n",
-			passoc->identifier);
+		fprintf(stderr, "ERROR: %s: association \"%s\": n:m associations cannot be local.\n",
+			filename, passoc->identifier);
 		result = FALSE;
 	}
 	/*
 	*	check for child and parent class and their role names
 	*/
 	if(!pparentclass) {
-		fprintf(stderr, "association \"%s\": parent class \"%s\" not defined.\n",
-			passoc->identifier, passoc->parentclassname);
+		fprintf(stderr, "ERROR: %s: association \"%s\": parent class \"%s\" not defined.\n",
+			filename, passoc->identifier, passoc->parentclassname);
 		result = FALSE;
 	} else {
 		pparentlib = ov_codegen_getlibdef(pparentclass->libname);
 		if(pparentclass->defnum > passoc->defnum) {
-			fprintf(stderr, "association \"%s\": definition prior to definition "
-				"of parent class \"%s\".\n", passoc->identifier,
+			fprintf(stderr, "ERROR: %s: association \"%s\": definition prior to definition "
+				"of parent class \"%s\".\n", filename, passoc->identifier,
 				passoc->parentclassname);
 			result = FALSE;
 		}
@@ -1336,20 +1336,20 @@ OV_BOOL ov_codegen_checksemantics_association(
 			|| ov_codegen_getopdef(pparentlib, pparentclass, passoc->childrolename)
 			|| ov_codegen_comparerolename(pparentclass, passoc, passoc->childrolename)
 		) {
-			fprintf(stderr, "association \"%s\": child role name \"%s\" already "
-				"used as identifier.", passoc->identifier, passoc->childrolename);
+			fprintf(stderr, "ERROR: %s: association \"%s\": child role name \"%s\" already "
+				"used as identifier.", filename, passoc->identifier, passoc->childrolename);
 			result = FALSE;
 		}
 	}
 	if(!pchildclass) {
-		fprintf(stderr, "association \"%s\": child class \"%s\" not defined.\n",
-			passoc->identifier, passoc->childclassname);
+		fprintf(stderr, "ERROR: %s: association \"%s\": child class \"%s\" not defined.\n",
+			filename, passoc->identifier, passoc->childclassname);
 		result = FALSE;
 	} else {
 		pchildlib = ov_codegen_getlibdef(pchildclass->libname);
 		if(pchildclass->defnum > passoc->defnum) {
-			fprintf(stderr, "association \"%s\": definition prior to definition "
-				"of child class \"%s\".\n", passoc->identifier,
+			fprintf(stderr, "ERROR: %s: association \"%s\": definition prior to definition "
+				"of child class \"%s\".\n", filename, passoc->identifier,
 				passoc->childclassname);
 			result = FALSE;
 		}
@@ -1370,8 +1370,8 @@ OV_BOOL ov_codegen_checksemantics_association(
 			|| ov_codegen_getopdef(pchildlib, pchildclass, passoc->parentrolename)
 			|| ov_codegen_comparerolename(pchildclass, passoc, passoc->parentrolename)
 		) {
-			fprintf(stderr, "association \"%s\": parent role name \"%s\" already "
-				"used as identifier.", passoc->identifier, passoc->parentrolename);
+			fprintf(stderr, "ERROR: %s: association \"%s\": parent role name \"%s\" already "
+				"used as identifier.", filename, passoc->identifier, passoc->parentrolename);
 			result = FALSE;
 		}
 	}
@@ -1400,8 +1400,8 @@ OV_BOOL ov_codegen_checksemantics_member(
 	*	check for unique name
 	*/
 	if(pvar != ov_codegen_getmemberdef(plib, pstruct, pvar->identifier)) {
-		fprintf(stderr, "structure \"%s\", member \"%s\": duplicate identifier.\n",
-			pstruct->identifier, pvar->identifier);
+		fprintf(stderr, "ERROR: %s: structure \"%s\", member \"%s\": duplicate identifier.\n",
+			filename, pstruct->identifier, pvar->identifier);
 		result = FALSE;
 	}
 	/*
@@ -1412,32 +1412,32 @@ OV_BOOL ov_codegen_checksemantics_member(
 		*	PV vectors are not supported
 		*/
 		if(pvar->vartype & (OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)) {
-			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of PV variables "
-				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			fprintf(stderr, "ERROR: %s: structure \"%s\", variable \"%s\": vectors of PV variables "
+				"are not supported.\n", filename, pstruct->identifier, pvar->identifier);
 			result = FALSE;
 		}
 		/*
 		*	vectors of structures are not (yet) supported
 		*/
 		if(pvar->structurename) {
-			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of structures "
-				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			fprintf(stderr, "ERROR: %s: structure \"%s\", variable \"%s\": vectors of structures "
+				"are not supported.\n", filename, pstruct->identifier, pvar->identifier);
 			result = FALSE;
 		}
 		/*
 		*	vectors of ANY variables are not supported
 		*/
 		if(pvar->vartype == OV_VT_ANY) {
-			fprintf(stderr, "structure \"%s\", variable \"%s\": vectors of type ANY "
-				"are not supported.\n", pstruct->identifier, pvar->identifier);
+			fprintf(stderr, "ERROR: %s: structure \"%s\", variable \"%s\": vectors of type ANY "
+				"are not supported.\n", filename, pstruct->identifier, pvar->identifier);
 			result = FALSE;
 		}
 		/*
 		*	dynamic vectors of C-type variables are not supported
 		*/
 		if((!pvar->veclen) && (pvar->vartype == OV_VT_BYTE_VEC)) {
-			fprintf(stderr, "structure \"%s\", variable \"%s\": dynamic vectors of C-type "
-				"variables are not supported.\n", pstruct->identifier, pvar->identifier);
+			fprintf(stderr, "ERROR: %s: structure \"%s\", variable \"%s\": dynamic vectors of C-type "
+				"variables are not supported.\n", filename, pstruct->identifier, pvar->identifier);
 			result = FALSE;
 		}
 	}
@@ -1449,18 +1449,18 @@ OV_BOOL ov_codegen_checksemantics_member(
 		if(pvarstruct) {
 			pvar->structurelibname = pvarstruct->libname;
 			if(pvarstruct->defnum == pstruct->defnum) {
-				fprintf(stderr, "structure \"%s\", member \"%s\": recursive definition.\n",
-					pstruct->identifier, pvar->identifier);
+				fprintf(stderr, "ERROR: %s: structure \"%s\", member \"%s\": recursive definition.\n",
+					filename, pstruct->identifier, pvar->identifier);
 				result = FALSE;
 			} else if(pvarstruct->defnum > pstruct->defnum) {
-				fprintf(stderr, "structure \"%s\", member \"%s\": definition prior to "
-					"definition of structure \"%s\".\n", pstruct->identifier,
+				fprintf(stderr, "ERROR: %s: structure \"%s\", member \"%s\": definition prior to "
+					"definition of structure \"%s\".\n", filename, pstruct->identifier,
 					pvar->identifier, pvar->structurename);
 				result = FALSE;
 			}
 		} else {
-			fprintf(stderr, "structure \"%s\", member \"%s\": structure \"%s\" not "
-				"defined.\n", pstruct->identifier, pvar->identifier, pvar->structurename);
+			fprintf(stderr, "ERROR: %s: structure \"%s\", member \"%s\": structure \"%s\" not "
+				"defined.\n", filename, pstruct->identifier, pvar->identifier, pvar->structurename);
 			result = FALSE;
 		}
 	}
