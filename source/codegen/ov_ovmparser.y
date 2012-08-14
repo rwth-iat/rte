@@ -1203,8 +1203,8 @@ OV_BOOL ov_codegen_checksemantics_class(
 				pclass->numoperations = pbaseclass->numoperations;
 			}
 		} else {
-			fprintf(stderr, "class \"%s\": base class \"%s\" not defined.\n",
-				pclass->identifier, pclass->baseclassname);
+			fprintf(stderr, "%s: class \"%s\": base class \"%s\" not defined.\n",
+				filename, pclass->identifier, pclass->baseclassname);
 			result = FALSE;
 		}
 	} else {
