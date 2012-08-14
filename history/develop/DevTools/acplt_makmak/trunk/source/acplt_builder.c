@@ -1118,7 +1118,7 @@ HELP:
 	    return 1;
 	}*/
 	if(getenv(acpltEnvVar) != NULL && getenv(ifbsEnvVar) == NULL){
-		fprintf(stdout,"ACPLT server detected\n");
+		//fprintf(stdout,"ACPLT server detected\n");
 		penv = getenv(acpltEnvVar);
 		acplt = 1;
 	}else if(getenv(ifbsEnvVar) != NULL && getenv(acpltEnvVar) == NULL){
@@ -1129,7 +1129,7 @@ HELP:
 		fprintf(stderr,"Neither %s nor %s are set. No runtime server detected.\n", acpltEnvVar, ifbsEnvVar);
 		return 1;
 	}else{
-		fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
+		//fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
 		penv = getenv(acpltEnvVar);
 		acplt = 1;
 	}

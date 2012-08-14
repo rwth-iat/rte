@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
 	//	return 1;
 	//}
 	if(getenv(acpltEnvVar) != NULL && getenv(ifbsEnvVar) == NULL){
-		fprintf(stdout,"ACPLT server detected\n");
+		//fprintf(stdout,"ACPLT server detected\n");
 		penv = getenv(acpltEnvVar);
 		acplt = 1;
 	}else if(getenv(ifbsEnvVar) != NULL && getenv(acpltEnvVar) == NULL){
@@ -198,7 +198,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr,"Neither %s nor %s are set. No runtime server detected.\n", acpltEnvVar, ifbsEnvVar);
 		return 1;
 	}else{
-		fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
+		//fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
 		penv = getenv(acpltEnvVar);
 		acplt = 1;
 	}
@@ -249,7 +249,7 @@ int main(int argc, char **argv) {
 	sprintf(help, "%s/build", libPath);
 	compatiblePath(help);
 	if(stat(help, &st) != 0){
-			fprintf(stdout,"Creating directory '%s'... \n", help);
+			//fprintf(stdout,"Creating directory '%s'... \n", help);
 			acplt_mkdir(help);
 	}
 
@@ -270,7 +270,7 @@ int main(int argc, char **argv) {
 	sprintf(help, "%s/build/generic.mk", libPath);
 	compatiblePath(help);
 
-	fprintf(stdout, "Creating file '%s' ...\n", help);
+	//fprintf(stdout, "Creating file '%s' ...\n", help);
 
 	fd = fopen(help, "w");
 	if(!fd) {
@@ -426,9 +426,9 @@ int main(int argc, char **argv) {
 	compatiblePath(help);
 
 	if(fileExists(help)){
-		fprintf(stdout, "File '%s' exists already\n", help);
+		//fprintf(stdout, "File '%s' exists already\n", help);
 	}else{
-		fprintf(stdout, "Creating file '%s' ...\n", help);
+		//fprintf(stdout, "Creating file '%s' ...\n", help);
 		fd = fopen(help, "w");
 		fclose(fd);
 	}
@@ -439,9 +439,9 @@ int main(int argc, char **argv) {
 	compatiblePath(help);
 
 	if(fileExists(help)){
-		fprintf(stdout, "File '%s' exists already\n", help);
+		//fprintf(stdout, "File '%s' exists already\n", help);
 	}else{
-		fprintf(stdout, "Creating file '%s' ...\n", help);
+		//fprintf(stdout, "Creating file '%s' ...\n", help);
 		fd = fopen(help, "w");
 		if(!fd) {
 			fprintf(stderr, "unable to open file '%s' for writing.\n", help);
@@ -458,9 +458,9 @@ int main(int argc, char **argv) {
 	compatiblePath(help);
 
 	if(fileExists(help) && force == 0){
-		fprintf(stdout, "File '%s' exists already\n", help);
+		//fprintf(stdout, "File '%s' exists already\n", help);
 	}else{
-		fprintf(stdout, "Creating file '%s' ...\n", help);
+		//fprintf(stdout, "Creating file '%s' ...\n", help);
 		fd = fopen(help, "w");
 		if(!fd) {
 			fprintf(stderr, "unable to open file '%s' for writing.\n", help);
@@ -513,7 +513,7 @@ int main(int argc, char **argv) {
 	sprintf(help, "%s/build/%s/gcc.mk", libPath, builddir);
 	compatiblePath(help);
 
-	fprintf(stdout, "Creating file '%s' ...\n", help);
+	//fprintf(stdout, "Creating file '%s' ...\n", help);
 
 	fd = fopen(help, "w");
 	if(!fd) {
@@ -625,6 +625,7 @@ int main(int argc, char **argv) {
 	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
 #endif
 	fprintf(fd,"\tacplt_builder -l %s $(MAKMAKOPTIONS)\n", libname);
+	fprintf(fd,"\t-@echo  ==== New templates have been created! ====\n");
 
 	fprintf(fd,"\n");
 
@@ -731,7 +732,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	sprintf(help, "%s/build/%s/borland.mk", libPath, builddir);
 	compatiblePath(help);
 
-	fprintf(stdout, "Creating file '%s' ...\n", help);
+	//fprintf(stdout, "Creating file '%s' ...\n", help);
 
 	fd = fopen(help, "w");
 	if(!fd) {
@@ -925,7 +926,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	sprintf(help, "%s/build/%s/msvc.mk", libPath, builddir);
 	compatiblePath(help);
 
-	fprintf(stdout, "Creating file '%s' ...\n", help);
+	//fprintf(stdout, "Creating file '%s' ...\n", help);
 
 	fd = fopen(help, "w");
 	if(!fd) {
