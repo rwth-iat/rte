@@ -889,7 +889,7 @@ cshmi.prototype = {
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === false){
 			var TemplateObject;
-			var FBRef;
+			var FBRef = null;
 			
 			//doku OP_NAME im Iterator nicht, sonst schon
 			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
@@ -1343,7 +1343,7 @@ cshmi.prototype = {
 			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
 				var TemplateObject = VisualObject;
-				var FBRef;
+				var FBRef = null;
 				//search FBReference of root Object
 				do{
 					//FBReference found
@@ -1373,7 +1373,7 @@ cshmi.prototype = {
 			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 				//we are in an iterator and want to read out a value from the currentchild
 				var TemplateObject = VisualObject;
-				var FBRef;
+				var FBRef = null;
 				//search FBReference of root Object
 				do{
 					//FBReference found
@@ -1640,7 +1640,7 @@ cshmi.prototype = {
 	 */
 	_interpreteChildrenIterator: function(VisualObject, ObjectPath){
 		var rootObject = VisualObject;
-		var FBRef;
+		var FBRef = null;
 		//search FBReference of root Object
 		while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			//FBReference found
@@ -1653,6 +1653,10 @@ cshmi.prototype = {
 				//loop upwards to find the Template object
 				rootObject = rootObject.parentNode;
 			}
+		}
+		if (FBRef === null){
+			HMI.hmi_log_info_onwebsite('ChildrenIterator '+ObjectPath+' could not work. Found no FBReference on a parent.');
+			return false;
 		}
 		
 		var ChildrenType;
@@ -1845,7 +1849,7 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
-		var FBRef;
+		var FBRef = null;
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		
 		
@@ -2509,7 +2513,7 @@ cshmi.prototype = {
 			
 			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
 			var rootObject = VisualObject;
-			var FBRef;
+			var FBRef = null;
 			//search FBReference of root Object
 			while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 				//FBReference found
@@ -2523,6 +2527,11 @@ cshmi.prototype = {
 					rootObject = rootObject.parentNode;
 				}
 			}
+			if (FBRef === null){
+				HMI.hmi_log_info_onwebsite('CompareIteratedChild '+ObjectPath+' could not work. Found no FBReference on a parent.');
+				return null;
+			}
+			
 			var splittedValue = childValue[0].split(".");
 			
 			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
@@ -2793,7 +2802,7 @@ cshmi.prototype = {
 				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]] !== undefined){
 					//something like OP_NAME was requested, so we have to find the real info from the iterator
 					var rootObject = VisualParentObject;
-					var FBRef;
+					var FBRef = null;
 					//search FBReference of root Object
 					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 						//FBReference found
@@ -2807,7 +2816,10 @@ cshmi.prototype = {
 							rootObject = rootObject.parentNode;
 						}
 					}
-					if (FBRef.indexOf("//localhost") === 0){
+					if (FBRef === null){
+						HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
+						return null;
+					}else if (FBRef.indexOf("//localhost") === 0){
 						//localhost in the model should not be the http-gateway
 						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
@@ -2890,7 +2902,7 @@ cshmi.prototype = {
 					//Value from currentChild is not a full path, so search for it in the parents
 					
 					var rootObject = VisualParentObject;
-					var FBRef = "";
+					var FBRef = null;
 					//search FBReference of root Object
 					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 						//FBVariableReference found
@@ -2904,7 +2916,10 @@ cshmi.prototype = {
 							rootObject = rootObject.parentNode;
 						}
 					}
-					if (FBRef.indexOf("//localhost") === 0){
+					if (FBRef === null){
+						HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
+						return null;
+					}else if (FBRef.indexOf("//localhost") === 0){
 						//localhost in the model should not be the http-gateway
 						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
