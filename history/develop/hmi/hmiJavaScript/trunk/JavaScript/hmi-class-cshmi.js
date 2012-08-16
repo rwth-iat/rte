@@ -637,6 +637,8 @@ cshmi.prototype = {
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		
+		//todo alle kinder auf einmal abholen...
+		
 		//a server could be not available, or we request a not existing (xpos) variable. This should not cancel the other actions
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
@@ -747,14 +749,16 @@ cshmi.prototype = {
 			return null;
 		}else if (ParameterName === "ksVar" && preventNetworkRequest === false){
 			var response;
-			if (ParameterValue.charAt(0) == "/"){
-				//we have an absolute path
-				response = HMI.KSClient.getVar_NG(ParameterValue, null);
-			}else{
-				//get baseKsPath
-				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.getVar_NG(baseKsPath+ParameterValue, null);
+			if (ParameterValue.charAt(0) !== "/"){
+				//we have no absolute path => get baseKsPath
+				var ParameterValue = this._getBaseKsPath(VisualObject, ObjectPath)+ParameterValue;
 			}
+			if (ParameterValue.indexOf("//localhost") === 0){
+				//localhost in the model should not be the http-gateway
+				ParameterValue = ParameterValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+			}
+			response = HMI.KSClient.getVar_NG(ParameterValue, null);
+			
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			if (responseArray.length === 0){
 				return false;
@@ -1057,7 +1061,7 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType){
-		//todo get config for setvalue and getvalue combined in one request
+		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList übergeben...?
 		
 		var NewValue = "";
 		//get Value to set
@@ -1205,14 +1209,17 @@ cshmi.prototype = {
 		//set the new Value
 		if (ParameterName === "ksVar"){
 			var response;
-			if (ParameterValue.charAt(0) == "/"){
-				//we have an absolute path
-				response = HMI.KSClient.setVar_NG(ParameterValue, NewValue, null);
-			}else{
-				//get baseKsPath
-				var baseKsPath = this._getBaseKsPath(VisualObject, ObjectPath);
-				response = HMI.KSClient.setVar_NG(baseKsPath+ParameterValue, NewValue, null);
+			if (ParameterValue.charAt(0) !== "/"){
+				//we have no absolute path => get baseKsPath
+				var ParameterValue = this._getBaseKsPath(VisualObject, ObjectPath)+ParameterValue;
 			}
+			if (ParameterValue.indexOf("//localhost") === 0){
+				//localhost in the model should not be the http-gateway
+				ParameterValue = ParameterValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+			}
+			
+			response = HMI.KSClient.setVar_NG(ParameterValue, NewValue, null);
+			
 			if (response === false || response === null){
 				//communication error
 				return true;
@@ -1541,6 +1548,11 @@ cshmi.prototype = {
 			}
 			ObjectPathArray.pop();
 		}while(ObjectPathArray.length > 1);
+		
+		if (returnValue.indexOf("//localhost") === 0){
+			//localhost in the model should not be the http-gateway
+			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+		}
 		return returnValue;
 	},
 	
@@ -2733,7 +2745,13 @@ cshmi.prototype = {
 			FBReferenceEntry = FBReferenceList[i].split(":");
 			if (FBReferenceList[i].charAt(0) === "/"){
 				//entry could be an fullpath with an port, so ":" is no separator
-				VisualObject.FBReference["default"] = FBReferenceList[i];
+				
+				if (FBReferenceList[i].indexOf("//localhost") === 0){
+					//localhost in the model should not be the http-gateway
+					VisualObject.FBReference["default"] = FBReferenceList[i].replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+				}else{
+					VisualObject.FBReference["default"] = FBReferenceList[i];
+				}
 				VisualObject.id = VisualObject.FBReference["default"];
 				VisualObject.setAttribute("data-NameOrigin", "FBReference");
 			}else if (FBReferenceEntry.length >= 2){
@@ -2789,6 +2807,10 @@ cshmi.prototype = {
 							rootObject = rootObject.parentNode;
 						}
 					}
+					if (FBRef.indexOf("//localhost") === 0){
+						//localhost in the model should not be the http-gateway
+						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+					}
 					if (this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]].charAt(0) === "/"){
 						// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
 						
@@ -2808,7 +2830,7 @@ cshmi.prototype = {
 							// it's not a path to another server, so we must replace the full FBRef path
 							VisualObject.FBReference["default"] = this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]];
 						}
-						VisualObject.id = VisualObject.FBReference["default"]
+						VisualObject.id = VisualObject.FBReference["default"];
 						VisualObject.setAttribute("data-NameOrigin", "CurrentChildfullpath");
 					}else{
 						//In OP_NAME is a relative path (likely from a GetEP request). We have to use the correct separator
@@ -2832,6 +2854,10 @@ cshmi.prototype = {
 						//relative path is given, so complete the path with the BaseKsPath
 						VisualObject.FBReference["default"] = this._getBaseKsPath(VisualObject, ObjectPath) + FBReferenceEntry[0];
 						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
+					}
+					if (VisualObject.FBReference["default"].indexOf("//localhost") === 0){
+						//localhost in the model should not be the http-gateway
+						VisualObject.FBReference["default"] = VisualObject.FBReference["default"].replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
 					VisualObject.id = VisualObject.FBReference["default"];
 				}
@@ -2878,6 +2904,10 @@ cshmi.prototype = {
 							rootObject = rootObject.parentNode;
 						}
 					}
+					if (FBRef.indexOf("//localhost") === 0){
+						//localhost in the model should not be the http-gateway
+						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+					}
 					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
 				}else{
 					//currentChild set a full path
@@ -2885,13 +2915,15 @@ cshmi.prototype = {
 				}
 			}else{
 				//direct setting of a FBVariable
-				if (FBVariableReferenceEntry[1].charAt(0) === "/"){
-					//full path is given
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
-				}else{
-					//relative path is given, so complete the path with the BaseKsPath
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = this._getBaseKsPath(VisualObject, ObjectPath) + FBVariableReferenceEntry[1];
+				if (FBVariableReferenceEntry[1].charAt(0) !== "/"){
+					//no full path is given, so complete the path with the BaseKsPath
+					FBVariableReferenceEntry[1] = this._getBaseKsPath(VisualObject, ObjectPath) + FBVariableReferenceEntry[1];
 				}
+				if (FBVariableReferenceEntry[1].indexOf("//localhost") === 0){
+					//localhost in the model should not be the http-gateway
+					FBVariableReferenceEntry[1] = FBVariableReferenceEntry[1].replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+				}
+				VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
 			}
 		}
 		
@@ -3621,8 +3653,6 @@ cshmi.prototype = {
 			requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
-			requestList[ObjectPath]["stroke"] = null;
-			requestList[ObjectPath]["fill"] = null;
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["x"] = null;
