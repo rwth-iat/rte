@@ -1282,6 +1282,10 @@ cshmi.prototype = {
 			}else if (ParameterValue == "rotate"){
 				//rotate is special, as it is different in OVM and SVG
 				
+				if(!isNumeric(NewValue)){
+					//ignore writing wrong value
+					return false;
+				}
 				//svg are not transformable, so the rotation is in the objects parent
 				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 					//object has already an g parent
@@ -1305,8 +1309,26 @@ cshmi.prototype = {
 					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
 				}
 			}else{
+				if (NewValue === "" && 
+					(		ParameterValue === "x"||
+							ParameterValue === "y"||
+							ParameterValue === "width"||
+							ParameterValue === "height"||
+							ParameterValue === "x1"||
+							ParameterValue === "y1"||
+							ParameterValue === "x2"||
+							ParameterValue === "y2"||
+							ParameterValue === "rx"||
+							ParameterValue === "ry"||
+							ParameterValue === "cx"||
+							ParameterValue === "cy"||
+							ParameterValue === "r")
+							){
+					//do not allow setting of the basic length to the empty string
+					return false;
+				}
 				VisualObject.setAttribute(ParameterValue, NewValue);
-				//reposition Layer if x, y, width or height is changed
+				//reposition Layer if x, y, width or height was changed
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
 					HMI._setLayerPosition(VisualObject);
 					//we want to have offset parameter on all visual elements
