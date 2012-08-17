@@ -1570,10 +1570,20 @@ HMI.prototype = {
 		if (Node.classList && Node.classList.add){
 			//html5 classList saves us some work
 			Node.classList.add(additionalClass);
-		}else if (Node.className !== undefined){
-			Node.className.baseVal = (Node.className.baseVal+" "+additionalClass).trim();
 		}else{
 			Node.setAttribute('class', (Node.getAttribute('class')+ " "+additionalClass).trim());
+		}
+	},
+	
+	/**
+	 * removes a class from a svg element
+	 */
+	removeClass: function(Node, oldClass){
+		if (Node.classList && Node.classList.remove){
+			//html5 classList saves us some work
+			Node.classList.remove(oldClass);
+		}else{
+			Node.setAttribute('class', (Node.getAttribute('class').replace(oldClass, "").trim()));
 		}
 	},
 	

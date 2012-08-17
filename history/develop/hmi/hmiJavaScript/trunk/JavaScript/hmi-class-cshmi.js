@@ -78,8 +78,13 @@ function cshmi() {
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
 	this.ResourceList.ChildrenIterator = Object();
-	this.ResourceList.EventInfos = Object();
 	this.ResourceList.GlobalVar = Object();
+	this.ResourceList.EventInfos = Object();
+	this.ResourceList.EventInfos.EventObj = null;
+	this.ResourceList.EventInfos.startXMouse = null;
+	this.ResourceList.EventInfos.startYMouse = null;
+	this.ResourceList.EventInfos.startXObj = null;
+	this.ResourceList.EventInfos.startYObj = null;
 	
 	//holds the information if the visualisation is filled with content right now
 	this.initStage = false;
@@ -90,7 +95,7 @@ function cshmi() {
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
 	this.cshmiObjectHasHideableChildren = "cshmi-ObjectHasHideableChildren";
-	this.cshmiObjectChildrenNotLoaded = "cshmi-ObjectChildrenNotLoaded";
+	this.cshmiObjectVisibleChildrenNotLoaded = "cshmi-ObjectVisibleChildrenNotLoaded";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -135,7 +140,7 @@ cshmi.prototype = {
 		this.initStage = true;
 		
 		//build the selected sheet aka group. This includes all containing elements
-		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group");
+		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", "all");
 		
 		if(HMI.PlaygroundContainerNode){
 			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
@@ -224,47 +229,70 @@ cshmi.prototype = {
 	 * Main iteration loop for visualisation, finds and arms Actions as well
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {String} restrictType of children loading ("events", "elements", "all")
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType) {
+	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, restrictType) {
 		var VisualObject = null;
 		var Result = true;
-		if (ObjectType.indexOf("/cshmi/Group") !== -1){
+		if (restrictType === "events" && ObjectType.indexOf("/cshmi/Group") !== -1){
+			return null;
+		}else if (ObjectType.indexOf("/cshmi/Group") !== -1){
 			VisualObject = this._buildSvgContainer(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Template") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Path") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Line") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
 			VisualObject = this._buildSvgLine(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Polyline") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Polyline") !== -1){
 			VisualObject = this._buildSvgPolyline(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Polygon") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Polygon") !== -1){
 			VisualObject = this._buildSvgPolygon(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Text") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
 			VisualObject = this._buildSvgText(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Circle") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Circle") !== -1){
 			VisualObject = this._buildSvgCircle(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Ellipse") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Ellipse") !== -1){
 			VisualObject = this._buildSvgEllipse(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Rectangle") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
 			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath);
+		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Image") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
 			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath);
+		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
 			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath);
+		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
 			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath);
+		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
+			return null;
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath);
 		}else{
-			if (	ObjectType.indexOf("/cshmi/SetValue") !== -1 ||
-					ObjectType.indexOf("/cshmi/IfThenElse") !== -1 ||
-					ObjectType.indexOf("/cshmi/ChildrenIterator") !== -1 ){
-				HMI.hmi_log_info("Actions not supported at this position: (Typ: "+ObjectType+"): "+ObjectPath);
-			}else{
-				HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
-			}
+			HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 		}
 		
 		//check type of returnvalue
@@ -277,13 +305,13 @@ cshmi.prototype = {
 		
 		//get and prepare Children in an recursive call
 		
-		/* fixme special handling for invisible objects
+		// special handling for invisible objects
+		// they should get all Events, but no further children should be fetched
 		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
-			HMI.addClass(VisualObject, this.cshmiObjectChildrenNotLoaded);
-		}
-		*/
-		if (VisualObject !== null){
-			this._loadChildren(VisualObject, ObjectPath);
+			HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
+			this._loadChildren(VisualObject, ObjectPath, "events");
+		}else if (VisualObject !== null){
+			this._loadChildren(VisualObject, ObjectPath, "all");
 		}
 		
 		return VisualObject;
@@ -344,6 +372,8 @@ cshmi.prototype = {
 				//get and execute all actions
 				preserveThis._interpreteAction(VisualObject, ObjectPath);
 				
+				//an later action should not interprete this event
+				preserveThis.ResourceList.EventInfos.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
@@ -358,6 +388,9 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				
+				//an later action should not interprete this event
+				preserveThis.ResourceList.EventInfos.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
@@ -371,6 +404,10 @@ cshmi.prototype = {
 				
 				//get and execute all actions
 				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				
+				//an later action should not interprete this event
+				preserveThis.ResourceList.EventInfos.EventObj = null;
+				
 				if (evt.stopPropagation) evt.stopPropagation();
 				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
@@ -1277,7 +1314,8 @@ cshmi.prototype = {
 				}else{
 					VisualObject.setAttribute("display", "block");
 					
-					//fixme, activate visible things
+					//load hidden elements now
+					this._loadHiddenChildrenElements(VisualObject);
 				}
 			}else if (ParameterValue == "rotate"){
 				//rotate is special, as it is different in OVM and SVG
@@ -1832,6 +1870,7 @@ cshmi.prototype = {
 				HMI._setLayerPosition(ComponentChilds[i]);
 			}
 			
+			//onload code should not know, we are in an iterator
 			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
 			delete this.ResourceList.ChildrenIterator.currentChild;
 			
@@ -3066,12 +3105,15 @@ cshmi.prototype = {
 		//get childs (grafics and actions) from the TemplateDefinition
 		//our child will be fetched later
 		
-		/* fixme special handling for invisible objects
-		if (VisualObject.getAttribute("display") === "none"){
-			//HMI.addClass(VisualObject, this.cshmiObjectChildrenNotLoaded);
+		
+		// special handling for invisible objects
+		// they should get all Events, but no further children should be fetched
+		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+			//the marking of the class will be done in the caller of our function
+			this._loadChildren(VisualObject, PathOfTemplateDefinition, "events");
+		}else if (VisualObject !== null){
+			this._loadChildren(VisualObject, PathOfTemplateDefinition, "all");
 		}
-		*/
-		this._loadChildren(VisualObject, PathOfTemplateDefinition);
 		
 		if (VisualChildObject){
 			//transformed Template for rotation
@@ -3090,20 +3132,23 @@ cshmi.prototype = {
 		var childTemplates = VisualParentObject.childNodes;
 		
 		for (var i=0; i < childTemplates.length; i++) {
-			if(childTemplates[i].getAttribute === undefined){
+			var VisualObject = childTemplates[i];
+			if(VisualObject.getAttribute === undefined){
 				//this children can be for example a text node
 				continue;
 			}
-			var Classes = childTemplates[i].getAttribute("class");
+			var Classes = VisualObject.getAttribute("class");
 			if (Classes === null){
 				continue;
 			}else if (Classes.indexOf(this.cshmiTemplateHideableClass) === -1){
 				continue;
-			}else if (childTemplates[i].getAttribute("display") == "block"){
-				childTemplates[i].setAttribute("display", "none");
+			}else if (VisualObject.getAttribute("display") == "block"){
+				VisualObject.setAttribute("display", "none");
 			}else{
-				childTemplates[i].setAttribute("display", "block");
-				//fixme, activate visible things
+				VisualObject.setAttribute("display", "block");
+				
+				//load hidden elements now
+				this._loadHiddenChildrenElements(VisualObject);
 				
 				//doku depth of moving to top
 				
@@ -3117,6 +3162,7 @@ cshmi.prototype = {
 				}
 			}
 		}
+		VisualObject = null;
 	},
 
 	/***************************************************************************************************************
@@ -3879,8 +3925,9 @@ cshmi.prototype = {
 	 * loads all children and appends them to the Parent
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {String} restrictType of children loading ("events", "elements", "all")
 	 */
-	_loadChildren: function(VisualParentObject, ObjectPath){
+	_loadChildren: function(VisualParentObject, ObjectPath, restrictType){
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
@@ -3890,7 +3937,7 @@ cshmi.prototype = {
 			}else{
 				realComponent = VisualParentObject;
 			}
-			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1]);
+			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1], restrictType);
 			if (ChildComponent !== null){
 				realComponent.appendChild(ChildComponent);
 			}
@@ -3927,6 +3974,52 @@ cshmi.prototype = {
 			
 			//prevent multiple events on this
 			HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
+		}
+	},
+	
+	/**
+	 * tests if we have to load children, dims the sheet and loads all graphical elements
+	 * @param {SVGElement} VisualParentObject Object to manipulate the visualisation
+	 */
+	_loadHiddenChildrenElements: function(VisualParentObject){
+		if (HMI.instanceOf(VisualParentObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+			//dim the full sheet to show the progress
+			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
+			
+			//test if we have an template
+			var PathOfTemplateDefinition = VisualParentObject.getAttribute("TemplateDescription");
+			if (PathOfTemplateDefinition){
+				//load the graphical elements of the template, the events were already loaded
+				this._loadChildren(VisualParentObject, PathOfTemplateDefinition, "elements");
+			}
+			//load all graphical children of the object, the events were already loaded
+			this._loadChildren(VisualParentObject, VisualParentObject.id, "elements");
+			
+			//we want to have offset parameter on all new visual elements
+			var ComponentChilds = VisualParentObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI._setLayerPosition(ComponentChilds[i]);
+			}
+			
+			if (this.initStage === false){
+				//interprete onload Actions if we are already loaded
+				
+				//for this objects, the init stage should be set (needed for getValue and timeevent)
+				this.initStage = true;
+				
+				while(this.ResourceList.onloadCallStack.length !== 0){
+					var EventObjItem = this.ResourceList.onloadCallStack.shift();
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+				}
+				//reset stage to real state
+				this.initStage = false;
+			}
+			
+			//mark the class as complete
+			HMI.removeClass(VisualParentObject, this.cshmiObjectVisibleChildrenNotLoaded);
+			
+			//deactivate the dim of the sheet, as we are ready
+			HMI.Playground.firstChild.removeAttribute("opacity");
 		}
 	}
 };
