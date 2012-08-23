@@ -3,7 +3,7 @@
 Die Bibliothek \textbf{iec61131stdfb} stellt eine Reihe standardisierter Funktionsbausteine zur Verfügung. Diese Bausteine sind kompatibel zur gleichnamigen Norm (IEC61131-3 Stand 28.10.2010) implementiert. Unter den Bausteinen sind einfache Rechenoperationen, trigonometrische Funktionen, Potenzieren zur Euler'schen Zahl oder einer beliebigen Basis, natürlicher und 10er-Logarithmus vorhanden. Des Weiteren gibt es Bausteine zum Vergleichen von Werten, zu deren Demultiplexen oder Auswählen nach Maximum oder Minimum und zur Begrenzung eines Wertes nach oben und unten. Boolsche Logiken sind ebenso vorhanden. Außerdem gibt es Flankenerkennungen, FlipFlops, Zähler und Timer-Bausteine.\\
 Mit dieser Auswahl an Bausteinen lassen sich die nahezu alle Funktionen im Leitsystem umsetzen. Zusätzliche Bausteine wie Integratoren, Differetiatoren und Regler sowie Totzeitglieder werden zukünftig noch hinzugefügt.\\
 
-Dieses Dokument gibt Hinweise zu den Standartfunktionsbausteinen der iec61131stdfb Bibliothek. Insbesondere wird auf die Verwendung des Variablentyps \textit{OV\_ANY} und die Verbindungen zu anderen Funktionsblöcken eingegangen. Außerdem wird das Verhalten der mathematischen Funktionsbausteine bei undefinierten Rechenoperationen (z. B. Division durch 0) und bei Werteüberlauf beschrieben.\\
+Dieses Dokument gibt Hinweise zu den Standardfunktionsbausteinen der iec61131stdfb Bibliothek. Insbesondere wird auf die Verwendung des Variablentyps \textit{OV\_ANY} und die Verbindungen zu anderen Funktionsblöcken eingegangen. Außerdem wird das Verhalten der mathematischen Funktionsbausteine bei undefinierten Rechenoperationen (z. B. Division durch 0) und bei Werteüberlauf beschrieben.\\
 
 
 
@@ -292,7 +292,7 @@ LEN & Gibt die Länge einer Zeichenkette zurück. & IN1 & STRING & OUT & UINT\\
 }
 
 Angesehen vom Block \textit{ABS} geben die Blöcke der Numerischen Funktionen ihr Ergebnis als SINGLE oder, wenn der Input DOUBLE ist, als DOUBLE zurück. Eine Ausgabe als Ganzzahl macht hier in den meisten Fällen keinen Sinn. Da die Berechnungen ohnehin mit Fließkommazahlen ausgeführt werden (müssen), würde sich aus Integern auch kein Vorteil in der Rechengeschwindigkeit ergeben.\\
-Blöcke der Bereiche Grundarithmetik und numerische Funktionen können Wertebereichsüberschreitungen oder undefinierte Operationen teilweise abfangen. Sie reagieren auf diese Fälle durch setzen des Statusflags \textit{Bad} der Ausgangsvariable. Genaueres hierzu findet sich in Kapitel \ref{CHAP_Reactions}.\\
+Blöcke der Bereiche Grundarithmetik und numerische Funktionen können Wertebereichsüberschreitungen oder undefinierte Operationen teilweise abfangen. Sie reagieren auf diese Fälle durch setzen des Statusflags \textit{Bad} der Ausgangsvariable. Genaueres hierzu findet sich in Kapitel~\ref{CHAP_Reactions}.\\
 
 Die Bitweise Logik arbeitet innerhalb der ANY-Variablen nur mit UINT, BYTES und BOOLs. Da die Verknüpfungen bitweise erfolgen, sind diese Typen ausreichend. BOOL wird zwar im Speicher wie eine unsigned int-Variable abgelegt, trotzdem wird nur zwischen zwei Werten (TRUE oder FALSE) unterschieden.\\
 
