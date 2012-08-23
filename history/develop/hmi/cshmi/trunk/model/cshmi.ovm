@@ -102,16 +102,16 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements";
 		VARIABLES
 			x : SINGLE
-			COMMENT = "x-axis coordinate of the rectangle"
+			COMMENT = "x-axis coordinate of the group"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			COMMENT = "y-axis coordinate of the rectangle"
+			COMMENT = "y-axis coordinate of the group"
 			INITIALVALUE = 0.0;
 			width : SINGLE
-			COMMENT = "width of the rectangle"
+			COMMENT = "width of the group"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			COMMENT = "height of the rectangle"
+			COMMENT = "height of the group"
 			INITIALVALUE = 100.0;
 			hideable : BOOL
 			COMMENT = "should this object be hidden if clicked on parent?"
@@ -124,10 +124,10 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements with is referenced";
 		VARIABLES
 			width : SINGLE
-			COMMENT = "width of the rectangle"
+			COMMENT = "width of the Template"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			COMMENT = "height of the rectangle"
+			COMMENT = "height of the Template"
 			INITIALVALUE = 100.0;
 			comment : STRING
 			COMMENT = "describes the use of the Definition (including parameters)";
@@ -261,13 +261,13 @@ LIBRARY cshmi
 			INITIALVALUE = 10.0;
 			cy : SINGLE
 			COMMENT = "y-axis coordinate of the center of the ellipse"
-			INITIALVALUE = 5.0;
+			INITIALVALUE = 10.0;
 			rx : SINGLE
 			COMMENT = "x-axis radius of the ellipse"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 5.0;
 			ry : SINGLE
 			COMMENT = "y-axis radius of the ellipse"
-			INITIALVALUE = 5.0;
+			INITIALVALUE = 10.0;
 			strokeWidth : SINGLE
 			COMMENT = "stroke width of the line"
 			INITIALVALUE = 1.0;
@@ -358,10 +358,10 @@ LIBRARY cshmi
 			COMMENT = "y-axis coordinate of the image"
 			INITIALVALUE = 0.0;
 			width : SINGLE
-			COMMENT = "width of the rectangle"
+			COMMENT = "width of the image (aspect ratio is not preserved!)"
 			INITIALVALUE = 100.0;
 			height : SINGLE
-			COMMENT = "height of the rectangle"
+			COMMENT = "height of the image (aspect ratio is not preserved!)"
 			INITIALVALUE = 100.0;
 			SVGcontent : STRING
 			COMMENT = "direct SVG content; example: <rect width='10' height='20' /> or <svg:rect width='10' height='20' />";
@@ -391,6 +391,7 @@ LIBRARY cshmi
 			elemVar : STRING
 			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
 			elemVarPath : STRING
+			HAS_SET_ACCESSOR
 			COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
 			globalVar : STRING
 			COMMENT = "name of the global variable (is resetted on reloading)";
@@ -422,6 +423,7 @@ LIBRARY cshmi
 			elemVar : STRING
 			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
 			elemVarPath : STRING
+			HAS_SET_ACCESSOR
 			COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
 			globalVar : STRING
 			COMMENT = "name of the global variable (is resetted on reloading)";
@@ -438,7 +440,7 @@ LIBRARY cshmi
 
 	CLASS SetMathValue : CLASS cshmi/SetConcatValue
 		IS_INSTANTIABLE;
-		COMMENT = "set a variable with a calculated value, add getValues with correct name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue";
+		COMMENT = "set a variable with a calculated value, add getValues with correct prefixed name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue";
 	END_CLASS;
 
 	CLASS SetValue : CLASS cshmi/SetConcatValue

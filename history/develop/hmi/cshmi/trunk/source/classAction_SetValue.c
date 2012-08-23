@@ -65,3 +65,12 @@
 
 #include "cshmilib.h"
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_elemVarPath_set(
+	OV_INSTPTR_cshmi_SetConcatValue          pobj,
+	const OV_STRING  value
+) {
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_elemVarPath, NULL);
+	}
+	return OV_ERR_NOTIMPLEMENTED;
+}

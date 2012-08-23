@@ -152,3 +152,13 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_OperatorInput_set(
 	return OV_ERR_BADPARAM;
 
 }
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVarPath_set(
+	OV_INSTPTR_cshmi_GetValue          pobj,
+	const OV_STRING  value
+) {
+	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_elemVarPath, NULL);
+	}
+	return OV_ERR_NOTIMPLEMENTED;
+}
