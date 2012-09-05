@@ -110,7 +110,7 @@ function cshmi() {
 /*#########################################################################################################################
 TODO: 
 
-replace localhost with model server
+fixme: unsichtbare gruppen haben unterschiedliche ausführungsreihenfolge aka onload ist früher, als wenn die gruppe sichtbar ist.
 
 JavaScript:
 - check return value of gethandleid
@@ -193,11 +193,11 @@ cshmi.prototype = {
 			
 			//calculate all offset parameter to be able to display visual feedback
 			//this is only possible now, as the orientation of the parents are not defined when they are not appended
-			var maxPosition = HMI._setLayerPosition(VisualObject, true);
+			var maxPosition = HMI.saveAbsolutePosition(VisualObject, true);
 			//we want to have offset parameter on all visual elements
 			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
-				var Position = HMI._setLayerPosition(ComponentChilds[i], true);
+				var Position = HMI.saveAbsolutePosition(ComponentChilds[i], true);
 				if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
 					maxPosition[0] = Position[0];
 				}
@@ -527,11 +527,11 @@ cshmi.prototype = {
 			VisualObject.setAttribute("x", newx);
 			VisualObject.setAttribute("y", newy);
 			
-			HMI._setLayerPosition(VisualObject);
+			HMI.saveAbsolutePosition(VisualObject);
 			//we want to have offset parameter on all visual elements
 			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI._setLayerPosition(ComponentChilds[i]);
+				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			//save event for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
@@ -575,11 +575,11 @@ cshmi.prototype = {
 		//restore old position
 		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
 		VisualObject.setAttribute("y", this.ResourceList.EventInfos.startYObj);
-		HMI._setLayerPosition(VisualObject);
+		HMI.saveAbsolutePosition(VisualObject);
 		//we want to have offset parameter on all visual elements
 		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 		for(var i = 0;i < ComponentChilds.length;i++){
-			HMI._setLayerPosition(ComponentChilds[i]);
+			HMI.saveAbsolutePosition(ComponentChilds[i]);
 		}
 		
 		if (canceled === true){
@@ -1346,6 +1346,18 @@ cshmi.prototype = {
 				}else{
 					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
 				}
+			}else if (ParameterValue == "absolutex"){
+				//absolutex is calculated from the offset of the parentNode
+				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					VisualObject.setAttribute("x", NewValue - VisualObject.parentNode.getAttribute("absolutex"));
+					VisualObject.setAttribute("absolutex", NewValue);
+				}
+			}else if (ParameterValue == "absolutey"){
+				//absolutex is calculated from the offset of the parentNode
+				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey"));
+					VisualObject.setAttribute("absolutey", NewValue);
+				}
 			}else{
 				if (NewValue === "" && 
 					(		ParameterValue === "x"||
@@ -1366,13 +1378,13 @@ cshmi.prototype = {
 					return false;
 				}
 				VisualObject.setAttribute(ParameterValue, NewValue);
-				//reposition Layer if x, y, width or height was changed
+				//reposition absolutex/y if x, y, width or height was changed
 				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
-					HMI._setLayerPosition(VisualObject);
+					HMI.saveAbsolutePosition(VisualObject);
 					//we want to have offset parameter on all visual elements
 					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 					for(var i = 0;i < ComponentChilds.length;i++){
-						HMI._setLayerPosition(ComponentChilds[i]);
+						HMI.saveAbsolutePosition(ComponentChilds[i]);
 					}
 				}
 			}
@@ -1863,11 +1875,11 @@ cshmi.prototype = {
 			VisualParentObject.appendChild(VisualObject);
 			//calculate all offset parameter to be able to display visual feedback
 			//needed now, because we append new components
-			HMI._setLayerPosition(VisualObject);
+			HMI.saveAbsolutePosition(VisualObject);
 			//we want to have offset parameter on all visual elements
 			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI._setLayerPosition(ComponentChilds[i]);
+				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
 			//onload code should not know, we are in an iterator
@@ -2150,18 +2162,18 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var xStart = parseInt(SourceConnectionPoint.getAttribute("layerX"), 10);
+		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
 		var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
 		xStart = xStart + cx;
 		var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
-		var yStart = parseInt(SourceConnectionPoint.getAttribute("layerY"), 10);
+		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
 		yStart = yStart +cy;
 		
-		var xEnd = parseInt(TargetConnectionPoint.getAttribute("layerX"), 10);
+		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
 		var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
 		xEnd = xEnd + cx;
 		var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
-		var yEnd = parseInt(TargetConnectionPoint.getAttribute("layerY"), 10);
+		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
 		yEnd = yEnd +cy;
 		
 		//if start- and endPoints changed since last time, recompute polyline points
@@ -3998,7 +4010,7 @@ cshmi.prototype = {
 			//we want to have offset parameter on all new visual elements
 			var ComponentChilds = VisualParentObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI._setLayerPosition(ComponentChilds[i]);
+				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
 			if (this.initStage === false){

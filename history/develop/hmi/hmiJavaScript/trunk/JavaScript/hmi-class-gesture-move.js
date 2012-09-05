@@ -603,12 +603,12 @@ Dragger.prototype = {
 			}
 			this._ground = ground;
 			
-			//LayerX and LayerY are HMI specific DOM Attributes!
+			//absolutex and absolutey are HMI specific DOM Attributes!
 			//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 			
 			//new position is old coordinate + position of old parent - position of new parent (=ground)
-			SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._node.parentNode.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
-			SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._node.parentNode.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
+			SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._node.parentNode.getAttribute("absolutex"),10) - parseInt(ground._node.getAttribute("absolutex"),10);
+			SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._node.parentNode.getAttribute("absolutey"),10) - parseInt(ground._node.getAttribute("absolutey"),10);
 			
 			//move dragged Node into the new ground
 			node = this._node.parentNode.removeChild(this._node);
@@ -635,19 +635,19 @@ Dragger.prototype = {
 			{
 				// firstChild == <g></g>
 				//
-				//LayerX and LayerY are HMI specific DOM Attributes!
+				//absolutex and absolutey are HMI specific DOM Attributes!
 				//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 				
 				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
-				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
-				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
+				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.firstChild.getAttribute("absolutex"),10) - parseInt(ground._node.getAttribute("absolutex"),10);
+				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.firstChild.getAttribute("absolutey"),10) - parseInt(ground._node.getAttribute("absolutey"),10);
 				
 				node = this._ground._node.firstChild.removeChild(this._node);
 				ground._node.firstChild.appendChild(node);
 			} else {
 				//new position is old coordinate + position of old parent(=ground) - position of new parent (=ground)
-				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("layerX"),10) - parseInt(ground._node.getAttribute("layerX"),10);
-				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("layerY"),10) - parseInt(ground._node.getAttribute("layerY"),10);
+				SVGx = parseInt(this._node.getAttribute("x"),10) + parseInt(this._ground._node.getAttribute("absolutex"),10) - parseInt(ground._node.getAttribute("absolutex"),10);
+				SVGy = parseInt(this._node.getAttribute("y"),10) + parseInt(this._ground._node.getAttribute("absolutey"),10) - parseInt(ground._node.getAttribute("absolutey"),10);
 				
 				try{
 					node = this._ground._node.removeChild(this._node);

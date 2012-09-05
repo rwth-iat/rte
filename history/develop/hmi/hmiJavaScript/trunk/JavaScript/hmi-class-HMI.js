@@ -746,10 +746,10 @@ HMI.prototype = {
 	displaygestureReactionMarker: function (Component){
 		this.hmi_log_trace("HMI.prototype.displaygestureReactionMarker");
 		
-		if (	Component.getAttribute('width') === null ||
-				Component.getAttribute('height') === null ||
-				Component.getAttribute('LayerX') === 0 ||
-				Component.getAttribute('LayerY') === 0){
+		if (	Component.getAttribute("width") === null ||
+				Component.getAttribute("height") === null ||
+				Component.getAttribute("absolutex") === 0 ||
+				Component.getAttribute("absolutey") === 0){
 			return;
 		}
 		//build info rect around affected component
@@ -775,10 +775,10 @@ HMI.prototype = {
 			//disable pointer Events
 			gestureReactionMarker.setAttributeNS(null, 'pointer-events', 'none');
 		}
-		gestureReactionMarker.setAttributeNS(null, 'x', Component.getAttribute('layerX'));
-		gestureReactionMarker.setAttributeNS(null, 'y', Component.getAttribute('layerY'));
-		gestureReactionMarker.setAttributeNS(null, 'width', Component.getAttribute('width'));
-		gestureReactionMarker.setAttributeNS(null, 'height', Component.getAttribute('height'));
+		gestureReactionMarker.setAttributeNS(null, "x", Component.getAttribute("absolutex"));
+		gestureReactionMarker.setAttributeNS(null, "y", Component.getAttribute("absolutey"));
+		gestureReactionMarker.setAttributeNS(null, "width", Component.getAttribute("width"));
+		gestureReactionMarker.setAttributeNS(null, "height", Component.getAttribute("height"));
 		
 		//append this rect into svg
 		HMI.Playground.firstChild.appendChild(gestureReactionMarker);
@@ -1401,7 +1401,7 @@ HMI.prototype = {
 			}
 			
 			//calculate and save absolute offset of the Components
-			this._setLayerPosition(Element);
+			this.saveAbsolutePosition(Element);
 		}
 		
 		//	GROUND
@@ -1587,56 +1587,55 @@ HMI.prototype = {
 		}
 	},
 	
-	/*********************************
-		_setLayerPosition
-	*********************************/
-	_setLayerPosition: function (Element, reportSize) {
-		//this.hmi_log_trace("HMI.prototype._setLayerPosition - Start: "+Element.id);
-		
-		//LayerX and LayerY are HMI specific DOM Attributes!
+	/**
+	 * calculates the absolute position and saves it into the custom absolutex and absolutey attributes
+	 * @param Element Element to work on
+	 * @param reportSize {bool} should the function report the maximum size of the object?
+	 */
+	saveAbsolutePosition: function (Element, reportSize) {
+		//absolutex and absolutey are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		//and the function displaygestureReactionMarker
-		var LayerX = parseInt(Element.getAttribute("x"), 10);
-		var LayerY = parseInt(Element.getAttribute("y"), 10);
+		var absolutex = parseInt(Element.getAttribute("x"), 10);
+		var absolutey = parseInt(Element.getAttribute("y"), 10);
 		
-		if (isNaN(LayerX)){
-			LayerX = 0;
+		if (isNaN(absolutex)){
+			absolutex = 0;
 		}
-		if (isNaN(LayerY)){
-			LayerY = 0;
+		if (isNaN(absolutey)){
+			absolutey = 0;
 		}
 		
 		if(Element.parentNode !== null && Element.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-			newLayerX = parseInt(Element.parentNode.getAttribute("layerX"), 10);
-			newLayerY = parseInt(Element.parentNode.getAttribute("layerY"), 10);
-			LayerX += newLayerX;
-			LayerY += newLayerY;
+			newabsolutex = parseInt(Element.parentNode.getAttribute("absolutex"), 10);
+			newabsolutey = parseInt(Element.parentNode.getAttribute("absolutey"), 10);
+			absolutex += newabsolutex;
+			absolutey += newabsolutey;
 		}
 		
-		if (isNaN(LayerX) || isNaN(LayerY)){
-			this.hmi_log_warning("SVG-ERROR - parentNode of\n"+Element.id+"\n is no hmi-component (has no layerX or layerY). The move-Gesture will not work on child elements!");
-			Element.setAttribute("layerX", 0);
-			Element.setAttribute("layerY", 0);
+		if (isNaN(absolutex) || isNaN(absolutey)){
+			this.hmi_log_warning("SVG-ERROR - parentNode of\n"+Element.id+"\n is no hmi-component (has no absolutex or absolutey). The move-Gesture will not work on child elements!");
+			Element.setAttribute("absolutex", 0);
+			Element.setAttribute("absolutey", 0);
 		}else{
-			Element.setAttribute("layerX", LayerX);
-			Element.setAttribute("layerY", LayerY);
+			Element.setAttribute("absolutex", absolutex);
+			Element.setAttribute("absolutey", absolutey);
 		}
 		
 		if (reportSize === true){
-			var LayerWidth = parseInt(Element.getAttribute("width"), 10);
-			var LayerHeight = parseInt(Element.getAttribute("height"), 10);
+			var elementWidth = parseInt(Element.getAttribute("width"), 10);
+			var elementHeight = parseInt(Element.getAttribute("height"), 10);
 			
-			if (isNaN(LayerWidth)){
-				LayerWidth = 0;
+			if (isNaN(elementWidth)){
+				elementWidth = 0;
 			}
-			if (isNaN(LayerHeight)){
-				LayerHeight = 0;
+			if (isNaN(elementHeight)){
+				elementHeight = 0;
 			}
-			return new Array(LayerX+LayerWidth, LayerY+LayerHeight);
+			return new Array(absolutex+elementWidth, absolutey+elementHeight);
 		}
 		
 		return;
-		//this.hmi_log_trace("HMI.prototype._setLayerPosition - End");
 	},	
 	
 	/*********************************
@@ -1686,8 +1685,8 @@ HMI.prototype = {
 			}
 			
 			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
-			clickPosition[0] = mousePosX - parseInt(Component.getAttribute("layerX"), 10) - svgOffsetX;
-			clickPosition[1] = mousePosY - parseInt(Component.getAttribute("layerY"), 10) - svgOffsetY;
+			clickPosition[0] = mousePosX - parseInt(Component.getAttribute("absolutex"), 10) - svgOffsetX;
+			clickPosition[1] = mousePosY - parseInt(Component.getAttribute("absolutey"), 10) - svgOffsetY;
 			
 			mousePosX = null;
 			mousePosY = null;
