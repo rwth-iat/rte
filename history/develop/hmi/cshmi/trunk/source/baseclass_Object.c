@@ -161,12 +161,22 @@ OV_DLLFNCEXPORT OV_UINT cshmi_Object_zindex_get(
 		SiblingNumber			= 0;
 
 	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
+		#ifdef ZINDEX_DEBUG
+			ov_logfile_debug("%d: zindex_get on %s, iteration number: %u", __LINE__,
+				pObj->v_identifier,
+				SiblingNumber);
+		#endif
 		if (pSiblingObj == pObj){
 			//found our index
 			break;
 		}
 		SiblingNumber++;
 	}
+	#ifdef ZINDEX_DEBUG
+		ov_logfile_debug("%d: zindex_get on %s, result: %u", __LINE__,
+			pObj->v_identifier,
+			SiblingNumber);
+	#endif
 	return SiblingNumber;
 }
 

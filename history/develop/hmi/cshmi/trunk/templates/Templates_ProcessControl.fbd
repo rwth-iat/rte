@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-08-23 17:05:24
+  Erstellt : 2012-09-06 17:20:03
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -22,8 +22,8 @@
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "configValues:
-captionText:LL|L|H|HH|MAX|MIN
+        comment : INPUT  STRING = "configValues:
+captionText:LL|L|H|HH|MAX|MIN
 isAMPMC:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1949,7 +1949,7 @@ isAMPMC:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[16] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR" , "CHG_FLOW" , "CHG_LIM" , "CHG_POS" , "CHG_RPM" , "HOLD" , "POSITION" , "SEL_SP" , "SET_MV_MAN" , "SET_ONCE" , "SET_SP" , "START1" , "START2"};
+        value[18] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR" , "CHG_FLOW" , "CHG_LIM" , "CHG_POS" , "CHG_RPM" , "HOLD" , "POSITION" , "SEL_SP" , "SET_MV_MAN" , "SET_ONCE" , "SET_SP" , "START1" , "START2" , "OCCSCU" , "LIBSCU"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2034,7 +2034,7 @@ isAMPMC:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[4] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR"};
+        value[6] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR" , "OCCSCU" , "LIBSCU"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2747,11 +2747,11 @@ isAMPMC:TRUE|FALSE";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "width:80 or 200, height 20
-FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "width:80 or 200, height 20
+FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
@@ -4046,10 +4046,10 @@ isDigital:TRUE|FALSE";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "FBReferences:
-Signaladaptation or AMPMC
-configValues:
-isAMPMC:TRUE|FALSE
+        comment : INPUT  STRING = "FBReferences:
+Signaladaptation or AMPMC
+configValues:
+isAMPMC:TRUE|FALSE
 isDigital:TRUE|FALSE";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5416,9 +5416,9 @@ isDigital:TRUE|FALSE";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 85.000000;
         height : INPUT  SINGLE = 28.000000;
-        comment : INPUT  STRING = "width is 82, height 26
-optional configValues:
-buttoncontent
+        comment : INPUT  STRING = "width is 82, height 26
+optional configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
@@ -5497,7 +5497,7 @@ buttontitle";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 11;
+        trimToLength : INPUT  INT = 7;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "none";
         fill : INPUT  STRING = "black";
@@ -5555,9 +5555,9 @@ buttontitle";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 42.000000;
         height : INPUT  SINGLE = 28.000000;
-        comment : INPUT  STRING = "width is 40, height 26
-optional configValues:
-buttoncontent
+        comment : INPUT  STRING = "width is 40, height 26
+optional configValues:
+buttoncontent
 buttontitle";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -5694,7 +5694,7 @@ buttontitle";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "ConfigValues:
+        comment : INPUT  STRING = "ConfigValues:
 vesselname";
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -5820,15 +5820,15 @@ vesselname";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
@@ -6415,15 +6415,15 @@ Para2Unit:";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 2000.000000;
         height : INPUT  SINGLE = 1000.000000;
-        comment : INPUT  STRING = "FBReference:
-pflib PCU Object
-FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
+        comment : INPUT  STRING = "FBReference:
+pflib PCU Object
+FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
 Para2Unit:";
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
@@ -7053,19 +7053,19 @@ Para2Unit:";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "maximal width 310px, height 150px
-FBReference:
-pflib PCU Object
-optional FBVariableReference:
-para1:variable of a PCU
-para2:variable of a PCU
-optional ConfigValues:
-Para1Name:
-Para1Unit:
-Para2Name:
-Para2Unit:
-fixedFaceplatePosition:TRUE
-FaceplateXPos
+        comment : INPUT  STRING = "maximal width 310px, height 150px
+FBReference:
+pflib PCU Object
+optional FBVariableReference:
+para1:variable of a PCU
+para2:variable of a PCU
+optional ConfigValues:
+Para1Name:
+Para1Unit:
+Para2Name:
+Para2Unit:
+fixedFaceplatePosition:TRUE
+FaceplateXPos
 FaceplateYPos";
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
@@ -7547,7 +7547,7 @@ FaceplateYPos";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -7556,6 +7556,335 @@ M37.8 14 L39.9 17.5 L37.8 21";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 40.000000;
+        height : INPUT  SINGLE = 26.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 0.400000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/onload/setTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "title";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/onload/setTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "Error state";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 3.000000;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.if/isError :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.if/isError.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "ErrorState";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.if/isError.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  INT = 30;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "red";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "none";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.if/isWarning :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.if/isWarning.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "ErrorState";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.if/isWarning.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UINT = 40;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.then/setStrokeColor :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/rectTransparent/cyclicRequest/setErrorStateWarning.then/setStrokeColor.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "yellow";
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8087,7 +8416,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8143,7 +8472,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnCommands/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -8936,11 +9265,11 @@ M37.8 14 L39.9 17.5 L37.8 21";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "Displays a button with the Text from 
-the ConfigValue buttoncontent
-A click send the command from
-PFCommand and the Value from PFValue
-to the object specified via FBReference.
+        comment : INPUT  STRING = "Displays a button with the Text from 
+the ConfigValue buttoncontent
+A click send the command from
+PFCommand and the Value from PFValue
+to the object specified via FBReference.
 If no PFValue is given, the operator is asked.";
         zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
@@ -9271,10 +9600,10 @@ If no PFValue is given, the operator is asked.";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "width:80 or 200, height 20
-FBReferences:
-Signaladaptation or AMPMC
-optional configValues:
+        comment : INPUT  STRING = "width:80 or 200, height 20
+FBReferences:
+Signaladaptation or AMPMC
+optional configValues:
 SignalName";
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
@@ -9684,7 +10013,7 @@ SignalName";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 40.000000;
         height : INPUT  SINGLE = 20.000000;
-        comment : INPUT  STRING = "xy position at center, so easy rotatable
+        comment : INPUT  STRING = "xy position at center, so easy rotatable
 width 50, height 25";
         zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";

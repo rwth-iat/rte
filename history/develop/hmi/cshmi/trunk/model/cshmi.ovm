@@ -115,6 +115,9 @@ LIBRARY cshmi
 			hideable : BOOL
 			COMMENT = "should this object be hidden if clicked on parent?"
 			INITIALVALUE = FALSE;
+			visible : BOOL
+			COMMENT = "the element is visible"
+			INITIALVALUE = TRUE;
 		END_VARIABLES;
 	END_CLASS;
 	

@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-08-23 17:33:24
+  Erstellt : 2012-08-27 17:05:11
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -458,8 +458,8 @@
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "ConfigValues:
-title
+        comment : INPUT  STRING = "ConfigValues:
+title
 rotate";
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -593,7 +593,7 @@ rotate";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "Visual Filter, xy position on pipe
+        comment : INPUT  STRING = "Visual Filter, xy position on pipe
 width 60, height 60";
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -1720,8 +1720,8 @@ width 60, height 60";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "y position at line center
-optional ConfigValues:
+        comment : INPUT  STRING = "y position at line center
+optional ConfigValues:
 caption";
         zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
@@ -1871,12 +1871,12 @@ caption";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "moves a line
-from configValue:VisMax at FBRef:RangeMax
-to configValue:VisMin at FBRef:RangeMin
-FBReference:
-pflib/SigAdaptationAI of Elektrode
-configValue:
+        comment : INPUT  STRING = "moves a line
+from configValue:VisMax at FBRef:RangeMax
+to configValue:VisMin at FBRef:RangeMin
+FBReference:
+pflib/SigAdaptationAI of Elektrode
+configValue:
 VisMin, VisMax";
         zindex : INPUT  UINT = 13;
         baseKsPath : INPUT  STRING = "";
@@ -2290,10 +2290,10 @@ VisMin, VisMax";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HeatExchangerLinear/lines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,0 L0,100
-M20,10 h5 v-5 v10 
-M-20,90 h-5 v-5 v10
-M-10,10 H10 
+        d : INPUT  STRING = "M0,0 L0,100
+M20,10 h5 v-5 v10 
+M-20,90 h-5 v-5 v10
+M-10,10 H10 
 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -2354,12 +2354,12 @@ m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/lines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,20 v20
-M-14,-14 L11,-17
-M-14,14 L11,17
-M-16,0
-A17,17 0 0 0 9,-14
-A17,17 0 0 0 9,14
+        d : INPUT  STRING = "M0,20 v20
+M-14,-14 L11,-17
+M-14,14 L11,17
+M-16,0
+A17,17 0 0 0 9,-14
+A17,17 0 0 0 9,14
 A17,17 0 0 0 -16,0";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -2671,11 +2671,11 @@ A17,17 0 0 0 -16,0";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        comment : INPUT  STRING = "xy position at center, so easy rotatable
-width 50, height 100
-Wenn bekannt ist, welcher BOOL
-den switch kennzeichnet, kann einfach x2
-der SwitchLine auf 0 gesetzt werden.
+        comment : INPUT  STRING = "xy position at center, so easy rotatable
+width 50, height 100
+Wenn bekannt ist, welcher BOOL
+den switch kennzeichnet, kann einfach x2
+der SwitchLine auf 0 gesetzt werden.
 ";
         zindex : INPUT  UINT = 17;
         baseKsPath : INPUT  STRING = "";
@@ -3005,12 +3005,12 @@ der SwitchLine auf 0 gesetzt werden.
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Thyristor/visualisation :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,0
-v-30
-m0,30
-m-15,0 h30
-m-15,0 l-15,-30 h30 l-15,30
-m-8,-15 h-12
+        d : INPUT  STRING = "M0,0
+v-30
+m0,30
+m-15,0 h30
+m-15,0 l-15,-30 h30 l-15,30
+m-8,-15 h-12
 m10,15 l-5,8";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -3028,7 +3028,7 @@ m10,15 l-5,8";
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
-        comment : INPUT  STRING = "parameter: title, line, column, fill, height
+        comment : INPUT  STRING = "parameter: title, line, column, fill, height
 obligatorisch: line, column, height, width";
         zindex : INPUT  UINT = 20;
         baseKsPath : INPUT  STRING = "";
