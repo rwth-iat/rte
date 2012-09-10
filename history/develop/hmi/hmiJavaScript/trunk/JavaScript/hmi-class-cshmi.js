@@ -110,8 +110,6 @@ function cshmi() {
 /*#########################################################################################################################
 TODO: 
 
-fixme: unsichtbare gruppen haben unterschiedliche ausführungsreihenfolge aka onload ist früher, als wenn die gruppe sichtbar ist.
-
 JavaScript:
 - check return value of gethandleid
 
@@ -229,68 +227,40 @@ cshmi.prototype = {
 	 * Main iteration loop for visualisation, finds and arms Actions as well
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {String} restrictType of children loading ("events", "elements", "all")
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, restrictType) {
+	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
 		var VisualObject = null;
 		var Result = true;
-		if (restrictType === "events" && ObjectType.indexOf("/cshmi/Group") !== -1){
-			return null;
-		}else if (ObjectType.indexOf("/cshmi/Group") !== -1){
-			VisualObject = this._buildSvgContainer(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Template") !== -1){
-			return null;
+		if (ObjectType.indexOf("/cshmi/Group") !== -1){
+			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
-			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Path") !== -1){
-			return null;
+			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
-			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Line") !== -1){
-			return null;
+			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
-			VisualObject = this._buildSvgLine(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Polyline") !== -1){
-			return null;
+			VisualObject = this._buildSvgLine(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Polyline") !== -1){
-			VisualObject = this._buildSvgPolyline(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Polygon") !== -1){
-			return null;
+			VisualObject = this._buildSvgPolyline(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Polygon") !== -1){
-			VisualObject = this._buildSvgPolygon(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Text") !== -1){
-			return null;
+			VisualObject = this._buildSvgPolygon(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Text") !== -1){
-			VisualObject = this._buildSvgText(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Circle") !== -1){
-			return null;
+			VisualObject = this._buildSvgText(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Circle") !== -1){
-			VisualObject = this._buildSvgCircle(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Ellipse") !== -1){
-			return null;
+			VisualObject = this._buildSvgCircle(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Ellipse") !== -1){
-			VisualObject = this._buildSvgEllipse(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Rectangle") !== -1){
-			return null;
+			VisualObject = this._buildSvgEllipse(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Rectangle") !== -1){
-			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath);
-		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Image") !== -1){
-			return null;
+			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
-			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath);
-		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
-			return null;
+			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
-			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath);
-		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
-			return null;
+			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
-			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath);
-		}else if (restrictType === "elements" && ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
-			return null;
+			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
-			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath);
+			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else{
 			HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 		}
@@ -306,12 +276,15 @@ cshmi.prototype = {
 		//get and prepare Children in an recursive call
 		
 		// special handling for invisible objects
-		// they should get all Events, but no further children should be fetched
 		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+			//we are not visible, so we should not contact network
+			this._loadChildren(VisualObject, ObjectPath, true);
+			
+			// mark objects incomplete AFTER initialisation
+			// the event registering require this to prevent duplicate registration
 			HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
-			this._loadChildren(VisualObject, ObjectPath, "events");
-		}else if (VisualObject !== null){
-			this._loadChildren(VisualObject, ObjectPath, "all");
+		}else if (VisualObject !== null && VisualObject.hasAttribute("display") === true){
+			this._loadChildren(VisualObject, ObjectPath, false);
 		}
 		
 		return VisualObject;
@@ -321,9 +294,15 @@ cshmi.prototype = {
 	 * calling Actions if supported ClientEvent is triggered
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {Boolean} true
 	 */
-	_interpreteClientEvent: function(VisualObject, ObjectPath){
+	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
+		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+			//this is the run that fills the objects with content, the Events were already armed
+			return true;
+		}
+		
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
 			//interprete Action later, so remember this
@@ -347,9 +326,15 @@ cshmi.prototype = {
 	 * detect all OperatorEvents and register them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {Boolean} true
 	 */
-	_interpreteOperatorEvent: function(VisualObject, ObjectPath){
+	_interpreteOperatorEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
+		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+			//this is the run that fills the objects with content, the Events were already armed
+			return true;
+		}
+		
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
 			VisualObject.setAttribute("cursor", "pointer");
@@ -440,13 +425,20 @@ cshmi.prototype = {
 			}
 			
 			//todo: try to implement via HTML5 drag&drop
-			//todo http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
+			//todo: http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
+		}
+		
+		if (this.ResourceList.Event && this.ResourceList.Event[ObjectPath] !== undefined){
+			requestList[ObjectPath] = new Object();
+			//we have registered the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 		}
 		return true;
 	},
@@ -599,9 +591,15 @@ cshmi.prototype = {
 	 * calling Actions if supported TimeEvent is triggered
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {Boolean} true
 	 */
-	_interpreteTimeEvent: function(VisualObject, ObjectPath){
+	_interpreteTimeEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
+		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+			//this is the run that fills the objects with content, the Events were already armed
+			return true;
+		}
+		
 		var skipEvent = false;
 		//check if the page is visible at all?
 		//http://www.w3.org/TR/page-visibility/
@@ -2717,13 +2715,22 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} calledFromInstantiateTemplate true if called from an action
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate){
-		var requestList;
+	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -2753,12 +2760,6 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
@@ -2770,11 +2771,14 @@ cshmi.prototype = {
 			return null;
 		}
 		
-		var requestListTemplate;
+		var requestListTemplate = new Object();
 		var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined)){
-			requestListTemplate = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
+			this.ResourceList.Elements[PathOfTemplateDefinition].useCount++;
+		}else{
 			requestListTemplate[PathOfTemplateDefinition] = new Object();
 			requestListTemplate[PathOfTemplateDefinition]["width"] = null;
 			requestListTemplate[PathOfTemplateDefinition]["height"] = null;
@@ -2790,16 +2794,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters = requestListTemplate;
 			this.ResourceList.Elements[PathOfTemplateDefinition].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
-			this.ResourceList.Elements[PathOfTemplateDefinition].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildFromTemplate: using remembered config of "+PathOfTemplateDefinition+" (#"+this.ResourceList.Elements[PathOfTemplateDefinition].useCount+")");
 		}
 		
-		//make svg Element
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			VisualObject.id = ObjectPath;
+		}
 		VisualObject.setAttribute("TemplateDescription", PathOfTemplateDefinition);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
@@ -3114,17 +3117,18 @@ cshmi.prototype = {
 		
 		
 		//////////////////////////////////////////////////////////////////////////
-		//get childs (grafics and actions) from the TemplateDefinition
+		//get childs (graphics and actions) from the TemplateDefinition
 		//our child will be fetched later
 		
 		
 		// special handling for invisible objects
-		// they should get all Events, but no further children should be fetched
 		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+			//we are not visible, so we should not contact network
+			
 			//the marking of the class will be done in the caller of our function
-			this._loadChildren(VisualObject, PathOfTemplateDefinition, "events");
+			this._loadChildren(VisualObject, PathOfTemplateDefinition, true);
 		}else if (VisualObject !== null){
-			this._loadChildren(VisualObject, PathOfTemplateDefinition, "all");
+			this._loadChildren(VisualObject, PathOfTemplateDefinition, false);
 		}
 		
 		if (VisualChildObject){
@@ -3181,39 +3185,61 @@ cshmi.prototype = {
 	 * builds SVG container, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgContainer: function(VisualParentObject, ObjectPath){
-		var requestList;
-		requestList = new Object();
-		requestList[ObjectPath] = new Object();
+	_buildSvgGroup: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
+			requestList[ObjectPath] = new Object();
+			if (VisualParentObject !== null){
+				//with this "hack" we can visualize a TemplateDefinition via deep link for testing
+				requestList[ObjectPath]["x"] = null;
+				requestList[ObjectPath]["y"] = null;
+			}
+			requestList[ObjectPath]["width"] = null;
+			requestList[ObjectPath]["height"] = null;
+			requestList[ObjectPath]["hideable"] = null;
+
+			
+			//fixme Groups sollen auch unsichtbar schaltbar sein. Nach ein paar Wochen freischalten, im svn ist das geänderte modell schon
+//			requestList[ObjectPath]["visible"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
+			}
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildSvgGroup: remembering config of "+ObjectPath+" ");
+		}
+		
 		if (VisualParentObject !== null){
-			//with this "hack" we can visualize a TemplateDefinition via deep link for testing
-			requestList[ObjectPath]["x"] = null;
-			requestList[ObjectPath]["y"] = null;
-		}
-		requestList[ObjectPath]["width"] = null;
-		requestList[ObjectPath]["height"] = null;
-		requestList[ObjectPath]["hideable"] = null;
-		
-		var successCode = this._requestVariablesArray(requestList);
-		if (successCode == false){
-			return null;
+			//search a predefined children
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		VisualObject.id = ObjectPath;
+		if (VisualObject === null || VisualObject === undefined){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			VisualObject.id = ObjectPath;
+		}
 		
 		HMI.addClass(VisualObject, this.cshmiGroupClass);
 		
-		//set dimension of container
-		if (VisualParentObject !== null){
-			//with this "hack" we can visualize a TemplateDefinition via deep link for testing
-			VisualObject.setAttribute("x", requestList[ObjectPath]["x"]);
-			VisualObject.setAttribute("y", requestList[ObjectPath]["y"]);
-		}
-		VisualObject.setAttribute("width", requestList[ObjectPath]["width"]);
-		VisualObject.setAttribute("height", requestList[ObjectPath]["height"]);
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
 		VisualObject.setAttribute("overflow", "visible");
 		
@@ -3226,13 +3252,22 @@ cshmi.prototype = {
 	 * builds SVG line object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgLine: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgLine: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3255,16 +3290,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgLine: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgLine: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3283,13 +3317,22 @@ cshmi.prototype = {
 	 * builds SVG polyline object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgPolyline: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgPolyline: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3309,16 +3352,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPolyline: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgPolyline: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3334,13 +3376,22 @@ cshmi.prototype = {
 	 * builds SVG polygon object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgPolygon: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgPolygon: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3360,16 +3411,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPolygon: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgPolygon: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3385,13 +3435,22 @@ cshmi.prototype = {
 	 * builds SVG path object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgPath: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgPath: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3411,16 +3470,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgPath: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgPath: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3479,13 +3537,22 @@ cshmi.prototype = {
 	 * builds SVG Text object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgText: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgText: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3513,16 +3580,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgText: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgText: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3578,13 +3644,22 @@ cshmi.prototype = {
 	 * builds SVG circle object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgCircle: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgCircle: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3606,16 +3681,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgCircle: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgCircle: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3630,13 +3704,22 @@ cshmi.prototype = {
 	 * builds SVG ellipse object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgEllipse: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgEllipse: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3659,16 +3742,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgEllipse: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgEllipse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3687,13 +3769,22 @@ cshmi.prototype = {
 	 * builds SVG rect object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgRect: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgRect: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["stroke"] = null;
@@ -3716,16 +3807,15 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
 		
-		var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-		VisualObject.id = ObjectPath;
+		//search a predefined children
+		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		
+		if (VisualObject === null){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
+			VisualObject.id = ObjectPath;
+		}
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3739,13 +3829,22 @@ cshmi.prototype = {
 	 * builds SVG image object, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgImage: function(VisualParentObject, ObjectPath){
-		var requestList;
+	_buildSvgImage: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined)){
-			requestList = new Object();
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest == true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
+			VisualObject.id = ObjectPath;
+			return VisualObject;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
 			requestList[ObjectPath]["opacity"] = null;
@@ -3767,13 +3866,11 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
 			this.ResourceList.Elements[ObjectPath].useCount = 1;
 			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList = new Object();
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._buildSvgRect: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Elements[ObjectPath].useCount+")");
 		}
+		
+		//search a predefined children
+		var PredefinedVisualObject = VisualParentObject.getElementById(ObjectPath);
+		
 		
 		var VisualObject;
 		if(requestList[ObjectPath]["SVGcontent"] !== ""){
@@ -3809,6 +3906,10 @@ cshmi.prototype = {
 		VisualObject.id = ObjectPath;
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
+		
+		if (PredefinedVisualObject !== null && PredefinedVisualObject.parentNode !== null){
+			PredefinedVisualObject.parentNode.replaceChild(VisualObject, PredefinedVisualObject)
+		}
 		
 		return VisualObject;
 	},
@@ -3937,9 +4038,9 @@ cshmi.prototype = {
 	 * loads all children and appends them to the Parent
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {String} restrictType of children loading ("events", "elements", "all")
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 */
-	_loadChildren: function(VisualParentObject, ObjectPath, restrictType){
+	_loadChildren: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
@@ -3949,8 +4050,9 @@ cshmi.prototype = {
 			}else{
 				realComponent = VisualParentObject;
 			}
-			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1], restrictType);
-			if (ChildComponent !== null){
+			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1], preventNetworkRequest);
+			//children could be already in DOM
+			if (ChildComponent !== null && ChildComponent.parentNode === null){
 				realComponent.appendChild(ChildComponent);
 			}
 		}
@@ -4001,11 +4103,11 @@ cshmi.prototype = {
 			//test if we have an template
 			var PathOfTemplateDefinition = VisualParentObject.getAttribute("TemplateDescription");
 			if (PathOfTemplateDefinition){
-				//load the graphical elements of the template, the events were already loaded
-				this._loadChildren(VisualParentObject, PathOfTemplateDefinition, "elements");
+				//load the elements of the template, allow all network request
+				this._loadChildren(VisualParentObject, PathOfTemplateDefinition, false);
 			}
-			//load all graphical children of the object, the events were already loaded
-			this._loadChildren(VisualParentObject, VisualParentObject.id, "elements");
+			//load all graphical children of the object, allow all network request
+			this._loadChildren(VisualParentObject, VisualParentObject.id, false);
 			
 			//we want to have offset parameter on all new visual elements
 			var ComponentChilds = VisualParentObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
@@ -4027,7 +4129,8 @@ cshmi.prototype = {
 				this.initStage = false;
 			}
 			
-			//mark the class as complete
+			// mark the class as complete
+			// the event registering requires the removing after loadChildren!
 			HMI.removeClass(VisualParentObject, this.cshmiObjectVisibleChildrenNotLoaded);
 			
 			//deactivate the dim of the sheet, as we are ready
