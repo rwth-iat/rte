@@ -242,7 +242,7 @@ cshmi.prototype = {
 		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Template") !== -1){
 			return null;
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
-			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath);
+			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false);
 		}else if (restrictType === "events" && ObjectType.indexOf("/cshmi/Path") !== -1){
 			return null;
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
@@ -1353,7 +1353,7 @@ cshmi.prototype = {
 					VisualObject.setAttribute("absolutex", NewValue);
 				}
 			}else if (ParameterValue == "absolutey"){
-				//absolutex is calculated from the offset of the parentNode
+				//absolutey is calculated from the offset of the parentNode
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey"));
 					VisualObject.setAttribute("absolutey", NewValue);
@@ -2732,7 +2732,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["x"] = null;
 			requestList[ObjectPath]["y"] = null;
-			if (calledFromInstantiateTemplate){
+			if (calledFromInstantiateTemplate === true){
 				requestList[ObjectPath]["xOffset"] = null;
 				requestList[ObjectPath]["yOffset"] = null;
 				requestList[ObjectPath]["maxTemplatesPerDirection"] = null;
@@ -2847,7 +2847,7 @@ cshmi.prototype = {
 				//##### Deprecated: change this code (named objects should use FBVarRef!), this should be named FBrefs
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]] !== undefined){
+				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[1]] !== undefined){
 					var rootObject = VisualParentObject;
 					var FBRef;
 					//search FBReference of root Object
@@ -2872,7 +2872,7 @@ cshmi.prototype = {
 			}else if (FBReferenceEntry.length === 1 && FBReferenceEntry[0] != ""){
 				//only one info was requested, so we can save it to the default position. 
 				
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]] !== undefined){
+				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceEntry[0]] !== undefined){
 					//something like OP_NAME was requested, so we have to find the real info from the iterator
 					var rootObject = VisualParentObject;
 					var FBRef = null;
@@ -2968,7 +2968,7 @@ cshmi.prototype = {
 			}
 			
 			//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-			if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]] !== undefined){
+			if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]] !== undefined){
 				//we want to get values from the current child (e.g. myFavoriteVar:OP_NAME)
 				
 				if (this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]].charAt(0) !== "/"){
@@ -3027,7 +3027,7 @@ cshmi.prototype = {
 			if (ConfigValueEntry.length === 2){
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]] !== undefined){
+				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]] !== undefined){
 					VisualObject.ConfigValues[ConfigValueEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]];
 				}
 				else{
@@ -3061,7 +3061,7 @@ cshmi.prototype = {
 		var xTemplate = requestList[ObjectPath]["x"];
 		var yTemplate = requestList[ObjectPath]["y"];
 		
-		if (calledFromInstantiateTemplate && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+		if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined){
 			//the offsetCount must be global for all InstantiateTemplate below an iterator
 			var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
 			//the next InstantiateTemplate should go to an other position
