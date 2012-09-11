@@ -298,7 +298,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
@@ -330,7 +330,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteOperatorEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
@@ -595,7 +595,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteTimeEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject.parentNode !== null && HMI.instanceOf(VisualObject.parentNode, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
@@ -923,6 +923,9 @@ cshmi.prototype = {
 			//intentionally no value
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === false){
+			
+			//fixme fullqualifiedname hinzufügen
+			
 			var TemplateObject;
 			var FBRef = null;
 			
@@ -1868,7 +1871,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
-		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true);
+		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
 		if (VisualObject !== null){
 			VisualParentObject.appendChild(VisualObject);
 			//calculate all offset parameter to be able to display visual feedback
@@ -2654,6 +2657,7 @@ cshmi.prototype = {
 		
 		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
 		
+		// fixme ein array wird niemals inNumeric sein. ups
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
 		if(isNumeric(Value2)){
 			Value2 = parseFloat(Value2);
@@ -2725,7 +2729,9 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest == true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
+			
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			VisualObject.id = ObjectPath;
@@ -2799,8 +2805,10 @@ cshmi.prototype = {
 		//search a predefined children
 		var VisualObject = VisualParentObject.getElementById(ObjectPath);
 		
-		if (VisualObject === null){
-			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		if (VisualObject === null || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+			//do not use a predefined VisualObject if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
+			
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			VisualObject.id = ObjectPath;
 		}
 		VisualObject.setAttribute("TemplateDescription", PathOfTemplateDefinition);
@@ -3210,10 +3218,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
 			requestList[ObjectPath]["hideable"] = null;
-
-			
-			//fixme Groups sollen auch unsichtbar schaltbar sein. Nach ein paar Wochen freischalten, im svn ist das geänderte modell schon
-//			requestList[ObjectPath]["visible"] = null;
+			requestList[ObjectPath]["visible"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode == false){
