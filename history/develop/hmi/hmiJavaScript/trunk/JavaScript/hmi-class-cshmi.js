@@ -3933,10 +3933,12 @@ cshmi.prototype = {
 		}
 		if(configArray["x"] && configArray["y"]){
 			//the attribute should be "rotate(deg, x, y)"
-			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
-		}else{
+			if (configArray["rotate"]){
+				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
+			}
+		}else if (configArray["rotate"]){
 			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
 		}
 		if(configArray["width"] && configArray["width"] !== ""){
