@@ -461,7 +461,7 @@ cshmi.prototype = {
 		HMI.hmi_log_trace("moveStartDrag - Start with object: "+VisualObject.id);
 		this.ResourceList.EventInfos.EventObj = evt;
 		//memorize Startposition
-		var mouseposition = HMI.getClickPosition(evt, null);
+		var mouseposition = HMI.getClickPosition(evt, HMI.Playground.firstChild);
 		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
 		this.ResourceList.EventInfos.startYMouse = mouseposition[1];
 		this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x"), 10);
@@ -519,7 +519,7 @@ cshmi.prototype = {
 		if (this.ResourceList.EventInfos.startXObj === null){
 			return;
 		}
-		var mouseposition = HMI.getClickPosition(evt, null);
+		var mouseposition = HMI.getClickPosition(evt, HMI.Playground.firstChild);
 		var mouseX = mouseposition[0];
 		var mouseY = mouseposition[1];
 		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
@@ -571,11 +571,10 @@ cshmi.prototype = {
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		
-		var mouseposition = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null);
+		//check if object is clickable and the movement is marginal
 		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
-			&& (Math.abs(mouseposition[0] - VisualObject.getAttribute("x")) < 5)
-			&& (Math.abs(mouseposition[1] - VisualObject.getAttribute("y")) < 5)){
-			//fixme dieser code ist wahrscheinlich falsch, x ist ja relativ
+			&& (Math.abs(this.ResourceList.EventInfos.startXObj - VisualObject.getAttribute("x")) < 5)
+			&& (Math.abs(this.ResourceList.EventInfos.startYObj - VisualObject.getAttribute("y")) < 5)){
 			
 			//no movement detected, so interprete the click
 			var interpreteEvent = "click";
@@ -923,12 +922,12 @@ cshmi.prototype = {
 					return null;
 				}
 			}else if(ParameterValue === "mousex"){
-				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[0];
+				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[0];
 				if (!isNaN(newX)){
 					return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
 				}
 			}else if(ParameterValue === "mousey"){
-				var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, null)[1];
+				var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[1];
 				if (!isNaN(newY)){
 					return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
 				}

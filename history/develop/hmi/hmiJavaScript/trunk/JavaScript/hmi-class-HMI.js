@@ -1696,12 +1696,13 @@ HMI.prototype = {
 				} while (obj = obj.offsetParent);
 			}
 			obj = null;
-			svgOffsetX = null;
-			svgOffsetY = null;
 			
 			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
 			clickPosition[0] = mousePosX - parseInt(Component.getAttribute("absolutex"), 10) - svgOffsetX;
 			clickPosition[1] = mousePosY - parseInt(Component.getAttribute("absolutey"), 10) - svgOffsetY;
+			
+			svgOffsetX = null;
+			svgOffsetY = null;
 			
 			this.hmi_log_trace("HMI.prototype.getClickPosition relative - End x:"+clickPosition[0]+" y:"+clickPosition[1]);
 		}else{
