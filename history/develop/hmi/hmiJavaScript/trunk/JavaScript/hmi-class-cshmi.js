@@ -430,6 +430,7 @@ cshmi.prototype = {
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("mousedown", VisualObject._moveStartDragThunk, false);
+			VisualObject.addEventListener("MSPointerDown", VisualObject._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -474,6 +475,14 @@ cshmi.prototype = {
 			HMI.svgDocument.addEventListener("touchmove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("touchend", VisualObject._moveStopDragThunk, false);
 			HMI.svgDocument.addEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
+		}else if(evt.type === 'MSPointerDown'){
+			//we have touch gestures, so kill legacy mousedown (and w3c touchstart)
+			VisualObject.removeEventListener("mousedown", VisualObject._moveStartDragThunk, false);
+			VisualObject.removeEventListener("touchstart", VisualObject._moveStartDragThunk, false);
+			
+			HMI.svgDocument.addEventListener("MSPointerMove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.addEventListener("MSPointerUp", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.addEventListener("MSPointerCancel", VisualObject._moveCancelDragThunk, false);
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy click (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected");
 			HMI.svgDocument.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
@@ -530,6 +539,7 @@ cshmi.prototype = {
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
+		if (eventObject.preventManipulation) eventObject.preventManipulation(); //stop panning and zooming in ie10
 	},
 	
 	/**
@@ -547,6 +557,12 @@ cshmi.prototype = {
 			HMI.svgDocument.removeEventListener("touchend", VisualObject._moveStopDragThunk, false);
 			HMI.svgDocument.removeEventListener("touchcancel", VisualObject._moveCancelDragThunk, false);
 			//the touchend has no xy position (since the fingers left the device!), so an action should work on the last move eventobj
+		}else if(evt.type === 'MSPointerUp'){
+			HMI.hmi_log_trace("moveStartDrag - MS touch up detected");
+			HMI.svgDocument.removeEventListener("MSPointerMove", VisualObject._moveMouseMoveThunk, false);
+			HMI.svgDocument.removeEventListener("MSPointerUp", VisualObject._moveStopDragThunk, false);
+			HMI.svgDocument.removeEventListener("MSPointerCancel", VisualObject._moveCancelDragThunk, false);
+			//the touchend has no xy position (since the fingers left the device!), so an action should work on the last move eventobj
 		}else{
 			HMI.hmi_log_trace("moveStartDrag - legacy mouse up detected");
 			HMI.svgDocument.removeEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
@@ -559,6 +575,7 @@ cshmi.prototype = {
 		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
 			&& (Math.abs(mouseposition[0] - VisualObject.getAttribute("x")) < 5)
 			&& (Math.abs(mouseposition[1] - VisualObject.getAttribute("y")) < 5)){
+			//fixme dieser code ist wahrscheinlich falsch, x ist ja relativ
 			
 			//no movement detected, so interprete the click
 			var interpreteEvent = "click";
@@ -919,19 +936,74 @@ cshmi.prototype = {
 				HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+ParameterValue);
 			}
 			return false;
+		}else if (ParameterName === "TemplateFBReferenceVariable" && ParameterValue === "fullqualifiedname"){
+			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+				//we are in an getEP-iterator and want to read out a value from the currentchild
+				TemplateObject = VisualObject;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+							//we have an OV-PART, so the separator is a dot
+							return FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						}else{
+							//we have no OV-PART, so the separator is a slash
+							return FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						}
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				return "";
+			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+				//we are in an GetVar-iterator and want to read out a value from the currentchild
+				TemplateObject = VisualObject;
+				//search FBReference of root Object
+				do{
+					//FBReference found
+					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+						FBRef = TemplateObject.FBReference["default"];
+						break;
+					}
+				//loop upwards to find the Template object
+				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+				
+				// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+				// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+				var prefix = "";
+				if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+					//find the 3rd "/"
+					var slashIndex = FBRef.indexOf("/", 2);
+					//find the 4th "/"
+					slashIndex = FBRef.indexOf("/", slashIndex+1);
+					//only keep the String before 4th "/"
+					var prefix = FBRef.slice(0, slashIndex);
+				}
+				
+				return prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+			}
+			
+			//no active iterator, so plain FBReference
+			TemplateObject = VisualObject;
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//the name of a Template was requested
+					return TemplateObject.FBReference["default"];
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return "";
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === true){
 			//intentionally no value
 			return null;
 		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === false){
-			
-			//fixme fullqualifiedname hinzufügen
-			
 			var TemplateObject;
 			var FBRef = null;
 			
 			//doku OP_NAME im Iterator nicht, sonst schon
 			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
-				//we are in an iterator and want to read out a value from the currentchild
+				//we are in an GetEP-iterator and want to read out a value from the currentchild
 				TemplateObject = VisualObject;
 				//search FBReference of root Object
 				do{
@@ -963,7 +1035,7 @@ cshmi.prototype = {
 				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 				return "";
 			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
-				//we are in an iterator and want to read out a value from the currentchild
+				//we are in an GetVar-iterator and want to read out a value from the currentchild
 				TemplateObject = VisualObject;
 				//search FBReference of root Object
 				do{
@@ -1770,6 +1842,7 @@ cshmi.prototype = {
 		
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
+			//GetEP requested
 			var response = HMI.KSClient.getEP_NG(encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + ChildrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
@@ -1830,6 +1903,7 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
 			return false;
 		}else{
+			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
 			
 			//allow a list of variables as ChildrenTypes

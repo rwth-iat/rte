@@ -1638,9 +1638,12 @@ HMI.prototype = {
 		return;
 	},	
 	
-	/*********************************
-		getClickPosition
-	*********************************/
+	/**
+	 * mouse position from an event object
+	 * @param evt
+	 * @param Component, if not null detect the mouse position relative to this component
+	 * @return an array with x and y position
+	 */
 	getClickPosition: function (evt, Component) {
 		this.hmi_log_trace("HMI.prototype.getClickPosition - Start");
 		
@@ -1699,6 +1702,10 @@ HMI.prototype = {
 				// iPhone (but no other touch devices)
 				clickPosition[0] = evt.touches[0].pageX;
 				clickPosition[1] = evt.touches[0].pageY;
+			}else if (evt.changedTouches && evt.changedTouches.length) {
+				// IE10 Touch. Not perfekt clean, as we should extract evt.changedTouches[x].identifier
+				clickPosition[0] = evt.changedTouches[0].pageX;
+				clickPosition[1] = evt.changedTouches[0].pageY;
 			}else if (evt.pageX || evt.pageY) {
 				//code for native SVG. pageX based on the full XHTML Document
 				clickPosition[0] = evt.pageX;
