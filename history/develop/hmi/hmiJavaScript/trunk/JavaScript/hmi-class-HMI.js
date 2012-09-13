@@ -1656,12 +1656,34 @@ HMI.prototype = {
 		}
 		var mousePosX;
 		var mousePosY;
+		
+		//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
+		if (evt.touches && evt.touches.length !== 0) {
+			// iPhone (but no other touch devices)
+			mousePosX = evt.touches[0].pageX;
+			mousePosY = evt.touches[0].pageY;
+		}else if (evt.changedTouches && evt.changedTouches.length) {
+			// IE10 Touch. Not perfekt clean, as we should extract evt.changedTouches[x].identifier
+			mousePosX = evt.changedTouches[0].pageX;
+			mousePosY = evt.changedTouches[0].pageY;
+		}else if (evt.pageX || evt.pageY) {
+			//code for native SVG. pageX based on the full XHTML Document
+			mousePosX = evt.pageX;
+			mousePosY = evt.pageY;
+		}else if (evt.clientX || evt.clientY) {
+			//code for svg-plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
+			mousePosX = evt.clientX;
+			mousePosY = evt.clientY;
+		}else{
+			mousePosX = Number.NaN;
+			mousePosY = Number.NaN;
+		}
+		
 		if (Component !== null)
 		{
 			//detect the mouse position relative to the component
-			//see technology paper "Human Model Interface - JavaScript" for full details of crossbrowser problems
 			
-			//First we have to find the offset of the svg-element in the XHTML
+			//we have to find the offset of the svg-element in the XHTML
 			var obj = HMI.Playground;
 			var svgOffsetX = 0;
 			var svgOffsetY = 0;
@@ -1673,53 +1695,23 @@ HMI.prototype = {
 					svgOffsetY += obj.offsetTop;
 				} while (obj = obj.offsetParent);
 			}
-			
-			if (evt.pageX || evt.pageY) {
-				//code for native SVG. pageX based on the full XHTML Document
-				mousePosX = evt.pageX;
-				mousePosY = evt.pageY;
-			}else if (evt.clientX || evt.clientY) {
-				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
-				mousePosX = evt.clientX;
-				mousePosY = evt.clientY;
-			}else{
-				mousePosX = Number.NaN;
-				mousePosY = Number.NaN;
-			}
+			obj = null;
+			svgOffsetX = null;
+			svgOffsetY = null;
 			
 			//the searched position is pageX/clientX minus Position of the HMI Component minus Position of the SVG
 			clickPosition[0] = mousePosX - parseInt(Component.getAttribute("absolutex"), 10) - svgOffsetX;
 			clickPosition[1] = mousePosY - parseInt(Component.getAttribute("absolutey"), 10) - svgOffsetY;
 			
-			mousePosX = null;
-			mousePosY = null;
-			svgOffsetX = null;
-			svgOffsetY = null;
-			obj = null;
 			this.hmi_log_trace("HMI.prototype.getClickPosition relative - End x:"+clickPosition[0]+" y:"+clickPosition[1]);
 		}else{
-			if (evt.touches && evt.touches.length) {
-				// iPhone (but no other touch devices)
-				clickPosition[0] = evt.touches[0].pageX;
-				clickPosition[1] = evt.touches[0].pageY;
-			}else if (evt.changedTouches && evt.changedTouches.length) {
-				// IE10 Touch. Not perfekt clean, as we should extract evt.changedTouches[x].identifier
-				clickPosition[0] = evt.changedTouches[0].pageX;
-				clickPosition[1] = evt.changedTouches[0].pageY;
-			}else if (evt.pageX || evt.pageY) {
-				//code for native SVG. pageX based on the full XHTML Document
-				clickPosition[0] = evt.pageX;
-				clickPosition[1] = evt.pageY;
-			}else if (evt.clientX || evt.clientY) {
-				//code for plugin. clientX is based on the Plugin area, without browser scrolling sideeffects
-				clickPosition[0] = evt.clientX;
-				clickPosition[1] = evt.clientY;
-			}else{
-				clickPosition[0] = Number.NaN;
-				clickPosition[1] = Number.NaN;
-			}
+			clickPosition[0] = mousePosX;
+			clickPosition[1] = mousePosY;
+			
 			this.hmi_log_trace("HMI.prototype.getClickPosition absolute - End x:"+clickPosition[0]+" y:"+clickPosition[1]);
 		}
+		mousePosX = null;
+		mousePosY = null;
 		
 		return clickPosition;
 	},

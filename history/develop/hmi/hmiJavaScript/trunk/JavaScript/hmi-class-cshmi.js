@@ -539,7 +539,7 @@ cshmi.prototype = {
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
 		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
-		if (eventObject.preventManipulation) eventObject.preventManipulation(); //stop panning and zooming in ie10
+		if (evt.preventManipulation) evt.preventManipulation(); //stop panning and zooming in ie10
 	},
 	
 	/**
