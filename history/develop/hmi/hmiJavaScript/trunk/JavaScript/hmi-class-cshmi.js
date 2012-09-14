@@ -323,6 +323,81 @@ cshmi.prototype = {
 	},
 	
 	/**
+	 * calling Actions if supported TimeEvent is triggered
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
+	 * @return {Boolean} true
+	 */
+	_interpreteTimeEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+			//this is the run that fills the objects with content, the Events were already armed
+			return true;
+		}
+		
+		var skipEvent = false;
+		//check if the page is visible at all?
+		//http://www.w3.org/TR/page-visibility/
+		if(	document.hidden === true ||
+			document.mozHidden === true||
+			document.webkitHidden === true||
+			document.msHidden === true||
+			document.oHidden === true
+		){
+			skipEvent = true;
+		}
+		if (this.initStage === true){
+			//we are in the init state of the sheet so interprete Action later onload, remembering this
+			var EventObjItem = Object();
+			EventObjItem["VisualObject"] = VisualObject;
+			EventObjItem["ObjectPath"] = ObjectPath;
+			this.ResourceList.onloadCallStack.push(EventObjItem);
+		}else if(skipEvent === false){
+			this._interpreteAction(VisualObject, ObjectPath);
+		}
+		
+		var cyctime;
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["cyctime"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
+			}
+			
+			cyctime = requestList[ObjectPath]["cyctime"];
+			
+			//feeding garbage collector early
+			requestList = null;
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Events[ObjectPath] = new Object();
+			this.ResourceList.Events[ObjectPath].useCount = 1;
+			this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime = cyctime;
+			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object was asked this session, so reuse the config to save communication requests
+			cyctime = this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime;
+			this.ResourceList.Events[ObjectPath].useCount++;
+			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
+		}
+		
+		//call us again for cyclic interpretation of the Actions
+		//only if we are in the initialisation or normal stage
+		//and the active cshmi display is "our" one
+		if ((this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			window.setTimeout(function(){
+				preserveThis._interpreteTimeEvent(VisualObject, ObjectPath);
+			}, cyctime*1000);
+		}
+		return true;
+	},
+	
+	/**
 	 * detect all OperatorEvents and register them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
@@ -604,81 +679,6 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * calling Actions if supported TimeEvent is triggered
-	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
-	 * @return {Boolean} true
-	 */
-	_interpreteTimeEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
-			//this is the run that fills the objects with content, the Events were already armed
-			return true;
-		}
-		
-		var skipEvent = false;
-		//check if the page is visible at all?
-		//http://www.w3.org/TR/page-visibility/
-		if(	document.hidden === true ||
-			document.mozHidden === true||
-			document.webkitHidden === true||
-			document.msHidden === true||
-			document.oHidden === true
-		){
-			skipEvent = true;
-		}
-		if (this.initStage === true){
-			//we are in the init state of the sheet so interprete Action later onload, remembering this
-			var EventObjItem = Object();
-			EventObjItem["VisualObject"] = VisualObject;
-			EventObjItem["ObjectPath"] = ObjectPath;
-			this.ResourceList.onloadCallStack.push(EventObjItem);
-		}else if(skipEvent === false){
-			this._interpreteAction(VisualObject, ObjectPath);
-		}
-		
-		var cyctime;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
-			var requestList = new Object();
-			requestList[ObjectPath] = new Object();
-			requestList[ObjectPath]["cyctime"] = null;
-			
-			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
-				return null;
-			}
-			
-			cyctime = requestList[ObjectPath]["cyctime"];
-			
-			//feeding garbage collector early
-			requestList = null;
-			
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Events[ObjectPath] = new Object();
-			this.ResourceList.Events[ObjectPath].useCount = 1;
-			this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime = cyctime;
-			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object was asked this session, so reuse the config to save communication requests
-			cyctime = this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime;
-			this.ResourceList.Events[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
-		}
-		
-		//call us again for cyclic interpretation of the Actions
-		//only if we are in the initialisation or normal stage
-		//and the active cshmi display is "our" one
-		if ((this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			window.setTimeout(function(){
-				preserveThis._interpreteTimeEvent(VisualObject, ObjectPath);
-			}, cyctime*1000);
-		}
-		return true;
-	},
-	
-	/**
 	 * detect all Actions and triggers them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
@@ -701,6 +701,8 @@ cshmi.prototype = {
 				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math");
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
+			}else if (varName[1].indexOf("/cshmi/DeleteObject") !== -1){
+				returnValue = this._interpreteDeleteObject(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
 				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
@@ -1776,6 +1778,294 @@ cshmi.prototype = {
 		return false;
 	},
 	
+	
+	/**
+	 * checks Condition
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return {Boolean} true if condition matched, false if not matched, null on error
+	 */
+	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
+		//get Values
+		var ignoreError;
+		var comptype;
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ignoreError"] = null;
+			requestList[ObjectPath]["comptype"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
+			}
+			
+			ignoreError = requestList[ObjectPath]["ignoreError"];
+			comptype = requestList[ObjectPath]["comptype"];
+			
+			//feeding garbage collector early
+			requestList = null;
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Conditions[ObjectPath] = new Object();
+			this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError = ignoreError;
+			this.ResourceList.Conditions[ObjectPath].checkConditionCompType = comptype;
+			this.ResourceList.Conditions[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionCompType;
+			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError;
+			this.ResourceList.Conditions[ObjectPath].useCount++;
+			//HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+		}
+		
+		
+		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
+		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
+		
+		if (Value1 === null){
+			//getValue had intentionally no value, abort
+			return null;
+		}else if (Value1 === false && ignoreError === "FALSE"){
+				HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
+				//error state, so no boolean
+				return null;
+		}else if (Value1 === false && ignoreError === "TRUE"){
+			Value1 = "";
+		}
+		if (Value2 === null){
+			//getValue had intentionally no value, abort
+			return null;
+		}else if (Value2 === false && ignoreError === "FALSE"){
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
+			//error state, so no boolean
+			return null;
+		}else if (Value2 === false && ignoreError === "TRUE"){
+			Value2 = "";
+		}
+		
+		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
+		if(isNumeric(Value1)){
+			Value1 = parseFloat(Value1);
+		}
+		if(isNumeric(Value2)){
+			Value2 = parseFloat(Value2);
+		}
+		
+		if (comptype === "<"){
+			return (Value1 < Value2);
+		}else if (comptype === "<="){
+			return (Value1 <= Value2);
+		}else if (comptype === "=="){
+			return (Value1 === Value2);
+		}else if (comptype === "!="){
+			return (Value1 !== Value2);
+		}else if (comptype === ">="){
+			return (Value1 >= Value2);
+		}else if (comptype === ">"){
+			return (Value1 > Value2);
+		}else{
+			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
+			//error state, so no boolean
+			return null;
+		}
+	},
+	
+	/**
+	 * checks Condition within ChildrenIterator
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return {Boolean} true if condition matched, false if not matched, null on error
+	 */
+	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
+		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
+			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
+			//error state, so no boolean
+			return null;
+		}
+		//get Values
+		var ignoreError;
+		var comptype;
+		var childValue;
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
+			var requestList = new Object();
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["ignoreError"] = null;
+			requestList[ObjectPath]["comptype"] = null;
+			requestList[ObjectPath]["childValue"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode == false){
+				return null;
+			}
+			
+			ignoreError = requestList[ObjectPath]["ignoreError"];
+			comptype = requestList[ObjectPath]["comptype"];
+			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
+			
+			//feeding garbage collector early
+			requestList = null;
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Conditions[ObjectPath] = new Object();
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError = ignoreError;
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
+			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
+			this.ResourceList.Conditions[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
+		}else{
+			//the object is asked this session, so reuse the config to save communication requests
+			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError;
+			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
+			childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
+			this.ResourceList.Conditions[ObjectPath].useCount++;
+			//HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+		}
+		
+		var Value1;
+		
+		if (childValue[0] === ""){
+			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
+			//error state, so no boolean
+			return null;
+		}else
+		
+		//check if we want to get a Value from the iteratedChild
+		if (childValue[0].indexOf(".") !== -1){
+			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same! This function will be removed in summer 2012.")
+			//##### Deprecated
+			
+			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
+			var rootObject = VisualObject;
+			var FBRef = null;
+			//search FBReference of root Object
+			while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+				//FBReference found
+				if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
+					FBRef = rootObject.FBReference["default"];
+					//FBRef found, we can stop search
+					rootObject = null;
+				}
+				else {
+					//loop upwards to find the Template object
+					rootObject = rootObject.parentNode;
+				}
+			}
+			if (FBRef === null){
+				HMI.hmi_log_info_onwebsite('CompareIteratedChild '+ObjectPath+' could not work. Found no FBReference on a parent.');
+				return null;
+			}
+			
+			var splittedValue = childValue[0].split(".");
+			
+			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+				//we have an OV-PART, so the separator is a dot
+				Value1 = HMI.KSClient.getVar_NG(FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
+			}else{
+				//we have no OV-PART, so the separator is a slash
+				Value1 = HMI.KSClient.getVar_NG(FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
+			}
+			if ((Value1 === false || Value1 === null) && ignoreError === "FALSE"){
+				//communication problem
+				HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+				//error state, so no boolean
+				return null;
+			}
+			Value1 = Value1.replace(/{/g, "");
+			Value1 = Value1.replace(/}/g, "");
+			
+			//##### end change this code
+		}else{
+			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
+		}
+		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
+		
+		if (Value1 === null && ignoreError === "FALSE"){
+			//intentionally no value, abort
+			return null;
+		}else if (Value1 === false && ignoreError === "FALSE"){
+			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			//error state, so no boolean
+			return null;
+		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
+			Value1 = "";
+		}
+		if (Value2 === null){
+			//intentionally no value, abort
+			return null;
+		}
+		if (Value2 === null && ignoreError === "FALSE"){
+			//getValue had intentionally no value, abort
+			return null;
+		}else if (Value2 === false && ignoreError === "FALSE"){
+			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			//error state, so no boolean
+			return null;
+		}else if (Value2 === false && ignoreError === "TRUE"){
+			Value2 = "";
+		}
+		
+		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
+		
+		// fixme ein array wird niemals inNumeric sein. ups
+		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
+		if(isNumeric(Value2)){
+			Value2 = parseFloat(Value2);
+		}
+		
+		if (comptype === "<"){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 < Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else if (comptype === "<="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 <= Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else if (comptype === "=="){
+			//check if one entry of Value2 == Value1
+			for (var i=0; i<Value2.length; i++){
+				if (Value1 === Value2[i]){
+					return true;
+				}
+			}
+			return false;
+		}else if (comptype === "!="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 !== Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else if (comptype === ">="){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 >= Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else if (comptype === ">"){
+			for (var i=0; i<Value2.length; i++){
+				if (!(Value1 > Value2[i])){
+					return false;
+				}
+			}
+			return true;
+		}else{
+			HMI.hmi_log_error("cshmi._checkConditionIterator Comparingtype "+comptype+" unknown");
+			//error state, so no boolean
+			return null;
+		}
+	},
+	
 	/**
 	 * iterates over an association (ov_containment or other) or an variable vector
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
@@ -1935,50 +2225,6 @@ cshmi.prototype = {
 		savedCurrentChild = null;
 		
 		return returnValue;
-	},
-	
-	/**
-	 * Action which calls _buildFromTemplate to build a template
-	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
-	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @return {Boolean} true on success, false if an error occured
-	 */
-	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
-		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
-		if (VisualObject !== null){
-			VisualParentObject.appendChild(VisualObject);
-			//calculate all offset parameter to be able to display visual feedback
-			//needed now, because we append new components
-			HMI.saveAbsolutePosition(VisualObject);
-			//we want to have offset parameter on all visual elements
-			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI.saveAbsolutePosition(ComponentChilds[i]);
-			}
-			
-			//onload code should not know, we are in an iterator
-			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-			delete this.ResourceList.ChildrenIterator.currentChild;
-			
-			if (this.initStage === false){
-				//interprete onload Actions if we are already loaded
-				
-				//for this objects, the init stage should be set (needed for getValue and timeevent)
-				this.initStage = true;
-				
-				while(this.ResourceList.onloadCallStack.length !== 0){
-					var EventObjItem = this.ResourceList.onloadCallStack.shift();
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-				}
-				//reset stage to real state
-				this.initStage = false;
-			}
-			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-			savedCurrentChild = null;
-			
-			return true;
-		}
-		return false;
 	},
 	
 	/**
@@ -2500,292 +2746,48 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * checks Condition
-	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * Action which calls _buildFromTemplate to build a template
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @return {Boolean} true if condition matched, false if not matched, null on error
+	 * @return {Boolean} true on success, false if an error occured
 	 */
-	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
-		//get Values
-		var ignoreError;
-		var comptype;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-			var requestList = new Object();
-			requestList[ObjectPath] = new Object();
-			requestList[ObjectPath]["ignoreError"] = null;
-			requestList[ObjectPath]["comptype"] = null;
-			
-			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
-				return null;
+	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
+		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
+		if (VisualObject !== null){
+			VisualParentObject.appendChild(VisualObject);
+			//calculate all offset parameter to be able to display visual feedback
+			//needed now, because we append new components
+			HMI.saveAbsolutePosition(VisualObject);
+			//we want to have offset parameter on all visual elements
+			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
-			ignoreError = requestList[ObjectPath]["ignoreError"];
-			comptype = requestList[ObjectPath]["comptype"];
+			//onload code should not know, we are in an iterator
+			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+			delete this.ResourceList.ChildrenIterator.currentChild;
 			
-			//feeding garbage collector early
-			requestList = null;
+			if (this.initStage === false){
+				//interprete onload Actions if we are already loaded
+				
+				//for this objects, the init stage should be set (needed for getValue and timeevent)
+				this.initStage = true;
+				
+				while(this.ResourceList.onloadCallStack.length !== 0){
+					var EventObjItem = this.ResourceList.onloadCallStack.shift();
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+				}
+				//reset stage to real state
+				this.initStage = false;
+			}
+			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+			savedCurrentChild = null;
 			
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError = ignoreError;
-			this.ResourceList.Conditions[ObjectPath].checkConditionCompType = comptype;
-			this.ResourceList.Conditions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionCompType;
-			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError;
-			this.ResourceList.Conditions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			return true;
 		}
-		
-		
-		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
-		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
-		
-		if (Value1 === null){
-			//getValue had intentionally no value, abort
-			return null;
-		}else if (Value1 === false && ignoreError === "FALSE"){
-				HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
-				//error state, so no boolean
-				return null;
-		}else if (Value1 === false && ignoreError === "TRUE"){
-			Value1 = "";
-		}
-		if (Value2 === null){
-			//getValue had intentionally no value, abort
-			return null;
-		}else if (Value2 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
-			//error state, so no boolean
-			return null;
-		}else if (Value2 === false && ignoreError === "TRUE"){
-			Value2 = "";
-		}
-		
-		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
-		if(isNumeric(Value1)){
-			Value1 = parseFloat(Value1);
-		}
-		if(isNumeric(Value2)){
-			Value2 = parseFloat(Value2);
-		}
-		
-		if (comptype === "<"){
-			return (Value1 < Value2);
-		}else if (comptype === "<="){
-			return (Value1 <= Value2);
-		}else if (comptype === "=="){
-			return (Value1 === Value2);
-		}else if (comptype === "!="){
-			return (Value1 !== Value2);
-		}else if (comptype === ">="){
-			return (Value1 >= Value2);
-		}else if (comptype === ">"){
-			return (Value1 > Value2);
-		}else{
-			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
-			//error state, so no boolean
-			return null;
-		}
+		return false;
 	},
-	
-	/**
-	 * checks Condition within ChildrenIterator
-	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @return {Boolean} true if condition matched, false if not matched, null on error
-	 */
-	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
-		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
-			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
-			//error state, so no boolean
-			return null;
-		}
-		//get Values
-		var ignoreError;
-		var comptype;
-		var childValue;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-			var requestList = new Object();
-			requestList[ObjectPath] = new Object();
-			requestList[ObjectPath]["ignoreError"] = null;
-			requestList[ObjectPath]["comptype"] = null;
-			requestList[ObjectPath]["childValue"] = null;
-			
-			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
-				return null;
-			}
-			
-			ignoreError = requestList[ObjectPath]["ignoreError"];
-			comptype = requestList[ObjectPath]["comptype"];
-			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
-			
-			//feeding garbage collector early
-			requestList = null;
-			
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError = ignoreError;
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
-			this.ResourceList.Conditions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError;
-			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
-			childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
-			this.ResourceList.Conditions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
-		}
-		
-		var Value1;
-		
-		if (childValue[0] === ""){
-			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
-			//error state, so no boolean
-			return null;
-		}else
-		
-		//check if we want to get a Value from the iteratedChild
-		if (childValue[0].indexOf(".") !== -1){
-			HMI.hmi_log_warning("Deprecated use of compareIteratedChild. Compare is now able to do the same! This function will be removed in summer 2012.")
-			//##### Deprecated
-			
-			//found something like childValue : INPUT  STRING = "OP_NAME.flags";
-			var rootObject = VisualObject;
-			var FBRef = null;
-			//search FBReference of root Object
-			while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-				//FBReference found
-				if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
-					FBRef = rootObject.FBReference["default"];
-					//FBRef found, we can stop search
-					rootObject = null;
-				}
-				else {
-					//loop upwards to find the Template object
-					rootObject = rootObject.parentNode;
-				}
-			}
-			if (FBRef === null){
-				HMI.hmi_log_info_onwebsite('CompareIteratedChild '+ObjectPath+' could not work. Found no FBReference on a parent.');
-				return null;
-			}
-			
-			var splittedValue = childValue[0].split(".");
-			
-			if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
-				//we have an OV-PART, so the separator is a dot
-				Value1 = HMI.KSClient.getVar_NG(FBRef+"."+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
-			}else{
-				//we have no OV-PART, so the separator is a slash
-				Value1 = HMI.KSClient.getVar_NG(FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild[splittedValue[0]]+"."+splittedValue[1], null);
-			}
-			if ((Value1 === false || Value1 === null) && ignoreError === "FALSE"){
-				//communication problem
-				HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
-				//error state, so no boolean
-				return null;
-			}
-			Value1 = Value1.replace(/{/g, "");
-			Value1 = Value1.replace(/}/g, "");
-			
-			//##### end change this code
-		}else{
-			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue];
-		}
-		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
-		
-		if (Value1 === null && ignoreError === "FALSE"){
-			//intentionally no value, abort
-			return null;
-		}else if (Value1 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
-			//error state, so no boolean
-			return null;
-		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
-			Value1 = "";
-		}
-		if (Value2 === null){
-			//intentionally no value, abort
-			return null;
-		}
-		if (Value2 === null && ignoreError === "FALSE"){
-			//getValue had intentionally no value, abort
-			return null;
-		}else if (Value2 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
-			//error state, so no boolean
-			return null;
-		}else if (Value2 === false && ignoreError === "TRUE"){
-			Value2 = "";
-		}
-		
-		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
-		
-		// fixme ein array wird niemals inNumeric sein. ups
-		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
-		if(isNumeric(Value2)){
-			Value2 = parseFloat(Value2);
-		}
-		
-		if (comptype === "<"){
-			for (var i=0; i<Value2.length; i++){
-				if (!(Value1 < Value2[i])){
-					return false;
-				}
-			}
-			return true;
-		}else if (comptype === "<="){
-			for (var i=0; i<Value2.length; i++){
-				if (!(Value1 <= Value2[i])){
-					return false;
-				}
-			}
-			return true;
-		}else if (comptype === "=="){
-			//check if one entry of Value2 == Value1
-			for (var i=0; i<Value2.length; i++){
-				if (Value1 === Value2[i]){
-					return true;
-				}
-			}
-			return false;
-		}else if (comptype === "!="){
-			for (var i=0; i<Value2.length; i++){
-				if (!(Value1 !== Value2[i])){
-					return false;
-				}
-			}
-			return true;
-		}else if (comptype === ">="){
-			for (var i=0; i<Value2.length; i++){
-				if (!(Value1 >= Value2[i])){
-					return false;
-				}
-			}
-			return true;
-		}else if (comptype === ">"){
-			for (var i=0; i<Value2.length; i++){
-				if (!(Value1 > Value2[i])){
-					return false;
-				}
-			}
-			return true;
-		}else{
-			HMI.hmi_log_error("cshmi._checkConditionIterator Comparingtype "+comptype+" unknown");
-			//error state, so no boolean
-			return null;
-		}
-	},
-	
 	
 	/**
 	 * builds template, gets the parameter via KS
@@ -3220,48 +3222,6 @@ cshmi.prototype = {
 		}
 	},
 	
-	/**
-	 * toggles visibility of child Templates
-	 * @param {Node} VisualParentObject Node which childs are toggled
-	 * @return void
-	 */
-	toggleChildTemplates: function(VisualParentObject){
-		var childTemplates = VisualParentObject.childNodes;
-		
-		for (var i=0; i < childTemplates.length; i++) {
-			var VisualObject = childTemplates[i];
-			if(VisualObject.getAttribute === undefined){
-				//this children can be for example a text node
-				continue;
-			}
-			var Classes = VisualObject.getAttribute("class");
-			if (Classes === null){
-				continue;
-			}else if (Classes.indexOf(this.cshmiTemplateHideableClass) === -1){
-				continue;
-			}else if (VisualObject.getAttribute("display") == "block"){
-				VisualObject.setAttribute("display", "none");
-			}else{
-				VisualObject.setAttribute("display", "block");
-				
-				//load hidden elements now
-				this._loadHiddenChildrenElements(VisualObject);
-				
-				//doku depth of moving to top
-				
-				//Move Faceplate-Container after every other, so it is fully visible
-				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
-					//hideable childtemplate in a normal template
-					VisualParentObject.parentNode.appendChild(VisualParentObject);
-				}else{
-					//hideable childtemplate in an action instantiated template (one level more)
-					VisualParentObject.parentNode.parentNode.appendChild(VisualParentObject.parentNode);
-				}
-			}
-		}
-		VisualObject = null;
-	},
-
 	/***************************************************************************************************************
 	 * builds SVG container, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
@@ -4097,24 +4057,6 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * sets an SVG title on an object
-	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {String} newText Text for the title
-	 * @return {Boolean} true
-	 */
-	_setTitle: function(VisualObject, newText){
-		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
-		if (titles.length >0){
-			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
-		}else{
-			var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
-			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
-			VisualObject.appendChild(svgTitle);
-		}
-		return true;
-	},
-	
-	/**
 	 * loads all children and appends them to the Parent
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
@@ -4135,39 +4077,6 @@ cshmi.prototype = {
 			if (ChildComponent !== null && ChildComponent.parentNode === null){
 				realComponent.appendChild(ChildComponent);
 			}
-		}
-	},
-	
-	/**
-	 * tests if the parent should get a click event and register for this
-	 */
-	_armToggleChildVisibility: function(VisualParentObject, VisualObject, ObjectPath, requestList){
-		if(VisualParentObject === null){
-			return;
-		}
-		if (requestList[ObjectPath]["hideable"] === "TRUE"){
-			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
-			VisualParentObject.setAttribute("cursor", "pointer");
-		}
-		//make the parent clickable, if we can be hidden and no sibling has done this before
-		if (requestList[ObjectPath]["hideable"] === "TRUE"
-			&& HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			//toggle visibility of hideable childtemplates onclick
-			VisualParentObject.addEventListener("click", function(evt){
-				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
-					//we have an clickgesture on the same VisualObject, so this will handle all action
-					return;
-				}
-				
-				preserveThis.toggleChildTemplates(VisualParentObject);
-				
-				//quit propagation of event in any case. We do not want the parent template to handle the click
-				if (evt.stopPropagation) evt.stopPropagation();
-			}, false);
-			
-			//prevent multiple events on this
-			HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
 		}
 	},
 	
@@ -4216,6 +4125,99 @@ cshmi.prototype = {
 			//deactivate the dim of the sheet, as we are ready
 			HMI.Playground.firstChild.removeAttribute("opacity");
 		}
+	},
+	
+	/**
+	 * tests if the parent should get a click event and register for this
+	 */
+	_armToggleChildVisibility: function(VisualParentObject, VisualObject, ObjectPath, requestList){
+		if(VisualParentObject === null){
+			return;
+		}
+		if (requestList[ObjectPath]["hideable"] === "TRUE"){
+			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
+			VisualParentObject.setAttribute("cursor", "pointer");
+		}
+		//make the parent clickable, if we can be hidden and no sibling has done this before
+		if (requestList[ObjectPath]["hideable"] === "TRUE"
+			&& HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			//toggle visibility of hideable childtemplates onclick
+			VisualParentObject.addEventListener("click", function(evt){
+				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
+					//we have an clickgesture on the same VisualObject, so this will handle all action
+					return;
+				}
+				
+				preserveThis.toggleChildTemplates(VisualParentObject);
+				
+				//quit propagation of event in any case. We do not want the parent template to handle the click
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
+			
+			//prevent multiple events on this
+			HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
+		}
+	},
+	
+	/**
+	 * toggles visibility of child Templates
+	 * @param {Node} VisualParentObject Node which childs are toggled
+	 * @return void
+	 */
+	toggleChildTemplates: function(VisualParentObject){
+		var childTemplates = VisualParentObject.childNodes;
+		
+		for (var i=0; i < childTemplates.length; i++) {
+			var VisualObject = childTemplates[i];
+			if(VisualObject.getAttribute === undefined){
+				//this children can be for example a text node
+				continue;
+			}
+			var Classes = VisualObject.getAttribute("class");
+			if (Classes === null){
+				continue;
+			}else if (Classes.indexOf(this.cshmiTemplateHideableClass) === -1){
+				continue;
+			}else if (VisualObject.getAttribute("display") == "block"){
+				VisualObject.setAttribute("display", "none");
+			}else{
+				VisualObject.setAttribute("display", "block");
+				
+				//load hidden elements now
+				this._loadHiddenChildrenElements(VisualObject);
+				
+				//doku depth of moving to top
+				
+				//Move Faceplate-Container after every other, so it is fully visible
+				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
+					//hideable childtemplate in a normal template
+					VisualParentObject.parentNode.appendChild(VisualParentObject);
+				}else{
+					//hideable childtemplate in an action instantiated template (one level more)
+					VisualParentObject.parentNode.parentNode.appendChild(VisualParentObject.parentNode);
+				}
+			}
+		}
+		VisualObject = null;
+	},
+	
+	/**
+	 * sets an SVG title on an object
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} newText Text for the title
+	 * @return {Boolean} true
+	 */
+	_setTitle: function(VisualObject, newText){
+		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
+		if (titles.length >0){
+			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
+		}else{
+			var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
+			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
+			VisualObject.appendChild(svgTitle);
+		}
+		return true;
 	}
 };
 
