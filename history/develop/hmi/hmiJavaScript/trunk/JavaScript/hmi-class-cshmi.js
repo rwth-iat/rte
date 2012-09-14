@@ -701,8 +701,16 @@ cshmi.prototype = {
 				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math");
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
+			}else if (varName[1].indexOf("/cshmi/RenameObject") !== -1){
+				returnValue = this._interpreteRenameObject(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/CreateObject") !== -1){
+				returnValue = this._interpreteCreateObject(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/DeleteObject") !== -1){
 				returnValue = this._interpreteDeleteObject(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/LinkObjects") !== -1){
+				returnValue = this._interpreteLinkObjects(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/UnlinkObjects") !== -1){
+				returnValue = this._interpreteUnlinkObjects(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
 				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
@@ -1646,6 +1654,131 @@ cshmi.prototype = {
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
+	},
+	
+	/**
+	 * rename an object
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return false on error, true on success
+	 */
+	_interpreteRenameObject: function(VisualObject, ObjectPath){
+		//via getValue-part of RenameObject object
+		var OldName = this._getValue(VisualObject, ObjectPath+".OldName");
+		var NewName = this._getValue(VisualObject, ObjectPath+".NewName");
+		
+		var response = HMI.KSClient.renameObject(OldName, NewName, null);
+		
+		if (response === false || response === null){
+			//communication error
+			return true;
+		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
+			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull.');
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info('Renaming "'+OldName+'" to "'+NewName+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+		}
+		return true;
+	},
+	
+	/**
+	 * creates an object
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return false on error, true on success
+	 */
+	_interpreteCreateObject: function(VisualObject, ObjectPath){
+		//todo: implement autoRenameIfExists
+		
+		//via getValue-part of CreateObject object
+		var targetName = this._getValue(VisualObject, ObjectPath+".Name");
+		var targetPlace = this._getValue(VisualObject, ObjectPath+".Place");
+		var targetLibrary = this._getValue(VisualObject, ObjectPath+".Library");
+		var targetClass = this._getValue(VisualObject, ObjectPath+".Class");
+		
+		var response = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass, null);
+		
+		if (response === false || response === null){
+			//communication error
+			return true;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		}
+		return true;
+	},
+	
+	/**
+	 * deletes an object
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return false on error, true on success
+	 */
+	_interpreteDeleteObject: function(VisualObject, ObjectPath){
+		//via getValue-part of DeleteObject object
+		var targetName = this._getValue(VisualObject, ObjectPath+".Path");
+		
+		var response = HMI.KSClient.deleteObject(targetName, null);
+		
+		if (response === false || response === null){
+			//communication error
+			return true;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		}
+		return true;
+	},
+	
+	/**
+	 * links two objects
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return false on error, true on success
+	 */
+	_interpreteLinkObjects: function(VisualObject, ObjectPath){
+		//via getValue-part of LinkObjects object
+		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
+		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".PortNameA");
+		
+		var response = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, null);
+		
+		if (response === false || response === null){
+			//communication error
+			return true;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		}
+		return true;
+	},
+	
+	/**
+	 * unlinks two objects
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return false on error, true on success
+	 */
+	_interpreteUnlinkObjects: function(VisualObject, ObjectPath){
+		//via getValue-part of UnlinkObjects object
+		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
+		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".PortNameA");
+		
+		var response = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, null);
+		
+		if (response === false || response === null){
+			//communication error
+			return true;
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR") !== -1){
+			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		}
+		return true;
 	},
 	
 	/**

@@ -112,7 +112,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * usage example:
 	 *		this.getEP(null, '/servers%20*', this._cbGetServers);
 	 * @param Handle requires own Handle, null if uses the normal global Handle
-	 * @param path command to process of the command
+	 * @param path of object to query
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
@@ -224,7 +224,7 @@ HMIJavaScriptKSClient.prototype = {
 	 *		this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
 	 * 
 	 * @param Handle requires own Handle, null if uses the normal global Handle
-	 * @param path command to process of the command, multiple commands are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
+	 * @param path of the variable to fetch, multiple path are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
@@ -279,12 +279,14 @@ HMIJavaScriptKSClient.prototype = {
 		return true;
 	},
 	
+	
+	//fixme return value "" in true wandeln
 	/**
 	 * usage example:
 	 *		this.setVar(null, '/TechUnits/HMIManager.Command ', "{1} {010} {/TechUnits/HMIManager} {SHOWSHEETS}", null);
 	 * 
 	 * @param Handle requires own Handle, null if uses the normal global Handle
-	 * @param path command to process of the command
+	 * @param path of the variable to set
 	 * @param {String} value to set (StringVec are {part1} {part2} {part3} coded
 	 * @param cbfnc callback function
 	 * @param async request async communication
@@ -338,6 +340,295 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
 		return true;
 	},
+	
+	/**
+	 * rename an object
+	 * 
+	 * @param path of the object to rename
+	 * @param newname (with full path) of the object
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return true, "" or null
+	 */
+	renameObject: function(path, newname, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no path found");
+			return null;
+		}
+		if(!newname || newname.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no classname found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no valid path found, path was: "+path);
+			return null;
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&args=rename%20'+
+			ServerAndPath[1]+'&20'+newname;
+		}else if (HMI.GatewayTypePHP === true){
+			//not implemented!
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=rename"+
+				"&path=" + ServerAndPath[1]+
+				"&newname=" + newname;
+		}
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		}else{
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - End");
+			return ReturnText;
+		}
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - End");
+		return true;
+	},
+	
+	/**
+	 * creates an object
+	 * 
+	 * @param path of the object to create
+	 * @param classname full class name of the new object
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return true, "" or null
+	 */
+	createObject: function(path, classname, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no path found");
+			return null;
+		}
+		if(!classname || classname.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no classname found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no valid path found, path was: "+path);
+			return null;
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&args=create%20'+
+			ServerAndPath[1]+'&20'+classname;
+		}else if (HMI.GatewayTypePHP === true){
+			//not implemented!
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=create"+
+				"&path=" + ServerAndPath[1]+
+				"&class=" + classname;
+		}
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		}else{
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - End");
+			return ReturnText;
+		}
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - End");
+		return true;
+	},
+	
+	/**
+	 * deletes an object
+	 * 
+	 * @param path ob the object to delete
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return true, "" or null
+	 */
+	deleteObject: function(path, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - no path found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - no valid path found, path was: "+path);
+			return null;
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&args=delete%20'+
+			ServerAndPath[1];
+		}else if (HMI.GatewayTypePHP === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=delete"+
+				"&path=" + ServerAndPath[1];
+		}
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		}else{
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - End");
+			return ReturnText;
+		}
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - End");
+		return true;
+	},
+	
+	/**
+	 * links two objects
+	 * 
+	 * @param path of the object to create
+	 * @param classname full class name of the new object
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return true, "" or null
+	 */
+	linkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no path found");
+			return null;
+		}
+		if(!classname || classname.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no classname found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no valid path found, path was: "+path);
+			return null;
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&args=link%20'+
+			ServerAndPath[1]+'.'+portnameA+'&20'+pathB;
+		}else if (HMI.GatewayTypePHP === true){
+			//not implemented!
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=link"+
+				"&path=" + ServerAndPath[1]+
+				"&class=" + classname;
+		}
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		}else{
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - End");
+			return ReturnText;
+		}
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - End");
+		return true;
+	},
+	
+	/**
+	 * links two objects
+	 * 
+	 * @param path of the object to create
+	 * @param classname full class name of the new object
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return true, "" or null
+	 */
+	unlinkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - Start: "+path);
+		if(!path || path.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no path found");
+			return null;
+		}
+		if(!classname || classname.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no classname found");
+			return null;
+		}
+		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(path.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no valid path found, path was: "+path);
+			return null;
+		}
+		
+		var ServerAndPath = this._splitKSPath(path);
+		var Handle;
+		var urlparameter;
+		if (HMI.GatewayTypeTCL === true){
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = 'obj='+Handle + '&args=unlink%20'+
+			ServerAndPath[1]+'.'+portnameA+'&20'+pathB;
+		}else if (HMI.GatewayTypePHP === true){
+			//not implemented!
+			Handle = this.getHandleID(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
+			urlparameter = "obj="+ Handle + "&cmd=unlink"+
+				"&path=" + ServerAndPath[1]+
+				"&class=" + classname;
+		}
+		if (async === true && cbfnc !== null){
+			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+		}else if (cbfnc !== null){
+			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+		}else{
+			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - End");
+			return ReturnText;
+		}
+		
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - End");
+		return true;
+	},
+	
 	/**
 	 * usage example:
 	 * 		this.delHandle("TksS-0042");

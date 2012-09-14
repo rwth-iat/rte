@@ -60,13 +60,16 @@
 *	12-Januar-2012			Je		V0.2.0
 *		-	adding global getaccess function, so no useless HAS_ACCESSORS are needed anymore
 *
+*	14-September-2012			Je		V0.3.0
+*		-	implemented all main KS services
+*
 ***********************************************************************/
 
 #include "ov.ovm"
 
 LIBRARY cshmi
 
-	VERSION		= "0.2";
+	VERSION		= "0.3";
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
 	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
@@ -391,7 +394,7 @@ LIBRARY cshmi
 			ksVar : STRING
 			COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
+			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'absolutey', 'fullqualifiedname')";
 			elemVarPath : STRING
 			HAS_SET_ACCESSOR
 			COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
@@ -423,7 +426,7 @@ LIBRARY cshmi
 			ksVar : STRING
 			COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content')";
+			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'absolutey')";
 			elemVarPath : STRING
 			HAS_SET_ACCESSOR
 			COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
@@ -530,14 +533,12 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS RoutePolyline : CLASS cshmi/Action
+	CLASS renameObject : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "a multi purpose connection between two objects";
+		COMMENT = "Rename an Object via KS";
 		PARTS
-			SourceBasename : CLASS cshmi/GetValue;
-			TargetBasename : CLASS cshmi/GetValue;
-			SourceVariablename : CLASS cshmi/GetValue;
-			TargetVariablename : CLASS cshmi/GetValue;
+			OldName : CLASS cshmi/GetValue;
+			NewName : CLASS cshmi/GetValue;
 		END_PARTS;
 	END_CLASS;
 	
@@ -562,6 +563,37 @@ LIBRARY cshmi
 		COMMENT = "Delete an Object via KS";
 		PARTS
 			Path : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+	
+	CLASS LinkObjects : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "link two Objects with an association via KS";
+		PARTS
+			ObjectA : CLASS cshmi/GetValue;
+			ObjectB : CLASS cshmi/GetValue;
+			PortNameA : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+	
+	CLASS UnlinkObjects : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "unlink an Object via KS";
+		PARTS
+			ObjectA : CLASS cshmi/GetValue;
+			ObjectB : CLASS cshmi/GetValue;
+			PortNameA : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+	
+	CLASS RoutePolyline : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "a multi purpose connection between two objects";
+		PARTS
+			SourceBasename : CLASS cshmi/GetValue;
+			TargetBasename : CLASS cshmi/GetValue;
+			SourceVariablename : CLASS cshmi/GetValue;
+			TargetVariablename : CLASS cshmi/GetValue;
 		END_PARTS;
 	END_CLASS;
 	
