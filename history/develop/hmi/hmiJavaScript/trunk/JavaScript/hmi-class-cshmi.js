@@ -2784,28 +2784,15 @@ cshmi.prototype = {
 				if (this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]].charAt(0) !== "/"){
 					//Value from currentChild is not a full path, so search for it in the parents
 					
-					var rootObject = VisualParentObject;
-					var FBRef = null;
-					//search FBReference of root Object
-					while (rootObject !== null && rootObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-						//FBVariableReference found
-						if(rootObject.FBReference && rootObject.FBReference["default"] !== undefined){
-							FBRef = rootObject.FBReference["default"];
-							//FBRef found, we can stop search
-							rootObject = null;
-						}else{
-							//loop upwards to find the Template object
-							rootObject = rootObject.parentNode;
-						}
-					}
-					if (FBRef === null){
+					var FBRef = this._getFBReference(VisualParentObject);
+					if (FBRef === ""){
 						HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
 						return null;
 					}else if (FBRef.indexOf("//localhost") === 0){
 						//localhost in the model should not be the http-gateway
 						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef + "." + this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef;
 				}else{
 					//currentChild set a full path
 					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
