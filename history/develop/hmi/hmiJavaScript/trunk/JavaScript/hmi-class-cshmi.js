@@ -563,6 +563,7 @@ cshmi.prototype = {
 			HMI.svgDocument.addEventListener("mousemove", VisualObject._moveMouseMoveThunk, false);
 			HMI.svgDocument.addEventListener("mouseup", VisualObject._moveStopDragThunk, false);
 		}
+		//we do not want to propagate a click to the parents
 		VisualObject.addEventListener("click", VisualObject._moveHandleClickThunk, false);
 		
 		if (evt.stopPropagation) evt.stopPropagation();
@@ -945,68 +946,20 @@ cshmi.prototype = {
 				HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+ParameterValue);
 			}
 			return false;
-		}else if (ParameterName === "TemplateFBReferenceVariable" && ParameterValue === "fullqualifiedname"){
-			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
-				//we are in an getEP-iterator and want to read out a value from the currentchild
-				TemplateObject = VisualObject;
-				//search FBReference of root Object
-				do{
-					//FBReference found
-					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-						FBRef = TemplateObject.FBReference["default"];
-						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
-							//we have an OV-PART, so the separator is a dot
-							return FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
-						}else{
-							//we have no OV-PART, so the separator is a slash
-							return FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
-						}
-					}
-				//loop upwards to find the Template object
-				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-				return "";
-			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
-				//we are in an GetVar-iterator and want to read out a value from the currentchild
-				TemplateObject = VisualObject;
-				//search FBReference of root Object
-				do{
-					//FBReference found
-					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-						FBRef = TemplateObject.FBReference["default"];
-						break;
-					}
-				//loop upwards to find the Template object
-				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-				
-				// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
-				// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
-				var prefix = "";
-				if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
-					//find the 3rd "/"
-					var slashIndex = FBRef.indexOf("/", 2);
-					//find the 4th "/"
-					slashIndex = FBRef.indexOf("/", slashIndex+1);
-					//only keep the String before 4th "/"
-					var prefix = FBRef.slice(0, slashIndex);
-				}
-				
-				return prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+		}else if (ParameterName === "TemplateFBReferenceVariable"){
+			var FBRef = this._getFBReference(VisualObject);
+			if (FBRef === ""){
+				return false;
+			}else if (ParameterValue === "fullqualifiedname"){
+				return FBRef;
+			}else if (ParameterValue === "fullqualifiedparentname"){
+				var PathArray = FBRef.split("/");
+				PathArray.pop();
+				return PathArray.join("/");
+			}else if(preventNetworkRequest === true){
+				//intentionally no value
+				return null;
 			}
-			
-			//no active iterator, so plain FBReference
-			TemplateObject = VisualObject;
-			do{
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					//the name of a Template was requested
-					return TemplateObject.FBReference["default"];
-				}
-			//loop upwards to find the Template object
-			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return "";
-		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === true){
-			//intentionally no value
-			return null;
-		}else if (ParameterName === "TemplateFBReferenceVariable" && preventNetworkRequest === false){
 			var TemplateObject;
 			var FBRef = null;
 			
@@ -1383,12 +1336,8 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(VisualObject, NewValue);
-/*
-			}else if (ParameterValue.indexOf("hover") !== -1){
-				//todo, https://developer.mozilla.org/en/DOM/CSSStyleSheet/insertRule
-				
-				//VisualObject, NewValue;
-*/
+/*			}else if (ParameterValue.indexOf("hover") !== -1){
+				//todo, https://developer.mozilla.org/en/DOM/CSSStyleSheet/insertRule */
 			}else if (ParameterValue == "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
@@ -1493,122 +1442,27 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
-			var TemplateObject;
-			if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
-				//we are in an iterator and want to read out a value from the currentchild
-				var TemplateObject = VisualObject;
-				var FBRef = null;
-				//search FBReference of root Object
-				do{
-					//FBReference found
-					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-						FBRef = TemplateObject.FBReference["default"];
-						
-						if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
-							//we have an OV-PART, so the separator is a dot
-							var result = HMI.KSClient.setVar_NG(FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, NewValue, null);
-						}else{
-							//we have no OV-PART, so the separator is a slash
-							result = HMI.KSClient.setVar_NG(FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"]+"."+ParameterValue, NewValue, null);
-						}
-						if (response === false || response === null){
-							//communication error
-							return true;
-						}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
-							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
-						}else if (result.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
-						}
-						return true;
-					}
-				//loop upwards to find the Template object
-				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			var FBRef = this._getFBReference(VisualObject);
+			if (FBRef === ""){
 				return false;
-			}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
-				//we are in an iterator and want to read out a value from the currentchild
-				var TemplateObject = VisualObject;
-				var FBRef = null;
-				//search FBReference of root Object
-				do{
-					//FBReference found
-					if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-						FBRef = TemplateObject.FBReference["default"];
-						break;
-					}
-				//loop upwards to find the Template object
-				}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-				
-				// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
-				// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
-				var prefix = "";
-				if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
-					//find the 3rd "/"
-					var slashIndex = FBRef.indexOf("/", 2);
-					//find the 4th "/"
-					slashIndex = FBRef.indexOf("/", slashIndex+1);
-					//only keep the String before 4th "/"
-					var prefix = FBRef.slice(0, slashIndex);
-				}
-				
-				var result = HMI.KSClient.setVar_NG(prefix + this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue, NewValue, null);
-				if (response === false || response === null){
-					//communication error
-					return true;
-				}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
-					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"]+"."+ParameterValue+' not successfull: Bad Parameter ');
-				}else if (result.indexOf("KS_ERR") !== -1){
-					HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
-				}
-				return true;
 			}
 			
-			//no active iterator, so plain FBReference
-			TemplateObject = VisualObject;
-			do{
-				if(TemplateObject.FBReference && TemplateObject.FBReference[ParameterValue] !== undefined){
-					//##### Deprecated: change this we have TemplateFBVariableReferenceName now
-					
-					//a named variable of a FBReference was requested, naming was done in instantiateTemplate
-					if (TemplateObject.FBReference[ParameterValue].charAt(0) === "/"){
-						//String begins with / so it is a fullpath
-						var response = HMI.KSClient.setVar_NG(TemplateObject.FBReference[ParameterValue], NewValue, null);
-						if (response === false || response === null){
-							//communication error
-							return true;
-						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference[ParameterValue]+' not successfull: Bad Parameter ');
-						}else if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-						}
-						return true;
-					}else{
-						//a normal relative path
-						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
-						return false;
-					}
-				}else if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					//a variable from a Template was requested
-					if (TemplateObject.FBReference["default"].charAt(0) === "/"){
-						//String begins with / so it is a fullpath
-						response = HMI.KSClient.setVar_NG(TemplateObject.FBReference["default"]+'.'+ParameterValue, NewValue, null);
-						if (response === false || response === null){
-							//communication error
-							return true;
-						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: Bad Parameter ');
-						}else if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+NewValue+' at '+TemplateObject.FBReference["default"]+'.'+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-						}
-						return true;
-					}else{
-						//a normal relative path
-						HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' wrong configured. No relative path allowed');
-						return false;
-					}
-				}
-			//loop upwards to find the Template object
-			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return false;
+			var result;
+			if(ParameterValue == "identifier"){
+				result = HMI.KSClient.renameObject(FBRef, NewValue, null);
+			}else{
+				var result = HMI.KSClient.setVar_NG(FBRef+"."+ParameterValue, NewValue, null);
+			}
+			
+			if (result === false || result === null){
+				//communication error
+				return true;
+			}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
+				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+FBRef+"."+ParameterValue+' not successfull: Bad Parameter ');
+			}else if (result.indexOf("KS_ERR") !== -1){
+				HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
+			}
+			return true;
 		}else if (ParameterName === "TemplateFBVariableReferenceName"){
 			//TemplateFBReferenceVariable
 			var TemplateObject = VisualObject;
@@ -1673,7 +1527,9 @@ cshmi.prototype = {
 			//communication error
 			return true;
 		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
-			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull.');
+			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull. Bad name supplied.');
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull, new path was not correct:'+NewName);
 		}else if (response.indexOf("KS_ERR") !== -1){
 			HMI.hmi_log_info('Renaming "'+OldName+'" to "'+NewName+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
 		}
@@ -1741,7 +1597,7 @@ cshmi.prototype = {
 		//via getValue-part of LinkObjects object
 		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
 		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".PortNameA");
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
 		var response = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, null);
 		
@@ -1766,7 +1622,7 @@ cshmi.prototype = {
 		//via getValue-part of UnlinkObjects object
 		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
 		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".PortNameA");
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
 		var response = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, null);
 		
@@ -4083,6 +3939,70 @@ cshmi.prototype = {
 		}
 		
 		return VisualObject;
+	},
+	
+	/**
+	 * returns the FBReference
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @return {String} Path of the FBReference or ""
+	 */
+	_getFBReference: function(VisualObject){
+		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+			//we are in an getEP-iterator and want to read out a value from the currentchild
+			TemplateObject = VisualObject;
+			//search FBReference of root Object
+			do{
+				//FBReference found
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					FBRef = TemplateObject.FBReference["default"];
+					if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+						//we have an OV-PART, so the separator is a dot
+						return FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+					}else{
+						//we have no OV-PART, so the separator is a slash
+						return FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			return "";
+		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+			//we are in an GetVar-iterator and want to read out a value from the currentchild
+			TemplateObject = VisualObject;
+			//search FBReference of root Object
+			do{
+				//FBReference found
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					FBRef = TemplateObject.FBReference["default"];
+					break;
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			
+			// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
+			var prefix = "";
+			if (FBRef !== null && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+				//find the 3rd "/"
+				var slashIndex = FBRef.indexOf("/", 2);
+				//find the 4th "/"
+				slashIndex = FBRef.indexOf("/", slashIndex+1);
+				//only keep the String before 4th "/"
+				var prefix = FBRef.slice(0, slashIndex);
+			}
+			return prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+		}else{
+			//no active iterator, so plain FBReference
+			TemplateObject = VisualObject;
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//the name of a Template was requested
+					return TemplateObject.FBReference["default"];
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+		}
+		return "";
 	},
 	
 	/**

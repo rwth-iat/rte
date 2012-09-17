@@ -345,28 +345,42 @@ HMIJavaScriptKSClient.prototype = {
 	 * rename an object
 	 * 
 	 * @param path of the object to rename
-	 * @param newname (with full path) of the object
+	 * @param newname (optional with full path) of the object
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return true, "" or null
 	 */
-	renameObject: function(path, newname, cbfnc, async) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - Start: "+path);
-		if(!path || path.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no path found");
+	renameObject: function(oldname, newname, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - Start: "+oldname);
+		if(!oldname || oldname.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no oldname found");
 			return null;
 		}
 		if(!newname || newname.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no classname found");
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no newname found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
-		if(path.charAt(0) !== "/"){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no valid path found, path was: "+path);
+		//if (oldname.indexof("http:") === 0){}else		//ksservhttp handling here
+		if(oldname.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no valid oldname found, oldname was: "+oldname);
 			return null;
 		}
 		
-		var ServerAndPath = this._splitKSPath(path);
+		var ServerAndPath = this._splitKSPath(oldname);
+		var ServerAndPathNewname = this._splitKSPath(newname);
+		if(newname.charAt(0) !== "/"){
+			//we have a plain name, add path of the oldname
+			var PathArray = ServerAndPath[1].split("/");
+			newname = ServerAndPath[1].replace( PathArray[PathArray.length - 1], newname);
+		}else if (ServerAndPath[0] === ServerAndPathNewname[0]){
+			//both names are within the same server
+			newname = ServerAndPathNewname[1];
+		}else if (ServerAndPath[0] !== ServerAndPathNewname[0] &&
+				ServerAndPath[2] === "fullpath" && ServerAndPathNewname[2] === "fullpath"){
+			//two full path names given , but on different server not possible
+			return "KS_ERR_BADPATH";
+		}
+		
 		var Handle;
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
@@ -375,7 +389,7 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=rename%20'+
-			ServerAndPath[1]+'&20'+newname;
+				ServerAndPath[1]+'%20'+newname;
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -1248,11 +1262,11 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/**
 	 * returns a valid HostAndServer, Path Array
-	 * @return Array with HostAndServer and Path as String or null (in Error) in Array
+	 * @return Array with HostAndServer and Path as String or null (in Error) and an infostring ("emptystring", "fullpath", "relativepath" or "genericerror") in Array
 	 */
 	_splitKSPath: function(FullKSpath){
 		if (typeof FullKSpath !== "string" || FullKSpath.length === 0){
-			return Array(null, "");
+			return Array(null, "", "emptystring");
 		}
 		if (FullKSpath.charAt(0) === "/" && FullKSpath.charAt(1) === "/"){
 			//find the 3rd "/"
@@ -1265,13 +1279,13 @@ HMIJavaScriptKSClient.prototype = {
 			var HostAndServer = FullKSpath.slice(2, slashIndexAfterServer);
 			var KSPath = FullKSpath.slice(slashIndexAfterServer);
 			
-			return Array(HostAndServer, KSPath);
+			return Array(HostAndServer, KSPath, "fullpath");
 		}else if (FullKSpath.charAt(0) === "/"){
 			//no Host and Server found, so replace with Model location
-			return Array(this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer, FullKSpath);
+			return Array(this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer, FullKSpath, "relativepath");
 		}else{
 			//ups kaputt
-			return Array(null, "");
+			return Array(null, "", "genericerror");
 		}
 	},
 	

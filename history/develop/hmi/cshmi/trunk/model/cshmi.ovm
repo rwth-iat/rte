@@ -394,7 +394,7 @@ LIBRARY cshmi
 			ksVar : STRING
 			COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'absolutey', 'fullqualifiedname')";
+			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'absolutey')";
 			elemVarPath : STRING
 			HAS_SET_ACCESSOR
 			COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
@@ -406,7 +406,7 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "Value from the user; example 'mousex', 'mousey', 'textinput', 'textinput:question', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref";
+			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref or 'fullqualifiedparentname'";
 			TemplateFBVariableReferenceName : STRING
 			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
@@ -533,7 +533,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS renameObject : CLASS cshmi/Action
+	CLASS RenameObject : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "Rename an Object via KS";
 		PARTS
@@ -568,21 +568,21 @@ LIBRARY cshmi
 	
 	CLASS LinkObjects : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "link two Objects with an association via KS";
+		COMMENT = "link two Objects with an association. Association is the 'varname' of object A in KS.";
 		PARTS
 			ObjectA : CLASS cshmi/GetValue;
 			ObjectB : CLASS cshmi/GetValue;
-			PortNameA : CLASS cshmi/GetValue;
+			Association : CLASS cshmi/GetValue;
 		END_PARTS;
 	END_CLASS;
 	
 	CLASS UnlinkObjects : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "unlink an Object via KS";
+		COMMENT = "link two Objects with an association. Association is the 'varname' of object A in KS.";
 		PARTS
 			ObjectA : CLASS cshmi/GetValue;
 			ObjectB : CLASS cshmi/GetValue;
-			PortNameA : CLASS cshmi/GetValue;
+			Association : CLASS cshmi/GetValue;
 		END_PARTS;
 	END_CLASS;
 	
