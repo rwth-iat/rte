@@ -140,87 +140,89 @@ cshmi.prototype = {
 		//build the selected sheet aka group. This includes all containing elements
 		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", false);
 		
+		if (VisualObject === null){
+			HMI.hmi_log_onwebsite('No sheet with name  "'+ObjectPath+'" available.');
+			return;
+		}
 		if(HMI.PlaygroundContainerNode){
 			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
 			HMI.PlaygroundContainerNode.setAttribute('height', VisualObject.getAttribute('height'));
 			HMI.PlaygroundContainerNode.setAttribute('width', VisualObject.getAttribute('width'));
 		}
 		
-		if (VisualObject !== null){
-			//build predefined gradients
-			//they are used in the fill attributes like this
-			//	url(#VertWhite2Black)
-			var svgDefs = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'defs');
-			var svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
-				svgLinGrad.id = "VertWhite2Black";
-				svgLinGrad.setAttribute("x1", "50%");
-				svgLinGrad.setAttribute("y1", "0%");
-				svgLinGrad.setAttribute("x2", "50%");
-				svgLinGrad.setAttribute("y2", "140%");
-				var svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
-					svgStop.setAttribute("stop-color", "white");
-					svgStop.setAttribute("offset", "0%");
-					svgLinGrad.appendChild(svgStop);
-				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
-					svgStop.setAttribute("stop-color", "black");
-					svgStop.setAttribute("offset", "100%");
+		//build predefined gradients
+		//they are used in the fill attributes like this
+		//	url(#VertWhite2Black)
+		var svgDefs = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'defs');
+		var svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
+			svgLinGrad.id = "VertWhite2Black";
+			svgLinGrad.setAttribute("x1", "50%");
+			svgLinGrad.setAttribute("y1", "0%");
+			svgLinGrad.setAttribute("x2", "50%");
+			svgLinGrad.setAttribute("y2", "140%");
+			var svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+				svgStop.setAttribute("stop-color", "white");
+				svgStop.setAttribute("offset", "0%");
 				svgLinGrad.appendChild(svgStop);
-				svgDefs.appendChild(svgLinGrad);
-			svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
-				svgLinGrad.id = "HorWhite2Black";
-				svgLinGrad.setAttribute("x1", "0%");
-				svgLinGrad.setAttribute("y1", "50%");
-				svgLinGrad.setAttribute("x2", "140%");
-				svgLinGrad.setAttribute("y2", "50%");
-				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
-					svgStop.setAttribute("stop-color", "white");
-					svgStop.setAttribute("offset", "0%");
-					svgLinGrad.appendChild(svgStop);
-				svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
-					svgStop.setAttribute("stop-color", "black");
-					svgStop.setAttribute("offset", "100%");
+			svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+				svgStop.setAttribute("stop-color", "black");
+				svgStop.setAttribute("offset", "100%");
+			svgLinGrad.appendChild(svgStop);
+			svgDefs.appendChild(svgLinGrad);
+		svgLinGrad = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'linearGradient');
+			svgLinGrad.id = "HorWhite2Black";
+			svgLinGrad.setAttribute("x1", "0%");
+			svgLinGrad.setAttribute("y1", "50%");
+			svgLinGrad.setAttribute("x2", "140%");
+			svgLinGrad.setAttribute("y2", "50%");
+			svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+				svgStop.setAttribute("stop-color", "white");
+				svgStop.setAttribute("offset", "0%");
 				svgLinGrad.appendChild(svgStop);
-				svgDefs.appendChild(svgLinGrad);
-			VisualObject.appendChild(svgDefs);
-			
-			svgLinGrad = null;
-			svgDefs = null;
-			
-			//push the svg VisualObject to the screen
-			HMI.Playground.appendChild(VisualObject);
-			
-			//calculate all offset parameter to be able to display visual feedback
-			//this is only possible now, as the orientation of the parents are not defined when they are not appended
-			var maxPosition = HMI.saveAbsolutePosition(VisualObject, true);
-			//we want to have offset parameter on all visual elements
-			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-			for(var i = 0;i < ComponentChilds.length;i++){
-				var Position = HMI.saveAbsolutePosition(ComponentChilds[i], true);
-				if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
-					maxPosition[0] = Position[0];
-				}
-				if (ComponentChilds[i].tagName !== "svg" && Position[1] > maxPosition[1]){
-					maxPosition[1] = Position[1];
-				}
+			svgStop = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'stop');
+				svgStop.setAttribute("stop-color", "black");
+				svgStop.setAttribute("offset", "100%");
+			svgLinGrad.appendChild(svgStop);
+			svgDefs.appendChild(svgLinGrad);
+		VisualObject.appendChild(svgDefs);
+		
+		svgLinGrad = null;
+		svgDefs = null;
+		
+		//push the svg VisualObject to the screen
+		HMI.Playground.appendChild(VisualObject);
+		
+		//calculate all offset parameter to be able to display visual feedback
+		//this is only possible now, as the orientation of the parents are not defined when they are not appended
+		var maxPosition = HMI.saveAbsolutePosition(VisualObject, true);
+		//we want to have offset parameter on all visual elements
+		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+		for(var i = 0;i < ComponentChilds.length;i++){
+			var Position = HMI.saveAbsolutePosition(ComponentChilds[i], true);
+			if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
+				maxPosition[0] = Position[0];
 			}
-			Position = null;
-			ComponentChilds = null;
-			
-			//interprete onload Actions in the order of occurrence
-			while(this.ResourceList.onloadCallStack.length !== 0){
-				var EventObjItem = this.ResourceList.onloadCallStack.shift();
-				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+			if (ComponentChilds[i].tagName !== "svg" && Position[1] > maxPosition[1]){
+				maxPosition[1] = Position[1];
 			}
-			EventObjItem = null;
-			
-			if (maxPosition[0] > VisualObject.getAttribute('width') || maxPosition[1] > VisualObject.getAttribute('height')){
-				HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view.");
-			}
-			maxPosition = null;
-			
-			//the DOM Tree is populated now
-			this.initStage = false;
 		}
+		Position = null;
+		ComponentChilds = null;
+		
+		//interprete onload Actions in the order of occurrence
+		while(this.ResourceList.onloadCallStack.length !== 0){
+			var EventObjItem = this.ResourceList.onloadCallStack.shift();
+			this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+		}
+		EventObjItem = null;
+		
+		if (maxPosition[0] > VisualObject.getAttribute('width') || maxPosition[1] > VisualObject.getAttribute('height')){
+			HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view.");
+		}
+		maxPosition = null;
+		
+		//the DOM Tree is populated now
+		this.initStage = false;
 	},
 	
 	/**
