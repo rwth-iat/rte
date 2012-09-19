@@ -138,7 +138,7 @@ cshmi.prototype = {
 		this.initStage = true;
 		
 		//build the selected sheet aka group. This includes all containing elements
-		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", "all");
+		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", false);
 		
 		if(HMI.PlaygroundContainerNode){
 			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
@@ -364,7 +364,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["cyctime"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -759,7 +759,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["value"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return false;
 			}
 			
@@ -1137,7 +1137,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return false;
 			}
 			
@@ -1383,7 +1383,7 @@ cshmi.prototype = {
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			return false;
 		}else if (ParameterName === "TemplateConfigValues"){
-			TemplateObject = VisualObject;
+			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					break;
@@ -1395,7 +1395,7 @@ cshmi.prototype = {
 				TemplateObject.ConfigValues[ParameterValue] = NewValue;
 				return true;
 			}
-			//fixme in diesem Fall muss die info auch irgendwo hinterlegt sein. Nur wohin?
+			//should not happen, since the first SVG has an empty ConfigValue
 			return false;
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
@@ -1598,7 +1598,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["anycond"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -1678,7 +1678,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["comptype"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -1779,7 +1779,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["childValue"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -1920,7 +1920,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["ChildrenType"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -2605,7 +2605,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
 			//build a skeleton to preserve zindex/sequence
@@ -2633,7 +2633,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["hideable"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -2666,7 +2666,7 @@ cshmi.prototype = {
 			requestListTemplate[PathOfTemplateDefinition]["height"] = null;
 			
 			successCode = this._requestVariablesArray(requestListTemplate);
-			if (successCode == false){
+			if (successCode === false){
 				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
 				return null;
 			}
@@ -2946,7 +2946,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			VisualObject.id = ObjectPath;
@@ -2954,7 +2954,8 @@ cshmi.prototype = {
 		}else{
 			requestList[ObjectPath] = new Object();
 			if (VisualParentObject !== null){
-				//with this "hack" we can visualize a TemplateDefinition via deep link for testing
+				//x,y of the first svg should be 0,0 regardless of the config
+				//with this "hack" we also can visualize a TemplateDefinition via deep link for testing
 				requestList[ObjectPath]["x"] = null;
 				requestList[ObjectPath]["y"] = null;
 			}
@@ -2964,7 +2965,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["visible"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			//we have asked the object successful, so remember the result
@@ -2991,6 +2992,13 @@ cshmi.prototype = {
 		
 		VisualObject.setAttribute("overflow", "visible");
 		
+		if (VisualParentObject === null){
+			//if this is the first svg, we need a default container for ConfigValues for saving them
+			VisualObject.FBReference = Object();
+			VisualObject.FBReference["default"] = "";
+			VisualObject.ConfigValues = Object();
+		}
+		
 		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		return VisualObject;
@@ -3010,7 +3018,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
 			VisualObject.id = ObjectPath;
@@ -3029,7 +3037,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3075,7 +3083,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
 			VisualObject.id = ObjectPath;
@@ -3091,7 +3099,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3134,7 +3142,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
 			VisualObject.id = ObjectPath;
@@ -3150,7 +3158,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3193,7 +3201,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
 			VisualObject.id = ObjectPath;
@@ -3209,7 +3217,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3295,7 +3303,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
 			VisualObject.id = ObjectPath;
@@ -3319,7 +3327,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["trimToLength"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3402,7 +3410,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
 			VisualObject.id = ObjectPath;
@@ -3420,7 +3428,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3462,7 +3470,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
 			VisualObject.id = ObjectPath;
@@ -3481,7 +3489,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3527,7 +3535,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 			VisualObject.id = ObjectPath;
@@ -3546,7 +3554,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["strokeWidth"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3587,7 +3595,7 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
 			this.ResourceList.Elements[ObjectPath].useCount++;
-		}else if(preventNetworkRequest == true){
+		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
 			VisualObject.id = ObjectPath;
@@ -3605,7 +3613,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["Bitmapcontent"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
-			if (successCode == false){
+			if (successCode === false){
 				return null;
 			}
 			
@@ -3668,9 +3676,9 @@ cshmi.prototype = {
 	 * @return {String} Path of the FBReference or ""
 	 */
 	_getFBReference: function(VisualObject){
+		var TemplateObject = VisualObject;
 		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 			//we are in an getEP-iterator and want to read out a value from the currentchild
-			TemplateObject = VisualObject;
 			//search FBReference of root Object
 			do{
 				//FBReference found
@@ -3689,7 +3697,6 @@ cshmi.prototype = {
 			return "";
 		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 			//we are in an GetVar-iterator and want to read out a value from the currentchild
-			TemplateObject = VisualObject;
 			//search FBReference of root Object
 			do{
 				//FBReference found
@@ -3714,7 +3721,6 @@ cshmi.prototype = {
 			return prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
 		}else{
 			//no active iterator, so plain FBReference
-			TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					//the name of a Template was requested
