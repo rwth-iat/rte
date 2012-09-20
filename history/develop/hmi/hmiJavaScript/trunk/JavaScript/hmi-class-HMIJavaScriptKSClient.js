@@ -447,8 +447,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=create%20'+
-			ServerAndPath[1]+'&20'+classname;
+			urlparameter = 'obj='+Handle + '&args=create%20{'+
+			ServerAndPath[1]+'%20'+classname+'}';
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -558,8 +558,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=link%20'+
-			ServerAndPath[1]+'.'+portnameA+'&20'+pathB;
+			urlparameter = 'obj='+Handle + '&args=link%20{'+
+			ServerAndPath[1]+'.'+portnameA+'%20'+pathB+'}';
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -617,8 +617,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=unlink%20'+
-			ServerAndPath[1]+'.'+portnameA+'&20'+pathB;
+			urlparameter = 'obj='+Handle + '&args=unlink%20{'+
+			ServerAndPath[1]+'.'+portnameA+'%20'+pathB+'}';
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);

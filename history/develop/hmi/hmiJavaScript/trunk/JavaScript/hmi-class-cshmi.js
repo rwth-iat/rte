@@ -937,12 +937,12 @@ cshmi.prototype = {
 			}else if(ParameterValue === "mousex"){
 				var newX = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[0];
 				if (!isNaN(newX)){
-					return this.ResourceList.EventInfos.startXObj+newX-this.ResourceList.EventInfos.startXMouse;
+					return newX;
 				}
 			}else if(ParameterValue === "mousey"){
 				var newY = HMI.getClickPosition(this.ResourceList.EventInfos.EventObj, HMI.Playground.firstChild)[1];
 				if (!isNaN(newY)){
-					return this.ResourceList.EventInfos.startYObj+newY-this.ResourceList.EventInfos.startYMouse;
+					return newY;
 				}
 			}else{
 				HMI.hmi_log_info_onwebsite('GetValue OperatorInput not implemented. command: '+ParameterValue);
