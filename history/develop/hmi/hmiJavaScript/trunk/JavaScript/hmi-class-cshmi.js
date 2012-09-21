@@ -81,6 +81,7 @@ function cshmi() {
 	this.ResourceList.GlobalVar = Object();
 	this.ResourceList.EventInfos = Object();
 	this.ResourceList.EventInfos.EventObj = null;
+	this.ResourceList.EventInfos.mouseRelativePosition = null;
 	this.ResourceList.EventInfos.startXMouse = null;
 	this.ResourceList.EventInfos.startYMouse = null;
 	this.ResourceList.EventInfos.startXObj = null;
@@ -473,6 +474,45 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
+		}else if (command[command.length-1] === "mouseover"){
+			var Eventname = "mouseover";
+			if ('onmouseenter' in HMI.svgDocument.documentElement){
+				//mouseenter is far better, than mouseover
+				Eventname = "mouseenter";
+			}
+			
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			VisualObject.addEventListener(Eventname, function(evt){
+				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				
+				//get and execute all actions
+				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				
+				//an later action should not interprete this event
+				preserveThis.ResourceList.EventInfos.EventObj = null;
+				
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
+		}else if (command[command.length-1] === "mouseout"){
+			//mouseleave is far better, than mouseout
+			var Eventname = "mouseout";
+			if ('onmouseleave' in HMI.svgDocument.documentElement){
+				//mouseenter is far better, than mouseover
+				Eventname = "mouseleave";
+			}
+			
+			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
+			VisualObject.addEventListener(Eventname, function(evt){
+				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				
+				//get and execute all actions
+				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				
+				//an later action should not interprete this event
+				preserveThis.ResourceList.EventInfos.EventObj = null;
+				
+				if (evt.stopPropagation) evt.stopPropagation();
+			}, false);
 		}else if (command[command.length-1] === "aftermove"){
 			VisualObject.setAttribute("cursor", "move");
 			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
@@ -541,6 +581,7 @@ cshmi.prototype = {
 		var mouseposition = HMI.getClickPosition(evt, HMI.Playground.firstChild);
 		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
 		this.ResourceList.EventInfos.startYMouse = mouseposition[1];
+		this.ResourceList.EventInfos.mouseRelativePosition = HMI.getClickPosition(evt, VisualObject);
 		this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x"), 10);
 		this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("y"), 10);
 		
@@ -669,14 +710,16 @@ cshmi.prototype = {
 		}
 		
 		if (canceled === true){
-			//an action should not interprete this event
-			this.ResourceList.EventInfos.EventObj = null;
+			//no action
 		}else if (interpreteEvent === "click"){
 			this._interpreteAction(VisualObject, VisualObject.getAttribute("data-clickpath"));
 		}else{
 			//get and execute all actions
 			this._interpreteAction(VisualObject, ObjectPath);
 		}
+		
+		//an later action should not interprete this event
+		this.ResourceList.EventInfos.EventObj = null;
 		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
@@ -1230,8 +1273,6 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue == "title"){
 				this._setTitle(VisualObject, NewValue);
-/*			}else if (ParameterValue.indexOf("hover") !== -1){
-				//todo, https://developer.mozilla.org/en/DOM/CSSStyleSheet/insertRule */
 			}else if (ParameterValue == "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
@@ -1272,16 +1313,36 @@ cshmi.prototype = {
 					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
 				}
 			}else if (ParameterValue == "absolutex"){
-				//absolutex is calculated from the offset of the parentNode
+				var relativeX = 0;
+				if (this.ResourceList.EventInfos.EventObj !== null){
+					//if we are after an move, we want to set a different x
+					var relativeX = this.ResourceList.EventInfos.mouseRelativePosition[0];
+				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-					VisualObject.setAttribute("x", NewValue - VisualObject.parentNode.getAttribute("absolutex"));
-					VisualObject.setAttribute("absolutex", NewValue);
+					//absolutex is calculated from the offset of the parentNode
+					VisualObject.setAttribute("x", NewValue - VisualObject.parentNode.getAttribute("absolutex") - relativeX);
+					VisualObject.setAttribute("absolutex", NewValue - relativeX);
+					//we want to have offset parameter on all visual elements
+					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+					for(var i = 0;i < ComponentChilds.length;i++){
+						HMI.saveAbsolutePosition(ComponentChilds[i]);
+					}
 				}
 			}else if (ParameterValue == "absolutey"){
-				//absolutey is calculated from the offset of the parentNode
+				var relativeY = 0;
+				if (this.ResourceList.EventInfos.EventObj !== null){
+					//if we are after an move, we want to set a different y
+					var relativeY = this.ResourceList.EventInfos.mouseRelativePosition[1];
+				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey"));
-					VisualObject.setAttribute("absolutey", NewValue);
+					//absolutey is calculated from the offset of the parentNode
+					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey") - relativeY);
+					VisualObject.setAttribute("absolutey", NewValue - relativeY);
+					//we want to have offset parameter on all visual elements
+					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+					for(var i = 0;i < ComponentChilds.length;i++){
+						HMI.saveAbsolutePosition(ComponentChilds[i]);
+					}
 				}
 			}else{
 				if (NewValue === "" && 
@@ -1304,7 +1365,7 @@ cshmi.prototype = {
 				}
 				VisualObject.setAttribute(ParameterValue, NewValue);
 				//reposition absolutex/y if x, y, width or height was changed
-				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "width" || ParameterValue === "height"){
+				if (ParameterValue === "x" || ParameterValue === "y"){
 					HMI.saveAbsolutePosition(VisualObject);
 					//we want to have offset parameter on all visual elements
 					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
@@ -1415,11 +1476,24 @@ cshmi.prototype = {
 		var OldName = this._getValue(VisualObject, ObjectPath+".OldName");
 		var NewName = this._getValue(VisualObject, ObjectPath+".NewName");
 		
+		if (OldName === false || NewName === false){
+			//_getValue had an error
+			return false;
+		}else if (OldName === null || NewName === null){
+			//intentionally no value, abort
+			return null;
+		}else if (OldName === "" || NewName === ""){
+			//no value found
+			return false;
+		}
+		
 		var response = HMI.KSClient.renameObject(OldName, NewName, null);
 		
 		if (response === false || response === null){
 			//communication error
 			return true;
+		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+			HMI.hmi_log_onwebsite('Renaming "'+targetName+'" not successfull. Operation not allowed.');
 		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
 			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull. Bad name supplied.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
@@ -1445,15 +1519,35 @@ cshmi.prototype = {
 		var targetLibrary = this._getValue(VisualObject, ObjectPath+".Library");
 		var targetClass = this._getValue(VisualObject, ObjectPath+".Class");
 		
+		if (targetName === false || targetPlace === false || targetLibrary === false || targetClass === false){
+			//_getValue had an error
+			return false;
+		}else if (targetName === null || targetPlace === null || targetLibrary === null || targetClass === null){
+			//intentionally no value, abort
+			return null;
+		}else if (targetName === "" || targetPlace === "" || targetLibrary === "" || targetClass === ""){
+			//no value found
+			return false;
+		}
+		
 		var response = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass, null);
 		
 		if (response === false || response === null){
 			//communication error
 			return true;
+		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Operation not allowed.');
+		}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Object already exists.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Target not found.');
+		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Bad name supplied.');
+		}else if (response.indexOf("KS_ERR_GENERIC") !== -1){
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Generic error.');
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull: '+response);
+//			HMI.hmi_log_info('Creation of '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 		}
 		return true;
 	},
@@ -1468,15 +1562,28 @@ cshmi.prototype = {
 		//via getValue-part of DeleteObject object
 		var targetName = this._getValue(VisualObject, ObjectPath+".Path");
 		
+		if (targetName === false){
+			//_getValue had an error
+			return false;
+		}else if (targetName === null){
+			//intentionally no value, abort
+			return null;
+		}else if (targetName === ""){
+			//no value found
+			return false;
+		}
+		
 		var response = HMI.KSClient.deleteObject(targetName, null);
 		
 		if (response === false || response === null){
 			//communication error
 			return true;
+		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Operation not allowed.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+			HMI.hmi_log_info('Deleting '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 		}
 		return true;
 	},
@@ -1493,15 +1600,32 @@ cshmi.prototype = {
 		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
 		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
+		if (ObjectA === false || ObjectB === false || PortNameA === false){
+			//_getValue had an error
+			return false;
+		}else if (ObjectA === null || ObjectB === null || PortNameA === null){
+			//intentionally no value, abort
+			return null;
+		}else if (ObjectA === "" || ObjectB === "" || PortNameA === ""){
+			//no value found
+			return false;
+		}
+		
 		var response = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, null);
 		
 		if (response === false || response === null){
 			//communication error
 			return true;
+		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
+		}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Link already exists.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+			HMI.hmi_log_info('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
 		}
 		return true;
 	},
@@ -1518,15 +1642,32 @@ cshmi.prototype = {
 		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
 		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
+		if (ObjectA === false || ObjectB === false || PortNameA === false){
+			//_getValue had an error
+			return false;
+		}else if (ObjectA === null || ObjectB === null || PortNameA === null){
+			//intentionally no value, abort
+			return null;
+		}else if (ObjectA === "" || ObjectB === "" || PortNameA === ""){
+			//no value found
+			return false;
+		}
+		
 		var response = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, null);
 		
 		if (response === false || response === null){
 			//communication error
 			return true;
+			
+		//Unlink with KS has no return value
+		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
+		}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Deleting'+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+			HMI.hmi_log_info('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
 		}
 		return true;
 	},
@@ -1636,8 +1777,8 @@ cshmi.prototype = {
 				i++;
 			}
 		}else{
-			ConditionMatched = true;
 			//logical AND
+			ConditionMatched = true;
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
@@ -2055,6 +2196,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
+		//fixme: hide if connected is invisible (after deletion)
 		if(VisualObject.parentNode === null){
 			//not visualised right now
 			return false;
@@ -2124,8 +2266,8 @@ cshmi.prototype = {
 			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
 			OffsetSource = this.ResourceList.Actions[FBRef].OffsetSource;
 			OffsetTarget = this.ResourceList.Actions[FBRef].OffsetTarget;
-			this.ResourceList.Actions[FBRef].useCount++;
-			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" (#"+this.ResourceList.Actions[FBRef].useCount+")");
+			//this.ResourceList.Actions[FBRef].useCount++;
+			//HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" (#"+this.ResourceList.Actions[FBRef].useCount+")");
 		}else{
 			//Move Polyline-Container before every Functionblocks
 			//needs only to be done once
@@ -2273,8 +2415,8 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].TargetConnectionPointdirection = TargetConnectionPointdirection;
 			this.ResourceList.Actions[FBRef].OffsetSource = OffsetSource;
 			this.ResourceList.Actions[FBRef].OffsetTarget = OffsetTarget;
-			this.ResourceList.Actions[FBRef].useCount = 1;
-			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
+			//this.ResourceList.Actions[FBRef].useCount = 1;
+			//HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
 		}
 		
 		if (SourceConnectionPoint === null){
@@ -2285,19 +2427,15 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
-		var cx = parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
-		xStart = xStart + cx;
-		var cy = parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
-		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
-		yStart = yStart +cy;
+		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10) +
+			parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
+		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10) +
+			parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
 		
-		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
-		var cx = parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
-		xEnd = xEnd + cx;
-		var cy = parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
-		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
-		yEnd = yEnd +cy;
+		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10) +
+			parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
+		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10) +
+			parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
 		if (	xStart !== this.ResourceList.Actions[FBRef].xStart ||
@@ -3711,16 +3849,23 @@ cshmi.prototype = {
 			
 			// check if FBref beginn with "//" because we need the server Info as prefix for our OP_VALUE
 			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
-			var prefix = "";
+			var ServerName = "";
 			if (FBRef !== "" && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
 				//find the 3rd "/"
 				var slashIndex = FBRef.indexOf("/", 2);
 				//find the 4th "/"
 				slashIndex = FBRef.indexOf("/", slashIndex+1);
 				//only keep the String before 4th "/"
-				var prefix = FBRef.slice(0, slashIndex);
+				var ServerName = FBRef.slice(0, slashIndex);
 			}
-			return prefix+"."+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+			if (this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"].charAt(0) === "/"){
+				// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
+				
+				// it could be a path to another server, so we must add the serverName
+				return ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+			}
+			//we have an getVar on a variable. Don't know how to guess a FBRef here
+			return "";
 		}else{
 			//no active iterator, so plain FBReference
 			do{

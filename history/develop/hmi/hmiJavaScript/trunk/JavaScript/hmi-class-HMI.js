@@ -1647,11 +1647,12 @@ HMI.prototype = {
 	getClickPosition: function (evt, Component) {
 		this.hmi_log_trace("HMI.prototype.getClickPosition - Start");
 		
-		var clickPosition = new Array(2);
+		var clickPosition = new Array(Number.NaN, Number.NaN);
 		if (!evt){
-			clickPosition[0] = Number.NaN;
-			clickPosition[1] = Number.NaN;
-			this.hmi_log_error("HMI.prototype.getClickPosition - called without an event!");
+			this.hmi_log_error("HMI.prototype.getClickPosition - called without an event");
+			return clickPosition;
+		}else if (Component === undefined){
+			this.hmi_log_error("HMI.prototype.getClickPosition - called without an Component");
 			return clickPosition;
 		}
 		var mousePosX;
@@ -1679,8 +1680,7 @@ HMI.prototype = {
 			mousePosY = Number.NaN;
 		}
 		
-		if (Component !== null)
-		{
+		if (Component !== null){
 			//detect the mouse position relative to the component
 			
 			//we have to find the offset of the svg-element in the XHTML
