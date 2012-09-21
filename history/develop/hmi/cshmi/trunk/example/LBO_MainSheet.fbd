@@ -2,10 +2,10 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-08-27 17:05:40
+  Erstellt : 2012-09-21 18:37:39
 
-  HOST                : DEV
-  SERVER              : ov_hmidemo8
+  HOST                : LOCALHOST:7509
+  SERVER              : MANAGER
 ======================================================================
 *********************************************************************/
 
@@ -17,6 +17,7 @@
         width : INPUT  SINGLE = 1675.000000;
         height : INPUT  SINGLE = 1020.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "//demo/fb_lbo_ProcessControl/";
     END_VARIABLE_VALUES;
@@ -48,6 +49,7 @@
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -61,7 +63,7 @@
         y : INPUT  SINGLE = 5.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Übersicht"};
+        ConfigValues[1] : INPUT  STRING = {"title:Ãœbersicht"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -81,7 +83,7 @@
         y : INPUT  SINGLE = 80.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Übersicht"};
+        ConfigValues[1] : INPUT  STRING = {"title:Ãœbersicht"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
@@ -98,7 +100,7 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 500.000000;
         y : INPUT  SINGLE = 150.000000;
-        content : INPUT  STRING = "Diese Überblicks-Seite wird zusammen mit dem IME gestaltet.";
+        content : INPUT  STRING = "Diese Ãœberblicks-Seite wird zusammen mit dem IME gestaltet.";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -124,6 +126,7 @@
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -200,6 +203,7 @@
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -929,6 +933,7 @@
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -942,7 +947,7 @@
         y : INPUT  SINGLE = 5.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserkreislauf"};
+        ConfigValues[1] : INPUT  STRING = {"title:KÃ¼hlwasserkreislauf"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -962,7 +967,7 @@
         y : INPUT  SINGLE = 80.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserkreislauf"};
+        ConfigValues[1] : INPUT  STRING = {"title:KÃ¼hlwasserkreislauf"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
@@ -979,7 +984,7 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 700.000000;
         y : INPUT  SINGLE = 50.000000;
-        content : INPUT  STRING = "Kühlwasserkreislauf";
+        content : INPUT  STRING = "KÃ¼hlwasserkreislauf";
         fontSize : INPUT  STRING = "36px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -1035,7 +1040,9 @@
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit/bubFrame/signalLines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M660,170 L650,170
+        d : INPUT  STRING = "M660,170 L650,170
+
+
 M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -1217,6 +1224,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 200.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1723,6 +1731,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 180.000000;
         height : INPUT  SINGLE = 80.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 26;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -1874,6 +1883,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 120.000000;
         height : INPUT  SINGLE = 80.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 27;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2063,6 +2073,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2136,6 +2147,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2185,6 +2197,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2455,6 +2468,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2725,6 +2739,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3058,6 +3073,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3107,6 +3123,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3253,7 +3270,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 80.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:gelÃ¶st"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3273,6 +3290,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3419,7 +3437,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 80.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:gelÃ¶st"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3439,6 +3457,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3585,7 +3604,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 80.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Open"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:gelÃ¶st"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3668,6 +3687,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -3681,7 +3701,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 5.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserverteiler"};
+        ConfigValues[1] : INPUT  STRING = {"title:KÃ¼hlwasserverteiler"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3701,7 +3721,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 80.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:Kühlwasserverteiler"};
+        ConfigValues[1] : INPUT  STRING = {"title:KÃ¼hlwasserverteiler"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = FALSE;
         stroke : INPUT  STRING = "black";
@@ -3718,7 +3738,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 830.000000;
         y : INPUT  SINGLE = 15.000000;
-        content : INPUT  STRING = "Kühlwasserverteilung";
+        content : INPUT  STRING = "KÃ¼hlwasserverteilung";
         fontSize : INPUT  STRING = "36px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -3744,6 +3764,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4897,7 +4918,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 875.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"caption:Elektrodendurchführung1"};
+        ConfigValues[1] : INPUT  STRING = {"caption:ElektrodendurchfÃ¼hrung1"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -5047,6 +5068,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5163,6 +5185,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5672,6 +5695,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6297,6 +6321,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6806,6 +6831,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6900,6 +6926,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7086,6 +7113,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7116,6 +7144,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7192,6 +7221,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -7587,6 +7617,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8251,6 +8282,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8304,6 +8336,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8478,6 +8511,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8552,6 +8586,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -8761,6 +8796,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9030,7 +9066,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 340.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecFreeChkbOn"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:Zündimpulse freigegeben"};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:ZÃ¼ndimpulse freigegeben"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9050,7 +9086,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 370.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU90/PS20/Gleichrichter/RecFreeChkbOff"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:Zündimpulse gesperrt"};
+        ConfigValues[1] : INPUT  STRING = {"SignalName:ZÃ¼ndimpulse gesperrt"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9150,6 +9186,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9284,6 +9321,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9312,7 +9350,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 110.000000;
         y : INPUT  SINGLE = 30.000000;
-        content : INPUT  STRING = "Regelgröße";
+        content : INPUT  STRING = "RegelgrÃ¶ÃŸe";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -9398,6 +9436,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9512,6 +9551,7 @@ M1000,250 v40 h-100";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9520,10 +9560,18 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/mainlines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M-100,100 h200
-M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
-M500,100 H600 V850
-M600,400 H700 V850
+        d : INPUT  STRING = "M-100,100 h200
+
+
+M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
+
+
+M500,100 H600 V850
+
+
+M600,400 H700 V850
+
+
 M700,400 H800 V850";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9686,7 +9734,9 @@ M700,400 H800 V850";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/sideLines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M10,300 H85 V225
+        d : INPUT  STRING = "M10,300 H85 V225
+
+
 M0,750 l30,30 v30 h55 V700";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9904,10 +9954,18 @@ M0,750 l30,30 v30 h55 V700";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/Fliessbild/Diode :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M600,270
-v-30
-m0,30
-m-15,0 h30
+        d : INPUT  STRING = "M600,270
+
+
+v-30
+
+
+m0,30
+
+
+m-15,0 h30
+
+
 m-15,0 l-15,-30 h30 l-15,30";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -10172,6 +10230,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10222,7 +10281,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 500.000000;
         y : INPUT  SINGLE = 150.000000;
-        content : INPUT  STRING = "Diese Seite wird nach Rücksprache mit dem IME evtl gelöscht.";
+        content : INPUT  STRING = "Diese Seite wird nach RÃ¼cksprache mit dem IME evtl gelÃ¶scht.";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -10248,6 +10307,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         width : INPUT  SINGLE = 2100.000000;
         height : INPUT  SINGLE = 1300.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10301,6 +10361,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10334,7 +10395,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[6] : INPUT  STRING = {"title:Möller" , "line:1" , "column:2" , "fill:grey" , "height:40" , "width:140"};
+        ConfigValues[6] : INPUT  STRING = {"title:MÃ¶ller" , "line:1" , "column:2" , "fill:grey" , "height:40" , "width:140"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -11097,6 +11158,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 31;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -11937,7 +11999,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "Übersicht";
+        value : INPUT  STRING = "Ãœbersicht";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;

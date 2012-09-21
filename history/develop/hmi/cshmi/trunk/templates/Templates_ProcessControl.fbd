@@ -2,10 +2,10 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-09-11 18:41:22
+  Erstellt : 2012-09-21 18:36:57
 
-  HOST                : DEV
-  SERVER              : ov_hmidemo8
+  HOST                : LOCALHOST:7509
+  SERVER              : MANAGER
 ======================================================================
 *********************************************************************/
 
@@ -9177,52 +9177,18 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBXpos :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "Xpos";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBXpos.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "mousex";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "x";
+        elemVar : INPUT  STRING = "absolutex";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9245,23 +9211,23 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "absolutey";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 2;
+        zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -9279,15 +9245,49 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBXpos :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "y";
+        elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "Xpos";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBXpos.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "x";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "Ypos";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         zindex : INPUT  UINT = 3;
@@ -9295,15 +9295,15 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "y";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "mousey";
+        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
