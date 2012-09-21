@@ -86,6 +86,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_constructor(
 			||	ov_string_compare(pobj->v_identifier, "doubleclick") == OV_STRCMP_EQUAL
 			||	ov_string_compare(pobj->v_identifier, "rightclick") == OV_STRCMP_EQUAL
 			||	ov_string_compare(pobj->v_identifier, "aftermove") == OV_STRCMP_EQUAL
+			||	ov_string_compare(pobj->v_identifier, "mouseover") == OV_STRCMP_EQUAL
+			||	ov_string_compare(pobj->v_identifier, "mouseout") == OV_STRCMP_EQUAL
 		){
 		return OV_ERR_OK;
 	}else{

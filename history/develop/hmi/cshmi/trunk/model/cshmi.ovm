@@ -662,7 +662,7 @@ LIBRARY cshmi
 	
 	CLASS OperatorEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "an event from the operator; the identifier could be click, doubleclick, rightclick, aftermove";
+		COMMENT = "an event from the operator; the identifier could be click, doubleclick, rightclick, aftermove, mouseover, mouseout";
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
