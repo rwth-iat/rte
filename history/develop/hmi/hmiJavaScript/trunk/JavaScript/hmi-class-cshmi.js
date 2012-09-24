@@ -858,12 +858,8 @@ cshmi.prototype = {
 			var response;
 			if (ParameterValue.charAt(0) !== "/"){
 				//we have no absolute path => get baseKsPath
-				var ParameterValue = this._getBaseKsPath(VisualObject, ObjectPath)+ParameterValue;
 			}
-			if (ParameterValue.indexOf("//localhost") === 0){
-				//localhost in the model should not be the http-gateway
-				ParameterValue = ParameterValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-			}
+			ParameterValue = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
 			response = HMI.KSClient.getVar_NG(ParameterValue, null);
 			
 			var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -1218,14 +1214,7 @@ cshmi.prototype = {
 		//set the new Value
 		if (ParameterName === "ksVar"){
 			var response;
-			if (ParameterValue.charAt(0) !== "/"){
-				//we have no absolute path => get baseKsPath
-				var ParameterValue = this._getBaseKsPath(VisualObject, ObjectPath)+ParameterValue;
-			}
-			if (ParameterValue.indexOf("//localhost") === 0){
-				//localhost in the model should not be the http-gateway
-				ParameterValue = ParameterValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-			}
+			ParameterValue = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
 			
 			response = HMI.KSClient.setVar_NG(ParameterValue, NewValue, null);
 			
@@ -1540,7 +1529,7 @@ cshmi.prototype = {
 		}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
 			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Object already exists.');
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Target not found.');
+			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Could be a problem with the class name or the target domain.');
 		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
 			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Bad name supplied.');
 		}else if (response.indexOf("KS_ERR_GENERIC") !== -1){
@@ -1673,9 +1662,10 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * search baseKsPath by iterating objects
+	 * generate the full path (append baseKsPath by iterating objects if needed)
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {String} PartialPath The path which should get potentially expanded via baseKsPath
 	 * @return {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
 	 * 
 	 * 
@@ -1683,11 +1673,15 @@ cshmi.prototype = {
 	 * sollte den vollen pfad zwischen speichern
 	 * sollte gefüllt werden von den containern, die sowieso abfragen machen
 	 */
-	_getBaseKsPath: function(VisualObject, ObjectPath){
-		var ObjectPathArray = ObjectPath.split("/");
-		
+	_generateFullKsPath: function(VisualObject, ObjectPath, PartialPath){
 		var returnValue = "";
-		do{
+		var ObjectPathArray = new Array();
+		if (PartialPath.charAt(0) !== "/"){
+			//if the path is not a full path, search for the baseKsPath
+			ObjectPathArray = ObjectPath.split("/");
+		}
+		
+		while(ObjectPathArray.length > 0){
 			var currentPath = ObjectPathArray.join("/");
 			var responseArray;
 			if (this.ResourceList.baseKsPath[currentPath] === undefined){
@@ -1702,7 +1696,7 @@ cshmi.prototype = {
 			
 			if (responseArray.length === 0){
 				//an object in tree is no cshmi object or we have an error
-				return returnValue;
+				break;
 			}else if (responseArray[0] !== ""){
 				if (responseArray[0].charAt(0) === "/"){
 					//String begins with / so it is a fullpath
@@ -1717,8 +1711,10 @@ cshmi.prototype = {
 				// no action in this loop
 			}
 			ObjectPathArray.pop();
-		}while(ObjectPathArray.length > 1);
+		};
 		
+		//create the full path
+		returnValue = returnValue+PartialPath;
 		if (returnValue.indexOf("//localhost") === 0){
 			//localhost in the model should not be the http-gateway
 			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
@@ -2881,18 +2877,13 @@ cshmi.prototype = {
 					VisualObject.id = FBRef;
 				}else{
 					//We have straightforward a full name of one FB Object, so save it with the default name
+					VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, FBReferenceList[i]);
 					if (FBReferenceList[i].charAt(0) === "/"){
 						//full path is given
-						VisualObject.FBReference["default"] = FBReferenceList[i];
 						VisualObject.setAttribute("data-NameOrigin", "FBReference");
 					}else{
 						//relative path is given, so complete the path with the BaseKsPath
-						VisualObject.FBReference["default"] = this._getBaseKsPath(VisualObject, ObjectPath) + FBReferenceList[i];
 						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
-					}
-					if (VisualObject.FBReference["default"].indexOf("//localhost") === 0){
-						//localhost in the model should not be the http-gateway
-						VisualObject.FBReference["default"] = VisualObject.FBReference["default"].replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
 					VisualObject.id = VisualObject.FBReference["default"];
 				}
@@ -2939,14 +2930,7 @@ cshmi.prototype = {
 				}
 			}else{
 				//direct setting of a FBVariable
-				if (FBVariableReferenceEntry[1].charAt(0) !== "/"){
-					//no full path is given, so complete the path with the BaseKsPath
-					FBVariableReferenceEntry[1] = this._getBaseKsPath(VisualObject, ObjectPath) + FBVariableReferenceEntry[1];
-				}
-				if (FBVariableReferenceEntry[1].indexOf("//localhost") === 0){
-					//localhost in the model should not be the http-gateway
-					FBVariableReferenceEntry[1] = FBVariableReferenceEntry[1].replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-				}
+				FBVariableReferenceEntry[1] = this._generateFullKsPath(VisualObject, ObjectPath, FBVariableReferenceEntry[1]);
 				VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
 			}
 		}
