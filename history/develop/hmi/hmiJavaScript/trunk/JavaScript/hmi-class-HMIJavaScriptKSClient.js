@@ -440,6 +440,9 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		var ServerAndPath = this._splitKSPath(path);
+		
+		//prevent an hostname in this path
+		var classname = this._splitKSPath(classname)[1];
 		var Handle;
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){

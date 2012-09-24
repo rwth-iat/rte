@@ -1715,9 +1715,45 @@ cshmi.prototype = {
 		
 		//create the full path
 		returnValue = returnValue+PartialPath;
+		
 		if (returnValue.indexOf("//localhost") === 0){
 			//localhost in the model should not be the http-gateway
 			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+		}else if (! (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/")){
+			//we want to have a full path with host and server
+			
+			//default to the ModelHost
+			var serverName = "//" + HMI.KSClient.ResourceList.ModelHost + "/" + HMI.KSClient.ResourceList.ModelServer;
+			
+			//this Path has not host+server, so try to search for this via an parent Template
+			if(VisualObject.parentNode !== null){
+				//VisualObject is in DOM and configured
+				var TemplateObject = VisualObject;
+			}else{
+				//VisualObject is not in DOM and we are configuring it right now (it has per definition no FBRef till now)
+				TemplateObject = VisualObject.VisualParentObject;
+			}
+			
+			do{
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//the name of a Template was requested
+					if (TemplateObject.FBReference["default"].indexOf("//") === 0){
+						var FBRef = TemplateObject.FBReference["default"];
+						
+						//find the 3rd "/"
+						var slashIndex = FBRef.indexOf("/", 2);
+						//find the 4th "/"
+						slashIndex = FBRef.indexOf("/", slashIndex+1);
+						//only keep the String before 4th "/"
+						
+						serverName = FBRef.slice(0, slashIndex);
+						break;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			
+			returnValue = serverName + returnValue;
 		}
 		return returnValue;
 	},
@@ -2834,6 +2870,9 @@ cshmi.prototype = {
 		
 		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
+		//the VPO is needed in generateFullKsPath
+		VisualObject.VisualParentObject = VisualParentObject;
+		
 		//###########################################################################
 		//parametrise templateDefinition with the config
 		VisualObject.FBReference = Object();
@@ -3840,7 +3879,7 @@ cshmi.prototype = {
 				//find the 4th "/"
 				slashIndex = FBRef.indexOf("/", slashIndex+1);
 				//only keep the String before 4th "/"
-				var ServerName = FBRef.slice(0, slashIndex);
+				ServerName = FBRef.slice(0, slashIndex);
 			}
 			if (this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"].charAt(0) === "/"){
 				// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
