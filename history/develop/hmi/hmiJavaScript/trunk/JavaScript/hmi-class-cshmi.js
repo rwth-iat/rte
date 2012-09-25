@@ -2233,9 +2233,12 @@ cshmi.prototype = {
 			//not visualised right now
 			return false;
 		}
-		if(VisualObject.tagName.indexOf("polyline") === -1 ){
+		if(VisualObject.tagName !== "polyline"){
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
+		}else if(VisualObject.getAttribute("display") === "none"){
+			//not visible, so no routing required
+			return true;
 		}
 		var FBRef = null;
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2279,15 +2282,12 @@ cshmi.prototype = {
 		}
 		
 		var SourceConnectionPoint = null;
-		var SourceConnectionPointdirection = null;
+		var SourceConnectionPointdirection = "";
 		var TargetConnectionPoint = null;
-		var TargetConnectionPointdirection = null;
+		var TargetConnectionPointdirection = "";
 		var ConnectionOffset = 3; //# pixel offset between connections from same FB
 		var OffsetSource = null;
 		var OffsetTarget = null;
-		
-		//todo merge caching!!
-		
 		
 		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
 		if(FBRef !== "" && this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
@@ -2323,19 +2323,25 @@ cshmi.prototype = {
 			
 			var Source;
 			var Target;
-			if (SourceVariablename !== ""){
+			if (SourceBasename === ""){
+				Source = "";
+			}else if (SourceVariablename !== ""){
 				//in the svg separators is always /, since it is named via ConfigValue "Name"
 				Source = prefix + SourceBasename + "/" + SourceVariablename;
 			}else{
 				Source = prefix + SourceBasename;
 			}
-			if (TargetVariablename !== ""){
+			if (TargetBasename === ""){
+				Target = "";
+			}else if (TargetVariablename !== ""){
 				//in the svg separators is always /, since it is named via ConfigValue "Name"
 				Target = prefix + TargetBasename + "/" + TargetVariablename;
 			}else{
 				Target = prefix + TargetBasename;
 			}
-			if (HMI.svgDocument.getElementById(Source) !== null){
+			if(Source === ""){
+				//skip
+			}else if (HMI.svgDocument.getElementById(Source) !== null){
 				Source = HMI.svgDocument.getElementById(Source);
 				for(var i = 0; i < Source.childNodes.length;i++){
 					// search tagName "circle" with name containing ConnectionPoint
@@ -2345,9 +2351,10 @@ cshmi.prototype = {
 						break;
 					}
 				}
-			//the SourceConnectionPoint is outside the domain
-			//search a connectionpoint recursively in all parent svgs for connectionsources that are outside the domain 	
 			}else{
+				//the SourceConnectionPoint is outside the domain
+				//search a connectionpoint recursively in all parent svgs for connectionsources that are outside the domain 	
+				
 				//there should only be one SourceConnectionPointOutsideDomain, so use the cached value if it has been searched before
 				if (this.ResourceList.Actions && this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] !== undefined){
 					SourceConnectionPoint = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint;
@@ -2373,8 +2380,10 @@ cshmi.prototype = {
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection = SourceConnectionPointdirection;
 				}
 			}
-
-			if (HMI.svgDocument.getElementById(Target) !== null){
+			
+			if(Target === ""){
+				//skip
+			}else if (HMI.svgDocument.getElementById(Target) !== null){
 				Target = HMI.svgDocument.getElementById(Target);
 				var TargetConnectionPoint;
 				var TargetConnectionPointdirection;
@@ -2415,24 +2424,29 @@ cshmi.prototype = {
 				}
 			}
 			
-			//get connection offset 
-			if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
+			//get connection offset
+			var OffsetSource = 0;
+			if (SourceBasename === ""){
+				//skip
+			}else if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
 				//there is already an incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename].count += 1;
 				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * ConnectionOffset;
-			}
-			else{ 
+			}else{ 
 				//1st incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename] = new Object();
 				this.ResourceList.Actions["Connection_from_" + SourceBasename].count = 0;
 				OffsetSource = 0;
 			}
-			if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
+			
+			var OffsetSource = 0;
+			if (TargetBasename === ""){
+				//skip
+			}else if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
 				//there is already an outgoing connection for this Object
 				this.ResourceList.Actions["Connection_to_" + TargetBasename].count += 1;
 				OffsetTarget = this.ResourceList.Actions["Connection_to_" + TargetBasename].count * ConnectionOffset;
-			}
-			else{
+			}else{
 				//1st outgoing connection for this Object
 				this.ResourceList.Actions["Connection_to_" + TargetBasename] = new Object();
 				this.ResourceList.Actions["Connection_to_" + TargetBasename].count = 0;
@@ -2454,9 +2468,25 @@ cshmi.prototype = {
 		if (SourceConnectionPoint === null){
 			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the SourceConnectionPoint. Routepolyline or connected objects are wrong configured.");
 			return false;
-		}else if (TargetConnectionPoint === null){
+		}else if(TargetConnectionPoint === null){
 			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the TargetConnectionPoint. Routepolyline or connected objects are wrong configured.");
 			return false;
+		}
+		var IteratorObj = SourceConnectionPoint;
+		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+			if(IteratorObj.getAttribute("display") === "none"){
+				//connection object is invisible, so hide us, too.
+				VisualObject.setAttribute("display", "none");
+				return true;
+			}
+		}
+		IteratorObj = TargetConnectionPoint;
+		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+			if(IteratorObj.getAttribute("display") === "none"){
+				//connection object is invisible, so hide us, too.
+				VisualObject.setAttribute("display", "none");
+				return true;
+			}
 		}
 		
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10) +
@@ -2480,7 +2510,7 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].xEnd = xEnd;
 			this.ResourceList.Actions[FBRef].yEnd = yEnd;
 			
-			var points;
+			var points = "";
 			// add minimum #pixel distance from Object till 1st direction change of connection
 			OffsetSource += 40;
 			OffsetTarget += 40;
