@@ -870,7 +870,7 @@ cshmi.prototype = {
 			}
 		}else if (ParameterName === "elemVar"){
 			//todo interprete elemVarPath
-			if (ParameterValue == "content"){
+			if (ParameterValue === "content"){
 				//content is special, as it is different in OVM and SVG
 				if (typeof VisualObject.textContent != "undefined"){
 					return VisualObject.textContent;
@@ -880,14 +880,14 @@ cshmi.prototype = {
 					//todo asv compatibility
 					return "";
 				}
-			}else if (ParameterValue == "title"){
+			}else if (ParameterValue === "title"){
 				for (var i = 0;i < VisualObject.childNodes.length;i++){
 					if (VisualObject.childNodes.item(i).tagName === "title"){
 						return VisualObject.childNodes.item(i).firstChild.textContent;
 					}
 				} 
 				return "";
-			}else if (ParameterValue == "visible"){
+			}else if (ParameterValue === "visible"){
 				//display is special, as it is different in OVM and SVG
 				var displayVar = VisualObject.getAttribute("display");
 				if (displayVar == "none"){
@@ -895,7 +895,7 @@ cshmi.prototype = {
 				}else{
 					return "TRUE";
 				}
-			}else if (ParameterValue == "rotate"){
+			}else if (ParameterValue === "rotate"){
 				//rotate is special, as it is different in OVM and SVG
 				if (VisualObject.tagName == "svg" && VisualObject.parentNode.tagName == "g" && VisualObject.parentNode.id === ""){
 					//svg are not transformable, so the rotation is in the objects parent
@@ -912,6 +912,43 @@ cshmi.prototype = {
 				TransformString = TransformString.replace(")", "").replace("rotate(", "");
 				//get first number if there are 3, separated via comma
 				return TransformString.split(",")[0];
+			}else if (ParameterValue === "previousTemplateCount"){
+				var previousTemplateCount = 0;
+				var myTemplateClass = VisualObject.getAttribute("TemplateDescription");
+				var SiblingObj = VisualObject;
+				
+				var checkTemplateMatch = function (currentNode){
+					for (var i = 0; i < currentNode.childNodes.length;i++){
+						if (currentNode.childNodes[i] === VisualObject){
+							//we found ourself, break
+							return false;
+						}else if (currentNode.childNodes[i].hasAttribute("TemplateDescription") === true
+								&& currentNode.childNodes[i].getAttribute("TemplateDescription") === myTemplateClass
+								&& currentNode.childNodes[i].getAttribute("display") !== "none"){
+							//we found a hit
+							previousTemplateCount++;
+							//check childrens
+							var result = checkTemplateMatch(currentNode.childNodes[i]);
+							if (false === result){
+								//we are below this branch, break
+								return false;
+							}
+						}
+					}
+					return true;
+				}
+				
+				while(SiblingObj.parentNode !== null){
+					SiblingObj = SiblingObj.parentNode;
+					if (SiblingObj.getAttribute("TemplateDescription") !== myTemplateClass){
+						//the object is from another same class, so break
+						break;
+					}
+				}
+				//check recursive the childrens
+				checkTemplateMatch(SiblingObj);
+				
+				return previousTemplateCount;
 			}else if (VisualObject.hasAttribute(ParameterValue)){
 				return VisualObject.getAttribute(ParameterValue);
 			}else{
@@ -1229,7 +1266,7 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "elemVar"){
 			//todo interprete elemVarPath
-			if (ParameterValue == "content"){
+			if (ParameterValue === "content"){
 				//content is special, as it is different in OVM and SVG
 				
 				//if trimToLength is set in parent TextFB and perform trimming if needed
@@ -1260,9 +1297,9 @@ cshmi.prototype = {
 				}else{
 					VisualObject.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild);
 				}
-			}else if (ParameterValue == "title"){
+			}else if (ParameterValue === "title"){
 				this._setTitle(VisualObject, NewValue);
-			}else if (ParameterValue == "visible"){
+			}else if (ParameterValue === "visible"){
 				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
 					VisualObject.setAttribute("display", "none");
@@ -1272,7 +1309,7 @@ cshmi.prototype = {
 					//load hidden elements now
 					this._loadHiddenChildrenElements(VisualObject);
 				}
-			}else if (ParameterValue == "rotate"){
+			}else if (ParameterValue === "rotate"){
 				//rotate is special, as it is different in OVM and SVG
 				
 				if(!isNumeric(NewValue)){
@@ -1301,7 +1338,7 @@ cshmi.prototype = {
 				}else{
 					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
 				}
-			}else if (ParameterValue == "absolutex"){
+			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.EventObj !== null){
 					//if we are after an move, we want to set a different x
@@ -1317,7 +1354,7 @@ cshmi.prototype = {
 						HMI.saveAbsolutePosition(ComponentChilds[i]);
 					}
 				}
-			}else if (ParameterValue == "absolutey"){
+			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
 				if (this.ResourceList.EventInfos.EventObj !== null){
 					//if we are after an move, we want to set a different y
@@ -1392,7 +1429,7 @@ cshmi.prototype = {
 			}
 			
 			var result;
-			if(ParameterValue == "identifier"){
+			if(ParameterValue === "identifier"){
 				result = HMI.KSClient.renameObject(FBRef, NewValue, null);
 			}else{
 				var result = HMI.KSClient.setVar_NG(FBRef+"."+ParameterValue, NewValue, null);
@@ -4169,6 +4206,10 @@ cshmi.prototype = {
 				
 				//doku depth of moving to top
 				
+				/*
+				
+				//fixme deaktiert, da previousTemplateCount sonst nicht geht...
+				
 				//Move Faceplate-Container after every other, so it is fully visible
 				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
 					//hideable childtemplate in a normal template
@@ -4177,6 +4218,7 @@ cshmi.prototype = {
 					//hideable childtemplate in an action instantiated template (one level more)
 					VisualParentObject.parentNode.parentNode.appendChild(VisualParentObject.parentNode);
 				}
+				*/
 			}
 		}
 		VisualObject = null;
