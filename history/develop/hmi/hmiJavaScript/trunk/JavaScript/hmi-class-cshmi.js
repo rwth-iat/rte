@@ -2503,10 +2503,10 @@ cshmi.prototype = {
 		}
 		
 		if (SourceConnectionPoint === null){
-			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the SourceConnectionPoint. Routepolyline or connected objects are wrong configured.");
+			//could not paint something
 			return false;
 		}else if(TargetConnectionPoint === null){
-			HMI.hmi_log_info_onwebsite("Routepolyline "+ObjectPath+" could not find the TargetConnectionPoint. Routepolyline or connected objects are wrong configured.");
+			//could not paint something
 			return false;
 		}
 		var IteratorObj = SourceConnectionPoint;

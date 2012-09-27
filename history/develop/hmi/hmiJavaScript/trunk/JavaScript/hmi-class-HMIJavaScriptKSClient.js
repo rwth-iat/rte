@@ -538,22 +538,31 @@ HMIJavaScriptKSClient.prototype = {
 	 * @return true, "" or null
 	 */
 	linkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - Start: "+path);
-		if(!path || path.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no path found");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects");
+		if(!pathA || pathA.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no pathA found");
 			return null;
 		}
-		if(!classname || classname.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no classname found");
+		if(!pathB || pathB.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no pathB found");
+			return null;
+		}
+		if(!portnameA || portnameA.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no portnameA found");
 			return null;
 		}
 		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
-		if(path.charAt(0) !== "/"){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no valid path found, path was: "+path);
+		if(pathA.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no valid pathA found, pathA was: "+pathA);
+			return null;
+		}
+		if(pathB.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no valid pathB found, pathB was: "+pathB);
 			return null;
 		}
 		
-		var ServerAndPath = this._splitKSPath(path);
+		var ServerAndPath = this._splitKSPath(pathA);
+		var ServerAndPathB = this._splitKSPath(pathB);
 		var Handle;
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
@@ -561,8 +570,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=link%20{'+
-			ServerAndPath[1]+'.'+portnameA+'%20'+pathB+'}';
+			urlparameter = 'obj='+Handle + '&args=link%20'+
+			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -571,7 +580,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			urlparameter = "obj="+ Handle + "&cmd=link"+
 				"&path=" + ServerAndPath[1]+
-				"&class=" + classname;
+				"&pathb=" + ServerAndPathB[1];
 		}
 		if (async === true && cbfnc !== null){
 			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
@@ -597,22 +606,31 @@ HMIJavaScriptKSClient.prototype = {
 	 * @return true, "" or null
 	 */
 	unlinkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - Start: "+path);
-		if(!path || path.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no path found");
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects");
+		if(!pathA || pathA.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no pathA found");
 			return null;
 		}
-		if(!classname || classname.length === 0){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no classname found");
+		if(!pathB || pathB.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no pathB found");
+			return null;
+		}
+		if(!portnameA || portnameA.length === 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no portnameA found");
 			return null;
 		}
 		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
-		if(path.charAt(0) !== "/"){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no valid path found, path was: "+path);
+		if(pathA.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no valid pathA found, pathA was: "+pathA);
+			return null;
+		}
+		if(pathB.charAt(0) !== "/"){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no valid pathB found, pathB was: "+pathB);
 			return null;
 		}
 		
-		var ServerAndPath = this._splitKSPath(path);
+		var ServerAndPath = this._splitKSPath(pathA);
+		var ServerAndPathB = this._splitKSPath(pathB);
 		var Handle;
 		var urlparameter;
 		if (HMI.GatewayTypeTCL === true){
@@ -620,8 +638,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=unlink%20{'+
-			ServerAndPath[1]+'.'+portnameA+'%20'+pathB+'}';
+			urlparameter = 'obj='+Handle + '&args=unlink%20'+
+			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
 		}else if (HMI.GatewayTypePHP === true){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -630,7 +648,7 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			urlparameter = "obj="+ Handle + "&cmd=unlink"+
 				"&path=" + ServerAndPath[1]+
-				"&class=" + classname;
+				"&pathb=" + ServerAndPathB[1];
 		}
 		if (async === true && cbfnc !== null){
 			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
