@@ -29,7 +29,6 @@
 *   --------                                                                  *
 *   08-07-1999 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
 *                                    Lehrstuhl fuer Prozessleittechnik, Aachen*
-*   08-07-2011 Gustavo Quiros: Added support for function charts.             *
 *                                                                             *
 *   Beschreibung                                                              *
 *   ------------                                                              *
@@ -52,18 +51,13 @@
 #include "fb_database.h"
 #include "fb_av.h"
 #include "fb_log.h"
-#include "ov_call_macros_10.h"
 
-/* internal use */
-int fb_vartype_implemented(OV_VAR_TYPE typ);
 
 /*	----------------------------------------------------------------------	*/
 int fb_connectiontype_implemented(OV_VAR_TYPE typ) {
     return fb_vartype_implemented(typ);
 }
 
-OV_INSTPTR_fb_variable fb_functionchart_searchvariable
-(OV_INSTPTR_fb_functionchart pfc, OV_STRING id);
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -75,89 +69,48 @@ OV_DLLFNCEXPORT OV_BOOL fb_connection_checkelements(
 	/*
 	*	local variables
 	*/
-	OV_ELEMENT			sourceelem, targetelem;
-	OV_INSTPTR_fb_functionblock	psourcefb, ptargetfb;
-	OV_INSTPTR_fb_functionchart	psourcefc, ptargetfc;
-	OV_INSTPTR_ov_object		psourceobj, ptargetobj;
-	OV_INSTPTR_fb_variable		psourcevar, ptargetvar, plinkedvar;
-	OV_VTBLPTR_ov_object	psourceobjvtable, ptargetobjvtable;
-	OV_TICKET                   	dummyTicket;
-        OV_STRING 			port = NULL;
-
+	OV_ELEMENT					sourcefbelem, targetfbelem;
+	OV_INSTPTR_fb_object    	psourcefb, ptargetfb;
+	OV_VTBLPTR_fb_object    	psourcefbvtable, ptargetfbvtable;
+	OV_TICKET                   dummyTicket;
+	OV_INSTPTR_fb_functionblock	pfb;
+	
 	/* Init the ticket */
 	dummyTicket.vtbl = NULL;
 	dummyTicket.type = OV_TT_SIMPLE;
 	dummyTicket.ticketunion.simpleticket.id = pdb->serverpassword;
 
 	/*
-	* get source object and source element info and test if it is a readable variable
+	*	get source element info and test if it is a readable variable
 	*/
-
-        psourceobj = NULL;
-
 	if(!ov_string_compare(pconn->v_sourceport, "")) {
 		return FALSE;
 	}
 	psourcefb = Ov_GetParent(fb_outputconnections, pconn);
-        
-        if (psourcefb) {
-          psourcefc = Ov_DynamicPtrCast (fb_functionchart, psourcefb);
-        } else {
-          psourcefc = Ov_GetParent (fb_initialconnections, pconn);  
-        }
-        
-        psourcevar = NULL;
-        if (psourcefc) {
-          psourcevar = fb_functionchart_searchvariable (psourcefc, pconn->v_sourceport);
-          if (psourcevar) {
-            /* Link source variable */
-            plinkedvar = Ov_GetParent (fb_sourcevariable, pconn);
-            if (plinkedvar != psourcevar) {
-              if (plinkedvar) {
-                Ov_Unlink (fb_sourcevariable, plinkedvar, pconn);
-                pconn->v_on = TRUE; /* Unlinking disables connection, enable it */
-              }
-              Ov_Link (fb_sourcevariable, psourcevar, pconn);
-            }
-            port = "value";
-            psourceobj = Ov_PtrUpCast (ov_object, psourcevar);
-          }
-        }
-
-        if (!psourceobj && psourcefb) {
-          psourceobj = Ov_PtrUpCast (ov_object, psourcefb);
-          port = pconn->v_sourceport;
-        }
-
-        if (!psourceobj) return FALSE;
-  
-        /* Get element */
-  
-	sourceelem.elemtype = OV_ET_OBJECT;
-	sourceelem.pobj = psourceobj;
-	ov_element_searchpart(&sourceelem, &pconn->v_sourceelem, 
-		OV_ET_VARIABLE, port);
+	if(!psourcefb) {
+		return FALSE;
+	}
+	sourcefbelem.elemtype = OV_ET_OBJECT;
+	sourcefbelem.pobj = Ov_PtrUpCast(ov_object, psourcefb);
+	ov_element_searchpart(&sourcefbelem, &pconn->v_sourceelem, 
+		OV_ET_VARIABLE, pconn->v_sourceport);
 	if(pconn->v_sourceelem.elemtype != OV_ET_VARIABLE) {
 		return FALSE;
 	}
-	Ov_GetVTablePtr(ov_object, psourceobjvtable, psourceobj);
-  
-	if(!psourceobjvtable) {
-          if (psourcefb) {
-		psourcefb->v_actimode = 0;	/* FIXME! */
-		psourcefb->v_ErrState = 1;	/* FIXME! */
-          }
-          if (psourcefc) {
-		psourcefc->v_actimode = 0;	/* FIXME! */
-		psourcefc->v_ErrState = 1;	/* FIXME! */
-          }
-		ov_logfile_error("Object %s: method table not found.", 
-		    psourceobj->v_identifier);
 
+	Ov_GetVTablePtr(fb_object, psourcefbvtable, psourcefb);  
+	if(!psourcefbvtable) {
+	    pfb = Ov_DynamicPtrCast(fb_functionblock, psourcefb);
+	    if(pfb) {
+    		pfb->v_actimode = 0;	/* FIXME! */
+    		pfb->v_ErrState = 1;	/* FIXME! */
+    	}
+		ov_logfile_error("Object %s: method table not found.", 
+		    psourcefb->v_identifier);
 		return FALSE;
     }
-	if(!(psourceobjvtable->m_getaccess(
-		psourceobj,
+	if(!(psourcefbvtable->m_getaccess(
+		Ov_PtrUpCast(ov_object, psourcefb),
 		&pconn->v_sourceelem,
 		&dummyTicket
 	) & OV_AC_READ)) {
@@ -167,126 +120,52 @@ OV_DLLFNCEXPORT OV_BOOL fb_connection_checkelements(
     if( !fb_connectiontype_implemented(pconn->v_sourceelem.elemunion.pvar->v_vartype)) {
         return FALSE;
 	}
-
 	/*
-	* get target object and target element info and test if it is a writeable variable
+	*	get target element info and test if it is a writeable variable
 	*/
-
-	ptargetobj = NULL;
-    
 	if(!ov_string_compare(pconn->v_targetport, "")) {
 		return FALSE;
 	}
 	ptargetfb = Ov_GetParent(fb_inputconnections, pconn);
-
-        if (ptargetfb) {
-          ptargetfc = Ov_DynamicPtrCast (fb_functionchart, ptargetfb);
-        } else {
-          ptargetfc = Ov_GetParent (fb_finalconnections, pconn);  
-        }
-
-        ptargetvar = NULL;
-        if (ptargetfc) {
-          ptargetvar = fb_functionchart_searchvariable (ptargetfc, pconn->v_targetport);
-          if (ptargetvar) {
-            /* Link target variable */
-            plinkedvar = Ov_GetChild (fb_targetvariable, pconn);
-            if (plinkedvar != ptargetvar) {
-              if (plinkedvar) {
-                Ov_Unlink (fb_targetvariable, pconn, plinkedvar);
-                pconn->v_on = TRUE; /* Unlinking disables connection, enable it */
-              }
-              Ov_Link (fb_targetvariable, pconn, ptargetvar);
-            }
-            port = "value";
-            ptargetobj = Ov_PtrUpCast (ov_object, ptargetvar);
-          }
-        }
-        
-        if ((!ptargetobj) && ptargetfb) {
-          ptargetobj = Ov_PtrUpCast (ov_object, ptargetfb);
-          port = pconn->v_targetport;
-        }
-
-        if (!ptargetobj) return FALSE;
-        
-        /* Get element */
-  
-	targetelem.elemtype = OV_ET_OBJECT;
-	targetelem.pobj = ptargetobj;
-	ov_element_searchpart(&targetelem, &pconn->v_targetelem, 
-		OV_ET_VARIABLE, port);
+	if(!ptargetfb) {
+		return FALSE;
+	}
+	targetfbelem.elemtype = OV_ET_OBJECT;
+	targetfbelem.pobj = Ov_PtrUpCast(ov_object, ptargetfb);
+	ov_element_searchpart(&targetfbelem, &pconn->v_targetelem, 
+		OV_ET_VARIABLE, pconn->v_targetport);
 	if(pconn->v_targetelem.elemtype != OV_ET_VARIABLE) {
 		return FALSE;
 	}
-	Ov_GetVTablePtr(ov_object, ptargetobjvtable, ptargetobj);
-  
-	if(!ptargetobjvtable) {
-    if (ptargetfb) {
-      ptargetfb->v_actimode = 0;	/* FIXME! */
-      ptargetfb->v_ErrState = 1;	/* FIXME! */
-    }
-    if (ptargetfc) {
-      ptargetfc->v_actimode = 0;	/* FIXME! */
-      ptargetfc->v_ErrState = 1;	/* FIXME! */
-    }
+	
+	Ov_GetVTablePtr(fb_object, ptargetfbvtable, ptargetfb);  
+	if(!ptargetfbvtable) {
+	    pfb = Ov_DynamicPtrCast(fb_functionblock, ptargetfb);
+	    if(pfb) {
+    		pfb->v_actimode = 0;	/* FIXME! */
+    		pfb->v_ErrState = 1;	/* FIXME! */
+    	}
 		ov_logfile_error("Object %s: method table not found.", 
-		    ptargetobj->v_identifier);
+		    ptargetfb->v_identifier);
 		return FALSE;
     }
-	if(!(ptargetobjvtable->m_getaccess(
-		ptargetobj,
+	if(!(ptargetfbvtable->m_getaccess(
+		Ov_PtrUpCast(ov_object, ptargetfb),
 		&pconn->v_targetelem,
 		&dummyTicket
 	) & OV_AC_WRITE)) {
 		return FALSE;
 	}
-  if (ptargetfc) {
-    if (IsFlagSet (ptargetvar->v_flags, 'p')) {
-      return FALSE;
-    }
-  } else if (IsFlagSet (pconn->v_targetelem.elemunion.pvar->v_flags, 'p')) {
-    return FALSE;
-  }
-
-    /**********************************************************************/
-	/*
-	*	check if source and target port have the same type and vector length
-	*/
-
-  /* Allow implicit conversion to and from ANY (FIXME: is this safe?) */
-  if (pconn->v_sourceelem.elemunion.pvar->v_vartype == OV_VT_ANY ||
-      pconn->v_targetelem.elemunion.pvar->v_vartype == OV_VT_ANY) {
-    return TRUE;
-  }
-
-	if(pconn->v_sourceelem.elemunion.pvar->v_vartype 
-		!= pconn->v_targetelem.elemunion.pvar->v_vartype
-	) {
+	if(IsFlagSet(pconn->v_targetelem.elemunion.pvar->v_flags, 'p') ) {
 		return FALSE;
 	}
-	if(pconn->v_sourceelem.elemunion.pvar->v_vartype == OV_VT_STRUCT) {
-		if(Ov_GetParent(ov_construction, pconn->v_sourceelem.elemunion.pvar)
-			!= Ov_GetParent(ov_construction, pconn->v_targetelem.elemunion.pvar)
-		) {
-			return FALSE;
-		}
+    /* Typ unterstuetzt? */
+    if( !fb_connectiontype_implemented(pconn->v_targetelem.elemunion.pvar->v_vartype)) {
+        return FALSE;
 	}
-	if(pconn->v_sourceelem.elemunion.pvar->v_vartype == OV_VT_BYTE_VEC) {
-		if(strcmp(pconn->v_sourceelem.elemunion.pvar->v_ctypename, 
-			pconn->v_targetelem.elemunion.pvar->v_ctypename)
-		) {
-			return FALSE;
-		}
-	}
-	if(pconn->v_sourceelem.elemunion.pvar->v_veclen 
-		!= pconn->v_targetelem.elemunion.pvar->v_veclen
-	) {
-		return FALSE;
-	}
+	
 	return TRUE;
 }
-
 OV_BOOL fb_connection_getelements(
 	OV_INSTPTR_fb_connection	pconn
 ) {
@@ -474,7 +353,7 @@ OV_DLLFNCEXPORT OV_ACCESS fb_connection_getaccess(
 		case OV_ET_VARIABLE:
 			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
 			    /* Typ unterstuetzt? */
-			    if( !fb_vartype_implemented(pelem->elemunion.pvar->v_vartype)) {
+			    if( !fb_connectiontype_implemented(pelem->elemunion.pvar->v_vartype)) {
                     return OV_AC_NONE;
 				}
                 return OV_AC_READWRITE;
@@ -500,12 +379,10 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
 	/*
 	*	local variables
 	*/
-	OV_INSTPTR_fb_functionblock	psourcefb, ptargetfb;
-	OV_INSTPTR_fb_functionchart	psourcefc, ptargetfc;
-	OV_INSTPTR_ov_object		psourceobj, ptargetobj;
-	OV_INSTPTR_fb_variable		psourcevar, ptargetvar;
-	OV_VTBLPTR_ov_object		psourceobjvtable, ptargetobjvtable;
-	OV_ANY              		varcurrprops;
+	OV_INSTPTR_fb_object    	psourcefb, ptargetfb;
+	OV_VTBLPTR_fb_object    	psourcefbvtable, ptargetfbvtable;
+	OV_INSTPTR_fb_functionblock	pfb;
+	OV_ANY              	    varcurrprops;
 	
 	/*
 	*	if we are "off", quit
@@ -522,19 +399,16 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
 	*/
 	psourcefb = Ov_GetParent(fb_outputconnections, pconn);
 	ptargetfb = Ov_GetParent(fb_inputconnections, pconn);
-	psourcefc = Ov_GetParent(fb_initialconnections, pconn);
-	ptargetfc = Ov_GetParent(fb_finalconnections, pconn);
-
-	if(!psourcefb && !psourcefc) {
+	if(!psourcefb) {
         /* Logging */
-        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: source functionblock missing");
+        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: source block missing");
         FbSvcLog_decrIndent();
         
 	    return;
 	}
-	if(!ptargetfb && !ptargetfc) {
+	if(!ptargetfb) {
         /* Logging */
-        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: target functionblock missing");
+        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: target block missing");
         FbSvcLog_decrIndent();
         
 	    return;
@@ -549,10 +423,14 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
     	    /* Turn connection off */
     		pconn->v_on = FALSE;
     		
-    		if (psourcefb) psourcefb->v_ErrState = 1;	/* FIXME! */
-                if (ptargetfb) ptargetfb->v_ErrState = 1;	/* FIXME! */
-                if (psourcefc) psourcefc->v_ErrState = 1;	/* FIXME! */
-                if (ptargetfc) ptargetfc->v_ErrState = 1;	/* FIXME! */
+    		pfb = Ov_DynamicPtrCast(fb_functionblock, psourcefb);
+    		if(pfb) {
+    		    pfb->v_ErrState = 1;	/* FIXME! */
+    		}
+    		pfb = Ov_DynamicPtrCast(fb_functionblock, ptargetfb);
+    		if(pfb) {
+		        pfb->v_ErrState = 1;	/* FIXME! */
+		    }
     		
             /* Logging */
             FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: bad init parameter");
@@ -561,74 +439,54 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
     		return;
     	}
     }
-
-  /* Get source and target variables, if any */
-
-  psourcevar = Ov_GetParent (fb_sourcevariable, pconn);
-  ptargetvar = Ov_GetChild (fb_targetvariable, pconn);
-
-  /* Determine source and target objects */
-
-  psourceobj = NULL;
-  ptargetobj = NULL;
-  if (psourcefb) psourceobj = Ov_PtrUpCast (ov_object, psourcefb);
-  if (ptargetfb) ptargetobj = Ov_PtrUpCast (ov_object, ptargetfb);
-  if (psourcevar) psourceobj = Ov_PtrUpCast (ov_object, psourcevar);
-  if (ptargetvar) ptargetobj = Ov_PtrUpCast (ov_object, ptargetvar);
     
 
-	Ov_GetVTablePtr(ov_object, psourceobjvtable, psourceobj);
-	if(!psourceobjvtable) {
-		if (psourcefb) { 
-      psourcefb->v_actimode = 0;	/* FIXME! */
-      psourcefb->v_ErrState = 1;	/* FIXME! */
-    }
-		if (psourcefc) {
-      psourcefc->v_actimode = 0;	/* FIXME! */
-      psourcefc->v_ErrState = 1;	/* FIXME! */
-    }	
+	Ov_GetVTablePtr(fb_object, psourcefbvtable, psourcefb);
+	if(!psourcefbvtable) {
+		pfb = Ov_DynamicPtrCast(fb_functionblock, psourcefb);
+		if(pfb) {
+    		pfb->v_actimode = 0;	/* FIXME! */
+    		pfb->v_ErrState = 1;	/* FIXME! */
+        }
+		
         /* Logging */
-        FbSvcLog_printexecitem(psourceobj, "ERROR: method table not found");
+        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)psourcefb, "ERROR: method table not found");
         FbSvcLog_decrIndent();
-        
-		ov_logfile_error("Object %s: method table not found.", 
-		    psourceobj->v_identifier);
+    	ov_logfile_error("Object %s: method table not found.", 
+    		    psourcefb->v_identifier);
 		return;
     }
     
-	Ov_GetVTablePtr(ov_object, ptargetobjvtable, ptargetobj);
-	if(!ptargetobjvtable) {
-		if (ptargetfb) {
-      ptargetfb->v_actimode = 0;	/* FIXME! */
-      ptargetfb->v_ErrState = 1;	/* FIXME! */
-    }
-		if (ptargetfc) {
-      ptargetfc->v_actimode = 0;	/* FIXME! */
-      ptargetfc->v_ErrState = 1;	/* FIXME! */
-    }
-
+	Ov_GetVTablePtr(fb_object, ptargetfbvtable, ptargetfb);
+	if(!ptargetfbvtable) {
+		pfb = Ov_DynamicPtrCast(fb_functionblock, ptargetfb);
+		if(pfb) {
+    		pfb->v_actimode = 0;	/* FIXME! */
+    		pfb->v_ErrState = 1;	/* FIXME! */
+        }
+        
         /* Logging */
-        FbSvcLog_printexecitem(ptargetobj, "ERROR: method table not found");
+        FbSvcLog_printexecitem((OV_INSTPTR_ov_object)ptargetfb, "ERROR: method table not found");
         FbSvcLog_decrIndent();
 
 		ov_logfile_error("Object %s: method table not found.", 
-		    ptargetobj->v_identifier);
+		    ptargetfb->v_identifier);
 		return;
     }
 	/*
 	*	get source value and set target value
 	*/
 	ov_memstack_lock();
-	if(Ov_Fail(psourceobjvtable->m_getvar(
-		psourceobj,
+	if(Ov_Fail(psourcefbvtable->m_getvar(
+		Ov_PtrUpCast(ov_object, psourcefb),
 		&pconn->v_sourceelem,
 		&varcurrprops
 	))) {
 	    /* Logging */
         FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: can't get source value");
 	} else {
-		if(Ov_Fail(ptargetobjvtable->m_setvar(
-			ptargetobj,
+		if(Ov_Fail(ptargetfbvtable->m_setvar(
+			Ov_PtrUpCast(ov_object, ptargetfb),
 			&pconn->v_targetelem,
 			&varcurrprops
 		))) {
@@ -649,32 +507,32 @@ OV_RESULT fb_concreate_init_fnc(
 ) {
     /* Lokale Variablen */
 	OV_RESULT                   result;
-    OV_INSTPTR_fb_functionblock pSourceFB;
-    OV_INSTPTR_fb_functionblock pTargetFB;
+    OV_INSTPTR_fb_object     pSourceObj;
+    OV_INSTPTR_fb_object     pTargetObj;
     OV_STRING                   *pUserdata;
 	OV_INSTPTR_fb_connection    pconn = Ov_StaticPtrCast(fb_connection, pobj);
     
     pUserdata = (OV_STRING*)userdata;
     
     /* Source FB suchen */
-    pSourceFB = (OV_INSTPTR_fb_functionblock)ov_path_getobjectpointer(pUserdata[0], 2);
-    if(!pSourceFB) {
+    pSourceObj = (OV_INSTPTR_fb_object)ov_path_getobjectpointer(pUserdata[0], 2);
+    if(!pSourceObj) {
         return OV_ERR_BADPATH;
     }
     /* Target FB suchen */
-    pTargetFB = (OV_INSTPTR_fb_functionblock)ov_path_getobjectpointer(pUserdata[2], 2);
-    if(!pTargetFB) {
+    pTargetObj = (OV_INSTPTR_fb_object)ov_path_getobjectpointer(pUserdata[2], 2);
+    if(!pTargetObj) {
         return OV_ERR_BADPATH;
     }
 
     /* Verbundungs-Objekt mit Source- und Target- FB verlinken */
-    result = Ov_Link(fb_outputconnections, pSourceFB, pconn);
+    result = Ov_Link(fb_outputconnections, pSourceObj, pconn);
     if(result != OV_ERR_OK) {
         return result;
     }
-    result = Ov_Link(fb_inputconnections, pTargetFB, pconn);
+    result = Ov_Link(fb_inputconnections, pTargetObj, pconn);
     if(result != OV_ERR_OK) {
-        Ov_Unlink(fb_outputconnections, pSourceFB, pconn);
+        Ov_Unlink(fb_outputconnections, pSourceObj, pconn);
         return result;
     }
 
@@ -686,8 +544,8 @@ OV_RESULT fb_concreate_init_fnc(
     if( !fb_connection_getelements(pconn) ) {
         ov_string_setvalue(&pconn->v_sourceport, NULL);
         ov_string_setvalue(&pconn->v_targetport, NULL);
-        Ov_Unlink(fb_inputconnections,  pTargetFB, pconn);
-        Ov_Unlink(fb_outputconnections, pSourceFB, pconn);
+        Ov_Unlink(fb_inputconnections,  pTargetObj, pconn);
+        Ov_Unlink(fb_outputconnections, pSourceObj, pconn);
         return OV_ERR_BADINITPARAM;
     }
 
@@ -793,19 +651,6 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
     FbSvcLog_printsvc(KS_CREATEOBJECT, "fb_server", "create connection object", result);
     
     return result;
-}
-
-OV_DLLFNCEXPORT OV_STRING fb_connection_visuallayout_get(
-    OV_INSTPTR_fb_connection          pobj
-) {
-    return pobj->v_visuallayout;
-}
-
-OV_DLLFNCEXPORT OV_RESULT fb_connection_visuallayout_set(
-    OV_INSTPTR_fb_connection          pobj,
-    const OV_STRING  value
-) {
-    return ov_string_setvalue(&pobj->v_visuallayout,value);
 }
 
 

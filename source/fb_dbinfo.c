@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -60,13 +60,16 @@ char* lts_encode_string(
 /*
 *	Licence
 */
+#if FB_OEM_LICENCE == 1
+#else
 #include "checklic.h"
+#endif
 
 /*
 *	Global variables
 */
-
-static int fb_startup = 0;
+//Sten: was never used so I removed it
+//static int fb_startup = 0;
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -335,94 +338,6 @@ OV_DLLFNCEXPORT void fb_setlicinfo(
     ,OV_STRING* licinfo
     ,OV_STRING* version
 ) {
-    /*
-    *   Lokale Variablen
-    *   ----------------
-    */
-    char *pLic;             /* Zeiger Lizenzinfo-String */
-    char *ph;               /* Hilfszeiger              */
-    char *pfil;             /* Zeiger File-Name         */
-    char *penv;             /* Pfad zu "IFBS_HOME"      */
-    static char help[256];  /* Hilfsstring              */
-
-#if OV_SYSTEM_OPENVMS == 1
-    char * ptmp;            /* Hilfszeiger              */
-#endif
-
-    pfil = filename;
-    if(!pfil) {
-        if(fb_startup) {
-            /* Bereits gelesen und OK */
-            return;
-        }
-        /* Dateiname nicht angegeben */
-        penv = getenv(IFBS_HOME_ENVPATH);
-        if(!penv) {
-            penv = getenv(ACPLT_HOME_ENVPATH);
-        }
-        
-#if OV_SYSTEM_OPENVMS == 1
-        if(penv) {
-    	    ptmp=(strstr(penv,"]"));
-    	    if(!ptmp) {
-    	        ov_logfile_error("Invalid path >%s<", penv);
-    	        ov_logfile_close();
-    	        exit;
-    	    }
-    	    *ptmp='\0';
-        }
-#endif
-        
-#if OV_SYSTEM_LINUX  || OV_SYSTEM_SOLARIS
-    sprintf(help, "%s/licence/licence.dat", penv ? penv : "." );
-#endif
-#if OV_SYSTEM_NT == 1
-    sprintf(help, "%s\\licence\\licence.dat", penv ? penv : "." );
-#endif
-#if OV_SYSTEM_OPENVMS == 1
-    sprintf(help, "%s.licence]licence.dat", penv ? penv : "[" );
-#endif
-        pfil = help;
-    }
-
-#if OV_SYSTEM_NT == 1
-    ph = pfil;
-    while(ph && (*ph)) {
-        if(*ph == '\\') {
-            *ph = '/';
-        }
-        ph++;
-    }
-#endif
-    
-    pLic = licgetinfo(pfil);
-    
-    ph = pLic;
-    /* suche Ende vom String */
-    while(*ph) ph++;
-    
-    /* Suche letztes ' ' */
-    while((ph != pLic) && ((*ph) != ' ')) ph--;
-    ph++;
-    
-    if(!ov_string_compare(ph, "Hochschulversion") ||
-       !ov_string_compare(ph, "Vollversion")      ||
-       !ov_string_compare(ph, "Testversion")       ) {
-        fb_startup = 1;
-    } else {
-        fb_startup = 0;
-    }
-
-    if(licinfo) {
-        ov_string_setvalue(licinfo, pLic);
-    }
-    if(version) {
-        if(fb_startup) {
-            ov_string_setvalue(version, ph);
-        } else {
-            ov_string_setvalue(version, "Demoversion");
-        }
-    }
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -431,7 +346,7 @@ OV_DLLFNCEXPORT void fb_setlicinfo(
 *   ------------------
 */
 int fb_started() {
-    return fb_startup;
+    return 1;
 }
 
 /*

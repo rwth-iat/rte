@@ -16,8 +16,11 @@ PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 
+#no licence in case of make debug call
+debug: EXTRA_CC_FLAGS = -DFB_OEM_LICENCE=1
+	
 %:
 	acplt_makmak -l fb $(MAKMAKOPTIONS)
 	-tclsh $(PREBUILD) fb $(MAKMAKOPTIONS)
-	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
+	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
 	-tclsh $(POSTBUILD) fb

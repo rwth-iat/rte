@@ -4,8 +4,8 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
-***   Heinrich-Hertz-Straï¿½e 9                                               ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Heinrich-Hertz-Straße 9                                               ***
 ***   50170 Kerpen                                                          ***
 ***   Tel: 02273/9893-0                                                     ***
 ***   Fax: 02273/9893-33                                                    ***
@@ -207,6 +207,20 @@ static OV_ACCESS fb_ticket_getaccess(const OV_TICKET *pticket) {
 	return fb_ticket_access;
 }
 
+
+/*
+*	register fb_ticket
+*/
+/***************** ov_runtimeserver FIX
+OV_DLLFNCEXPORT OV_RESULT fb_server_ticket_register() {
+
+    OV_RESULT result = ov_ksserver_ticket_register(OV_TT_NONE, &fb_noneticketvtbl);
+    if(Ov_Fail(result)) {
+        return result;
+    }
+    return ov_ksserver_ticket_register(OV_TT_SIMPLE, &fb_ticketvtbl);
+}
+*/
 
 /*
 *   Zugriffsrechte fuer Variablen pruefen

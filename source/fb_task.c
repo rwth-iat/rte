@@ -64,8 +64,6 @@
 OV_DLLFNCEXPORT void fb_task_run(
 	OV_INSTPTR_ov_object 	pobj
 );
-/* internal use */
-int fb_vartype_implemented(OV_VAR_TYPE typ);
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -138,6 +136,41 @@ void fb_set_proctime(
             ptask->v_proctime = t0;
         }
     }
+}
+
+/*	----------------------------------------------------------------------	*/
+/*
+*	Set next proctime of the task object
+*/
+OV_DLLFNCEXPORT void fb_task_setNextProcTime(
+	OV_INSTPTR_fb_task	ptask,
+	OV_TIME				*pltc
+) {
+	OV_INSTPTR_fb_task	ptaskparent;
+	
+	switch(ptask->v_actimode) {
+		case FB_AM_ON:
+			if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
+				do {
+					ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
+				} while(ov_time_compare(&ptask->v_proctime, pltc) <= 0);
+			}
+			break;
+		case FB_AM_UNLINK:
+			ptaskparent = Ov_GetParent(fb_tasklist, ptask);
+			if(ptaskparent) {
+			    Ov_Unlink(fb_tasklist, ptaskparent, ptask);
+			}
+			break;
+		case FB_AM_CATCHUP:
+			ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
+			break;
+		case FB_AM_ONCE:
+		default :
+			ptask->v_actimode = 0;
+			break;
+	}
+	return;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -235,7 +268,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_task_constructor(
 	OV_INSTPTR_fb_dbinfoclass	pdbinfo ;
 	OV_INSTPTR_fb_task			ptask = Ov_StaticPtrCast(fb_task, pobj);
 
-	result = ov_object_constructor(pobj);
+	result = fb_object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 
@@ -338,23 +371,6 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 	*	switch based on the element's type
 	*/
 	switch(pelem->elemtype) {
-		case OV_ET_VARIABLE:
-			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			    /* Typ unterstuetzt? */
-			    if( !fb_vartype_implemented(pelem->elemunion.pvar->v_vartype)) {
-                    return OV_AC_NONE;
-				}
-		        /* Rest der Variablen setzen, nur wenn Input-Flags gesetzt */
-		        if(IsFlagSet(pelem->elemunion.pvar->v_flags, 'p') ||
-				   IsFlagSet(pelem->elemunion.pvar->v_flags, 'i')) {
-					return OV_AC_READWRITE;
-				}
-        		if(pelem->elemunion.pvar->v_varprops & OV_VP_SETACCESSOR) {
-        			return OV_AC_READWRITE;
-        		}
-				return OV_AC_READ;
-			}
-			break;
 		case OV_ET_OBJECT:
 		    /* Default access */
 		    acces = (OV_AC_READWRITE | OV_AC_LINKABLE );
@@ -386,47 +402,14 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
     		    }
 		    }
 		    
+		    acces &= fb_object_getaccess(pobj, pelem, pticket);
 			return acces;
 		default:
 			break;
 	}
-	return ov_object_getaccess(pobj, pelem, pticket);
+	return fb_object_getaccess(pobj, pelem, pticket);
 }
 
-/*	----------------------------------------------------------------------	*/
-/*
-*	Set next proctime of the task object
-*/
-OV_DLLFNCEXPORT void fb_task_setNextProcTime(
-	OV_INSTPTR_fb_task	ptask,
-	OV_TIME				*pltc
-) {
-	OV_INSTPTR_fb_task	ptaskparent;
-	
-	switch(ptask->v_actimode) {
-		case FB_AM_ON:
-			if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
-				do {
-					ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
-				} while(ov_time_compare(&ptask->v_proctime, pltc) <= 0);
-			}
-			break;
-		case FB_AM_UNLINK:
-			ptaskparent = Ov_GetParent(fb_tasklist, ptask);
-			if(ptaskparent) {
-			    Ov_Unlink(fb_tasklist, ptaskparent, ptask);
-			}
-			break;
-		case FB_AM_CATCHUP:
-			ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
-			break;
-		case FB_AM_ONCE:
-		default :
-			ptask->v_actimode = 0;
-			break;
-	}
-	return;
-}
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -437,6 +420,7 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 	OV_TIME				*pltc
 ) {
 	OV_INSTPTR_fb_task	ptaskchild;
+	OV_INSTPTR_fb_task	pnexttaskchild;
 	OV_VTBLPTR_fb_task	pvtable;
 
     FbSvcLog_printexecitem((OV_INSTPTR_ov_object)ptask, "executing child objects");
@@ -446,6 +430,7 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 	*/
 	ptaskchild=Ov_GetFirstChild(fb_tasklist, ptask);
 	while(ptaskchild) {
+		pnexttaskchild=Ov_GetNextChild(fb_tasklist, ptaskchild);
 		Ov_GetVTablePtr(fb_task, pvtable, ptaskchild);
     
 		if(!pvtable) {
@@ -460,7 +445,7 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
 		} else {
     		pvtable->m_execute(ptaskchild, pltc);
 		}
-		ptaskchild = Ov_GetNextChild(fb_tasklist, ptaskchild);
+		ptaskchild = pnexttaskchild;
 	}
 
 	return;
@@ -491,9 +476,15 @@ OV_DLLFNCEXPORT void fb_task_execute(
 
     /* Logging */
     FbSvcLog_incrIndent();
+
+	/* trigger output send connections */
+    fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)ptask );
     
 	/* execute the child objects */
     fb_task_execChildObjects(ptask, pltc);
+
+	/* trigger output send connections */
+	fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)ptask );
 	
     /* Logging */
     FbSvcLog_decrIndent();
@@ -536,9 +527,7 @@ OV_DLLFNCEXPORT void fb_task_run(
     	
     	/* Set next execute time */
     	if( (!ptask->v_cyctime.secs) && (!ptask->v_cyctime.usecs) ) {
-            do {
-				ptask->v_proctime.secs += 1;
-			} while(ov_time_compare(&ptask->v_proctime, &time) <= 0);
+			ptask->v_proctime.secs = time.secs + 1;
     	}
     } else {
         if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
@@ -546,9 +535,7 @@ OV_DLLFNCEXPORT void fb_task_run(
 				ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
 			} while(ov_time_compare(&ptask->v_proctime, &time) <= 0);
 		} else {
-            do {
-				ptask->v_proctime.secs += 1;
-			} while(ov_time_compare(&ptask->v_proctime, &time) <= 0);
+			ptask->v_proctime.secs = time.secs + 1;
 		}
     }
 	/*
