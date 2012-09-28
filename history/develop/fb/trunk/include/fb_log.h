@@ -7,7 +7,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
+***   Agentur für Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -39,7 +39,7 @@
 ******************************************************************************/
 
 #include "libov/ov_ov.h"
-#include "libovks/ov_ksserver.h"
+/* #include "libovks/ov_ksserver.h" */
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,6 +61,16 @@ struct FB_EXECLOG_VTBL {
 };
 typedef struct FB_EXECLOG_VTBL	FB_EXECLOG_VTBL;
 
+struct FB_EXECLOG_TABLE_ENTRY {
+	const FB_EXECLOG_VTBL *vtbl;
+};
+typedef struct FB_EXECLOG_TABLE_ENTRY FB_EXECLOG_TABLE_ENTRY;
+
+/*
+*	Get/Set entry for service logger
+*/
+OV_DLLFNCEXPORT FB_EXECLOG_TABLE_ENTRY* FbExecLog_getLogEntry(void);
+OV_DLLFNCEXPORT OV_RESULT FbExecLog_setLogEntry(FB_EXECLOG_TABLE_ENTRY	*plogentry);
 /* Start logger */
 OV_DLLFNCEXPORT void FbSvcLog_startexeclog(OV_INSTPTR_ov_object pobj, OV_STRING msg);
 /* Print info message */

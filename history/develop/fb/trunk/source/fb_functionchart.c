@@ -23,139 +23,62 @@
 
 #include "fb.h"
 #include "libov/ov_macros.h"
-#include "ov_call_macros_10.h"
-
-
-OV_DLLFNCEXPORT void
-fb_functionchart_typemethod
-(OV_INSTPTR_fb_functionblock pfb,	OV_TIME	* pltc)
-{
-  OV_INSTPTR_fb_functionchart pinst = Ov_StaticPtrCast(fb_functionchart, pfb);
-  OV_INSTPTR_fb_task intask = &pinst->p_intask;
-  OV_INSTPTR_fb_connection pcon;
-
-  /* Trigger initial connections */
-
-  Ov_ForEachChild (fb_initialconnections, pinst, pcon)
-  {
-    if (pcon->v_sourcetrig)
-      Ov_Call0 (fb_connection, pcon, trigger);
-  }
-
-  /* Call preintask  */
-
-  Ov_Call1 (fb_functionchart, pinst, preintask, pltc);
-
-  /* Execute internal task */
-
-  Ov_Call1 (fb_task, intask, execute, pltc);
-  
-  /* Call postintask  */
-
-  Ov_Call1 (fb_functionchart, pinst, postintask, pltc);
-
-  /* Trigger final connections */
-
-  Ov_ForEachChild (fb_finalconnections, pinst, pcon)
-  {
-    if (!pcon->v_sourcetrig)
-      Ov_Call0 (fb_connection, pcon, trigger);
-  }
-
-}
-
-OV_DLLFNCEXPORT void
-fb_functionchart_preintask
-(OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
-{
-  OV_INSTPTR_fb_task intask = &pfc->p_intask;
-  intask->v_actimode = 1;
-  intask->v_cyctime.secs = 0;
-  intask->v_cyctime.usecs = 0;
-}
-
-OV_DLLFNCEXPORT void
-fb_functionchart_postintask
-(OV_INSTPTR_fb_functionchart pfc, OV_TIME * pltc)
-{
-}
+#include "fb_namedef.h"
+#include "fb_macros.h"
 
 /*
- * Search and return an instance of fb_variable with given id
- */
-OV_DLLFNCEXPORT OV_INSTPTR_fb_variable
-fb_functionchart_searchvariable
-(OV_INSTPTR_fb_functionchart pfc, OV_STRING id)
-{
-  OV_INSTPTR_fb_variable pvar;
+*	Execute internal task
+*/
+void fbchart_execIntask(
+	OV_INSTPTR_fb_task	pIntask,
+	OV_TIME				*pltc
+) {
+	OV_VTBLPTR_fb_task	             pvtable;
+	
+	
+	Ov_GetVTablePtr(fb_task, pvtable, pIntask);
 
-  Ov_ForEachChild (fb_variables, pfc, pvar)
-  {
-    if (ov_string_compare (id, pvar->v_identifier) == 0)
-    {
-      return pvar;
+	if(!pvtable) {
+        /* ? */
+        return;
     }
-  }
-
-  return NULL;
+    pvtable->m_execute(pIntask, pltc);
 }
 
 /*
- * Auxiliary procedure for getvariable/setvariable
- */
-static OV_RESULT
-fb_functionchart_getorsetvariable 
-(OV_INSTPTR_fb_functionchart pfc,
- const OV_STRING varname,
- OV_ANY *pvarcurrprops,
- OV_BOOL getorset)
-{
-  OV_ELEMENT objelem, varelem;
-  OV_INSTPTR_fb_variable pvar;
-  OV_STRING varid;
+*	Typemethod of functionchart
+*/
+OV_DLLFNCEXPORT void fb_functionchart_typemethod(
+    OV_INSTPTR_fb_functionblock  pfb,
+    OV_TIME                     *pltc
+) {
+    OV_INSTPTR_fb_task          intask;
+    OV_INSTPTR_fb_port          pvar;
+    OV_INSTPTR_fb_functionchart pfc = Ov_StaticPtrCast(fb_functionchart, pfb);
 
-  objelem.elemtype = OV_ET_OBJECT;
-
-  if ((pvar = fb_functionchart_searchvariable (pfc, varname))) {
-    objelem.pobj = Ov_PtrUpCast (ov_object, pvar);
-    varid = "value";
-  } else {
-    objelem.pobj = Ov_PtrUpCast (ov_object, pfc);
-    varid = varname;
-  }
-  
-  if (Ov_OK (ov_element_searchpart (&objelem, &varelem, OV_ET_VARIABLE, varid))) {
-    if (getorset) {
-      return Ov_Call2 (ov_object, objelem.pobj, getvar, &varelem, pvarcurrprops);
-    } else {
-      return Ov_Call2 (ov_object, objelem.pobj, setvar, &varelem, pvarcurrprops);
+    /* Init intask */
+    intask = &pfc->p_intask;
+    intask->v_actimode = 1;
+    intask->v_cyctime.secs = 0;
+    intask->v_cyctime.usecs = 0;
+    intask->v_proctime = *pltc;
+    
+    /* Trigger all connections on chart input ports */
+    Ov_ForEachChild (fb_variables, pfc, pvar) {
+        if( IsFlagSet(pvar->v_flags, 'i') ) {
+            fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)pvar );
+            fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)pvar );
+        }
     }
-  } else {
-    return OV_ERR_BADPARAM;
-  }
-}
-
-/*
- * Get variable value (object variable or real variable) by name
- * Note: call ov_memstack_lock/ov_memstack_unlock around this procedure
- */
-OV_DLLFNCEXPORT OV_RESULT
-fb_functionchart_getvariable 
-(OV_INSTPTR_fb_functionchart pfc,
- const OV_STRING varname,
- OV_ANY *pvarcurrprops)
-{
-  return fb_functionchart_getorsetvariable (pfc, varname, pvarcurrprops, TRUE);
-}
-
-/*
- * Set variable value (object variable or real variable) by name
- */
-OV_DLLFNCEXPORT OV_RESULT 
-fb_functionchart_setvariable 
-(OV_INSTPTR_fb_functionchart pfc,
- const OV_STRING varname,
- OV_ANY *pvarcurrprops)
-{ 
-  return fb_functionchart_getorsetvariable (pfc, varname, pvarcurrprops, FALSE);
+  
+    /* Execute internal task */
+    fbchart_execIntask(intask, pltc);
+  
+    /* Trigger all connections on chart output ports */
+    Ov_ForEachChild (fb_variables, pfc, pvar) {
+        if( IsFlagSet(pvar->v_flags, 'o') ) {
+            fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)pvar );
+            fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)pvar );
+        }
+    }    
 }

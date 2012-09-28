@@ -121,10 +121,30 @@ OV_DLLFNCEXPORT void fb_task_setNextProcTime(
 );
 
 /*
+*   Check whether the variable type is supportive of FB
+*/
+OV_DLLFNCEXPORT int fb_vartype_implemented(
+    OV_VAR_TYPE typ
+);
+
+/*
+*   Set variable value
+*/
+OV_DLLFNCEXPORT OV_RESULT fb_set_varvalue(
+    OV_INSTPTR_ov_object  pobj,
+    const OV_ELEMENT     *pelem,
+    const OV_ANY         *pvarcurrprops,
+    OV_BOOL              *changed
+);
+
+/*
 *	Trigger input get connections
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerInpGetConnections(
 	OV_INSTPTR_fb_functionblock	pfb
+);
+OV_DLLFNCEXPORT void fb_object_triggerInpGetConnections(
+	OV_INSTPTR_fb_object	pfb
 );
 
 /*
@@ -132,6 +152,9 @@ OV_DLLFNCEXPORT void fb_functionblock_triggerInpGetConnections(
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerOutSendConnections(
 	OV_INSTPTR_fb_functionblock	pfb
+);
+OV_DLLFNCEXPORT void fb_object_triggerOutSendConnections(
+	OV_INSTPTR_fb_object	pfb
 );
 
 /*
@@ -161,6 +184,12 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
 	OV_STRING				  targetPort,         /* Target port identifier "in1"     */
     OV_INSTPTR_fb_connection  *pcon               /* Pointer connection object        */
 );
+
+/*
+*   Get the envinroment
+*/
+OV_DLLFNCEXPORT char* fb___getenv(OV_STRING exepth);
+OV_DLLFNCEXPORT void fb___addenvpath(const char *pEnvVar, const char *pth);
 
 #ifdef __cplusplus
 } // Extern "C"

@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -43,9 +43,6 @@
 #endif
 
 
-#include <stdio.h>
-#include <signal.h>
-
 #include "fb.h"
 #include "fb_namedef.h"
 #include "fb_database.h"
@@ -54,6 +51,9 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_association.h"
 #include "libov/ov_result.h"
+
+#include <stdio.h>
+#include <signal.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -316,38 +316,23 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_checkstruct(void) {
     /*
     *   Library fb
     */
-	plib = (OV_INSTPTR_ov_library)Ov_SearchChild(ov_containment, &pdb->root, "fb");
-	if(!plib) {
-	    /* Bibliothek noch nicht geladen? */
-	    plib = ov_library_search("fb");
-	    if(!plib) {
+    plib = ov_library_search("fb");
+    if(!plib) {
 #if OV_SYSTEM_LINUX
-	        result = Ov_CreateObject(ov_library, pobj, &pdb->root, "fb");
+        result = Ov_CreateObject(ov_library, pobj, &pdb->root, "fb");
 #else
-	        result = Ov_CreateObject(ov_library, plib, &pdb->root, "fb");
+        result = Ov_CreateObject(ov_library, plib, &pdb->root, "fb");
 #endif
-           	if(Ov_Fail(result)) {
-    	        ov_logfile_error("Can't load library 'fb'. Error: %s",
-                        ov_result_getresulttext(result));
-       	    	return result;
-            }
-#if OV_SYSTEM_LINUX
-            plib = (OV_INSTPTR_ov_library)pobj;
-#endif
-        } else {
-            /* Bibliothek nicht in "/" */
-            pdom = Ov_GetParent(ov_containment, plib);
-            Ov_Unlink(ov_containment, pdom, plib);
-		    result = ov_association_link(passoc_ov_containment,
-                      (OV_INSTPTR_ov_object)(&pdb->root), (OV_INSTPTR_ov_object)plib,
-		              OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
-		    if(result != OV_ERR_OK) {
-    	        ov_logfile_error("Can't move library 'fb'. Error: %s",
-                        ov_result_getresulttext(result) );
-                return result;
-            }
+       	if(Ov_Fail(result)) {
+	        ov_logfile_error("Can't load library 'fb'. Error: %s",
+                    ov_result_getresulttext(result));
+   	    	return result;
         }
-	}
+#if OV_SYSTEM_LINUX
+        plib = (OV_INSTPTR_ov_library)pobj;
+#endif
+    }
+
 	/*
 	*	DB-INFO object
 	*/

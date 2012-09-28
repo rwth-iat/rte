@@ -37,11 +37,11 @@
 #ifndef _FB_VERSION_H_
 #define _FB_VERSION_H_
 
-#define FB_STRING_VERSION            "2.6"
-#define FB_VERSION                   2.6
+#define FB_STRING_VERSION            "2.7"
+#define FB_VERSION                   2.7
 
-#define FB_DLL_FILE_VERSION          2, 6, 0, 0
-#define FB_DLL_PRODUCT_VERSION       2, 6, 0, 0
+#define FB_DLL_FILE_VERSION          2, 7, 0, 0
+#define FB_DLL_PRODUCT_VERSION       2, 7, 0, 0
 
 #define FBTOOL_STRING_VERSION        "1.0"
 #define FBTOOL_VERSION               1.0
@@ -71,8 +71,8 @@
 #define FB_BUILDER_FILE_VERSION      2, 3, 0, 0
 #define FB_BUILDER_PRODUCT_VERSION   2, 3, 0, 0
 
-#define LTSOFT_COPYRIGHT         "Copyright © 2000-2010 LTSoft GmbH\000"
-#define LTSOFT_LICENCE           "Copyright © 2000-2010\r\nLTSoft GmbH,\r\nAll rights reserved.\000"
+#define LTSOFT_COPYRIGHT         "Copyright © 2000-2012 LTSoft GmbH\000"
+#define LTSOFT_LICENCE           "Copyright © 2000-2012\r\nLTSoft GmbH,\r\nAll rights reserved.\000"
 
 #define LTSOFT_COMPANY           "LTSoft GmbH\r\nBrabanterstr. 13\r\n50171 Kerpen, Germany.\r\n\r\nTel.: 02237/92869-0\r\nFax : 02237/92869-9\r\ne-Mail : ltsoft@ltsoft.de\r\n\r\nInternet : www.ltsoft.de\000\000"
 
