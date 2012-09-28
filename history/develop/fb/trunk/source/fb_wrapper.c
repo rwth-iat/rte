@@ -43,15 +43,22 @@
 	#define _XOPEN_SOURCE 500
 #endif
 
+#if OV_SYSTEM_NT
+	#undef __STRICT_ANSI__
+	#define putenv _putenv
+#endif
+
 #include "libov/ov_database.h"
 #include "libov/ov_logfile.h"
 
 #if OV_SYSTEM_LINUX
 	#include <unistd.h>
 #endif
-#if OV_SYSTEM_SOLARIS
+#if OV_SYSTEM_SOLARIS || OV_SYSTEM_NT
     #include <stdlib.h>
 #endif
+
+
 
 #define SRV_DEBUG 0
 
