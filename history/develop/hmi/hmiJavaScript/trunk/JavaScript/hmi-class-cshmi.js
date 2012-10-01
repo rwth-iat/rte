@@ -87,6 +87,10 @@ function cshmi() {
 	this.ResourceList.EventInfos.startXObj = null;
 	this.ResourceList.EventInfos.startYObj = null;
 	
+	//newwrite
+	//this.ResourceList.ModellVariables = Object();
+	//this.ResourceList.ModellVariables.getValue = ["ksVar", "elemVar", "globalVar", "persistentGlobalVar", "OperatorInput", "TemplateFBReferenceVariable", "TemplateFBVariableReferenceName", "TemplateConfigValues", "value"];
+	
 	//holds the information if the visualisation is filled with content right now
 	this.initStage = false;
 	
@@ -734,7 +738,8 @@ cshmi.prototype = {
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		
-		//todo alle kinder auf einmal abholen...
+		//newwrite
+		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
 		//a server could be not available, or we request a not existing (xpos) variable. This should not cancel the other actions
 		for (var i=0; i < responseArray.length; i++) {
@@ -1127,6 +1132,10 @@ cshmi.prototype = {
 		}else if (GetType === "concat"){
 			//via multiple getValues under the setValue object
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+			
+			//newwrite
+			//fetch config from all childrens via this.ResourceList.ModellVariables.*
+			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
@@ -1147,6 +1156,10 @@ cshmi.prototype = {
 			
 			NewValue = 0;
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+			
+			//newwrite
+			//fetch config from all childrens via this.ResourceList.ModellVariables.*
+			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
@@ -1832,6 +1845,10 @@ cshmi.prototype = {
 		}
 		var ConditionMatched = false;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
+		
+		//newwrite
+		//fetch config from all childrens via this.ResourceList.ModellVariables.*
+		
 		var i = 0;
 		if (anyCond == "TRUE"){
 			//logical OR
@@ -2163,7 +2180,7 @@ cshmi.prototype = {
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP_NG(encodeURI(FBRef)+'%20*', "%20-type%20$::TKS::" + ChildrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
+			var response = HMI.KSClient.getEP_NG(encodeURI(FBRef), "%20-type%20$::TKS::" + ChildrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
 				var responseDictionary = Array();
@@ -3169,6 +3186,10 @@ cshmi.prototype = {
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
+	
+	//newwrite
+	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ähnlich. Mit this.ModellVariables...
+	
 	_buildSvgGroup: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -4022,6 +4043,10 @@ cshmi.prototype = {
 	 * @param {Array} requestList List of multiple Variables to fetch
 	 * @return {Boolean} true on success, false if an error occured
 	 */
+	
+	//newwrite
+	//ksclient.getVar benötigt array als parameter und fügt selbst zusammen
+	
 	_requestVariablesArray: function(requestList){
 		var requestString = "";
 		var lastOvObjName = null;
@@ -4081,6 +4106,10 @@ cshmi.prototype = {
 	 */
 	_loadChildren: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
+		
+		//newwrite
+		//fetch config from all childrens via this.ResourceList.ModellVariables.*
+		
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if(VisualParentObject.tagName === "g" && VisualParentObject.id === "" && VisualParentObject.firstChild && VisualParentObject.firstChild.id !== ""){

@@ -120,8 +120,6 @@ function HMI(debug, error, warning, info, trace) {
 	this.svgWindow = null;
 	this.svgDocument = null;
 	this.SVGPlugin = null;
-	this.GatewayTypeTCL = null;
-	this.GatewayTypePHP = null;
 	
 	this.RefreshTime = null;
 	this.ServerProperty = {SheetHasStyleDescription:null};
@@ -308,7 +306,7 @@ HMI.prototype = {
 			});
 		
 		//detect if the file is called from http or https, but not from filesystem
-		if (-1 == window.location.protocol.indexOf('http')){
+		if (-1 === window.location.protocol.indexOf('http')){
 			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
 			this.hmi_log_onwebsite("Communication to Server failed. This website has to be transfered via HTTP.");
 			if (document.getElementById("idThrobbler") !== null){
@@ -320,6 +318,8 @@ HMI.prototype = {
 				HMI.HMI_Constants.ServerType = "php";
 			}else if ( -1 !== window.location.search.search(/ServerType=tcl/)){
 				HMI.HMI_Constants.ServerType = "tcl";
+			}else if ( -1 !== window.location.search.search(/ServerType=kshttp/)){
+				HMI.HMI_Constants.ServerType = "kshttp";
 			}
 		}else{
 			//Try to detect the Servertype (TCL or PHP capable)
@@ -340,13 +340,16 @@ HMI.prototype = {
 						document.getElementById("idThrobbler").style.display = "none";
 					}
 					return false;
-				}else if (ResponseServerString && -1 != ResponseServerString.indexOf('Tcl-Webserver')){
+				}else if (ResponseServerString && -1 !== ResponseServerString.indexOf('Tcl-Webserver')){
 					HMI.HMI_Constants.ServerType = "tcl";
 					this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
-				}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('PHP')){
+				}else if (ResponseServerString &&  -1 !== ResponseServerString.indexOf('ACPLT/OV HTTP Server')){
+					HMI.HMI_Constants.ServerType = "kshttp";
+					this.hmi_log_trace("HMI.prototype.init - detected kshttp server");
+				}else if (ResponseServerString &&  -1 !== ResponseServerString.indexOf('PHP')){
 					HMI.HMI_Constants.ServerType = "php";
 					this.hmi_log_trace("HMI.prototype.init - detected PHP Gateway");
-				}else if (ResponseServerString &&  -1 != ResponseServerString.indexOf('Apache')){
+				}else if (ResponseServerString &&  -1 !== ResponseServerString.indexOf('Apache')){
 					HMI.HMI_Constants.ServerType = "php";
 					this.hmi_log_trace("HMI.prototype.init - detected Apache Webserver, so probably a PHP Gateway");
 				}
@@ -363,16 +366,15 @@ HMI.prototype = {
 			DatePreventsCaching = null;
 		}
 		//the guessed servertype is used for communication
-		if ("php" == HMI.HMI_Constants.ServerType){
+		if ("php" === HMI.HMI_Constants.ServerType){
 			//tks.php is always in the same subdir as the html files
 			this.KSGateway_Path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1)+ "tks.php";
-			this.GatewayTypeTCL = false;
-			this.GatewayTypePHP = true;
-		}else if("tcl" == HMI.HMI_Constants.ServerType){
+		}else if("tcl" === HMI.HMI_Constants.ServerType){
 			//tcl gateway is hardcoded in the Gateway via TCL-HTTPD\tclhttpd3.5.1\custom\tkshttpserver.tcl
 			this.KSGateway_Path = "/tks";
-			this.GatewayTypeTCL = true;
-			this.GatewayTypePHP = false;
+		}else if("kshttp" === HMI.HMI_Constants.ServerType){
+			//not required with kshttp
+			this.KSGateway_Path = null;
 		}else{
 			HMI.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway (Is a manipulating Proxy like Opera Turbo active?). Please configure in hmi-class-HMI.js');
 			
@@ -453,9 +455,9 @@ HMI.prototype = {
 			if (typeof HMI.svgWindow.getSVGViewerVersion != "undefined"){
 				this.SVGPlugin = true;
 				this.PluginVendor = HMI.svgWindow.getSVGViewerVersion();
-				if (-1 != this.PluginVendor.indexOf('Adobe')){
+				if (-1 !== this.PluginVendor.indexOf('Adobe')){
 					this.PluginVendor = 'Adobe';
-				}else if (-1 != this.PluginVendor.indexOf('examotion')){
+				}else if (-1 !== this.PluginVendor.indexOf('examotion')){
 					this.PluginVendor = 'Examotion';
 				}
 			}
@@ -1846,7 +1848,7 @@ HMI.prototype = {
  * HMI(debug, error, warning, info, trace)
  */
 var HMI;
-if (window.location.search && -1 != unescape(window.location.search).indexOf("trace=true")){
+if (window.location.search && -1 !== unescape(window.location.search).indexOf("trace=true")){
 	HMI = new HMI(true, true, true, true, true);
 }else{
 	HMI = new HMI(true, true, true, true, false);

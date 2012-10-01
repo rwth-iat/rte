@@ -110,7 +110,7 @@ function HMIJavaScriptKSClient() {
 HMIJavaScriptKSClient.prototype = {
 	/**
 	 * usage example:
-	 *		this.getEP(null, '/servers%20*', this._cbGetServers);
+	 *		this.getEP(null, '/servers', this._cbGetServers);
 	 * @param Handle requires own Handle, null if uses the normal global Handle
 	 * @param path of object to query
 	 * @param cbfnc callback function
@@ -136,28 +136,36 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		var ServerAndPath = this._splitKSPath(path);
+		
+		var method = "GET";
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1] + tksparameter;
-		}else if (HMI.GatewayTypePHP === true){
+			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1]+'%20*' + tksparameter;
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//fixkshttp tksparameter support
+			urlparameter = 'getEP?path=' +ServerAndPath[1];
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//todo php should get similar filtering interface
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +ServerAndPath[1];
+			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +ServerAndPath[1]+'%20*';
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
 			return ReturnText;
 		}
@@ -181,6 +189,7 @@ HMIJavaScriptKSClient.prototype = {
 		//fixme auf async umstellen
 		var urlparameter;
 		var newhost;
+		var method = "GET";
 		var hostArray = HostAndServer.split("/");
 		if (hostArray.length !== 2){
 			return null;
@@ -192,12 +201,12 @@ HMIJavaScriptKSClient.prototype = {
 			newhost = HostAndServer;
 		}
 		
-		if (HMI.GatewayTypeTCL === true){
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			urlparameter = "obj=tks-server&args="+newhost;
-		}else if(HMI.GatewayTypePHP === true){
+		}else if("php" === HMI.HMI_Constants.ServerType){
 			urlparameter = "cmd=tks-server&args="+newhost;
 		}
-		var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
+		var ReturnText = this._sendRequest(this, method, false, urlparameter, null);
 		
 		if (ReturnText === false){
 			//communication error
@@ -207,12 +216,12 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
 			//on error retest without default acplt port
-			if (HMI.GatewayTypeTCL === true){
+			if ("tcl" === HMI.HMI_Constants.ServerType){
 				urlparameter = 'obj=tks-server&args='+HostAndServer;
-			}else if(HMI.GatewayTypePHP === true){
+			}else if("php" === HMI.HMI_Constants.ServerType){
 				urlparameter = 'cmd=tks-server&args='+HostAndServer;
 			}
-			ReturnText = this._sendRequest(this, 'GET', false, urlparameter, null);
+			ReturnText = this._sendRequest(this, method, false, urlparameter, null);
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._getHandle - End");
 		return ReturnText;
@@ -248,7 +257,8 @@ HMIJavaScriptKSClient.prototype = {
 		var ServerAndPath = this._splitKSPath(path);
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -257,20 +267,25 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=getvar%20' +
 				"{"+ServerAndPath[1]+"}"+
 				"%20-output%20$::TKS::OP_VALUE";
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			urlparameter = 'getVar?path=' +ServerAndPath[1];
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' +
 				"{"+ServerAndPath[1]+"}";
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - End");
 			return ReturnText;
 		}
@@ -309,16 +324,20 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		var ServerAndPath = this._splitKSPath(path);
+		var method = "GET";
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=setvar%20'+
 			'{'+ServerAndPath[1]+'%20{'+value+'}}';
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//method = "PUT"; //REST conform
+			urlparameter = 'setVar?path=' +ServerAndPath[1]+'&newvalue='+value;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -326,13 +345,16 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "obj="+ Handle + "&cmd=setvar"+
 				"&path=" + ServerAndPath[1] +
 				"&val=" + value;
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
 			return ReturnText;
 		}
@@ -383,14 +405,19 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=rename%20'+
 				ServerAndPath[1]+'%20'+newname;
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//urlparameter = "";
+			//not implemented
+			return null;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
@@ -399,13 +426,16 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "obj="+ Handle + "&cmd=rename"+
 				"&path=" + ServerAndPath[1]+
 				"&newname=" + newname;
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - End");
 			return ReturnText;
 		}
@@ -445,14 +475,19 @@ HMIJavaScriptKSClient.prototype = {
 		var classname = this._splitKSPath(classname)[1];
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=create%20{'+
 			ServerAndPath[1]+'%20'+classname+'}';
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//urlparameter = "";
+			//not implemented
+			return null;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
@@ -461,13 +496,16 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "obj="+ Handle + "&cmd=create"+
 				"&path=" + ServerAndPath[1]+
 				"&class=" + classname;
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - End");
 			return ReturnText;
 		}
@@ -499,27 +537,35 @@ HMIJavaScriptKSClient.prototype = {
 		var ServerAndPath = this._splitKSPath(path);
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=delete%20'+
 			ServerAndPath[1];
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//urlparameter = "";
+			//not implemented
+			return null;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = "obj="+ Handle + "&cmd=delete"+
 				"&path=" + ServerAndPath[1];
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - End");
 			return ReturnText;
 		}
@@ -565,14 +611,19 @@ HMIJavaScriptKSClient.prototype = {
 		var ServerAndPathB = this._splitKSPath(pathB);
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=link%20'+
 			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//urlparameter = "";
+			//not implemented
+			return null;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
@@ -581,13 +632,16 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "obj="+ Handle + "&cmd=link"+
 				"&path=" + ServerAndPath[1]+
 				"&pathb=" + ServerAndPathB[1];
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - End");
 			return ReturnText;
 		}
@@ -633,14 +687,19 @@ HMIJavaScriptKSClient.prototype = {
 		var ServerAndPathB = this._splitKSPath(pathB);
 		var Handle;
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = 'obj='+Handle + '&args=unlink%20'+
 			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//urlparameter = "";
+			//not implemented
+			return null;
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
@@ -649,13 +708,16 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "obj="+ Handle + "&cmd=unlink"+
 				"&path=" + ServerAndPath[1]+
 				"&pathb=" + ServerAndPathB[1];
+		}else{
+			//communication type not implemented
+			return null;
 		}
 		if (async === true && cbfnc !== null){
-			this._sendRequest(this, 'GET', true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc);
 		}else if (cbfnc !== null){
-			this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
-			var ReturnText = this._sendRequest(this, 'GET', false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - End");
 			return ReturnText;
 		}
@@ -672,14 +734,18 @@ HMIJavaScriptKSClient.prototype = {
 	 */
 	delHandle: function(Handle) {
 		var urlparameter;
-		if (HMI.GatewayTypeTCL === true){
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
 			urlparameter = 'obj='+Handle + '&args=destroy';
-		}else if (HMI.GatewayTypePHP === true){
+		}else if ("php" === HMI.HMI_Constants.ServerType){
 			urlparameter = 'obj='+Handle + '&cmd=destroy';
+		}else{
+			//communication type not implemented
+			return;
 		}
 		if (Handle !== null){
 			//the result is not interesting, so can be ignored (async, no callback)
-			this._sendRequest(this, 'GET', true, urlparameter, null);
+			this._sendRequest(this, method, true, urlparameter, null);
 		}
 	},
 	
@@ -738,7 +804,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
 		//fixme async
-		var result = this.getEP_NG("//"+Host+"/"+'MANAGER'+'/servers%20*', "%20-output%20$::TKS::OP_NAME", this._cbGetServers, false);
+		var result = this.getEP_NG("//"+Host+"/"+'MANAGER'+'/servers', "%20-output%20$::TKS::OP_NAME", this._cbGetServers, false);
 		if (result === null){
 			HMI.PossServers.setAttribute("title", "No MANAGER available");
 			HMI.hmi_log_info_onwebsite("Requested Host has no MANAGER available.");
@@ -993,10 +1059,14 @@ HMIJavaScriptKSClient.prototype = {
 			
 			//only send POST to non tcl servers!
 			
-			req.open(method,
-				HMI.KSGateway_Path
-				+ '?'
-				+ urlparameter, async);
+			if (HMI.KSGateway_Path !== null){
+				req.open(method,
+					HMI.KSGateway_Path
+					+ '?'
+					+ urlparameter, async);
+			}else{
+				req.open(method, urlparameter, async);
+			}
 			
 			//prevent caching of request in all browsers (ie was the problem - as usual)
 			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
@@ -1254,7 +1324,7 @@ HMIJavaScriptKSClient.prototype = {
 	getChildObjArray: function (ObjectPath, cachingTarget) {
 		var responseArray;
 		if (!(cachingTarget.ResourceList.ChildList && cachingTarget.ResourceList.ChildList[ObjectPath] !== undefined)){
-			var response = this.getEP_NG(encodeURI(ObjectPath)+'%20*', this.TksGetChildInfo, null);
+			var response = this.getEP_NG(encodeURI(ObjectPath), this.TksGetChildInfo, null);
 			
 			//no caching with an communication error
 			if (response === false){
