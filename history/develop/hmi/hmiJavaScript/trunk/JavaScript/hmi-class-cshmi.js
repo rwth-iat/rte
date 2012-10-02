@@ -2283,7 +2283,6 @@ cshmi.prototype = {
 	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteRoutePolyline: function(VisualObject, ObjectPath){
-		//fixme: hide if connected is invisible (after deletion)
 		if(VisualObject.parentNode === null){
 			//not visualised right now
 			return false;
@@ -2291,9 +2290,6 @@ cshmi.prototype = {
 		if(VisualObject.tagName !== "polyline"){
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
-		}else if(VisualObject.getAttribute("display") === "none"){
-			//not visible, so no routing required
-			return true;
 		}
 		var FBRef = null;
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -2362,37 +2358,46 @@ cshmi.prototype = {
 				VisualObject.parentNode.parentNode.insertBefore(VisualObject.parentNode, VisualObject.parentNode.parentNode.firstChild);
 			}
 			
-			// check if FBref beginn with "//" because we need the server Info as prefix when using getElementById
+			//in DOM every object has a full server+Host name, so if the basename does not provide it, 
+			//we have to add it
 			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
-			var prefix;
-			if (FBRef !== "" && FBRef.charAt(0) === "/" && FBRef.charAt(1) === "/"){
+			var prefix = "";
+			if (FBRef !== ""){
 				//find the 3rd "/"
-				var slashIndex = FBRef.indexOf("/", 2);
+				var slashIndexAfterHost = FBRef.indexOf("/", 2);
 				//find the 4th "/"
-				slashIndex = FBRef.indexOf("/", slashIndex+1);
+				var slashIndexAfterServer = FBRef.indexOf("/", slashIndexAfterHost+1);
 				//only keep the String before 4th "/"
-				prefix = FBRef.slice(0, slashIndex);
-			}else {
-				prefix = "";
+				prefix = FBRef.slice(0, slashIndexAfterServer);
 			}
 			
 			var Source;
 			var Target;
+			
+			if(SourceBasename.charAt(0) === "/" && SourceBasename.charAt(1) !== "/"){
+				//Basename has no prefix (comes perhaps from a association)
+				SourceBasename = prefix + SourceBasename;
+			}
+			if(TargetBasename.charAt(0) === "/" && TargetBasename.charAt(1) !== "/"){
+				//Basename has no prefix (comes perhaps from a association)
+				TargetBasename = prefix + TargetBasename;
+			}
+			
 			if (SourceBasename === ""){
 				Source = "";
 			}else if (SourceVariablename !== ""){
 				//in the svg separators is always /, since it is named via ConfigValue "Name"
-				Source = prefix + SourceBasename + "/" + SourceVariablename;
+				Source = SourceBasename + "/" + SourceVariablename;
 			}else{
-				Source = prefix + SourceBasename;
+				Source = SourceBasename;
 			}
 			if (TargetBasename === ""){
 				Target = "";
 			}else if (TargetVariablename !== ""){
 				//in the svg separators is always /, since it is named via ConfigValue "Name"
-				Target = prefix + TargetBasename + "/" + TargetVariablename;
+				Target = TargetBasename + "/" + TargetVariablename;
 			}else{
-				Target = prefix + TargetBasename;
+				Target = TargetBasename;
 			}
 			if(Source === ""){
 				//skip
@@ -2531,7 +2536,7 @@ cshmi.prototype = {
 		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(IteratorObj.getAttribute("display") === "none"){
 				//connection object is invisible, so hide us, too.
-				VisualObject.setAttribute("display", "none");
+				VisualObject.setAttribute("points", "");
 				return true;
 			}
 		}
@@ -2539,7 +2544,7 @@ cshmi.prototype = {
 		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(IteratorObj.getAttribute("display") === "none"){
 				//connection object is invisible, so hide us, too.
-				VisualObject.setAttribute("display", "none");
+				VisualObject.setAttribute("points", "");
 				return true;
 			}
 		}
@@ -2566,6 +2571,13 @@ cshmi.prototype = {
 			this.ResourceList.Actions[FBRef].yEnd = yEnd;
 			
 			var points = "";
+			
+			//we are perhaps not at global coordinate 0,0
+			xStart = xStart - VisualObject.parentNode.getAttribute("absolutex");
+			xEnd = xEnd - VisualObject.parentNode.getAttribute("absolutex");
+			yStart = yStart - VisualObject.parentNode.getAttribute("absolutey");
+			yEnd = yEnd - VisualObject.parentNode.getAttribute("absolutey");
+			
 			// add minimum #pixel distance from Object till 1st direction change of connection
 			OffsetSource += 40;
 			OffsetTarget += 40;
