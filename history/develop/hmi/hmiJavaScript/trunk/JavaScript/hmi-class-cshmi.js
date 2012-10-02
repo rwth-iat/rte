@@ -724,6 +724,7 @@ cshmi.prototype = {
 		
 		//an later action should not interprete this event
 		this.ResourceList.EventInfos.EventObj = null;
+		this.ResourceList.EventInfos.mouseRelativePosition = null;
 		
 		if (evt.stopPropagation) evt.stopPropagation();
 	},
@@ -1353,7 +1354,7 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
-				if (this.ResourceList.EventInfos.EventObj !== null){
+				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
 					//if we are after an move, we want to set a different x
 					var relativeX = this.ResourceList.EventInfos.mouseRelativePosition[0];
 				}
@@ -1369,7 +1370,7 @@ cshmi.prototype = {
 				}
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
-				if (this.ResourceList.EventInfos.EventObj !== null){
+				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
 					//if we are after an move, we want to set a different y
 					var relativeY = this.ResourceList.EventInfos.mouseRelativePosition[1];
 				}
