@@ -2321,14 +2321,14 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			VisualObject.ResourceList = Object();
 			VisualObject.ResourceList.Actions = Object();
-			VisualObject.ResourceList.Actions[VisualObject.id] = new Object();
-			VisualObject.ResourceList.Actions[VisualObject.id].FBRef = FBRef;
-			VisualObject.ResourceList.Actions[VisualObject.id].useCount = 1;
+			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")] = new Object();
+			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].FBRef = FBRef;
+			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].useCount = 1;
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			FBRef = VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].FBRef;
-			VisualObject.ResourceList.Actions[VisualObject.id].useCount++;
+			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].useCount++;
 			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
