@@ -920,7 +920,7 @@ cshmi.prototype = {
 				return TransformString.split(",")[0];
 			}else if (ParameterValue === "previousTemplateCount"){
 				var previousTemplateCount = 0;
-				var myTemplateClass = VisualObject.getAttribute("TemplateDescription");
+				var myTemplateClass = VisualObject.getAttribute("data-ModelSource");
 				var SiblingObj = VisualObject;
 				
 				var checkTemplateMatch = function (currentNode){
@@ -928,8 +928,8 @@ cshmi.prototype = {
 						if (currentNode.childNodes[i] === VisualObject){
 							//we found ourself, break
 							return false;
-						}else if (currentNode.childNodes[i].hasAttribute("TemplateDescription") === true
-								&& currentNode.childNodes[i].getAttribute("TemplateDescription") === myTemplateClass
+						}else if (currentNode.childNodes[i].hasAttribute("data-ModelSource") === true
+								&& currentNode.childNodes[i].getAttribute("data-ModelSource") === myTemplateClass
 								&& currentNode.childNodes[i].getAttribute("display") !== "none"){
 							//we found a hit
 							previousTemplateCount++;
@@ -946,7 +946,7 @@ cshmi.prototype = {
 				
 				while(SiblingObj.parentNode !== null){
 					SiblingObj = SiblingObj.parentNode;
-					if (SiblingObj.getAttribute("TemplateDescription") !== myTemplateClass){
+					if (SiblingObj.getAttribute("data-ModelSource") !== myTemplateClass){
 						//the object is from another same class, so break
 						break;
 					}
@@ -1284,7 +1284,7 @@ cshmi.prototype = {
 				//content is special, as it is different in OVM and SVG
 				
 				//if trimToLength is set in parent TextFB and perform trimming if needed
-				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.id].ElementParameters.trimToLength, 10);
+				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.getAttribute("data-ModelSource")].ElementParameters.trimToLength, 10);
 				var contentLength = parseInt(NewValue.length, 10);
 				var trimmedContent;
 				if(trimLength > 0 && isNumeric(NewValue)){
@@ -2296,7 +2296,7 @@ cshmi.prototype = {
 		
 		
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
-		if (!(VisualObject.ResourceList && VisualObject.ResourceList.Actions && VisualObject.ResourceList.Actions[VisualObject.id] !== undefined)){
+		if (!(VisualObject.ResourceList && VisualObject.ResourceList.Actions && VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")] !== undefined)){
 			//get Values (via getValue-parts)
 			var SourceBasename = this._getValue(VisualObject, ObjectPath+".SourceBasename");
 			var SourceVariablename = this._getValue(VisualObject, ObjectPath+".SourceVariablename");
@@ -2327,7 +2327,7 @@ cshmi.prototype = {
 			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
-			FBRef = VisualObject.ResourceList.Actions[VisualObject.id].FBRef;
+			FBRef = VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].FBRef;
 			VisualObject.ResourceList.Actions[VisualObject.id].useCount++;
 			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
@@ -2375,11 +2375,11 @@ cshmi.prototype = {
 			var Target;
 			
 			if(SourceBasename.charAt(0) === "/" && SourceBasename.charAt(1) !== "/"){
-				//Basename has no prefix (comes perhaps from a association)
+				//Basename has no prefix (perhaps from an association)
 				SourceBasename = prefix + SourceBasename;
 			}
 			if(TargetBasename.charAt(0) === "/" && TargetBasename.charAt(1) !== "/"){
-				//Basename has no prefix (comes perhaps from a association)
+				//Basename has no prefix (perhaps from an association)
 				TargetBasename = prefix + TargetBasename;
 			}
 			
@@ -2401,16 +2401,23 @@ cshmi.prototype = {
 			}
 			if(Source === ""){
 				//skip
-			}else if (HMI.svgDocument.getElementById(Source) !== null){
-				Source = HMI.svgDocument.getElementById(Source);
-				for(var i = 0; i < Source.childNodes.length;i++){
-					// search tagName "circle" with name containing ConnectionPoint
-					if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
-						SourceConnectionPoint = Source.childNodes[i];
-						SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
-						break;
+			}else if (null !== (Source = HMI.svgDocument.getElementById(Source))){
+				//todo doku moeglichkeit zur direkten scp angabe
+				
+				if (Source.tagName === "circle"){
+					var SourceConnectionPoint = Source;
+					var SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+				}else{
+					for(var i = 0; i < Source.childNodes.length;i++){
+						// search tagName "circle" with name containing ConnectionPoint
+						if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+							SourceConnectionPoint = Source.childNodes[i];
+							SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+							break;
+						}
 					}
 				}
+				Source = null;
 			}else{
 				//the SourceConnectionPoint is outside the domain
 				//search a connectionpoint recursively in all parent svgs for connectionsources that are outside the domain 	
@@ -2443,18 +2450,21 @@ cshmi.prototype = {
 			
 			if(Target === ""){
 				//skip
-			}else if (HMI.svgDocument.getElementById(Target) !== null){
-				Target = HMI.svgDocument.getElementById(Target);
-				var TargetConnectionPoint;
-				var TargetConnectionPointdirection;
-				for(var i = 0; i < Target.childNodes.length;i++){
-					// search tagName "circle" with name containing ConnectionPoint
-					if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
-						TargetConnectionPoint = Target.childNodes[i];
-						TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
-						break;
+			}else if (null !== (Target = HMI.svgDocument.getElementById(Target))){
+				if (Target.tagName === "circle"){
+					var TargetConnectionPoint = Target;
+					var TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+				}else{
+					for(var i = 0; i < Target.childNodes.length;i++){
+						// search tagName "circle" with name containing ConnectionPoint
+						if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+							TargetConnectionPoint = Target.childNodes[i];
+							TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+							break;
+						}
 					}
 				}
+				Target = null;
 			//the TargetConnectionPoint is outside the domain
 			//search a connectionpoint recursively in all parent svgs for connectiontargets that are outside the domain 	
 			}else{
@@ -2954,9 +2964,14 @@ cshmi.prototype = {
 			//do not use a predefined VisualObject if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			VisualObject.id = ObjectPath;
 		}
-		VisualObject.setAttribute("TemplateDescription", PathOfTemplateDefinition);
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = PathOfTemplateDefinition.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		NameList = null;
+		
+		VisualObject.setAttribute("data-ModelSource", PathOfTemplateDefinition);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
 		HMI.addClass(VisualObject, this.cshmiTemplateClass);
@@ -3246,7 +3261,18 @@ cshmi.prototype = {
 		
 		if (VisualObject === null || VisualObject === undefined){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			VisualObject.id = ObjectPath;
+		}
+		
+		if (VisualParentObject !== null){
+			//id should be the name of the parent plus our identifier
+			var NameList = ObjectPath.split("/");
+			VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+			VisualObject.setAttribute("data-ModelSource", ObjectPath);
+			NameList = null;
+		}else{
+			//we are the main sheet, so no parent available
+			VisualObject.id = "//"+HMI.KSClient.ResourceList.ModelHost+"/"+HMI.KSClient.ResourceList.ModelServer+ObjectPath;
+			VisualObject.setAttribute("data-ModelSource", ObjectPath);
 		}
 		
 		HMI.addClass(VisualObject, this.cshmiGroupClass);
@@ -3317,8 +3343,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3379,8 +3410,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3438,8 +3474,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3497,8 +3538,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3607,8 +3653,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3708,8 +3759,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3769,8 +3825,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3834,8 +3895,13 @@ cshmi.prototype = {
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
-			VisualObject.id = ObjectPath;
 		}
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
@@ -3923,7 +3989,13 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("Image "+ObjectPath+" is not configured");
 			return null;
 		}
-		VisualObject.id = ObjectPath;
+		
+		//id should be the name of the parent plus our identifier
+		var NameList = ObjectPath.split("/");
+		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		NameList = null;
+		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
@@ -4149,10 +4221,9 @@ cshmi.prototype = {
 			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
 			
 			//test if we have an template
-			var PathOfTemplateDefinition = VisualParentObject.getAttribute("TemplateDescription");
-			if (PathOfTemplateDefinition){
+			if (HMI.instanceOf(VisualParentObject, "cshmi-template")){
 				//load the elements of the template, allow all network request
-				this._loadChildren(VisualParentObject, PathOfTemplateDefinition, false);
+				this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
 			}
 			//load all graphical children of the object, allow all network request
 			this._loadChildren(VisualParentObject, VisualParentObject.id, false);
