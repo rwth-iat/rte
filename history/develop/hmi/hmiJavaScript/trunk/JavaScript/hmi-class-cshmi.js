@@ -920,7 +920,7 @@ cshmi.prototype = {
 				return TransformString.split(",")[0];
 			}else if (ParameterValue === "previousTemplateCount"){
 				var previousTemplateCount = 0;
-				var myTemplateClass = VisualObject.getAttribute("data-ModelSource");
+				var myTemplateClass = VisualObject.getAttribute("data-TemplateModelSource");
 				var SiblingObj = VisualObject;
 				
 				var checkTemplateMatch = function (currentNode){
@@ -928,8 +928,8 @@ cshmi.prototype = {
 						if (currentNode.childNodes[i] === VisualObject){
 							//we found ourself, break
 							return false;
-						}else if (currentNode.childNodes[i].hasAttribute("data-ModelSource") === true
-								&& currentNode.childNodes[i].getAttribute("data-ModelSource") === myTemplateClass
+						}else if (currentNode.childNodes[i].hasAttribute("data-TemplateModelSource") === true
+								&& currentNode.childNodes[i].getAttribute("data-TemplateModelSource") === myTemplateClass
 								&& currentNode.childNodes[i].getAttribute("display") !== "none"){
 							//we found a hit
 							previousTemplateCount++;
@@ -946,7 +946,7 @@ cshmi.prototype = {
 				
 				while(SiblingObj.parentNode !== null){
 					SiblingObj = SiblingObj.parentNode;
-					if (SiblingObj.getAttribute("data-ModelSource") !== myTemplateClass){
+					if (SiblingObj.getAttribute("data-TemplateModelSource") !== myTemplateClass){
 						//the object is from another same class, so break
 						break;
 					}
@@ -2968,7 +2968,8 @@ cshmi.prototype = {
 		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
 		NameList = null;
 		
-		VisualObject.setAttribute("data-ModelSource", PathOfTemplateDefinition);
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		
 		HMI.addClass(VisualObject, this.cshmiTemplateClass);
@@ -3264,13 +3265,12 @@ cshmi.prototype = {
 			//id should be the name of the parent plus our identifier
 			var NameList = ObjectPath.split("/");
 			VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
-			VisualObject.setAttribute("data-ModelSource", ObjectPath);
 			NameList = null;
 		}else{
 			//we are the main sheet, so no parent available
 			VisualObject.id = "//"+HMI.KSClient.ResourceList.ModelHost+"/"+HMI.KSClient.ResourceList.ModelServer+ObjectPath;
-			VisualObject.setAttribute("data-ModelSource", ObjectPath);
 		}
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
 		
 		HMI.addClass(VisualObject, this.cshmiGroupClass);
 		
@@ -4218,12 +4218,12 @@ cshmi.prototype = {
 			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
 			
 			//test if we have an template
-			if (HMI.instanceOf(VisualParentObject, "cshmi-template")){
+			if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateClass)){
 				//load the elements of the template, allow all network request
-				this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
+				this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-TemplateModelSource"), false);
 			}
 			//load all graphical children of the object, allow all network request
-			this._loadChildren(VisualParentObject, VisualParentObject.id, false);
+			this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
 			
 			//we want to have offset parameter on all new visual elements
 			var ComponentChilds = VisualParentObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
