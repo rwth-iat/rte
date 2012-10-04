@@ -1103,7 +1103,10 @@ HMI.prototype = {
 		
 		//show fb-server name when known
 		//spaces in objectname are encoded as %20 within OV
-		document.title = Server+decodeURI(Sheet)+" - ACPLT/HMI";
+		
+		var SheetArray = Sheet.split("/");
+		document.title = SheetArray[SheetArray.length-1] + " - //" + Host+"/"+Server+decodeURI(Sheet)+" - ACPLT/HMI";
+		SheetArray = null;
 		if (HMI.autoKeepHeader === false && !HMI.ErrorOutput.firstChild){
 			if (!HMI.InfoOutput){
 				//no info output available => hide
