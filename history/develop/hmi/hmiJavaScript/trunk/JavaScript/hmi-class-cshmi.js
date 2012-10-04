@@ -2291,12 +2291,33 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
-		var FBRef = null;
+		
+		var ConnectionOffset = 3; //# pixel offset between connections from same FB
+		
+		var SourceConnectionPoint = null;
+		var SourceConnectionPointdirection = "Right";
+		var TargetConnectionPoint = null;
+		var TargetConnectionPointdirection = "Left";
+		var OffsetSource = 0;
+		var OffsetTarget = 0;
+		
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		
-		
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
-		if (!(VisualObject.ResourceList && VisualObject.ResourceList.Actions && VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")] !== undefined)){
+		if (this.ResourceList.Actions && this.ResourceList.Actions["route_"+VisualObject.id] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			SourceConnectionPoint = this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPoint;
+			SourceConnectionPointdirection = this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPointdirection;
+			TargetConnectionPoint = this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPoint;
+			TargetConnectionPointdirection = this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPointdirection;
+			OffsetSource = this.ResourceList.Actions["route_"+VisualObject.id].OffsetSource;
+			OffsetTarget = this.ResourceList.Actions["route_"+VisualObject.id].OffsetTarget;
+		}else{
+			//Move Polyline-Container before every Functionblocks
+			//needs only to be done once
+			if (VisualObject.parentNode.parentNode.tagName === "svg"){
+				VisualObject.parentNode.parentNode.insertBefore(VisualObject.parentNode, VisualObject.parentNode.parentNode.firstChild);
+			}
+			
 			//get Values (via getValue-parts)
 			var SourceBasename = this._getValue(VisualObject, ObjectPath+".SourceBasename");
 			var SourceVariablename = this._getValue(VisualObject, ObjectPath+".SourceVariablename");
@@ -2316,47 +2337,7 @@ cshmi.prototype = {
 				TargetVariablename = "";
 			}
 			
-			FBRef = this._getFBReference(VisualObject);
-			
-			//we have asked the object successful, so remember the result
-			VisualObject.ResourceList = Object();
-			VisualObject.ResourceList.Actions = Object();
-			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")] = new Object();
-			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].FBRef = FBRef;
-			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].useCount = 1;
-			HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			FBRef = VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].FBRef;
-			VisualObject.ResourceList.Actions[VisualObject.getAttribute("data-ModelSource")].useCount++;
-			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
-		}
-		
-		var SourceConnectionPoint = null;
-		var SourceConnectionPointdirection = "";
-		var TargetConnectionPoint = null;
-		var TargetConnectionPointdirection = "";
-		var ConnectionOffset = 3; //# pixel offset between connections from same FB
-		var OffsetSource = null;
-		var OffsetTarget = null;
-		
-		//if the Polyline was routed earlier, get the cached information (could be the case with cyclic calls)
-		if(FBRef !== "" && this.ResourceList.Actions && this.ResourceList.Actions[FBRef] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
-			SourceConnectionPoint = this.ResourceList.Actions[FBRef].SourceConnectionPoint;
-			SourceConnectionPointdirection = this.ResourceList.Actions[FBRef].SourceConnectionPointdirection;
-			TargetConnectionPoint = this.ResourceList.Actions[FBRef].TargetConnectionPoint;
-			TargetConnectionPointdirection = this.ResourceList.Actions[FBRef].TargetConnectionPointdirection;
-			OffsetSource = this.ResourceList.Actions[FBRef].OffsetSource;
-			OffsetTarget = this.ResourceList.Actions[FBRef].OffsetTarget;
-			//this.ResourceList.Actions[FBRef].useCount++;
-			//HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: using cached information of "+FBRef+" (#"+this.ResourceList.Actions[FBRef].useCount+")");
-		}else{
-			//Move Polyline-Container before every Functionblocks
-			//needs only to be done once
-			if (VisualObject.parentNode.parentNode.tagName === "svg"){
-				VisualObject.parentNode.parentNode.insertBefore(VisualObject.parentNode, VisualObject.parentNode.parentNode.firstChild);
-			}
+			var FBRef = this._getFBReference(VisualObject);
 			
 			//in DOM every object has a full server+Host name, so if the basename does not provide it, 
 			//we have to add it
@@ -2402,19 +2383,29 @@ cshmi.prototype = {
 			if(Source === ""){
 				//skip
 			}else if (null !== (Source = HMI.svgDocument.getElementById(Source))){
-				//todo doku moeglichkeit zur direkten scp angabe
+				//todo doku moeglichkeit zur direkten SourceConnectionPoint angabe (inkl richtung und default)
 				
 				if (Source.tagName === "circle"){
-					var SourceConnectionPoint = Source;
-					var SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
+					SourceConnectionPoint = Source;
 				}else{
 					for(var i = 0; i < Source.childNodes.length;i++){
 						// search tagName "circle" with name containing ConnectionPoint
 						if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
 							SourceConnectionPoint = Source.childNodes[i];
-							SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("ConnectionPoint")+15);
 							break;
 						}
+					}
+				}
+				if(SourceConnectionPoint !== null){
+					//asv problem due to ie bug for substr. Solved in ie9
+					if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "left"){
+						SourceConnectionPointdirection = "Left";
+					}else if(SourceConnectionPoint.id.toLowerCase().substr(-5) === "right"){
+						SourceConnectionPointdirection = "Right";
+					}else if(SourceConnectionPoint.id.toLowerCase().substr(-2) === "up"){
+						SourceConnectionPointdirection = "Up";
+					}else if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "down"){
+						SourceConnectionPointdirection = "Down";
 					}
 				}
 				Source = null;
@@ -2425,7 +2416,6 @@ cshmi.prototype = {
 				//there should only be one SourceConnectionPointOutsideDomain, so use the cached value if it has been searched before
 				if (this.ResourceList.Actions && this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] !== undefined){
 					SourceConnectionPoint = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint;
-					SourceConnectionPointdirection = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection;
 				}
 				//search for SourceConnectionPointOutsideDomain in all parent svgs
 				else{
@@ -2452,16 +2442,25 @@ cshmi.prototype = {
 				//skip
 			}else if (null !== (Target = HMI.svgDocument.getElementById(Target))){
 				if (Target.tagName === "circle"){
-					var TargetConnectionPoint = Target;
-					var TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
+					TargetConnectionPoint = Target;
 				}else{
 					for(var i = 0; i < Target.childNodes.length;i++){
 						// search tagName "circle" with name containing ConnectionPoint
 						if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
 							TargetConnectionPoint = Target.childNodes[i];
-							TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("ConnectionPoint")+15);
 							break;
 						}
+					}
+				}
+				if (TargetConnectionPoint !== null){
+					if(TargetConnectionPoint.id.toLowerCase().substr(-4) === "left"){
+						TargetConnectionPointdirection = "Left";
+					}else if(TargetConnectionPoint.id.toLowerCase().substr(-5) === "right"){
+						TargetConnectionPointdirection = "Right";
+					}else if(TargetConnectionPoint.id.toLowerCase().substr(-2) === "up"){
+						TargetConnectionPointdirection = "Up";
+					}else if(TargetConnectionPoint.id.toLowerCase().substr(-4) === "down"){
+						TargetConnectionPointdirection = "Down";
 					}
 				}
 				Target = null;
@@ -2495,7 +2494,6 @@ cshmi.prototype = {
 			}
 			
 			//get connection offset
-			var OffsetSource = 0;
 			if (SourceBasename === ""){
 				//skip
 			}else if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
@@ -2509,7 +2507,6 @@ cshmi.prototype = {
 				OffsetSource = 0;
 			}
 			
-			var OffsetSource = 0;
 			if (TargetBasename === ""){
 				//skip
 			}else if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
@@ -2524,14 +2521,14 @@ cshmi.prototype = {
 			}
 
 			//remember the result
-			this.ResourceList.Actions[FBRef] = new Object();
-			this.ResourceList.Actions[FBRef].SourceConnectionPoint = SourceConnectionPoint;
-			this.ResourceList.Actions[FBRef].SourceConnectionPointdirection = SourceConnectionPointdirection;
-			this.ResourceList.Actions[FBRef].TargetConnectionPoint = TargetConnectionPoint;
-			this.ResourceList.Actions[FBRef].TargetConnectionPointdirection = TargetConnectionPointdirection;
-			this.ResourceList.Actions[FBRef].OffsetSource = OffsetSource;
-			this.ResourceList.Actions[FBRef].OffsetTarget = OffsetTarget;
-			//this.ResourceList.Actions[FBRef].useCount = 1;
+			this.ResourceList.Actions["route_"+VisualObject.id] = new Object();
+			this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPoint = SourceConnectionPoint;
+			this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPointdirection = SourceConnectionPointdirection;
+			this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPoint = TargetConnectionPoint;
+			this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPointdirection = TargetConnectionPointdirection;
+			this.ResourceList.Actions["route_"+VisualObject.id].OffsetSource = OffsetSource;
+			this.ResourceList.Actions["route_"+VisualObject.id].OffsetTarget = OffsetTarget;
+			//this.ResourceList.Actions["route_"+VisualObject.id].useCount = 1;
 			//HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
 		}
 		
@@ -2570,15 +2567,15 @@ cshmi.prototype = {
 			parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
-		if (	xStart !== this.ResourceList.Actions[FBRef].xStart ||
-				yStart !== this.ResourceList.Actions[FBRef].yStart ||
-				xEnd !== this.ResourceList.Actions[FBRef].xEnd ||
-				yEnd !== this.ResourceList.Actions[FBRef].yEnd) {
+		if (	xStart !== this.ResourceList.Actions["route_"+VisualObject.id].xStart ||
+				yStart !== this.ResourceList.Actions["route_"+VisualObject.id].yStart ||
+				xEnd !== this.ResourceList.Actions["route_"+VisualObject.id].xEnd ||
+				yEnd !== this.ResourceList.Actions["route_"+VisualObject.id].yEnd) {
 			//cache new start- and endPoints
-			this.ResourceList.Actions[FBRef].xStart = xStart;
-			this.ResourceList.Actions[FBRef].yStart = yStart;
-			this.ResourceList.Actions[FBRef].xEnd = xEnd;
-			this.ResourceList.Actions[FBRef].yEnd = yEnd;
+			this.ResourceList.Actions["route_"+VisualObject.id].xStart = xStart;
+			this.ResourceList.Actions["route_"+VisualObject.id].yStart = yStart;
+			this.ResourceList.Actions["route_"+VisualObject.id].xEnd = xEnd;
+			this.ResourceList.Actions["route_"+VisualObject.id].yEnd = yEnd;
 			
 			var points = "";
 			
