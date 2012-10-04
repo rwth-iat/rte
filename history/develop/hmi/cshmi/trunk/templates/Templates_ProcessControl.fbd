@@ -2,10 +2,10 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-09-21 18:36:57
+  Erstellt : 2012-10-04 17:50:19
 
-  HOST                : LOCALHOST:7509
-  SERVER              : MANAGER
+  HOST                : DEV
+  SERVER              : ov_hmidemo8
 ======================================================================
 *********************************************************************/
 
@@ -5241,7 +5241,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -5250,7 +5250,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5258,7 +5258,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5266,7 +5266,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5274,7 +5274,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.if/isRunning :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.if/isOpened :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -5284,7 +5284,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.if/isRunning.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.if/isOpened.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5293,7 +5293,7 @@ Para2Unit:";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
         OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "OperatingState";
+        TemplateFBReferenceVariable : INPUT  STRING = "Opened";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -5302,7 +5302,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.if/isRunning.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.if/isOpened.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5314,13 +5314,13 @@ Para2Unit:";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  INT = 30;
+        value : INPUT  BOOL = TRUE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.then/setFillColorOp :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.then/setFillOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5336,7 +5336,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.then/setFillColorOp.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.then/setFillOpened.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5354,7 +5354,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.else/setFillColorNoOp :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.else/setFillNotOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5370,7 +5370,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setOperatingState.else/setFillColorNoOp.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testOpened.else/setFillNotOpened.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5388,50 +5388,23 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure :
-    CLASS /Libraries/cshmi/IfThenElse;
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/cacheErrorState :
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.if/isError :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.if/isError.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/cacheErrorState.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5449,93 +5422,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.if/isError.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  INT = 30;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "black";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -5544,7 +5431,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5552,7 +5439,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5560,7 +5447,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -5568,17 +5455,17 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.if/isWarning :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.if/isWarning :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
+        comptype : INPUT  STRING = ">=";
         ignoreError : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.if/isWarning.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.if/isWarning.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5587,16 +5474,16 @@ Para2Unit:";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
         OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "ErrorState";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.if/isWarning.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.if/isWarning.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5614,7 +5501,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.then/setStrokeColor :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.then/setStrokeWarning :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5630,7 +5517,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/setErrorStateWarning.then/setStrokeColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.then/setStrokeWarning.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -5643,6 +5530,153 @@ Para2Unit:";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "yellow";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.if/isError :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = ">=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.if/isError.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.if/isError.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  INT = 30;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "stroke";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "red";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "stroke";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "black";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5850,7 +5884,7 @@ Para2Unit:";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setOperatingState.if/isRunning :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
+        comptype : INPUT  STRING = ">=";
         ignoreError : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5961,50 +5995,23 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure :
-    CLASS /Libraries/cshmi/IfThenElse;
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/cacheErrorState :
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.if/isError :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.if/isError.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/cacheErrorState.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6022,93 +6029,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.if/isError.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  INT = 30;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "stroke";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "black";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -6117,7 +6038,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6125,7 +6046,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6133,7 +6054,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6141,17 +6062,17 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.if/isWarning :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.if/isWarning :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
+        comptype : INPUT  STRING = ">=";
         ignoreError : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.if/isWarning.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.if/isWarning.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6160,16 +6081,16 @@ Para2Unit:";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
         OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "ErrorState";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.if/isWarning.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.if/isWarning.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6187,7 +6108,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.then/setStrokeColor :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.then/setStrokeWarning :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6203,7 +6124,7 @@ Para2Unit:";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setErrorStateWarning.then/setStrokeColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.then/setStrokeWarning.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6216,6 +6137,153 @@ Para2Unit:";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "yellow";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.if/isError :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = ">=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.if/isError.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "ErrorState";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.if/isError.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  INT = 30;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "stroke";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "red";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "stroke";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "black";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
