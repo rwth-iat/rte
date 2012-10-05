@@ -4192,9 +4192,17 @@ cshmi.prototype = {
 		}
 		if (NewText === null){
 			//no text change, but only trimToLength
-			if (typeof VisualObject.textContent != "undefined"){
+			for (var i = 0;i < VisualObject.childNodes.length;i++){
+				//search untrimmed text in the title
+				if (VisualObject.childNodes.item(i).tagName === "title"){
+					NewText = VisualObject.childNodes.item(i).firstChild.textContent;
+					break;
+				}
+			}
+			
+			if (NewText === null && typeof VisualObject.textContent != "undefined"){
 				NewText = VisualObject.textContent;
-			}else if (typeof VisualObject.innerText != "undefined"){
+			}else if (NewText === null && typeof VisualObject.innerText != "undefined"){
 				NewText = VisualObject.innerText;
 			}
 		}
