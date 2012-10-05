@@ -1827,10 +1827,9 @@ cshmi.prototype = {
 			while(i < responseArray.length && ConditionMatched !== true){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkConditionIterator(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
-				}
-				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true);
+				}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false);
 				}
 				i++;
 			}
@@ -1840,10 +1839,9 @@ cshmi.prototype = {
 			while(i < responseArray.length && ConditionMatched !== false){
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkConditionIterator(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
-				}
-				else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], ObjectPath);
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true);
+				}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
+					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false);
 				}
 				i++;
 			}
@@ -1860,167 +1858,67 @@ cshmi.prototype = {
 		return false;
 	},
 	
-	
 	/**
 	 * checks Condition
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {Boolean} CompareIteratedChild is the object a CompareIteratedChild?
 	 * @return {Boolean} true if condition matched, false if not matched, null on error
 	 */
-	_checkCondition: function(VisualObject, ObjectPath, ConditionPath){
-		//get Values
-		var ignoreError;
-		var comptype;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-			var requestList = new Object();
+	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild){
+		var requestList = new Object();
+		if (this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined){
+			requestList[ObjectPath] = this.ResourceList.Conditions[ObjectPath].ConditionParameters;
+		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ignoreError"] = null;
 			requestList[ObjectPath]["comptype"] = null;
-			
+			if (CompareIteratedChild === true){
+				if (this.ResourceList.ChildrenIterator.currentChild === undefined){
+					HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
+					//error state, so no boolean
+					return null;
+				}
+				requestList[ObjectPath]["childValue"] = null;
+			}
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode === false){
 				return null;
 			}
-			
-			ignoreError = requestList[ObjectPath]["ignoreError"];
-			comptype = requestList[ObjectPath]["comptype"];
-			
-			//feeding garbage collector early
-			requestList = null;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError = ignoreError;
-			this.ResourceList.Conditions[ObjectPath].checkConditionCompType = comptype;
-			this.ResourceList.Conditions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._checkCondition: remembering config of "+ObjectPath+" ");
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionCompType;
-			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIgnoreError;
-			this.ResourceList.Conditions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._checkCondition: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			this.ResourceList.Conditions[ObjectPath].ConditionParameters = requestList[ObjectPath];
 		}
 		
-		
-		var Value1 = this._getValue(VisualObject, ObjectPath+".value1");
-		var Value2 = this._getValue(VisualObject, ObjectPath+".value2");
-		
-		if (Value1 === null){
-			//getValue had intentionally no value, abort
-			return null;
-		}else if (Value1 === false && ignoreError === "FALSE"){
-				HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
-				//error state, so no boolean
-				return null;
-		}else if (Value1 === false && ignoreError === "TRUE"){
-			Value1 = "";
-		}
-		if (Value2 === null){
-			//getValue had intentionally no value, abort
-			return null;
-		}else if (Value2 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
-			//error state, so no boolean
-			return null;
-		}else if (Value2 === false && ignoreError === "TRUE"){
-			Value2 = "";
-		}
-		
-		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
-		if(isNumeric(Value1)){
-			Value1 = parseFloat(Value1);
-		}
-		if(isNumeric(Value2)){
-			Value2 = parseFloat(Value2);
-		}
-		
-		if (comptype === "<"){
-			return (Value1 < Value2);
-		}else if (comptype === "<="){
-			return (Value1 <= Value2);
-		}else if (comptype === "=="){
-			return (Value1 === Value2);
-		}else if (comptype === "!="){
-			return (Value1 !== Value2);
-		}else if (comptype === ">="){
-			return (Value1 >= Value2);
-		}else if (comptype === ">"){
-			return (Value1 > Value2);
-		}else{
-			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
-			//error state, so no boolean
-			return null;
-		}
-	},
-	
-	/**
-	 * checks Condition within ChildrenIterator
-	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @return {Boolean} true if condition matched, false if not matched, null on error
-	 */
-	_checkConditionIterator: function(VisualObject, ObjectPath, ConditionPath){
-		if (this.ResourceList.ChildrenIterator.currentChild === undefined){
-			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
-			//error state, so no boolean
-			return null;
-		}
-		//get Values
-		var ignoreError;
-		var comptype;
+		var ignoreError = requestList[ObjectPath]["ignoreError"];
+		var comptype = requestList[ObjectPath]["comptype"];
 		var childValue;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined)){
-			var requestList = new Object();
-			requestList[ObjectPath] = new Object();
-			requestList[ObjectPath]["ignoreError"] = null;
-			requestList[ObjectPath]["comptype"] = null;
-			requestList[ObjectPath]["childValue"] = null;
-			
-			var successCode = this._requestVariablesArray(requestList);
-			if (successCode === false){
-				return null;
-			}
-			
-			ignoreError = requestList[ObjectPath]["ignoreError"];
-			comptype = requestList[ObjectPath]["comptype"];
+		var Value1;
+		var Value2;
+		if (CompareIteratedChild === true){
 			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
 			
-			//feeding garbage collector early
-			requestList = null;
+			if (childValue[0] === ""){
+				HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
+				//error state, so no boolean
+				return null;
+			}
 			
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError = ignoreError;
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType = comptype;
-			this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue = childValue;
-			this.ResourceList.Conditions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._checkConditionIterator: remembering config of "+ObjectPath+" ");
+			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue[0]];
+			Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
 		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			ignoreError = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorIgnoreError;
-			comptype = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorCompType;
-			childValue = this.ResourceList.Conditions[ObjectPath].checkConditionIteratorChildValue;
-			this.ResourceList.Conditions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._checkConditionIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Conditions[ObjectPath].useCount+")");
+			Value1 = this._getValue(VisualObject, ObjectPath+".value1");
+			Value2 = this._getValue(VisualObject, ObjectPath+".value2");
 		}
-		
-		if (childValue[0] === ""){
-			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
-			//error state, so no boolean
-			return null;
-		}
-		
-		var Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue[0]];
-		var Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
+		//feeding garbage collector early
+		requestList = null;
 		
 		if (Value1 === null && ignoreError === "FALSE"){
 			//intentionally no value, abort
 			return null;
 		}else if (Value1 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
 			//error state, so no boolean
 			return null;
 		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
@@ -2034,16 +1932,20 @@ cshmi.prototype = {
 			//getValue had intentionally no value, abort
 			return null;
 		}else if (Value2 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkConditionIterator on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
 			//error state, so no boolean
 			return null;
 		}else if (Value2 === false && ignoreError === "TRUE"){
 			Value2 = "";
 		}
 		
+		//todo doku mehrfache Abfragen von value2
 		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
 		
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
+		if(isNumeric(Value1)){
+			Value1 = parseFloat(Value1);
+		}
 		for (var i=0; i<Value2.length; i++){
 			if(isNumeric(Value2[i])){
 				Value2[i] = parseFloat(Value2[i]);
@@ -2094,7 +1996,7 @@ cshmi.prototype = {
 			}
 			return true;
 		}else{
-			HMI.hmi_log_error("cshmi._checkConditionIterator Comparingtype "+comptype+" unknown");
+			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
 			//error state, so no boolean
 			return null;
 		}
@@ -4285,6 +4187,9 @@ cshmi.prototype = {
 	 * @return void
 	 */
 	_setSvgText: function(VisualObject, NewText, trimToLength){
+		if (VisualObject.tagName !== "text"){
+			return;
+		}
 		if (NewText === null){
 			//no text change, but only trimToLength
 			if (typeof VisualObject.textContent != "undefined"){

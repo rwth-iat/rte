@@ -1812,6 +1812,10 @@ HMI.prototype = {
 	hmi_log_onwebsite: function (text) {
 		var ErrorTextNode = document.createTextNode(text);
 		deleteChilds(HMI.ErrorOutput);
+		if (this.InfoOutput){
+			//if we have an error, the warning is not interesting anymore
+			deleteChilds(HMI.InfoOutput);
+		}
 		HMI.ErrorOutput.appendChild(ErrorTextNode);
 		//show header
 		HMI.hideHeader(false);

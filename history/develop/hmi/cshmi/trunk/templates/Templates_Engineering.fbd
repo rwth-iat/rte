@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-10-05 12:54:58
+  Erstellt : 2012-10-05 16:20:36
 
   HOST                : LOCALHOST:7509
   SERVER              : MANAGER
@@ -2171,9 +2171,8 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/BlacklistLibs.if/Blacklist :
-    CLASS /Libraries/cshmi/CompareIteratedChild;
+    CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
-        childValue : INPUT  STRING = "OP_VALUE";
         comptype : INPUT  STRING = "!=";
         ignoreError : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -2181,7 +2180,25 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/BlacklistLibs.if/Blacklist.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/BlacklistLibs.if/Blacklist.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "identifier";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/BlacklistLibs.if/Blacklist.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2193,7 +2210,7 @@
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[16] : INPUT  STRING = {"/acplt/ov" , "/acplt/ksserv" , "/acplt/ksservtcp" , "/acplt/cshmi" , "/Libraries/cshmi" , "/fb" , "/acplt/fb" , "/Libraries/fb" , "/acplt/hmi" , "/Libraries/hmi" , "/acplt/hmixml" , "/Libraries/hmixml" , "/acplt/hmisvg" , "/Libraries/hmisvg" , "/acplt/hmisvggesture" , "/Libraries/hmisvggesture"};
+        value[9] : INPUT  STRING = {"ov" , "ksserv" , "ksservtcp" , "fb" , "cshmi" , "hmi" , "hmisvg" , "hmisvggesture" , "hmixml"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2217,6 +2234,119 @@
         rotate : INPUT  INT = 0;
         opacity : INPUT  SINGLE = 1.000000;
         hideable : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.if/testFB2 :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.if/testFB2.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "identifier";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.if/testFB2.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "fb";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.then/saveFBpath :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "fbpath";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/InstLibList/onload/libIterator.forEachChild/findFB.then/saveFBpath.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "fullqualifiedname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4739,7 +4869,7 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[57] : INPUT  STRING = {"/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/fb/task" , "/Libraries/fb/connection" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/Libraries/fb/task" , "/acplt/fb/connection" , "/acplt/fb/anyvar" , "/acplt/fb/boolvar" , "/acplt/fb/boolvecvar" , "/acplt/fb/doublevar" , "/acplt/fb/doublevecvar" , "/acplt/fb/intvar" , "/acplt/fb/intvecvar" , "/acplt/fb/singlevar" , "/acplt/fb/singlevecvar" , "/acplt/fb/stringvar" , "/acplt/fb/stringvecvar" , "/acplt/fb/timespanvar" , "/acplt/fb/timespanvecvar" , "/acplt/fb/timevar" , "/acplt/fb/timevecvar" , "/acplt/fb/uintvar" , "/acplt/fb/uintvecvar" , "/acplt/fb/task"};
+        value[91] : INPUT  STRING = {"/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/fb/task" , "/Libraries/fb/connection" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/Libraries/fb/task" , "/acplt/fb/connection" , "/acplt/fb/anyvar" , "/acplt/fb/boolvar" , "/acplt/fb/boolvecvar" , "/acplt/fb/doublevar" , "/acplt/fb/doublevecvar" , "/acplt/fb/intvar" , "/acplt/fb/intvecvar" , "/acplt/fb/singlevar" , "/acplt/fb/singlevecvar" , "/acplt/fb/stringvar" , "/acplt/fb/stringvecvar" , "/acplt/fb/timespanvar" , "/acplt/fb/timespanvecvar" , "/acplt/fb/timevar" , "/acplt/fb/timevecvar" , "/acplt/fb/uintvar" , "/acplt/fb/uintvecvar" , "/acplt/fb/task" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport" , "/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4841,7 +4971,7 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[34] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
+        value[68] : INPUT  STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4989,7 +5119,7 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[34] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
+        value[68] : INPUT  STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5540,7 +5670,7 @@ buttontitle";
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/labelNewButtons :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 110.000000;
+        x : INPUT  SINGLE = 130.000000;
         y : INPUT  SINGLE = 23.000000;
         content : INPUT  STRING = "click to instantiate a new";
         fontSize : INPUT  STRING = "10px";
@@ -5771,13 +5901,13 @@ buttontitle";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "fbpath";
         persistentGlobalVar : INPUT  STRING = "";
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "/acplt/fb";
+        value : INPUT  STRING = "";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5824,11 +5954,143 @@ buttontitle";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Engineering/internal/ButtonSchmalv1";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 25.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Dom"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/actionCreate :
+    CLASS /Libraries/cshmi/CreateObject;
+    VARIABLE_VALUES
+        autoRenameIfExists : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/actionCreate.Name :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Please enter the name for the new Domain";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/actionCreate.Place :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "DomainName";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/actionCreate.Library :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "/acplt/ov";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/actionCreate.Class :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "domain";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstNewDom/click/printWarning :
+    CLASS /Libraries/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Engineering/internal/reloadRequest";
+        x : INPUT  SINGLE = -40.000000;
+        y : INPUT  SINGLE = 30.000000;
+        xOffset : INPUT  SINGLE = 0.000000;
+        yOffset : INPUT  SINGLE = 0.000000;
+        maxTemplatesPerDirection : INPUT  STRING = "";
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        rotate : INPUT  INT = 0;
+        opacity : INPUT  SINGLE = 0.400000;
+        hideable : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/InstLibList :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Engineering/internal/InstLibList";
-        x : INPUT  SINGLE = 160.000000;
+        x : INPUT  SINGLE = 200.000000;
         y : INPUT  SINGLE = 25.000000;
         FBReference[1] : INPUT  STRING = {"/acplt/ov/library"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -5839,7 +6101,7 @@ buttontitle";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 8;
+        zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -6683,7 +6945,7 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[34] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
+        value[68] : INPUT  STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -6945,7 +7207,7 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[34] : INPUT  STRING = {"/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
+        value[68] : INPUT  STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
