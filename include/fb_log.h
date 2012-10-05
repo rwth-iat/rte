@@ -39,7 +39,10 @@
 ******************************************************************************/
 
 #include "libov/ov_ov.h"
-/* #include "libovks/ov_ksserver.h" */
+
+/***************** ov_runtimeserver FIX
+#include "libovks/ov_ksserver.h"
+*/
 
 #ifdef __cplusplus
 extern "C" {
