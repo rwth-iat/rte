@@ -4297,6 +4297,7 @@ cshmi.prototype = {
 		trimToLength = parseInt(trimToLength, 10);
 		var contentLength = parseInt(NewText.length, 10);
 		var trimmedContent;
+		var trimFromRight = null;
 		if(trimToLength > 0 && isNumeric(NewText)){
 			//we have a numeric NewText
 			if(NewText.indexOf(".") === -1){
@@ -4311,10 +4312,12 @@ cshmi.prototype = {
 				this._setTitle(VisualObject, NewText);
 			}
 		}else if((trimToLength > 0) && (contentLength > trimToLength)){
-			trimmedContent = NewText.substr(0, trimToLength) + String.fromCharCode(8230);
+			trimmedContent = NewText.substr(0, trimToLength);
+			trimFromRight = true;
 			this._setTitle(VisualObject, NewText);
 		}else if((trimToLength < 0) && (contentLength > -trimToLength)){
-			trimmedContent =  String.fromCharCode(8230) + NewText.substr(contentLength + trimToLength);
+			trimmedContent = NewText.substr(contentLength + trimToLength);
+			trimFromRight = false;
 			this._setTitle(VisualObject, NewText);
 		}else{
 			trimmedContent = NewText;
@@ -4322,11 +4325,19 @@ cshmi.prototype = {
 		}
 		
 		trimmedContent = HMI.svgDocument.createTextNode(trimmedContent);
-		if(VisualObject.firstChild !== null){
-			VisualObject.replaceChild(trimmedContent, VisualObject.firstChild);
-		}else{
-			VisualObject.appendChild(trimmedContent);
+		deleteChilds(VisualObject);
+		VisualObject.appendChild(trimmedContent);
+		
+		var dots = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
+		dots.appendChild(HMI.svgDocument.createTextNode(String.fromCharCode(8230)));
+		dots.setAttribute("font-size", "70%");
+		if(trimFromRight === true){
+			VisualObject.appendChild(dots);
+		}else if(trimFromRight === false){
+			VisualObject.insertBefore(dots, VisualObject.firstChild);
 		}
+		
+		//remember config
 		VisualObject.setAttribute("trimToLength", trimToLength);
 	},
 	

@@ -78,13 +78,13 @@ function $(id) {
  * @returns void
  */
 function deleteChilds(ParentNode) {
-	HMI.hmi_log_trace("deleteChilds with id: "+ParentNode.id+" - Start");
+	//HMI.hmi_log_trace("deleteChilds with id: "+ParentNode.id+" - Start");
 	
 	while (ParentNode.hasChildNodes() === true){
 		ParentNode.removeChild(ParentNode.lastChild);
 	}
 	
-	HMI.hmi_log_trace("deleteChilds - End");
+	//HMI.hmi_log_trace("deleteChilds - End");
 }
 
 /**
