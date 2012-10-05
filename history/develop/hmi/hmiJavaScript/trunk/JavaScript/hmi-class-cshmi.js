@@ -876,8 +876,9 @@ cshmi.prototype = {
 			}
 		}else if (ParameterName === "elemVar"){
 			//todo interprete elemVarPath
+			
+			//some elemVars are special, as they are different in OVM and SVG
 			if (ParameterValue === "content"){
-				//content is special, as it is different in OVM and SVG
 				if (typeof VisualObject.textContent != "undefined"){
 					return VisualObject.textContent;
 				}else if (typeof VisualObject.innerText != "undefined"){
@@ -894,7 +895,6 @@ cshmi.prototype = {
 				} 
 				return "";
 			}else if (ParameterValue === "visible"){
-				//display is special, as it is different in OVM and SVG
 				var displayVar = VisualObject.getAttribute("display");
 				if (displayVar == "none"){
 					return "FALSE";
@@ -902,7 +902,6 @@ cshmi.prototype = {
 					return "TRUE";
 				}
 			}else if (ParameterValue === "rotate"){
-				//rotate is special, as it is different in OVM and SVG
 				if (VisualObject.tagName == "svg" && VisualObject.parentNode.tagName == "g" && VisualObject.parentNode.id === ""){
 					//svg are not transformable, so the rotation is in the objects parent
 					var TransformString = VisualObject.parentNode.getAttribute("transform");
@@ -1280,41 +1279,15 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "elemVar"){
 			//todo interprete elemVarPath
+			
+			//some elemVars are special, as they are different in OVM and SVG
 			if (ParameterValue === "content"){
-				//content is special, as it is different in OVM and SVG
-				
-				//if trimToLength is set in parent TextFB and perform trimming if needed
-				var trimLength = parseInt(this.ResourceList.Elements[VisualObject.getAttribute("data-ModelSource")].ElementParameters.trimToLength, 10);
-				var contentLength = parseInt(NewValue.length, 10);
-				var trimmedContent;
-				if(trimLength > 0 && isNumeric(NewValue)){
-					//we have a numeric NewValue
-					if(NewValue.indexOf(".") === -1){
-						//INT or UINT
-						VisualObject.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild);
-					}else{
-						//other values
-						var power = Math.pow(10, trimLength || 0);
-						trimmedContent = String(Math.round(NewValue * power) / power);
-						
-						VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
-						this._setTitle(VisualObject, NewValue);
-					}
-				}else if((trimLength > 0) && (contentLength > trimLength)){
-					trimmedContent = NewValue.substr(0, trimLength) + String.fromCharCode(8230);
-					VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
-					this._setTitle(VisualObject, NewValue);
-				}else if((trimLength < 0) && (contentLength > -trimLength)){
-					trimmedContent =  String.fromCharCode(8230) + NewValue.substr(contentLength + trimLength);
-					VisualObject.replaceChild(HMI.svgDocument.createTextNode(trimmedContent), VisualObject.firstChild);
-					this._setTitle(VisualObject, NewValue);
-				}else{
-					VisualObject.replaceChild(HMI.svgDocument.createTextNode(NewValue), VisualObject.firstChild);
-				}
+				this._setSvgText(VisualObject, NewValue, VisualObject.getAttribute("trimToLength"));
+			}else if (ParameterValue === "trimToLength"){
+				this._setSvgText(VisualObject, null, NewValue);
 			}else if (ParameterValue === "title"){
 				this._setTitle(VisualObject, NewValue);
 			}else if (ParameterValue === "visible"){
-				//visible is special, as it is different in OVM and SVG
 				if (NewValue == "FALSE"){
 					VisualObject.setAttribute("display", "none");
 				}else{
@@ -1324,8 +1297,6 @@ cshmi.prototype = {
 					this._loadHiddenChildrenElements(VisualObject);
 				}
 			}else if (ParameterValue === "rotate"){
-				//rotate is special, as it is different in OVM and SVG
-				
 				if(!isNumeric(NewValue)){
 					//ignore writing wrong value
 					return false;
@@ -3666,35 +3637,7 @@ cshmi.prototype = {
 		VisualObject.setAttribute("font-family", requestList[ObjectPath]["fontFamily"]);
 		VisualObject.setAttribute("text-anchor", requestList[ObjectPath]["horAlignment"]);
 		
-		//perform trimming if needed
-		var trimLength = parseInt(requestList[ObjectPath]["trimToLength"], 10);
-		var contentLength = parseInt(requestList[ObjectPath]["content"].length, 10);
-		var trimmedContent;
-		
-		if(trimLength > 0 && isNumeric(requestList[ObjectPath]["content"])){
-			//we have a numeric NewValue
-			if(requestList[ObjectPath]["content"].indexOf(".") === -1){
-				//INT or UINT
-				VisualObject.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
-			}else{
-				//other values
-				var power = Math.pow(10, trimLength || 0);
-				trimmedContent = String(Math.round(NewValue * power) / power);
-				
-				VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-				this._setTitle(VisualObject, NewValue);
-			}
-		}else if((trimLength > 0) && (contentLength > trimLength)){
-			trimmedContent = requestList[ObjectPath]["content"].substr(0, trimLength) + String.fromCharCode(8230);
-			VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
-		}else if((trimLength < 0) && (contentLength > -trimLength)){
-			trimmedContent =  String.fromCharCode(8230) + requestList[ObjectPath]["content"].substr(contentLength + trimLength);
-			VisualObject.appendChild(HMI.svgDocument.createTextNode(trimmedContent));
-			this._setTitle(VisualObject, requestList[ObjectPath]["content"]);
-		}else{
-			VisualObject.appendChild(HMI.svgDocument.createTextNode(requestList[ObjectPath]["content"]));
-		}
+		this._setSvgText(VisualObject, requestList[ObjectPath]["content"], parseInt(requestList[ObjectPath]["trimToLength"], 10));
 		
 		//dominant-baseline:hanging not supported by Opera (v12) and IE9
 		//baseline-shift:-100% only defined on a tspan, not on text (respected by Opera), not supported by IE9
@@ -4335,6 +4278,59 @@ cshmi.prototype = {
 	},
 	
 	/**
+	 * set Text, trim if needed and remember the length
+	 * @param {SVGElement} VisualObject visual Object which is active Text Object
+	 * @param {String} newText Text to set, null if unchanged.
+	 * @param {trimLength} maximal length to set
+	 * @return void
+	 */
+	_setSvgText: function(VisualObject, NewText, trimToLength){
+		if (NewText === null){
+			//no text change, but only trimToLength
+			if (typeof VisualObject.textContent != "undefined"){
+				NewText = VisualObject.textContent;
+			}else if (typeof VisualObject.innerText != "undefined"){
+				NewText = VisualObject.innerText;
+			}
+		}
+		
+		trimToLength = parseInt(trimToLength, 10);
+		var contentLength = parseInt(NewText.length, 10);
+		var trimmedContent;
+		if(trimToLength > 0 && isNumeric(NewText)){
+			//we have a numeric NewText
+			if(NewText.indexOf(".") === -1){
+				//INT or UINT
+				trimmedContent = NewText;
+				this._setTitle(VisualObject, "");
+			}else{
+				//other values
+				var power = Math.pow(10, trimToLength || 0);
+				trimmedContent = String(Math.round(NewText * power) / power);
+				
+				this._setTitle(VisualObject, NewText);
+			}
+		}else if((trimToLength > 0) && (contentLength > trimToLength)){
+			trimmedContent = NewText.substr(0, trimToLength) + String.fromCharCode(8230);
+			this._setTitle(VisualObject, NewText);
+		}else if((trimToLength < 0) && (contentLength > -trimToLength)){
+			trimmedContent =  String.fromCharCode(8230) + NewText.substr(contentLength + trimToLength);
+			this._setTitle(VisualObject, NewText);
+		}else{
+			trimmedContent = NewText;
+			this._setTitle(VisualObject, "");
+		}
+		
+		trimmedContent = HMI.svgDocument.createTextNode(trimmedContent);
+		if(VisualObject.firstChild !== null){
+			VisualObject.replaceChild(trimmedContent, VisualObject.firstChild);
+		}else{
+			VisualObject.appendChild(trimmedContent);
+		}
+		VisualObject.setAttribute("trimToLength", trimToLength);
+	},
+	
+	/**
 	 * sets an SVG title on an object
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} newText Text for the title
@@ -4342,12 +4338,18 @@ cshmi.prototype = {
 	 */
 	_setTitle: function(VisualObject, newText){
 		var titles = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
-		if (titles.length >0){
-			titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
+		if(newText === ""){
+			if (titles.length !== 0){
+				titles[0].parentNode.removeChild(titles[0]);
+			}
 		}else{
-			var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
-			svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
-			VisualObject.appendChild(svgTitle);
+			if (titles.length >0){
+				titles[0].replaceChild(HMI.svgDocument.createTextNode(newText), titles[0].firstChild);
+			}else{
+				var svgTitle = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'title');
+				svgTitle.appendChild(HMI.svgDocument.createTextNode(newText));
+				VisualObject.appendChild(svgTitle);
+			}
 		}
 		return true;
 	}
