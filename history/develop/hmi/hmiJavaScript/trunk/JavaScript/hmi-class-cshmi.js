@@ -1939,16 +1939,20 @@ cshmi.prototype = {
 			Value2 = "";
 		}
 		
-		//todo doku mehrfache Abfragen von value2
-		Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
-		
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
 		if(isNumeric(Value1)){
 			Value1 = parseFloat(Value1);
 		}
-		for (var i=0; i<Value2.length; i++){
-			if(isNumeric(Value2[i])){
-				Value2[i] = parseFloat(Value2[i]);
+		if (Value2 === ""){
+			Value2 = [""];
+		}else{
+			//todo doku mehrfache Abfragen von value2
+			Value2 = HMI.KSClient.splitKsResponse(Value2, 0);
+			
+			for (var i=0; i<Value2.length; i++){
+				if(isNumeric(Value2[i])){
+					Value2[i] = parseFloat(Value2[i]);
+				}
 			}
 		}
 		
