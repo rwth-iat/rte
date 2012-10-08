@@ -2165,8 +2165,6 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var ConnectionOffset = 3; //# pixel offset between connections from same FB
-		
 		var SourceConnectionPoint = null;
 		var SourceConnectionPointdirection = "Right";
 		var TargetConnectionPoint = null;
@@ -2185,10 +2183,24 @@ cshmi.prototype = {
 			OffsetSource = this.ResourceList.Actions["route_"+VisualObject.id].OffsetSource;
 			OffsetTarget = this.ResourceList.Actions["route_"+VisualObject.id].OffsetTarget;
 		}else{
-			//Move Polyline-Container before every Functionblocks
-			//needs only to be done once
-			if (VisualObject.parentNode.parentNode.tagName === "svg"){
-				VisualObject.parentNode.parentNode.insertBefore(VisualObject.parentNode, VisualObject.parentNode.parentNode.firstChild);
+			var requestList = new Object();
+			//This caching is model config specific, not instance specific
+			if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+				//the object is asked this session, so reuse the config to save communication requests
+				requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].ActionParameters;
+			}else{
+				requestList[ObjectPath] = new Object();
+				requestList[ObjectPath]["offset"] = null;
+				requestList[ObjectPath]["gridWidth"] = null;
+				
+				var successCode = this._requestVariablesArray(requestList);
+				if (successCode === false){
+					return null;
+				}
+				
+				//we have asked the object successful, so remember the result
+				this.ResourceList.Actions[ObjectPath] = new Object();
+				this.ResourceList.Actions[ObjectPath].ActionParameters = requestList[ObjectPath];
 			}
 			
 			//get Values (via getValue-parts)
@@ -2372,7 +2384,7 @@ cshmi.prototype = {
 			}else if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
 				//there is already an incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename].count += 1;
-				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * ConnectionOffset;
+				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{ 
 				//1st incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename] = new Object();
@@ -2385,14 +2397,18 @@ cshmi.prototype = {
 			}else if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
 				//there is already an outgoing connection for this Object
 				this.ResourceList.Actions["Connection_to_" + TargetBasename].count += 1;
-				OffsetTarget = this.ResourceList.Actions["Connection_to_" + TargetBasename].count * ConnectionOffset;
+				OffsetTarget = this.ResourceList.Actions["Connection_to_" + TargetBasename].count * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{
 				//1st outgoing connection for this Object
 				this.ResourceList.Actions["Connection_to_" + TargetBasename] = new Object();
 				this.ResourceList.Actions["Connection_to_" + TargetBasename].count = 0;
 				OffsetTarget = 0;
 			}
-
+			
+			// add minimum #pixel distance from Object till 1st direction change of connection
+			OffsetSource += parseFloat(requestList[ObjectPath]["offset"]);
+			OffsetTarget += parseFloat(requestList[ObjectPath]["offset"]);
+			
 			//remember the result
 			this.ResourceList.Actions["route_"+VisualObject.id] = new Object();
 			this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPoint = SourceConnectionPoint;
@@ -2458,9 +2474,6 @@ cshmi.prototype = {
 			yStart = yStart - VisualObject.parentNode.getAttribute("absolutey");
 			yEnd = yEnd - VisualObject.parentNode.getAttribute("absolutey");
 			
-			// add minimum #pixel distance from Object till 1st direction change of connection
-			OffsetSource += 40;
-			OffsetTarget += 40;
 			if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
 				//OUTPUT --> INPUT
 				points = xStart + "," + yStart + " ";

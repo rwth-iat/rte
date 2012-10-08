@@ -589,6 +589,14 @@ LIBRARY cshmi
 	CLASS RoutePolyline : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "a multi purpose connection between two objects";
+		VARIABLES
+			offset : SINGLE
+			COMMENT = "minimum pixel distance from Object till 1st direction change of polyline"
+			INITIALVALUE = 40.0;
+			gridWidth : SINGLE
+			COMMENT = "Pixel offset between polylines from same Object"
+			INITIALVALUE = 3.0;
+		END_VARIABLES;
 		PARTS
 			SourceBasename : CLASS cshmi/GetValue;
 			TargetBasename : CLASS cshmi/GetValue;
