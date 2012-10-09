@@ -894,6 +894,25 @@ cshmi.prototype = {
 					}
 				} 
 				return "";
+			}else if (ParameterValue === "fontSize"){
+				return VisualObject.getAttribute("font-size");
+			}else if (ParameterValue === "fontStyle"){
+				return VisualObject.getAttribute("font-style");
+			}else if (ParameterValue === "fontWeight"){
+				return VisualObject.getAttribute("font-weight");
+			}else if (ParameterValue === "fontFamily"){
+				return VisualObject.getAttribute("font-family");
+			}else if (ParameterValue === "horAlignment"){
+				return VisualObject.getAttribute("text-anchor");
+			}else if (ParameterValue === "verAlignment"){
+				if (VisualObject.tagName !== "text"){
+					return "";
+				}else if (VisualObject.getAttribute("dy") === "0.7ex"){
+					return "middle";
+				}else if (VisualObject.getAttribute("dy") === "1ex"){
+					return "hanging";
+				}
+				return "auto";
 			}else if (ParameterValue === "visible"){
 				var displayVar = VisualObject.getAttribute("display");
 				if (displayVar == "none"){
@@ -902,10 +921,10 @@ cshmi.prototype = {
 					return "TRUE";
 				}
 			}else if (ParameterValue === "rotate"){
-				if (VisualObject.tagName == "svg" && VisualObject.parentNode.tagName == "g" && VisualObject.parentNode.id === ""){
+				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 					//svg are not transformable, so the rotation is in the objects parent
 					var TransformString = VisualObject.parentNode.getAttribute("transform");
-				}else if (VisualObject.tagName == "svg"){
+				}else if (VisualObject.tagName === "svg"){
 					//it is an template, with no rotation
 					return "0";
 				}else{
@@ -1287,6 +1306,26 @@ cshmi.prototype = {
 				this._setSvgText(VisualObject, null, NewValue);
 			}else if (ParameterValue === "title"){
 				this._setTitle(VisualObject, NewValue);
+			}else if (ParameterValue === "fontSize"){
+				VisualObject.setAttribute("font-size", NewValue);
+			}else if (ParameterValue === "fontStyle"){
+				VisualObject.setAttribute("font-style", NewValue);
+			}else if (ParameterValue === "fontWeight"){
+				VisualObject.setAttribute("font-weight", NewValue);
+			}else if (ParameterValue === "fontFamily"){
+				VisualObject.setAttribute("font-family", NewValue);
+			}else if (ParameterValue === "horAlignment"){
+				VisualObject.setAttribute("text-anchor", NewValue);
+			}else if (ParameterValue === "verAlignment"){
+				if (NewValue === "auto"){
+					if(VisualObject.hasAttribute("dy")){
+						VisualObject.removeAttribute("dy");
+					}
+				}else if (NewValue === "middle"){
+					VisualObject.setAttribute("dy", "0.7ex");
+				}else if (NewValue === "hanging"){
+					VisualObject.setAttribute("dy", "1ex");
+				}
 			}else if (ParameterValue === "visible"){
 				if (NewValue == "FALSE"){
 					VisualObject.setAttribute("display", "none");
