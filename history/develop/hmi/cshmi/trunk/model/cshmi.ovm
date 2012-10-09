@@ -110,9 +110,11 @@ LIBRARY cshmi
 			COMMENT = "y-axis coordinate of the group"
 			INITIALVALUE = 0.0;
 			width : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "width of the group"
 			INITIALVALUE = 100.0;
 			height : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "height of the group"
 			INITIALVALUE = 100.0;
 			hideable : BOOL
@@ -129,9 +131,11 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements with is referenced";
 		VARIABLES
 			width : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "width of the Template"
 			INITIALVALUE = 100.0;
 			height : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "height of the Template"
 			INITIALVALUE = 100.0;
 			comment : STRING
