@@ -910,7 +910,9 @@ HMI.prototype = {
 		
 		var newInputRefreshTime;
 		//html5 forms give us the value for free
-		if (HMI.InputRefreshTime.valueAsNumber !== undefined){
+		if (false && HMI.InputRefreshTime.valueAsNumber !== undefined){
+			//https://bugzilla.mozilla.org/show_bug.cgi?id=636737
+			//is a problem, so deactivated
 			newInputRefreshTime = HMI.InputRefreshTime.valueAsNumber;
 		}else{
 			newInputRefreshTime = parseInt(HMI.InputRefreshTime.value,10);
@@ -1169,7 +1171,7 @@ HMI.prototype = {
 			if (SVGRequestURI !== ""){
 				//	get GraphicDescription
 				//
-				ComponentText = this.KSClient.getVar_NG("//"+Host+"/"+Server+SVGRequestURI, null);
+				ComponentText = this.KSClient.getVar("//"+Host+"/"+Server+SVGRequestURI, "OP_VALUE", null);
 			}
 			
 			//check if we have an cshmi target, no hmimanager at all or an error

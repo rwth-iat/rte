@@ -866,7 +866,7 @@ cshmi.prototype = {
 				//we have no absolute path => get baseKsPath
 			}
 			ParameterValue = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
-			response = HMI.KSClient.getVar_NG(ParameterValue, null);
+			response = HMI.KSClient.getVar(ParameterValue, "OP_VALUE", null);
 			
 			var responseArray = HMI.KSClient.splitKsResponse(response);
 			if (responseArray.length === 0){
@@ -1067,7 +1067,7 @@ cshmi.prototype = {
 				return null;
 			}
 			
-			var result = HMI.KSClient.getVar_NG(FBRef+"."+ParameterValue, null);
+			var result = HMI.KSClient.getVar(FBRef+"."+ParameterValue, "OP_VALUE", null);
 			var returnValue = HMI.KSClient.splitKsResponse(result);
 			if (returnValue.length > 0){
 				//valid response
@@ -1086,7 +1086,7 @@ cshmi.prototype = {
 					//a FBVariableReferenceName was requested
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						var result = HMI.KSClient.getVar_NG(TemplateObject.FBVariableReference[ParameterValue], null);
+						var result = HMI.KSClient.getVar(TemplateObject.FBVariableReference[ParameterValue], "OP_VALUE", null);
 						var returnValue = HMI.KSClient.splitKsResponse(result);
 						if (returnValue.length > 0){
 							//valid response
@@ -1746,7 +1746,7 @@ cshmi.prototype = {
 			var currentPath = ObjectPathArray.join("/");
 			var responseArray;
 			if (this.ResourceList.baseKsPath[currentPath] === undefined){
-				var response = HMI.KSClient.getVar_NG(currentPath+'.baseKsPath', null);
+				var response = HMI.KSClient.getVar(currentPath+'.baseKsPath', "OP_VALUE", null);
 				responseArray = HMI.KSClient.splitKsResponse(response);
 				
 				this.ResourceList.baseKsPath[currentPath] = responseArray;
@@ -2097,7 +2097,7 @@ cshmi.prototype = {
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP_NG(encodeURI(FBRef), "%20-type%20$::TKS::" + ChildrenType + "%20-output%20[expr%20$::TKS::OP_ANY]", null);
+			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", null);
 			response = HMI.KSClient.splitKsResponse(response, 1);
 			for (var i=0; i<response.length; i++){
 				var responseDictionary = Array();
@@ -2164,7 +2164,7 @@ cshmi.prototype = {
 			var ChildrenTypeList = ChildrenType.split(" ");
 			var response;
 			for (var i=0; i < ChildrenTypeList.length; i++) {
-				response = HMI.KSClient.getVar_NG(FBRef +'.' + ChildrenTypeList[i], null);
+				response = HMI.KSClient.getVar(FBRef +'.' + ChildrenTypeList[i], "OP_VALUE", null);
 				if (response === false || response === null){
 					continue;
 				}
@@ -4050,7 +4050,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		var response = HMI.KSClient.getVar_NG(requestString, null);
+		var response = HMI.KSClient.getVar(requestString, "OP_VALUE", null);
 		if (response === false || response === null){
 			//communication error
 			return false;

@@ -89,8 +89,6 @@ function HMIJavaScriptKSClient() {
 	this.ResourceList.ModelServer = null;
 	this.ResourceList.Handles = Object();
 	
-	this.TksGetChildInfo = "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]";
-	
 	/** Private *********************/
 	var MessageID = 0;	
 	
@@ -110,20 +108,18 @@ function HMIJavaScriptKSClient() {
 HMIJavaScriptKSClient.prototype = {
 	/**
 	 * usage example:
-	 *		this.getEP(null, '/servers', this._cbGetServers);
-	 * @param Handle requires own Handle, null if uses the normal global Handle
+	 *		this.getEP(null, '/servers', 'OT_DOMAIN', 'OP_NAME', this._cbGetServers);
+	 *		this.getEP(null, '/servers', 'OT_DOMAIN', ['OP_NAME', 'OP_CLASS'], this._cbGetServers);
 	 * @param path of object to query
+	 * @param requestType type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
+	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS or OT_ANY)
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
 	 * 
 	 * @todo tksparameter dienst neutral definieren
 	 */
-	getEP: function(Handle, path, tksparameter, cbfnc, async) {
-		//wrapper function for old hmi gestures
-		return this.getEP_NG(path, tksparameter, cbfnc, async);
-	},
-	getEP_NG: function(path, tksparameter, cbfnc, async) {
+	getEP: function(path, requestType = "OT_DOMAIN", requestOutput = "OP_NAME", cbfnc = null, async = false) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no path found");
@@ -132,6 +128,10 @@ HMIJavaScriptKSClient.prototype = {
 		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no valid path found, path was: "+path);
+			return null;
+		}
+		if (!requestType.indexOf || requestType.indexOf("OT_") !== 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no valid requestType found, requestType was: "+requestType);
 			return null;
 		}
 		
@@ -145,8 +145,38 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
+			/*
+			 * possible tksparameters:
+			 * "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]"
+			 * multiple	-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]
+			 * one		-output%20$::TKS::OP_NAME
+			 */
+			var tksparameter = "%20-type%20$::TKS::"+requestType;
+			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
+				//fail save array detection
+				tksparameter += "%20-output%20$::TKS::"+requestOutput;
+			}else if(requestOutput.length === 1){
+				//the expr syntax works for one entry, too, but we save a few bytes :-)
+				tksparameter += "%20-output%20$::TKS::"+requestOutput[0];
+			}else if(requestOutput.length > 1){
+				tksparameter += "%20-output%20[expr%20$::TKS::"
+				for (var i = 0; i < requestOutput.length;i++){
+					tksparameter += requestOutput[i];
+					if(i+1 < requestOutput.length){
+						//we will do another run
+						tksparameter += "|$::TKS::";
+					}
+				}
+				tksparameter += "]";
+			}
+			
 			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1]+'%20*' + tksparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - "+ServerAndPath[0]+" is not on the same host as our source. GetEP on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//fixkshttp tksparameter support
 			urlparameter = 'getEP?path=' +ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
@@ -232,17 +262,13 @@ HMIJavaScriptKSClient.prototype = {
 	 *		ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
 	 *		this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
 	 * 
-	 * @param Handle requires own Handle, null if uses the normal global Handle
 	 * @param path of the variable to fetch, multiple path are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
+	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_VALUE, OP_TIMESTAMP or OP_STATE)
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	 */
-	getVar: function(Handle, path, cbfnc, async) {
-		//wrapper function for old hmi gestures
-		return this.getVar_NG(path, cbfnc, async)
-	},
-	getVar_NG: function(path, cbfnc, async) {
+	getVar: function(path, requestOutput = "OP_VALUE", cbfnc = null, async = false) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no path found");
@@ -251,6 +277,10 @@ HMIJavaScriptKSClient.prototype = {
 		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid path found, path was: "+path);
+			return null;
+		}
+		if (!requestOutput.indexOf || requestOutput.indexOf("OP_") !== 0){
+			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid requestOutput found, requestOutput was: "+requestOutput);
 			return null;
 		}
 		
@@ -263,11 +293,34 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			path = path + "%20-output%20$::TKS::OP_VALUE";
+			
+			var tksparameter = "";
+			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
+				//fail save array detection
+				tksparameter = "%20-output%20$::TKS::"+requestOutput;
+			}else if(requestOutput.length === 1){
+				//the expr syntax works for one entry, too, but we save a few bytes :-)
+				tksparameter = "%20-output%20$::TKS::"+requestOutput[0];
+			}else if(requestOutput.length > 1){
+				tksparameter = "%20-output%20[expr%20$::TKS::"
+				for (var i = 0; i < requestOutput.length;i++){
+					tksparameter += requestOutput[i];
+					if(i+1 < requestOutput.length){
+						//we will do another run
+						tksparameter += "|$::TKS::";
+					}
+				}
+				tksparameter += "]";
+			}
+			
 			urlparameter = 'obj='+Handle + '&args=getvar%20' +
-				"{"+ServerAndPath[1]+"}"+
-				"%20-output%20$::TKS::OP_VALUE";
+				"{"+ServerAndPath[1]+"}" + tksparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - "+ServerAndPath[0]+" is not on the same host as our source. GetVar on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			urlparameter = 'getVar?path=' +ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -300,18 +353,18 @@ HMIJavaScriptKSClient.prototype = {
 	 * usage example:
 	 *		this.setVar(null, '/TechUnits/HMIManager.Command ', "{1} {010} {/TechUnits/HMIManager} {SHOWSHEETS}", null);
 	 * 
-	 * @param Handle requires own Handle, null if uses the normal global Handle
 	 * @param path of the variable to set
 	 * @param {String} value to set (StringVec are {part1} {part2} {part3} coded
+	 * @param {String} type variable type to set, null if no change
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "" or null
 	 */
 	setVar: function(Handle, path, value, cbfnc, async) {
 		//wrapper function for old hmi gestures
-		return this.setVar_NG(path, value, cbfnc, async)
+		return this.setVar_NG(path, value, null, cbfnc, async)
 	},
-	setVar_NG: function(path, value, cbfnc, async) {
+	setVar_NG: function(path, value, type = null, cbfnc = null, async = false) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
@@ -332,9 +385,19 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
+			var tksparameter = "";
+			if(type !== null){
+				tksparameter = "%20-type%20"+type;
+			}
+			
 			urlparameter = 'obj='+Handle + '&args=setvar%20'+
-			'{'+ServerAndPath[1]+'%20{'+value+'}}';
+			'{'+ServerAndPath[1]+'%20{'+value+'}}'+tksparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar_NG - "+ServerAndPath[0]+" is not on the same host as our source. SetVar on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//method = "PUT"; //REST conform
 			urlparameter = 'setVar?path=' +ServerAndPath[1]+'&newvalue='+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
@@ -414,6 +477,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=rename%20'+
 				ServerAndPath[1]+'%20'+newname;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - "+ServerAndPath[0]+" is not on the same host as our source. rename on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//urlparameter = "";
 			//not implemented
 			return null;
@@ -484,6 +552,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=create%20{'+
 			ServerAndPath[1]+'%20'+classname+'}';
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.creatObject - "+ServerAndPath[0]+" is not on the same host as our source. create on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//urlparameter = "";
 			//not implemented
 			return null;
@@ -546,6 +619,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=delete%20'+
 			ServerAndPath[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - "+ServerAndPath[0]+" is not on the same host as our source. delete on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//urlparameter = "";
 			//not implemented
 			return null;
@@ -620,6 +698,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=link%20'+
 			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObject - "+ServerAndPath[0]+" is not on the same host as our source. Link on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//urlparameter = "";
 			//not implemented
 			return null;
@@ -696,6 +779,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = 'obj='+Handle + '&args=unlink%20'+
 			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
+				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObject - "+ServerAndPath[0]+" is not on the same host as our source. unlink on a remote host is not supported right now. ");
+				return null;
+			}
+			
 			//urlparameter = "";
 			//not implemented
 			return null;
@@ -804,7 +892,9 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getServers - Start");
 		
 		//fixme async
-		var result = this.getEP_NG("//"+Host+"/"+'MANAGER'+'/servers', "%20-output%20$::TKS::OP_NAME", this._cbGetServers, false);
+		
+		//we want a domain listing and only the names are interesting
+		var result = this.getEP("//"+Host+"/"+'MANAGER'+'/servers', "OT_DOMAIN", "OP_NAME", this._cbGetServers, false);
 		if (result === null){
 			HMI.PossServers.setAttribute("title", "No MANAGER available");
 			HMI.hmi_log_info_onwebsite("Requested Host has no MANAGER available.");
@@ -820,7 +910,7 @@ HMIJavaScriptKSClient.prototype = {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._cbGetServers - Start");
 		
 		//responseText should be something like: {fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi5} {fb_hmi4}
-		var Server = HMI.KSClient.splitKsResponse(req.responseText);
+		var Server = HMI.KSClient.splitKsResponse(req.responseText, 0);
 		
 		var i = 0;
 		
@@ -871,7 +961,7 @@ HMIJavaScriptKSClient.prototype = {
 	pingServer: function(Host, Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
 		//get a list of all loaded ov libraries of this server
-		var Response = this.getVar_NG("//"+Host+"/"+Server+"/acplt/ov/library.instance", null);
+		var Response = this.getVar("//"+Host+"/"+Server+"/acplt/ov/library.instance", "OP_VALUE", null);
 		if (!Response){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - communication problem, so no hmi and no cshmi server");
 			return false;
@@ -896,7 +986,7 @@ HMIJavaScriptKSClient.prototype = {
 	 */
 	getHMIManagerPointer: function(Host, Server) {
 		//the path of the HMI Manager could be different in every OV Server
-		var ManagerResponse = this.getVar_NG("//"+Host+"/"+Server+"/Libraries/hmi/Manager.instance", null);
+		var ManagerResponse = this.getVar("//"+Host+"/"+Server+"/Libraries/hmi/Manager.instance", "OP_VALUE", null);
 		
 		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
 		if (ManagerResponseArray.length === 0){
@@ -933,7 +1023,7 @@ HMIJavaScriptKSClient.prototype = {
 		var responseArray;
 		var lastEntry;
 		var sortedList = Array();
-		var cshmiString = this.getVar_NG("//"+Host+"/"+Server+'/Libraries/cshmi/Group.instance', null);
+		var cshmiString = this.getVar("//"+Host+"/"+Server+'/Libraries/cshmi/Group.instance', "OP_VALUE", null);
 		if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 			responseArray = this.splitKsResponse(cshmiString);
 			//the array could be [""]
@@ -941,7 +1031,7 @@ HMIJavaScriptKSClient.prototype = {
 				sortedList = responseArray[0].split(" ").sort();
 			}
 		}else{
-			cshmiString = this.getVar_NG("//"+Host+"/"+Server+'/acplt/cshmi/Group.instance', null);
+			cshmiString = this.getVar("//"+Host+"/"+Server+'/acplt/cshmi/Group.instance', "OP_VALUE", null);
 			if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 				responseArray = this.splitKsResponse(cshmiString);
 				//the array could be [""]
@@ -998,7 +1088,7 @@ HMIJavaScriptKSClient.prototype = {
 				+ '.Command',
 				Command,
 				null);
-		var Sheetstring = this.getVar_NG("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.CommandReturn', null);
+		var Sheetstring = this.getVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.CommandReturn', "OP_VALUE", null);
 		Command = null;
 		
 		var responseArray = this.splitKsResponse(Sheetstring);
@@ -1186,7 +1276,7 @@ HMIJavaScriptKSClient.prototype = {
 			return;
 		}
 		//spaces in objectname are encoded as %20 within OV
-		var StyleResponse = this.getVar_NG("//"+Host+"/"+Server+encodeURI(ComponentPath) + '.StyleDescription', null);
+		var StyleResponse = this.getVar("//"+Host+"/"+Server+encodeURI(ComponentPath) + '.StyleDescription', "OP_VALUE", null);
 		
 		if (StyleResponse.indexOf("KS_ERR_BADPATH") !== -1){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
@@ -1324,7 +1414,8 @@ HMIJavaScriptKSClient.prototype = {
 	getChildObjArray: function (ObjectPath, cachingTarget) {
 		var responseArray;
 		if (!(cachingTarget.ResourceList.ChildList && cachingTarget.ResourceList.ChildList[ObjectPath] !== undefined)){
-			var response = this.getEP_NG(encodeURI(ObjectPath), this.TksGetChildInfo, null);
+			
+			var response = this.getEP(encodeURI(ObjectPath), "OT_DOMAIN", ["OP_NAME", "OP_CLASS"], null);
 			
 			//no caching with an communication error
 			if (response === false){
