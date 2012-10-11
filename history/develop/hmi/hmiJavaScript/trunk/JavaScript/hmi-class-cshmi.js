@@ -950,22 +950,29 @@ cshmi.prototype = {
 				//get first number if there are 3, separated via comma
 				return TransformString.split(",")[0];
 			}else if (ParameterValue === "previousTemplateCount"){
+				if (HMI.instanceOf(VisualObject, this.cshmiTemplateClass) !== true){
+					return 0;
+				}
 				var previousTemplateCount = 0;
 				var myTemplateClass = VisualObject.getAttribute("data-TemplateModelSource");
 				var SiblingObj = VisualObject;
 				
-				var checkTemplateMatch = function (currentNode){
-					for (var i = 0; i < currentNode.childNodes.length;i++){
-						if (currentNode.childNodes[i] === VisualObject){
+				/**
+				 * helper Function for checking all childrens
+				 */
+				var checkChildrenTemplateMatch = function (currentNode, myTemplateClass){
+					if(currentNode.cshmiOriginalOrderList[myTemplateClass] === undefined){
+						return true;
+					}
+					for (var i = 0; i < currentNode.cshmiOriginalOrderList[myTemplateClass].length;i++){
+						if (currentNode.cshmiOriginalOrderList[myTemplateClass][i] === VisualObject){
 							//we found ourself, break
 							return false;
-						}else if (currentNode.childNodes[i].hasAttribute("data-TemplateModelSource") === true
-								&& currentNode.childNodes[i].getAttribute("data-TemplateModelSource") === myTemplateClass
-								&& currentNode.childNodes[i].getAttribute("display") !== "none"){
+						}else if (currentNode.cshmiOriginalOrderList[myTemplateClass][i].getAttribute("display") !== "none"){
 							//we found a hit
 							previousTemplateCount++;
-							//check childrens
-							var result = checkTemplateMatch(currentNode.childNodes[i]);
+							//iterate down and check childrens
+							var result = checkChildrenTemplateMatch(currentNode.cshmiOriginalOrderList[myTemplateClass][i], myTemplateClass);
 							if (false === result){
 								//we are below this branch, break
 								return false;
@@ -975,6 +982,7 @@ cshmi.prototype = {
 					return true;
 				}
 				
+				//search maximum parent from the same template
 				while(SiblingObj.parentNode !== null){
 					SiblingObj = SiblingObj.parentNode;
 					if (SiblingObj.getAttribute("data-TemplateModelSource") !== myTemplateClass){
@@ -983,7 +991,7 @@ cshmi.prototype = {
 					}
 				}
 				//check recursive the childrens
-				checkTemplateMatch(SiblingObj);
+				checkChildrenTemplateMatch(SiblingObj, myTemplateClass);
 				
 				return previousTemplateCount;
 			}else if (VisualObject.hasAttribute(ParameterValue)){
@@ -3026,6 +3034,9 @@ cshmi.prototype = {
 			}
 		}
 		
+		//the VPO was only needed in generateFullKsPath
+		delete VisualObject.VisualParentObject;
+		
 		////////////////////////////////////////////////////////////////////////////
 		//ConfigValue
 		
@@ -3123,6 +3134,19 @@ cshmi.prototype = {
 		VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
 		VisualObject.setAttribute("overflow", "visible");
 		
+		//instance order is lost on zindex manipulation (dom reordering)
+		//so build a second childNodes like Collection for preserving ordering
+		VisualObject.cshmiOriginalOrderList = new Object();
+		
+		//add ourself to the parent zindex-list
+		if(VisualParentObject.cshmiOriginalOrderList === undefined){
+			VisualParentObject.cshmiOriginalOrderList = new Object();
+		}
+		if(VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] === undefined){
+			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] = new Array();
+		}
+		VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
+		//if delete object, delete from this list, too.
 		
 		//////////////////////////////////////////////////////////////////////////
 		//get childs (graphics and actions) from the TemplateDefinition
