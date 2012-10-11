@@ -121,10 +121,8 @@ JavaScript:
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verfügbar!
 
-- hover fuer polylines
-
 - Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
-- Nur einige wenige cycTimes (enum?) erlauben
+- Nur einige wenige cycTimes (enum like?) erlauben
 - ks befehle konsolidieren bei zyklischer abarbeitung
 #########################################################################################################################*/
 
@@ -201,15 +199,9 @@ cshmi.prototype = {
 		//this is only possible now, as the orientation of the parents are not defined when they are not appended
 		var maxPosition = HMI.saveAbsolutePosition(VisualObject, true);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
+		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
 		for(var i = 0;i < ComponentChilds.length;i++){
-			var Position = HMI.saveAbsolutePosition(ComponentChilds[i], true);
-			if (ComponentChilds[i].tagName !== "svg" && Position[0] > maxPosition[0]){
-				maxPosition[0] = Position[0];
-			}
-			if (ComponentChilds[i].tagName !== "svg" && Position[1] > maxPosition[1]){
-				maxPosition[1] = Position[1];
-			}
+			var Position = HMI.saveAbsolutePosition(ComponentChilds[i], false);
 		}
 		Position = null;
 		ComponentChilds = null;
@@ -221,10 +213,31 @@ cshmi.prototype = {
 		}
 		EventObjItem = null;
 		
+		/*
+		var invisibleObjectName = "";
+		var ComponentChilds = VisualObject.getElementsByTagName("svg");
+		for(var i = 0;i < ComponentChilds.length;i++){
+			var elementWidth = parseInt(ComponentChilds[i].getAttribute("width"), 10)+parseInt(ComponentChilds[i].getAttribute("absolutex"), 10);
+			var elementHeight = parseInt(ComponentChilds[i].getAttribute("height"), 10)+parseInt(ComponentChilds[i].getAttribute("absolutey"), 10);
+			
+			if (!isNaN(elementWidth) && elementWidth > maxPosition[0]){
+				//wider than the last
+				maxPosition[0] = elementWidth;
+				invisibleObjectName = ComponentChilds[i].id;
+			}
+			if (!isNaN(elementHeight) && elementHeight > maxPosition[1]){
+				//higher than the last
+				maxPosition[1] = elementHeight;
+				invisibleObjectName = ComponentChilds[i].id;
+			}
+		}
+		
 		if (maxPosition[0] > VisualObject.getAttribute('width') || maxPosition[1] > VisualObject.getAttribute('height')){
-			HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view.");
+			HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view. Last known candidate is: "+invisibleObjectName);
 		}
 		maxPosition = null;
+		invisibleObjectName = null;
+		*/
 		
 		//the DOM Tree is populated now
 		this.initStage = false;
@@ -1957,7 +1970,7 @@ cshmi.prototype = {
 			//intentionally no value, abort
 			return null;
 		}else if (Value1 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
 			//error state, so no boolean
 			return null;
 		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
@@ -1971,7 +1984,7 @@ cshmi.prototype = {
 			//getValue had intentionally no value, abort
 			return null;
 		}else if (Value2 === false && ignoreError === "FALSE"){
-			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 is null.");
+			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
 			//error state, so no boolean
 			return null;
 		}else if (Value2 === false && ignoreError === "TRUE"){
@@ -4217,9 +4230,7 @@ cshmi.prototype = {
 				
 				//doku depth of moving to top
 				
-				/*
-				
-				//fixme deaktiert, da previousTemplateCount sonst nicht geht...
+				//fixme previousTemplateCount geht so nicht
 				
 				//Move Faceplate-Container after every other, so it is fully visible
 				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
@@ -4229,7 +4240,6 @@ cshmi.prototype = {
 					//hideable childtemplate in an action instantiated template (one level more)
 					VisualParentObject.parentNode.parentNode.appendChild(VisualParentObject.parentNode);
 				}
-				*/
 			}
 		}
 		VisualObject = null;

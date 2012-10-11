@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-09-21 18:26:30
+  Erstellt : 2012-10-11 10:00:53
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -756,7 +756,7 @@ width 60, height 60";
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1670.000000;
-        height : INPUT  SINGLE = 940.000000;
+        height : INPUT  SINGLE = 935.000000;
         comment : INPUT  STRING = "in configvalue muss ein name mit \"titel\" angegeben werden";
         zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";

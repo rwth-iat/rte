@@ -910,7 +910,7 @@ HMI.prototype = {
 		
 		var newInputRefreshTime;
 		//html5 forms give us the value for free
-		if (false && HMI.InputRefreshTime.valueAsNumber !== undefined){
+		if (HMI.InputRefreshTime.type === "number" && HMI.InputRefreshTime.valueAsNumber !== undefined){
 			//https://bugzilla.mozilla.org/show_bug.cgi?id=636737
 			//is a problem, so deactivated
 			newInputRefreshTime = HMI.InputRefreshTime.valueAsNumber;

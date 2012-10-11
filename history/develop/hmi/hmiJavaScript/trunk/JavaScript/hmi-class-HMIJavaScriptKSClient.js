@@ -116,8 +116,6 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
-	 * 
-	 * @todo tksparameter dienst neutral definieren
 	 */
 	getEP: function(path, requestType = "OT_DOMAIN", requestOutput = "OP_NAME", cbfnc = null, async = false) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path);
@@ -177,10 +175,10 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			
-			//fixkshttp tksparameter support
+			//todo implement requestType, requestOutput
 			urlparameter = 'getEP?path=' +ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//todo php should get similar filtering interface
+			//todo implement requestType, requestOutput
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
