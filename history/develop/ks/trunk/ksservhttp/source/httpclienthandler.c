@@ -357,8 +357,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 #define EXEC_GETEP_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
-		ov_string_setvalue(&objectType, NULL);\
-		ov_string_setvalue(&outputInfos, NULL);\
+		ov_string_setvalue(&requestType, NULL);\
+		Ov_SetDynamicVectorLength(&requestOutput,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
@@ -366,16 +366,18 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pChild = NULL;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING message = NULL;
-	OV_STRING objectType = NULL;
-	OV_STRING outputInfos = NULL;
+	OV_STRING requestType = NULL;
+	OV_STRING_VEC requestOutput = {0,NULL};
 	OV_STRING temp = NULL;
 	OV_UINT output_format;
+	OV_STRING requestOutputDefault[] = {"OP_NAME", "OP_TYPE", "OP_COMMENT", "OP_ACCESS", "OP_SEMANTIC", "OP_CREATIONTIME", "OP_CLASS"};
+	OV_RESULT fr = OV_ERR_OK;
 	int i;
 
 	//muss noch aufgebohrt werden:
 	//path=/TechUnits
-	//objectType=OT_DOMAINS|OT_VARIABLES|... (siehe tcl-tks doku)
-	//TODO: outputInfos (anderer name muss her) ein bis sieben informatinen liefert tcl-tks
+	//requestType=OT_DOMAIN|OT_VARIABLE|... (siehe tcl-tks doku)
+	//TODO: requestOutput ein bis sieben informatinen liefert tcl-tks
 
 	output_format = extract_output_format(args);
 
@@ -389,38 +391,42 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		ov_string_append(re, "Variable not found");
 		EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 	}
-	find_arguments(args, "objectType", &match);
-	if(match.veclen!=1){
-		if(Ov_CanCastTo(ov_domain, pObj)){
-			ov_string_setvalue(&objectType, "OT_DOMAIN");
-		}else{
-			//not implemented yet
-			ov_string_setvalue(&objectType, "OT_ANY");
+	find_arguments(args, "requestType", &match);
+	if(match.veclen == 1){
+		ov_string_setvalue(&requestType, match.value[0]);
+	}else{
+		//default to OT_DOMAIN
+		ov_string_setvalue(&requestType, "OT_DOMAIN");
+	}
+	find_arguments(args, "requestOutput", &match);
+	if(match.veclen == 0 || (match.veclen==1 && ov_string_compare(requestType, "OP_ANY") == OV_STRCMP_EQUAL )){
+		fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefault, 7, STRING);
+		if(Ov_Fail(fr)) {
+			ov_string_append(re, "internal memory problem");
+			EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 		}
 	}else{
-		ov_string_setvalue(&objectType, match.value[0]);
-	}
-	find_arguments(args, "outputInfos", &match);
-	if(match.veclen!=1){
-		ov_string_setvalue(&outputInfos, "OP_ANY");
-	}else{
-		ov_string_setvalue(&outputInfos, match.value[0]);
+		//append to requestOutput, to allow search for a match in one string
+		for (i=0;i<match.veclen;i++){
+			Ov_SetDynamicVectorLength(&requestOutput, i+1, STRING);
+			ov_string_setvalue(&requestOutput.value[i], match.value[i]);
+		}
 	}
 
 	i=0;
 	//todo: reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
-	if(ov_string_compare(objectType, "OT_DOMAIN") == OV_STRCMP_EQUAL
+	if(ov_string_compare(requestType, "OT_DOMAIN") == OV_STRCMP_EQUAL
 			&& Ov_CanCastTo(ov_domain, pObj)){
 		//OT_DOMAIN == ov_containment
 		init_vector_output(&message, output_format);
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
-			//outputInfos=OP_ANY
+			//requestOutput=OP_ANY
 			if(i!=0){ //FIXME: this is ugly
 				split_vector_output(&message, output_format);
 			}else{
 				i++;
 			}
-			//the number of output variables depends on the OP ~ outputInfos request
+			//the number of output variables depends on the OP ~ requestOutput request
 			ov_memstack_lock();
 			//todo: adjust the format
 			ov_string_print(&temp, "{%s} {} {} {} {} {%s} {%s} ", pChild->v_identifier, ov_time_timetoascii(&(pChild->v_creationtime)), ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pChild)),2));
@@ -428,11 +434,11 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 			ov_string_append(&message, temp);
 		}
 		finalize_vector_output(&message, output_format);
-	}else if(ov_string_compare(objectType, "OT_VARIABLES") == OV_STRCMP_EQUAL){
-		ov_string_append(re, "objectType VARIABLES not implemented");
+	}else if(ov_string_compare(requestType, "OT_VARIABLE") == OV_STRCMP_EQUAL){
+		ov_string_append(re, "requestType VARIABLES not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
 	}else{
-		ov_string_append(re, "objectType not implemented");
+		ov_string_append(re, "requestType not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
 	}
 	ov_string_append(re, message);

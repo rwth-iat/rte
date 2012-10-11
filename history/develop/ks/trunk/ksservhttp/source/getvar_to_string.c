@@ -80,8 +80,9 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 	}
 
 	if(ov_string_compare(pObj->v_identifier, "vendor") == OV_STRCMP_EQUAL && Ov_GetParent(ov_containment, pObj)==&pdb->root){
+		//vendor is very special, so normal ov functions do not work here
 		if(ov_string_compare(*varname, "classes") == OV_STRCMP_EQUAL){
-			//TODO: tut nicht bei classes/libraries
+			//TODO: tut nicht bei classes und libraries
 			fr = ov_vendortree_getclasses(&Variable, NULL);
 		}else{
 			pObj = Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), *varname);
