@@ -19,16 +19,11 @@ OV_UINT extract_output_format(OV_STRING_VEC* args){
 }
 
 /*
- * VECTOR OUPUT BUSINESS
+ * VECTOR OUTPUT BUSINESS
  */
 OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format){
 	ov_string_setvalue(output, "");
-	if(format==GETVAR_FORMAT_TCL){
-		ov_string_append(output, "{");
-	}else{
-		ov_string_append(output, "");
-	}
-	return OV_ERR_OK;
+	return begin_vector_output(output, format);
 }
 
 OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format){
@@ -36,6 +31,15 @@ OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format){
 		ov_string_append(output, "}{");
 	}else{
 		ov_string_append(output, ";");
+	}
+	return OV_ERR_OK;
+}
+
+OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format){
+	if(format==GETVAR_FORMAT_TCL){
+		ov_string_append(output, "{");
+	}else{
+		ov_string_append(output, "");
 	}
 	return OV_ERR_OK;
 }
@@ -48,6 +52,3 @@ OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format){
 	}
 	return OV_ERR_OK;
 }
-
-
-

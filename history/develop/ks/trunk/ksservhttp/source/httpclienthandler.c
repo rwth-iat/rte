@@ -357,21 +357,22 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 #define EXEC_GETEP_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
-		Ov_SetDynamicVectorLength(&requestOutput,0,STRING);\
+		Ov_SetDynamicVectorLength(&requestOutput,0,UINT);\
 		ov_string_setvalue(&temp, NULL);\
 		return
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_ov_object pChild = NULL;
+	OV_VTBLPTR_ov_object pChildVTable;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING message = NULL;
 	OV_UINT requestType = KS_OT_DOMAIN;
-	OV_STRING_VEC requestOutput = {0,NULL};
+	OV_UINT_VEC requestOutput = {0,NULL};
 	OV_STRING temp = NULL;
 	OV_UINT output_format;
-	OV_STRING requestOutputDefault[] = {"OP_NAME", "OP_TYPE", "OP_COMMENT", "OP_ACCESS", "OP_SEMANTIC", "OP_CREATIONTIME", "OP_CLASS"};
+	OV_UINT requestOutputDefault[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
 	OV_RESULT fr = OV_ERR_OK;
-	int i;
+	int i = 0;
 
 	//muss noch aufgebohrt werden:
 	//path=/TechUnits
@@ -409,40 +410,82 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		requestType = KS_OT_DOMAIN;
 	}
 	find_arguments(args, "requestOutput", &match);
-	if(match.veclen == 0 || (match.veclen==1 && requestType == KS_OT_ANY)){
-		fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefault, 7, STRING);
+	if(match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+		//if nothing is specified or all is requested, give all
+		fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefault, 7, UINT);
 		if(Ov_Fail(fr)) {
+			//should not happen with an UINT
 			ov_string_append(re, "internal memory problem");
 			EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 		}
 	}else{
 		//append to requestOutput, to allow search for a match in one string
 		for (i=0;i<match.veclen;i++){
-			Ov_SetDynamicVectorLength(&requestOutput, i+1, STRING);
-			ov_string_setvalue(&requestOutput.value[i], match.value[i]);
+			Ov_SetDynamicVectorLength(&requestOutput, i+1, UINT);
+			if(ov_string_compare(match.value[i], "OP_NAME") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_NAME;
+			}else if(ov_string_compare(match.value[i], "OP_TYPE") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_TYPE;
+			}else if(ov_string_compare(match.value[i], "OP_COMMENT") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_COMMENT;
+			}else if(ov_string_compare(match.value[i], "OP_ACCESS") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_ACCESS;
+			}else if(ov_string_compare(match.value[i], "OP_SEMANTIC") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_SEMANTIC;
+			}else if(ov_string_compare(match.value[i], "OP_CREATIONTIME") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_CREATIONTIME;
+			}else if(ov_string_compare(match.value[i], "OP_CLASS") == OV_STRCMP_EQUAL){
+				requestOutput.value[i] = OP_CLASS;
+			}else{
+				requestOutput.value[i] = OP_UNKNOWN;
+			}
 		}
 	}
 
-	i=0;
-	//todo: reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
+	//idea: reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
 	if(requestType == KS_OT_DOMAIN && Ov_CanCastTo(ov_domain, pObj)){
 		//OT_DOMAIN == ov_containment
-		init_vector_output(&message, output_format);
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
-			//requestOutput=OP_ANY
-			if(i!=0){ //FIXME: this is ugly
-				split_vector_output(&message, output_format);
-			}else{
-				i++;
+			Ov_GetVTablePtr(ov_object, pChildVTable, pChild);
+			//open Child item level
+			begin_vector_output(&temp, output_format);
+			for (i=0;i < requestOutput.veclen;i++){
+				if(requestOutput.veclen > 1){
+					//open request item level, if we have more than one entry
+					begin_vector_output(&temp, output_format);
+				}
+				switch(requestOutput.value[i]){
+				case OP_NAME:
+					ov_string_append(&temp, pChild->v_identifier);
+					break;
+				case OP_CREATIONTIME:
+					ov_string_append(&temp, ov_time_timetoascii(&(pChild->v_creationtime)));
+					break;
+				case OP_CLASS:
+					ov_memstack_lock();
+					ov_string_append(&temp, ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pChild)),2));
+					ov_memstack_unlock();
+					break;
+				case OP_TYPE:
+				case OP_COMMENT:
+					//pChildVTable->m_getcomment(pChild, pelem);
+				case OP_ACCESS:
+				case OP_SEMANTIC:
+				default:
+					//nothing to do
+					break;
+				}
+				if(requestOutput.veclen > 1){
+					//close request item level, if we have more than one entry
+					finalize_vector_output(&temp, output_format);
+				}
 			}
-			//the number of output variables depends on the OP ~ requestOutput request
-			ov_memstack_lock();
-			//todo: adjust the format
-			ov_string_print(&temp, "{%s} {} {} {} {} {%s} {%s} ", pChild->v_identifier, ov_time_timetoascii(&(pChild->v_creationtime)), ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object,Ov_GetClassPtr(pChild)),2));
-			ov_memstack_unlock();
-			ov_string_append(&message, temp);
+			//close Child item level
+			finalize_vector_output(&temp, output_format);
 		}
-		finalize_vector_output(&message, output_format);
+		//save our hard work
+		ov_string_append(&message, temp);
+		ov_string_setvalue(&temp, NULL);
 	}else if(requestType == KS_OT_VARIABLE){
 		ov_string_append(re, "requestType VARIABLES not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501

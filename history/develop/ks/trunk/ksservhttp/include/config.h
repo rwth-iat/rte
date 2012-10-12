@@ -54,6 +54,16 @@
 #define GETVAR_FORMAT_TCL 0
 #define GETVAR_FORMAT_PLAIN 1
 
+//requestOutput for getVar and getEP
+#define OP_UNKNOWN 0
+#define OP_NAME 1
+#define OP_TYPE 2
+#define OP_COMMENT 3
+#define OP_ACCESS 4
+#define OP_SEMANTIC 5
+#define OP_CREATIONTIME 6
+#define OP_CLASS 7
+
 //authorization.c
 #define REALM "Top secret! User: root Pass: pass"
 #define SESSION_TTL 1200 //http session time to live in seconds
@@ -117,4 +127,5 @@ OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
 OV_UINT extract_output_format(OV_STRING_VEC* args);
 OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format);
+OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format);
