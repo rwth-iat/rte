@@ -280,7 +280,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* re){
 		if(match.value[i]==NULL)ov_string_setvalue(&match.value[i], " ");
 		//separating spacer
 		if(i>0)ov_string_append(re, " ");
-		//handle the funny ks syntax path=/vendor.database_name .database_free to get 2 variables at once
+		//handle the funny tcl syntax path=/vendor.database_name .database_free to get 2 variables at once
 		//NOTE: space is %20 here
 		pVarsList = ov_string_split((match.value[i]), "%20", &innerlen);
 		//pVarsList[0] should be /vendor.database_name
@@ -308,7 +308,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* re){
 				ov_string_append(re, "Every variable name after a space must start with a dot");
 				EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
 			}
-			ov_string_setvalue(&message, NULL);
 			//this is the actual getvar call
 			result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]), output_format, &message);
 			ov_string_append(re, " "); //one more spacer

@@ -41,7 +41,6 @@
 
 #define GETVAR_TO_STRING_RETURN \
 		ov_string_setvalue(&temp, NULL);\
-		if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "}");\
 		return
 
 /**
@@ -70,9 +69,6 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 	Ov_GetVTablePtr(ov_object, pOvVTable, pObj);
 	ParentElement.elemtype	= OV_ET_OBJECT;
 	ParentElement.pobj		= Ov_PtrUpCast(ov_object, pObj);
-
-	//first separator
-	if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "{");
 
 	if(pObj == NULL){
 		ov_string_append(message, "Object does not exist");
@@ -312,7 +308,7 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 
 	case OV_VT_TIME_SPAN_VEC:
 	case OV_VT_TIME_SPAN_PV_VEC:
-		ov_string_setvalue(&temp, "Vector has no entries");
+		init_vector_output(&temp, format);
 		for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
 			if (i != 0){
 				split_vector_output(&temp, format);
@@ -339,9 +335,9 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 		break;
 	}
 
-	ov_string_setvalue(message, "");
-	if(format==GETVAR_FORMAT_TCL)ov_string_append(message, "{");
+	init_vector_output(message, format);
 	ov_string_append(message, temp);
+	finalize_vector_output(message, format);
 	GETVAR_TO_STRING_RETURN OV_ERR_OK;
 }
 
