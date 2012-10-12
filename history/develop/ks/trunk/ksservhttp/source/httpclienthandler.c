@@ -357,7 +357,6 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 #define EXEC_GETEP_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
-		ov_string_setvalue(&requestType, NULL);\
 		Ov_SetDynamicVectorLength(&requestOutput,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		return
@@ -366,7 +365,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_INSTPTR_ov_object pChild = NULL;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING message = NULL;
-	OV_STRING requestType = NULL;
+	OV_UINT requestType = KS_OT_DOMAIN;
 	OV_STRING_VEC requestOutput = {0,NULL};
 	OV_STRING temp = NULL;
 	OV_UINT output_format;
@@ -393,13 +392,24 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	find_arguments(args, "requestType", &match);
 	if(match.veclen == 1){
-		ov_string_setvalue(&requestType, match.value[0]);
+		if(ov_string_compare(match.value[0], "OT_DOMAIN") == OV_STRCMP_EQUAL){
+			requestType = KS_OT_DOMAIN;
+		}else if(ov_string_compare(match.value[0], "OT_VARIABLE") == OV_STRCMP_EQUAL){
+			requestType = KS_OT_VARIABLE;
+		}else if(ov_string_compare(match.value[0], "OT_LINK") == OV_STRCMP_EQUAL){
+			requestType = KS_OT_LINK;
+		}else if(ov_string_compare(match.value[0], "OT_ANY") == OV_STRCMP_EQUAL){
+			requestType = KS_OT_ANY;
+		}else{
+			ov_string_append(re, "Requesttype not supported");
+			EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		}
 	}else{
 		//default to OT_DOMAIN
-		ov_string_setvalue(&requestType, "OT_DOMAIN");
+		requestType = KS_OT_DOMAIN;
 	}
 	find_arguments(args, "requestOutput", &match);
-	if(match.veclen == 0 || (match.veclen==1 && ov_string_compare(requestType, "OP_ANY") == OV_STRCMP_EQUAL )){
+	if(match.veclen == 0 || (match.veclen==1 && requestType == KS_OT_ANY)){
 		fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefault, 7, STRING);
 		if(Ov_Fail(fr)) {
 			ov_string_append(re, "internal memory problem");
@@ -415,8 +425,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 
 	i=0;
 	//todo: reimplement via ov_element_getnextchild, see at ov_ksserver_getep.c
-	if(ov_string_compare(requestType, "OT_DOMAIN") == OV_STRCMP_EQUAL
-			&& Ov_CanCastTo(ov_domain, pObj)){
+	if(requestType == KS_OT_DOMAIN && Ov_CanCastTo(ov_domain, pObj)){
 		//OT_DOMAIN == ov_containment
 		init_vector_output(&message, output_format);
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
@@ -434,7 +443,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 			ov_string_append(&message, temp);
 		}
 		finalize_vector_output(&message, output_format);
-	}else if(ov_string_compare(requestType, "OT_VARIABLE") == OV_STRCMP_EQUAL){
+	}else if(requestType == KS_OT_VARIABLE){
 		ov_string_append(re, "requestType VARIABLES not implemented");
 		EXEC_GETEP_RETURN OV_ERR_NOTIMPLEMENTED; //501
 	}else{
