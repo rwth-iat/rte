@@ -117,7 +117,13 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param async request async communication
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
 	 */
-	getEP: function(path, requestType = "OT_DOMAIN", requestOutput = "OP_NAME", cbfnc = null, async = false) {
+	getEP: function(path, requestType, requestOutput, cbfnc, async) {
+		if(requestType === undefined){
+			requestType = "OT_DOMAIN";
+		}
+		if(requestOutput === undefined){
+			requestOutput = "OP_NAME";
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no path found");
@@ -188,9 +194,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -266,7 +272,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param async request async communication
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	 */
-	getVar: function(path, requestOutput = "OP_VALUE", cbfnc = null, async = false) {
+	getVar: function(path, requestOutput, cbfnc, async) {
+		if(requestOutput === undefined){
+			requestOutput = "OP_VALUE";
+		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no path found");
@@ -331,9 +340,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -362,7 +371,7 @@ HMIJavaScriptKSClient.prototype = {
 		//wrapper function for old hmi gestures
 		return this.setVar_NG(path, value, null, cbfnc, async)
 	},
-	setVar_NG: function(path, value, type = null, cbfnc = null, async = false) {
+	setVar_NG: function(path, value, type, cbfnc, async) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
@@ -384,7 +393,7 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			var tksparameter = "";
-			if(type !== null){
+			if(type !== null && type !== undefined){
 				tksparameter = "%20-type%20"+type;
 			}
 			
@@ -410,9 +419,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -496,9 +505,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -571,9 +580,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -636,9 +645,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -717,9 +726,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -798,9 +807,9 @@ HMIJavaScriptKSClient.prototype = {
 			//communication type not implemented
 			return null;
 		}
-		if (async === true && cbfnc !== null){
+		if (async === true && cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, true, urlparameter, cbfnc);
-		}else if (cbfnc !== null){
+		}else if (cbfnc !== null && cbfnc !== undefined){
 			this._sendRequest(this, method, false, urlparameter, cbfnc);
 		}else{
 			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
@@ -1115,7 +1124,7 @@ HMIJavaScriptKSClient.prototype = {
 			case 3 : // INTERACTIVE
 				break;
 			case 4 : // COMPLETED
-				if (cbfnc !== null)
+				if (cbfnc !== null && cbfnc !== undefined)
 				{
 					cbfnc(this, req);
 				};
@@ -1164,7 +1173,7 @@ HMIJavaScriptKSClient.prototype = {
 				req.timeout = 1000;
 			}
 			
-			if (async === true && cbfnc !== null)
+			if (async === true && cbfnc !== null && cbfnc !== undefined)
 			{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - entering async communication");
 				//	Asynchron Communication
