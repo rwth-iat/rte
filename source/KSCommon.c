@@ -185,7 +185,12 @@ OV_DLLFNCEXPORT void ksapi_KSCommon_submitget(
 	} else if(ksapi_KSCommon_status_get(pobj) == STATUS_KSCOMMON_BUSY) {
 		ksapi_logfile_error("get*: connection in use");
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object) pobj, "connection in use", 5);
-	} else {
+	} else if(ksapi_KSCommon_status_get(pobj) == STATUS_KSCOMMON_CHANNELERROR) {
+		//channelerror
+		ksapi_logfile_error("get*: Channel returned error");
+		pvtableop->m_returnMethod((OV_INSTPTR_ov_object) pobj, "Channelerror", 3);
+	}else
+	{
 		//not all values are set
 		ksapi_logfile_error("get*: Not all values are set. Reading cancelled");
 		pvtableop->m_returnMethod((OV_INSTPTR_ov_object) pobj, "Not all values are set", 2);
