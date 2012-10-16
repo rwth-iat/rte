@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2012-09-06 13:15:09
+* Erstellt: 2012-10-16 10:28:36
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -26,18 +26,40 @@
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
+      width : INPUT SINGLE = 20.000000;
+      height : INPUT SINGLE = 20.000000;
       comment : INPUT STRING = "";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 20.000000;
+      height : INPUT SINGLE = 20.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "";
+      fill : INPUT STRING = "white";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -45,8 +67,707 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Set_absoluteY :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.if/Comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.if/Comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "SetColor";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.if/Comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"lightyellow"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.then/SetColor :
     CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "fill";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.then/SetColor.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "SetColor";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.else/Set_white :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "fill";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Border/onload/If_SetColor.else/Set_white.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"white"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Title :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 30.000000;
+      y : INPUT SINGLE = 10.000000;
+      content : INPUT STRING = "Loading...";
+      fontSize : INPUT STRING = "13px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Title/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Title/onload/SetTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/Title/onload/SetTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "identifier";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/InfoWindow";
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 30.000000;
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = FALSE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator :
+    CLASS /Libraries/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_ANY";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.if/Comp :
+    CLASS /Libraries/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_SEMANTICS";
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.if/Comp.withValue :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[6] : INPUT STRING = {"o" , "hi" , "ho" , "n" , "hn" , "hp"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.if/IfVarOrObject :
+    CLASS /Libraries/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_TYPE";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.if/IfVarOrObject.withValue :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"KS_OT_VARIABLE"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.then/InstVariable :
+    CLASS /Libraries/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/Variable";
+      x : INPUT SINGLE = 100.000000;
+      y : INPUT SINGLE = 100.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 30.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:1";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[1] : INPUT STRING = {"Value:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"title:OP_NAME" , "flags:input"};
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/InputVarIterator.forEachChild/If_Input.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator :
+    CLASS /Libraries/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_ANY";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.if/Comp :
+    CLASS /Libraries/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_SEMANTICS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.if/Comp.withValue :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"o"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.then/InstVariable :
+    CLASS /Libraries/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/Variable";
+      x : INPUT SINGLE = 280.000000;
+      y : INPUT SINGLE = 100.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 30.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:1";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[1] : INPUT STRING = {"Value:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"title:OP_NAME" , "flags:output"};
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/InfoWindow/onload/OutputVarIterator.forEachChild/If_Output.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.if/Compare :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.if/Compare.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "InfoWindowVisible";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.if/Compare.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "fullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.then/SetStroke_red :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "stroke";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.then/SetStroke_red.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"red"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.else/SetStroke_black :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "stroke";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_InfoWindowVisible.else/SetStroke_black.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"black"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.if/Compare :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.if/Compare.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "adjustNode";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.if/Compare.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.then/Set_adjust :
+    CLASS /Libraries/cshmi/SetMathValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "absolutey";
@@ -61,7 +782,25 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Set_absoluteY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.then/Set_adjust/add_PreviousTempCount :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "previousTemplateCount";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.then/Set_adjust/mul_yOffset :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -73,22 +812,31 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT SINGLE = 80.000000;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator :
-    CLASS /Libraries/cshmi/ChildrenIterator;
-    VARIABLE_VALUES
-      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      value : INPUT SINGLE = 30.000000;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.then/Set_adjust/add_Y :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT SINGLE = 40.000000;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/globalvarchanged/If_adjustNode.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -96,7 +844,108 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/click/Set_activateInfoWindow :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "InfoWindowVisible";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/click/Set_activateInfoWindow.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "fullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/click/Set_adjustNode :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "adjustNode";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/click/Set_adjustNode.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator :
+    CLASS /Libraries/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -105,7 +954,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.if :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -113,7 +962,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.if/Comp :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.if/Comp :
     CLASS /Libraries/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
@@ -124,7 +973,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.if/Comp.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.if/Comp.withValue :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -142,7 +991,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -150,7 +999,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -159,7 +1008,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.if :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -167,7 +1016,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.if/Comp :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.if/Comp :
     CLASS /Libraries/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
@@ -178,7 +1027,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.if/Comp.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.if/Comp.withValue :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -196,7 +1045,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.then :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -204,615 +1053,146 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.then/InstContainer :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.then/InstContainerNode :
     CLASS /Libraries/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "ContainerButton";
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      xOffset : INPUT SINGLE = 0.000000;
-      yOffset : INPUT SINGLE = 40.000000;
-      maxTemplatesPerDirection : INPUT STRING = "x:1";
-      FBReference[1] : INPUT STRING = {"OP_NAME"};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"title:OP_NAME"};
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      rotate : INPUT INT = 0;
-      opacity : INPUT SINGLE = 1.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.then/IfContainer.else/InstButton :
-    CLASS /Libraries/cshmi/InstantiateTemplate;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Button";
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      xOffset : INPUT SINGLE = 0.000000;
-      yOffset : INPUT SINGLE = 40.000000;
-      maxTemplatesPerDirection : INPUT STRING = "x:1";
-      FBReference[1] : INPUT STRING = {"OP_NAME"};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"title:OP_NAME"};
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      rotate : INPUT INT = 0;
-      opacity : INPUT SINGLE = 1.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/FbIterator/onload/Iterator.forEachChild/If.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/VarIterator :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/VarIterator/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/VarIterator/onload/Iterator :
-    CLASS /Libraries/cshmi/ChildrenIterator;
-    VARIABLE_VALUES
-      ChildrenType : INPUT STRING = "OT_VARIABLE";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/VarIterator/onload/Iterator.forEachChild :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/VarIterator/onload/Iterator.forEachChild/InstVariable :
-    CLASS /Libraries/cshmi/InstantiateTemplate;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Variable";
-      x : INPUT SINGLE = 100.000000;
-      y : INPUT SINGLE = 50.000000;
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/Node";
+      x : INPUT SINGLE = 30.000000;
+      y : INPUT SINGLE = 30.000000;
       xOffset : INPUT SINGLE = 0.000000;
       yOffset : INPUT SINGLE = 30.000000;
       maxTemplatesPerDirection : INPUT STRING = "x:1";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
-      FBVariableReference[1] : INPUT STRING = {"Value:OP_NAME"};
-      ConfigValues[1] : INPUT STRING = {"title:OP_NAME"};
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      rotate : INPUT INT = 0;
-      opacity : INPUT SINGLE = 1.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/Border :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 20.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "";
-      fill : INPUT STRING = "white";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/Title :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 50.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "Loading...";
-      fontSize : INPUT STRING = "13px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/Title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/Title/onload/SetTitle :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "content";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/Title/onload/SetTitle.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "title";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/InfoTemp :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "InfoButton";
-      x : INPUT SINGLE = -20.000000;
-      y : INPUT SINGLE = 0.000000;
-      FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
-      hideable : INPUT BOOL = FALSE;
-      visible : INPUT BOOL = TRUE;
+      ConfigValues[2] : INPUT STRING = {"SetColor:lightyellow" , "InstanceType:OP_CLASS"};
+      visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 2;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Button/InfoTemp/InfoWindow :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.else :
+    CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "InfoWindow";
-      x : INPUT SINGLE = 0.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.then/If_Container.else/InstNode :
+    CLASS /Libraries/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/Node";
+      x : INPUT SINGLE = 30.000000;
       y : INPUT SINGLE = 30.000000;
-      FBReference[0] : INPUT STRING = {};
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 30.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:1";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"SetColor:white" , "InstanceType:OP_CLASS"};
+      visible : INPUT BOOL = FALSE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
       hideable : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/onload/Iterator.forEachChild/If_no_connection.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/ConnectionPointLeft :
+    CLASS /Libraries/cshmi/Circle;
+    VARIABLE_VALUES
+      cx : INPUT SINGLE = 0.000000;
+      cy : INPUT SINGLE = 10.000000;
+      r : INPUT SINGLE = 1.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Button/InfoTemp/InfoWindow/Variables :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/ConnectionPointDown :
+    CLASS /Libraries/cshmi/Circle;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "VarIterator";
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      FBReference[0] : INPUT STRING = {};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
-      hideable : INPUT BOOL = FALSE;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/NextButton :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "FbIterator";
-      x : INPUT SINGLE = 140.000000;
-      y : INPUT SINGLE = 0.000000;
-      FBReference[0] : INPUT STRING = {};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
-      hideable : INPUT BOOL = TRUE;
+      cx : INPUT SINGLE = 10.000000;
+      cy : INPUT SINGLE = 20.000000;
+      r : INPUT SINGLE = 1.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Button/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine :
+    CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-      zindex : INPUT UINT = 4;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[1] : INPUT STRING = {"black"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.then/SetColor :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.then/SetColor.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "red";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.else/SetBlack :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Button/click/If_clicked.else/SetBlack.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "black";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 3;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/Border :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 20.000000;
+      points : INPUT STRING = "";
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "";
-      fill : INPUT STRING = "lightyellow";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/Title :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 50.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "Loading...";
-      fontSize : INPUT STRING = "13px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/Title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/Title/onload/SetTitle :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "content";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/Title/onload/SetTitle.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "title";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/NextButton :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "FbIterator";
-      x : INPUT SINGLE = 140.000000;
-      y : INPUT SINGLE = 0.000000;
-      FBReference[0] : INPUT STRING = {};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
-      hideable : INPUT BOOL = TRUE;
-      visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 2;
+      zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection :
+    CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
-      zindex : INPUT UINT = 3;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
+      cyctime : INPUT SINGLE = 0.200000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.if :
-    CLASS /Libraries/cshmi/csContainer;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection/RouteLine :
+    CLASS /Libraries/cshmi/RoutePolyline;
     VARIABLE_VALUES
+      offset : INPUT SINGLE = 5.000000;
+      gridWidth : INPUT SINGLE = 0.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.if/comp.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection/RouteLine.SourceBasename :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
+      elemVar : INPUT STRING = "";
       elemVarPath : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "fullqualifiedname";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -821,7 +1201,25 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.if/comp.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection/RouteLine.TargetBasename :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "fullqualifiedparentname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection/RouteLine.SourceVariablename :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -833,37 +1231,13 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[1] : INPUT STRING = {"black"};
+      value : INPUT STRING = "ConnectionPointLeft";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.then/SetColor :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.then/SetColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Node/PolyLine/cyclicRouteConnection/RouteLine.TargetVariablename :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -875,66 +1249,24 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "red";
+      value : INPUT STRING = "ConnectionPointDown";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.else/SetBlack :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "stroke";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ContainerButton/click/If_clicked.else/SetBlack.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "black";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Variable :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 120.000000;
       height : INPUT SINGLE = 20.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 4;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Border :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Border :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -952,7 +1284,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/click :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/click :
     CLASS /Libraries/cshmi/OperatorEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 1;
@@ -960,7 +1292,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/click/Set :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/click/Set_UserInput :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -976,7 +1308,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/click/Set.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/click/Set_UserInput.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -994,7 +1326,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = -10.000000;
@@ -1017,16 +1349,15 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update :
-    CLASS /Libraries/cshmi/TimeEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 3.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -1035,7 +1366,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.if :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1043,7 +1374,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.if/comp :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.if/comp :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -1053,7 +1384,310 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.if/comp.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "flags";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "input";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.then/Set_xPos :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "x";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.then/Set_xPos.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT SINGLE = -10.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.then/Set_horAlignment :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "horAlignment";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.then/Set_horAlignment.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "end";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "flags";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "output";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.then/Set_xPos :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "x";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.then/Set_xPos.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT SINGLE = 130.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.then/Set_horAlignment :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "horAlignment";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.then/Set_horAlignment.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "start";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/onload/If_input.else/If_output.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+      cyctime : INPUT SINGLE = 3.000000;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.if/comp.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1071,7 +1705,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.if/comp.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.if/comp.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1089,7 +1723,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.then :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1097,7 +1731,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.then/Set :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.then/Set :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1113,7 +1747,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.then/Set.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.then/Set.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1131,7 +1765,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.else :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1139,7 +1773,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.else/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.else/SetTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1155,7 +1789,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Value/Update/If_ValueNull.else/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Value/Update_Value/If_ValueNull.else/SetTitle.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1173,7 +1807,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Title :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Title :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 60.000000;
@@ -1196,7 +1830,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Title/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Title/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1204,7 +1838,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Title/onload/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Title/onload/SetTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1220,7 +1854,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Variable/Title/onload/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/Variable/Title/onload/SetTitle.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1238,18 +1872,20 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 5;
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      comment : INPUT STRING = "das Click-Event ist wichtig, damit der Button 
+nicht beim Klick auf das InfoWindow 
+verschwindet!";
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/Border :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/Border :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -1267,22 +1903,49 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/Heading :
-    CLASS /Libraries/cshmi/Text;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup :
+    CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 250.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "Loading...";
-      fontSize : INPUT STRING = "15px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 500.000000;
+      height : INPUT SINGLE = 80.000000;
+      hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Border :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 500.000000;
+      height : INPUT SINGLE = 60.000000;
+      strokeWidth : INPUT SINGLE = 1.500000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/horLine :
+    CLASS /Libraries/cshmi/Line;
+    VARIABLE_VALUES
+      x1 : INPUT SINGLE = 0.000000;
+      y1 : INPUT SINGLE = 30.000000;
+      x2 : INPUT SINGLE = 500.000000;
+      y2 : INPUT SINGLE = 30.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
       zindex : INPUT UINT = 1;
@@ -1290,7 +1953,53 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/Heading/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Heading :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 10.000000;
+      y : INPUT SINGLE = 15.000000;
+      content : INPUT STRING = "Instanzname:";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Heading_Value :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 130.000000;
+      y : INPUT SINGLE = 15.000000;
+      content : INPUT STRING = "Loading...";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Heading_Value/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1298,7 +2007,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/Heading/onload/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Heading_Value/onload/SetTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1314,7 +2023,95 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/Heading/onload/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/Heading_Value/onload/SetTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "identifier";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TypeName :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 10.000000;
+      y : INPUT SINGLE = 45.000000;
+      content : INPUT STRING = "Instanztyp:";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TypeName_Value :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 130.000000;
+      y : INPUT SINGLE = 45.000000;
+      content : INPUT STRING = "Loading...";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TypeName_Value/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TypeName_Value/onload/SetTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TypeName_Value/onload/SetTitle.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1325,14 +2122,60 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "title";
+      TemplateConfigValues : INPUT STRING = "InstanceType";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TextInput :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 160.000000;
+      y : INPUT SINGLE = 80.000000;
+      content : INPUT STRING = "Inputs";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/InfoGroup/TextOutput :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 340.000000;
+      y : INPUT SINGLE = 80.000000;
+      content : INPUT STRING = "Outputs";
+      fontSize : INPUT STRING = "17px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "bold";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 2;
@@ -1340,11 +2183,82 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/onload/Set_absoluteX :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.if/Compare :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.if/Compare.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "InfoWindowVisible";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.if/Compare.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "fullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.then/Set_visible :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "absolutex";
+      elemVar : INPUT STRING = "visible";
       elemVarPath : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
@@ -1356,7 +2270,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/onload/Set_absoluteX.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.then/Set_visible.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1368,13 +2282,55 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT SINGLE = 1000.000000;
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/onload/Set_absoluteY :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.else/Set_visible_false :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "visible";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/If_Visible.else/Set_visible_false.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/Set_absoluteY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1390,7 +2346,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoWindow/onload/Set_absoluteY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/globalvarchanged/Set_absoluteY.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1408,101 +2364,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 20.000000;
-      height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 6;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/Button :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 20.000000;
-      height : INPUT SINGLE = 20.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "white";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/InfoText :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 10.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "i";
-      fontSize : INPUT STRING = "15px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "bolder";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/onload/SetStroke :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "fill";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/onload/SetStroke.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "black";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/click :
     CLASS /Libraries/cshmi/OperatorEvent;
     VARIABLE_VALUES
       zindex : INPUT UINT = 3;
@@ -1510,82 +2372,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked :
-    CLASS /Libraries/cshmi/IfThenElse;
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "fill";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[1] : INPUT STRING = {"black"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.then/SetColor :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/onload/Set_absoluteX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "fill";
+      elemVar : INPUT STRING = "absolutex";
       elemVarPath : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
@@ -1597,7 +2396,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.then/SetColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/onload/Set_absoluteX.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1609,37 +2408,29 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "red";
+      value : INPUT SINGLE = 700.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.else/SetBlack :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/onload/Set_absoluteY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "fill";
+      elemVar : INPUT STRING = "absolutey";
       elemVarPath : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/InfoButton/click/If_clicked.else/SetBlack.value :
+ INSTANCE  /TechUnits/cshmi/Templates/EngineeringSimple/InfoWindow/onload/Set_absoluteY.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1651,13 +2442,13 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "black";
+      value : INPUT SINGLE = 100.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/MainSheet :
+ INSTANCE  /TechUnits/cshmi/engineeringSimple :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -1665,12 +2456,13 @@
       width : INPUT SINGLE = 1675.000000;
       height : INPUT SINGLE = 1020.000000;
       hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/MainSheet/Background :
+ INSTANCE  /TechUnits/cshmi/engineeringSimple/Background :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 5.000000;
@@ -1688,61 +2480,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/MainSheet/Heading :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 20.000000;
-      y : INPUT SINGLE = 20.000000;
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/MainSheet/Heading/Border :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 60.000000;
-      height : INPUT SINGLE = 40.000000;
-      strokeWidth : INPUT SINGLE = 1.500000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "white";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/MainSheet/Heading/Title :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 30.000000;
-      y : INPUT SINGLE = 20.000000;
-      content : INPUT STRING = "TU";
-      fontSize : INPUT STRING = "15px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "bold";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/MainSheet/StartUpIterator :
+ INSTANCE  /TechUnits/cshmi/engineeringSimple/StartUp :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -1750,247 +2488,27 @@
       width : INPUT SINGLE = 100.000000;
       height : INPUT SINGLE = 100.000000;
       hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 2;
+      visible : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/MainSheet/StartUpIterator/FbIterator :
+ INSTANCE  /TechUnits/cshmi/engineeringSimple/StartUp/StartUpNode :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "FbIterator";
-      x : INPUT SINGLE = 50.000000;
-      y : INPUT SINGLE = 80.000000;
+      TemplateDefinition : INPUT STRING = "EngineeringSimple/Node";
+      x : INPUT SINGLE = 20.000000;
+      y : INPUT SINGLE = 40.000000;
       FBReference[1] : INPUT STRING = {"/TechUnits/TU"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
+      ConfigValues[2] : INPUT STRING = {"InstanceType:/acplt/ov/domain" , "SetColor:lightyellow"};
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU :
-    CLASS /acplt/ov/domain;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef/Border :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 150.000000;
-      y : INPUT SINGLE = 10.000000;
-      width : INPUT SINGLE = 10.000000;
-      height : INPUT SINGLE = 30.000000;
-      strokeWidth : INPUT SINGLE = 1.500000;
-      visible : INPUT BOOL = FALSE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef/Title :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 10.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "";
-      fontSize : INPUT STRING = "medium";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "Times New Roman";
-      horAlignment : INPUT STRING = "start";
-      verAlignment : INPUT STRING = "auto";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2 :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 150.000000;
-      comment : INPUT STRING = "kommentare";
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2/onload/SetMath :
-    CLASS /Libraries/cshmi/SetMathValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2/onload/SetMath/add1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2/onload/SetMath/mul2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef2/onload/SetMath/sub3 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/TempDef3 :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 150.000000;
-      height : INPUT SINGLE = 150.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/meins :
-    CLASS /acplt/ov/domain;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/meins/TempDef4 :
-    CLASS /Libraries/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/meins/TempDef4/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/meins/TempDef4/onload/Set :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/TU/meins/TempDef4/onload/Set.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
