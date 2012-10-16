@@ -26,7 +26,8 @@
 
 /**
  * Convey Sp to Out or SimOut, respectively, controlled by the state of SimOn
- * Scale from Min to Max at Sp is calculated to 0...1 aut (Sim)Out
+ * Scale from Min to Max at Sp is calculated to 0...1 at (Sim)Out
+ * If input range is exceeded (Sim)Out is 0.0 or 1.0
  */
 OV_DLLFNCEXPORT void IOdriverlib_AO_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,

@@ -28,7 +28,8 @@
  * Cascaded ifs:
  * 		SimOn switches between transport from In to Out (false) or from SimIn to Out (true)
  * 		PVSwitch switches between usage of InPV/SimInPv or TimStamp generation inside block.
- * 		Scale at (Sim)In ranges from 0.0 to 1.0, at Pv(Pv) from Min to Max.
+ * Scale at (Sim)In ranges from 0.0 to 1.0, at Pv(Pv) from Min to Max.
+ * If (Sim)In range is exceeded Pv(Pv) is Min or Max
  */
 OV_DLLFNCEXPORT void IOdriverlib_AI_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
