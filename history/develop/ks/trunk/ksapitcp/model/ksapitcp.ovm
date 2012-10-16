@@ -18,6 +18,9 @@ LIBRARY	ksapitcp
 		VARIABLES
 			socket	:	INT	HAS_ACCESSORS COMMENT="opened TCP socket" INITIALVALUE=-1;
 			state : 	INT COMMENT="0:free,1:waitingForServerPort(managercom acting),2:WaitingForSending,3:WaitingForReceiving"; 
+			reset	:	BOOL HAS_ACCESSORS COMMENT="reset Channel's state" INITIALVALUE = FALSE;
+			timeout	:	UINT HAS_ACCESSORS COMMENT="Timeout for network-processes (in s)" INITIALVALUE = 5;
+			procstarttime	:	TIME	COMMENT="Starting time of last network-process, used to calculate timeouts"; 
 		END_VARIABLES;	
 		OPERATIONS
 			startup		:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -60,6 +63,12 @@ LIBRARY	ksapitcp
 				INITIALVALUE	=	"127.0.0.1";
 			methcount	:	INT
 				INITIALVALUE = 0;
+			reset	:	BOOL 
+				HAS_ACCESSORS COMMENT="reset Channel's state" INITIALVALUE = FALSE;
+			timeout	:	UINT 
+				HAS_ACCESSORS COMMENT="Timeout for network-processes (in s)" INITIALVALUE = 5;
+			procstarttime	: TIME
+				COMMENT="Starting time of last network-process, used to calculate timeouts"; 
 		END_VARIABLES;
 		OPERATIONS
 			startup : C_FUNCTION <OV_FNC_STARTUP>;

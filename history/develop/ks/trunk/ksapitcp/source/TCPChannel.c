@@ -72,6 +72,47 @@ OV_DLLFNCEXPORT OV_RESULT ksapitcp_TCPChannel_constate_set(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_BOOL ksapitcp_TCPChannel_reset_get(
+    OV_INSTPTR_ksapitcp_TCPChannel          pobj
+) {
+    return pobj->v_reset;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapitcp_TCPChannel_reset_set(
+    OV_INSTPTR_ksapitcp_TCPChannel          pobj,
+    const OV_BOOL  value
+) {
+
+	int sock;
+	if(value)
+	{
+		sock = ksapitcp_TCPChannel_socket_get(pobj);
+		if(sock>=0)
+		{
+			CLOSE_SOCKET(sock);
+			ksapitcp_TCPChannel_socket_set(pobj, -1);
+		}
+		ksapitcp_TCPChannel_constate_set(pobj, 0);
+		pobj->v_state = 0;
+		pobj->v_serverport = 0;
+	}
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapitcp_TCPChannel_timeout_get(
+    OV_INSTPTR_ksapitcp_TCPChannel          pobj
+) {
+    return pobj->v_timeout;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapitcp_TCPChannel_timeout_set(
+    OV_INSTPTR_ksapitcp_TCPChannel          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_timeout = value;
+    return OV_ERR_OK;
+}
+
 /*	ksapitcp_TCPChannel_startup
  *	On startup set all values to default and close all connections
  */
@@ -180,6 +221,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			{
 				perror ("socket(ksapitcp) failed");
 				ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETCREATEFAILED);
+				ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
 				return;
 			} else {
 				//KSDEVEL printf("socket(ksapitcp): %d\n", sock);
@@ -205,6 +247,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 			CLOSE_SOCKET(sock);
 			ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
 			ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETCONNECTFAILED);
+			ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
 			return;
 		}
 		//KSDEVEL else
@@ -250,6 +293,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 					CLOSE_SOCKET(sock);
 					ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
 					ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETSENDFAILED);
+					ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
 					return;
 				}
 			}
@@ -262,6 +306,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 					CLOSE_SOCKET(sock);
 					ksapitcp_TCPChannel_socket_set(tcpchannel, -1);
 					ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_SOCKETSENDFAILED);
+					ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
 					return;
 				}
 			}
@@ -274,7 +319,7 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_sendxdr(
 		//ready -> wait for answer
 		cTask->v_actimode = 1;
 		ksapitcp_TCPChannel_constate_set(tcpchannel, CONSTATE_TCPCHANNEL_WAITINGRESPOND);
-
+		ov_time_gettime(&(tcpchannel->v_procstarttime));
 		//~ printf("\n\n\nCHANNEL TYPEMETHOD ACTIVATED\n\n\n");
 		//TODO: Do we need to set this as a status flag???
 
@@ -292,6 +337,8 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 	OV_INSTPTR_ksapitcp_TCPChannel	channel = Ov_StaticPtrCast(ksapitcp_TCPChannel, cTask);
 	OV_INSTPTR_ksapi_KSCommon	kscommon = NULL;
 	OV_VTBLPTR_ksapi_KSCommon   kscommonVTBL = NULL;
+	OV_TIME temptime;
+	OV_TIME_SPAN	timediff;
 
  	int recvBytes = 0;
 	char *buffer_location = 0; //pointer into the buffer 
@@ -309,13 +356,23 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 	int size_received, size_receiving;
 
 	kscommon = (OV_INSTPTR_ksapi_KSCommon)Ov_GetParent(ov_containment, channel);
+	if(!kscommon)
+	{
+		ov_logfile_error("no kscommon object");
+		return;
+	}
 	Ov_GetVTablePtr(ksapi_KSCommon, kscommonVTBL, kscommon);
-
+	if(!kscommonVTBL)
+	{
+		ov_logfile_error("failed getting vtbl-pointer");
+		return;
+	}
 	sock = ksapitcp_TCPChannel_socket_get(channel);
 	//check socket
 	if (sock < 0) {
 		ksapi_logfile_error("no socket");
 		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_NOSOCKET);
+		ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
 		cTask->v_actimode = 0;
 		return;
 	}
@@ -415,7 +472,19 @@ OV_DLLFNCEXPORT void ksapitcp_TCPChannel_typemethod(
 		cTask->v_actimode = 0;
 
 	}
+	else{		//nothing arrived, look for timeout
+		ov_time_gettime(&temptime);
+		ov_time_diff(&timediff, &temptime, &(channel->v_procstarttime));
 
+		if(timediff.secs > channel->v_timeout)
+		{
+			CLOSE_SOCKET(sock);
+			ksapitcp_TCPChannel_socket_set(channel, -1);
+			ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_RESPONSETIMEDOUT);
+			ksapi_KSCommon_status_set(kscommon, STATUS_KSCOMMON_CHANNELERROR);
+			cTask->v_actimode = 0;
+		}
+	}
 	free(xdr_received);
 	return;
 }

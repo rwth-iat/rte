@@ -6,6 +6,7 @@
 #endif
 
 #include "ksapitcp.h"
+#include "ksapitcp_config.h"
 #include "config.h"
 #include "ksserv.h"
 #include "ksservtcp.h"
@@ -66,6 +67,34 @@ OV_DLLFNCEXPORT OV_RESULT ksapitcp_managercom_mngport_set(
 	pobj->v_mngport = value;
 
 	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_BOOL ksapitcp_managercom_reset_get(
+    OV_INSTPTR_ksapitcp_managercom          pobj
+) {
+    return pobj->v_reset;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapitcp_managercom_reset_set(
+    OV_INSTPTR_ksapitcp_managercom          pobj,
+    const OV_BOOL  value
+) {
+    pobj->v_reset = value;
+    return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ksapitcp_managercom_timeout_get(
+    OV_INSTPTR_ksapitcp_managercom          pobj
+) {
+    return pobj->v_timeout;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapitcp_managercom_timeout_set(
+    OV_INSTPTR_ksapitcp_managercom          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_timeout = value;
+    return OV_ERR_OK;
 }
 
 /**
@@ -169,23 +198,23 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 	channel =
 			(OV_INSTPTR_ksapitcp_TCPChannel) Ov_GetParent(ov_containment, pobj);
 	if (pgsd && (!ov_string_compare(host, "127.0.0.1") || !ov_string_compare(host, "localhost"))) { //dont ask local manager, if remote server is requested
-		ov_logfile_info(
+		ksapi_logfile_info(
 				"getserverdata-OBJECT found - server is MANAGER, local distribution of GETSERVER cmd");
 		ksservtcp_getserverdata_name_set(pgsd, servername);
 		ksservtcp_getserverdata_version_set(pgsd, version);
 		ksservtcp_getserverdata_process_set(pgsd, 1);
 		if (pgsd->v_res == 1) { // we successfully found sth
-			ov_logfile_info(
+			ksapi_logfile_info(
 					"ManagerCom local GETSERVER: ANSWER w/ name: %s, version: %d, port: %d, secs: %d, usecs: %d",
 					servername, pgsd->v_version, pgsd->v_port,
 					pgsd->v_expirationtime.secs, pgsd->v_expirationtime.usecs);
 			pobj->v_receivedsport = pgsd->v_port;
 			channel->v_serverport = pgsd->v_port;
-			ov_logfile_info("local retrieved serverport: %d",
+			ksapi_logfile_info("local retrieved serverport: %d",
 					pobj->v_receivedsport);
 		} else { // cant locate server, but we are the Manager! Non registered!
-			ov_logfile_info(
-					"serverport: NONE, not found loally registered server for %s",
+			ksapi_logfile_info(
+					"serverport: NONE, not found locally registered server for %s",
 					pobj->v_receivedsport);
 			pobj->v_receivedsport = 0;
 			channel->v_serverport = 0;
@@ -203,6 +232,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 
 	if (pobj->v_mngport <= 0) {
 		ksapi_logfile_error("no manager port set (mnggetserver)");
+		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 		return;
 	}
 
@@ -284,6 +314,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 	//~ printf("\n\n\nMANAGAERCOM_MNGGETSERVER create socket\n\n\n");
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
 		perror("socket(mnggetserver) failed");
+		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 		return;
 	}
 	pobj->v_tcpsocket = sock;
@@ -298,6 +329,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 		ksapi_logfile_info("Unknown host (mnggetserver)");
 		CLOSE_SOCKET(sock);
 		pobj->v_tcpsocket = -1;
+		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 		return;
 	}
 	memcpy((char *) &server.sin_addr, (char *) hp->h_addr, hp->h_length);
@@ -310,6 +342,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 		perror("connect(ksapi_managercom) failed");
 		CLOSE_SOCKET(sock);
 		pobj->v_tcpsocket = -1;
+		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 		return;
 	}
 	//~ printf("\n\n\nMANAGAERCOM_MNGGETSERVER send\n\n\n");
@@ -318,6 +351,7 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 		ksapi_logfile_info("send(mnggetserver) failed");
 		CLOSE_SOCKET(sock);
 		pobj->v_tcpsocket = -1;
+		ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 		return;
 	}
 
@@ -325,6 +359,8 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_mnggetserver(OV_INSTPTR_ksapitcp_manage
 	//~ printf("\n\n\nMANAGAERCOM_MNGGETSERVER activate typemethode\n\n\n");
 	pobj->v_cycIntervalCount = 0;
 	pobj->v_actimode = 1;
+
+	ov_time_gettime(&(pobj->v_procstarttime));
 
 	return;
 }
@@ -343,8 +379,11 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 	OV_INT bytes, c;
 	OV_UINT xdrnamelength = 0;
 	OV_INT rcvdserverport;
+	OV_TIME temptime;
+	OV_TIME_SPAN timediff;
 	char buffer[4096];
 	int tcpsocket = pobj->v_tcpsocket;
+	int on = 1;
 
 	char temp[4];
 
@@ -353,6 +392,12 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 
 	if (tcpsocket >= 0) { //receive getserver answer
 		memset(buffer, 0, sizeof(buffer));
+		//non-blocking
+		if ((IOCTL_SOCKET(tcpsocket, FIONBIO, (char*) &on)) == -1) {
+			perror("ioctl(tcpcChannel) failed (set to non-blocking)");
+			return;
+		}
+
 		bytes = recv(tcpsocket, buffer, 4096, 0);
 #if OV_SYSTEM_NT
 		errno = WSAGetLastError();
@@ -362,8 +407,9 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 			ksapi_logfile_debug("error receiving?, closing socket!");
 			CLOSE_SOCKET(tcpsocket);
 			pobj->v_tcpsocket = -1;
+			ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
 			return;
-		} else {
+		} else if(bytes >=0) {
 			ksapi_logfile_debug(
 					"(ksapi_managercom/typemethod: getserver answer analysing");
 			pobj->v_xdrlength = bytes;
@@ -413,10 +459,30 @@ OV_DLLFNCEXPORT void ksapitcp_managercom_typemethod(
 				ksapi_logfile_info("mnggetserver failed");
 				pobj->v_receivedsport = 0;
 				channel->v_serverport = 0;
+				ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_GETSERVERFAILED);
+				return;
+			}
+			channelVTBL->m_sendxdr((OV_INSTPTR_ksapi_Channel) channel, kscommon,
+							NULL, 0);
+		}
+		else
+		{
+			ov_time_gettime(&(temptime));
+			ov_time_diff(&timediff, &temptime, &(pobj->v_procstarttime));
+			if(timediff.secs >= pobj->v_timeout)
+			{
+				pobj->v_receivedsport = 0;
+				channel->v_serverport = 0;
+				ksapitcp_TCPChannel_constate_set(channel, CONSTATE_TCPCHANNEL_MNGTIMEDOUT);
+				if(pobj->v_tcpsocket>=0)
+				{
+					CLOSE_SOCKET(tcpsocket);
+					pobj->v_tcpsocket = -1;
+				}
+
 			}
 		}
-		channelVTBL->m_sendxdr((OV_INSTPTR_ksapi_Channel) channel, kscommon,
-				NULL, 0);
+
 	}
 
 	if ((pobj->v_udpsocket < 0) && (pobj->v_tcpsocket < 0))
