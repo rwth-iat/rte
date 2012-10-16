@@ -24,7 +24,10 @@
 #include "IOdriverlib.h"
 #include "libov/ov_macros.h"
 
-
+/**
+ * Convey Sp to Out or SimOut, respectively, controlled by the state of SimOn
+ * Scale from Min to Max at Sp is calculated to 0...1 aut (Sim)Out
+ */
 OV_DLLFNCEXPORT void IOdriverlib_AO_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
@@ -34,6 +37,24 @@ OV_DLLFNCEXPORT void IOdriverlib_AO_typemethod(
     */
     OV_INSTPTR_IOdriverlib_AO pinst = Ov_StaticPtrCast(IOdriverlib_AO, pfb);
 
+    if(pinst->v_SimOn)
+    {
+    	if(pinst->v_Sp > pinst->v_Max)
+    		pinst->v_SimOut = 1.0;
+    	else if (pinst->v_Sp < pinst->v_Min)
+    		pinst->v_SimOut = 0.0;
+    	else
+    		pinst->v_SimOut = pinst->v_Sp / (pinst->v_Max - pinst->v_Min) - pinst->v_Min;
+    }
+    else
+    {
+    	if(pinst->v_Sp > pinst->v_Max)
+    		pinst->v_Out = 1.0;
+    	else if (pinst->v_Sp < pinst->v_Min)
+    		pinst->v_Out = 0.0;
+    	else
+    		pinst->v_Out = pinst->v_Sp / (pinst->v_Max - pinst->v_Min) - pinst->v_Min;
+    }
     return;
 }
 

@@ -24,7 +24,9 @@
 #include "IOdriverlib.h"
 #include "libov/ov_macros.h"
 
-
+/**
+ * If SimOn is true convex Sp to SimOut, else convey to Out
+ */
 OV_DLLFNCEXPORT void IOdriverlib_DO_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
@@ -33,6 +35,15 @@ OV_DLLFNCEXPORT void IOdriverlib_DO_typemethod(
     *   local variables
     */
     OV_INSTPTR_IOdriverlib_DO pinst = Ov_StaticPtrCast(IOdriverlib_DO, pfb);
+
+    if(pinst->v_SimOn)
+    {
+    	pinst->v_SimOut = pinst->v_Sp;
+    }
+    else
+    {
+    	pinst->v_Out = pinst->v_Sp;
+    }
 
     return;
 }

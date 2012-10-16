@@ -107,6 +107,9 @@ OV_DLLFNCEXPORT OV_RESULT IOdriverlib_DI_constructor(
     pinst->v_SimInPv.time.usecs = 0;
     pinst->v_PvPv.time.secs = 0;
     pinst->v_PvPv.time.usecs = 0;
+    pinst->v_PvPv.state = KS_ST_NOTSUPPORTED;
+    pinst->v_TimeStamp.secs = 0;
+    pinst->v_TimeStamp.usecs = 0;
 
     return OV_ERR_OK;
 }
