@@ -26,7 +26,7 @@
 
 OV_DLLFNCEXPORT OV_RESULT kbuslib_AnalogOUT_Value_set(OV_INSTPTR_kbuslib_AnalogOUT pobj, const OV_SINGLE value)
 {
-	if(value <= pobj->v_UpperLimit && value >= pobj->v_LowerLimit)
+	if(value <= 1.0 && value >= 0.0)
 	{
 		pobj->v_Value = value;
 		return(OV_ERR_OK);

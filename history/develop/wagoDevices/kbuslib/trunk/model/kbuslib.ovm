@@ -147,13 +147,7 @@ LIBRARY kbuslib
 		IS_INSTANTIABLE;
 		COMMENT = "Analog input clamp";
 		VARIABLES
-			UpperLimit	:	SINGLE	FLAGS = "i"
-				COMMENT = "Upper limit of range"
-				INITIALVALUE = 100.0;
-			LowerLimit	:	SINGLE	FLAGS = "i"
-				COMMENT = "Lower limit of range"
-				INITIALVALUE = 0.0;
-				TimeStamp	:	TIME
+			TimeStamp	:	TIME
 				FLAGS = "o"
 				COMMENT = "Last sync with ProcessImage.";
 			Value	:	SINGLE	FLAGS = "o"
@@ -173,12 +167,6 @@ LIBRARY kbuslib
 		IS_INSTANTIABLE;
 		COMMENT = "Analog output clamp";
 		VARIABLES
-			UpperLimit	:	SINGLE	FLAGS = "i"
-				COMMENT = "Upper limit of range"
-				INITIALVALUE = 100.0;
-			LowerLimit	:	SINGLE	FLAGS = "i"
-				COMMENT = "Lower limit of range"
-				INITIALVALUE = 0.0;
 			Value	:	SINGLE	HAS_SET_ACCESSOR
 				FLAGS = "i"
 				COMMENT = "Analog value"

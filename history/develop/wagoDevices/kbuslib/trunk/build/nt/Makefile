@@ -19,7 +19,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
-	-tclsh $(PREBUILD) kbuslib $(MAKMAKOPTIONS)
 	acplt_makmak -l kbuslib $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) kbuslib $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	-tclsh $(POSTBUILD) kbuslib
+	tclsh $(POSTBUILD) kbuslib

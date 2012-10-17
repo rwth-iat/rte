@@ -295,7 +295,8 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_startup(
 	ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_NOERROR);
 	pinst->v_ErrorCode = KBUS_ERROR_NOERROR;
 	pinst->v_Error = TRUE;
-	pinst->v_actimode = 0;
+	pinst->v_actimode = 1;
+	pinst->v_iexreq = 1;
 
     return;
 }
@@ -307,66 +308,12 @@ OV_DLLFNCEXPORT void kbuslib_Clamp_typemethod(
     /*    
     *   local variables
     */
-	OV_INSTPTR_ov_class pBusMngr = NULL;
-	OV_INSTPTR_kbuslib_BusManager pUsedManager = NULL;
-	OV_INSTPTR_kbuslib_BusManager ptmpManager = NULL;
+
 	OV_INSTPTR_ov_domain pParentContainer = NULL;
-	OV_INSTPTR_kbuslib_Clamp pinst = Ov_StaticPtrCast(kbuslib_Clamp, pfb);
 
-	Ov_ForEachChild(ov_inheritance, pclass_kbuslib_BusManager, pBusMngr)
-	{
-		ptmpManager = Ov_StaticPtrCast(kbuslib_BusManager, Ov_GetFirstChild(ov_instantiation, pBusMngr));	/*get the Manager used in the Database*/
-		if(ptmpManager)
-		{
-			if(Ov_GetNextChild(ov_instantiation, pUsedManager))		/*if there is more than one Manager of the same type: Error*/
-			{
-				ov_logfile_error("%s: Error: There is more than one Bus Manager.", pinst->v_identifier);
-				ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_MANAGER);
-				pinst->v_ErrorCode = KBUS_ERROR_MANAGER;
-				pinst->v_Error = FALSE;
-				return;
-			}
-			if(!pUsedManager)
-			{
-				pUsedManager = ptmpManager;
-			}
-			else						/*if a Manager is already found and a second Manager of a different type is found: Error*/
-			{
-				ov_logfile_error("%s: Error: There is more than one Bus Manager.", pinst->v_identifier);
-				ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_MANAGER);
-				pinst->v_ErrorCode = KBUS_ERROR_MANAGER;
-				pinst->v_Error = FALSE;
-				return;
-			}
-		}
-	}
-	
-	if(pUsedManager)
-	{
-		pParentContainer = Ov_GetParent(ov_containment, pinst);		/*if the clamp instance is contained in another instance, */
-		if(pParentContainer)										/*this link is deleted and the clamp is moved into the Managers container*/
-		{
-			Ov_Unlink(ov_containment, pParentContainer, pinst);
-		}
-		Ov_Link(ov_containment, Ov_StaticPtrCast(ov_domain, pUsedManager), pinst);
-		
-
-			
-	}
-	else
-	{
-		ov_logfile_error("%s: Error: No Bus Manager found. Automatic configuration not possible", pinst->v_identifier);
-		ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_NO_MANAGER);
-		pinst->v_ErrorCode = KBUS_ERROR_NO_MANAGER;
-		pinst->v_Error = FALSE;
-		return;
-	}
-	
-	
-	ov_string_setvalue(&pinst->v_ErrorString, KBUS_ERRORSTR_NOERROR);
-	pinst->v_ErrorCode = KBUS_ERROR_NOERROR;
-	pinst->v_Error = TRUE;
-	pinst->v_actimode = 0;
+	pParentContainer = Ov_GetParent(ov_containment, (Ov_StaticPtrCast(ov_object, pfb)));
+	if(!Ov_CanCastTo(kbuslib_BusManager,pParentContainer))
+		pfb->v_actimode = 0;
 	
     return;
 }
