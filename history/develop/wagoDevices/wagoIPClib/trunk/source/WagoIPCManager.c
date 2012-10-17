@@ -775,10 +775,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					
 					
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value = 
-						(((uint16_t*) pinfo->image.inputs.data)[tmp_number / sizeof(uint16_t)] / 32767.00  
-							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
-							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
-							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+						(((uint16_t*) pinfo->image.inputs.data)[tmp_number / sizeof(uint16_t)] / 32767.00);
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.value =
 							Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value;
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.time = pinst->v_LastRead;
@@ -796,9 +793,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 				}
 				
-				/*trigger output connections*/
-				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
-
 			}
 			else
 			{
@@ -847,9 +841,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					
 				}
 				
-				/*trigger output connections*/
-				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
-
 			}
 			else
 			{
@@ -907,9 +898,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					Ov_StaticPtrCast(kbuslib_DigitalIN, pcClamp)->v_ValuePV.state = OV_ST_BAD;
 					
 				}
-				
-				/*trigger output connections*/
-				fb_functionblock_triggerOutSendConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
 
 			}
 			else
@@ -933,9 +921,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
 
-				/*trigger input connections*/
-				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
-
 				if(tmp_number <= dig_output_offset)
 				{
 					/*if there was an error, or the clamp was disabled reset it*/
@@ -948,28 +933,20 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 					}
 					
 					Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_RBValue = 
-						(((uint16_t*) pinfo->image.outputs.data)[tmp_number / sizeof(uint16_t)] / 32767.00  
-							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
-							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
-							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+						(((uint16_t*) pinfo->image.outputs.data)[tmp_number / sizeof(uint16_t)] / 32767.00);
 					
 					if(!Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_ReadBackOnly)
 					{
 						write = TRUE;
 						dtemp = Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_Value;
 						
-						if(dtemp >= Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit
-							&& dtemp <= Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit)
+						if(dtemp >= 0.0	&& dtemp <= 1.0)
 						{
-							dtemp -= Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_LowerLimit;
-							dtemp /= (Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_UpperLimit 
-								- Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_LowerLimit);
-										
 							((uint16_t*) pinfo->image.outputs.data)[tmp_number / sizeof(uint16_t)] = (uint16_t) (dtemp * 32767);
 						}
 						else
 						{
-							ov_logfile_error("%s: value outside Upper / Lower limit", 
+							ov_logfile_error("%s: value exceeds range (0.0 - 1.0)",
 								Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_identifier);
 							pcClamp->v_Error = FALSE;
 							pcClamp->v_ErrorCode = KBUS_ERROR_OUT_OF_RANGE;
@@ -1016,9 +993,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 			
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
-
-				/*trigger input connections*/
-				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
 
 				if(tmp_number <= dig_output_offset)
 				{
@@ -1077,9 +1051,6 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 			
 			if(pcClamp->v_Enabled)				/*check if clamp is enabled*/
 			{
-
-				/*trigger input connections*/
-				fb_functionblock_triggerInpGetConnections(Ov_PtrUpCast(fb_functionblock, pcClamp));
 
 				if(tmp_number >= dig_output_offset)
 				{
