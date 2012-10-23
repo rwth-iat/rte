@@ -175,7 +175,7 @@ LIBRARY IOdriverlib
 		@param Out:	Boolean ProcessValue (with state and timestamp) from field. Used if SimOn==0 and PvSwitch==1.
 		@param SimOut:	Boolean Value from simulation. Used if SimOn==1 and PvSwitch==0.
 	*/
-	CLASS DO	:	CLASS IOdriverlib/input
+	CLASS DO	:	CLASS IOdriverlib/output
 	IS_INSTANTIABLE;
 	COMMENT="Digital Output. Data is transported from Sp to Out or SimOut according to SimOn option. The Value is not processed / altered in any way";
 	VARIABLES
@@ -208,7 +208,7 @@ LIBRARY IOdriverlib
 		@param Min:	Lower limit of input range.
 		@param Max:	Upper limit of input range.
 	*/
-	CLASS AO	:	CLASS IOdriverlib/input
+	CLASS AO	:	CLASS IOdriverlib/output
 	IS_INSTANTIABLE;
 	COMMENT="Analog Output. Input range is between Min and Max. This is transformed linearly to output range (0.0...1.0)";
 	VARIABLES
