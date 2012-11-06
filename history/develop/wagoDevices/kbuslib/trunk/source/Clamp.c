@@ -194,7 +194,7 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_ByteWidth_set(OV_INSTPTR_kbuslib_Clamp p
 		if((value == 2) && (Ov_CanCastTo(kbuslib_AnalogOUT, pobj) || Ov_CanCastTo(kbuslib_AnalogIN, pobj)))
 			return OV_ERR_OK;
 		else
-			if((value == 1) && (Ov_CanCastTo(kbuslib_DigitalOUT, pobj) || Ov_CanCastTo(kbuslib_DigitalIN, pobj)))
+			if((value == 0) && (Ov_CanCastTo(kbuslib_DigitalOUT, pobj) || Ov_CanCastTo(kbuslib_DigitalIN, pobj)))
 				return OV_ERR_OK;
 			else
 			{
