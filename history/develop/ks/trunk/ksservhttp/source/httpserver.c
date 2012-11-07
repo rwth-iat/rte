@@ -314,6 +314,7 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		//copy socket to created tcpclient-object
 		ksservhttp_httpclienthandler_receivesocket_set(ptcpc, receivesocket);
 		this->v_status = STATUS_TCPCON_OK;
+		ptcpc->v_cycInterval = 0;
 	} else {
 		ksserv_logfile_error("Creating of TCPClient failed while New client connected, socket %d ", receivesocket);
 	}

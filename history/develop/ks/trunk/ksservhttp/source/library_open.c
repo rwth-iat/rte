@@ -113,6 +113,7 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 				ov_logfile_error("Fatal: Could not create Object 'httpserver': %s", ov_result_getresulttext(result));
 			   return result;
 		   }
+    	   phttpserver->v_cycInterval = 0;
 		}
 
 	   /*
