@@ -52,7 +52,7 @@ OV_RESULT ov_library_setglobalvars_rtov_new(void) {
 		return OV_ERR_GENERIC;
 	}
 
-	result = Ov_CreateObject(rtov_rtov, pnew, domain, "RT");
+	result = Ov_CreateObject(rtov_rtov, pnew, domain, "rt");
 
 	return result;
 }
