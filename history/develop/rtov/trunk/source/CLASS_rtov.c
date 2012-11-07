@@ -20,6 +20,10 @@
 #define OV_COMPILE_LIBRARY_rtov
 #endif
 
+/**
+ * The SAFE_STACK define determines the size of the prefaulted (safe) stack in kB.
+ * The RT_LOG_OV define enables debug-logging
+ */
 #ifndef SAFE_STACK					/* Size of safe stack in kB. Should be determined in make-process*/
 #warning "SAFE_STACK not define will use 128kB as default"
 #define MAX_SAFE_STACK (128*1024) /* Defaultvalue for safe stack without faulting */
@@ -53,7 +57,13 @@ log_dbg("prefaulting done");
         return;
 }
 
-
+/**
+ * Set-accessor for RTenable parameter. This parameter is used to switch RT-mode on or off.
+ * Furthermore changes in priority or scheduling policy take effect after a set to RTenable.
+ * If RT-mode is switched on with a call, scheduling priority and policy parameters take effect.
+ * Memory is locked and the stack prefaulted. If RT-mode was already on before, the new priority and policy take effect.
+ * If RT-mode is switched of, memory is unlocked, the priority is set to 0 and the scheduling policy to SCHED_OTHER.
+ */
 OV_DLLFNCEXPORT OV_RESULT rtov_rtov_RTenable_set(
     OV_INSTPTR_rtov_rtov          pobj,
     const OV_BOOL  value
@@ -127,6 +137,9 @@ OV_DLLFNCEXPORT OV_RESULT rtov_rtov_RTenable_set(
     return OV_ERR_OK;
 }
 
+/**
+ * Set-accessor for priority value. Checks the values for range-exceeds. 0-99 is allowed. 99 means highest priority.
+ */
 OV_DLLFNCEXPORT OV_RESULT rtov_rtov_priority_set(
     OV_INSTPTR_rtov_rtov          pobj,
     const OV_UINT  value
@@ -140,6 +153,11 @@ OV_DLLFNCEXPORT OV_RESULT rtov_rtov_priority_set(
 		return OV_ERR_BADPARAM;
 }
 
+/**
+ * During object startup the set parameters take effect.
+ * Scheduling priority and policy is set. If RT-mode is enabled memory is locked and the stack prefaulted.
+ * First startup is RT-mode with highest priority and FIFO scheduling (see initialvalues).
+ */
 OV_DLLFNCEXPORT void rtov_rtov_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -175,6 +193,10 @@ OV_DLLFNCEXPORT void rtov_rtov_startup(
     return;
 }
 
+
+/**
+ * During shutdown RT-mode is switched off. Memory is unlocked.
+ */
 OV_DLLFNCEXPORT void rtov_rtov_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -208,6 +230,9 @@ OV_DLLFNCEXPORT void rtov_rtov_shutdown(
     return;
 }
 
+/**
+ * To make parameters visible in ks.
+ */
 OV_DLLFNCEXPORT OV_ACCESS rtov_rtov_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
@@ -231,6 +256,12 @@ OV_DLLFNCEXPORT OV_ACCESS rtov_rtov_getaccess(
     return ov_object_getaccess(pobj, pelem, pticket);
 }
 
+/**
+ * Check if there is already an rtov object in the database and abort if so.
+ * (The test is not complete. It works because the default placement for created objects is as the classes
+ * last child in the instantiation association. If someone works around this test (by setting a different
+ * placement-hint) he probably knows what he's doing.
+ */
 OV_DLLFNCEXPORT OV_RESULT rtov_rtov_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
