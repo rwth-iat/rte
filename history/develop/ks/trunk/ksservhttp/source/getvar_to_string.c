@@ -156,6 +156,8 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 		if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 			ov_string_setvalue(&temp, "");
 		}else{
+			//FIXME: temp can be empty if there is no memory in the database
+			//check it with Ov_OK!
 			ov_string_print(&temp, "%s", Variable.value.valueunion.val_string);
 		}
 		break;
