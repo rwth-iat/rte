@@ -935,7 +935,6 @@ CLASS SHL : CLASS fb/functionblock
  END_CLASS;
 
 // ANY_STRING -> STRING => kein CHAR
-// ANY_INT -> UINT
 // gibt es schon in reSFCbased
 //auf zwei beschraenkt
  CLASS CONCAT : CLASS fb/functionblock							
@@ -1461,6 +1460,29 @@ CLASS StateWatch	:	CLASS fb/functionblock
 		typemethod	:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
 END_CLASS;
+
+ /************************************************************
+ 			Concatination of Variables to Vectors 
+ *************************************************************/
+
+CLASS CONCATVEC : CLASS fb/functionblock							
+    IS_INSTANTIABLE;
+    COMMENT = "Concatination of Values (or Vectors) to Vectors of the same type";
+    VARIABLES
+    	IN1  :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	IN2   :	ANY		     			HAS_SET_ACCESSOR
+            FLAGS = "i";
+    	OUT :	ANY	           			HAS_GET_ACCESSOR
+            FLAGS = "o"
+            COMMENT = "Concatination to Vector";
+    END_VARIABLES;
+	OPERATIONS
+		destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+		constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+ END_CLASS;
 
 	
 END_LIBRARY;
