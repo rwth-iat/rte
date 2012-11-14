@@ -102,6 +102,8 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_constructor(OV_INSTPTR_ov_obje
 	OV_INSTPTR_iec61131stdfb_CONCATVEC pinst = Ov_StaticPtrCast(iec61131stdfb_CONCATVEC, pobj);
 	OV_SINGLE temp [2];
 	OV_SINGLE_VEC vtemp;
+	temp [0] = 0;
+	temp [1] = 1;
 	vtemp.value = temp;
 	vtemp.veclen = 2;
 	res = fb_functionblock_constructor(pobj);
