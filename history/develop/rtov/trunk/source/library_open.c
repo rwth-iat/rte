@@ -35,7 +35,6 @@ OV_RESULT ov_library_setglobalvars_rtov_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_rtov_rtov pnew = 0;
 
-	OV_INSTPTR_ov_domain domain = 0;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -45,14 +44,7 @@ OV_RESULT ov_library_setglobalvars_rtov_new(void) {
 	if(Ov_Fail(result))
 			return result;
 
-	domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/", 2);
-	if(!domain)
-	{
-		ov_logfile_error("Could not determine root-domain");
-		return OV_ERR_GENERIC;
-	}
-
-	result = Ov_CreateObject(rtov_rtov, pnew, domain, "rt");
+	result = Ov_CreateObject(rtov_rtov, pnew, &pdb->root, "rt");
 
 	return result;
 }
