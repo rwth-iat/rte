@@ -111,7 +111,7 @@ HMIJavaScriptKSClient.prototype = {
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', 'OP_NAME', this._cbGetServers);
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', ['OP_NAME', 'OP_CLASS'], this._cbGetServers);
 	 * @param path of object to query
-	 * @param requestType type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
+	 * @param [requestType = OT_DOMAIN] type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
 	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS or OT_ANY)
 	 * @param cbfnc callback function
 	 * @param async request async communication
@@ -144,45 +144,58 @@ HMIJavaScriptKSClient.prototype = {
 		var method = "GET";
 		var Handle;
 		var urlparameter;
+		var optionalurlparameter = "";
 		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			/*
-			 * possible tksparameters:
+			 * possible optionalurlparameters:
 			 * "%20-type%20$::TKS::OT_DOMAIN%20-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]"
 			 * multiple	-output%20[expr%20$::TKS::OP_NAME%20|%20$::TKS::OP_CLASS]
 			 * one		-output%20$::TKS::OP_NAME
 			 */
-			var tksparameter = "%20-type%20$::TKS::"+requestType;
+			optionalurlparameter = "%20-type%20$::TKS::"+requestType;
 			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
 				//fail save array detection
-				tksparameter += "%20-output%20$::TKS::"+requestOutput;
+				optionalurlparameter += "%20-output%20$::TKS::"+requestOutput;
 			}else if(requestOutput.length === 1){
 				//the expr syntax works for one entry, too, but we save a few bytes :-)
-				tksparameter += "%20-output%20$::TKS::"+requestOutput[0];
+				optionalurlparameter += "%20-output%20$::TKS::"+requestOutput[0];
 			}else if(requestOutput.length > 1){
-				tksparameter += "%20-output%20[expr%20$::TKS::"
+				optionalurlparameter += "%20-output%20[expr%20$::TKS::"
 				for (var i = 0; i < requestOutput.length;i++){
-					tksparameter += requestOutput[i];
+					optionalurlparameter += requestOutput[i];
 					if(i+1 < requestOutput.length){
 						//we will do another run
-						tksparameter += "|$::TKS::";
+						optionalurlparameter += "|$::TKS::";
 					}
 				}
-				tksparameter += "]";
+				optionalurlparameter += "]";
 			}
 			
-			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1]+'%20*' + tksparameter;
+			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1]+'%20*' + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - "+ServerAndPath[0]+" is not on the same host as our source. GetEP on a remote host is not supported right now. ");
 				return null;
 			}
 			
+			optionalurlparameter = "&requestType="+requestType;
+			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
+				//fail save array detection
+				optionalurlparameter += "&requestOutput="+requestOutput;
+			}else if(requestOutput.length === 1){
+				//the expr syntax works for one entry, too, but we save a few bytes :-)
+				optionalurlparameter += "&requestOutput="+requestOutput[0];
+			}else if(requestOutput.length > 1){
+				for (var i = 0; i < requestOutput.length;i++){
+					optionalurlparameter += "&requestOutput"+i+"="+requestOutput[i];
+				}
+			}
 			//todo implement requestType, requestOutput
-			urlparameter = 'getEP?path=' +ServerAndPath[1];
+			urlparameter = 'getEP?path=' +ServerAndPath[1]+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//todo implement requestType, requestOutput
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -295,33 +308,33 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var method = "GET";
+		var optionalurlparameter = "";
 		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			
-			var tksparameter = "";
 			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
 				//fail save array detection
-				tksparameter = "%20-output%20$::TKS::"+requestOutput;
+				optionalurlparameter = "%20-output%20$::TKS::"+requestOutput;
 			}else if(requestOutput.length === 1){
 				//the expr syntax works for one entry, too, but we save a few bytes :-)
-				tksparameter = "%20-output%20$::TKS::"+requestOutput[0];
+				optionalurlparameter = "%20-output%20$::TKS::"+requestOutput[0];
 			}else if(requestOutput.length > 1){
-				tksparameter = "%20-output%20[expr%20$::TKS::"
+				optionalurlparameter = "%20-output%20[expr%20$::TKS::"
 				for (var i = 0; i < requestOutput.length;i++){
-					tksparameter += requestOutput[i];
+					optionalurlparameter += requestOutput[i];
 					if(i+1 < requestOutput.length){
 						//we will do another run
-						tksparameter += "|$::TKS::";
+						optionalurlparameter += "|$::TKS::";
 					}
 				}
-				tksparameter += "]";
+				optionalurlparameter += "]";
 			}
 			
 			urlparameter = 'obj='+Handle + '&args=getvar%20' +
-				"{"+ServerAndPath[1]+"}" + tksparameter;
+				"{"+ServerAndPath[1]+"}" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - "+ServerAndPath[0]+" is not on the same host as our source. GetVar on a remote host is not supported right now. ");
@@ -387,18 +400,18 @@ HMIJavaScriptKSClient.prototype = {
 		var method = "GET";
 		var Handle;
 		var urlparameter;
+		var optionalurlparameter = "";
 		if ("tcl" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			var tksparameter = "";
 			if(type !== null && type !== undefined){
-				tksparameter = "%20-type%20"+type;
+				optionalurlparameter = "%20-type%20"+type;
 			}
 			
 			urlparameter = 'obj='+Handle + '&args=setvar%20'+
-			'{'+ServerAndPath[1]+'%20{'+value+'}}'+tksparameter;
+			'{'+ServerAndPath[1]+'%20{'+value+'}}'+optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar_NG - "+ServerAndPath[0]+" is not on the same host as our source. SetVar on a remote host is not supported right now. ");
