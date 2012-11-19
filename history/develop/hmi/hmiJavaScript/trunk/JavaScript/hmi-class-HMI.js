@@ -820,7 +820,14 @@ HMI.prototype = {
 			
 			//if there is support for CSS transition use it
 			//transition from an height="auto" is not supported, so we change maxHeight
-			if(HMI.HideableHeader.style.MozTransitionDuration !== undefined){
+			//never used with ms prefix
+			if(HMI.HideableHeader.style.transitionDuration !== undefined){
+				HMI.HideableHeader.style.transitionProperty = "all";
+				HMI.HideableHeader.style.transitionTimingFunction = "ease-in-out";
+				HMI.HideableHeader.style.transitionDuration = "0.6s";
+				HMI.HideableHeader.style.maxHeight = '0px';
+				HMI.HeaderIsVisible = false;
+			}else if(HMI.HideableHeader.style.MozTransitionDuration !== undefined){
 				HMI.HideableHeader.style.MozTransitionProperty = "all";
 				HMI.HideableHeader.style.MozTransitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.MozTransitionDuration = "0.6s";
@@ -836,18 +843,6 @@ HMI.prototype = {
 				HMI.HideableHeader.style.OTransitionProperty = "all";
 				HMI.HideableHeader.style.OTransitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.OTransitionDuration = "0.6s";
-				HMI.HideableHeader.style.maxHeight = '0px';
-				HMI.HeaderIsVisible = false;
-			}else if(HMI.HideableHeader.style.MSTransitionDuration !== undefined){
-				HMI.HideableHeader.style.MSTransitionProperty = "all";
-				HMI.HideableHeader.style.MSTransitionTimingFunction = "ease-in-out";
-				HMI.HideableHeader.style.MSTransitionDuration = "0.6s";
-				HMI.HideableHeader.style.maxHeight = '0px';
-				HMI.HeaderIsVisible = false;
-			}else if(HMI.HideableHeader.style.transitionDuration !== undefined){
-				HMI.HideableHeader.style.transitionProperty = "all";
-				HMI.HideableHeader.style.transitionTimingFunction = "ease-in-out";
-				HMI.HideableHeader.style.transitionDuration = "0.6s";
 				HMI.HideableHeader.style.maxHeight = '0px';
 				HMI.HeaderIsVisible = false;
 			}else{
@@ -1146,11 +1141,10 @@ HMI.prototype = {
 		var skipRefresh = false;
 		//check if the page is visible at all?
 		//http://www.w3.org/TR/page-visibility/
+		//never used with ms or o prefix
 		if(	document.hidden === true ||
 			document.mozHidden === true||
-			document.webkitHidden === true||
-			document.msHidden === true||
-			document.oHidden === true
+			document.webkitHidden === true
 		){
 			var skipRefresh = true;
 		}

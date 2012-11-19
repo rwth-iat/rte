@@ -358,11 +358,10 @@ cshmi.prototype = {
 		var skipEvent = false;
 		//check if the page is visible at all?
 		//http://www.w3.org/TR/page-visibility/
+		//never used with ms or o prefix
 		if(	document.hidden === true ||
 			document.mozHidden === true||
-			document.webkitHidden === true||
-			document.msHidden === true||
-			document.oHidden === true
+			document.webkitHidden === true
 		){
 			skipEvent = true;
 		}
