@@ -59,6 +59,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 		varname_len = ov_string_getlength(varname);
 		if(strncmp(args->value[i], varname, varname_len) == OV_STRCMP_EQUAL){
 			if((int)ov_string_getlength(args->value[i]) == varname_len){
+				//direct variablename in args
 				Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
 				ov_string_setvalue(&(re->value[re->veclen-1]), args->value[i+1]);
 			}else{

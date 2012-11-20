@@ -191,7 +191,7 @@ HMIJavaScriptKSClient.prototype = {
 				optionalurlparameter += "&requestOutput="+requestOutput[0];
 			}else if(requestOutput.length > 1){
 				for (var i = 0; i < requestOutput.length;i++){
-					optionalurlparameter += "&requestOutput"+i+"="+requestOutput[i];
+					optionalurlparameter += "&requestOutput["+i+"]="+requestOutput[i];
 				}
 			}
 			//todo implement requestType, requestOutput
@@ -1224,6 +1224,8 @@ HMIJavaScriptKSClient.prototype = {
 				cbfnc(this, req);
 			}else{
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
+				
+				//FIXME req.status auswerten!
 				return req.responseText;
 			}
 		}

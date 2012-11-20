@@ -373,10 +373,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_RESULT fr = OV_ERR_OK;
 	int i = 0;
 
-	//muss noch aufgebohrt werden:
 	//path=/TechUnits
 	//requestType=OT_DOMAIN|OT_VARIABLE|... (siehe tcl-tks doku)
-	//TODO: requestOutput ein bis sieben informatinen liefert tcl-tks
+	//requestOutput or requestOutput[i] with OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME and OP_CLASS
 
 	output_format = extract_output_format(args);
 
