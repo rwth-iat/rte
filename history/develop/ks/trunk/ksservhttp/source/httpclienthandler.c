@@ -207,39 +207,39 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		break;
 	case OV_ERR_BADNAME:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_BADNAME: %s%s", HTTP_400_BODY, tmp_body);
 		break;
 	case OV_ERR_BADPARAM:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_400_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_BADPARAM: %s%s", HTTP_400_BODY, tmp_body);
 		break;
 	case OV_ERR_BADAUTH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_401_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_BADAUTH: %s%s", HTTP_401_BODY, tmp_body);
 		break;
 	case OV_ERR_NOACCESS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_403_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_NOACCESS: %s%s", HTTP_403_BODY, tmp_body);
 		break;
 	case OV_ERR_BADPATH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_404_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
 		break;
 	case OV_ERR_BADVALUE:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_414_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_414_BODY, tmp_body);
 		break;
 	case OV_ERR_NOTIMPLEMENTED:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_501_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_NOTIMPLEMENTED: %s%s", HTTP_501_BODY, tmp_body);
 		break;
 	case OV_ERR_GENERIC:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		ov_string_print(body, "%s%s", HTTP_503_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		break;
 	}
 
@@ -470,6 +470,10 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 					//pChildVTable->m_getcomment(pChild, pelem);
 				case OP_ACCESS:
 				case OP_SEMANTIC:
+					/*	if(pChildVTable->m_getaccess(pChild, &pelem, NULL) & OV_AC_INSTANTIABLE) {
+
+					}
+				*/
 				default:
 					//nothing to do
 					break;
