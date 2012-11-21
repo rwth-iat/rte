@@ -298,13 +298,18 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* re){
 		//FIXME! does not work with /vendor/database_name but with /vendor.database_name
 		if(pPathList != NULL)ov_string_freelist(pPathList);
 		pPathList = ov_string_split((pVarsList[0]), ".", &len);
-		if(len!=2){
+		if(len < 2){
 			ov_string_append(re, "First variable name must contain a dot");
 			EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+		}else if(len == 2){
+			ov_string_setvalue(&prefix, pPathList[0]);
 		}else{
 			ov_string_setvalue(&prefix, pPathList[0]);
+			for(i=1;i < len-1;i++){
+				ov_string_print(&prefix, "%s.%s", prefix, pPathList[i]);
+			}
 		}
-		result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[1]),output_format,&message);
+		result = getvar_to_string(ov_path_getobjectpointer(prefix,2),&(pPathList[len-1]),output_format,&message);
 		ov_string_append(re, message);
 		//process remaining queries like .database_free
 		//no prefix expected here
@@ -328,14 +333,17 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* re){
 #define EXEC_SETVAR_RETURN ov_string_freelist(pPathList); \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
+		ov_string_setvalue(&prefix, NULL);\
 		return
 
 OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING *pPathList = NULL;
 	OV_UINT len;
+	int i;
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT result;
 	OV_STRING message = NULL;
+	OV_STRING prefix = NULL;
 
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
@@ -343,17 +351,24 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
 	pPathList = ov_string_split(match.value[0], ".", &len);
-	if(len!=2){
+	if(len < 2){
 		ov_string_freelist(pPathList);
 		ov_string_append(re, "Variablename must contain a dot");
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
+	}else if(len == 2){
+		ov_string_setvalue(&prefix, pPathList[0]);
+	}else{
+		ov_string_setvalue(&prefix, pPathList[0]);
+		for(i=1;i < len-1;i++){
+			ov_string_print(&prefix, "%s.%s", prefix, pPathList[i]);
+		}
 	}
 	find_arguments(args, "newvalue", &match);
 	if(match.veclen!=1){
 		ov_string_print(re, "Variable newvalue not found");
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
 	}
-	result = setvar_at_object(ov_path_getobjectpointer(pPathList[0],2),&(pPathList[1]),&match.value[0], &message);
+	result = setvar_at_object(ov_path_getobjectpointer(prefix,2),&(pPathList[len-1]),&match.value[0], &message);
 
 	ov_string_append(re, message);
 
@@ -453,6 +468,10 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChild){
 			Ov_GetVTablePtr(ov_object, pChildVTable, pChild);
 			//open Child item level
+			if(Ov_GetPreviousChild(ov_containment, pChild) != NULL && output_format==GETVAR_FORMAT_TCL){
+				//append here a space to maintain compatibility with tcl format handling
+				ov_string_append(&temp, " ");
+			}
 			begin_vector_output(&temp, output_format);
 			for (i=0;i < requestOutput.veclen;i++){
 				if(i >= 1 && output_format==GETVAR_FORMAT_TCL){
