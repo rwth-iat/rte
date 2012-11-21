@@ -127,7 +127,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpserver_startup(OV_INSTPTR_ov_object pobj) {
 		ptcpc = (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_GetFirstChild(ov_containment, pclients);
 		while (ptcpc) {
 			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object) ptcpc);
-			ptcpc = (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_GetNextChild(ov_containment, pclients);
+			ptcpc = (OV_INSTPTR_ksservhttp_httpclienthandler) Ov_GetNextChild(ov_containment, ptcpc);
 		}
 		Ov_DeleteObject((OV_INSTPTR_ov_object)pclients);
 		if (!Ov_OK((Ov_CreateObject(ov_domain, pclients, thisdomain, "clients")))) {
