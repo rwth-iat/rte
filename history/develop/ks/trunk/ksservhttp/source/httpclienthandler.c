@@ -183,6 +183,13 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	return;
 }
 
+/**
+ * Builds header for http communication from OV_RESULT
+ * @param result
+ * @param http_version
+ * @param header will be overwritten
+ * @param body will be overwritten in an error state
+ */
 void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body){
 	OV_STRING tmp_header = NULL;
 	OV_STRING tmp_body = NULL;
@@ -448,6 +455,10 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 			//open Child item level
 			begin_vector_output(&temp, output_format);
 			for (i=0;i < requestOutput.veclen;i++){
+				if(i >= 1 && output_format==GETVAR_FORMAT_TCL){
+					//append here a space to maintain compatibility with tcl format
+					ov_string_append(&temp, " ");
+				}
 				if(requestOutput.veclen > 1){
 					//open request item level, if we have more than one entry
 					begin_vector_output(&temp, output_format);
@@ -486,7 +497,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 			finalize_vector_output(&temp, output_format);
 		}
 		//save our hard work
-		ov_string_append(&message, temp);
+		ov_string_setvalue(&message, temp);
 		ov_string_setvalue(&temp, NULL);
 	}else if(requestType == KS_OT_VARIABLE){
 		ov_string_append(re, "requestType VARIABLES not implemented");
@@ -611,7 +622,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
-	OV_BOOL static_file = FALSE; //is true if we send a static file
+	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
 	OV_STRING http_version;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
@@ -745,14 +756,14 @@ void ksservhttp_httpclienthandler_typemethod(
 				result = OV_ERR_OK;
 			}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
 				//used for Cross-Origin Resource Sharing (CORS)
-				//only an 200 is required
 				result = OV_ERR_OK;
-				ov_string_append(&body, "CORS Request granted"); //need some answer to skip commands
+				//only an 200 is required
+				request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
 			}
 		}
 
 		//BEGIN command routine
-		if(!Ov_Fail(result) && body == NULL){
+		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
 				//it is caused by the second dot in the filename
@@ -775,33 +786,40 @@ void ksservhttp_httpclienthandler_typemethod(
 						ov_string_print(&body, "data: %s\r\n\r\n", this->v_streambuffer);
 					}else{
 						//no - set body to null
-						ov_string_setvalue(&body, "");
+						ov_string_setvalue(&body, NULL);
 					}
+					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
 					//no
 					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
 				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_setvar(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_getep(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
 				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = OV_ERR_BADPATH; //404
 				ov_string_append(&body, "Tks-NoHandleSupported");
 				//only communication to this server allowed
+				request_handled_by = REQUEST_HANDLED_BY_GETHANDLE;
 			}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
 				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = OV_ERR_BADPATH; //404
 				ov_string_append(&body, "We do not support Handles, so everything is ok.");
+				request_handled_by = REQUEST_HANDLED_BY_DELHANDLE;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
 				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
 				if(!Ov_Fail(result)){
 					ov_string_append(&body, "Secret area");
 					result = OV_ERR_OK;
 				}
+				request_handled_by = REQUEST_HANDLED_BY_AUTH;
 			}
 		}
 		//END command routine
@@ -813,7 +831,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//BEGIN static file routine
 		//no command matched yet... Is it a static file?
-		if(!Ov_Fail(result) && body == NULL && (header == NULL || strstr(header, "Content-Type: text/event-stream;") == NULL)){
+		if(!Ov_Fail(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			OV_STRING filename = NULL;
 			OV_STRING filepath = NULL;
 			OV_STRING basepath = NULL;
@@ -827,11 +845,11 @@ void ksservhttp_httpclienthandler_typemethod(
 			ov_memstack_lock();
 			//basepath is something like /communication/httpservers/httpserver
 			basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
-			//a dot in a filename is represented via a percent notation in an identifier,  so we need
-			//to change the parameter. A directory should be possible, but so we need to skip / in conversion
+			//a dot in a filename is represented via a percent notation in an identifier, so we need
+			//to change the parameter. A directory should be possible, so we need to skip / in conversion
 			ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
 			ov_memstack_unlock();
-			temp = ov_path_getobjectpointer(filepath,2);
+			temp = ov_path_getobjectpointer(filepath, 2);
 			ov_string_setvalue(&filepath, NULL);
 			filename = NULL;
 
@@ -846,12 +864,15 @@ void ksservhttp_httpclienthandler_typemethod(
 				result = OV_ERR_OK;
 				//body is NULL here
 				body = staticfile->v_content;
-				static_file = TRUE;
-			}else{
-				result = OV_ERR_BADPATH;
+				request_handled_by = REQUEST_HANDLED_BY_STATICFILE;
 			}
 		}
 		//END static file routine
+
+		//no method has found a hit
+		if (request_handled_by == REQUEST_HANDLED_BY_NONE){
+			result = OV_ERR_BADPATH; //404
+		}
 
 		//BEGIN forming and sending the answer
 		//now we have to format the raw http answer
@@ -859,7 +880,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		//Append common data to header:
 		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
 		//no-cache
-		if(static_file == FALSE){
+		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 			ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
 		}
 		//handle keep_alives
@@ -875,7 +896,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			bodylength = (int)ov_string_getlength(body);
 		}
 
-		if(strstr(header, "Content-Type: text/event-stream;") == NULL){
+		if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
 			//append content length
 			ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
 		}
@@ -889,7 +910,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//are we starting a stream?
-		if(this->v_stream == FALSE && strstr(header, "Content-Type: text/event-stream") != NULL){
+		if(this->v_stream == FALSE && request_handled_by == REQUEST_HANDLED_BY_GETVARSTREAM){
 			this->v_stream = TRUE;
 			//speed the processing time down to 500ms
 			this->v_cycInterval = 500;
@@ -907,7 +928,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		ov_string_setvalue(&http_request_type, NULL);
 		ov_string_setvalue(&header, NULL);
 		//if a static file is returned body is pointing inside of the database
-		if(static_file == FALSE){
+		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 			ov_string_setvalue(&body, NULL);
 		}
 
