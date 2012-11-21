@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-10-11 10:00:19
+  Erstellt : 2012-11-21 16:44:02
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -2206,7 +2206,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/PolylineSignalP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "170,660 170,600";
+        points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "#555555";
@@ -2221,7 +2221,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/PolylineSignalT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "186,600 186,680";
+        points : INPUT  STRING = "166,600 166,680";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2307,7 +2307,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/SV2P";
-        x : INPUT  SINGLE = 103.000000;
+        x : INPUT  SINGLE = 83.000000;
         y : INPUT  SINGLE = 580.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y067/Y067"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2386,7 +2386,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/checkValveSignalline :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "240,560 186,560 186,580";
+        points : INPUT  STRING = "240,560 166,560 166,580";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -2477,7 +2477,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/PolylineSignalP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "170,660 170,600";
+        points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "#555555";
@@ -2492,7 +2492,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/PolylineSignalT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "186,600 186,680";
+        points : INPUT  STRING = "166,600 166,680";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2578,7 +2578,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/SV2P";
-        x : INPUT  SINGLE = 103.000000;
+        x : INPUT  SINGLE = 83.000000;
         y : INPUT  SINGLE = 580.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y070/Y070"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2657,7 +2657,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/checkValveSignalline :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "240,560 186,560 186,580";
+        points : INPUT  STRING = "240,560 166,560 166,580";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -2748,7 +2748,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/PolylineSignalP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "170,660 170,600";
+        points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "#555555";
@@ -2763,7 +2763,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/PolylineSignalT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "186,600 186,680";
+        points : INPUT  STRING = "166,600 166,680";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2849,7 +2849,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/SV2P";
-        x : INPUT  SINGLE = 103.000000;
+        x : INPUT  SINGLE = 83.000000;
         y : INPUT  SINGLE = 580.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y073/Y073"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2928,7 +2928,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/checkValveSignalline :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "240,560 186,560 186,580";
+        points : INPUT  STRING = "240,560 166,560 166,580";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3163,7 +3163,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 143.000000;
+        x : INPUT  SINGLE = 113.000000;
         y : INPUT  SINGLE = 170.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -3330,7 +3330,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 143.000000;
+        x : INPUT  SINGLE = 113.000000;
         y : INPUT  SINGLE = 170.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -3497,7 +3497,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 143.000000;
+        x : INPUT  SINGLE = 113.000000;
         y : INPUT  SINGLE = 170.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -8349,7 +8349,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 310.000000;
         height : INPUT  SINGLE = 350.000000;
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -8524,7 +8524,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 310.000000;
         height : INPUT  SINGLE = 500.000000;
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgray";
@@ -9740,7 +9740,7 @@ M700,400 H800 V850";
         y : INPUT  SINGLE = 175.000000;
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 50.000000;
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -9759,7 +9759,7 @@ M700,400 H800 V850";
         content : INPUT  STRING = "P1220";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "middle";
@@ -9798,7 +9798,7 @@ M700,400 H800 V850";
 
 
 M0,750 l30,30 v30 h55 V700";
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.100000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
@@ -9836,7 +9836,7 @@ M0,750 l30,30 v30 h55 V700";
         y : INPUT  SINGLE = 650.000000;
         width : INPUT  SINGLE = 50.000000;
         height : INPUT  SINGLE = 50.000000;
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -9855,7 +9855,7 @@ M0,750 l30,30 v30 h55 V700";
         content : INPUT  STRING = "Aktiver";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "middle";
@@ -9878,7 +9878,7 @@ M0,750 l30,30 v30 h55 V700";
         content : INPUT  STRING = "Filter";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
         horAlignment : INPUT  STRING = "middle";
         verAlignment : INPUT  STRING = "middle";
@@ -10027,7 +10027,7 @@ m-15,0 h30
 
 
 m-15,0 l-15,-30 h30 l-15,30";
-        strokeWidth : INPUT  SINGLE = 1.000000;
+        strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "lightgrey";
@@ -10417,11 +10417,34 @@ m-15,0 l-15,-30 h30 l-15,30";
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = -100.000000;
-        y : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/00_00Heading :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 560.000000;
+        y : INPUT  SINGLE = 30.000000;
+        content : INPUT  STRING = "Prozessarten";
+        fontSize : INPUT  STRING = "18px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "Times New Roman";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10442,7 +10465,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
+        zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -10462,32 +10485,12 @@ m-15,0 l-15,-30 h30 l-15,30";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_06EAF_Prozess :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[6] : INPUT  STRING = {"title:EAF-Prozess" , "line:1" , "column:6" , "fill:grey" , "height:40" , "width:140"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_05SchlPr_mit_Lichtbogen :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_03Schlackenreinigung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10495,7 +10498,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[6] : INPUT  STRING = {"title:SchlPr. mit Lichtbogen" , "line:1" , "column:5" , "fill:grey" , "height:40" , "width:140"};
+        ConfigValues[6] : INPUT  STRING = {"title:Schlackenreinigung" , "line:1" , "column:3" , "fill:grey" , "height:40" , "width:140"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -10527,7 +10530,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_03Schlackenreinigung :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_05SchlPr_mit_Lichtbogen :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10535,7 +10538,7 @@ m-15,0 l-15,-30 h30 l-15,30";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[6] : INPUT  STRING = {"title:Schlackenreinigung" , "line:1" , "column:3" , "fill:grey" , "height:40" , "width:140"};
+        ConfigValues[6] : INPUT  STRING = {"title:SchlPr. mit Lichtbogen" , "line:1" , "column:5" , "fill:grey" , "height:40" , "width:140"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -10547,22 +10550,19 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/00_00Heading :
-    CLASS /Libraries/cshmi/Text;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_06EAF_Prozess :
+    CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 560.000000;
-        y : INPUT  SINGLE = 30.000000;
-        content : INPUT  STRING = "Prozessarten";
-        fontSize : INPUT  STRING = "18px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
-        fontFamily : INPUT  STRING = "Times New Roman";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[6] : INPUT  STRING = {"title:EAF-Prozess" , "line:1" , "column:6" , "fill:grey" , "height:40" , "width:140"};
+        hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 6;
@@ -10593,7 +10593,7 @@ m-15,0 l-15,-30 h30 l-15,30";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_02SiMn :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10610,30 +10610,10 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_02SiMn/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_03Cu_Schlacke :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10650,30 +10630,10 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_03Cu_Schlacke/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_04Schrott_Recycling :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10690,30 +10650,10 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_04Schrott_Recycling/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_05FeNi :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10726,26 +10666,6 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 11;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_05FeNi/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -10793,7 +10713,7 @@ m-15,0 l-15,-30 h30 l-15,30";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_02FeMn :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10806,26 +10726,6 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 14;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_02FeMn/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -10853,7 +10753,7 @@ m-15,0 l-15,-30 h30 l-15,30";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_04FeNi :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10866,26 +10766,6 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 16;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_04FeNi/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -10953,7 +10833,7 @@ m-15,0 l-15,-30 h30 l-15,30";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_02FeCr :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -10966,26 +10846,6 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 20;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_02FeCr/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -11093,7 +10953,7 @@ m-15,0 l-15,-30 h30 l-15,30";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_02Si_Metall :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
+        TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
@@ -11106,26 +10966,6 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 26;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_02Si_Metall/FacePlate :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
-        x : INPUT  SINGLE = 300.000000;
-        y : INPUT  SINGLE = 0.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
