@@ -1169,7 +1169,7 @@ HMI.prototype = {
 			}
 			
 			//check if we have an cshmi target, no hmimanager at all or an error
-			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR_BADPATH") !== -1)){
+			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR") !== -1)){
 				//save for later use
 				this.KSClient.ResourceList.ModelHost = Host;
 				this.KSClient.ResourceList.ModelServer = Server;

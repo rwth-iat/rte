@@ -63,8 +63,11 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 	OV_ANY		Variable;
 	OV_RESULT	fr = OV_ERR_OK;
 	OV_UINT i = 0;
+	OV_UINT len = 0;
 	OV_STRING temp = NULL;
 	OV_STRING temp2 = NULL;
+	OV_INSTPTR_ov_object	pchild, pparent;
+	Ov_Association_DefineIteratorNM(pit);
 
 	Ov_GetVTablePtr(ov_object, pOvVTable, pObj);
 	ParentElement.elemtype	= OV_ET_OBJECT;
@@ -89,27 +92,160 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 			ov_string_append(message, "Vendor object exists, but variable does not (however vendor-elements that are vectors are not supported yet, so that it must not be your fault)");
 			GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
 		}
+	}else if(ov_string_compare(*varname, "instance") == OV_STRCMP_EQUAL && Ov_CanCastTo(ov_class, pObj)){
+		//hack bis associationen generisch unterstützt werden. instance ist aber kritisch für hmi
+		Ov_ForEachChild(ov_instantiation, Ov_StaticPtrCast(ov_class, pObj), pchild){
+			//open Child item level
+			if(Ov_GetPreviousChild(ov_instantiation, pchild) != NULL && format==GETVAR_FORMAT_TCL){
+				//append here a space to maintain compatibility with tcl format handling
+				ov_string_append(&temp, " ");
+			}
+			begin_vector_output(&temp, format);
+			ov_memstack_lock();
+			ov_string_append(&temp, ov_path_getcanonicalpath(pchild, 2));
+			ov_memstack_unlock();
+			//close Child item level
+			finalize_vector_output(&temp, format);
+		}
+		init_vector_output(message, format);
+		ov_string_append(message, temp);
+		finalize_vector_output(message, format);
+		GETVAR_TO_STRING_RETURN OV_ERR_OK;
 	}else{
 		//	search Variable-Element with corresponding name in OV-Object
 		//
+		//todo hier sollte OV_ET_ANY sein
 		fr = ov_element_searchpart(&ParentElement, &PartElement, OV_ET_VARIABLE, *varname);
 		if (Ov_Fail(fr))
 		{
+			ov_logfile_debug("%s:%d searchpart auf die Variable nicht moeglich", __FILE__, __LINE__);
 			GETVAR_TO_STRING_RETURN OV_ERR_GENERIC; //503
 		};
 		if(!(pOvVTable->m_getaccess(pObj, &PartElement, NULL) & OV_AC_READ)) {
+			ov_logfile_debug("%s:%d getaccess auf die Variable nicht erlaubt", __FILE__, __LINE__);
 			return OV_ERR_NOACCESS;
 		}
-		//	fill Variable with active Content of OV-Object
-		//
-		ov_memstack_lock();
-		fr = pOvVTable->m_getvar(pObj, &PartElement, &Variable);
-		ov_memstack_unlock();
-		if (Ov_Fail(fr))
-		{
-			ov_string_append(message, "Object exists, but variable does not");
-			GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
-		};
+/*		switch(PartElement->elemtype) {
+		case OV_ET_OBJECT:
+*/
+			//	fill Variable with active Content of OV-Object
+			//
+			ov_memstack_lock();
+			fr = pOvVTable->m_getvar(pObj, &PartElement, &Variable);
+			ov_memstack_unlock();
+			if (Ov_Fail(fr))
+			{
+				ov_string_print(&temp, "Object exists, but variable does not: %s", ov_result_getresulttext(fr));
+				ov_string_append(message, temp);
+				GETVAR_TO_STRING_RETURN OV_ERR_BADPATH; //404
+			}
+/*			break;
+
+		case OV_ET_PARENTLINK:
+			//	get value of a parent link (string vector with children's paths)
+
+			//pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
+			len = ov_association_getchildcount(PartElement->elemunion.passoc, pObj);
+			if(len) {
+				switch(PartElement->elemunion.passoc->v_assoctype) {
+				case OV_AT_ONE_TO_ONE:
+					pchild = Ov_Association_GetChild(PartElement->elemunion.passoc, pObj);
+					break;
+				case OV_AT_ONE_TO_MANY:
+					pchild = Ov_Association_GetFirstChild(PartElement->elemunion.passoc, pObj);
+					break;
+				case OV_AT_MANY_TO_MANY:
+					pchild = Ov_Association_GetFirstChildNM(PartElement->elemunion.passoc, pit, pObj);
+					break;
+				default:
+					Ov_Warning("no such association type");
+					//pitem->result = OV_ERR_TARGETGENERIC;
+					//return;
+				}
+				for(i=0; i<len; i++) {
+					Ov_AbortIfNot(pchild);
+					begin_vector_output(temp, format);
+					ov_memstack_lock();
+					fr = ov_string_append(temp, ov_path_getcanonicalpath(pchild, 2));
+					ov_memstack_unlock();
+					if(Ov_Fail(fr)) {
+						//fixme
+					}
+
+					finalize_vector_output(temp, format);
+
+					switch(PartElement->elemunion.passoc->v_assoctype) {
+					case OV_AT_ONE_TO_ONE:
+						pchild = NULL;
+						break;
+					case OV_AT_ONE_TO_MANY:
+						pchild = Ov_Association_GetNextChild(PartElement->elemunion.passoc, pchild);
+						break;
+					case OV_AT_MANY_TO_MANY:
+						pchild = Ov_Association_GetNextChildNM(PartElement->elemunion.passoc, pit);
+						break;
+					default:
+						Ov_Warning("no such association type");
+						//fixme pitem->result = OV_ERR_TARGETGENERIC;
+					}
+				}
+				Ov_WarnIf(pchild);
+			}
+			//	set timestamp and state
+			//ov_time_gettime(&pitem->var_current_props.time);
+			//pitem->var_current_props.state = OV_ST_NOTSUPPORTED;
+			break;
+		case OV_ET_CHILDLINK:
+			//	get value of a child link (string with the parent's paths)
+			switch(PartElement->elemunion.passoc->v_assoctype) {
+			case OV_AT_ONE_TO_ONE:
+				//pitem->var_current_props.value.vartype = OV_VT_STRING;
+				pparent = Ov_Association_GetParent(PartElement->elemunion.passoc, pObj);
+				if(pparent) {
+					ov_string_setvalue(&temp, ov_path_getcanonicalpath(pparent, 2));
+					if(!temp) {
+						//fixme
+					}
+				break;
+			case OV_AT_ONE_TO_MANY:
+				//pitem->var_current_props.value.vartype = OV_VT_STRING;
+				pparent = Ov_Association_GetParent(PartElement->elemunion.passoc, pObj);
+				if(pparent) {
+					ov_string_setvalue(&temp, ov_path_getcanonicalpath(pparent, 2));
+					if(!temp) {
+						GETVAR_TO_STRING_RETURN OV_ERR_TARGETGENERIC;
+					}
+				}
+				break;
+			case OV_AT_MANY_TO_MANY:
+				//pitem->var_current_props.value.vartype = OV_VT_STRING_VEC;
+				len = ov_association_getparentcount(PartElement->elemunion.passoc, pObj);
+				if(len) {
+					pparent = Ov_Association_GetFirstParentNM(PartElement->elemunion.passoc, pit, pObj);
+					for(i=0; i<len; i++) {
+						Ov_AbortIfNot(pparent);
+						ov_memstack_lock();
+						fr = ov_string_setvalue(&temp, ov_path_getcanonicalpath(pparent, 2));
+						if(Ov_Fail(fr)) {
+							GETVAR_TO_STRING_RETURN OV_ERR_TARGETGENERIC;
+						}
+						pparent = Ov_Association_GetNextParentNM(PartElement->elemunion.passoc, pit);
+					}
+					Ov_WarnIf(pparent);
+				}
+				break;
+			default:
+				Ov_Warning("no such association type");
+				GETVAR_TO_STRING_RETURN OV_ERR_TARGETGENERIC;
+			}
+			init_vector_output(message, format);
+			ov_string_append(message, temp);
+			finalize_vector_output(message, format);
+			GETVAR_TO_STRING_RETURN OV_ERR_OK;
+		default:
+			break;
+		}
+		*/
 	}
 
 	//	We are checking actual content and not the definition of Variable, so we have no ANY, but VOID
@@ -184,7 +320,7 @@ OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UIN
 
 	case OV_VT_VOID:															//unused ANY with explicit no content
 	case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
-	ov_string_print(&temp, "%s", "VOID");
+	ov_string_print(&temp, "%s", "");
 	break;
 
 	//****************** VEC: *******************

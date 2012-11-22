@@ -408,7 +408,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	pObj = ov_path_getobjectpointer(match.value[0],0);
 	if (pObj == NULL){
-		ov_string_append(re, "Variable not found");
+		ov_string_append(re, "getEP: Variable not found");
 		EXEC_GETEP_RETURN OV_ERR_BADPATH; //404
 	}
 	find_arguments(args, "requestType", &match);
@@ -821,17 +821,6 @@ void ksservhttp_httpclienthandler_typemethod(
 				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_getep(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
-			}else if(ov_string_compare(cmd, "/getHandle") == OV_STRCMP_EQUAL){
-				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-				result = OV_ERR_BADPATH; //404
-				ov_string_append(&body, "Tks-NoHandleSupported");
-				//only communication to this server allowed
-				request_handled_by = REQUEST_HANDLED_BY_GETHANDLE;
-			}else if(ov_string_compare(cmd, "/delHandle") == OV_STRCMP_EQUAL){
-				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
-				result = OV_ERR_BADPATH; //404
-				ov_string_append(&body, "We do not support Handles, so everything is ok.");
-				request_handled_by = REQUEST_HANDLED_BY_DELHANDLE;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
 				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
 				if(!Ov_Fail(result)){
@@ -857,6 +846,10 @@ void ksservhttp_httpclienthandler_typemethod(
 			//assume index.html as a root file
 			if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
 				filename = "index.html";
+			}else if(cmd[ov_string_getlength(cmd)-1] == '/'){
+				ov_string_append(&cmd, "index.html");
+				//remove leading /
+				filename = cmd + 1;
 			}else{
 				//remove leading /
 				filename = cmd + 1;
@@ -890,6 +883,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//no method has found a hit
 		if (request_handled_by == REQUEST_HANDLED_BY_NONE){
+			ov_string_append(&body, "Resource not found");
 			result = OV_ERR_BADPATH; //404
 		}
 

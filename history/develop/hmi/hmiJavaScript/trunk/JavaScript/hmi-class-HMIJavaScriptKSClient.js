@@ -175,7 +175,7 @@ HMIJavaScriptKSClient.prototype = {
 				optionalurlparameter += "]";
 			}
 			
-			urlparameter = 'obj='+Handle + '&args=getep%20' +ServerAndPath[1]+'%20*' + optionalurlparameter;
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getep%20" +ServerAndPath[1]+"%20*" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - "+ServerAndPath[0]+" is not on the same host as our source. GetEP on a remote host is not supported right now. ");
@@ -194,15 +194,14 @@ HMIJavaScriptKSClient.prototype = {
 					optionalurlparameter += "&requestOutput["+i+"]="+requestOutput[i];
 				}
 			}
-			//todo implement requestType, requestOutput
-			urlparameter = 'getEP?path=' +ServerAndPath[1]+optionalurlparameter;
+			urlparameter = "/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//todo implement requestType, requestOutput
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&cmd=getep&path=' +ServerAndPath[1]+'%20*';
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=getep&path=" +ServerAndPath[1]+"%20*";
 		}else{
 			//communication type not implemented
 			return null;
@@ -249,9 +248,9 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			urlparameter = "obj=tks-server&args="+newhost;
+			urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+newhost;
 		}else if("php" === HMI.HMI_Constants.ServerType){
-			urlparameter = "cmd=tks-server&args="+newhost;
+			urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+newhost;
 		}
 		var ReturnText = this._sendRequest(this, method, false, urlparameter, null);
 		
@@ -333,7 +332,7 @@ HMIJavaScriptKSClient.prototype = {
 				optionalurlparameter += "]";
 			}
 			
-			urlparameter = 'obj='+Handle + '&args=getvar%20' +
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getvar%20" +
 				"{"+ServerAndPath[1]+"}" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
@@ -341,13 +340,13 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			
-			urlparameter = 'getVar?path=' +ServerAndPath[1];
+			urlparameter = "/getVar?path=" +ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&cmd=getvar&path=' +
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=getvar&path=" +
 				"{"+ServerAndPath[1]+"}";
 		}else{
 			//communication type not implemented
@@ -410,8 +409,8 @@ HMIJavaScriptKSClient.prototype = {
 				optionalurlparameter = "%20-type%20"+type;
 			}
 			
-			urlparameter = 'obj='+Handle + '&args=setvar%20'+
-			'{'+ServerAndPath[1]+'%20{'+value+'}}'+optionalurlparameter;
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=setvar%20"+
+			"{"+ServerAndPath[1]+"%20{"+value+"}}"+optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar_NG - "+ServerAndPath[0]+" is not on the same host as our source. SetVar on a remote host is not supported right now. ");
@@ -419,13 +418,13 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			
 			//method = "PUT"; //REST conform
-			urlparameter = 'setVar?path=' +ServerAndPath[1]+'&newvalue='+value;
+			urlparameter = "/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=setvar"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=setvar"+
 				"&path=" + ServerAndPath[1] +
 				"&val=" + value;
 		}else{
@@ -494,8 +493,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=rename%20'+
-				ServerAndPath[1]+'%20'+newname;
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=rename%20"+
+				ServerAndPath[1]+"%20"+newname;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - "+ServerAndPath[0]+" is not on the same host as our source. rename on a remote host is not supported right now. ");
@@ -511,7 +510,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=rename"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=rename"+
 				"&path=" + ServerAndPath[1]+
 				"&newname=" + newname;
 		}else{
@@ -569,8 +568,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=create%20{'+
-			ServerAndPath[1]+'%20'+classname+'}';
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=create%20{"+
+			ServerAndPath[1]+"%20"+classname+"}";
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.creatObject - "+ServerAndPath[0]+" is not on the same host as our source. create on a remote host is not supported right now. ");
@@ -586,7 +585,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=create"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=create"+
 				"&path=" + ServerAndPath[1]+
 				"&class=" + classname;
 		}else{
@@ -636,7 +635,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=delete%20'+
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=delete%20"+
 			ServerAndPath[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
@@ -652,7 +651,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=delete"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=delete"+
 				"&path=" + ServerAndPath[1];
 		}else{
 			//communication type not implemented
@@ -715,8 +714,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=link%20'+
-			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=link%20"+
+			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObject - "+ServerAndPath[0]+" is not on the same host as our source. Link on a remote host is not supported right now. ");
@@ -732,7 +731,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=link"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=link"+
 				"&path=" + ServerAndPath[1]+
 				"&pathb=" + ServerAndPathB[1];
 		}else{
@@ -796,8 +795,8 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = 'obj='+Handle + '&args=unlink%20'+
-			ServerAndPath[1]+'.'+portnameA+'%20'+ServerAndPathB[1];
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=unlink%20"+
+			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObject - "+ServerAndPath[0]+" is not on the same host as our source. unlink on a remote host is not supported right now. ");
@@ -813,7 +812,7 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
-			urlparameter = "obj="+ Handle + "&cmd=unlink"+
+			urlparameter = HMI.KSGateway_Path+"?obj="+ Handle + "&cmd=unlink"+
 				"&path=" + ServerAndPath[1]+
 				"&pathb=" + ServerAndPathB[1];
 		}else{
@@ -844,9 +843,9 @@ HMIJavaScriptKSClient.prototype = {
 		var urlparameter;
 		var method = "GET";
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			urlparameter = 'obj='+Handle + '&args=destroy';
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=destroy";
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			urlparameter = 'obj='+Handle + '&cmd=destroy';
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=destroy";
 		}else{
 			//communication type not implemented
 			return;
@@ -1169,14 +1168,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			//only send POST to non tcl servers!
 			
-			if (HMI.KSGateway_Path !== null){
-				req.open(method,
-					HMI.KSGateway_Path
-					+ '?'
-					+ urlparameter, async);
-			}else{
-				req.open(method, urlparameter, async);
-			}
+			req.open(method, urlparameter, async);
 			
 			//prevent caching of request in all browsers (ie was the problem - as usual)
 			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
@@ -1300,7 +1292,7 @@ HMIJavaScriptKSClient.prototype = {
 		//spaces in objectname are encoded as %20 within OV
 		var StyleResponse = this.getVar("//"+Host+"/"+Server+encodeURI(ComponentPath) + '.StyleDescription', "OP_VALUE", null);
 		
-		if (StyleResponse.indexOf("KS_ERR_BADPATH") !== -1){
+		if (StyleResponse.indexOf("KS_ERR") !== -1){
 			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
 			HMI.ServerProperty.SheetHasStyleDescription = false;
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endf");
