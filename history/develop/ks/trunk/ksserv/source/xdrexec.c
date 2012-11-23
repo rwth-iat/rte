@@ -95,7 +95,9 @@ OV_STRING ksserv_xdrinfo(XDR xdrs) {
 
 }
 
-
+/**
+ * Handles the XDR Stream and returns the result as a XDR
+ */
 OV_DLLFNCEXPORT OV_STRING ksserv_xdrexec(XDR *in, XDR *out, OV_INSTPTR_ksserv_Client client) {
 	//~ OV_INSTPTR_ov_domain communication = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/communication", 2);
 	//~ OV_INSTPTR_ksservtcp_tcpclient tcpclient;

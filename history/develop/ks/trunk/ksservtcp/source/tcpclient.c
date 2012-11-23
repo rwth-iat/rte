@@ -356,7 +356,7 @@ void ksservtcp_tcpclient_typemethod(
 				cTask->v_identifier, this->v_sourceAdr, xid, messageType, rpcVersion, progID, progVersion, procedure);
 
 		switch (procedure)	{
-		case 65281:	//register
+		case KS_REGISTER:
 			//get name
 			for(j=0;j<4;j++)
 				tmp[3-j] = xdr_received[44+j];//martin40
@@ -388,7 +388,7 @@ void ksservtcp_tcpclient_typemethod(
 				ksservtcp_register_version_set(preg, receivedversion);
 				ksservtcp_register_port_set(preg, receivedport);
 				ksservtcp_register_timetolife_set(preg, receivedttl);
-				ksservtcp_register_process_set(preg, 1);
+				ksservtcp_register_process_set(preg, TRUE);
 			} else {
 				ksserv_logfile_error("NO REGISTER-OBJECT");
 				free(xdr_received);
@@ -405,7 +405,7 @@ void ksservtcp_tcpclient_typemethod(
 			xdr_return[7] = 1;
 			free(receivedname);
 			break;
-		case 65282:	//unregister
+		case KS_UNREGISTER:
 			//get name
 			for(j=0;j<4;j++)
 				tmp[3-j] = xdr_received[44+j];
@@ -426,7 +426,7 @@ void ksservtcp_tcpclient_typemethod(
 			if(pureg) {
 				ksservtcp_unregister_name_set(pureg, receivedname);
 				ksservtcp_unregister_version_set(pureg, receivedversion);
-				ksservtcp_unregister_process_set(pureg, 1);
+				ksservtcp_unregister_process_set(pureg, TRUE);
 			} else {
 				ksserv_logfile_error("NO UNREGISTER-OBJECT");
 				free(xdr_received);
@@ -444,7 +444,7 @@ void ksservtcp_tcpclient_typemethod(
 				xdr_return[31] = 0x21;
 			free(receivedname);
 			break;
-		case 65283:	//getserver
+		case KS_GETSERVER:
 			//get name
 			for(j=0;j<4;j++)
 				tmp[3-j] = xdr_received[44+j];
@@ -465,7 +465,7 @@ void ksservtcp_tcpclient_typemethod(
 			if(pgsd) {
 				ksservtcp_getserverdata_name_set(pgsd, receivedname);
 				ksservtcp_getserverdata_version_set(pgsd, receivedversion);
-				ksservtcp_getserverdata_process_set(pgsd, 1);
+				ksservtcp_getserverdata_process_set(pgsd, TRUE);
 			} else {
 				ksserv_logfile_error("NO GETSERVERDATA-OBJECT");
 				free(xdr_received);
