@@ -617,6 +617,15 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
+	
+	CLASS RebuildObject : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "rebuild yourself after an action";
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	/* Conditions */
 	
 	CLASS Condition : CLASS cshmi/Object
