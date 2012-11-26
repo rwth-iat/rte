@@ -22,26 +22,7 @@
 
 
 #include "cshmi.h"
-#include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_RebuildObject_constructor(
-	OV_INSTPTR_ov_object 	pobj
-) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_cshmi_RebuildObject pinst = Ov_StaticPtrCast(cshmi_RebuildObject, pobj);
-    OV_RESULT    result;
 
-    /* do what the base class does first */
-    result = cshmi_Action_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-
-    return OV_ERR_OK;
-}
 

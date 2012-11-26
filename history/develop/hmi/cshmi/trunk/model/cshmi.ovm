@@ -622,7 +622,6 @@ LIBRARY cshmi
 		IS_INSTANTIABLE;
 		COMMENT = "rebuild yourself after an action";
 		OPERATIONS
-			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	
