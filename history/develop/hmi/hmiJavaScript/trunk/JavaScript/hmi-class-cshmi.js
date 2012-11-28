@@ -408,9 +408,10 @@ cshmi.prototype = {
 		//only if we are in the initialisation or normal stage
 		//and the active cshmi display is "our" one
 		if ((this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			window.setTimeout(function(){
-				preserveThis._interpreteTimeEvent(VisualObject, ObjectPath);
+			//call a function, which is manipulating this keyword
+			window.setTimeout(function() {
+				//the function will be executed in the context (this) of the HMI.cshmi object
+				HMI.cshmi._interpreteTimeEvent(VisualObject, ObjectPath);
 			}, cyctime*1000);
 		}
 		return true;
@@ -434,58 +435,56 @@ cshmi.prototype = {
 			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("click", function(evt){
-				if(HMI.instanceOf(VisualObject, preserveThis.cshmiOperatorAftermoveClass)){
+				if(HMI.instanceOf(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
 					//we have an movegesture on the same VisualObject, so this will handle all action
 					return;
 				}
 				
-				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				//"this" is here the event target object, so work on HMI.cshmi
+				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//toggle visibility of hideable childtemplates
-				preserveThis.toggleChildTemplates(VisualObject);
+				HMI.cshmi.toggleChildTemplates(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
 				
 				//an later action should not interprete this event
-				preserveThis.ResourceList.EventInfos.EventObj = null;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
 			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
 			VisualObject.setAttribute("data-doubleclickpath", ObjectPath);
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("dblclick", function(evt){
-				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
 				
 				//an later action should not interprete this event
-				preserveThis.ResourceList.EventInfos.EventObj = null;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
 			HMI.addClass(VisualObject, this.cshmiOperatorRightclickClass);
 			VisualObject.setAttribute("data-rightclickpath", ObjectPath);
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener("contextmenu", function(evt){
-				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
 				
 				//an later action should not interprete this event
-				preserveThis.ResourceList.EventInfos.EventObj = null;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				
 				if (evt.stopPropagation) evt.stopPropagation();
 				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
@@ -497,15 +496,14 @@ cshmi.prototype = {
 				Eventname = "mouseenter";
 			}
 			
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener(Eventname, function(evt){
-				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
 				
 				//an later action should not interprete this event
-				preserveThis.ResourceList.EventInfos.EventObj = null;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
@@ -517,15 +515,14 @@ cshmi.prototype = {
 				Eventname = "mouseleave";
 			}
 			
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			VisualObject.addEventListener(Eventname, function(evt){
-				preserveThis.ResourceList.EventInfos.EventObj = evt;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
-				preserveThis._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
 				
 				//an later action should not interprete this event
-				preserveThis.ResourceList.EventInfos.EventObj = null;
+				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
@@ -534,27 +531,25 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
 			VisualObject.setAttribute("data-aftermovepath", ObjectPath);
 			
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
-			
 			//make an dummy wrapper function so we can use VisualObject and ObjectPath in it, 
 			//addEventListener only provides the event object
 			VisualObject._moveStartDragThunk = function(evt){
-				preserveThis._moveStartDrag(VisualObject, ObjectPath, evt);
+				HMI.cshmi._moveStartDrag(VisualObject, ObjectPath, evt);
 			}
 			VisualObject._moveMouseMoveThunk = function(evt){
-				preserveThis._moveMouseMove(VisualObject, ObjectPath, evt);
+				HMI.cshmi._moveMouseMove(VisualObject, ObjectPath, evt);
 			}
 			VisualObject._moveStopDragThunk = function(evt){
 				//stop with interpreting the actions
-				preserveThis._moveStopDrag(VisualObject, ObjectPath, evt, false);
+				HMI.cshmi._moveStopDrag(VisualObject, ObjectPath, evt, false);
 			}
 			VisualObject._moveCancelDragThunk = function(evt){
 				//stop without interpreting the actions
-				preserveThis._moveStopDrag(VisualObject, ObjectPath, evt, true);
+				HMI.cshmi._moveStopDrag(VisualObject, ObjectPath, evt, true);
 			}
 			VisualObject._moveHandleClickThunk = function(evt){
 				//stop the propagation
-				preserveThis._moveHandleClick(VisualObject, ObjectPath, evt, true);
+				HMI.cshmi._moveHandleClick(VisualObject, ObjectPath, evt, true);
 			}
 			
 			//todo: try to implement via HTML5 drag&drop
@@ -4205,15 +4200,14 @@ cshmi.prototype = {
 		//make the parent clickable, if we can be hidden and no sibling has done this before
 		if (requestList[ObjectPath]["hideable"] === "TRUE"
 			&& HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
-			var preserveThis = this;	//grabbed from http://jsbin.com/etise/7/edit
 			//toggle visibility of hideable childtemplates onclick
 			VisualParentObject.addEventListener("click", function(evt){
-				if(HMI.instanceOf(VisualParentObject, preserveThis.cshmiOperatorClickClass)){
+				if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
 					//we have an clickgesture on the same VisualObject, so this will handle all action
 					return;
 				}
 				
-				preserveThis.toggleChildTemplates(VisualParentObject);
+				HMI.cshmi.toggleChildTemplates(VisualParentObject);
 				
 				//quit propagation of event in any case. We do not want the parent template to handle the click
 				if (evt.stopPropagation) evt.stopPropagation();
