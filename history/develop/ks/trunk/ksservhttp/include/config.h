@@ -51,8 +51,9 @@
 //macros for static file inclusion
 
 //output format of getvar
-#define GETVAR_FORMAT_TCL 0
-#define GETVAR_FORMAT_PLAIN 1
+#define GETVAR_FORMAT_TCL 1
+#define GETVAR_FORMAT_PLAIN 2
+#define GETVAR_FORMAT_DEFAULT GETVAR_FORMAT_TCL
 
 //requestOutput for getVar and getEP
 #define OP_UNKNOWN 0

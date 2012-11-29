@@ -5,7 +5,8 @@
  * constants are in the config.h file
  */
 OV_UINT extract_output_format(OV_STRING_VEC* args){
-	OV_UINT re = GETVAR_FORMAT_TCL;
+	//todo move format into http accept header
+	OV_UINT re = GETVAR_FORMAT_DEFAULT;
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	find_arguments(args, "format", &match);
