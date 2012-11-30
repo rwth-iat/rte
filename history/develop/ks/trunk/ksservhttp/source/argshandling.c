@@ -103,6 +103,8 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
     }
     ov_string_setvalue(&rawrequest, plist[0]);
 
+    //todo handling of other http headers (like accept), move extract_output_format into this
+
     ov_string_freelist(plist);
     //split out the actual GET request
     plist = ov_string_split(rawrequest, " ", &len);

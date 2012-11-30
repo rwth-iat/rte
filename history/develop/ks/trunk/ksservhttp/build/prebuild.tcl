@@ -1,6 +1,12 @@
 puts "== Begin processing static files ==" 
 cd "../../staticfiles"
 
+proc stripLineComments {inputString {commentChars ";#"}} {
+	# Switch the RE engine into line-respecting mode instead of the default whole-string mode
+	regsub -all -line "(\s+)\/\/.*$" $inputString "" commentStripped
+	# Now strip the whitespace
+	regsub -all -line {^[ \t\r]*(.*\S)?[ \t\r]*$} $commentStripped {\1}
+}
 proc processDir {dirname} {
 	global out
 	set filelist [glob -nocomplain -types {f} *]
@@ -20,10 +26,18 @@ proc processDir {dirname} {
 		set in  [open $filename r]
 		#mimetype business
 		set extension [file extension $filename]
+		
+		if { $extension == ".jpg" || $extension == ".jpeg" || $extension == ".png" || $extension == ".ico"} {
+			#ignore binary formats
+			continue
+		}
+		
 		#default value
 		set mimetype "text/html"
 		if { $extension == ".js" } {
 			set mimetype "text/javascript"
+		} elseif { $extension == ".css" } {
+			set mimetype "text/css"
 		}
 		# line-by-line, read the original file
 		while {[gets $in line] != -1} {
@@ -33,6 +47,11 @@ proc processDir {dirname} {
 			set line [string map {"\\" "\\\\"} $line]
 			#recode quotes
 			set line [string map {"\"" "\\\""} $line]
+			if { $extension == ".js" || $extension == ".html" || $extension == ".xhtml"} {
+				#strip line comments and trim white spaces at line begin and end
+#this is buggy, so deactivate
+#				set line [stripLineComments $line]
+			}
 			#recode lineending
 			set line "$line\\n\\"
 			# then write the transformed line
@@ -94,6 +113,8 @@ puts "done"
 
 processDir {.}
 
+#make gcc happy and use this variable at least once :)
+puts $out "	pdom = pnewdom;"
 puts $out "	"
 puts $out "	return result;"
 puts $out "\};"

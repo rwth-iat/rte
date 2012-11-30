@@ -251,7 +251,7 @@ void ksservhttp_httpserver_typemethod(OV_INSTPTR_ksserv_ComTask cTask
 		client_addr.sin_port = htons(port);
 
 		//test reuseage!
-		ov_logfile_info("########## reuseage of used port by setsockopt ");
+		//ov_logfile_info("########## reuseage of used port by setsockopt ");
 		setsockopt(listensocket, SOL_SOCKET, SO_REUSEADDR, &optval,	sizeof(optval));
 		//setsockopt(listensocket, SOL_SOCKET, 0, &optval,	sizeof(optval));
 
