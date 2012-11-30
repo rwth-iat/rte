@@ -1462,16 +1462,25 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
+			var result;
 			var FBRef = this._getFBReference(VisualObject);
 			if (FBRef === ""){
 				return false;
-			}
-			
-			var result;
-			if(ParameterValue === "identifier"){
+			}else if (ParameterValue === "fullqualifiedname"){
+				var TemplateObject = HMI.svgDocument.getElementById(FBRef);
+				if (TemplateObject === null){
+					return false;
+				}
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					TemplateObject.FBReference["default"] = NewValue;
+					TemplateObject.id = NewValue;
+					return true;
+				}
+				return false;
+			}else if(ParameterValue === "identifier"){
 				result = HMI.KSClient.renameObject(FBRef, NewValue, null);
 			}else{
-				var result = HMI.KSClient.setVar_NG(FBRef+"."+ParameterValue, NewValue, null);
+				result = HMI.KSClient.setVar_NG(FBRef+"."+ParameterValue, NewValue, null);
 			}
 			
 			if (result === false || result === null){
