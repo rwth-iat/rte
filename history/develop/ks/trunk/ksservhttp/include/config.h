@@ -50,6 +50,10 @@
 
 //macros for static file inclusion
 
+
+//config for gzip compression
+#define MINIMAL_LENGTH_FOR_GZIP  150
+
 //output format of getvar
 #define GETVAR_FORMAT_TCL 1
 #define GETVAR_FORMAT_PLAIN 2

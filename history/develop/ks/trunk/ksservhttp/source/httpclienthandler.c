@@ -44,6 +44,9 @@
 #include <time.h>
 
 #include "config.h"
+#include "ksservhttp.h"
+#include "ksserv.h"
+#include "gzip.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,16 +55,17 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+//#include <gzip.h>
 //TCP sockets
 #if !OV_SYSTEM_NT
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fcntl.h>
+	#include <arpa/inet.h>
+	#include <sys/socket.h>
+	#include <sys/ioctl.h>
+	#include <netinet/in.h>
+	#include <unistd.h>
+	#include <fcntl.h>
 #else
-#include <winsock2.h>
+	#include <winsock2.h>
 #endif
 
 #define BUFFER_CHUNK_SIZE 2048
@@ -143,7 +147,6 @@ OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
 	return OV_ERR_OK;
 }
 
-
 /**
  * This method is called on startup.
  */
@@ -165,7 +168,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
 	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
 
 	int receivesocket;
-	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twiche while DeleteObj
+	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twice while DeleteObj
 		ksserv_logfile_error("httpclienthandler/shutdown socket %i", this->v_receivesocket);
 		receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
 		if(receivesocket < 0) {
@@ -614,7 +617,7 @@ void stop(struct timeval* start, OV_STRING comment){
 
 
 /**
- * Procedure periodically called by ComTask // ov_scheduler. * 
+ * Procedure periodically called by ComTask // ov_scheduler. *
  * It takes over the sending/receiving of data to/from the
  * connected client.
  *  * If the connection is closed by the client this object
@@ -641,13 +644,22 @@ void ksservhttp_httpclienthandler_typemethod(
 	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
+	OV_BOOL gzip_accepted = FALSE; //default on enconding
+	OV_BOOL gzip_aplicable = FALSE;
 	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
 	OV_STRING http_version;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
+	OV_STRING content_type="text/plain", encoding="charset=Windows-1252";
+	OV_STRING* plist=NULL;
+	OV_INT i = 0;
 
 	//vector of the variables, even elements are variable names, odds are values
 	OV_STRING_VEC args = {0,NULL};
+
+	//gzip compression business
+	OV_STRING gzip_compressed_body = NULL;
+	OV_INT gzip_compressed_body_length;
 
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
@@ -747,6 +759,21 @@ void ksservhttp_httpclienthandler_typemethod(
 		//debug - output header
 		ksserv_logfile_error("%s", http_request_header);
 
+		//checking if Accept-Encoding: gzip
+		plist = ov_string_split(buffer, "\r\n", &len);
+		if(len<=0){
+			result = OV_ERR_BADPARAM; //400
+		}
+		for (i=0; i<len; i++){
+			if(strstr(plist[i], "Accept-Encoding:") != NULL){
+				if(strstr(plist[i], "gzip") != NULL){
+					gzip_accepted = TRUE;
+					break;
+				}
+			}
+		}
+		ov_string_freelist(plist);
+
 		//http_request_header is the request header
 		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
@@ -791,7 +818,8 @@ void ksservhttp_httpclienthandler_typemethod(
 				find_arguments(&args, "stream", &match);
 				if(match.veclen>0){
 					//yes
-					ov_string_setvalue(&header, "Content-Type: text/event-stream; charset=Windows-1252\r\n");
+					//ov_string_setvalue(&header, "Content-Type: text/event-stream; charset=Windows-1252\r\n");
+					ov_string_setvalue(&content_type, "text/event-stream");
 					//first time?
 					if(!this->v_stream){
 						//backup the header
@@ -810,15 +838,14 @@ void ksservhttp_httpclienthandler_typemethod(
 					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
 					//no
-					ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+					//ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
-				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
+				//ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_setvar(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
-				ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_getep(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
@@ -830,6 +857,7 @@ void ksservhttp_httpclienthandler_typemethod(
 				request_handled_by = REQUEST_HANDLED_BY_AUTH;
 			}
 		}
+
 		//END command routine
 
 		//raw request header not needed any longer
@@ -867,12 +895,9 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 				staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
-				if (ov_string_compare(staticfile->v_encoding, "") == OV_STRCMP_EQUAL){
-					//adding to the end of the header
-					ov_string_print(&header, "Content-Type: %s\r\n", staticfile->v_mimetype);
-				}else{
-					ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
-				}
+				//ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
+				ov_string_setvalue(&content_type, staticfile->v_mimetype);
+				ov_string_setvalue(&encoding, staticfile->v_encoding);
 				result = OV_ERR_OK;
 				//body is NULL here
 				body = staticfile->v_content;
@@ -888,8 +913,17 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//BEGIN forming and sending the answer
+
+		//adding encoding and content-type to the header
+		if (ov_string_compare(encoding, "") == OV_STRCMP_EQUAL){
+				ov_string_print(&header, "Content-Type: %s\r\n", content_type);
+			}else{
+				ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", content_type, encoding);
+		}
+
 		//now we have to format the raw http answer
 		map_result_to_http(&result, &http_version, &header, &body);
+
 		//Append common data to header:
 		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
 		//no-cache
@@ -909,10 +943,41 @@ void ksservhttp_httpclienthandler_typemethod(
 			bodylength = (int)ov_string_getlength(body);
 		}
 
+		// check if the body length corresponds for compression
+		if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
+													  (ov_string_compare(content_type, "text/plain") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "text/html") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "text/xml") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "text/css") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "application/xml") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "application/xhtml+xml") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "application/javascript") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "application/x-javascript") == OV_STRCMP_EQUAL))
+		{
+			gzip_aplicable = TRUE;
+		}
+
+		if(gzip_aplicable){
+			// The body is compressed by using gzip function in gzip.h
+			gzip(body, &gzip_compressed_body, &gzip_compressed_body_length);
+		}
+
 		if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
 			//append content length
-			ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
+			if(gzip_aplicable){
+				ov_string_print(&header, "%sContent-Length: %i\r\n", header, gzip_compressed_body_length);
+				ksserv_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(header))/((float)ov_string_getlength(header)-24+bodylength));
+			}else{
+				ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
+			}
 		}
+
+		//handle gzip encoding by attaching a line to the header if accepted
+		if(gzip_aplicable)
+		{
+			ov_string_append(&header, "Content-Encoding: gzip\r\n");
+		}
+
 		// and finalize the header
 		ov_string_append(&header, "\r\n");
 
@@ -930,12 +995,22 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//in case of a HEAD request there is no need to send the body
+
 		if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL && body!=NULL){
 			ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
-			result = send_tcp(receivesocket, body, (int)ov_string_getlength(body));
+
+			if(gzip_aplicable){
+				result = send_tcp(receivesocket, gzip_compressed_body, gzip_compressed_body_length);
+			}else{
+				result = send_tcp(receivesocket, body, bodylength);
+			}
+
 		}
 
 		//free resources
+		ov_string_setvalue(&encoding, NULL);
+		ov_string_setvalue(&content_type, NULL);
+		ov_database_free(gzip_compressed_body);
 		ov_string_setvalue(&cmd, NULL);
 		ov_string_setvalue(&http_version, NULL);
 		ov_string_setvalue(&http_request_type, NULL);
@@ -957,3 +1032,4 @@ void ksservhttp_httpclienthandler_typemethod(
 
 	return;
 }
+
