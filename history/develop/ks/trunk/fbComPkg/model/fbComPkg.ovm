@@ -71,7 +71,7 @@ LIBRARY fbComPkg
 		IS_INSTANTIABLE;
 		COMMENT	=	"set SINGLE variable from receiving package";
 		VARIABLES
-			value: SINGLE 	FLAGS = "o" COMMENT = "received value";
+			value: SINGLE 	FLAGS = "i" COMMENT = "value to be sent";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -83,7 +83,7 @@ LIBRARY fbComPkg
 		IS_INSTANTIABLE;
 		COMMENT	=	"set BOOL variable from receiving package";
 		VARIABLES
-			value: BOOL 	FLAGS = "o" COMMENT = "received value";
+			value: BOOL 	FLAGS = "i" COMMENT = "value to be sent";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
