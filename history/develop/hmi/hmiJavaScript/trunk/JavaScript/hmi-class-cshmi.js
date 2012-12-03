@@ -86,6 +86,7 @@ function cshmi() {
 	this.ResourceList.EventInfos.startYMouse = null;
 	this.ResourceList.EventInfos.startXObj = null;
 	this.ResourceList.EventInfos.startYObj = null;
+	this.ResourceList.newRebuildObjectId = null;
 	
 	//newwrite
 	//this.ResourceList.ModellVariables = Object();
@@ -295,16 +296,21 @@ cshmi.prototype = {
 		
 		//get and prepare Children in an recursive call
 		
-		// special handling for invisible objects
-		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
-			//we are not visible, so we should not contact network
-			this._loadChildren(VisualObject, ObjectPath, true);
+		if (VisualObject !== null){
+			//remember the ObjectType on every object (needed for reloading via action)
+			VisualObject.setAttribute("data-ObjectType", ObjectType);
 			
-			// mark objects incomplete AFTER initialisation
-			// the event registering require this to prevent duplicate registration
-			HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
-		}else if (VisualObject !== null && VisualObject.hasAttribute("display") === true){
-			this._loadChildren(VisualObject, ObjectPath, false);
+			// special handling for invisible objects
+			if (VisualObject.getAttribute("display") === "none"){
+				//we are not visible, so we should not contact network
+				this._loadChildren(VisualObject, ObjectPath, true);
+				
+				// mark objects incomplete AFTER initialisation
+				// the event registering require this to prevent duplicate registration
+				HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
+			}else if (VisualObject.hasAttribute("display") === true){
+				this._loadChildren(VisualObject, ObjectPath, false);
+			}
 		}
 		
 		return VisualObject;
@@ -778,6 +784,8 @@ cshmi.prototype = {
 				returnValue = this._interpreteInstantiateTemplate(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/RoutePolyline") !== -1){
 				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/RebuildObject") !== -1){
+				returnValue = this._interpreteRebuildObject(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/debugger") !== -1){
 				//breakpoint requested
 				returnValue = true;
@@ -2776,6 +2784,50 @@ cshmi.prototype = {
 	},
 	
 	/**
+	 * rebuilds the VisualObject
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return {Boolean} true on success, false if an error occured
+	 */
+	_interpreteRebuildObject: function(VisualObject, ObjectPath){
+		//get list of parameters for rebuilding
+		var VisualParentObject = VisualObject.parentNode;
+		var ObjectPath = VisualObject.getAttribute("data-ModelSource");
+		var ObjectType = VisualObject.getAttribute("data-ObjectType");
+		if(VisualObject.FBReference && VisualObject.FBReference["default"] !== undefined){
+			//save a (perhaps changed) FBref for later rebuilding of the template
+			this.ResourceList.newRebuildObjectId = VisualObject.id;
+		}
+		
+		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
+		VisualParentObject.replaceChild(newVisualObject, VisualObject);
+		
+		if (this.initStage === false){
+			//interprete onload Actions if we are already loaded
+			
+			//onload code should not know, we are in an iterator
+			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+			delete this.ResourceList.ChildrenIterator.currentChild;
+			
+			//for this objects, the init stage should be set (needed for getValue and timeevent)
+			this.initStage = true;
+			
+			while(this.ResourceList.onloadCallStack.length !== 0){
+				var EventObjItem = this.ResourceList.onloadCallStack.shift();
+				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+			}
+			//reset stage to real state
+			this.initStage = false;
+			
+			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+			savedCurrentChild = null;
+		}
+		this.ResourceList.newRebuildObjectId = null;
+		
+		return true;
+	},
+	
+	/**
 	 * Action which calls _buildFromTemplate to build a template
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
@@ -2794,12 +2846,12 @@ cshmi.prototype = {
 				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
-			//onload code should not know, we are in an iterator
-			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-			delete this.ResourceList.ChildrenIterator.currentChild;
-			
 			if (this.initStage === false){
 				//interprete onload Actions if we are already loaded
+				
+				//onload code should not know, we are in an iterator
+				var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+				delete this.ResourceList.ChildrenIterator.currentChild;
 				
 				//for this objects, the init stage should be set (needed for getValue and timeevent)
 				this.initStage = true;
@@ -2810,9 +2862,10 @@ cshmi.prototype = {
 				}
 				//reset stage to real state
 				this.initStage = false;
+				
+				this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+				savedCurrentChild = null;
 			}
-			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-			savedCurrentChild = null;
 			
 			return true;
 		}
@@ -2949,12 +3002,22 @@ cshmi.prototype = {
 		var FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
 		var FBReferenceEntry = null;
 		for (var i=0; i < FBReferenceList.length; i++) {
-			if (i == 1){
+			if (i > 1){
 				HMI.hmi_log_info_onwebsite("Only one FBReference is valid. "+ObjectPath+" has more of them.");
 				break;
 			}
 			if (FBReferenceList[i] !== ""){
-				//only one info was requested, so we can save it to the default position. 
+				//save the info to the default position 
+				
+				if(this.ResourceList.newRebuildObjectId !== null){
+					//we should use a preconfigured FBref, instead of the configured one...
+					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObjectId;
+					VisualObject.id = this.ResourceList.newRebuildObjectId;
+					
+					//.. but only once
+					this.ResourceList.newRebuildObjectId = null;
+					break;
+				}
 				
 				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceList[i]] !== undefined){
 					//something like OP_NAME or OP_VALUE was requested, so we have to find the real info from the iterator

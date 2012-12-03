@@ -620,9 +620,7 @@ LIBRARY cshmi
 	
 	CLASS RebuildObject : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "rebuild yourself after an action";
-		OPERATIONS
-		END_OPERATIONS;
+		COMMENT = "rebuild the visual object from event";
 	END_CLASS;
 	
 	/* Conditions */
