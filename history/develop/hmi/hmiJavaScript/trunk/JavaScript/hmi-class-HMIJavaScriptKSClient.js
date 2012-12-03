@@ -263,9 +263,9 @@ HMIJavaScriptKSClient.prototype = {
 		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
 			//on error retest without default acplt port
 			if ("tcl" === HMI.HMI_Constants.ServerType){
-				urlparameter = 'obj=tks-server&args='+HostAndServer;
+				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+HostAndServer;
 			}else if("php" === HMI.HMI_Constants.ServerType){
-				urlparameter = 'cmd=tks-server&args='+HostAndServer;
+				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+HostAndServer;
 			}
 			ReturnText = this._sendRequest(this, method, false, urlparameter, null);
 		}
