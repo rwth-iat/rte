@@ -55,7 +55,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-//#include <gzip.h>
 //TCP sockets
 #if !OV_SYSTEM_NT
 	#include <arpa/inet.h>
@@ -651,8 +650,6 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING content_type="text/plain", encoding="charset=Windows-1252";
-	OV_STRING* plist=NULL;
-	OV_INT i = 0;
 
 	//vector of the variables, even elements are variable names, odds are values
 	OV_STRING_VEC args = {0,NULL};
@@ -759,36 +756,12 @@ void ksservhttp_httpclienthandler_typemethod(
 		//debug - output header
 		ksserv_logfile_error("%s", http_request_header);
 
-		//checking if Accept-Encoding: gzip
-		plist = ov_string_split(buffer, "\r\n", &len);
-		if(len<=0){
-			result = OV_ERR_BADPARAM; //400
-		}
-		for (i=0; i<len; i++){
-			if(strstr(plist[i], "Accept-Encoding:") != NULL){
-				if(strstr(plist[i], "gzip") != NULL){
-					gzip_accepted = TRUE;
-					break;
-				}
-			}
-		}
-		ov_string_freelist(plist);
-
 		//http_request_header is the request header
 		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-		//START default behaviour
-		//scan header for Connection: close - the default behavior is keep-alive
-		if(strstr(http_request_header, "Connection: close\r\n")){
-			keep_alive = FALSE;
-		}
-		//default HTTP version
-		ov_string_setvalue(&http_version, "1.1");
-		//END default behaviour
-
 		//parse request header into get command and arguments request
 		if(!Ov_Fail(result)){
-			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type);
+			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive);
 		}
 
 		//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
@@ -818,7 +791,6 @@ void ksservhttp_httpclienthandler_typemethod(
 				find_arguments(&args, "stream", &match);
 				if(match.veclen>0){
 					//yes
-					//ov_string_setvalue(&header, "Content-Type: text/event-stream; charset=Windows-1252\r\n");
 					ov_string_setvalue(&content_type, "text/event-stream");
 					//first time?
 					if(!this->v_stream){
@@ -838,11 +810,9 @@ void ksservhttp_httpclienthandler_typemethod(
 					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
 					//no
-					//ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
-				//ov_string_setvalue(&header, "Content-Type: text/plain; charset=Windows-1252\r\n");
 				result = exec_setvar(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
@@ -857,7 +827,6 @@ void ksservhttp_httpclienthandler_typemethod(
 				request_handled_by = REQUEST_HANDLED_BY_AUTH;
 			}
 		}
-
 		//END command routine
 
 		//raw request header not needed any longer
@@ -895,7 +864,6 @@ void ksservhttp_httpclienthandler_typemethod(
 
 			if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
 				staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
-				//ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", staticfile->v_mimetype, staticfile->v_encoding);
 				ov_string_setvalue(&content_type, staticfile->v_mimetype);
 				ov_string_setvalue(&encoding, staticfile->v_encoding);
 				result = OV_ERR_OK;
