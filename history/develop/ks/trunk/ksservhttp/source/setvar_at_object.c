@@ -54,6 +54,52 @@
 		||	ov_string_compare(Value, "false")	== OV_STRCMP_EQUAL	\
 		||	ov_string_compare(Value, "False")	== OV_STRCMP_EQUAL
 
+
+#define EXEC_SETVAR_RETURN ov_string_freelist(pPathList); \
+		Ov_SetDynamicVectorLength(&match,0,STRING);\
+		ov_string_setvalue(&message, NULL);\
+		ov_string_setvalue(&prefix, NULL);\
+		return
+
+OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
+	OV_STRING *pPathList = NULL;
+	OV_UINT len;
+	int i;
+	OV_STRING_VEC match = {0,NULL};
+	OV_RESULT result;
+	OV_STRING message = NULL;
+	OV_STRING prefix = NULL;
+
+	find_arguments(args, "path", &match);
+	if(match.veclen<1){
+		ov_string_append(re, "Variable path not found");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
+	}
+	pPathList = ov_string_split(match.value[0], ".", &len);
+	if(len < 2){
+		ov_string_freelist(pPathList);
+		ov_string_append(re, "Variablename must contain a dot");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
+	}else if(len == 2){
+		ov_string_setvalue(&prefix, pPathList[0]);
+	}else{
+		ov_string_setvalue(&prefix, pPathList[0]);
+		for(i=1;i < len-1;i++){
+			ov_string_print(&prefix, "%s.%s", prefix, pPathList[i]);
+		}
+	}
+	find_arguments(args, "newvalue", &match);
+	if(match.veclen!=1){
+		ov_string_print(re, "Variable newvalue not found");
+		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
+	}
+	result = setvar_at_object(ov_path_getobjectpointer(prefix,2),&(pPathList[len-1]),&match.value[0], &message);
+
+	ov_string_append(re, message);
+
+	EXEC_SETVAR_RETURN result;
+}
+
 #define SETVAR_AT_OBJECT_RETURN	\
 	ov_string_setvalue(&Temp, NULL);\
 	return

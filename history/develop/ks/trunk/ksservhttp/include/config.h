@@ -147,4 +147,6 @@ OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format);
 
+OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re);
 OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re);
