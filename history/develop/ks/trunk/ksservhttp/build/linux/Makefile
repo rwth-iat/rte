@@ -9,7 +9,8 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 DATABASE = database 
 DATABASECREATEKEYS = -w ksservhttp
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS = 
+#gzip disabled because libz has to be precompiled
+EXTRA_CC_FLAGS = -DKSSERVHTTP_DISABLE_GZIP
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC

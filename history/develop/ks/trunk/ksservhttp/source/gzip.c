@@ -5,6 +5,8 @@
  *      Author: george
  */
 
+#ifndef KSSERVHTTP_DISABLE_GZIP
+
 #include "libov/ov_string.h"
 #include "libov/ov_database.h"
 
@@ -66,3 +68,5 @@ OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length){
 }
     // deflate alg. compresses as much data as possible, and stops when the input buffer becomes empty or the output buffer becomes full.
 	// It may introduce some output latency (reading input without producing any output) except when forced to flush.
+
+#endif

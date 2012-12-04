@@ -46,7 +46,9 @@
 #include "config.h"
 #include "ksservhttp.h"
 #include "ksserv.h"
-#include "gzip.h"
+#ifndef KSSERVHTTP_DISABLE_GZIP
+	#include "gzip.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -644,7 +646,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_RESULT result = OV_ERR_OK;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
 	OV_BOOL gzip_accepted = FALSE; //default on enconding
-	OV_BOOL gzip_aplicable = FALSE;
+	OV_BOOL gzip_applicable = FALSE;
 	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
 	OV_STRING http_version;
 	OV_UINT len;
@@ -656,7 +658,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 	//gzip compression business
 	OV_STRING gzip_compressed_body = NULL;
-	OV_INT gzip_compressed_body_length;
+	OV_INT gzip_compressed_body_length = 0;
 
 	OV_INSTPTR_ov_object temp;
 	OV_INSTPTR_ksservhttp_staticfile staticfile;
@@ -911,6 +913,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			bodylength = (int)ov_string_getlength(body);
 		}
 
+#ifndef KSSERVHTTP_DISABLE_GZIP
 		// check if the body length corresponds for compression
 		if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
 													  (ov_string_compare(content_type, "text/plain") == OV_STRCMP_EQUAL
@@ -922,17 +925,18 @@ void ksservhttp_httpclienthandler_typemethod(
 													|| ov_string_compare(content_type, "application/javascript") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "application/x-javascript") == OV_STRCMP_EQUAL))
 		{
-			gzip_aplicable = TRUE;
+			gzip_applicable = TRUE;
 		}
 
-		if(gzip_aplicable){
+		if(gzip_applicable){
 			// The body is compressed by using gzip function in gzip.h
 			gzip(body, &gzip_compressed_body, &gzip_compressed_body_length);
 		}
+#endif
 
 		if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
 			//append content length
-			if(gzip_aplicable){
+			if(gzip_applicable){
 				ov_string_print(&header, "%sContent-Length: %i\r\n", header, gzip_compressed_body_length);
 				ksserv_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(header))/((float)ov_string_getlength(header)-24+bodylength));
 			}else{
@@ -941,7 +945,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//handle gzip encoding by attaching a line to the header if accepted
-		if(gzip_aplicable)
+		if(gzip_applicable)
 		{
 			ov_string_append(&header, "Content-Encoding: gzip\r\n");
 		}
@@ -967,7 +971,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL && body!=NULL){
 			ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
 
-			if(gzip_aplicable){
+			if(gzip_applicable){
 				result = send_tcp(receivesocket, gzip_compressed_body, gzip_compressed_body_length);
 			}else{
 				result = send_tcp(receivesocket, body, bodylength);
@@ -978,7 +982,11 @@ void ksservhttp_httpclienthandler_typemethod(
 		//free resources
 		ov_string_setvalue(&encoding, NULL);
 		ov_string_setvalue(&content_type, NULL);
+
+#ifndef KSSERVHTTP_DISABLE_GZIP
 		ov_database_free(gzip_compressed_body);
+#endif
+
 		ov_string_setvalue(&cmd, NULL);
 		ov_string_setvalue(&http_version, NULL);
 		ov_string_setvalue(&http_request_type, NULL);
