@@ -1150,23 +1150,24 @@ HMI.prototype = {
 		}
 		//load hmi if playground is empty or with empty view (load in background)
 		if (skipRefresh === false || HMI.Playground.childNodes.length === 0){
-			var SVGRequestURI = "";
+			
+			//spaces in objectname are encoded as %20 within OV
+			var SVGRequestURI = new Array("//"+Host+"/"+Server+encodeURI(Sheet) + ".GraphicDescription");
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 			if (HMI.ServerProperty.SheetHasStyleDescription){
-				//spaces in objectname are encoded as %20 within OV
-				SVGRequestURI = '{' + encodeURI(Sheet) + '.GraphicDescription' + '%20' + encodeURI(Sheet) + '.StyleDescription' + '}';
-			}else if (HMI.KSClient.HMIMANAGER_PATH !== null){
-				//spaces in objectname are encoded as %20 within OV
-				SVGRequestURI = encodeURI(Sheet) + '.GraphicDescription';
+				SVGRequestURI.push('.StyleDescription';
+			}else if (HMI.KSClient.HMIMANAGER_PATH === null){
+				SVGRequestURI = null;
 			}
 			
 			var ComponentText = null;
-			if (SVGRequestURI !== ""){
+			if (SVGRequestURI !== null){
 				//	get GraphicDescription
 				//
-				ComponentText = this.KSClient.getVar("//"+Host+"/"+Server+SVGRequestURI, "OP_VALUE", null);
+				ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null);
 			}
+			SVGRequestURI = null;
 			
 			//check if we have an cshmi target, no hmimanager at all or an error
 			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR") !== -1)){
@@ -1209,8 +1210,6 @@ HMI.prototype = {
 					Component.setAttribute("x", this.currX);
 				}
 			}
-			
-			SVGRequestURI = null;
 			ComponentText = null;
 		}
 		if(HMI.cyclicRequestNeeded == true){

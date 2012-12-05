@@ -278,7 +278,7 @@ HMIJavaScriptKSClient.prototype = {
 	 *		ManagerResponse = this.getVar(TCLKSHandle, "/Libraries/hmi/Manager.instance", null)
 	 *		this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
 	 * 
-	 * @param path of the variable to fetch, multiple path are {part1} {part1} coded (used in GraphicDescription+StyleDescription)
+	 * @param path of the variable to fetch, multiple path possible via an Array (used in GraphicDescription+StyleDescription)
 	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_VALUE, OP_TIMESTAMP or OP_STATE)
 	 * @param cbfnc callback function
 	 * @param async request async communication
@@ -294,10 +294,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
-		if(path.charAt(0) !== "/"){
+/*		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid path found, path was: "+path);
 			return null;
 		}
+		*/
 		if (!requestOutput.indexOf || requestOutput.indexOf("OP_") !== 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid requestOutput found, requestOutput was: "+requestOutput);
 			return null;
@@ -333,21 +334,27 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getvar%20" +
-				"{"+ServerAndPath[1]+"}" + optionalurlparameter;
+				"{"+ServerAndPath.slice(1).join(" ")+"}" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - "+ServerAndPath[0]+" is not on the same host as our source. GetVar on a remote host is not supported right now. ");
 				return null;
 			}
 			
-			urlparameter = "/getVar?path=" +ServerAndPath[1];
+			urlparameter = "/getVar?";
+			for(var i=1; i < ServerAndPath.length;i++){
+				if(i>1){
+					urlparameter += "&"
+				}
+				urlparameter += "path["+i+"]=" +ServerAndPath[i];
+			}
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=getvar&path=" +
-				"{"+ServerAndPath[1]+"}";
+				"{"+ServerAndPath.slice(1).join(" ")+"}";
 		}else{
 			//communication type not implemented
 			return null;
@@ -479,8 +486,7 @@ HMIJavaScriptKSClient.prototype = {
 		}else if (ServerAndPath[0] === ServerAndPathNewname[0]){
 			//both names are within the same server
 			newname = ServerAndPathNewname[1];
-		}else if (ServerAndPath[0] !== ServerAndPathNewname[0] &&
-				ServerAndPath[2] === "fullpath" && ServerAndPathNewname[2] === "fullpath"){
+		}else if (ServerAndPath[0] !== ServerAndPathNewname[0]){
 			//two full path names given , but on different server not possible
 			return "KS_ERR_BADPATH";
 		}
@@ -1038,6 +1044,8 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var SheetList = new Array();
 		
+		//todo reuse the result from the PingServer library location!
+		
 		//get Sheets from cshmi library
 		var responseArray;
 		var lastEntry;
@@ -1315,6 +1323,8 @@ HMIJavaScriptKSClient.prototype = {
 		//check input
 		if (response === null){
 			return Array();
+		}else if (response === undefined){
+			return Array();
 		}else if (response === ""){
 			return Array();
 		}else if (response === false){
@@ -1461,28 +1471,47 @@ HMIJavaScriptKSClient.prototype = {
 	 * @return Array with HostAndServer and Path as String or null (in Error) and an infostring ("emptystring", "fullpath", "relativepath" or "genericerror") in Array
 	 */
 	_splitKSPath: function(FullKSpath){
-		if (typeof FullKSpath !== "string" || FullKSpath.length === 0){
-			return Array(null, "", "emptystring");
+		if (FullKSpath.length === 0){
+			return Array(null, "");
 		}
-		if (FullKSpath.charAt(0) === "/" && FullKSpath.charAt(1) === "/"){
-			//find the 3rd "/"
-			var slashIndexAfterHost = FullKSpath.indexOf("/", 2);
-			//find the 4th "/"
-			var slashIndexAfterServer = FullKSpath.indexOf("/", slashIndexAfterHost+1);
-			//only keep the String before 4th "/"
-			//var Host = FullKSpath.slice(2, slashIndexAfterHost);
-			//var Server = FullKSpath.slice(slashIndexAfterHost+1, slashIndexAfterServer);
-			var HostAndServer = FullKSpath.slice(2, slashIndexAfterServer);
-			var KSPath = FullKSpath.slice(slashIndexAfterServer);
-			
-			return Array(HostAndServer, KSPath, "fullpath");
-		}else if (FullKSpath.charAt(0) === "/"){
-			//no Host and Server found, so replace with Model location
-			return Array(this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer, FullKSpath, "relativepath");
-		}else{
-			//ups kaputt
-			return Array(null, "", "genericerror");
+		var resultArray = new Array(null);
+		if(Object.prototype.toString.call(FullKSpath) !== "[object Array]"){
+			//force a string input in Array
+			FullKSpath = Array(FullKSpath);
 		}
+		for(var i=0;i<FullKSpath.length;i++){
+			if(FullKSpath[i].charAt(0) === "/" && FullKSpath[i].charAt(1) === "/"){
+				//full path
+				
+				//find the 3rd "/"
+				var slashIndexAfterHost = FullKSpath[i].indexOf("/", 2);
+				//find the 4th "/"
+				var slashIndexAfterServer = FullKSpath[i].indexOf("/", slashIndexAfterHost+1);
+				//only keep the String before 4th "/"
+				//var Host = FullKSpath.slice(2, slashIndexAfterHost);
+				//var Server = FullKSpath.slice(slashIndexAfterHost+1, slashIndexAfterServer);
+				var HostAndServer = FullKSpath[i].slice(2, slashIndexAfterServer);
+				var KSPath = FullKSpath[i].slice(slashIndexAfterServer);
+				
+				if(resultArray[0] === null){
+					resultArray[0] = HostAndServer;
+				}
+				resultArray.push(KSPath);
+			}else if(FullKSpath[i].charAt(0) === "/"){
+				//no Host and Server found, so replace with Model location
+				if(resultArray[0] === null){
+					resultArray[0] = this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer;
+				}
+				resultArray.push(FullKSpath[i]);
+			}else if(i>0){
+				//relativ path allowed, if not the first entry
+				resultArray.push(FullKSpath[i]);
+			}else{
+				//ups kaputt
+				resultArray = Array(null, "");
+			}
+		}
+		return resultArray;
 	},
 	
 	/*********************************

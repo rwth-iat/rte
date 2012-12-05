@@ -4129,12 +4129,8 @@ cshmi.prototype = {
 	 * @param {Array} requestList List of multiple Variables to fetch
 	 * @return {Boolean} true on success, false if an error occured
 	 */
-	
-	//newwrite
-	//ksclient.getVar benötigt array als parameter und fügt selbst zusammen
-	
 	_requestVariablesArray: function(requestList){
-		var requestString = "";
+		var requestArray = new Array();
 		var lastOvObjName = null;
 		var VariableCount = 0;
 		
@@ -4143,17 +4139,17 @@ cshmi.prototype = {
 			for (var ksVarName in requestList[ovObjName]) {
 				if (lastOvObjName != ovObjName){
 					//variable from a new object requested
-					requestString += ovObjName+"."+ksVarName+" ";
+					requestArray.push(ovObjName+"."+ksVarName);
 				}else{
 					//variable from the same object requested
-					requestString += "."+ksVarName+" ";
+					requestArray.push("."+ksVarName);
 				}
 				lastOvObjName = ovObjName;
 				VariableCount++;
 			}
 		}
 		
-		var response = HMI.KSClient.getVar(requestString, "OP_VALUE", null);
+		var response = HMI.KSClient.getVar(requestArray, "OP_VALUE", null);
 		if (response === false || response === null){
 			//communication error
 			return false;
@@ -4165,10 +4161,10 @@ cshmi.prototype = {
 			return false;
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
-			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestString+" failed: "+response);
+			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
 			return false;
 		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestString+" failed: "+response);
+			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
 			return false;
 		}
 		var responseArray = HMI.KSClient.splitKsResponse(response);
