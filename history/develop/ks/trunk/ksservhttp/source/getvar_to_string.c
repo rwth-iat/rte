@@ -98,6 +98,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	OV_STRING temp = NULL;
 	OV_STRING temp2 = NULL;
 	OV_STRING LoopEntryList = NULL;
+	OV_RESULT fr = OV_ERR_OK;
 
 	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_NONE };
 
@@ -149,6 +150,10 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	}
 	for (j=0; j< result.items_len;j++){
 		one_result = *(result.items_val + j);
+		if(Ov_Fail(one_result.result)){
+			//todo better info which element had an error
+			EXEC_GETVAR_RETURN one_result.result;
+		}
 		Variable = one_result.var_current_props;
 
 
@@ -156,9 +161,9 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 			case OV_VT_BOOL:
 			case OV_VT_BOOL_PV:
 				if (Variable.value.valueunion.val_bool == TRUE){
-					ov_string_append(&temp, "TRUE");
+					ov_string_setvalue(&temp, "TRUE");
 				}else{
-					ov_string_append(&temp, "FALSE");
+					ov_string_setvalue(&temp, "FALSE");
 				}
 				break;
 
@@ -232,10 +237,12 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 						split_vector_output(&temp, output_format);
 					}
 					if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
-						ov_string_setvalue(&temp, "TRUE");
+						ov_string_setvalue(&temp2, "TRUE");
 					}else{
-						ov_string_setvalue(&temp, "FALSE");
+						ov_string_setvalue(&temp2, "FALSE");
 					}
+					ov_string_append(&temp, temp2);
+					ov_string_setvalue(&temp2, NULL);
 				}
 				finalize_vector_output(&temp, output_format);
 				break;
@@ -360,34 +367,34 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 
 			case OV_VT_STATE_VEC:
 			case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_print(&temp, "%s", "unknown");
-			break;
+				ov_string_print(&temp, "%s", "unknown");
+				fr = OV_ERR_NOTIMPLEMENTED;
+				break;
 
 			case OV_VT_STRUCT_VEC:
 			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_print(&temp, "%s", "unknown");
-			break;
+				ov_string_print(&temp, "%s", "unknown");
+				fr = OV_ERR_NOTIMPLEMENTED;
+				break;
 
 			default:
 				ov_string_print(&temp, "unknown value, VarType: %#X", Variable.value.vartype);
+				fr = OV_ERR_NOTIMPLEMENTED;
 				break;
 		}
 
-		if (result.items_len > 1){
-			//wrap answer if multiple values
-			begin_vector_output(&LoopEntryList, output_format);
+		if(j>0){
+			ov_string_append(&LoopEntryList, " ");
 		}
+		begin_vector_output(&LoopEntryList, output_format);
+
 		ov_string_append(&LoopEntryList, temp);
 
-		if (result.items_len > 1){
-			//wrap answer if multiple values
-			finalize_vector_output(&LoopEntryList, output_format);
-		}
+		//wrap answer if multiple values
+		finalize_vector_output(&LoopEntryList, output_format);
+
 	}
 
-	begin_vector_output(message, output_format);
 	ov_string_append(message, LoopEntryList);
-	finalize_vector_output(message, output_format);
-
-	EXEC_GETVAR_RETURN OV_ERR_OK;
+	EXEC_GETVAR_RETURN fr;
 }

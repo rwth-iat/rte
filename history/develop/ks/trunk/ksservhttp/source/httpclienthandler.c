@@ -373,7 +373,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_STRING http_version;
 	OV_UINT len;
 	OV_STRING_VEC match = {0,NULL};
-	OV_STRING content_type="text/plain", encoding="charset=Windows-1252";
+	OV_STRING content_type="text/plain", encoding="Windows-1252";
 
 	//vector of the variables, even elements are variable names, odds are values
 	OV_STRING_VEC args = {0,NULL};
@@ -617,7 +617,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		map_result_to_http(&result, &http_version, &header, &body);
 
 		//Append common data to header:
-		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s\r\n", header, OV_LIBRARY_DEF_ksservhttp.version);
+		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);
 		//no-cache
 		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 			ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
@@ -641,6 +641,7 @@ void ksservhttp_httpclienthandler_typemethod(
 													  (ov_string_compare(content_type, "text/plain") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "text/html") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "text/xml") == OV_STRCMP_EQUAL
+													|| ov_string_compare(content_type, "text/javascript") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "text/css") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "application/xml") == OV_STRCMP_EQUAL
 													|| ov_string_compare(content_type, "application/xhtml+xml") == OV_STRCMP_EQUAL

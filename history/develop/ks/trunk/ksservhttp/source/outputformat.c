@@ -29,7 +29,7 @@ OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format){
 
 OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format){
 	if(format==GETVAR_FORMAT_TCL){
-		ov_string_append(output, "}{");
+		ov_string_append(output, "} {");
 	}else{
 		ov_string_append(output, ";");
 	}
