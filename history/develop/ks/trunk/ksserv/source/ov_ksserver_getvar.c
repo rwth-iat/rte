@@ -178,6 +178,7 @@ OV_NAMED_ELEMENT* ov_ksserver_getvar_getstruct(
 				break;
 			default:
 				Ov_Warning("internal error");
+				break;
 		}
 		pvar = Ov_StaticPtrCast(ov_variable, Ov_GetNextChild(ov_containment, pvar));
 		pstructelem++;

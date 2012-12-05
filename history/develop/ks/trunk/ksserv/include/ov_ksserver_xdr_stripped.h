@@ -693,6 +693,10 @@ OV_BOOL ov_ksserver_xdr_array(
 /*
 *	XDR routines for basic datatypes
 */
+/**
+ * A filter primitive that translates between C enums (actually integers) and their external representations.
+ * @return This routine returns one if it succeeds, zero otherwise.
+ */
 #define ov_ksserver_xdr_OV_ENUM		xdr_enum
 #define ov_ksserver_xdr_OV_BOOL		xdr_bool
 #define ov_ksserver_xdr_OV_INT		xdr_long
@@ -753,17 +757,38 @@ OV_KSSERVER_DECL_XDRFNC(OV_GETPP_RES);
 /*
 *	XDR routines for GetVar
 */
-OV_KSSERVER_DECL_XDRFNC(OV_NAMED_ELEMENT);
-OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_ITEM);
-OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_GETVAR_RES);
+OV_BOOL ov_ksserver_xdr_OV_NAMED_ELEMENT (
+	XDR		*xdrs,
+	OV_NAMED_ELEMENT	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_GETVAR_ITEM (
+	XDR		*xdrs,
+	OV_GETVAR_ITEM	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_GETVAR_PAR (
+	XDR		*xdrs,
+	OV_GETVAR_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_GETVAR_RES (
+	XDR		*xdrs,
+	OV_GETVAR_RES	*objp
+);
 
 /*
 *	XDR routines for SetVar
 */
-OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_ITEM);
-OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_SETVAR_RES);
+OV_BOOL ov_ksserver_xdr_OV_SETVAR_ITEM (
+		XDR		*xdrs,
+		OV_SETVAR_ITEM	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_SETVAR_PAR (
+		XDR		*xdrs,
+		OV_SETVAR_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_SETVAR_RES (
+		XDR		*xdrs,
+		OV_SETVAR_RES	*objp
+);
 
 /*
 *	XDR routines for ExgData
@@ -774,36 +799,78 @@ OV_KSSERVER_DECL_XDRFNC(OV_EXGDATA_RES);
 /*
 *	XDR routines for GetEP
 */
-OV_KSSERVER_DECL_XDRFNC(OV_GETEP_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_GETEP_RES);
+OV_BOOL ov_ksserver_xdr_OV_GETEP_PAR (
+		XDR		*xdrs,
+		OV_GETEP_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_GETEP_RES (
+		XDR		*xdrs,
+		OV_GETEP_RES	*objp
+);
 
 /*
 *	XDR routines for links
 */
-OV_KSSERVER_DECL_XDRFNC(OV_PLACEMENT);
-OV_KSSERVER_DECL_XDRFNC(OV_LINK_ITEM);
-OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_ITEM);
+OV_BOOL ov_ksserver_xdr_OV_PLACEMENT (
+		XDR		*xdrs,
+		OV_PLACEMENT	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_LINK_ITEM (
+		XDR		*xdrs,
+		OV_LINK_ITEM	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_UNLINK_ITEM (
+		XDR		*xdrs,
+		OV_UNLINK_ITEM	*objp
+);
 
 /*
 *	XDR routines for CreateObject
 */
-OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJ_ITEM);
-OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECTITEM_RES);
-OV_KSSERVER_DECL_XDRFNC(OV_CREATEOBJECT_RES);
+OV_BOOL ov_ksserver_xdr_OV_CREATEOBJ_ITEM (
+		XDR		*xdrs,
+		OV_CREATEOBJ_ITEM	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_PAR (
+		XDR		*xdrs,
+		OV_CREATEOBJECT_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECTITEM_RES (
+		XDR		*xdrs,
+		OV_CREATEOBJECTITEM_RES	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_CREATEOBJECT_RES (
+		XDR		*xdrs,
+		OV_CREATEOBJECT_RES	*objp
+);
 
 /*
 *	XDR routines for DeleteObject
 */
-OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_DELETEOBJECT_RES);
+OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_PAR (
+		XDR		*xdrs,
+		OV_DELETEOBJECT_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_DELETEOBJECT_RES (
+		XDR		*xdrs,
+		OV_DELETEOBJECT_RES	*objp
+);
 
 /*
 *	XDR routines for RenameObject
 */
-OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_ITEM);
-OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_RENAMEOBJECT_RES);
+OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_ITEM (
+		XDR		*xdrs,
+		OV_RENAMEOBJECT_ITEM	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_PAR (
+		XDR		*xdrs,
+		OV_RENAMEOBJECT_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_RENAMEOBJECT_RES (
+		XDR		*xdrs,
+		OV_RENAMEOBJECT_RES	*objp
+);
 
 /*
 *	XDR routines for GetCanonicalPath
@@ -815,14 +882,26 @@ OV_KSSERVER_DECL_XDRFNC(OV_GETCANONICALPATH_RES);
 /*
 *	XDR routines for Link
 */
-OV_KSSERVER_DECL_XDRFNC(OV_LINK_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_LINK_RES);
+OV_BOOL ov_ksserver_xdr_OV_LINK_PAR (
+		XDR		*xdrs,
+		OV_LINK_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_LINK_RES (
+		XDR		*xdrs,
+		OV_LINK_RES	*objp
+);
 
 /*
 *	XDR routines for Unlink
 */
-OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_PAR);
-OV_KSSERVER_DECL_XDRFNC(OV_UNLINK_RES);
+OV_BOOL ov_ksserver_xdr_OV_UNLINK_PAR (
+		XDR		*xdrs,
+		OV_UNLINK_PAR	*objp
+);
+OV_BOOL ov_ksserver_xdr_OV_UNLINK_RES (
+		XDR		*xdrs,
+		OV_UNLINK_RES	*objp
+);
 
 /*
 *	XDR routines for GetHist

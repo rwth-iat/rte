@@ -4,7 +4,7 @@ LIBRARY ksserv
 	VERSION   = "0.1";
 	AUTHOR    = "Henning Mersch";
 	COPYRIGHT = "Lehrstuhl fuer Prozessleittechnik";
-	COMMENT   = "general communication components - independant of communcation system";
+	COMMENT   = "general communication components - independant of communication system";
 
 	CLASS comcontainer : CLASS ov/domain
 		IS_INSTANTIABLE;

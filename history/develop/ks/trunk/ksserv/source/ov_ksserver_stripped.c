@@ -780,16 +780,200 @@ void ov_ksserver_dispatch_wo_answer(
 
 	switch(service) {
 	Ov_KsServer_Dispatch_woanswer2(getpp, GETPP);
-	Ov_KsServer_Dispatch_woanswer2(getvar, GETVAR);
-	Ov_KsServer_Dispatch_woanswer2(setvar, SETVAR);
+	case (KS_GETVAR): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_GETVAR_PAR	params;
+				OV_GETVAR_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_GETVAR_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					ksserv_logfile_info("Executing Command.");
+					ov_ksserver_getvar(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_GETVAR_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
+	case (KS_SETVAR): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_SETVAR_PAR	params;
+				OV_SETVAR_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_SETVAR_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_setvar(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_SETVAR_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
 	Ov_KsServer_Dispatch_woanswer2(exgdata, EXGDATA);
-	Ov_KsServer_Dispatch_woanswer2(getep, GETEP);
-	Ov_KsServer_Dispatch_woanswer2(createobject, CREATEOBJECT);
-	Ov_KsServer_Dispatch_woanswer2(deleteobject, DELETEOBJECT);
-	Ov_KsServer_Dispatch_woanswer2(renameobject, RENAMEOBJECT);
+	case (KS_GETEP): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_GETEP_PAR	params;
+				OV_GETEP_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_GETEP_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_getep(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_GETEP_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
+	case (KS_CREATEOBJECT): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_CREATEOBJECT_PAR	params;
+				OV_CREATEOBJECT_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_CREATEOBJECT_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_createobject(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_CREATEOBJECT_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
+	case (KS_DELETEOBJECT): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_DELETEOBJECT_PAR	params;
+				OV_DELETEOBJECT_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_DELETEOBJECT_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_deleteobject(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_DELETEOBJECT_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
+	case (KS_RENAMEOBJECT): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_RENAMEOBJECT_PAR	params;
+				OV_RENAMEOBJECT_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_RENAMEOBJECT_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_renameobject(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_RENAMEOBJECT_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
 	Ov_KsServer_Dispatch_woanswer2(getcanonicalpath, GETCANONICALPATH);
-	Ov_KsServer_Dispatch_woanswer2(link, LINK);
-	Ov_KsServer_Dispatch_woanswer2(unlink, UNLINK);
+	case (KS_LINK): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_LINK_PAR	params;
+				OV_LINK_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_LINK_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_link(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_LINK_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
+	case (KS_UNLINK): {
+				/*
+				*	parameter and result objects
+				*/
+				OV_UNLINK_PAR	params;
+				OV_UNLINK_RES	result;
+				/*
+				*	decode the parameters
+				*/
+				ov_memstack_lock();
+				if(ov_ksserver_xdr_OV_UNLINK_PAR(xdrin, &params)) {
+					/*
+					*	properly decoded, call service function and send reply
+					*/
+					 ksserv_logfile_info("Executing Command.");
+					ov_ksserver_unlink(version, povticket, &params, &result);
+					ov_ksserver_sendreply_woanswer22(xdrout, pticket, (OV_RESULT*)&result,
+						(xdrproc_t)ov_ksserver_xdr_OV_UNLINK_RES);
+					ov_memstack_unlock();
+					return;
+				}
+			}
+			ov_memstack_unlock();
+			break;
 	Ov_KsServer_Dispatch_woanswer2(gethist, GETHIST);
 	default:
      		Ov_Warning("Entering default in switch");

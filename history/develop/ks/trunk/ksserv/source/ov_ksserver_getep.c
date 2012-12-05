@@ -362,6 +362,7 @@ OV_RESULT ov_ksserver_getep_additem(
 				break;
 			default:
 				objtype = KS_OT_VARIABLE;
+				break;
 		}
 		access |= OV_AC_PART;
 		break;
