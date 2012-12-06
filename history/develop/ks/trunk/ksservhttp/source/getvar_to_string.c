@@ -152,237 +152,237 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 		one_result = *(result.items_val + j);
 		if(Ov_Fail(one_result.result)){
 			//todo better info which element had an error
-			EXEC_GETVAR_RETURN one_result.result;
-		}
-		Variable = one_result.var_current_props;
+			ov_string_setvalue(&temp, ov_result_getresulttext(one_result.result));
+			fr = one_result.result;
+		}else{
+			Variable = one_result.var_current_props;
 
-
-		switch (Variable.value.vartype){
-			case OV_VT_BOOL:
-			case OV_VT_BOOL_PV:
-				if (Variable.value.valueunion.val_bool == TRUE){
-					ov_string_setvalue(&temp, "TRUE");
-				}else{
-					ov_string_setvalue(&temp, "FALSE");
-				}
-				break;
-
-			case OV_VT_BYTE:
-			case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_print(&temp, "%d", Variable.value.valueunion.val_byte);
-			break;
-
-			case OV_VT_INT:
-			case OV_VT_INT_PV:
-				ov_string_print(&temp, "%i", Variable.value.valueunion.val_int);
-				break;
-
-			case OV_VT_UINT:
-			case OV_VT_UINT_PV:
-				ov_string_print(&temp, "%u", Variable.value.valueunion.val_uint);
-				break;
-
-			case OV_VT_SINGLE:
-			case OV_VT_SINGLE_PV:
-				ov_string_print(&temp, "%g", Variable.value.valueunion.val_single);
-				break;
-
-			case OV_VT_DOUBLE:
-			case OV_VT_DOUBLE_PV:
-				ov_string_print(&temp, "%g", Variable.value.valueunion.val_double);
-				break;
-
-			case OV_VT_STRING:
-			case OV_VT_STRING_PV:
-				if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
-					ov_string_setvalue(&temp, "");
-				}else{
-					//FIXME: temp can be empty if there is no memory in the database
-					//check it with Ov_OK!
-					ov_string_print(&temp, "%s", Variable.value.valueunion.val_string);
-				}
-				break;
-
-			case OV_VT_TIME:
-			case OV_VT_TIME_PV:
-				ov_string_print(&temp, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time));
-				break;
-
-			case OV_VT_TIME_SPAN:
-			case OV_VT_TIME_SPAN_PV:
-				ov_string_print(&temp, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
-				break;
-
-			case OV_VT_STATE:
-			case (OV_VT_STATE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_print(&temp, "%s", "unknown");
-			break;
-
-			case OV_VT_STRUCT:
-			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_print(&temp, "%s", "unknown");
-			break;
-
-			case OV_VT_VOID:															//unused ANY with explicit no content
-			case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
-			ov_string_print(&temp, "%s", "");
-			break;
-
-			//****************** VEC: *******************
-			case OV_VT_BOOL_VEC:
-			case OV_VT_BOOL_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_bool_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
-						ov_string_setvalue(&temp2, "TRUE");
+			switch (Variable.value.vartype){
+				case OV_VT_BOOL:
+				case OV_VT_BOOL_PV:
+					if (Variable.value.valueunion.val_bool == TRUE){
+						ov_string_setvalue(&temp, "TRUE");
 					}else{
-						ov_string_setvalue(&temp2, "FALSE");
+						ov_string_setvalue(&temp, "FALSE");
 					}
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
+					break;
+
+				case OV_VT_BYTE:
+				case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				ov_string_print(&temp, "%d", Variable.value.valueunion.val_byte);
 				break;
 
-			case OV_VT_BYTE_VEC:
-			case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			init_vector_output(&temp, output_format);
-			for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
-				if (i != 0){
-					split_vector_output(&temp, output_format);
-				}
-				//TODO: I know copy-pasting all appends around is mad, however i went even more mad by passing
-				//variable number of arguments around :(
-				ov_string_print(&temp2, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
-				ov_string_append(&temp, temp2);
-				ov_string_setvalue(&temp2, NULL);
-			}
-			finalize_vector_output(&temp, output_format);
-			break;
+				case OV_VT_INT:
+				case OV_VT_INT_PV:
+					ov_string_print(&temp, "%i", Variable.value.valueunion.val_int);
+					break;
 
-			case OV_VT_INT_VEC:
-			case OV_VT_INT_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_int_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					ov_string_print(&temp2, "%i", Variable.value.valueunion.val_int_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
+				case OV_VT_UINT:
+				case OV_VT_UINT_PV:
+					ov_string_print(&temp, "%u", Variable.value.valueunion.val_uint);
+					break;
 
-			case OV_VT_UINT_VEC:
-			case OV_VT_UINT_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_uint_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					ov_string_print(&temp2, "%i", Variable.value.valueunion.val_uint_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
+				case OV_VT_SINGLE:
+				case OV_VT_SINGLE_PV:
+					ov_string_print(&temp, "%g", Variable.value.valueunion.val_single);
+					break;
 
-			case OV_VT_SINGLE_VEC:
-			case OV_VT_SINGLE_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_single_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					ov_string_print(&temp2, "%g", Variable.value.valueunion.val_single_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
+				case OV_VT_DOUBLE:
+				case OV_VT_DOUBLE_PV:
+					ov_string_print(&temp, "%g", Variable.value.valueunion.val_double);
+					break;
 
-			case OV_VT_DOUBLE_VEC:
-			case OV_VT_DOUBLE_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_double_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					ov_string_print(&temp2, "%g", Variable.value.valueunion.val_double_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
-
-			case OV_VT_STRING_VEC:
-			case OV_VT_STRING_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_string_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
-						ov_string_append(&temp, "");
+				case OV_VT_STRING:
+				case OV_VT_STRING_PV:
+					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
+						ov_string_setvalue(&temp, "");
 					}else{
-						ov_string_print(&temp2, "%s", Variable.value.valueunion.val_string_vec.value[i]);
+						//FIXME: temp can be empty if there is no memory in the database
+						//check it with Ov_OK!
+						ov_string_print(&temp, "%s", Variable.value.valueunion.val_string);
+					}
+					break;
+
+				case OV_VT_TIME:
+				case OV_VT_TIME_PV:
+					ov_string_print(&temp, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time));
+					break;
+
+				case OV_VT_TIME_SPAN:
+				case OV_VT_TIME_SPAN_PV:
+					ov_string_print(&temp, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
+					break;
+
+				case OV_VT_STATE:
+				case (OV_VT_STATE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				ov_string_print(&temp, "%s", "unknown");
+				break;
+
+				case OV_VT_STRUCT:
+				case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				ov_string_print(&temp, "%s", "unknown");
+				break;
+
+				case OV_VT_VOID:															//unused ANY with explicit no content
+				case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
+				ov_string_print(&temp, "%s", "");
+				break;
+
+				//****************** VEC: *******************
+				case OV_VT_BOOL_VEC:
+				case OV_VT_BOOL_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_bool_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
+							ov_string_setvalue(&temp2, "TRUE");
+						}else{
+							ov_string_setvalue(&temp2, "FALSE");
+						}
 						ov_string_append(&temp, temp2);
 						ov_string_setvalue(&temp2, NULL);
 					}
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
+					finalize_vector_output(&temp, output_format);
+					break;
 
-			case OV_VT_TIME_VEC:
-			case OV_VT_TIME_PV_VEC:
+				case OV_VT_BYTE_VEC:
+				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_time_vec.veclen;i++){
+				for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
 					if (i != 0){
 						split_vector_output(&temp, output_format);
 					}
-					ov_string_print(&temp2, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
+					//TODO: I know copy-pasting all appends around is mad, however i went even more mad by passing
+					//variable number of arguments around :(
+					ov_string_print(&temp2, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
 					ov_string_append(&temp, temp2);
 					ov_string_setvalue(&temp2, NULL);
 				}
 				finalize_vector_output(&temp, output_format);
 				break;
 
-			case OV_VT_TIME_SPAN_VEC:
-			case OV_VT_TIME_SPAN_PV_VEC:
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
+				case OV_VT_INT_VEC:
+				case OV_VT_INT_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_int_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%i", Variable.value.valueunion.val_int_vec.value[i]);
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
 					}
-					ov_string_print(&temp2, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
+					finalize_vector_output(&temp, output_format);
+					break;
 
-			case OV_VT_STATE_VEC:
-			case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%s", "unknown");
-				fr = OV_ERR_NOTIMPLEMENTED;
-				break;
+				case OV_VT_UINT_VEC:
+				case OV_VT_UINT_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_uint_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%i", Variable.value.valueunion.val_uint_vec.value[i]);
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
 
-			case OV_VT_STRUCT_VEC:
-			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%s", "unknown");
-				fr = OV_ERR_NOTIMPLEMENTED;
-				break;
+				case OV_VT_SINGLE_VEC:
+				case OV_VT_SINGLE_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_single_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%g", Variable.value.valueunion.val_single_vec.value[i]);
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
 
-			default:
-				ov_string_print(&temp, "unknown value, VarType: %#X", Variable.value.vartype);
-				fr = OV_ERR_NOTIMPLEMENTED;
-				break;
+				case OV_VT_DOUBLE_VEC:
+				case OV_VT_DOUBLE_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_double_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%g", Variable.value.valueunion.val_double_vec.value[i]);
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
+
+				case OV_VT_STRING_VEC:
+				case OV_VT_STRING_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_string_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
+							ov_string_append(&temp, "");
+						}else{
+							ov_string_print(&temp2, "%s", Variable.value.valueunion.val_string_vec.value[i]);
+							ov_string_append(&temp, temp2);
+							ov_string_setvalue(&temp2, NULL);
+						}
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
+
+				case OV_VT_TIME_VEC:
+				case OV_VT_TIME_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_time_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
+
+				case OV_VT_TIME_SPAN_VEC:
+				case OV_VT_TIME_SPAN_PV_VEC:
+					init_vector_output(&temp, output_format);
+					for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
+						if (i != 0){
+							split_vector_output(&temp, output_format);
+						}
+						ov_string_print(&temp2, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
+					finalize_vector_output(&temp, output_format);
+					break;
+
+				case OV_VT_STATE_VEC:
+				case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+					ov_string_print(&temp, "%s", "unknown");
+					fr = OV_ERR_NOTIMPLEMENTED;
+					break;
+
+				case OV_VT_STRUCT_VEC:
+				case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+					ov_string_print(&temp, "%s", "unknown");
+					fr = OV_ERR_NOTIMPLEMENTED;
+					break;
+
+				default:
+					ov_string_print(&temp, "unknown value, VarType: %#X", Variable.value.vartype);
+					fr = OV_ERR_NOTIMPLEMENTED;
+					break;
+			}
 		}
-
 		if(j>0){
 			ov_string_append(&LoopEntryList, " ");
 		}
@@ -390,7 +390,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 
 		ov_string_append(&LoopEntryList, temp);
 
-		//wrap answer if multiple values
+
 		finalize_vector_output(&LoopEntryList, output_format);
 
 	}
