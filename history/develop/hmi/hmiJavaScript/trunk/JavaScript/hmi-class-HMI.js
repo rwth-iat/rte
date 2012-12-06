@@ -1156,7 +1156,7 @@ HMI.prototype = {
 			
 			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
 			if (HMI.ServerProperty.SheetHasStyleDescription){
-				SVGRequestURI.push('.StyleDescription';
+				SVGRequestURI.push('.StyleDescription');
 			}else if (HMI.KSClient.HMIMANAGER_PATH === null){
 				SVGRequestURI = null;
 			}
