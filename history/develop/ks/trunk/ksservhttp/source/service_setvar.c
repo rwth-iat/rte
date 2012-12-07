@@ -115,10 +115,15 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	OV_RESULT	fr = OV_ERR_OK;
 
 	OV_STRING	Temp = NULL;
+	OV_STRING_VEC tempstrvec;
+
 
 	OV_ELEMENT	ParentElement;
 	OV_ELEMENT	PartElement;
 	OV_ANY		Variable;
+	OV_STRING *pArgumentList = NULL;
+	OV_UINT len = 0;
+	OV_UINT i = 0;
 
 	Variable.value.vartype = OV_VT_VOID;
 	//	get VTable
@@ -141,7 +146,7 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	if (Ov_Fail(fr))
 	{
 		ov_string_append(message, "Object does not exist\n");
-		SETVAR_AT_OBJECT_RETURN OV_ERR_BADPATH;
+		SETVAR_AT_OBJECT_RETURN fr;
 	};
 	if(!(pOvVTable->m_getaccess(pObj, &PartElement, NULL) & OV_AC_WRITE)) {
 		return OV_ERR_NOACCESS;
@@ -155,7 +160,7 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	if (Ov_Fail(fr))
 	{
 		ov_string_append(message, "Object exists, but variable does not\n");
-		SETVAR_AT_OBJECT_RETURN OV_ERR_BADPATH;
+		SETVAR_AT_OBJECT_RETURN fr;
 	};
 
 	if (ov_string_compare(*varname, "identifier") == OV_STRCMP_EQUAL){
@@ -180,19 +185,12 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 
 	//	OV_VT_x_PV is an ANY which is set to x
 	//
-	switch (Variable.value.vartype)
-	{
-		case OV_VT_STRING:
-		case OV_VT_STRING_PV:
-			//setting the content of the whole union to zero (double is the entry which fills the valueunion complete)
-			//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
-			Variable.value.valueunion.val_double = 0;
-			fr = ov_string_setvalue(&Variable.value.valueunion.val_string, *newcontent);
-			if (Ov_Fail(fr))
-			{
-				ov_string_append(message, "Setting value failed\n");
-				SETVAR_AT_OBJECT_RETURN OV_ERR_GENERIC;
-			};
+	switch (Variable.value.vartype){
+		case OV_VT_BYTE:
+		case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+			fr = ov_string_setvalue(&Temp, *newcontent);
+			//fixme klappt dies? Sehe da beim Speicher Probleme
+			Variable.value.valueunion.val_byte = Temp[ov_string_getlength(Temp)-1];
 			break;
 
 		case OV_VT_BOOL:
@@ -202,25 +200,19 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 			}else if (CHECK_BOOLFALSE(*newcontent)){
 				Variable.value.valueunion.val_bool = FALSE;
 			}else{
-				ov_string_append(message, "Userinput not detected as bool\n");
+				ov_string_append(message, "Input not detected as bool\n");
 				SETVAR_AT_OBJECT_RETURN OV_ERR_BADPARAM;
 			}
 			break;
 
-		case OV_VT_BYTE:
-		case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-			ov_string_setvalue(&Temp, *newcontent);
-			Variable.value.valueunion.val_byte = Temp[ov_string_getlength(Temp)-1];
-		break;
-
 		case OV_VT_INT:
 		case OV_VT_INT_PV:
-			Variable.value.valueunion.val_int = (OV_INT) strtol(*newcontent,NULL,0);
+			Variable.value.valueunion.val_int = (OV_INT) strtol(*newcontent,NULL,10);
 		break;
 
 		case OV_VT_UINT:
 		case OV_VT_UINT_PV:
-			Variable.value.valueunion.val_uint = (OV_UINT) strtol(*newcontent,NULL,0);
+			Variable.value.valueunion.val_uint = (OV_UINT) strtoul(*newcontent,NULL,10);
 		break;
 
 		case OV_VT_SINGLE:
@@ -233,19 +225,42 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 			Variable.value.valueunion.val_double = (OV_DOUBLE) atof(*newcontent);
 		break;
 
+		case OV_VT_STRING:
+		case OV_VT_STRING_PV:
+			//setting the content of the whole union to zero (double is the entry which fills the valueunion complete)
+			//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
+			Variable.value.valueunion.val_double = 0;
+			fr = ov_string_setvalue(&Variable.value.valueunion.val_string, *newcontent);
+			if (Ov_Fail(fr)){
+				ov_string_append(message, "Setting string value failed");
+				SETVAR_AT_OBJECT_RETURN fr;
+			};
+			break;
+
 		case OV_VT_VOID:
 		case OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
-			ov_string_append(message, "OV_VOID has no variable content to change.\n");
-			SETVAR_AT_OBJECT_RETURN OV_ERR_GENERIC;
+			ov_string_append(message, "");
 			break;
-/*	TODO	implement this
-		case OV_VT_TIME:
-			ov_logfile_debug("%s:%d OV_VT_TIME", __FILE__, __LINE__);
-		break;
 
+		case OV_VT_TIME:
+		case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
+			fr = ov_time_asciitotime(&Variable.value.valueunion.val_time, *newcontent);
+			if (Ov_Fail(fr)){
+				ov_string_append(message, "Setting time value failed");
+				SETVAR_AT_OBJECT_RETURN fr;
+			};
+			break;
+
+			/*	TODO	implement this
 		case OV_VT_TIME_SPAN:
-			ov_logfile_debug("%s:%d OV_VT_TIME_SPAN", __FILE__, __LINE__);
-		break;
+		case OV_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
+			//easy implementation by copying ov_time_asciitotime
+			fr = ov_time_asciitotime(&Variable.value.valueunion.val_time_span, *newcontent);
+			if (Ov_Fail(fr)){
+				ov_string_append(message, "Setting time span value failed");
+				SETVAR_AT_OBJECT_RETURN fr;
+			};
+			break;
 
 		case OV_VT_STATE:
 			ov_logfile_debug("%s:%d OV_VT_STATE", __FILE__, __LINE__);
@@ -254,7 +269,113 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 		case OV_VT_STRUCT:
 			ov_logfile_debug("%s:%d OV_VT_STRUCT", __FILE__, __LINE__);
 		break;
+*/
+		//****************** VEC: *******************
+		/* request could be "{1}%20{10}"
+		 * split at "%20", discard the "{" via pointer arithmetic (+1)
+		 * the strtol and atof commands ignores the last "}"
+		 * with STRING_VEC we have to do some more
+		 */
 
+/*		case OV_VT_BYTE_VEC:
+		case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+*/
+
+		case OV_VT_BOOL_VEC:
+		case OV_VT_BOOL_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_bool_vec, len, BOOL);
+			for(i = 0; i < len; i++){
+				//killing the first character
+				ov_string_setvalue(&Temp, pArgumentList[i]+1);
+				//kill the last character, now we have two null bytes at the end
+				Temp[ov_string_getlength(Temp)-1] = '\0';
+
+				if (CHECK_BOOLTRUE(Temp)){
+					Variable.value.valueunion.val_bool_vec.value[i] = TRUE;
+				}else if (CHECK_BOOLFALSE(Temp)){
+					Variable.value.valueunion.val_bool_vec.value[i] = FALSE;
+				}else{
+					//default
+					Variable.value.valueunion.val_bool_vec.value[i] = FALSE;
+				}
+			}
+			ov_string_freelist(pArgumentList);
+			break;
+
+		case OV_VT_INT_VEC:
+		case OV_VT_INT_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_int_vec, len, INT);
+			for(i = 0; i < len; i++){
+				Variable.value.valueunion.val_int_vec.value[i] = (OV_INT) strtol(pArgumentList[i]+1,NULL,10);
+			}
+			ov_string_freelist(pArgumentList);
+			break;
+
+		case OV_VT_UINT_VEC:
+		case OV_VT_UINT_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_uint_vec, len, UINT);
+			for(i = 0; i < len; i++){
+				Variable.value.valueunion.val_uint_vec.value[i] = (OV_UINT) strtoul(pArgumentList[i]+1,NULL,10);
+			}
+			ov_string_freelist(pArgumentList);
+			break;
+
+		case OV_VT_SINGLE_VEC:
+		case OV_VT_SINGLE_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_single_vec, len, SINGLE);
+			for(i = 0; i < len; i++){
+				Variable.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) atof(pArgumentList[i]+1);
+			}
+			ov_string_freelist(pArgumentList);
+			break;
+
+		case OV_VT_DOUBLE_VEC:
+		case OV_VT_DOUBLE_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_double_vec, len, DOUBLE);
+			for(i = 0; i < len; i++){
+				Variable.value.valueunion.val_double_vec.value[i] = (OV_SINGLE) atof(pArgumentList[i]+1);
+			}
+			ov_string_freelist(pArgumentList);
+			break;
+
+			/*
+		case OV_VT_STRING_VEC:
+		case OV_VT_STRING_PV_VEC:
+			pArgumentList = ov_string_split(*newcontent, "%20", &len);
+			Ov_SetDynamicVectorLength(&tempstrvec, len, STRING);
+			for(i = 0; i < len; i++){
+				//killing the first character
+				ov_string_setvalue(&Temp, pArgumentList[i]+1);
+				//kill the last character, now we have two null bytes at the end
+				Temp[ov_string_getlength(Temp)-1] = '\0';
+
+				ov_string_setvalue(&tempstrvec.value[i], Temp);
+
+
+			}
+			Ov_SetDynamicVectorValue(&Variable.value.valueunion.val_string_vec, tempstrvec.value, len, STRING);
+
+			ov_string_freelist(pArgumentList);
+			break;
+*/
+
+/*
+		case OV_VT_TIME_VEC:
+		case OV_VT_TIME_PV_VEC:
+
+		case OV_VT_TIME_SPAN_VEC:
+		case OV_VT_TIME_SPAN_PV_VEC:
+
+		case OV_VT_STATE_VEC:
+		case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+
+		case OV_VT_STRUCT_VEC:
+		case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 */
 		default:
 /*				ov_logfile_error("%s:%d - GestureReaction - target: %s, Userinput (%s), DataType %u not implemented.", __FILE__, __LINE__,
@@ -271,7 +392,7 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	if (Ov_Fail(fr))
 	{
 		ov_string_append(message, "Error in writing new value\n");
-		SETVAR_AT_OBJECT_RETURN OV_ERR_GENERIC;
+		SETVAR_AT_OBJECT_RETURN fr;
 	}else{
 		ov_string_append(message, "Success");
 	};

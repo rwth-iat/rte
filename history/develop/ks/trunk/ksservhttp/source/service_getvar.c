@@ -158,6 +158,16 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 			Variable = one_result.var_current_props;
 
 			switch (Variable.value.vartype){
+				case OV_VT_VOID:															//unused ANY with explicit no content
+				case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
+					ov_string_print(&temp, "%s", "");
+					break;
+
+				case OV_VT_BYTE:
+				case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				ov_string_print(&temp, "%d", Variable.value.valueunion.val_byte);
+				break;
+
 				case OV_VT_BOOL:
 				case OV_VT_BOOL_PV:
 					if (Variable.value.valueunion.val_bool == TRUE){
@@ -166,11 +176,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 						ov_string_setvalue(&temp, "FALSE");
 					}
 					break;
-
-				case OV_VT_BYTE:
-				case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%d", Variable.value.valueunion.val_byte);
-				break;
 
 				case OV_VT_INT:
 				case OV_VT_INT_PV:
@@ -223,12 +228,23 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 				ov_string_print(&temp, "%s", "unknown");
 				break;
 
-				case OV_VT_VOID:															//unused ANY with explicit no content
-				case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
-				ov_string_print(&temp, "%s", "");
+				//****************** VEC: *******************
+				case OV_VT_BYTE_VEC:
+				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				init_vector_output(&temp, output_format);
+				for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
+					if (i != 0){
+						split_vector_output(&temp, output_format);
+					}
+					//TODO: I know copy-pasting all appends around is mad, however i went even more mad by passing
+					//variable number of arguments around :(
+					ov_string_print(&temp2, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
+					ov_string_append(&temp, temp2);
+					ov_string_setvalue(&temp2, NULL);
+				}
+				finalize_vector_output(&temp, output_format);
 				break;
 
-				//****************** VEC: *******************
 				case OV_VT_BOOL_VEC:
 				case OV_VT_BOOL_PV_VEC:
 					init_vector_output(&temp, output_format);
@@ -246,22 +262,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 					}
 					finalize_vector_output(&temp, output_format);
 					break;
-
-				case OV_VT_BYTE_VEC:
-				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				init_vector_output(&temp, output_format);
-				for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format);
-					}
-					//TODO: I know copy-pasting all appends around is mad, however i went even more mad by passing
-					//variable number of arguments around :(
-					ov_string_print(&temp2, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format);
-				break;
 
 				case OV_VT_INT_VEC:
 				case OV_VT_INT_PV_VEC:
