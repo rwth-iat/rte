@@ -445,22 +445,14 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					}
 					
 					Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_RBValue = 
-						(pstPabOUT->us.Pab[tmp_number / sizeof(uint16_t)] / 32767.00  
-							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
-							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
-							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+						(pstPabOUT->us.Pab[tmp_number / sizeof(uint16_t)] / 32767.00);
 						
 					if(!Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_ReadBackOnly)
 					{
 						dtemp = Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_Value;
 						
-						if(dtemp >= Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit
-							&& dtemp <= Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit)
+						if(dtemp >= 0.0 && dtemp <= 1.0)
 						{
-							dtemp -= Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_LowerLimit;
-							dtemp /= (Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_UpperLimit 
-								- Ov_StaticPtrCast(kbuslib_AnalogOUT, pcClamp)->v_LowerLimit);
-										
 							pstPabOUT->us.Pab[tmp_number / sizeof(uint16_t)] = (uint16_t) (dtemp * 32767);
 					
 						}
@@ -671,10 +663,7 @@ OV_DLLFNCEXPORT void wagoFBKlib_WagoFBKManager_typemethod(
 					}
 					
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value = 
-						(pstPabIN->us.Pab[tmp_number / sizeof(uint16_t)] / 32767.00  
-							* (Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_UpperLimit
-							- Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit)
-							 + Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_LowerLimit);
+						(pstPabIN->us.Pab[tmp_number / sizeof(uint16_t)] / 32767.00);
 
 					Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_ValuePV.value =
 							Ov_StaticPtrCast(kbuslib_AnalogIN, pcClamp)->v_Value;
