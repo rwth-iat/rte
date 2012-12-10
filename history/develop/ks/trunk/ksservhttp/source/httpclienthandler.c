@@ -237,8 +237,8 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		ov_string_print(body, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
 		break;
 	case OV_ERR_BADVALUE:
-		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_414_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_414_BODY, tmp_body);
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
+		ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_406_BODY, tmp_body);
 		break;
 	case OV_ERR_NOTIMPLEMENTED:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);

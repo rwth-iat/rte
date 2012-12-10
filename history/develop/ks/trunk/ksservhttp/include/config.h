@@ -102,7 +102,7 @@
 //"HTTP/1.x " will be appended before header
 #define HTTP_200_HEADER "200 OK\r\n"
 #define HTTP_400_HEADER "400 Bad Request\r\n"
-#define HTTP_400_BODY   "error 400: parameter are not valid\r\n"
+#define HTTP_400_BODY   "error 400: Bad Name or Path requested\r\n"
 #define HTTP_401_HEADER "401 Unauthorized\r\n"
 #define HTTP_401_BODY   "error 401: unauthorized\r\n"
 #define HTTP_403_HEADER "403 Forbidden\r\n"
@@ -110,7 +110,7 @@
 #define HTTP_404_HEADER "404 Not Found\r\n"
 #define HTTP_404_BODY   "error 404: path not found\r\n"
 #define HTTP_406_HEADER "406 Not Acceptable\r\n"
-#define HTTP_406_BODY   "error 406: Bad Name or Path requested\r\n"
+#define HTTP_406_BODY   "error 406: Bad Value requested\r\n"
 #define HTTP_414_HEADER "414 Request Too Long\r\n"
 #define HTTP_414_BODY   "error 414: request too long\r\n"
 #define HTTP_500_HEADER "500 Internal Server Error\r\n"

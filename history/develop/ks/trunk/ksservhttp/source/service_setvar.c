@@ -115,7 +115,6 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 	OV_RESULT	fr = OV_ERR_OK;
 
 	OV_STRING	Temp = NULL;
-	OV_STRING_VEC tempstrvec;
 
 
 	OV_ELEMENT	ParentElement;
@@ -227,9 +226,9 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 
 		case OV_VT_STRING:
 		case OV_VT_STRING_PV:
-			//setting the content of the whole union to zero (double is the entry which fills the valueunion complete)
+			//setting the content of the pointer to null
 			//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
-			Variable.value.valueunion.val_double = 0;
+			Variable.value.valueunion.val_string = NULL;
 			fr = ov_string_setvalue(&Variable.value.valueunion.val_string, *newcontent);
 			if (Ov_Fail(fr)){
 				ov_string_append(message, "Setting string value failed");
@@ -343,26 +342,26 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 			ov_string_freelist(pArgumentList);
 			break;
 
-			/*
 		case OV_VT_STRING_VEC:
 		case OV_VT_STRING_PV_VEC:
 			pArgumentList = ov_string_split(*newcontent, "%20", &len);
-			Ov_SetDynamicVectorLength(&tempstrvec, len, STRING);
+			Ov_SetDynamicVectorLength(&Variable.value.valueunion.val_string_vec, len, STRING);
+
 			for(i = 0; i < len; i++){
 				//killing the first character
 				ov_string_setvalue(&Temp, pArgumentList[i]+1);
 				//kill the last character, now we have two null bytes at the end
 				Temp[ov_string_getlength(Temp)-1] = '\0';
 
-				ov_string_setvalue(&tempstrvec.value[i], Temp);
-
+				//setting the content of the pointers to null
+				//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
+				Variable.value.valueunion.val_string_vec.value[i] = NULL;
+				ov_string_setvalue(&Variable.value.valueunion.val_string_vec.value[i], Temp);
 
 			}
-			Ov_SetDynamicVectorValue(&Variable.value.valueunion.val_string_vec, tempstrvec.value, len, STRING);
 
 			ov_string_freelist(pArgumentList);
 			break;
-*/
 
 /*
 		case OV_VT_TIME_VEC:
