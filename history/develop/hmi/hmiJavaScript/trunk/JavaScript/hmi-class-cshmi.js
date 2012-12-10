@@ -1480,6 +1480,10 @@ cshmi.prototype = {
 					return false;
 				}
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					if(NewValue === ""){
+						HMI.hmi_log_info_onwebsite(ObjectPath+": Tried to set FBReference to the empty string. Aborted.");
+						return false;
+					}
 					TemplateObject.FBReference["default"] = NewValue;
 					TemplateObject.id = NewValue;
 					return true;
