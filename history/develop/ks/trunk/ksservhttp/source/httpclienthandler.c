@@ -279,6 +279,7 @@ OV_RESULT send_tcp(int socket, char* pointer, int length){
 		if(err < 0)
 		{
 			perror("httpclienthandler: error waiting for sending answer:");
+			break;
 		}
 
 		if((length - sentBytes) > 4096)
@@ -685,8 +686,8 @@ void ksservhttp_httpclienthandler_typemethod(
 		//are we starting a stream?
 		if(this->v_stream == FALSE && request_handled_by == REQUEST_HANDLED_BY_GETVARSTREAM){
 			this->v_stream = TRUE;
-			//speed the processing time down to 500ms
-			this->v_cycInterval = 500;
+			//speed the processing time down to 5ms
+			this->v_cycInterval = 5;
 		}
 
 		//in case of a HEAD request there is no need to send the body

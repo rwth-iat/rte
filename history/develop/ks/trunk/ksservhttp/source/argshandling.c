@@ -75,7 +75,6 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 }
 
 #define PARSE_HTTP_HEADER_RETURN ov_string_setvalue(&rawrequest, NULL);\
-		ov_string_freelist(pallheaderslist);\
 		ov_string_freelist(plist);\
 		ov_string_freelist(pelement);\
 		return
@@ -123,7 +122,6 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 	}
 	ov_string_freelist(pallheaderslist);
 
-	ov_string_freelist(plist);
 	//split out the actual GET request
 	plist = ov_string_split(rawrequest, " ", &len);
 	if(len!=3){
