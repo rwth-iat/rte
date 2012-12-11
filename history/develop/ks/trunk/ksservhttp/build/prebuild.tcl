@@ -1,3 +1,8 @@
+if { $tcl_platform(platform) == "windows"} {
+	#libz.a is in svn as libz.a_persistent because make clean deletes *.a
+	file copy -force libz.a_persistent libz.a
+}
+
 puts "== Begin processing static files ==" 
 cd "../../staticfiles"
 
