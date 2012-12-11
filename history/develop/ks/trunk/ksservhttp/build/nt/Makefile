@@ -12,8 +12,7 @@ MAKMAKOPTIONS = -o
 EXTRA_CC_FLAGS = 
 #EXTRA_CC_FLAGS = -DKSSERVHTTP_DISABLE_GZIP
 EXTRA_LIBS = 
-#libz.a is in svn as libz.a_persistent and copied in the prebuild because make clean deletes *.a
-LD_FLAGS = libz.a -lwsock32
+LD_FLAGS = ../../lib/nt/libz.a -lwsock32
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl

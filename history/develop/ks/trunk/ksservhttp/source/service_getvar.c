@@ -71,6 +71,7 @@ static OV_TICKET *ov_ksservhttp_ticket_defaultticket_createticket(XDR *xdr, OV_T
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		ov_string_setvalue(&temp2, NULL);\
+		ov_string_setvalue(&LoopEntryList, NULL);\
 		return
 
 /**
