@@ -2795,6 +2795,10 @@ cshmi.prototype = {
 	 */
 	_interpreteRebuildObject: function(VisualObject, ObjectPath){
 		//get list of parameters for rebuilding
+		if(VisualObject.parentNode === null){
+			//could be a just replaced VisualObject, not in the DOM tree
+			return false;
+		}
 		var VisualParentObject = VisualObject.parentNode;
 		var ObjectPath = VisualObject.getAttribute("data-ModelSource");
 		var ObjectType = VisualObject.getAttribute("data-ObjectType");
@@ -2805,6 +2809,8 @@ cshmi.prototype = {
 		
 		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
 		VisualParentObject.replaceChild(newVisualObject, VisualObject);
+		
+		//fixme aus den wichtigen listen löschen.
 		
 		if (this.initStage === false){
 			//interprete onload Actions if we are already loaded
