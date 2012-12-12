@@ -1504,11 +1504,11 @@ cshmi.prototype = {
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			var result;
 			var FBRef = this._getFBReference(VisualObject, true);
-			if (FBRef === "" || FBRef[0] === ""){
+			if (FBRef[0] === ""){
 				return false;
 			}else if (ParameterValue === "fullqualifiedname"){
 				var TemplateObject = FBRef[1];
-				if (TemplateObject === undefined || TemplateObject === null){
+				if (TemplateObject === null){
 					return false;
 				}
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
@@ -4090,6 +4090,7 @@ cshmi.prototype = {
 	 */
 	_getFBReference: function(VisualObject, giveObject){
 		var TemplateObject = VisualObject;
+		var resultArray = ["", null];
 		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 			//we are in an getEP-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
@@ -4099,15 +4100,15 @@ cshmi.prototype = {
 					FBRef = TemplateObject.FBReference["default"];
 					if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 						//we have an OV-PART, so the separator is a dot
-						return FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						resultArray[0] = FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
 					}else{
 						//we have no OV-PART, so the separator is a slash
-						return FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						resultArray[0] = FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
 					}
+					break;
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			return "";
 		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 			//we are in an GetVar-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
@@ -4135,25 +4136,25 @@ cshmi.prototype = {
 				// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
 				
 				// it could be a path to another server, so we must add the serverName
-				return ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+				resultArray[0] = ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
 			}
 			//we have an getVar on a variable. Don't know how to guess a FBRef here
-			return "";
 		}else{
 			//no active iterator, so plain FBReference
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					//the name of a Template was requested
-					if(giveObject === true){
-						//fixme überall implementieren
-						return [TemplateObject.FBReference["default"], TemplateObject];
-					}
-					return TemplateObject.FBReference["default"];
+					resultArray = [TemplateObject.FBReference["default"], TemplateObject];
+					break;
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 		}
-		return "";
+		if(giveObject === true){
+			return resultArray;
+		}else{
+			return resultArray[0];
+		}
 	},
 	
 	/**
@@ -4394,8 +4395,6 @@ cshmi.prototype = {
 				this._loadHiddenChildrenElements(VisualObject);
 				
 				//doku depth of moving to top
-				
-				//fixme previousTemplateCount geht so nicht
 				
 				//Move Faceplate-Container after every other, so it is fully visible
 				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
