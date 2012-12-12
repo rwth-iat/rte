@@ -336,12 +336,44 @@ cshmi.prototype = {
 			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.onloadCallStack.push(EventObjItem);
+			
+			VisualObject.addEventListener("DOMNodeRemoved", function(evt){
+				if(evt.target !== VisualObject){
+					return;
+				}
+				//remove ourself out of the globalvarchangeStack
+				for (var i = 0; i < HMI.cshmi.ResourceList.onloadCallStack.length;){
+					var EventObjItem = HMI.cshmi.ResourceList.onloadCallStack[i];
+					if(EventObjItem["VisualObject"] === VisualObject){
+						//we found an old entry, remove
+						HMI.cshmi.ResourceList.onloadCallStack.splice(i, 1);
+					}else{
+						i++;
+					}
+				}
+			}, false);
 		}else if (command[command.length-1] === "globalvarchanged"){
 			//remember Action to be called after a globalVar is changed
 			var EventObjItem = Object();
 			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
+			//fixme reimplement with DOM4 MutationObserver
+			VisualObject.addEventListener("DOMNodeRemoved", function(evt){
+				if(evt.target !== VisualObject){
+					return;
+				}
+				//remove ourself out of the globalvarchangeStack
+				for (var i = 0; i < HMI.cshmi.ResourceList.globalvarChangedCallStack.length;){
+					var EventObjItem = HMI.cshmi.ResourceList.globalvarChangedCallStack[i];
+					if(EventObjItem["VisualObject"] === VisualObject){
+						//we found an old entry, remove
+						HMI.cshmi.ResourceList.globalvarChangedCallStack.splice(i, 1);
+					}else{
+						i++;
+					}
+				}
+			}, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -1471,12 +1503,12 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			var result;
-			var FBRef = this._getFBReference(VisualObject);
-			if (FBRef === ""){
+			var FBRef = this._getFBReference(VisualObject, true);
+			if (FBRef === "" || FBRef[0] === ""){
 				return false;
 			}else if (ParameterValue === "fullqualifiedname"){
-				var TemplateObject = HMI.svgDocument.getElementById(FBRef);
-				if (TemplateObject === null){
+				var TemplateObject = FBRef[1];
+				if (TemplateObject === undefined || TemplateObject === null){
 					return false;
 				}
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
@@ -2808,9 +2840,23 @@ cshmi.prototype = {
 		}
 		
 		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
-		VisualParentObject.replaceChild(newVisualObject, VisualObject);
 		
-		//fixme aus den wichtigen listen löschen.
+		if(VisualParentObject.cshmiOriginalOrderList !== undefined){
+			//place the new object to the same order position as the old object
+			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
+			for (var i; OrderArray !== undefined && i < OrderArray.length;) {
+				if (OrderArray[i] === VisualObject){
+					//we found an old entry, change to new
+					OrderArray[i] = newVisualObject;
+					i++;
+				}else if(OrderArray[i] === newVisualObject){
+					//we found an new entry, inserted in the creation, remove
+					OrderArray.splice(i, 1);
+				}
+			}
+		}
+		
+		VisualParentObject.replaceChild(newVisualObject, VisualObject);
 		
 		if (this.initStage === false){
 			//interprete onload Actions if we are already loaded
@@ -3222,7 +3268,26 @@ cshmi.prototype = {
 			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] = new Array();
 		}
 		VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
-		//if delete object, delete from this list, too.
+		
+		VisualObject.addEventListener("DOMNodeRemoved", function(evt){
+			if(evt.target !== VisualObject || VisualObject.parentNode === null){
+				return;
+			}
+			var VisualParentObject = VisualObject.parentNode;
+			if(VisualParentObject.cshmiOriginalOrderList !== undefined){
+				//remove the object from the orderList
+				var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
+				for (var i; OrderArray !== undefined && i < OrderArray.length;) {
+					if (OrderArray[i] === VisualObject){
+						//we found an old entry, remove
+						OrderArray.splice(i, 1);
+					}else{
+						i++;
+					}
+				}
+			}
+		}, false);
+		
 		
 		//////////////////////////////////////////////////////////////////////////
 		//get childs (graphics and actions) from the TemplateDefinition
@@ -4020,9 +4085,10 @@ cshmi.prototype = {
 	/**
 	 * returns the FBReference
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {BOOL} giveObject should we give the targetObject?
 	 * @return {String} Path of the FBReference or ""
 	 */
-	_getFBReference: function(VisualObject){
+	_getFBReference: function(VisualObject, giveObject){
 		var TemplateObject = VisualObject;
 		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 			//we are in an getEP-iterator and want to read out a value from the currentchild
@@ -4078,6 +4144,10 @@ cshmi.prototype = {
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					//the name of a Template was requested
+					if(giveObject === true){
+						//fixme überall implementieren
+						return [TemplateObject.FBReference["default"], TemplateObject];
+					}
 					return TemplateObject.FBReference["default"];
 				}
 			//loop upwards to find the Template object
