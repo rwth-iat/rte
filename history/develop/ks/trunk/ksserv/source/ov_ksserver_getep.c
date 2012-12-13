@@ -82,6 +82,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETEPHISTELEM (
 
 /*
 *	Execute the GetEP service (subroutine)
+*	needs ov_memstack_lock, because of class_identifier (and ov_pathresolve crashes)
 */
 void ov_ksserver_getep(
 	const OV_UINT		version,

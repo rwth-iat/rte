@@ -52,7 +52,7 @@ static OV_ACCESS ov_ksservhttp_ticket_defaultticket_getaccess(const OV_TICKET *a
 }
 
 //we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
+OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblVar = {
 	NULL,
 	NULL,
 	NULL,
@@ -101,7 +101,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	OV_STRING LoopEntryList = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 
-	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_NONE };
+	static OV_TICKET ticket = { &defaultticketvtblVar,  OV_TT_NONE };
 
 	output_format = extract_output_format(args);
 
