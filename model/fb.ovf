@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -70,6 +70,24 @@ typedef OV_DLLFNCEXPORT void FB_FNC_TRIGGER(
 typedef OV_DLLFNCEXPORT void FB_FNC_TYPEMETHOD(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
+);
+
+/*
+ * Get port value (object port or real variable) by name
+ */
+typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_GETPORT(
+        OV_INSTPTR_fb_functionchart     pfc,
+        const OV_STRING varname,
+        OV_ANY *pvarcurrprops
+);
+
+/*
+ * Set port value (object port or real variable) by name
+ */
+typedef OV_DLLFNCEXPORT OV_RESULT FB_FNC_SETPORT(
+        OV_INSTPTR_fb_functionchart     pfc,
+        const OV_STRING varname,
+        OV_ANY *pvarcurrprops
 );
 
 #ifdef __cplusplus

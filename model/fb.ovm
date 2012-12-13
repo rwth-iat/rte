@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -49,7 +49,7 @@ LIBRARY fb
 
 	VERSION   = "2.7";
 	AUTHOR    = "Alexander Neugebauer";
-	COPYRIGHT = "Copyright © 1999-2012 LTSoft, Kerpen";
+	COPYRIGHT = "Copyright ï¿½ 1999-2012 LTSoft, Kerpen";
 	COMMENT   = "iFBSpro Model";
 
 	/*
@@ -172,6 +172,8 @@ LIBRARY fb
         END_PARTS;
         OPERATIONS
     		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+    		getport      : C_FUNCTION <FB_FNC_GETPORT>;
+			setport      : C_FUNCTION <FB_FNC_SETPORT>;
         END_OPERATIONS;
     END_CLASS;
     
