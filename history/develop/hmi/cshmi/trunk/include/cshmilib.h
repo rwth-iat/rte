@@ -70,6 +70,9 @@
 #include "libov/ov_result.h"
 #include <limits.h>
 
+#ifndef FB_INSTANZ_CONTAINER
+#define  FB_INSTANZ_CONTAINER        "TechUnits"
+#endif
 #ifndef FB_INSTANZ_CONTAINER_PATH
 #define  FB_INSTANZ_CONTAINER_PATH   "/TechUnits"
 #endif

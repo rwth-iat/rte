@@ -74,6 +74,8 @@
 OV_RESULT ov_library_setglobalvars_cshmi_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_ov_domain
+		pTechunits = NULL;
+	OV_INSTPTR_ov_domain
 		pCsDomain = NULL;
 	OV_INSTPTR_ov_domain
 		pTemplateDomain = NULL;
@@ -84,13 +86,26 @@ OV_RESULT ov_library_setglobalvars_cshmi_new(void) {
 	 */
 	result = ov_library_setglobalvars_cshmi();
 
-	if(Ov_OK(result)){
-		result = Ov_CreateObject(ov_domain, pCsDomain, Ov_DynamicPtrCast(ov_domain, ov_path_getobjectpointer(FB_INSTANZ_CONTAINER_PATH, 2)), "cshmi");
-		if(Ov_OK(result)){
-			result = Ov_CreateObject(ov_domain, pTemplateDomain, pCsDomain, "Templates");
+	if(Ov_Fail(result)){
+		return result;
+	}
+	pTechunits = Ov_DynamicPtrCast(ov_domain, ov_path_getobjectpointer(FB_INSTANZ_CONTAINER_PATH, 2));
+	if(pTechunits == NULL){
+		result = Ov_CreateObject(ov_domain, pTechunits, &pdb->root, FB_INSTANZ_CONTAINER);
+		if(Ov_Fail(result)){
+			return result;
 		}
-		//an error should not prevent loading the library
-		result = OV_ERR_OK;
+	}
+	pCsDomain = Ov_SearchChildEx(ov_containment, pTechunits, "cshmi", ov_domain);
+	if(pCsDomain == NULL){
+		result = Ov_CreateObject(ov_domain, pCsDomain, pTechunits, "cshmi");
+		if(Ov_Fail(result)){
+			return result;
+		}
+	}
+	pTemplateDomain = Ov_SearchChildEx(ov_containment, pCsDomain, "Templates", ov_domain);
+	if(pTemplateDomain == NULL){
+		result = Ov_CreateObject(ov_domain, pTemplateDomain, pCsDomain, "Templates");
 	}
 	return result;
 }
