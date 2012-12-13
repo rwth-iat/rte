@@ -1522,16 +1522,16 @@ cshmi.prototype = {
 				}
 				return false;
 			}else if(ParameterValue === "identifier"){
-				result = HMI.KSClient.renameObject(FBRef, NewValue, null);
+				result = HMI.KSClient.renameObject(FBRef[0], NewValue, null);
 			}else{
-				result = HMI.KSClient.setVar_NG(FBRef+"."+ParameterValue, NewValue, null);
+				result = HMI.KSClient.setVar_NG(FBRef[0]+"."+ParameterValue, NewValue, null);
 			}
 			
 			if (result === false || result === null){
 				//communication error
 				return true;
 			}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
-				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+FBRef+"."+ParameterValue+' not successfull: Bad Parameter ');
+				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+FBRef[0]+"."+ParameterValue+' not successfull: Bad Parameter ');
 			}else if (result.indexOf("KS_ERR") !== -1){
 				HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
 			}
