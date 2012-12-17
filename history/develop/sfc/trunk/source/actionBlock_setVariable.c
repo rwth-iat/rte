@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT void sfc_setVariable_typemethod(
     //result= fb_functionchart_getvariable(Ov_PtrUpCast(fb_functionchart, pSFC), pinst->v_variable, &pinst->v_value);
     //result= fb_functionchart_setvariable(Ov_PtrUpCast(fb_functionchart, pSFC), pinst->v_variable, &pinst->v_value);
 
-    result= fb_functionchart_setvariable( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC)), pinst->v_variable, &pinst->v_value);
+    result= fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC)), pinst->v_variable, &pinst->v_value);
     if(Ov_Fail(result))
     {
     	pinst->v_error=TRUE;

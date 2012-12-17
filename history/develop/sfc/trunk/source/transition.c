@@ -75,6 +75,7 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     OV_INSTPTR_sfc_step  		pPreStep = Ov_GetParent(sfc_nextTransitions, pinst);
     OV_INSTPTR_sfc_step  		pNextStep = Ov_GetParent(sfc_previousTransitions, pinst);
     OV_INSTPTR_sfc_sfcHeader	pSFC = Ov_StaticPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_fb_functionchart pFC = Ov_StaticPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC));
     //OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
     //OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
     OV_INSTPTR_ov_domain        pTransCondsDomain = &pSFC->p_transConds;
@@ -99,27 +100,29 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     if (pTransCond != NULL)
     {
         // check location
-    	if (pTransCondsContainer != pTransCondsDomain)
-        {
-        	pinst->v_error=TRUE;
-          	ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
-           	return;
-        }
+    	if (pTransCondsContainer != pFC)
+    	{
+    		if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != pFC) )
+    		{
+    			pinst->v_error=TRUE;
+    			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
+    			return;
+    		}
 
-    	// check tasklist
-    	if (pTransCondsTaskParent != NULL)
-    		Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
+    		// check tasklist
+    		if (pTransCondsTaskParent != NULL)
+    			Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
 
-
-    	// init transition condition
-        pTransCond->v_actimode = 1;
-    	pTransCond->v_cyctime.secs = 0;
-    	pTransCond->v_cyctime.usecs = 0;
-    	pTransCond->v_iexreq = TRUE;
-    	pResultConnection->v_on = 1;
-    	pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
-    	// execute transtion condition
-    	Ov_Call1 (fb_functionblock, pTransCond, execute, pltc);
+    		// init transition condition
+    		pTransCond->v_actimode = 1;
+    		pTransCond->v_cyctime.secs = 0;
+    		pTransCond->v_cyctime.usecs = 0;
+    		pTransCond->v_iexreq = TRUE;
+    		pResultConnection->v_on = 1;
+    		pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
+    		// execute transtion condition
+    		Ov_Call1 (fb_functionblock, pTransCond, execute, pltc);
+    	}
     }
 
     // trigger
