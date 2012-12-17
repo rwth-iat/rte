@@ -72,8 +72,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_UINT output_format;
 	OV_UINT requestOutputDefault[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
 	OV_RESULT fr = OV_ERR_OK;
-	OV_STRING usableflags = "abcdefghijklmnopqrstuvwxyz";
-	OV_UINT usableflags_length = ov_string_getlength(usableflags);
+	char flagiterator = 'a';
 	int i = 0;
 	int j = 0;
 
@@ -199,14 +198,105 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				if(one_result->objtype & KS_OT_DOMAIN) {
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier);
 				}else if(one_result->objtype & KS_OT_VARIABLE){
-					ov_string_append(&temp, "vartype");
-					//fixme, klartext erstellen: KS_VT_BOOL
-					ov_string_print(&temp, "%s%d", temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype);
+					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype) {
+						case KS_VT_VOID:
+							ov_string_append(&temp, "KS_VT_VOID");
+							break;
+						case KS_VT_BOOL:
+							ov_string_append(&temp, "KS_VT_BOOL");
+							break;
+						case KS_VT_INT:
+							ov_string_append(&temp, "KS_VT_INT");
+							break;
+						case KS_VT_UINT:
+							ov_string_append(&temp, "KS_VT_UINT");
+							break;
+						case KS_VT_SINGLE:
+							ov_string_append(&temp, "KS_VT_SINGLE");
+							break;
+						case KS_VT_DOUBLE:
+							ov_string_append(&temp, "KS_VT_DOUBLE");
+							break;
+						case KS_VT_STRING:
+							ov_string_append(&temp, "KS_VT_STRING");
+							break;
+						case KS_VT_TIME:
+							ov_string_append(&temp, "KS_VT_TIME");
+							break;
+						case KS_VT_TIME_SPAN:
+							ov_string_append(&temp, "KS_VT_TIME_SPAN");
+							break;
+						case KS_VT_STATE:
+							ov_string_append(&temp, "KS_VT_STATE");
+							break;
+						case KS_VT_STRUCT:
+							ov_string_append(&temp, "KS_VT_STRUCT");
+							break;
+
+						case KS_VT_BYTE_VEC:
+							ov_string_append(&temp, "KS_VT_BYTE_VEC");
+							break;
+						case KS_VT_BOOL_VEC:
+							ov_string_append(&temp, "KS_VT_BOOL_VEC");
+							break;
+						case KS_VT_INT_VEC:
+							ov_string_append(&temp, "KS_VT_INT_VEC");
+							break;
+						case KS_VT_UINT_VEC:
+							ov_string_append(&temp, "KS_VT_UINT_VEC");
+							break;
+						case KS_VT_SINGLE_VEC:
+							ov_string_append(&temp, "KS_VT_SINGLE_VEC");
+							break;
+						case KS_VT_DOUBLE_VEC:
+							ov_string_append(&temp, "KS_VT_DOUBLE_VEC");
+							break;
+						case KS_VT_STRING_VEC:
+							ov_string_append(&temp, "KS_VT_STRING_VEC");
+							break;
+						case KS_VT_TIME_VEC:
+							ov_string_append(&temp, "KS_VT_TIME_VEC");
+							break;
+						case KS_VT_TIME_SPAN_VEC:
+							ov_string_append(&temp, "KS_VT_TIME_SPAN_VEC");
+							break;
+						case KS_VT_STATE_VEC:
+							ov_string_append(&temp, "KS_VT_STATE_VEC");
+							break;
+						default:
+							ov_string_append(&temp, "unknown");
+							break;
+					}
 				}else if(one_result->objtype & KS_OT_LINK){
-					ov_string_append(&temp, "linktype");
-					//fixme, klartext erstellen: KS_LT_GLOBAL_1_MANY
-					ov_string_print(&temp, "%s%d", temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype);
-					//ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier);
+					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype) {
+						case KS_LT_LOCAL_1_1:
+							ov_string_append(&temp, "KS_LT_LOCAL_1_1");
+							break;
+						case KS_LT_LOCAL_1_MANY:
+							ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
+							break;
+						case KS_LT_LOCAL_MANY_MANY:
+							ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
+							break;
+						case KS_LT_LOCAL_MANY_1:
+							ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
+							break;
+						case KS_LT_GLOBAL_1_1:
+							ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
+							break;
+						case KS_LT_GLOBAL_1_MANY:
+							ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
+							break;
+						case KS_LT_GLOBAL_MANY_MANY:
+							ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
+							break;
+						case KS_LT_GLOBAL_MANY_1:
+							ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
+							break;
+						default:
+							ov_string_append(&temp, "unknown");
+							break;
+					}
 				}
 				break;
 			case OP_TYPE:
@@ -282,9 +372,10 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}
 				break;
 			case OP_SEMANTIC:
-				for (j = 0;j < usableflags_length;j++){
-					if(IsFlagSet(one_result->semantic_flags, usableflags[j])){
-						ov_string_print(&temp, "%s%c", temp, usableflags[j]);
+				//semantic_flags is 32 bit long
+				for (flagiterator = 'a';flagiterator < 'a'+32;flagiterator++){
+					if(IsFlagSet(one_result->semantic_flags, flagiterator)){
+						ov_string_print(&temp, "%s%c", temp, flagiterator);
 					}
 				}
 				break;
