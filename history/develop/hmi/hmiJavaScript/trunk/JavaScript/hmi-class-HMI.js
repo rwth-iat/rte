@@ -963,6 +963,9 @@ HMI.prototype = {
 	showServers: function () {
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
+		//flush cache of tcl handles
+		HMI.KSClient.destroy();
+		
 		//disable double click by user
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";

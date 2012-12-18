@@ -408,7 +408,7 @@ LIBRARY cshmi
 			COMMENT = "name of the persistent global variable (survives reloading)";
 			OperatorInput : STRING
 			HAS_SET_ACCESSOR
-			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:TemplateFBReferenceVariable:IN1')";
+			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
 			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref or 'fullqualifiedparentname'";
 			TemplateFBVariableReferenceName : STRING

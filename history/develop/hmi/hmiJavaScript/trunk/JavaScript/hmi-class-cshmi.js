@@ -1052,6 +1052,8 @@ cshmi.prototype = {
 			return "";
 		}else if (ParameterName === "OperatorInput"){
 			if(ParameterValue.indexOf("textinput") !== -1){
+				//todo idea: rebuild as html div with textarea
+				
 				var input = null;
 				var textinputHint;
 				var splittedValueParameter = ParameterValue.split(":");
@@ -2285,14 +2287,14 @@ cshmi.prototype = {
 		
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
-		if (this.ResourceList.Actions && this.ResourceList.Actions["route_"+VisualObject.id] !== undefined){
+		if (VisualObject.ResourceList && VisualObject.ResourceList.RoutePolyline !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			SourceConnectionPoint = this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPoint;
-			SourceConnectionPointdirection = this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPointdirection;
-			TargetConnectionPoint = this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPoint;
-			TargetConnectionPointdirection = this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPointdirection;
-			OffsetSource = this.ResourceList.Actions["route_"+VisualObject.id].OffsetSource;
-			OffsetTarget = this.ResourceList.Actions["route_"+VisualObject.id].OffsetTarget;
+			SourceConnectionPoint = VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint;
+			SourceConnectionPointdirection = VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection;
+			TargetConnectionPoint = VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint;
+			TargetConnectionPointdirection = VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection;
+			OffsetSource = VisualObject.ResourceList.RoutePolyline.OffsetSource;
+			OffsetTarget = VisualObject.ResourceList.RoutePolyline.OffsetTarget;
 		}else{
 			var requestList = new Object();
 			//This caching is model config specific, not instance specific
@@ -2521,15 +2523,14 @@ cshmi.prototype = {
 			OffsetTarget += parseFloat(requestList[ObjectPath]["offset"]);
 			
 			//remember the result
-			this.ResourceList.Actions["route_"+VisualObject.id] = new Object();
-			this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPoint = SourceConnectionPoint;
-			this.ResourceList.Actions["route_"+VisualObject.id].SourceConnectionPointdirection = SourceConnectionPointdirection;
-			this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPoint = TargetConnectionPoint;
-			this.ResourceList.Actions["route_"+VisualObject.id].TargetConnectionPointdirection = TargetConnectionPointdirection;
-			this.ResourceList.Actions["route_"+VisualObject.id].OffsetSource = OffsetSource;
-			this.ResourceList.Actions["route_"+VisualObject.id].OffsetTarget = OffsetTarget;
-			//this.ResourceList.Actions["route_"+VisualObject.id].useCount = 1;
-			//HMI.hmi_log_trace("cshmi._interpreteRoutePolyline: remembering results for "+FBRef+" ");
+			VisualObject.ResourceList = new Object();
+			VisualObject.ResourceList.RoutePolyline = new Object();
+			VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint = SourceConnectionPoint;
+			VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection = SourceConnectionPointdirection;
+			VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint = TargetConnectionPoint;
+			VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection = TargetConnectionPointdirection;
+			VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
+			VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
 		}
 		
 		if (SourceConnectionPoint === null){
@@ -2567,15 +2568,15 @@ cshmi.prototype = {
 			parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
-		if (	xStart !== this.ResourceList.Actions["route_"+VisualObject.id].xStart ||
-				yStart !== this.ResourceList.Actions["route_"+VisualObject.id].yStart ||
-				xEnd !== this.ResourceList.Actions["route_"+VisualObject.id].xEnd ||
-				yEnd !== this.ResourceList.Actions["route_"+VisualObject.id].yEnd) {
+		if (	xStart !== VisualObject.ResourceList.RoutePolyline.xStart ||
+				yStart !== VisualObject.ResourceList.RoutePolyline.yStart ||
+				xEnd !== VisualObject.ResourceList.RoutePolyline.xEnd ||
+				yEnd !== VisualObject.ResourceList.RoutePolyline.yEnd) {
 			//cache new start- and endPoints
-			this.ResourceList.Actions["route_"+VisualObject.id].xStart = xStart;
-			this.ResourceList.Actions["route_"+VisualObject.id].yStart = yStart;
-			this.ResourceList.Actions["route_"+VisualObject.id].xEnd = xEnd;
-			this.ResourceList.Actions["route_"+VisualObject.id].yEnd = yEnd;
+			VisualObject.ResourceList.RoutePolyline.xStart = xStart;
+			VisualObject.ResourceList.RoutePolyline.yStart = yStart;
+			VisualObject.ResourceList.RoutePolyline.xEnd = xEnd;
+			VisualObject.ResourceList.RoutePolyline.yEnd = yEnd;
 			
 			var points = "";
 			
@@ -2831,17 +2832,23 @@ cshmi.prototype = {
 			//could be a just replaced VisualObject, not in the DOM tree
 			return false;
 		}
-		var VisualParentObject = VisualObject.parentNode;
+		
+		var VisualParentObject = null;
+		if (VisualObject.parentNode.namespaceURI === HMI.HMI_Constants.NAMESPACE_SVG){
+			VisualParentObject = VisualObject.parentNode;
+		}
+		
 		var ObjectPath = VisualObject.getAttribute("data-ModelSource");
 		var ObjectType = VisualObject.getAttribute("data-ObjectType");
-		if(VisualObject.FBReference && VisualObject.FBReference["default"] !== undefined){
+		if(VisualObject.FBReference && VisualObject.FBReference["default"] !== undefined && VisualObject.FBReference["default"] !== ""){
 			//save a (perhaps changed) FBref for later rebuilding of the template
 			this.ResourceList.newRebuildObjectId = VisualObject.id;
 		}
-		
+		//dim object while recreation
+		VisualObject.setAttribute("opacity", "0.6");
 		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
 		
-		if(VisualParentObject.cshmiOriginalOrderList !== undefined){
+		if(VisualParentObject !== null && VisualParentObject.cshmiOriginalOrderList !== undefined){
 			//place the new object to the same order position as the old object
 			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
 			for (var i; OrderArray !== undefined && i < OrderArray.length;) {
@@ -2856,7 +2863,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		VisualParentObject.replaceChild(newVisualObject, VisualObject);
+		VisualObject.parentNode.replaceChild(newVisualObject, VisualObject);
 		
 		if (this.initStage === false){
 			//interprete onload Actions if we are already loaded
@@ -3070,7 +3077,7 @@ cshmi.prototype = {
 					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObjectId;
 					VisualObject.id = this.ResourceList.newRebuildObjectId;
 					
-					//.. but only once
+					//.. but only once/here
 					this.ResourceList.newRebuildObjectId = null;
 					break;
 				}

@@ -87,7 +87,7 @@ function HMIJavaScriptKSClient() {
 	//needed for absolute ks path on the same ksserver
 	this.ResourceList.ModelHost = null;
 	this.ResourceList.ModelServer = null;
-	this.ResourceList.Handles = Object();
+	this.ResourceList.Servers = Object();
 	
 	/** Private *********************/
 	var MessageID = 0;	
@@ -868,8 +868,8 @@ HMIJavaScriptKSClient.prototype = {
 	 * @todo add timeout für unused delHandle
 	 */
 	getHandleID: function(HostAndServername) {
-		if (this.ResourceList.Handles[HostAndServername] && this.ResourceList.Handles[HostAndServername].HandleString !== undefined){
-			return this.ResourceList.Handles[HostAndServername].HandleString;
+		if (this.ResourceList.Servers[HostAndServername] && this.ResourceList.Servers[HostAndServername].HandleString !== undefined){
+			return this.ResourceList.Servers[HostAndServername].HandleString;
 		}else{
 			var HandleString = this._getHandle(HostAndServername, null);
 			if (HandleString === null || HandleString === false){
@@ -898,16 +898,16 @@ HMIJavaScriptKSClient.prototype = {
 				}
 				return null;
 			}
-			this.ResourceList.Handles[HostAndServername] = Object();
-			this.ResourceList.Handles[HostAndServername].HandleString = HandleString;
+			this.ResourceList.Servers[HostAndServername] = Object();
+			this.ResourceList.Servers[HostAndServername].HandleString = HandleString;
 			return HandleString;
 		}
 	},
 	
 	_cbSetDefaultHandle: function(Client, req) {
 		//fixme work in progress
-		Client.ResourceList.Handles[HostAndServername] = Object();
-		Client.ResourceList.Handles[HostAndServername].HandleString = HandleString;
+		Client.ResourceList.Servers[HostAndServername] = Object();
+		Client.ResourceList.Servers[HostAndServername].HandleString = HandleString;
 	},
 	
 	/*********************************
@@ -1519,10 +1519,12 @@ HMIJavaScriptKSClient.prototype = {
 	*********************************/
 	destroy: function () {
 		//destroy all handles
-		for (var i in this.ResourceList.Handles){
-			this.delHandle(this.ResourceList.Handles[i].HandleString);
-			delete this.ResourceList.Handles[i].HandleString;
-			delete this.ResourceList.Handles[i];
+		for (var i in this.ResourceList.Servers){
+			if(this.ResourceList.Servers[i].HandleString !== undefined){
+				this.delHandle(this.ResourceList.Servers[i].HandleString);
+				delete this.ResourceList.Servers[i].HandleString;
+			}
+			delete this.ResourceList.Servers[i];
 		}
 	}
 };
