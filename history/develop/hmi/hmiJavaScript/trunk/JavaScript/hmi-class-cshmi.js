@@ -212,12 +212,7 @@ cshmi.prototype = {
 		Position = null;
 		ComponentChilds = null;
 		
-		//interprete onload Actions in the order of occurrence
-		while(this.ResourceList.onloadCallStack.length !== 0){
-			var EventObjItem = this.ResourceList.onloadCallStack.shift();
-			this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-		}
-		EventObjItem = null;
+		this._interpreteOnloadCallStack();
 		
 		/*
 		var invisibleObjectName = "";
@@ -2842,6 +2837,8 @@ cshmi.prototype = {
 			//could be a just replaced VisualObject, not in the DOM tree
 			return false;
 		}
+		//dim object while recreation
+		VisualObject.setAttribute("opacity", "0.6");
 		
 		var VisualParentObject = null;
 		if (VisualObject.parentNode.namespaceURI === HMI.HMI_Constants.NAMESPACE_SVG){
@@ -2854,10 +2851,10 @@ cshmi.prototype = {
 			//save a (perhaps changed) FBref for later rebuilding of the template
 			this.ResourceList.newRebuildObjectId = VisualObject.id;
 		}
-		//dim object while recreation
-		VisualObject.setAttribute("opacity", "0.6");
 		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
+		this.ResourceList.newRebuildObjectId = null;
 		
+		//find references to the old VisualObject in cshmiOriginalOrderList of the VisualParentObject and change to new
 		if(VisualParentObject !== null && VisualParentObject.cshmiOriginalOrderList !== undefined){
 			//place the new object to the same order position as the old object
 			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
@@ -2898,28 +2895,13 @@ cshmi.prototype = {
 			//move old node out of document, to make clear it is not used anymore (HACK)
 			this.trashDocument.adoptNode(VisualObject);
 		}
+		//note the references in cshmiOriginalOrderList are only internal in the VisualObject tree.
+		//So the garbage collection will not have a problem with the circular reference.
 		
+		//interprete onload Actions if we are already loaded
 		if (this.initStage === false){
-			//interprete onload Actions if we are already loaded
-			
-			//onload code should not know, we are in an iterator
-			var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-			delete this.ResourceList.ChildrenIterator.currentChild;
-			
-			//for this objects, the init stage should be set (needed for getValue and timeevent)
-			this.initStage = true;
-			
-			while(this.ResourceList.onloadCallStack.length !== 0){
-				var EventObjItem = this.ResourceList.onloadCallStack.shift();
-				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-			}
-			//reset stage to real state
-			this.initStage = false;
-			
-			this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-			savedCurrentChild = null;
+			this._interpreteOnloadCallStack();
 		}
-		this.ResourceList.newRebuildObjectId = null;
 		
 		return true;
 	},
@@ -2943,25 +2925,9 @@ cshmi.prototype = {
 				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
+			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){
-				//interprete onload Actions if we are already loaded
-				
-				//onload code should not know, we are in an iterator
-				var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-				delete this.ResourceList.ChildrenIterator.currentChild;
-				
-				//for this objects, the init stage should be set (needed for getValue and timeevent)
-				this.initStage = true;
-				
-				while(this.ResourceList.onloadCallStack.length !== 0){
-					var EventObjItem = this.ResourceList.onloadCallStack.shift();
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-				}
-				//reset stage to real state
-				this.initStage = false;
-				
-				this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-				savedCurrentChild = null;
+				this._interpreteOnloadCallStack();
 			}
 			
 			return true;
@@ -3309,27 +3275,6 @@ cshmi.prototype = {
 			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] = new Array();
 		}
 		VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
-		
-		// fixme reimplement via dom4 mutation observer
-		VisualObject.addEventListener("DOMNodeRemoved", function(evt){
-			if(evt.target !== VisualObject || VisualObject.parentNode === null){
-				return;
-			}
-			var VisualParentObject = VisualObject.parentNode;
-			if(VisualParentObject.cshmiOriginalOrderList !== undefined){
-				//remove the object from the orderList
-				var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
-				for (var i; OrderArray !== undefined && i < OrderArray.length;) {
-					if (OrderArray[i] === VisualObject){
-						//we found an old entry, remove
-						OrderArray.splice(i, 1);
-					}else{
-						i++;
-					}
-				}
-			}
-		}, false);
-		
 		
 		//////////////////////////////////////////////////////////////////////////
 		//get childs (graphics and actions) from the TemplateDefinition
@@ -4354,18 +4299,9 @@ cshmi.prototype = {
 				HMI.saveAbsolutePosition(ComponentChilds[i]);
 			}
 			
+			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){
-				//interprete onload Actions if we are already loaded
-				
-				//for this objects, the init stage should be set (needed for getValue and timeevent)
-				this.initStage = true;
-				
-				while(this.ResourceList.onloadCallStack.length !== 0){
-					var EventObjItem = this.ResourceList.onloadCallStack.shift();
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-				}
-				//reset stage to real state
-				this.initStage = false;
+				this._interpreteOnloadCallStack();
 			}
 			
 			// mark the class as complete
@@ -4375,6 +4311,37 @@ cshmi.prototype = {
 			//deactivate the dim of the sheet, as we are ready
 			HMI.Playground.firstChild.removeAttribute("opacity");
 		}
+	},
+	
+	/**
+	 * interprete onloadCallStack
+	 */
+	_interpreteOnloadCallStack: function(){
+		//onload code should not know, if we are in an iterator
+		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+		delete this.ResourceList.ChildrenIterator.currentChild;
+		
+		//for this objects, the init stage should be set (needed for getValue and timeevent)
+		var oldStage = this.initStage;
+		this.initStage= true;
+		
+		while(this.ResourceList.onloadCallStack.length !== 0){
+			var EventObjItem = this.ResourceList.onloadCallStack.shift();
+			if(EventObjItem["VisualObject"].ownerDocument === this.trashDocument){
+				//the object was killed, so ignore
+				continue;
+			}
+			this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+		}
+		EventObjItem = null;
+		
+		//restore currentChild status
+		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+		savedCurrentChild = null;
+		
+		this.initStage = oldStage;
+		
+		return;
 	},
 	
 	/**
