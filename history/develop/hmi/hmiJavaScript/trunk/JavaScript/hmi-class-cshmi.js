@@ -88,6 +88,11 @@ function cshmi() {
 	this.ResourceList.EventInfos.startYObj = null;
 	this.ResourceList.newRebuildObjectId = null;
 	
+	this.trashDocument = null;
+	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
+		this.trashDocument = HMI.svgDocument.implementation.createDocument (HMI.HMI_Constants.NAMESPACE_SVG, "html", null);
+	}
+	
 	//newwrite
 	//this.ResourceList.ModellVariables = Object();
 	//this.ResourceList.ModellVariables.getValue = ["ksVar", "elemVar", "globalVar", "persistentGlobalVar", "OperatorInput", "TemplateFBReferenceVariable", "TemplateFBVariableReferenceName", "TemplateConfigValues", "value"];
@@ -337,6 +342,7 @@ cshmi.prototype = {
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.onloadCallStack.push(EventObjItem);
 			
+			/* not necessary
 			VisualObject.addEventListener("DOMNodeRemoved", function(evt){
 				if(evt.target !== VisualObject){
 					return;
@@ -352,28 +358,13 @@ cshmi.prototype = {
 					}
 				}
 			}, false);
+			*/
 		}else if (command[command.length-1] === "globalvarchanged"){
 			//remember Action to be called after a globalVar is changed
 			var EventObjItem = Object();
 			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
-			//fixme reimplement with DOM4 MutationObserver
-			VisualObject.addEventListener("DOMNodeRemoved", function(evt){
-				if(evt.target !== VisualObject){
-					return;
-				}
-				//remove ourself out of the globalvarchangeStack
-				for (var i = 0; i < HMI.cshmi.ResourceList.globalvarChangedCallStack.length;){
-					var EventObjItem = HMI.cshmi.ResourceList.globalvarChangedCallStack[i];
-					if(EventObjItem["VisualObject"] === VisualObject){
-						//we found an old entry, remove
-						HMI.cshmi.ResourceList.globalvarChangedCallStack.splice(i, 1);
-					}else{
-						i++;
-					}
-				}
-			}, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -388,6 +379,11 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteTimeEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
+		if (VisualObject.ownerDocument === this.trashDocument || HMI.cshmi !== this){
+			//our object are no active anymore. Removed from DOM or 
+			//the active cshmi display is not "our" one
+			return true;
+		}
 		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
@@ -444,8 +440,7 @@ cshmi.prototype = {
 		
 		//call us again for cyclic interpretation of the Actions
 		//only if we are in the initialisation or normal stage
-		//and the active cshmi display is "our" one
-		if ((this.initStage === true || HMI.Playground.firstChild !== null ) && HMI.cshmi === this){
+		if (this.initStage === true || HMI.Playground.firstChild !== null ){
 			//call a function, which is manipulating this keyword
 			window.setTimeout(function() {
 				//the function will be executed in the context (this) of the HMI.cshmi object
@@ -1485,9 +1480,15 @@ cshmi.prototype = {
 		}else if (ParameterName === "globalVar"){
 			//globalVar
 			this.ResourceList.GlobalVar[ParameterValue] = NewValue;
-			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
+			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;){
 				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
-				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+				if(EventObjItem["VisualObject"].ownerDocument === this.trashDocument){
+					//this Object was replaced with rebuildObject, so remove from callstack
+					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
+				}else{
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+					i++
+				}
 			}
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
@@ -1498,9 +1499,15 @@ cshmi.prototype = {
 				//fall back to globalVar if no persistent storage is available
 				this.ResourceList.GlobalVar[ParameterValue] = NewValue;
 			}
-			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;i++){
+			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;){
 				var EventObjItem = this.ResourceList.globalvarChangedCallStack[i];
-				this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+				if(EventObjItem["VisualObject"].ownerDocument === this.trashDocument){
+					//this Object was replaced with rebuildObject, so remove from callstack
+					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
+				}else{
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+					i++
+				}
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
@@ -1644,7 +1651,7 @@ cshmi.prototype = {
 			return false;
 		}else if (targetName === null || targetPlace === null || targetLibrary === null || targetClass === null){
 			//intentionally no value, abort
-			return null;
+			return true;
 		}else if (targetName === "" || targetPlace === "" || targetLibrary === "" || targetClass === ""){
 			//no value found
 			return false;
@@ -1860,9 +1867,12 @@ cshmi.prototype = {
 			if(VisualObject.parentNode !== null){
 				//VisualObject is in DOM and configured
 				var TemplateObject = VisualObject;
-			}else{
+			}else if(VisualObject.VisualParentObject !== undefined){
 				//VisualObject is not in DOM and we are configuring it right now (it has per definition no FBRef till now)
 				TemplateObject = VisualObject.VisualParentObject;
+			}else{
+				//VisualObject is not in DOM and no Template. make the do-while abbort quick
+				var TemplateObject = VisualObject;
 			}
 			
 			do{
@@ -2863,7 +2873,31 @@ cshmi.prototype = {
 			}
 		}
 		
+		//remove ourself out of the globalvarchangeStack
+		//caveat: our children will not be removed from stack, therefor the whole subtree will be moved out of dom later and tested on execution
+		for (var i = 0; i < HMI.cshmi.ResourceList.globalvarChangedCallStack.length;){
+			var EventObjItem = HMI.cshmi.ResourceList.globalvarChangedCallStack[i];
+			if(EventObjItem["VisualObject"] === VisualObject){
+				//we found an old entry, remove
+				HMI.cshmi.ResourceList.globalvarChangedCallStack.splice(i, 1);
+			}else{
+				i++;
+			}
+		}
+		//we want to have offset parameter on all visual elements
+		HMI.saveAbsolutePosition(newVisualObject, true);
+		var ComponentChilds = newVisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
+		for(var i = 0;i < ComponentChilds.length;i++){
+			HMI.saveAbsolutePosition(ComponentChilds[i], false);
+		}
+		ComponentChilds = null;
+		
 		VisualObject.parentNode.replaceChild(newVisualObject, VisualObject);
+		
+		if(this.trashDocument && this.trashDocument.adoptNode){
+			//move old node out of document, to make clear it is not used anymore (HACK)
+			this.trashDocument.adoptNode(VisualObject);
+		}
 		
 		if (this.initStage === false){
 			//interprete onload Actions if we are already loaded
@@ -3264,7 +3298,7 @@ cshmi.prototype = {
 		VisualObject.setAttribute("overflow", "visible");
 		
 		//instance order is lost on zindex manipulation (dom reordering)
-		//so build a second childNodes like Collection for preserving ordering
+		//so build a second childNodes-like collection for preserving ordering
 		VisualObject.cshmiOriginalOrderList = new Object();
 		
 		//add ourself to the parent zindex-list
@@ -3276,6 +3310,7 @@ cshmi.prototype = {
 		}
 		VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
 		
+		// fixme reimplement via dom4 mutation observer
 		VisualObject.addEventListener("DOMNodeRemoved", function(evt){
 			if(evt.target !== VisualObject || VisualObject.parentNode === null){
 				return;
