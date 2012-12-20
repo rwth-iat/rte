@@ -119,7 +119,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	ov_memstack_lock();
 	addrp = Ov_MemStackAlloc(OV_STRING);
 
-	*addrp = (char*)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
+	*addrp = (OV_STRING)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
 	if(!*addrp) {
 		ov_memstack_unlock();
 		EXEC_GETVAR_RETURN OV_ERR_TARGETGENERIC;
@@ -133,28 +133,25 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 		*addrp = match.value[i];
 		//add one size of a pointer
 		addrp ++;
-		//*target = match.value[i];
-		//target += elsize;
 	}
-	//params.identifiers_val = addrp;
 
 	ov_ksserver_getvar(2, &ticket, &params, &result);
-
-	ov_memstack_unlock();
 
 	/**
 	 * Parse result from KS function
 	 */
 
 	if(Ov_Fail(result.result)){
+		//general problem like memory problem or NOACCESS
+		ov_memstack_unlock();
 		EXEC_GETVAR_RETURN result.result;
 	}
 	for (j=0; j< result.items_len;j++){
 		one_result = *(result.items_val + j);
 		if(Ov_Fail(one_result.result)){
 			//todo better info which element had an error
-			ov_string_setvalue(&temp, ov_result_getresulttext(one_result.result));
 			fr = one_result.result;
+			ov_string_setvalue(&temp, ov_result_getresulttext(fr));
 		}else{
 			Variable = one_result.var_current_props;
 
@@ -397,5 +394,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	}
 
 	ov_string_append(message, LoopEntryList);
+
+	ov_memstack_unlock();
 	EXEC_GETVAR_RETURN fr;
 }

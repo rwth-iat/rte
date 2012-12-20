@@ -60,7 +60,7 @@
 #define GETVAR_FORMAT_PLAIN 2
 #define GETVAR_FORMAT_DEFAULT GETVAR_FORMAT_TCL
 
-//requestOutput for getVar and getEP
+//requestOutput for getVar and getEP, only internal used!
 #define OP_UNKNOWN 0
 #define OP_NAME 1
 #define OP_TYPE 2
@@ -72,6 +72,10 @@
 #define OP_TECHUNIT 8
 #define OP_ASSOCIDENT 9
 #define OP_ROLEIDENT 10
+#define OP_DEFAULTINTERP 11
+#define OP_SUPPORTEDINTERP 12
+#define OP_TYPEIDENT 13
+
 
 #define REQUEST_HANDLED_BY_NONE 0
 #define REQUEST_HANDLED_BY_GETVAR 1
@@ -83,6 +87,11 @@
 #define REQUEST_HANDLED_BY_AUTH 7
 #define REQUEST_HANDLED_BY_CORS_OPTION 8
 #define REQUEST_HANDLED_BY_STATICFILE 9
+#define REQUEST_HANDLED_BY_CREATEOBJECT 10
+#define REQUEST_HANDLED_BY_DELETEOBJECT 11
+#define REQUEST_HANDLED_BY_RENAMEOBJECT 12
+#define REQUEST_HANDLED_BY_LINK 13
+#define REQUEST_HANDLED_BY_UNLINK 14
 
 //authorization.c
 #define REALM "Top secret! User: root Pass: pass"
@@ -114,6 +123,8 @@
 #define HTTP_404_BODY   "error 404: path not found\r\n"
 #define HTTP_406_HEADER "406 Not Acceptable\r\n"
 #define HTTP_406_BODY   "error 406: Bad Value requested\r\n"
+#define HTTP_409_HEADER "406 Conflict\r\n"
+#define HTTP_409_BODY   "error 409: Conflict\r\n"
 #define HTTP_414_HEADER "414 Request Too Long\r\n"
 #define HTTP_414_BODY   "error 414: request too long\r\n"
 #define HTTP_500_HEADER "500 Internal Server Error\r\n"
@@ -155,3 +166,8 @@ OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re);
 OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message);
 OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re);
+OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message);

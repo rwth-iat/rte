@@ -74,7 +74,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_RESULT fr = OV_ERR_OK;
 	char flagiterator = 'a';
 	int i = 0;
-	int j = 0;
 
 	//path=/TechUnits
 	//requestType=OT_DOMAIN|OT_VARIABLE|... (siehe tcl-tks doku)
@@ -164,6 +163,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	ov_ksserver_getep(2, &ticket, &params, &result);
 
 	if(Ov_Fail(result.result)){
+		//general problem like memory problem or NOACCESS
 		ov_string_setvalue(&temp, ov_result_getresulttext(result.result));
 		ov_memstack_unlock();
 		EXEC_GETEP_RETURN result.result;

@@ -177,24 +177,15 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_ksservhttp(void) {
 
 	OV_INSTPTR_ov_library pNewOvLib = NULL;
 	OV_RESULT fr = OV_ERR_OK;
-	OV_INSTPTR_ov_domain pTarget;
 	//this is executed at database start, too
 
-	fr = OV_ERR_OK;
-	pTarget = Ov_DynamicPtrCast(ov_domain, ov_path_getobjectpointer("/acplt", 2));
-	if (pTarget != NULL){
-		fr = Ov_CreateObject(ov_library, pNewOvLib, pTarget, "ksserv");
-		if (fr != OV_ERR_ALREADYEXISTS && Ov_Fail(fr))
-		{
-			ov_logfile_error("ksservhttp needs the library %s which is not available (%s).",
-					"ksserv",
-					ov_result_getresulttext(fr));
-
-		}
-	} else {
-		ov_logfile_error("domain /acplt does not exist");
+	fr = Ov_CreateObject(ov_library, pNewOvLib, &pdb->acplt, "ksserv");
+	if (fr != OV_ERR_ALREADYEXISTS && Ov_Fail(fr))
+	{
+		ov_logfile_error("ksservhttp needs the library %s which is not available (%s).",
+				"ksserv",
+				ov_result_getresulttext(fr));
 	}
-
 
 	OV_LIBRARY_DEF_ksservhttp_new = ov_library_open_ksservhttp_old();
 	OV_LIBRARY_DEF_ksservhttp_new->setglobalvarsfnc = ov_library_setglobalvars_ksservhttp_new;
