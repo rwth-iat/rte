@@ -142,9 +142,9 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message){
 		EXEC_CREATEOBJECT_RETURN fr;
 	}
 	for (i=0; i< result.obj_results_len;i++){
-		if(Ov_Fail(result.obj_results_val[i]->result)){
+		if(Ov_Fail((result.obj_results_val+i)->result)){
 			//todo better info which element had an error
-			fr = result.obj_results_val[i];
+			fr = (result.obj_results_val+i)->result;
 			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
 		}
 	}
