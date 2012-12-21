@@ -116,14 +116,15 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message){
 		//general problem like memory problem or NOACCESS
 		ov_memstack_unlock();
 		fr = result.result;
-		ov_string_setvalue(&temp, ov_result_getresulttext(fr));
+		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
+		ov_string_append(message, temp);
 		EXEC_DELETEOBJECT_RETURN fr;
 	}
 	for (i=0; i< result.results_len;i++){
 		if(Ov_Fail(result.results_val[i])){
 			//todo better info which element had an error
 			fr = result.results_val[i];
-			ov_string_setvalue(&temp, ov_result_getresulttext(fr));
+			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
 		}
 	}
 

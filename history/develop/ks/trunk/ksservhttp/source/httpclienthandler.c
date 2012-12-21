@@ -248,6 +248,10 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 		ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		break;
+	case OV_ERR_ALREADYEXISTS:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_409_HEADER, tmp_header);
+		ov_string_print(body, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
+		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 		ov_string_print(body, "KS_ERR_GENERIC (unknown): %s%s", HTTP_503_BODY, tmp_body);
@@ -543,6 +547,21 @@ void ksservhttp_httpclienthandler_typemethod(
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				result = exec_getep(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
+			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
+				result = exec_createObject(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
+			}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
+				result = exec_deleteObject(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
+			}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
+				result = exec_renameObject(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
+			}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
+				result = exec_link(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_LINK;
+			}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
+				result = exec_unlink(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_UNLINK;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
 				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
 				if(!Ov_Fail(result)){

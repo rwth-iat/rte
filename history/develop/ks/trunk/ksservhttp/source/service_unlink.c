@@ -38,66 +38,67 @@
 
 #include "config.h"
 
-
 static OV_ACCESS ov_ksservhttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_RENAMEABLE;
+	return KS_AC_UNLINKABLE;
 }
 
 //we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblRenameObj = {
+OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblUnlink = {
 	NULL,
 	NULL,
 	NULL,
 	ov_ksservhttp_ticket_defaultticket_getaccess
 };
 
-#define EXEC_RENAMEOBJECT_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
-		Ov_SetDynamicVectorLength(&newnamematch,0,STRING);\
+#define EXEC_UNLINK_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
+		Ov_SetDynamicVectorLength(&elementmatch,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		return
 
 /**
- * extracts the command for the renaming and let do ks_server_rename the job
+ * Syntax: /unlink?path=/TechUnits/con.sourcefb&element=/TechUnits/testFB
+ *
+ * extracts the command for the linking and let do ks_server_link the job
  * @param args arguments of the http get request
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
+OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message){
 	/*
 	*	parameter and result objects
 	*/
 	OV_STRING_VEC match = {0,NULL};
-	OV_STRING_VEC newnamematch = {0,NULL};
-	OV_RENAMEOBJECT_ITEM *addrp = NULL;
+	OV_STRING_VEC elementmatch = {0,NULL};
+	OV_UNLINK_ITEM *addrp = NULL;
 	OV_UINT i = 0;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_STRING temp = NULL;
 
-	OV_RENAMEOBJECT_PAR	params;
-	OV_RENAMEOBJECT_RES	result;
+	OV_UNLINK_PAR	params;
+	OV_UNLINK_RES	result;
 
-	static OV_TICKET ticket = { &defaultticketvtblRenameObj,  OV_TT_NONE };
+	static OV_TICKET ticket = { &defaultticketvtblUnlink,  OV_TT_NONE };
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		ov_string_append(message, "Variable path not found");
-		EXEC_RENAMEOBJECT_RETURN OV_ERR_BADPARAM; //400
+		EXEC_UNLINK_RETURN OV_ERR_BADPARAM; //400
 	}
-	//process factory
-	Ov_SetDynamicVectorLength(&newnamematch,0,STRING);
-	find_arguments(args, "newname", &newnamematch);
-	if(newnamematch.veclen < match.veclen){
-		ov_string_append(message, "not enough Variables newname found");
-		EXEC_RENAMEOBJECT_RETURN OV_ERR_BADPARAM; //400
+	//process element
+	Ov_SetDynamicVectorLength(&elementmatch,0,STRING);
+	find_arguments(args, "element", &elementmatch);
+	if(elementmatch.veclen < match.veclen){
+		ov_string_append(message, "not enough Variables element found");
+		EXEC_UNLINK_RETURN OV_ERR_BADPARAM; //400
 	}
 
 	ov_memstack_lock();
-	addrp = (OV_RENAMEOBJECT_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_RENAMEOBJECT_ITEM));
+	addrp = (OV_UNLINK_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_UNLINK_ITEM));
 	if(!addrp) {
 		ov_memstack_unlock();
-		EXEC_RENAMEOBJECT_RETURN OV_ERR_TARGETGENERIC;
+		EXEC_UNLINK_RETURN OV_ERR_TARGETGENERIC;
 	}
 
 	params.items_val = addrp;
@@ -105,17 +106,14 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
 
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){
-		addrp->old_path = match.value[i];
-		addrp->new_path = newnamematch.value[i];
-
-		//todo PMH implementieren
-		addrp->place.hint = KS_PMH_DEFAULT;
+		addrp->link_path = match.value[i];
+		addrp->element_path = elementmatch.value[i];
 
 		//add one size of a pointer
 		addrp ++;
 	}
 
-	ov_ksserver_renameobject(2, &ticket, &params, &result);
+	ov_ksserver_unlink(2, &ticket, &params, &result);
 
 	/**
 	 * Parse result from KS function
@@ -126,7 +124,7 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
 		fr = result.result;
 		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
 		ov_string_append(message, temp);
-		EXEC_RENAMEOBJECT_RETURN fr;
+		EXEC_UNLINK_RETURN fr;
 	}
 	for (i=0; i< result.results_len;i++){
 		if(Ov_Fail(result.results_val[i])){
@@ -138,5 +136,5 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
 
 	ov_memstack_unlock();
 	ov_string_append(message, temp);
-	EXEC_RENAMEOBJECT_RETURN fr;
+	EXEC_UNLINK_RETURN fr;
 }

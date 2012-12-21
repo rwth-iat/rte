@@ -144,7 +144,10 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
 		ov_memstack_unlock();
-		EXEC_GETVAR_RETURN result.result;
+		fr = result.result;
+		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
+		ov_string_append(message, temp);
+		EXEC_GETVAR_RETURN fr;
 	}
 	for (j=0; j< result.items_len;j++){
 		one_result = *(result.items_val + j);

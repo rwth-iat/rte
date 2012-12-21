@@ -114,9 +114,10 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message){
 			//set factory to the last factory given
 			addrp->factory_path = factorymatch.value[factorymatch.veclen-1];
 		}
+		//todo PMH implementieren
 		addrp->place.hint = KS_PMH_DEFAULT;
 
-		//do not allow default value/links
+		//todo, but a lot of work: do allow default value/links
 		addrp->parameters_len = 0;
 		addrp->parameters_val = NULL;
 		addrp->links_len = 0;
@@ -134,11 +135,18 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message){
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
+		ov_memstack_unlock();
 		fr = result.result;
-		ov_string_setvalue(&temp, ov_result_getresulttext(fr));
-	}else if(Ov_Fail(result.obj_results_val->result)){
-		fr = result.obj_results_val->result;
-		ov_string_setvalue(&temp, ov_result_getresulttext(fr));
+		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
+		ov_string_append(message, temp);
+		EXEC_CREATEOBJECT_RETURN fr;
+	}
+	for (i=0; i< result.obj_results_len;i++){
+		if(Ov_Fail(result.obj_results_val[i]->result)){
+			//todo better info which element had an error
+			fr = result.obj_results_val[i];
+			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+		}
 	}
 
 	ov_memstack_unlock();
