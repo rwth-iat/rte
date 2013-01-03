@@ -1327,20 +1327,28 @@ cshmi.prototype = {
 			//HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
+		var SetVarCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+path+' not successfull: Bad Parameter ');
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+req.responseText+' (configured here: '+ObjectPath+').');
+				}else{
+					HMI.hmi_log_info('Setting a variable failed.');
+				}
+			}
+		};
+		
 		//set the new Value
 		if (ParameterName === "ksVar"){
-			var response;
-			ParameterValue = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
+			var result;
+			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
 			
-			response = HMI.KSClient.setVar_NG(ParameterValue, NewValue, null);
+			result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
 			
-			if (response === false || response === null){
-				//communication error
-				return true;
-			}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+baseKsPath+ParameterValue+' not successfull: Bad Parameter ');
-			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_info('Setting '+NewValue+' at variable '+baseKsPath+ParameterValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+			if (result !== true){
+				return false;
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
@@ -1507,6 +1515,7 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			var result;
+			var path;
 			var FBRef = this._getFBReference(VisualObject, true);
 			if (FBRef[0] === ""){
 				return false;
@@ -1526,18 +1535,14 @@ cshmi.prototype = {
 				}
 				return false;
 			}else if(ParameterValue === "identifier"){
-				result = HMI.KSClient.renameObject(FBRef[0], NewValue, null);
+				path = FBRef[0];
+				result = HMI.KSClient.renameObject(path, NewValue, null, SetVarCbfnc, true);
 			}else{
-				result = HMI.KSClient.setVar_NG(FBRef[0]+"."+ParameterValue, NewValue, null);
+				path = FBRef[0]+"."+ParameterValue;
+				result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
 			}
-			
-			if (result === false || result === null){
-				//communication error
-				return true;
-			}else if (result.indexOf("KS_ERR_BADPARAM") !== -1){
-				HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+FBRef[0]+"."+ParameterValue+' not successfull: Bad Parameter ');
-			}else if (result.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+result+' (configured here: '+ObjectPath+').');
+			if (result !== true){
+				return false;
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBVariableReferenceName"){
@@ -1548,14 +1553,10 @@ cshmi.prototype = {
 					//a FBVariableReferenceName was requested
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						var response = HMI.KSClient.setVar_NG(TemplateObject.FBVariableReference[ParameterValue], NewValue, null);
-						if (response === false || response === null){
-							//communication error
-							return true;
-						}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-							HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+TemplateObject.FBVariableReference[ParameterValue]+' not successfull: Bad Parameter ');
-						}else if (response.indexOf("KS_ERR") !== -1){
-							HMI.hmi_log_info('Setting '+NewValue+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+						var path = TemplateObject.FBVariableReference[ParameterValue];
+						result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
+						if (result !== true){
+							return false;
 						}
 						return true;
 					}else{
@@ -1609,19 +1610,25 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var response = HMI.KSClient.renameObject(OldName, NewName, null);
+		var RenameCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+					HMI.hmi_log_onwebsite('Renaming "'+OldName+'" not successfull. Operation not allowed.');
+				}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
+					HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull. Bad name supplied.');
+				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+					HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull, new path was not correct:'+NewName);
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Renaming "'+OldName+'" to "'+NewName+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}
+			}
+		};
 		
-		if (response === false || response === null){
-			//communication error
-			return true;
-		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
-			HMI.hmi_log_onwebsite('Renaming "'+targetName+'" not successfull. Operation not allowed.');
-		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
-			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull. Bad name supplied.');
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Renaming "'+OldName+'" to "'+NewName+'" not successfull, new path was not correct:'+NewName);
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Renaming "'+OldName+'" to "'+NewName+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+		var result = HMI.KSClient.renameObject(OldName, NewName, RenameCbfnc, true);
+		
+		if (result !== true){
+			return false;
 		}
 		return true;
 	},
@@ -1652,24 +1659,30 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var response = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass, null);
+		var CreateObjectCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Operation not allowed.');
+				}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Object already exists.');
+				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Could be a problem with the class name or the target domain.');
+				}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Bad name supplied.');
+				}else if (response.indexOf("KS_ERR_GENERIC") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Generic error.');
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull: '+response);
+//					HMI.hmi_log_info('Creation of '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}
+			}
+		};
 		
-		if (response === false || response === null){
-			//communication error
-			return true;
-		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Operation not allowed.');
-		}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Object already exists.');
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Could be a problem with the class name or the target domain.');
-		}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Bad name supplied.');
-		}else if (response.indexOf("KS_ERR_GENERIC") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Generic error.');
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull: '+response);
-//			HMI.hmi_log_info('Creation of '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		var result = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass, CreateObjectCbfnc, true);
+		
+		if (result !== true){
+			return false;
 		}
 		return true;
 	},
@@ -1695,17 +1708,24 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var response = HMI.KSClient.deleteObject(targetName, null);
+		var DeleteObjectCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+					HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Operation not allowed.');
+				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+					HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Deleting '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}
+			}
+		};
+
 		
-		if (response === false || response === null){
-			//communication error
-			return true;
-		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
-			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Operation not allowed.');
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Object not found.');
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Deleting '+targetName+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+		var result = HMI.KSClient.deleteObject(targetName, DeleteObjectCbfnc, true);
+		
+		if (result !== true){
+			return false;
 		}
 		return true;
 	},
@@ -1733,21 +1753,27 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var response = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, null);
+		var LinkObjectsCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
+				}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Link already exists.');
+				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
+				}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}
+			}
+		};
 		
-		if (response === false || response === null){
-			//communication error
-			return true;
-		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
-			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
-		}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
-			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Link already exists.');
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
-		}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-			HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+		var result = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, LinkObjectsCbfnc, true);
+		
+		if (result !== true){
+			return false;
 		}
 		return true;
 	},
@@ -1775,21 +1801,25 @@ cshmi.prototype = {
 			return false;
 		}
 		
-		var response = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, null);
+		var UnlinkObjectsCbfnc = function(Client, req){
+			if(req.status !== 200){
+				var response = req.responseText;
+				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
+					HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
+				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
+					HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
+				}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
+					HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}
+			}
+		};
 		
-		if (response === false || response === null){
-			//communication error
-			return true;
-			
-		//Unlink with KS has no return value
-		}else if (response.indexOf("KS_ERR_NOACCESS") !== -1){
-			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
-		}else if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-			HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Bad Parameter.');
-		}else if (response.indexOf("KS_ERR") !== -1){
-			HMI.hmi_log_info('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull: '+response+' (configured here: '+ObjectPath+').');
+		var result = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, UnlinkObjectsCbfnc, true);
+		
+		if (result !== true){
+			return false;
 		}
 		return true;
 	},
@@ -4033,7 +4063,7 @@ cshmi.prototype = {
 				+"xmlns:xlink=\""+HMI.HMI_Constants.NAMESPACE_XLINK+"\">"
 				+requestList[ObjectPath]["SVGcontent"]
 				+"</svg:svg>";
-			VisualObject = HMI.HMIDOMParser.parse(svgContent, null);
+			VisualObject = HMI.HMIDOMParser.parse(svgContent);
 			VisualObject.setAttribute("overflow", "visible");
 		}else if(requestList[ObjectPath]["Bitmapcontent"] !== ""){
 			//we have an Bitmap Content to visualise
