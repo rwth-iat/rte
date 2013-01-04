@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -104,7 +104,7 @@ HMIDOMParser.prototype = {
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription !== null || StyleDescription !== undefined){
+			if (StyleDescription !== null && StyleDescription !== undefined){
 				try {
 					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
 				} catch (e) {
@@ -129,7 +129,7 @@ HMIDOMParser.prototype = {
 				//http://tickets.examotion.com/public/view.php?id=32
 				
 				//StyleDescription is optional
-				if (StyleDescription !== null || StyleDescription !== undefined){
+				if (StyleDescription !== null && StyleDescription !== undefined){
 					StyleElement = HMI.svgWindow.parseXML(StyleDescription,HMI.svgDocument);
 				}
 			}else{
@@ -150,7 +150,7 @@ HMIDOMParser.prototype = {
 				return null;
 			};
 			//StyleDescription is optional
-			if (StyleDescription !== null || StyleDescription !== undefined){
+			if (StyleDescription !== null && StyleDescription !== undefined){
 				StyleElement = new ActiveXObject("Microsoft.XMLDOM");
 				loadXMLresult = StyleElement.loadXML(StyleDescription);
 				if (loadXMLresult === false){
@@ -161,7 +161,7 @@ HMIDOMParser.prototype = {
 			loadXMLresult = null;
 		}
 		
-		if (StyleDescription !== null || StyleDescription !== undefined){
+		if (StyleDescription !== null && StyleDescription !== undefined){
 			//GraphicElement has another DOM ownerDocument
 			if("unknown" == typeof GraphicElement.importNode){
 				//adobe plugin is buggy
