@@ -555,6 +555,10 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
+			if(VisualObject.getAttribute("x") === null || VisualObject.getAttribute("y") === null){
+				HMI.hmi_log_info_onwebsite("OperatorEvent aftermove "+ObjectPath+" is not under an object with x,y coordinates. Aborting.");
+				return false;
+			}
 			VisualObject.setAttribute("cursor", "move");
 			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
 			VisualObject.setAttribute("data-aftermovepath", ObjectPath);
@@ -897,19 +901,9 @@ cshmi.prototype = {
 		
 		var GetVarCbfnc = function(Client, req){
 			var response = req.responseText;
-			if(req.status !== 200){
-				if (response.indexOf("KS_ERR_BADPARAM") !== -1){
-					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+path+' not successfull: Bad Parameter ');
-				}else if (response.indexOf("KS_ERR") !== -1){
-					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+req.responseText+' (configured here: '+ObjectPath+').');
-				}else{
-					HMI.hmi_log_info('Setting a variable failed.');
-				}
-				response = false;
-			}
 			for(var i = 0; i < getVarObserver.getVarArray.length;i++){
 				var thisGetVarObj = getVarObserver.getVarArray[i];
-				if(ObjectPath === getVarObserver.ObjectPath+thisGetVarObj.GetObjectName){
+				if(ObjectPath === getVarObserver.ObjectPath+getVarObserver.delimiter+thisGetVarObj.GetObjectName){
 					//we found "our" callback
 					var responseArray = HMI.KSClient.splitKsResponse(response);
 					if (responseArray.length === 0){
@@ -1223,20 +1217,20 @@ cshmi.prototype = {
 		
 		//get Value to set
 		if (GetType === "static"){
-			var thisGetVarObj = {"GetObjectName":".value", "NewValue":undefined};
+			var thisGetVarObj = {"delimiter":".", "GetObjectName":"value", "NewValue":undefined};
 			getVarObserver.getVarArray.push(thisGetVarObj);
 			getVarObserver.processActionIfReady = function(){
 				//in a static GetType we are ready in the first call by definition
 				var thisGetVarObj = getVarObserver.getVarArray[0];
 				if(thisGetVarObj.NewValue === false){
-					//_getValue had an error
+					//getValue had an error
 					HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue.");
 					return false;
 				}else if(thisGetVarObj.NewValue === null){
-					//_getValue had intentionally no value, abort
+					//getValue had intentionally no value, abort
 					return true;
 				}else if(thisGetVarObj.NewValue === undefined){
-					//_getValue gave no result, should not happen in static case
+					//getValue gave no result, should not happen in static case
 					return false;
 				}
 				return HMI.cshmi._setVarExecute(getVarObserver.VisualObject, getVarObserver.ObjectPath, thisGetVarObj.NewValue);
@@ -1265,17 +1259,17 @@ cshmi.prototype = {
 					var thisGetVarObj = getVarObserver.getVarArray[i];
 					
 					if(thisGetVarObj === undefined){
-						//not all _getValues are build up till now, waiting for next call
+						//not all getValues are build up till now, waiting for next call
 						return null;
 					}else if(thisGetVarObj.NewValue === false){
-						//_getValue had an error
+						//getValue had an error
 						HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue. Aborting.");
 						return false;
 					}else if(thisGetVarObj.NewValue === null){
-						//_getValue had intentionally no value, abort
+						//getValue had intentionally no value, abort
 						return false;
 					}else if(thisGetVarObj.NewValue === undefined){
-						//not all _getValues are ready till now, waiting for next call
+						//not all getValues are ready till now, waiting for next call
 						return null;
 					}
 				}
@@ -1292,7 +1286,7 @@ cshmi.prototype = {
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var thisGetVarObj = {"GetObjectName":varName[0], "NewValue":undefined};
+					var thisGetVarObj = {"delimiter":"/", "GetObjectName":varName[0], "NewValue":undefined};
 					getVarObserver.getVarArray[i] = thisGetVarObj;
 					
 					//via getValue instance under setValue object
@@ -1325,17 +1319,17 @@ cshmi.prototype = {
 					var thisGetVarObj = getVarObserver.getVarArray[i];
 					
 					if(thisGetVarObj === undefined){
-						//not all _getValues are build up till now, waiting for next call
+						//not all getValues are build up till now, waiting for next call
 						return null;
 					}else if(thisGetVarObj.NewValue === false){
-						//_getValue had an error
+						//getValue had an error
 						HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue. Aborting.");
 						return false;
 					}else if(thisGetVarObj.NewValue === null){
-						//_getValue had intentionally no value, abort
+						//getValue had intentionally no value, abort
 						return false;
 					}else if(thisGetVarObj.NewValue === undefined){
-						//not all _getValues are ready till now, waiting for next call
+						//not all getValues are ready till now, waiting for next call
 						return null;
 					}else if(!isNumeric(thisGetVarObj.NewValue)){
 						//clear an non numeric entry
@@ -1391,7 +1385,7 @@ cshmi.prototype = {
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var thisGetVarObj = {"GetObjectName":varName[0], "NewValue":undefined};
+					var thisGetVarObj = {"delimiter":"/", "GetObjectName":varName[0], "NewValue":undefined};
 					getVarObserver.getVarArray[i] = thisGetVarObj;
 					
 					//via getValue instance under setValue object
@@ -1747,7 +1741,7 @@ cshmi.prototype = {
 		var NewName = this._getValue(VisualObject, ObjectPath+".NewName");
 		
 		if (OldName === false || NewName === false){
-			//_getValue had an error
+			//getValue had an error
 			return false;
 		}else if (OldName === null || NewName === null){
 			//intentionally no value, abort
@@ -1796,7 +1790,7 @@ cshmi.prototype = {
 		var targetClass = this._getValue(VisualObject, ObjectPath+".Class");
 		
 		if (targetName === false || targetPlace === false || targetLibrary === false || targetClass === false){
-			//_getValue had an error
+			//getValue had an error
 			return false;
 		}else if (targetName === null || targetPlace === null || targetLibrary === null || targetClass === null){
 			//intentionally no value, abort
@@ -1845,7 +1839,7 @@ cshmi.prototype = {
 		var targetName = this._getValue(VisualObject, ObjectPath+".Path");
 		
 		if (targetName === false){
-			//_getValue had an error
+			//getValue had an error
 			return false;
 		}else if (targetName === null){
 			//intentionally no value, abort
@@ -1890,7 +1884,7 @@ cshmi.prototype = {
 		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
-			//_getValue had an error
+			//getValue had an error
 			return false;
 		}else if (ObjectA === null || ObjectB === null || PortNameA === null){
 			//intentionally no value, abort
@@ -1938,7 +1932,7 @@ cshmi.prototype = {
 		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
-			//_getValue had an error
+			//getValue had an error
 			return false;
 		}else if (ObjectA === null || ObjectB === null || PortNameA === null){
 			//intentionally no value, abort
@@ -2157,6 +2151,12 @@ cshmi.prototype = {
 	 * @return {Boolean} true if condition matched, false if not matched, null on error
 	 */
 	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild){
+		if (CompareIteratedChild === true && this.ResourceList.ChildrenIterator.currentChild === undefined){
+			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
+			//error state, so no boolean
+			return null;
+		}
+		
 		var requestList = new Object();
 		if (this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined){
 			requestList[ObjectPath] = this.ResourceList.Conditions[ObjectPath].ConditionParameters;
@@ -2165,11 +2165,6 @@ cshmi.prototype = {
 			requestList[ObjectPath]["ignoreError"] = null;
 			requestList[ObjectPath]["comptype"] = null;
 			if (CompareIteratedChild === true){
-				if (this.ResourceList.ChildrenIterator.currentChild === undefined){
-					HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
-					//error state, so no boolean
-					return null;
-				}
 				requestList[ObjectPath]["childValue"] = null;
 			}
 			var successCode = this._requestVariablesArray(requestList);
