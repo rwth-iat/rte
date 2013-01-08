@@ -899,23 +899,31 @@ cshmi.prototype = {
 		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
 		iterationObject = null;
 		
-		var GetVarCbfnc = function(Client, req){
-			var response = req.responseText;
-			for(var i = 0; i < getVarObserver.getVarArray.length;i++){
-				var thisGetVarObj = getVarObserver.getVarArray[i];
-				if(ObjectPath === getVarObserver.ObjectPath+getVarObserver.delimiter+thisGetVarObj.GetObjectName){
-					//we found "our" callback
-					var responseArray = HMI.KSClient.splitKsResponse(response);
-					if (responseArray.length === 0){
-						thisGetVarObj.NewValue = false;
-					}else{
-						thisGetVarObj.NewValue = responseArray[0];
+		if(this.initStage === true){
+			//force sync request in the init stage. The order of actions have to be fixed in the loading
+			getVarObserver = null;
+		}else{
+			//after load, we can use async requests
+			
+			//the callback fills the getVarObserver with data and call the processActionIfReady()
+			var GetVarCbfnc = function(Client, req){
+				var response = req.responseText;
+				for(var i = 0; i < getVarObserver.getVarArray.length;i++){
+					var thisGetVarObj = getVarObserver.getVarArray[i];
+					if(ObjectPath === getVarObserver.ObjectPath+getVarObserver.delimiter+thisGetVarObj.GetObjectName){
+						//we found "our" callback
+						var responseArray = HMI.KSClient.splitKsResponse(response);
+						if (responseArray.length === 0){
+							thisGetVarObj.NewValue = false;
+						}else{
+							thisGetVarObj.NewValue = responseArray[0];
+						}
+						break;
 					}
-					break;
 				}
-			}
-			getVarObserver.processActionIfReady();
-		};
+				getVarObserver.processActionIfReady();
+			};
+		}
 		
 		if (ParameterName === "ksVar" && preventNetworkRequest === true){
 			//intentionally no value
@@ -926,7 +934,7 @@ cshmi.prototype = {
 				//we have no absolute path => get baseKsPath
 			}
 			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
-			if(getVarObserver !== undefined){
+			if(getVarObserver !== undefined && getVarObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 				return true;
 			}else{
@@ -1142,7 +1150,7 @@ cshmi.prototype = {
 			}
 			var path = FBRef+"."+ParameterValue;
 			
-			if(getVarObserver !== undefined){
+			if(getVarObserver !== undefined && getVarObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 				return true;
 			}else{
@@ -1166,7 +1174,7 @@ cshmi.prototype = {
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var path = TemplateObject.FBVariableReference[ParameterValue]
-						if(getVarObserver !== undefined){
+						if(getVarObserver !== undefined && getVarObserver !== null){
 							response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 							return true;
 						}else{
@@ -3085,6 +3093,10 @@ cshmi.prototype = {
 	 * @return {Boolean} true on success, false if an error occured
 	 */
 	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
+		if(VisualParentObject.getElementById === undefined){
+			HMI.hmi_log_info_onwebsite("InstantiateTemplate is not allowed under an Element (configured here: "+ObjectPath+")");
+			return false;
+		}
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
 		if (VisualObject !== null){
 			VisualParentObject.appendChild(VisualObject);
