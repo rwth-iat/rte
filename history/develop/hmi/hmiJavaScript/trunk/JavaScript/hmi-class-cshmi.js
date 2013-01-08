@@ -910,7 +910,7 @@ cshmi.prototype = {
 				var response = req.responseText;
 				for(var i = 0; i < getVarObserver.getVarArray.length;i++){
 					var thisGetVarObj = getVarObserver.getVarArray[i];
-					if(ObjectPath === getVarObserver.ObjectPath+getVarObserver.delimiter+thisGetVarObj.GetObjectName){
+					if(ObjectPath === getVarObserver.ObjectPath+thisGetVarObj.delimiter+thisGetVarObj.GetObjectName){
 						//we found "our" callback
 						var responseArray = HMI.KSClient.splitKsResponse(response);
 						if (responseArray.length === 0){
