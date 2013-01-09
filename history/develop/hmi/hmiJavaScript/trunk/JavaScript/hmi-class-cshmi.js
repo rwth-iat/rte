@@ -1141,6 +1141,8 @@ cshmi.prototype = {
 				PathArray.pop();
 				return PathArray.join("/");
 			}else if (ParameterValue === "identifier"){
+				//todo add1.IN1 sollte hier nur IN1 liefern
+				
 				//if the identifier is requested calculate this to avoid network request
 				var Objectname = FBRef.split("/");
 				return Objectname[Objectname.length - 1];
@@ -1289,7 +1291,7 @@ cshmi.prototype = {
 					NewValue = NewValue + thisGetVarObj.NewValue.toString();
 				}
 				return HMI.cshmi._setVarExecute(getVarObserver.VisualObject, getVarObserver.ObjectPath, NewValue);
-			}
+			};
 			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
@@ -2108,47 +2110,73 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath].useCount++;
 			//HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
-		var ConditionMatched = false;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
 		
 		//newwrite
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
-		var i = 0;
+		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+		IfThenElseObserver.triggerActivity = function(){
+			var ConditionMatched = null;
+			if(this.customInformation == true){
+				//logical OR
+				ConditionMatched = false;
+				
+				for (var i=0; i < this.ObserverEntryArray.length && ConditionMatched !== true; i++) {
+					var thisObserverEntry = this.ObserverEntryArray[i];
+					ConditionMatched = thisObserverEntry.value;
+				}
+			}else{
+				//logical AND
+				ConditionMatched = true;
+				
+				for (var i=0; i < this.ObserverEntryArray.length && ConditionMatched !== false; i++) {
+					var thisObserverEntry = this.ObserverEntryArray[i];
+					ConditionMatched = thisObserverEntry.value;
+				}
+			}
+			if (ConditionMatched === true){
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath+".then");
+				return true;
+			}else if (ConditionMatched === false){
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath+".else");
+				return true;
+			}else{
+				//this Action produced an error
+				return false;
+			}
+		};
+		
 		if (anyCond == "TRUE"){
-			//logical OR
-			while(i < responseArray.length && ConditionMatched !== true){
-				var varName = responseArray[i].split(" ");
-				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true);
-				}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false);
-				}
-				i++;
-			}
+			IfThenElseObserver.customInformation = true;
 		}else{
-			//logical AND
-			ConditionMatched = true;
-			while(i < responseArray.length && ConditionMatched !== false){
-				var varName = responseArray[i].split(" ");
-				if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true);
-				}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-					ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false);
-				}
-				i++;
-			}
-		}
-		if (ConditionMatched === true){
-			return this._interpreteAction(VisualObject, ObjectPath+".then");
-		}else if (ConditionMatched === false){
-			return this._interpreteAction(VisualObject, ObjectPath+".else");
-		}else{
-			//this Action produced an error
-			return false;
+			IfThenElseObserver.customInformation = false;
 		}
 		
-		return false;
+		var ConditionMatched;
+		for(var i = 0;i < responseArray.length;i++){
+			var varName = responseArray[i].split(" ");
+			var thisObserverEntry = new ObserverEntry(varName[0]);
+			IfThenElseObserver.ObserverEntryArray[i] = thisObserverEntry;
+			
+			if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver);
+			}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver);
+			}
+			if(ConditionMatched === undefined){
+				//the checkCondition is handled via a callback
+			}else{
+				thisObserverEntry.value = ConditionMatched;
+				thisObserverEntry.requirementsFulfilled = true;
+				var result = IfThenElseObserver.checkAndTrigger();
+				if (result === false){
+					//in an known error state, skip processing
+					break;
+				}
+			}
+		}
+		return true;
 	},
 	
 	/**
@@ -2156,9 +2184,9 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} CompareIteratedChild is the object a CompareIteratedChild?
-	 * @return {Boolean} true if condition matched, false if not matched, null on error
+	 * @return {Boolean} true if condition matched, false if not matched, null on error, undefined if callback is in charge
 	 */
-	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild){
+	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver){
 		if (CompareIteratedChild === true && this.ResourceList.ChildrenIterator.currentChild === undefined){
 			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
 			//error state, so no boolean
@@ -4701,6 +4729,71 @@ cshmi.prototype = {
 		return true;
 	}
 };
+
+/**
+ * Constructor for a generic observer for multiple tasks in cshmi
+ * @param {SVGElement} VisualObject Object to manipulate the visualisation
+ * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+ * @param length ammount of Activities to check
+ */
+function cshmiObserver(VisualObject, ObjectPath, length){
+	this.VisualObject = VisualObject;
+	this.ObjectPath = ObjectPath;
+	this.ObserverEntryArray = new Array(length);
+	
+	//could be changed if needed (fixme needed?)
+	this.ignoreErrors = false;
+	
+	//will be overwritten with a specific function
+	//should return false on error, true on success
+	this.triggerActivity = null;
+	
+	//useful for own information stuff
+	this.customInformation = null;
+}
+cshmiObserver.prototype = {
+		/**
+		 * Tests all entries if they are processed
+		 * @return {bool} true if ready
+		 */
+		checkIfReady: function(){
+			for (var i=0; i < this.ObserverEntryArray.length; i++) {
+				var thisObserverEntry = this.ObserverEntryArray[i];
+				
+				if(thisObserverEntry === undefined){
+					//not all checkConditions are build up till now, waiting for next call
+					return false;
+				}else if(thisObserverEntry.requirementsFulfilled === false){
+					//not all entries are ready till now, waiting for next call
+					return false;
+				}
+			}
+			
+			return true;
+		},
+		/**
+		 * Calls checkIfReady and calls triggerActivity on success
+		 * @return false on error (no triggerActivity defined), null if not ready
+		 */
+		checkAndTrigger: function(){
+			if(this.checkIfReady() === true){
+				if(this.triggerActivity !== null){
+					return this.triggerActivity();
+				}
+				return false;
+			}
+			return null;
+		}
+};
+/**
+ * Constructor for a generic ObserverEntry
+ * @param ObjectName
+ */
+function ObserverEntry(ObjectName){
+	this.requirementsFulfilled = false;
+	this.ObjectName = ObjectName;
+	this.value = null;
+}
 
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
