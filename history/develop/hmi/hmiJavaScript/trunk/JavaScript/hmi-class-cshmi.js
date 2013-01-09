@@ -831,10 +831,10 @@ cshmi.prototype = {
 	 * get a Value from multiple Sources
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param getVarObserver Object which hold info for the callback
+	 * @param callerObserver Object which hold info for the callback
 	 * @return false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
-	_getValue: function(VisualObject, ObjectPath, getVarObserver){
+	_getValue: function(VisualObject, ObjectPath, callerObserver){
 		var ParameterName;
 		var ParameterValue;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -901,27 +901,21 @@ cshmi.prototype = {
 		
 		if(this.initStage === true){
 			//force sync request in the init stage. The order of actions have to be fixed in the loading
-			getVarObserver = null;
+			callerObserver = null;
 		}else{
 			//after load, we can use async requests
 			
-			//the callback fills the getVarObserver with data and call the processActionIfReady()
+			//the callback fills the callerObserver with data and call the processActionIfReady()
 			var GetVarCbfnc = function(Client, req){
 				var response = req.responseText;
-				for(var i = 0; i < getVarObserver.getVarArray.length;i++){
-					var thisGetVarObj = getVarObserver.getVarArray[i];
-					if(ObjectPath === getVarObserver.ObjectPath+thisGetVarObj.delimiter+thisGetVarObj.GetObjectName){
-						//we found "our" callback
-						var responseArray = HMI.KSClient.splitKsResponse(response);
-						if (responseArray.length === 0){
-							thisGetVarObj.NewValue = false;
-						}else{
-							thisGetVarObj.NewValue = responseArray[0];
-						}
-						break;
-					}
+				var responseArray = HMI.KSClient.splitKsResponse(response);
+				if (responseArray.length === 0){
+					var newValue = false;
+				}else{
+					newValue = responseArray[0];
 				}
-				getVarObserver.processActionIfReady();
+				callerObserver.updateValueInArray(ObjectPath, newValue);
+				callerObserver.checkAndTrigger();
 			};
 		}
 		
@@ -934,7 +928,7 @@ cshmi.prototype = {
 				//we have no absolute path => get baseKsPath
 			}
 			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
-			if(getVarObserver !== undefined && getVarObserver !== null){
+			if(callerObserver !== undefined && callerObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 				return true;
 			}else{
@@ -1152,7 +1146,7 @@ cshmi.prototype = {
 			}
 			var path = FBRef+"."+ParameterValue;
 			
-			if(getVarObserver !== undefined && getVarObserver !== null){
+			if(callerObserver !== undefined && callerObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 				return true;
 			}else{
@@ -1176,7 +1170,7 @@ cshmi.prototype = {
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var path = TemplateObject.FBVariableReference[ParameterValue]
-						if(getVarObserver !== undefined && getVarObserver !== null){
+						if(callerObserver !== undefined && callerObserver !== null){
 							response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 							return true;
 						}else{
@@ -1223,38 +1217,46 @@ cshmi.prototype = {
 	_setValue: function(VisualObject, ObjectPath, GetType){
 		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList übergeben...?
 		
-		var getVarObserver = {"VisualObject":VisualObject, "ObjectPath":ObjectPath, "getVarArray":[], "processActionIfReady":null};
-		
 		//get Value to set
 		if (GetType === "static"){
-			var thisGetVarObj = {"delimiter":".", "GetObjectName":"value", "NewValue":undefined};
-			getVarObserver.getVarArray.push(thisGetVarObj);
-			getVarObserver.processActionIfReady = function(){
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1);
+			setValueObserver.triggerActivity = function(){
 				//in a static GetType we are ready in the first call by definition
-				var thisGetVarObj = getVarObserver.getVarArray[0];
-				if(thisGetVarObj.NewValue === false){
-					//getValue had an error
-					HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue.");
-					return false;
-				}else if(thisGetVarObj.NewValue === null){
-					//getValue had intentionally no value, abort
-					return true;
-				}else if(thisGetVarObj.NewValue === undefined){
-					//getValue gave no result, should not happen in static case
-					return false;
+				for (var i=0; i < this.ObserverEntryArray.length; i++) {
+					var thisObserverEntry = this.ObserverEntryArray[i];
+					if(thisObserverEntry.value === false){
+						//getValue had an error
+						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						return false;
+					}else if(thisObserverEntry.value === null){
+						//getValue had intentionally no value, abort
+						return true;
+					}else if(thisObserverEntry.value === undefined){
+						//getValue gave no result, should not happen in static case
+						return false;
+					}
+					var NewValue = thisObserverEntry.value;
 				}
-				return HMI.cshmi._setVarExecute(getVarObserver.VisualObject, getVarObserver.ObjectPath, thisGetVarObj.NewValue);
+				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				return true;
 			}
-			
+			var thisObserverEntry = new ObserverEntry("value", ".");
+			setValueObserver.ObserverEntryArray[0] = thisObserverEntry;
 			//via getValue-part of setValue object
-			var NewValue = this._getValue(VisualObject, ObjectPath+".value", getVarObserver);
+			var NewValue = this._getValue(VisualObject, ObjectPath+".value", setValueObserver);
 			
 			if(NewValue === true){
 				//the setVar is handled via a callback
 				return true;
 			}else{
-				getVarObserver.getVarArray[0].NewValue = NewValue;
-				return getVarObserver.processActionIfReady();
+				thisObserverEntry.requirementsFulfilled = true;
+				thisObserverEntry.value = NewValue;
+				var result = setValueObserver.checkAndTrigger();
+				if (result === false){
+					//in an known error state, skip processing
+					//break;
+				}
+				return true;
 			}
 		}else if (GetType === "concat"){
 			//via multiple getValues under the setValue object
@@ -1263,50 +1265,44 @@ cshmi.prototype = {
 			//newwrite
 			//fetch config from all childrens via this.ResourceList.ModellVariables.*
 			
-			getVarObserver.getVarArray = new Array(responseArray.length);
-			getVarObserver.processActionIfReady = function(){
-				for (var i=0; i < getVarObserver.getVarArray.length; i++) {
-					var thisGetVarObj = getVarObserver.getVarArray[i];
-					
-					if(thisGetVarObj === undefined){
-						//not all getValues are build up till now, waiting for next call
-						return null;
-					}else if(thisGetVarObj.NewValue === false){
-						//getValue had an error
-						HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue. Aborting.");
-						return false;
-					}else if(thisGetVarObj.NewValue === null){
-						//getValue had intentionally no value, abort
-						return false;
-					}else if(thisGetVarObj.NewValue === undefined){
-						//not all getValues are ready till now, waiting for next call
-						return null;
-					}
-				}
-				//the loop above proved that all getVars were called and were happy
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+			setValueObserver.triggerActivity = function(){
 				var NewValue = "";
-				for (var i=0; i < getVarObserver.getVarArray.length; i++) {
-					var thisGetVarObj = getVarObserver.getVarArray[i];
+				for (var i=0; i < this.ObserverEntryArray.length; i++) {
+					var thisObserverEntry = this.ObserverEntryArray[i];
+					if(thisObserverEntry.value === false){
+						//getValue had an error
+						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						return false;
+					}else if(thisObserverEntry.value === null){
+						//getValue had intentionally no value, abort
+						return true;
+					}else if(thisObserverEntry.value === undefined){
+						//getValue gave no result, should not happen in static case
+						return false;
+					}
 					//force string to clean append
-					NewValue = NewValue + thisGetVarObj.NewValue.toString();
+					var NewValue = NewValue + thisObserverEntry.value.toString();
 				}
-				return HMI.cshmi._setVarExecute(getVarObserver.VisualObject, getVarObserver.ObjectPath, NewValue);
-			};
+				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				return true;
+			}
 			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var thisGetVarObj = {"delimiter":"/", "GetObjectName":varName[0], "NewValue":undefined};
-					getVarObserver.getVarArray[i] = thisGetVarObj;
+					var thisObserverEntry = new ObserverEntry(varName[0], "/");
+					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], getVarObserver);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
 					}else{
-						thisGetVarObj.NewValue = NewValuePart;
-						var result = getVarObserver.processActionIfReady();
+						thisObserverEntry.requirementsFulfilled = true;
+						thisObserverEntry.value = NewValuePart;
+						var result = setValueObserver.checkAndTrigger();
 						if (result === false){
 							//in an known error state, skip processing
 							break;
@@ -1322,90 +1318,85 @@ cshmi.prototype = {
 			//newwrite
 			//fetch config from all childrens via this.ResourceList.ModellVariables.*
 			
-			
-			getVarObserver.getVarArray = new Array(responseArray.length);
-			getVarObserver.processActionIfReady = function(){
-				for (var i=0; i < getVarObserver.getVarArray.length; i++) {
-					var thisGetVarObj = getVarObserver.getVarArray[i];
-					
-					if(thisGetVarObj === undefined){
-						//not all getValues are build up till now, waiting for next call
-						return null;
-					}else if(thisGetVarObj.NewValue === false){
-						//getValue had an error
-						HMI.hmi_log_info("cshmi._setValue on "+getVarObserver.ObjectPath+" (baseobject: "+getVarObserver.VisualObject.id+") failed because of an error in getValue. Aborting.");
-						return false;
-					}else if(thisGetVarObj.NewValue === null){
-						//getValue had intentionally no value, abort
-						return false;
-					}else if(thisGetVarObj.NewValue === undefined){
-						//not all getValues are ready till now, waiting for next call
-						return null;
-					}else if(!isNumeric(thisGetVarObj.NewValue)){
-						//clear an non numeric entry
-						thisGetVarObj.NewValue = 0;
-					}
-				}
-				//the loop above proved that all getVars were called and were happy
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+			setValueObserver.triggerActivity = function(){
 				var NewValue = 0;
-				for (var i=0; i < getVarObserver.getVarArray.length; i++) {
-					var thisGetVarObj = getVarObserver.getVarArray[i];
-					var NewValuePart = thisGetVarObj.NewValue;
+				for (var i=0; i < this.ObserverEntryArray.length; i++) {
+					var thisObserverEntry = this.ObserverEntryArray[i];
+					if(thisObserverEntry.value === false){
+						//getValue had an error
+						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						return false;
+					}else if(thisObserverEntry.value === null){
+						//getValue had intentionally no value, abort
+						return true;
+					}else if(thisObserverEntry.value === undefined){
+						//getValue gave no result, should not happen in static case
+						return false;
+					}else if(!isNumeric(thisObserverEntry.value)){
+						//clear an non numeric entry
+						thisObserverEntry.value = 0;
+					}
+					var NewValuePart = thisObserverEntry.value;
 					
-					if (thisGetVarObj.GetObjectName.indexOf("add") === 0){
+					if (thisObserverEntry.ObjectName.indexOf("add") === 0){
 						NewValue = NewValue + parseFloat(NewValuePart);
-					}else if (thisGetVarObj.GetObjectName.indexOf("sub") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("sub") === 0){
 						NewValue = NewValue - parseFloat(NewValuePart);
-					}else if (thisGetVarObj.GetObjectName.indexOf("mul") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("mul") === 0){
 						NewValue = NewValue * parseFloat(NewValuePart);
-					}else if (thisGetVarObj.GetObjectName.indexOf("div") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("div") === 0){
 						NewValue = NewValue / parseFloat(NewValuePart);
-					}else if (thisGetVarObj.GetObjectName.indexOf("abs") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("abs") === 0){
 						NewValue = NewValue + Math.abs(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("acos") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("acos") === 0){
 						NewValue = NewValue + Math.acos(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("asin") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("asin") === 0){
 						NewValue = NewValue + Math.asin(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("atan") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("atan") === 0){
 						NewValue = NewValue + Math.atan(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("cos") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("cos") === 0){
 						NewValue = NewValue + Math.cos(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("exp") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("exp") === 0){
 						NewValue = NewValue + Math.exp(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("log") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("log") === 0){
 						NewValue = NewValue + Math.log(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("sin") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("sin") === 0){
 						NewValue = NewValue + Math.sin(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("sqrt") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("sqrt") === 0){
 						NewValue = NewValue + Math.sqrt(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("tan") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("tan") === 0){
 						NewValue = NewValue + Math.tan(parseFloat(NewValuePart));
-					}else if (thisGetVarObj.GetObjectName.indexOf("pow") === 0){
+					}else if (thisObserverEntry.ObjectName.indexOf("pow") === 0){
 						NewValue = Math.pow(NewValue, parseFloat(NewValuePart));
 					}
+					
 					if (!isFinite(NewValue)){
 						NewValue = 0;
 					}
 				}
 				//force string format
 				NewValue = NewValue.toString();
-				return HMI.cshmi._setVarExecute(getVarObserver.VisualObject, getVarObserver.ObjectPath, NewValue);
+				
+				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				return true;
 			}
 			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
 				if (varName[1].indexOf("/cshmi/GetValue") !== -1){
-					var thisGetVarObj = {"delimiter":"/", "GetObjectName":varName[0], "NewValue":undefined};
-					getVarObserver.getVarArray[i] = thisGetVarObj;
+					var thisObserverEntry = new ObserverEntry(varName[0], "/");
+					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], getVarObserver);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
 					}else{
-						thisGetVarObj.NewValue = NewValuePart;
-						var result = getVarObserver.processActionIfReady();
+						thisObserverEntry.requirementsFulfilled = true;
+						thisObserverEntry.value = NewValuePart;
+						var result = setValueObserver.checkAndTrigger();
 						if (result === false){
 							//in an known error state, skip processing
 							break;
@@ -4783,14 +4774,34 @@ cshmiObserver.prototype = {
 				return false;
 			}
 			return null;
+		},
+		/**
+		 * searches right place in the array, saves the value and marks this entry as complete
+		 */
+		updateValueInArray: function(ObjectPath, value){
+			for(var i = 0; i < this.ObserverEntryArray.length;i++){
+				var thisObserverEntry = this.ObserverEntryArray[i];
+				if(ObjectPath === this.ObjectPath+thisObserverEntry.delimiter+thisObserverEntry.ObjectName){
+					//we found "our" callback
+					thisObserverEntry.requirementsFulfilled = true;
+					thisObserverEntry.value = value;
+					break;
+				}
+			}
+
 		}
 };
 /**
  * Constructor for a generic ObserverEntry
  * @param ObjectName
  */
-function ObserverEntry(ObjectName){
+function ObserverEntry(ObjectName, delimiter){
 	this.requirementsFulfilled = false;
+	if(delimiter === undefined){
+		this.delimiter = "/";
+	}else{
+		this.delimiter = delimiter;
+	}
 	this.ObjectName = ObjectName;
 	this.value = null;
 }
