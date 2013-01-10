@@ -501,6 +501,7 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "rightclick"){
+			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorRightclickClass);
 			VisualObject.setAttribute("data-rightclickpath", ObjectPath);
 			VisualObject.addEventListener("contextmenu", function(evt){
@@ -905,7 +906,7 @@ cshmi.prototype = {
 		}else{
 			//after load, we can use async requests
 			
-			//the callback fills the callerObserver with data and call the processActionIfReady()
+			//the callback fills the callerObserver with data and call the checkAndTrigger()
 			var GetVarCbfnc = function(Client, req){
 				var response = req.responseText;
 				var responseArray = HMI.KSClient.splitKsResponse(response);
@@ -1310,7 +1311,7 @@ cshmi.prototype = {
 					}
 				}
 			}
-			return result;
+			return true;
 		}else if (GetType === "math"){
 			//via multiple getValues under the setValue object
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
@@ -1404,7 +1405,7 @@ cshmi.prototype = {
 					}
 				}
 			}
-			return result;
+			return true;
 		}else{
 			//setValue type not recognised!
 			return false;
@@ -1806,7 +1807,7 @@ cshmi.prototype = {
 				var response = req.responseText;
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Operation not allowed.');
-				}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+				}else if (response.indexOf("KS_ERR_ALREADYEXISTS") !== -1){
 					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Object already exists.');
 				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Could be a problem with the class name or the target domain.');
@@ -1900,7 +1901,7 @@ cshmi.prototype = {
 				var response = req.responseText;
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
-				}else if (response.indexOf("OV_ERR_ALREADYEXISTS") !== -1){
+				}else if (response.indexOf("KS_ERR_ALREADYEXISTS") !== -1){
 					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Link already exists.');
 				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
 					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Object not found.');
@@ -2147,7 +2148,7 @@ cshmi.prototype = {
 		var ConditionMatched;
 		for(var i = 0;i < responseArray.length;i++){
 			var varName = responseArray[i].split(" ");
-			var thisObserverEntry = new ObserverEntry(varName[0]);
+			var thisObserverEntry = new ObserverEntry(varName[0], ".if/");
 			IfThenElseObserver.ObserverEntryArray[i] = thisObserverEntry;
 			
 			if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
@@ -2209,6 +2210,14 @@ cshmi.prototype = {
 		var childValue;
 		var Value1;
 		var Value2;
+		
+		var checkConditionObserver = new cshmiObserver(VisualObject, ObjectPath, 2);
+		checkConditionObserver.triggerActivity = function(){
+			HMI.cshmi._checkConditionResult(this.VisualObject, this.ObjectPath, IfThenElseObserver, checkConditionObserver);
+		}
+		checkConditionObserver.customInformation = {"ignoreError":ignoreError, "comptype":comptype};
+		
+		var thisObserverEntry;
 		if (CompareIteratedChild === true){
 			childValue = HMI.KSClient.splitKsResponse(requestList[ObjectPath]["childValue"], 0);
 			
@@ -2217,37 +2226,108 @@ cshmi.prototype = {
 				//error state, so no boolean
 				return null;
 			}
+			thisObserverEntry = new ObserverEntry("currentChild");
+			//this is know right know, so fill it direct
+			thisObserverEntry.value = this.ResourceList.ChildrenIterator.currentChild[childValue[0]];
+			thisObserverEntry.requirementsFulfilled = true;
+			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
 			
-			Value1 = this.ResourceList.ChildrenIterator.currentChild[childValue[0]];
-			Value2 = this._getValue(VisualObject, ObjectPath+".withValue");
+			thisObserverEntry = new ObserverEntry("withValue", ".");
+			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
+			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver);
+			if(Value2 === true){
+				//the setVar is handled via a callback
+				return true;
+			}else{
+				thisObserverEntry.requirementsFulfilled = true;
+				thisObserverEntry.value = Value2;
+				var result = checkConditionObserver.checkAndTrigger();
+				if (result === false){
+					//in an known error state, skip processing
+					//break;
+				}
+			}
 		}else{
-			Value1 = this._getValue(VisualObject, ObjectPath+".value1");
-			Value2 = this._getValue(VisualObject, ObjectPath+".value2");
+			thisObserverEntry = new ObserverEntry("value1", ".");
+			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
+			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver);
+			if(Value1 === true){
+				//the setVar is handled via a callback
+			}else{
+				thisObserverEntry.requirementsFulfilled = true;
+				thisObserverEntry.value = Value1;
+				var result = checkConditionObserver.checkAndTrigger();
+				if (result === false){
+					//in an known error state, skip processing
+					//break;
+				}
+			}
+			thisObserverEntry = new ObserverEntry("value2", ".");
+			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
+			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver);
+			if(Value2 === true){
+				//the setVar is handled via a callback
+			}else{
+				thisObserverEntry.requirementsFulfilled = true;
+				thisObserverEntry.value = Value2;
+				var result = checkConditionObserver.checkAndTrigger();
+				if (result === false){
+					//in an known error state, skip processing
+					//break;
+				}
+			}
 		}
 		//feeding garbage collector early
 		requestList = null;
 		
+		return;
+	},
+	
+	/**
+	 * callback function for comparing two values from the condition
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {cshmiObserver} IfThenElseObserver Observer to save the result from the compare
+	 * @param {cshmiObserver} checkConditionObserver Observer which holds the value
+	 */
+	_checkConditionResult: function(VisualObject, ObjectPath, IfThenElseObserver, checkConditionObserver){
+		var ignoreError = checkConditionObserver.customInformation.ignoreError;
+		var comptype = checkConditionObserver.customInformation.comptype;
+		
+		var Value1 = checkConditionObserver.ObserverEntryArray[0].value;
+		var Value2 = checkConditionObserver.ObserverEntryArray[1].value;
+		
 		if (Value1 === null && ignoreError === "FALSE"){
 			//intentionally no value, abort
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (Value1 === false && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value1 had an error.");
 			//error state, so no boolean
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if ((Value1 === false || Value1 === null) && ignoreError === "TRUE"){
 			Value1 = "";
 		}
 		if (Value2 === null){
 			//intentionally no value, abort
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}
 		if (Value2 === null && ignoreError === "FALSE"){
 			//getValue had intentionally no value, abort
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (Value2 === false && ignoreError === "FALSE"){
 			HMI.hmi_log_info("cshmi._checkCondition on "+ObjectPath+" (baseobject: "+VisualObject.id+") failed because Value2 had an error.");
 			//error state, so no boolean
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (Value2 === false && ignoreError === "TRUE"){
 			Value2 = "";
 		}
@@ -2272,50 +2352,74 @@ cshmi.prototype = {
 		if (comptype === "<"){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 < Value2[i])){
-					return false;
+					IfThenElseObserver.updateValueInArray(ObjectPath, false);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
 			return true;
 		}else if (comptype === "<="){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 <= Value2[i])){
-					return false;
+					IfThenElseObserver.updateValueInArray(ObjectPath, false);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
-			return true;
+			IfThenElseObserver.updateValueInArray(ObjectPath, true);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (comptype === "=="){
 			//check if one entry of Value2 == Value1
 			for (var i=0; i<Value2.length; i++){
 				if (Value1 === Value2[i]){
-					return true;
+					IfThenElseObserver.updateValueInArray(ObjectPath, true);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
-			return false;
+			IfThenElseObserver.updateValueInArray(ObjectPath, false);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (comptype === "!="){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 !== Value2[i])){
-					return false;
+					IfThenElseObserver.updateValueInArray(ObjectPath, false);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
-			return true;
+			IfThenElseObserver.updateValueInArray(ObjectPath, true);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (comptype === ">="){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 >= Value2[i])){
-					return false;
+					IfThenElseObserver.updateValueInArray(ObjectPath, false);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
-			return true;
+			IfThenElseObserver.updateValueInArray(ObjectPath, true);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (comptype === ">"){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 > Value2[i])){
-					return false;
+					IfThenElseObserver.updateValueInArray(ObjectPath, false);
+					IfThenElseObserver.checkAndTrigger();
+					return;
 				}
 			}
-			return true;
+			IfThenElseObserver.updateValueInArray(ObjectPath, true);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else{
 			HMI.hmi_log_error("cshmi._checkCondition Comparingtype "+comptype+" unknown");
 			//error state, so no boolean
-			return null;
+			IfThenElseObserver.updateValueInArray(ObjectPath, null);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}
 	},
 	
@@ -4777,6 +4881,8 @@ cshmiObserver.prototype = {
 		},
 		/**
 		 * searches right place in the array, saves the value and marks this entry as complete
+		 * @param {String} ObjectPath full path to the active Activity
+		 * @param {String} value to set
 		 */
 		updateValueInArray: function(ObjectPath, value){
 			for(var i = 0; i < this.ObserverEntryArray.length;i++){
@@ -4788,7 +4894,7 @@ cshmiObserver.prototype = {
 					break;
 				}
 			}
-
+			return true;
 		}
 };
 /**
