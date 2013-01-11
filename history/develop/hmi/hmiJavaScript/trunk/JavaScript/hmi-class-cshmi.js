@@ -127,7 +127,9 @@ JavaScript:
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verfügbar!
 
-- Alle xmlhttprequests sollten async sein (bessere performance bei den meisten browsern)
+- Nach dem Laden (nur gebrauchter Objecte), sollte ein Hintergrund thread die restliche Config nachladen
+- Auch das laden sollte asyncrone requests nutzen. 
+	Dafür muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
 - Nur einige wenige cycTimes (enum like?) erlauben
 - ks befehle konsolidieren bei zyklischer abarbeitung
 #########################################################################################################################*/
@@ -568,22 +570,22 @@ cshmi.prototype = {
 			//addEventListener only provides the event object
 			VisualObject._moveStartDragThunk = function(evt){
 				HMI.cshmi._moveStartDrag(VisualObject, ObjectPath, evt);
-			}
+			};
 			VisualObject._moveMouseMoveThunk = function(evt){
 				HMI.cshmi._moveMouseMove(VisualObject, ObjectPath, evt);
-			}
+			};
 			VisualObject._moveStopDragThunk = function(evt){
 				//stop with interpreting the actions
 				HMI.cshmi._moveStopDrag(VisualObject, ObjectPath, evt, false);
-			}
+			};
 			VisualObject._moveCancelDragThunk = function(evt){
 				//stop without interpreting the actions
 				HMI.cshmi._moveStopDrag(VisualObject, ObjectPath, evt, true);
-			}
+			};
 			VisualObject._moveHandleClickThunk = function(evt){
 				//stop the propagation
 				HMI.cshmi._moveHandleClick(VisualObject, ObjectPath, evt, true);
-			}
+			};
 			
 			//todo: try to implement via HTML5 drag&drop
 			//todo: http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
@@ -609,7 +611,7 @@ cshmi.prototype = {
 	 * prepares the drag and drop handling via mousemove etc
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {DOM Event} evt event object
+	 * @param {DOMEvent} evt event object
 	 * @return nothing
 	 */
 	_moveStartDrag : function(VisualObject, ObjectPath, evt){
@@ -660,7 +662,7 @@ cshmi.prototype = {
 	 * stops propagation of event
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {DOM Event} evt event object
+	 * @param {DOMEvent} evt event object
 	 * @return nothing
 	 */
 	_moveHandleClick : function(VisualObject, ObjectPath, evt){
@@ -675,7 +677,7 @@ cshmi.prototype = {
 	 * handles the movement during a drag
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {DOM Event} evt event object
+	 * @param {DOMEvent} evt event object
 	 * @return nothing
 	 */
 	_moveMouseMove : function(VisualObject, ObjectPath, evt){
@@ -709,7 +711,7 @@ cshmi.prototype = {
 	 * stops the drag and call needed actions
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {DOM Event} evt event object
+	 * @param {DOMEvent} evt event object
 	 * @return nothing
 	 */
 	_moveStopDrag : function(VisualObject, ObjectPath, evt, canceled){
@@ -833,11 +835,11 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param callerObserver Object which hold info for the callback
-	 * @return false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
+	 * @return {bool} false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
 	_getValue: function(VisualObject, ObjectPath, callerObserver){
-		var ParameterName;
-		var ParameterValue;
+		var ParameterName = "";
+		var ParameterValue = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var requestList = new Object();
@@ -903,11 +905,12 @@ cshmi.prototype = {
 		if(this.initStage === true){
 			//force sync request in the init stage. The order of actions have to be fixed in the loading
 			callerObserver = null;
+			var GetVarCbfnc = null;
 		}else{
 			//after load, we can use async requests
 			
 			//the callback fills the callerObserver with data and call the checkAndTrigger()
-			var GetVarCbfnc = function(Client, req){
+			GetVarCbfnc = function(Client, req){
 				var response = req.responseText;
 				var responseArray = HMI.KSClient.splitKsResponse(response);
 				if (responseArray.length === 0){
@@ -1034,7 +1037,7 @@ cshmi.prototype = {
 						}
 					}
 					return true;
-				}
+				};
 				
 				//search maximum parent from the same template
 				while(SiblingObj.parentNode !== null){
@@ -1086,7 +1089,7 @@ cshmi.prototype = {
 						this.ResourceList.Actions["tempPath"] = new Object();
 						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
 						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
-						var defaultValue = this._getValue(VisualObject, "tempPath")
+						var defaultValue = this._getValue(VisualObject, "tempPath");
 						if (defaultValue !== false && defaultValue !== null){
 							input = window.prompt(textinputHint, defaultValue);
 						}else{
@@ -1170,7 +1173,7 @@ cshmi.prototype = {
 					//a FBVariableReferenceName was requested
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						var path = TemplateObject.FBVariableReference[ParameterValue]
+						var path = TemplateObject.FBVariableReference[ParameterValue];
 						if(callerObserver !== undefined && callerObserver !== null){
 							response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 							return true;
@@ -1223,6 +1226,7 @@ cshmi.prototype = {
 			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1);
 			setValueObserver.triggerActivity = function(){
 				//in a static GetType we are ready in the first call by definition
+				var NewValue = "";
 				for (var i=0; i < this.ObserverEntryArray.length; i++) {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
@@ -1236,11 +1240,11 @@ cshmi.prototype = {
 						//getValue gave no result, should not happen in static case
 						return false;
 					}
-					var NewValue = thisObserverEntry.value;
+					NewValue = thisObserverEntry.value;
 				}
 				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
-			}
+			};
 			var thisObserverEntry = new ObserverEntry("value", ".");
 			setValueObserver.ObserverEntryArray[0] = thisObserverEntry;
 			//via getValue-part of setValue object
@@ -1283,11 +1287,11 @@ cshmi.prototype = {
 						return false;
 					}
 					//force string to clean append
-					var NewValue = NewValue + thisObserverEntry.value.toString();
+					NewValue = NewValue + thisObserverEntry.value.toString();
 				}
 				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
-			}
+			};
 			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
@@ -1381,7 +1385,7 @@ cshmi.prototype = {
 				
 				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
-			}
+			};
 			
 			for (var i=0; i < responseArray.length; i++) {
 				var varName = responseArray[i].split(" ");
@@ -1544,7 +1548,7 @@ cshmi.prototype = {
 					var rotationObject = VisualObject.parentNode;
 				}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
 					//element has to be shifted into an g element
-					var rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+					rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 					rotationObject.setAttribute("overflow", "visible");
 					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
 					rotationObject.appendChild(VisualObject);
@@ -1564,7 +1568,7 @@ cshmi.prototype = {
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
 					//if we are after an move, we want to set a different x
-					var relativeX = this.ResourceList.EventInfos.mouseRelativePosition[0];
+					relativeX = this.ResourceList.EventInfos.mouseRelativePosition[0];
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutex is calculated from the offset of the parentNode
@@ -1580,7 +1584,7 @@ cshmi.prototype = {
 				var relativeY = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
 					//if we are after an move, we want to set a different y
-					var relativeY = this.ResourceList.EventInfos.mouseRelativePosition[1];
+					relativeY = this.ResourceList.EventInfos.mouseRelativePosition[1];
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutey is calculated from the offset of the parentNode
@@ -1633,7 +1637,7 @@ cshmi.prototype = {
 					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
 				}else{
 					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-					i++
+					i++;
 				}
 			}
 			return true;
@@ -1652,7 +1656,7 @@ cshmi.prototype = {
 					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
 				}else{
 					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
-					i++
+					i++;
 				}
 			}
 			return true;
@@ -2040,7 +2044,7 @@ cshmi.prototype = {
 				TemplateObject = VisualObject.VisualParentObject;
 			}else{
 				//VisualObject is not in DOM and no Template. make the do-while abbort quick
-				var TemplateObject = VisualObject;
+				TemplateObject = VisualObject;
 			}
 			
 			do{
@@ -2214,7 +2218,7 @@ cshmi.prototype = {
 		var checkConditionObserver = new cshmiObserver(VisualObject, ObjectPath, 2);
 		checkConditionObserver.triggerActivity = function(){
 			HMI.cshmi._checkConditionResult(this.VisualObject, this.ObjectPath, IfThenElseObserver, checkConditionObserver);
-		}
+		};
 		checkConditionObserver.customInformation = {"ignoreError":ignoreError, "comptype":comptype};
 		
 		var thisObserverEntry;
@@ -3160,7 +3164,7 @@ cshmi.prototype = {
 		//find references to the old VisualObject in cshmiOriginalOrderList of the VisualParentObject and change to new
 		if(VisualParentObject !== null && VisualParentObject.cshmiOriginalOrderList !== undefined){
 			//place the new object to the same order position as the old object
-			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")]
+			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")];
 			for (var i; OrderArray !== undefined && i < OrderArray.length;) {
 				if (OrderArray[i] === VisualObject){
 					//we found an old entry, change to new
@@ -3370,7 +3374,6 @@ cshmi.prototype = {
 		//FBReference
 		
 		var FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
-		var FBReferenceEntry = null;
 		for (var i=0; i < FBReferenceList.length; i++) {
 			if (i > 1){
 				HMI.hmi_log_info_onwebsite("Only one FBReference is valid. "+ObjectPath+" has more of them.");
@@ -4072,6 +4075,7 @@ cshmi.prototype = {
 		//dominant-baseline:hanging not supported by Opera (v12) and IE9
 		//baseline-shift:-100% only defined on a tspan, not on text (respected by Opera), not supported by IE9
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
+			//no change needed
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
 			VisualObject.setAttribute("dy", "0.7ex");
 		}else if (requestList[ObjectPath]["verAlignment"] == "hanging"){
@@ -4370,7 +4374,7 @@ cshmi.prototype = {
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		
 		if (PredefinedVisualObject !== null && PredefinedVisualObject.parentNode !== null){
-			PredefinedVisualObject.parentNode.replaceChild(VisualObject, PredefinedVisualObject)
+			PredefinedVisualObject.parentNode.replaceChild(VisualObject, PredefinedVisualObject);
 		}
 		
 		return VisualObject;
@@ -4835,9 +4839,6 @@ function cshmiObserver(VisualObject, ObjectPath, length){
 	this.VisualObject = VisualObject;
 	this.ObjectPath = ObjectPath;
 	this.ObserverEntryArray = new Array(length);
-	
-	//could be changed if needed (fixme needed?)
-	this.ignoreErrors = false;
 	
 	//will be overwritten with a specific function
 	//should return false on error, true on success
