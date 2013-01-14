@@ -297,7 +297,6 @@ cshmi.prototype = {
 		}
 		
 		//get and prepare Children in an recursive call
-		
 		if (VisualObject !== null){
 			//remember the ObjectType on every object (needed for reloading via action)
 			VisualObject.setAttribute("data-ObjectType", ObjectType);
@@ -588,7 +587,7 @@ cshmi.prototype = {
 			};
 			
 			//todo: try to implement via HTML5 drag&drop
-			//todo: http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
+			//http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
@@ -1223,7 +1222,7 @@ cshmi.prototype = {
 		
 		//get Value to set
 		if (GetType === "static"){
-			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1);
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1, this);
 			setValueObserver.triggerActivity = function(){
 				//in a static GetType we are ready in the first call by definition
 				var NewValue = "";
@@ -1242,7 +1241,7 @@ cshmi.prototype = {
 					}
 					NewValue = thisObserverEntry.value;
 				}
-				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
 			};
 			var thisObserverEntry = new ObserverEntry("value", ".");
@@ -1270,7 +1269,7 @@ cshmi.prototype = {
 			//newwrite
 			//fetch config from all childrens via this.ResourceList.ModellVariables.*
 			
-			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 			setValueObserver.triggerActivity = function(){
 				var NewValue = "";
 				for (var i=0; i < this.ObserverEntryArray.length; i++) {
@@ -1289,7 +1288,7 @@ cshmi.prototype = {
 					//force string to clean append
 					NewValue = NewValue + thisObserverEntry.value.toString();
 				}
-				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
 			};
 			
@@ -1323,7 +1322,7 @@ cshmi.prototype = {
 			//newwrite
 			//fetch config from all childrens via this.ResourceList.ModellVariables.*
 			
-			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 			setValueObserver.triggerActivity = function(){
 				var NewValue = 0;
 				for (var i=0; i < this.ObserverEntryArray.length; i++) {
@@ -1383,7 +1382,7 @@ cshmi.prototype = {
 				//force string format
 				NewValue = NewValue.toString();
 				
-				HMI.cshmi._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
 				return true;
 			};
 			
@@ -2111,7 +2110,7 @@ cshmi.prototype = {
 		//newwrite
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
-		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length);
+		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
 			if(this.customInformation == true){
@@ -2132,10 +2131,10 @@ cshmi.prototype = {
 				}
 			}
 			if (ConditionMatched === true){
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath+".then");
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".then");
 				return true;
 			}else if (ConditionMatched === false){
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath+".else");
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".else");
 				return true;
 			}else{
 				//this Action produced an error
@@ -2215,9 +2214,9 @@ cshmi.prototype = {
 		var Value1;
 		var Value2;
 		
-		var checkConditionObserver = new cshmiObserver(VisualObject, ObjectPath, 2);
+		var checkConditionObserver = new cshmiObserver(VisualObject, ObjectPath, 2, this);
 		checkConditionObserver.triggerActivity = function(){
-			HMI.cshmi._checkConditionResult(this.VisualObject, this.ObjectPath, IfThenElseObserver, checkConditionObserver);
+			this.cshmiObject._checkConditionResult(this.VisualObject, this.ObjectPath, IfThenElseObserver, checkConditionObserver);
 		};
 		checkConditionObserver.customInformation = {"ignoreError":ignoreError, "comptype":comptype};
 		
@@ -3226,6 +3225,11 @@ cshmi.prototype = {
 		}
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
 		if (VisualObject !== null){
+			//special handling for invisible objects
+			if (VisualObject.getAttribute("display") === "none"){
+				HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
+			}
+			
 			VisualParentObject.appendChild(VisualObject);
 			//calculate all offset parameter to be able to display visual feedback
 			//needed now, because we append new components
@@ -4835,9 +4839,10 @@ cshmi.prototype = {
  * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
  * @param length ammount of Activities to check
  */
-function cshmiObserver(VisualObject, ObjectPath, length){
+function cshmiObserver(VisualObject, ObjectPath, length, cshmiObject){
 	this.VisualObject = VisualObject;
 	this.ObjectPath = ObjectPath;
+	this.cshmiObject = cshmiObject;
 	this.ObserverEntryArray = new Array(length);
 	
 	//will be overwritten with a specific function
