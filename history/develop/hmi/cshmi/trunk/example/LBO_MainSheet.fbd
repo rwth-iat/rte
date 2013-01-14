@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2012-11-21 16:44:02
+  Erstellt : 2013-01-14 14:56:37
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -616,7 +616,7 @@
         y : INPUT  SINGLE = 340.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y081/Y081"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE"};
+        ConfigValues[4] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE" , "FPVisibility:FALSE"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -636,7 +636,7 @@
         y : INPUT  SINGLE = 530.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU11/Y080/Y080"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE"};
+        ConfigValues[4] : INPUT  STRING = {"FaceplateXPos:-60" , "FaceplateYPos:-150" , "fixedFaceplatePosition:TRUE" , "FPVisibility:FALSE"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -714,7 +714,7 @@
         y : INPUT  SINGLE = 880.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y064/Y064"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-100" , "fixedFaceplatePosition:TRUE"};
+        ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:60" , "FaceplateYPos:-100" , "fixedFaceplatePosition:TRUE"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -812,7 +812,7 @@
         y : INPUT  SINGLE = 610.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU10/Y063/Y063"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[4] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:80" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE"};
+        ConfigValues[5] : INPUT  STRING = {"rotate:90" , "FaceplateXPos:60" , "FaceplateYPos:-30" , "fixedFaceplatePosition:TRUE" , "LockCmdButton:TRUE"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
