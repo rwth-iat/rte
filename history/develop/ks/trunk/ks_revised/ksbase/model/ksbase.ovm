@@ -1,0 +1,165 @@
+#include "ov.ovm"
+
+LIBRARY ksbase
+	VERSION   = "V0.1 (15-01-2013)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent off protocols and transport bindings.";
+	
+	////////////////// Scheduling / Tasking components
+
+	CLASS RootComTask : CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "root communication task - cycling all connected tasks. ";
+		VARIABLES
+			cycsecs	: INT HAS_ACCESSORS  COMMENT="seconds for scheduler registration. Please note that we do not calculate the amount of time spent - root task just pauses for this time intervall. If communications need too long there will be a jitter in other timings." INITIALVALUE=0;
+			cycusecs: INT HAS_ACCESSORS  COMMENT="usecs for scheduler registration" INITIALVALUE=1000;
+		END_VARIABLES;
+		OPERATIONS
+			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
+			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
+			//execute     : C_FUNCTION <FNC_EXECUTE>; //gets called by scheduler and iterates over childs of ComTaskList
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS ComTask : CLASS ov/domain
+		COMMENT = "communication task baseclass - get called typemethod every $cycInterval by root task. Functionality is implemented by derived classes";
+		VARIABLES
+			actimode: INT HAS_ACCESSORS  COMMENT="0=NonActive, 1=Active" INITIALVALUE=1;
+			cycIntervalCount	: INT HAS_GET_ACCESSOR COMMENT="current wait cycles until next execution" INITIALVALUE=5;
+			cycInterval		: INT HAS_ACCESSORS COMMENT="execution intervall of cycles of RootTasks" INITIALVALUE=5;
+			NextExecTime	:	TIME COMMENT="time of next execution (if cycInterval !=0)";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; //creates assoc to roottask
+			destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;  //deletes assoc to roottask
+			calcExec    : C_FUNCTION <KSBASE_FNC_CALCEXEC>;       //provides bool if typemethod need to be called. decreases cyc
+								      //would be nice to do this check locally by overloading typemethod, by....
+			typemethod  : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;     //gets called by roottask and should be implemented 
+		END_OPERATIONS;
+	END_CLASS;
+
+
+
+///////////////////// Accessing currently calling client components
+/* 
+ * Hopefully some of these information is applicable to all clients
+ * this is an interface class, which is inherited e.g. by xdrClientlientHandler and httpClientHandler
+ * user applications could cast to this class and access information for 
+ * determining the currently calling client
+*/ 
+
+	CLASS ClientHandler : CLASS ksbase/ComTask
+		COMMENT = "General clienthandler";
+	 	VARIABLES
+			sourceAdr : 	STRING HAS_GET_ACCESSOR COMMENT="Source adr of client (e.g. IP)";
+			ovticket : 	STRING HAS_GET_ACCESSOR COMMENT="Ticket - ONLY set during call from client - thus invisible!";
+			receivedCalls : INT HAS_GET_ACCESSOR COMMENT="Number of received calls from this client"; 
+		END_VARIABLES;
+	END_CLASS;
+
+/**
+ *	Representative for a server. These objects are used by the manager to save the data for all servers on the specific machine.	
+*/
+
+	CLASS	ServerRep			:	CLASS	ksbase/ComTask //ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"object to save connected server";
+		VARIABLES
+			/* server data *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"list of protocols a server can handle";	
+			port []						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"list of addresses / ports corresponding to the protocols. List has to be of same length as protocols[]";
+			timetolive				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time in which server has to do callback"
+				INITIALVALUE	=	0;
+			expirationtime			:	TIME		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time at which server has to do callback";
+			/* internals ***************************************************/
+			regtime					:	TIME											FLAGS =	"i"
+				COMMENT			=	"time the server registered at the manager";
+			state						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactiv"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod 		: 	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+/**
+ * Manager Class. Contains operations to handle servers.
+ */
+
+	CLASS	Manager				:	CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT	=	"Manager. Provides operations for handling servers (register, unregister, getserverdata).";
+		OPERATIONS
+			register		:	C_FUNCTION <KSBASE_FNC_REGISTER>;
+			unregister		:	C_FUNCTION <KSBASE_FNC_UNREGISTER>;
+			getserverdata	:	C_FUNCTION <KSBASE_FNC_GETSERVERDATA>;	
+		END_OPERATIONS;
+	END_CLASS;	
+
+
+/**
+ *	Baseclass for protocol-identificators. Each library supporting a specific protocol needs to derive one identificator from this in oder to determine the protocol used with a channel.
+ */
+ 
+	CLASS	ProtocolIdentificator				:	CLASS ov/domain
+		COMMENT	=	"Baseclass for Protocol-Identificators. Provides an identify operation. This operation scans a chunk of bytes if the data contained matches a specific protocol.";
+		OPERATIONS
+			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;	
+		END_OPERATIONS;
+	END_CLASS;	
+
+/**
+ *Baseclass for channels.
+ */
+ 
+ 
+	 CLASS	Channel					:	CLASS	ksbase/ComTask
+		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
+		VARIABLES
+			constate :	INT	HAS_ACCESSORS 
+				COMMENT	=	"state of channel"
+				INITIALVALUE	=	0;
+			address	:	STRING	
+				COMMENT	=	"Address to communicate with"
+				INITIALVALUE	=	"";
+			outBuffer	:	STRING	
+				COMMENT	=	"data to be sent"
+				INITIALVALUE	=	"";
+			outLength	:	INT	
+				COMMENT	=	"length of data to be sent"
+				INITIALVALUE	=	0;
+			inBuffer	:	STRING	
+				COMMENT	=	"data received"
+				INITIALVALUE	=	"";
+			inLength	:	INT
+				COMMENT	=	"length of received data"
+				INITIALVALUE	=	0;
+			END_VARIABLES;	
+		OPERATIONS
+			//real sending of data
+			SendData	:	C_FUNCTION <KSBASE_FNC_SENDDATA>;
+		END_OPERATIONS;
+	END_CLASS;
+ 
+///////////////Assocs
+
+/* 
+ * This is the Association, which connects the RootComTask to the real ComTasks
+ */
+	ASSOCIATION AssocComTaskList : ONE_TO_MANY
+		PARENT rootcomtask : CLASS ksbase/RootComTask;
+		CHILD  comtaskchild  : CLASS ksbase/ComTask;
+	END_ASSOCIATION;
+	
+END_LIBRARY;

@@ -1,0 +1,6 @@
+#ifndef ksbase_OVT_INCLUDED
+#define ksbase_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/

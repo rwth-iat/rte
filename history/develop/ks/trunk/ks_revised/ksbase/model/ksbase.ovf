@@ -1,0 +1,43 @@
+#ifndef ksbase_OVF_INCLUDED
+#define ksbase_OVF_INCLUDED
+
+//is called by execute to determine if executime of Task is reached
+typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_CALCEXEC (
+	OV_INSTPTR_ksbase_ComTask	cTask
+);
+
+//needs to be implemted by inherrited classes
+typedef OV_DLLFNCEXPORT void KSBASE_FNC_TYPEMETHOD (
+	OV_INSTPTR_ksbase_ComTask	cTask
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REGISTER (
+	OV_STRING name, 
+	OV_INT version,
+	OV_STRING_VEC protocols,
+	OV_STRING_VEC ports,
+	OV_UINT timetolive
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_UNREGISTER (
+	OV_STRING name, 
+	OV_INT version,
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GETSERVERDATA (
+	OV_STRING name, 
+	OV_INT version,
+	OV_STRING_VEC* protocols,
+	OV_STRING_VEC* ports,
+	OV_UINT* TimeToLive,
+	OV_TIME* ExpirationTime
+);
+
+typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_IDENTIFY (
+	OV_INSTPTR_ksbase_Channel pchannel
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_SENDDATA(
+	OV_INSTPTR_ksbase_Channel pchannel
+);
+
