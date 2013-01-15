@@ -42,3 +42,4 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_SENDDATA(
 	OV_INSTPTR_ksbase_Channel this
 );
 
+#endif

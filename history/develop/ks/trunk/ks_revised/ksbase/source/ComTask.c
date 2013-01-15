@@ -23,6 +23,7 @@
 
 #include "ksbase.h"
 #include "libov/ov_macros.h"
+#include "ks_logfile.h"
 
 
 OV_DLLFNCEXPORT OV_INT ksbase_ComTask_actimode_get(
@@ -59,51 +60,89 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_cycInterval_set(
     return OV_ERR_OK;
 }
 
+/*
+ * Implementing classes need to call this!
+ * It links the instance to the RootComTask, thus the task is recognized to be executed.
+ */
 OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_ksbase_ComTask pinst = Ov_StaticPtrCast(ksbase_ComTask, pobj);
-    OV_RESULT    result;
 
-    /* do what the base class does first */
+    OV_RESULT result;
+	OV_INSTPTR_ksbase_RootComTask 	rcTask = NULL;
+    OV_INSTPTR_ksbase_ComTask 	cTask = NULL;
+    OV_TIME_SPAN ts;
+    OV_TIME t;
+
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
-         return result;
-
-    /* do what */
-
-
+             return result;
+    cTask = Ov_StaticPtrCast(ksbase_ComTask, pobj);
+    rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
+    //link for getting called
+    Ov_Link(ksbase_AssocComTaskList,rcTask,cTask);
+    ks_logfile_debug("Registered %s at ComTasks", pobj->v_identifier);
+    //set time for next execution
+    ov_time_gettime(&t);
+    ts.secs = rcTask->v_cycsecs * cTask->v_cycInterval;
+    ts.usecs = rcTask->v_cycusecs * cTask->v_cycInterval;
+    if(ts.usecs >= 1000000)
+    {
+    	ts.secs += (ts.usecs / 1000000);
+    	ts.usecs %= 1000000;
+    }
+    ov_time_add(&(cTask->v_NextExecTime), &(t), &ts);
     return OV_ERR_OK;
+
 }
 
 OV_DLLFNCEXPORT void ksbase_ComTask_destructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_ksbase_ComTask pinst = Ov_StaticPtrCast(ksbase_ComTask, pobj);
+	OV_INSTPTR_ksbase_RootComTask 	rcTask = NULL;
+	OV_INSTPTR_ksbase_ComTask 	cTask = NULL;
 
-    /* do what */
-
+		cTask = Ov_StaticPtrCast(ksbase_ComTask, pobj);
+		rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
+		//unlink
+		Ov_Unlink(ksbase_AssocComTaskList,rcTask,cTask);
     /* destroy object */
     ov_object_destructor(pobj);
 
     return;
 }
 
+/**
+ * Called by RootComTask
+ * Checks if its time to execute typemethod and counts down the cycIntervalCount otherwise.
+ */
 OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
-    return OV_ERR_OK;
+	OV_INSTPTR_ksbase_RootComTask rcTask;
+	OV_TIME now;
+
+	ks_logfile_debug("ComTask: %s , cyc %d ", this->v_identifier, this->v_cycInterval);
+
+	rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
+
+	if(this->v_actimode == 0) return FALSE; //disabled ComTask
+
+	ov_time_gettime(&now);
+	if(ov_time_compare(&(this->v_NextExecTime), &now) <= 0) {//its time to get called
+		return TRUE;
+	}
+	return FALSE;
 }
 
+/**
+ * Will be called by calcExec, if it is time
+ * Should be overwritten by implementing class (is called by methodtable)
+ */
 OV_DLLFNCEXPORT void ksbase_ComTask_typemethod(
     OV_INSTPTR_ksbase_ComTask          this
 ) {
-    return OV_ERR_OK;
+	ks_logfile_error("This ComTask has no typemethod - but it should!!!");
+	return;
 }
 

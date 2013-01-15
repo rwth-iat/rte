@@ -148,6 +148,6 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_shutdown(
 OV_DLLFNCEXPORT void ksbase_ServerRep_typemethod(
     OV_INSTPTR_ksbase_ComTask          this
 ) {
-    return OV_ERR_OK;
+    return;
 }
 

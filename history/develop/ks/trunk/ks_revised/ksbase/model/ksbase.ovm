@@ -16,6 +16,7 @@ LIBRARY ksbase
 			cycusecs: INT HAS_ACCESSORS  COMMENT="usecs for scheduler registration" INITIALVALUE=1000;
 		END_VARIABLES;
 		OPERATIONS
+			constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
 			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
 			//execute     : C_FUNCTION <FNC_EXECUTE>; //gets called by scheduler and iterates over childs of ComTaskList
