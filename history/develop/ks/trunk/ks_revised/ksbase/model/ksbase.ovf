@@ -3,12 +3,12 @@
 
 //is called by execute to determine if executime of Task is reached
 typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_CALCEXEC (
-	OV_INSTPTR_ksbase_ComTask	cTask
+	OV_INSTPTR_ksbase_ComTask	this
 );
 
 //needs to be implemted by inherrited classes
 typedef OV_DLLFNCEXPORT void KSBASE_FNC_TYPEMETHOD (
-	OV_INSTPTR_ksbase_ComTask	cTask
+	OV_INSTPTR_ksbase_ComTask	this
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REGISTER (
@@ -21,7 +21,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REGISTER (
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_UNREGISTER (
 	OV_STRING name, 
-	OV_INT version,
+	OV_INT version
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GETSERVERDATA (
@@ -34,10 +34,11 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GETSERVERDATA (
 );
 
 typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_IDENTIFY (
+	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_SENDDATA(
-	OV_INSTPTR_ksbase_Channel pchannel
+	OV_INSTPTR_ksbase_Channel this
 );
 
