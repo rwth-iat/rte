@@ -6,9 +6,6 @@
  * 
 */
 
-#ifdef OV
-#include "libov/ov_ov.h"
-#endif
 /**
 *	Print info to logfile
 */

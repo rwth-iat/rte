@@ -7,11 +7,9 @@
 */
 
 #include "ks_logfile.h"
-#ifdef OV
-#include "libov/ov_logfile.h"
-#endif
 #include <stdarg.h>
 #include <time.h>
+#include <stdio.h>
 
 #if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR
 static char			msg[1024];
@@ -38,14 +36,19 @@ void ks_logfile_info(
 #else
 	vsprintf(msg, format, args);
 #endif
-#ifdef OV
-	ov_logfile_info("%s | %s", str, msg);
-#else
-	printf("[Info] %s | %s", str, msg);
+	fprintf(stdout, "[KS-Info] %s | %s\n", str, msg);
+#if OV_SYSTEM_NT
+/*
+ *	added to handle output for eclipse consoles on windows
+ * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+ *	we need to see whether this has performance issues
+*/
+	fflush(stdout);
 #endif
 	va_end(args);
 #endif
 }
+
 
 /**
 *	Print debug info to logfile
@@ -55,11 +58,9 @@ void ks_logfile_debug(
 	...
 ) {
 #if LOG_KS || LOG_KS_DEBUG
-#ifndef OV
 	time_t now;
 	struct tm *ptr;
 	char str[60];
-#endif
 	va_list	args;
 	va_start(args, format);
 #if OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
@@ -67,13 +68,17 @@ void ks_logfile_debug(
 #else
 	vsprintf(msg, format, args);
 #endif
-#ifdef OV
-	ov_logfile_print(OV_MT_DEBUG, msg);
-#else
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	printf("[Debug] %s | %s", str, msg);
+	fprintf(stdout, "[KS-Debug] %s | %s\n", str, msg);
+#if OV_SYSTEM_NT
+/*
+ *	added to handle output for eclipse consoles on windows
+ * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+ *	we need to see whether this has performance issues
+*/
+	fflush(stdout);
 #endif
 	va_end(args);
 #endif
@@ -87,11 +92,9 @@ void ks_logfile_warning(
 	...
 ) {
 #if LOG_KS || LOG_KS_WARNING
-#ifndef OV
 	time_t now;
 	struct tm *ptr;
 	char str[60];
-#endif
 	va_list	args;
 	va_start(args, format);
 #if OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
@@ -99,13 +102,17 @@ void ks_logfile_warning(
 #else
 	vsprintf(msg, format, args);
 #endif
-#ifdef OV
-	ov_logfile_print(OV_MT_WARNING, msg);
-#else
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	printf("[Warning] %s | %s", str, msg);
+	fprintf(stdout, "[KS-Warning] %s | %s\n", str, msg);
+#if OV_SYSTEM_NT
+/*
+ *	added to handle output for eclipse consoles on windows
+ * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+ *	we need to see whether this has performance issues
+*/
+	fflush(stdout);
 #endif
 	va_end(args);
 #endif
@@ -119,11 +126,9 @@ void ks_logfile_error(
 	...
 ) {
 #if LOG_KS || LOG_KS_ERROR
-#ifndef OV
 	time_t now;
 	struct tm *ptr;
 	char str[60];
-#endif
 	va_list	args;
 	va_start(args, format);
 #if OV_SYSTEM_UNIX && !OV_SYSTEM_SOLARIS
@@ -131,13 +136,17 @@ void ks_logfile_error(
 #else
 	vsprintf(msg, format, args);
 #endif
-#ifdef OV
-	ov_logfile_print(OV_MT_ERROR, msg);
-#else
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	printf("[Warning] %s | %s", str, msg);
+	fprintf(stdout, "[KS-Error] %s | %s\n", str, msg);
+#if OV_SYSTEM_NT
+/*
+ *	added to handle output for eclipse consoles on windows
+ * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+ *	we need to see whether this has performance issues
+*/
+	fflush(stdout);
 #endif
 	va_end(args);
 #endif

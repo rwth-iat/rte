@@ -84,6 +84,20 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_timetolive_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_UINT ksbase_ServerRep_version_get(
+    OV_INSTPTR_ksbase_ServerRep          pobj
+) {
+    return pobj->v_version;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_version_set(
+    OV_INSTPTR_ksbase_ServerRep          pobj,
+    const OV_UINT  value
+) {
+    pobj->v_version = value;
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_TIME* ksbase_ServerRep_expirationtime_get(
     OV_INSTPTR_ksbase_ServerRep          pobj
 ) {

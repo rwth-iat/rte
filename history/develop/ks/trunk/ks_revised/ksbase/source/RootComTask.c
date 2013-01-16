@@ -79,8 +79,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_RootComTask_constructor(
 	rcTask = Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
 	if(rcTask && rcTask != pobj)
 		return OV_ERR_GENERIC;
-	else
-		return OV_ERR_OK;
+
+	Ov_StaticPtrCast(ksbase_RootComTask, rcTask)->v_cycusecs = 1000;
+	return OV_ERR_OK;
 }
 
 

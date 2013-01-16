@@ -12,8 +12,12 @@ LIBRARY ksbase
 		IS_INSTANTIABLE;
 		COMMENT = "root communication task - cycling all connected tasks. ";
 		VARIABLES
-			cycsecs	: INT HAS_ACCESSORS  COMMENT="seconds for scheduler registration. Please note that we do not calculate the amount of time spent - root task just pauses for this time intervall. If communications need too long there will be a jitter in other timings." INITIALVALUE=0;
-			cycusecs: INT HAS_ACCESSORS  COMMENT="usecs for scheduler registration" INITIALVALUE=1000;
+			cycsecs	: INT HAS_ACCESSORS  
+				COMMENT	=	"seconds for scheduler registration. Please note that we do not calculate the amount of time spent - root task just pauses for this time intervall. If communications need too long there will be a jitter in other timings."
+				INITIALVALUE	=	0;
+			cycusecs: INT HAS_ACCESSORS  
+				COMMENT	=	"usecs for scheduler registration"
+				INITIALVALUE	=	1000;
 		END_VARIABLES;
 		OPERATIONS
 			constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -26,10 +30,17 @@ LIBRARY ksbase
 	CLASS ComTask : CLASS ov/domain
 		COMMENT = "communication task baseclass - get called typemethod every $cycInterval by root task. Functionality is implemented by derived classes";
 		VARIABLES
-			actimode: INT HAS_ACCESSORS  COMMENT="0=NonActive, 1=Active" INITIALVALUE=1;
-			cycIntervalCount	: INT HAS_GET_ACCESSOR COMMENT="current wait cycles until next execution" INITIALVALUE=5;
-			cycInterval		: INT HAS_ACCESSORS COMMENT="execution intervall of cycles of RootTasks" INITIALVALUE=5;
-			NextExecTime	:	TIME COMMENT="time of next execution (if cycInterval !=0)";
+			actimode: INT HAS_ACCESSORS 
+				COMMENT	=	"0=NonActive, 1=Active"
+				INITIALVALUE	=	1;
+			cycIntervalCount	: INT HAS_GET_ACCESSOR
+				COMMENT	=	"current wait cycles until next execution"
+				INITIALVALUE	=	5;
+			cycInterval		: INT HAS_ACCESSORS 
+				COMMENT	=	"execution intervall of cycles of RootTasks"
+				INITIALVALUE	=	5;
+			NextExecTime	:	TIME 
+				COMMENT	=	"time of next execution (if cycInterval !=0)";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; //creates assoc to roottask
@@ -53,9 +64,12 @@ LIBRARY ksbase
 	CLASS ClientHandler : CLASS ksbase/ComTask
 		COMMENT = "General clienthandler";
 	 	VARIABLES
-			sourceAdr : 	STRING HAS_GET_ACCESSOR COMMENT="Source adr of client (e.g. IP)";
-			ovticket : 	STRING HAS_GET_ACCESSOR COMMENT="Ticket - ONLY set during call from client - thus invisible!";
-			receivedCalls : INT HAS_GET_ACCESSOR COMMENT="Number of received calls from this client"; 
+			sourceAdr : 	STRING HAS_GET_ACCESSOR 
+				COMMENT	=	"Source adr of client (e.g. IP)";
+			ovticket : 	STRING HAS_GET_ACCESSOR
+				COMMENT	=	"Ticket - ONLY set during call from client - thus invisible!";
+			receivedCalls : INT HAS_GET_ACCESSOR
+				COMMENT	=	"Number of received calls from this client"; 
 		END_VARIABLES;
 	END_CLASS;
 
@@ -71,6 +85,9 @@ LIBRARY ksbase
 			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"name of server"
 				INITIALVALUE	=	"";	
+			version				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"Version of the ks protocol"
+				INITIALVALUE	=	2;
 			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"list of protocols a server can handle";	
 			port []						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
