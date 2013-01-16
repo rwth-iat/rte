@@ -62,8 +62,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				ksbase_ServerRep_protocols_set(pNewSrvRep, protocols.value, protocols.veclen);
 				ksbase_ServerRep_timetolive_set(pNewSrvRep, timetolive);
 				ov_time_gettime(&timenow);
-				pExistingSrvRep->v_regtime.secs = timenow.secs;
-				pExistingSrvRep->v_regtime.usecs = timenow.usecs;
+				ksbase_ServerRep_regtime_set(pNewSrvRep, &timenow);
 				ksbase_ServerRep_state_set(pNewSrvRep, 1);
 
 			}
@@ -90,10 +89,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 
 					ksbase_ServerRep_timetolive_set(pExistingSrvRep, timetolive);
 					ov_time_gettime(&timenow);
-					pExistingSrvRep->v_regtime.secs = timenow.secs;
-					pExistingSrvRep->v_regtime.usecs = timenow.usecs;
-					ksbase_ServerRep_port_set(pNewSrvRep, ports.value, ports.veclen);
-					ksbase_ServerRep_protocols_set(pNewSrvRep, protocols.value, protocols.veclen);
+					ksbase_ServerRep_regtime_set(pExistingSrvRep, &timenow);
+					ksbase_ServerRep_port_set(pExistingSrvRep, ports.value, ports.veclen);
+					ksbase_ServerRep_protocols_set(pExistingSrvRep, protocols.value, protocols.veclen);
 					ksbase_ServerRep_state_set(pExistingSrvRep, 1);
 					return OV_ERR_OK;
 				}

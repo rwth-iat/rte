@@ -85,7 +85,7 @@ LIBRARY ksbase
 			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"name of server"
 				INITIALVALUE	=	"";	
-			version				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+			version						:	UINT	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"Version of the ks protocol"
 				INITIALVALUE	=	2;
 			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
@@ -98,7 +98,7 @@ LIBRARY ksbase
 			expirationtime			:	TIME		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"time at which server has to do callback";
 			/* internals ***************************************************/
-			regtime					:	TIME											FLAGS =	"i"
+			regtime					:	TIME	HAS_ACCESSORS							FLAGS =	"i"
 				COMMENT			=	"time the server registered at the manager";
 			state						:	INT		HAS_ACCESSORS						FLAGS =	"i"
 				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactiv"

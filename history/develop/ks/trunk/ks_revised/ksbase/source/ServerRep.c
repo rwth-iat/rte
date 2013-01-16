@@ -80,8 +80,17 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_timetolive_set(
     OV_INSTPTR_ksbase_ServerRep          pobj,
     const OV_UINT  value
 ) {
-    pobj->v_timetolive = value;
-    return OV_ERR_OK;
+	OV_TIME exptime;
+	OV_TIME_SPAN ttl;
+
+	pobj->v_timetolive = value;
+
+	ttl.secs = value;
+	ttl.usecs = 0;
+
+	ov_time_add(&exptime, &(pobj->v_regtime), &ttl);
+	ksbase_ServerRep_expirationtime_set(pobj, &exptime);
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_UINT ksbase_ServerRep_version_get(
@@ -112,6 +121,24 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_expirationtime_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_TIME* ksbase_ServerRep_regtime_get(
+    OV_INSTPTR_ksbase_ServerRep          pobj
+) {
+    return &pobj->v_regtime;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_regtime_set(
+    OV_INSTPTR_ksbase_ServerRep          pobj,
+    const OV_TIME*  value
+) {
+    OV_TIME exptime;
+	pobj->v_regtime = *value;
+    exptime = *value;
+    exptime.secs += pobj->v_timetolive;
+    ksbase_ServerRep_expirationtime_set(pobj, &exptime);
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_INT ksbase_ServerRep_state_get(
     OV_INSTPTR_ksbase_ServerRep          pobj
 ) {
@@ -132,7 +159,6 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksbase_ServerRep pinst = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
@@ -152,16 +178,35 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_shutdown(
     OV_INSTPTR_ksbase_ServerRep pinst = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
 
     /* do what */
-
+    Ov_SetDynamicVectorLength(&(pinst->v_protocols), 0, STRING);
+    Ov_SetDynamicVectorLength(&(pinst->v_port), 0, STRING);
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
-
+    Ov_DeleteObject(pobj);
     return;
 }
 
+/**
+* Procedure periodically called by RootComTask
+* Checks if timetolife of server has expired.
+* When expired server first is set as inactive
+* and after another 300 secs object will be deleted.
+*/
 OV_DLLFNCEXPORT void ksbase_ServerRep_typemethod(
     OV_INSTPTR_ksbase_ComTask          this
 ) {
+	OV_INSTPTR_ksbase_ServerRep pinst = Ov_StaticPtrCast(ksbase_ServerRep, this);
+	OV_TIME timenow;
+
+	ov_time_gettime(&timenow);
+
+	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_BEFORE) {
+		ksbase_ServerRep_state_set(pinst, 2);
+	}
+	if(timenow.secs >= ((int)ksbase_ServerRep_expirationtime_get(pinst)+300)) {
+		Ov_DeleteObject(pinst);
+	}
+
     return;
 }
 
