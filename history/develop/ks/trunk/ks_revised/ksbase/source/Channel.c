@@ -23,6 +23,7 @@
 
 #include "ksbase.h"
 #include "libov/ov_macros.h"
+#include "ks_logfile.h"
 
 
 OV_DLLFNCEXPORT OV_INT ksbase_Channel_constate_get(
@@ -42,6 +43,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_constate_set(
 OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_SendData(
 	OV_INSTPTR_ksbase_Channel this
 ) {
-    return OV_ERR_OK;
+
+	ks_logfile_warning("This channel has no SendData function, but it should. Nothing Send. Identifier: %s", this->v_identifier);
+	return OV_ERR_OK;
 }
 

@@ -142,7 +142,7 @@ OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 OV_DLLFNCEXPORT void ksbase_ComTask_typemethod(
     OV_INSTPTR_ksbase_ComTask          this
 ) {
-	ks_logfile_error("This ComTask has no typemethod - but it should!!!");
+	ks_logfile_warning("This ComTask has no typemethod - but it should!!! Identifier: %s", this->v_identifier);
 	return;
 }
 
