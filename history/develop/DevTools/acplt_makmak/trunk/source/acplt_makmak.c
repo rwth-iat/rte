@@ -484,11 +484,7 @@ int main(int argc, char **argv) {
 		fprintf(fd,"\n");
 		fprintf(fd,"EXTRA_CC_FLAGS = \n");
 		fprintf(fd,"EXTRA_LIBS = \n");
-#if OV_SYSTEM_NT
-		fprintf(fd,"LD_FLAGS = -lwsock32\n");
-#else
 		fprintf(fd,"LD_FLAGS = \n");
-#endif
 		fprintf(fd,"COMPILER = GCC\n");
 		fprintf(fd,"PREBUILD = ../prebuild.tcl\n");
 		fprintf(fd,"POSTBUILD = ../postbuild.tcl\n");
@@ -562,7 +558,7 @@ int main(int argc, char **argv) {
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n\n");
 #if OV_SYSTEM_NT
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)libovks$(_LIB)\n");
+	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
 	if(anzAddLibs > 0) {
 		fprintf(fd,"ADD_LIBS =");
 		for(i=0; i<anzAddLibs; i++) {
