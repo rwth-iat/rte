@@ -40,6 +40,23 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_constate_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+
+    /* do what */
+
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
+    /*destroy the object. this object may not be created at next startup*/
+    Ov_DeleteObject(pobj);
+    return;
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_SendData(
 	OV_INSTPTR_ksbase_Channel this
 ) {

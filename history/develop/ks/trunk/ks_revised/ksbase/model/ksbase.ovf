@@ -42,4 +42,10 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_SENDDATA(
 	OV_INSTPTR_ksbase_Channel this
 );
 
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_HANDLEREQUEST(
+	OV_INSTPTR_ksbase_ClientHandler this,
+	KS_DATAPACKET* dataReceived,
+	KS_DATAPACKET* answer
+);
+
 #endif

@@ -4,3 +4,19 @@
 /* 
 	Define your data types here. 
 */
+
+/**
+ *	KS_DATAPACKET	
+ */
+ 
+ typedef struct
+ {
+ 	OV_UINT length;
+ 	OV_STRING data;
+ 	OV_STRING readPT;
+ 	OV_STRING writePT;
+ } KS_DATAPACKET;
+ 
+ 
+#endif //ksbase_OVT_INCLUDED
+ 	

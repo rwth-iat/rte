@@ -23,7 +23,6 @@ LIBRARY ksbase
 			constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
 			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
-			//execute     : C_FUNCTION <FNC_EXECUTE>; //gets called by scheduler and iterates over childs of ComTaskList
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -71,6 +70,11 @@ LIBRARY ksbase
 			receivedCalls : INT HAS_GET_ACCESSOR
 				COMMENT	=	"Number of received calls from this client"; 
 		END_VARIABLES;
+		OPERATIONS
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		END_OPERATIONS;
 	END_CLASS;
 
 /**
@@ -151,22 +155,15 @@ LIBRARY ksbase
 			address	:	STRING	
 				COMMENT	=	"Address to communicate with"
 				INITIALVALUE	=	"";
-			outBuffer	:	STRING	
-				COMMENT	=	"data to be sent"
-				INITIALVALUE	=	"";
-			outLength	:	INT	
-				COMMENT	=	"length of data to be sent"
-				INITIALVALUE	=	0;
-			inBuffer	:	STRING	
-				COMMENT	=	"data received"
-				INITIALVALUE	=	"";
-			inLength	:	INT
-				COMMENT	=	"length of received data"
-				INITIALVALUE	=	0;
+			outData	:	C_TYPE	<KS_DATAPACKET>	
+				COMMENT	=	"data to be sent";
+			inData	:	C_TYPE	<KS_DATAPACKET>	
+				COMMENT	=	"data received";
 			END_VARIABLES;	
 		OPERATIONS
 			//real sending of data
-			SendData	:	C_FUNCTION <KSBASE_FNC_SENDDATA>;
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
  
