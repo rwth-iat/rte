@@ -26,7 +26,7 @@
 *	23-Jun-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 */
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 
 #include "libov/ov_path.h"
 #include "libov/ov_macros.h"

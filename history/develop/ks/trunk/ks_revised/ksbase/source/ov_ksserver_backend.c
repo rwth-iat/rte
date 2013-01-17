@@ -7,7 +7,7 @@
 #define OV_COMPILE_LIBOVKS
 
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 #include "ks_logfile.h"
 #include "libov/ov_ov.h"
 #include "libov/ov_object.h"

@@ -28,7 +28,7 @@
 */
 
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 
 #include "libov/ov_library.h"
 #include "libov/ov_path.h"

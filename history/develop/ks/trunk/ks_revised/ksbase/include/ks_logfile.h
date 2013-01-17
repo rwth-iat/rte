@@ -6,10 +6,39 @@
  * 
 */
 
+#if OV_SYSTEM_UNIX
+#define OV_DLLFNCEXPORT
+#endif
+
+#if OV_SYSTEM_NT
+#if OV_COMPILER_MSVC
+#define OV_DLLFNCEXPORT 		_declspec(dllexport)
+#else
+#if OV_COMPILER_BORLAND || OV_COMPILER_CYGWIN
+#define OV_DLLFNCEXPORT 		__declspec(dllexport)
+#else
+#define OV_DLLFNCEXPORT
+#endif
+#endif
+#endif
+
+#if OV_SYSTEM_OPENVMS
+#define OV_DLLFNCEXPORT
+#endif
+
+#if OV_SYSTEM_RMOS
+#define OV_DLLFNCEXPORT
+#endif
+
+#if OV_SYSTEM_MC164
+#define OV_DLLFNCEXPORT
+#endif
+
+
 /**
 *	Print info to logfile
 */
-void ks_logfile_info(
+OV_DLLFNCEXPORT void ks_logfile_info(
 	const char*	format,
 	...
 );
@@ -17,7 +46,7 @@ void ks_logfile_info(
 /**
 *	Print debug info to logfile
 */
-void ks_logfile_debug(
+OV_DLLFNCEXPORT void ks_logfile_debug(
 	const char*	format,
 	...
 );
@@ -25,7 +54,7 @@ void ks_logfile_debug(
 /**
 *	Print warning to logfile
 */
-void ks_logfile_warning(
+OV_DLLFNCEXPORT void ks_logfile_warning(
 	const char*	format,
 	...
 );
@@ -33,7 +62,7 @@ void ks_logfile_warning(
 /**
 *	Print error to logfile
 */
-void ks_logfile_error(
+OV_DLLFNCEXPORT void ks_logfile_error(
 	const char*	format,
 	...
 );

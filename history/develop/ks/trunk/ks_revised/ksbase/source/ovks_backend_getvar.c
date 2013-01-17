@@ -27,7 +27,7 @@
 *	21-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 */
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 #include "libov/ov_path.h"
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"

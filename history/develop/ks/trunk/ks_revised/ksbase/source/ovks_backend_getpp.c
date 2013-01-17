@@ -28,7 +28,7 @@
 *	04-Nov-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: variable type ANY added.
 */
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 
 #include "libov/ov_path.h"
 #include "libov/ov_string.h"

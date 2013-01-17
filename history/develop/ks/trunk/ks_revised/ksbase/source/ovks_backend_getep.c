@@ -29,7 +29,7 @@
 *	13-Jul-2001 Ansgar M�nnemann <ansgar@plt.rwth-aachen.de>: History concept changed
 */
 
-#include "ov_ksserver_stripped.h"
+#include "ov_ksserver_backend.h"
 
 #include "libov/ov_path.h"
 #include "libov/ov_string.h"
