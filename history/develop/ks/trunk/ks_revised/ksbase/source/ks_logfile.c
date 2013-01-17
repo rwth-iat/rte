@@ -18,7 +18,7 @@ static char			msg[1024];
 /**
   * Print info to logfile
   */
-OV_DLLFNCEXPORT void ks_logfile_info(
+DLLFNCEXPORT void ks_logfile_info(
 	const char*	format,
 	...
 ) {
@@ -53,7 +53,7 @@ OV_DLLFNCEXPORT void ks_logfile_info(
 /**
 *	Print debug info to logfile
 */
-OV_DLLFNCEXPORT void ks_logfile_debug(
+DLLFNCEXPORT void ks_logfile_debug(
 	const char*	format,
 	...
 ) {
@@ -87,7 +87,7 @@ OV_DLLFNCEXPORT void ks_logfile_debug(
 /**
 *	Print warning to logfile
 */
-OV_DLLFNCEXPORT void ks_logfile_warning(
+DLLFNCEXPORT void ks_logfile_warning(
 	const char*	format,
 	...
 ) {
@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void ks_logfile_warning(
 /**
 *	Print error to logfile
 */
-OV_DLLFNCEXPORT void ks_logfile_error(
+DLLFNCEXPORT void ks_logfile_error(
 	const char*	format,
 	...
 ) {

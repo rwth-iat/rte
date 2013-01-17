@@ -58,11 +58,11 @@ static OV_TICKET *ov_ksserver_ticket_defaultticket_createticket2(XDR *xdr, OV_TI
 		case OV_TT_NONE:
 			break;
 		case OV_TT_SIMPLE:
-			if(!ov_ksserver_xdr_string(xdr, &ticket.ticketunion.simpleticket.id,
+		/*	if(!ov_ksserver_xdr_string(xdr, &ticket.ticketunion.simpleticket.id,
 				KS_SIMPLEID_MAXLEN)
 			) {
 				return &ticket; //NULL;
-			}
+			}*/		//TODO change handling
 			break;
 		default:
 			return &ticket;//hmersch NULL
@@ -98,7 +98,7 @@ static void ov_ksserver_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
 	*/
 	if (pticket->type == OV_TT_SIMPLE) {
 		xdr.x_op = XDR_FREE;
-		ov_ksserver_xdr_string(&xdr, &(pticket->ticketunion.simpleticket.id), KS_SIMPLEID_MAXLEN);
+		//ov_ksserver_xdr_string(&xdr, &(pticket->ticketunion.simpleticket.id), KS_SIMPLEID_MAXLEN); //TODO change handling
 	}
 }
 
