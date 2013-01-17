@@ -1,5 +1,10 @@
 #include "ov.ovm"
 
+/**
+ * Some Classes now have the Flag "v". This means volatile. 
+ * This flag will be used in a clean-up function of the ov_runtimeserver to determine if an object needs to be deleted before the server starts up. 
+ */
+
 LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
@@ -61,6 +66,7 @@ LIBRARY ksbase
 */ 
 
 	CLASS ClientHandler : CLASS ksbase/ComTask
+		FLAGS	=	"v";
 		COMMENT = "General clienthandler";
 	 	VARIABLES
 			sourceAdr : 	STRING HAS_GET_ACCESSOR 
@@ -83,6 +89,7 @@ LIBRARY ksbase
 
 	CLASS	ServerRep			:	CLASS	ksbase/ComTask //ov/domain
 		IS_INSTANTIABLE;
+		FLAGS	=	"v";
 		COMMENT	=	"object to save connected server";
 		VARIABLES
 			/* server data *************************************************/
@@ -121,6 +128,7 @@ LIBRARY ksbase
 
 	CLASS	Manager				:	CLASS ov/domain
 		IS_INSTANTIABLE;
+		FLAGS	=	"v";
 		COMMENT	=	"Manager. Provides operations for handling servers (register, unregister, getserverdata).";
 		OPERATIONS
 			register		:	C_FUNCTION <KSBASE_FNC_REGISTER>;
@@ -147,6 +155,7 @@ LIBRARY ksbase
  
  
 	 CLASS	Channel					:	CLASS	ksbase/ComTask
+		FLAGS	=	"v";
 		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
 		VARIABLES
 			constate :	INT	HAS_ACCESSORS 
