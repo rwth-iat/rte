@@ -23,6 +23,7 @@
 
 #include "ksbase.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_malloc.h"
 #include "ks_logfile.h"
 
 
@@ -80,21 +81,21 @@ OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	if(this->v_inData.length > 0)
 	{
 		ks_logfile_debug("tcpclient/shutdown %s: freeing inData", pobj->v_identifier);
-		free(this->v_inData.data);
-		pinst->v_inData.length = 0;
-		pinst->v_inData.data = NULL;
-		pinst->v_inData.readPT = NULL;
-		pinst->v_inData.writePT = NULL;
+		ov_free(this->v_inData.data);
+		this->v_inData.length = 0;
+		this->v_inData.data = NULL;
+		this->v_inData.readPT = NULL;
+		this->v_inData.writePT = NULL;
 	}
 
 	if(this->v_outData.length > 0)
 	{
 		ks_logfile_debug("tcpclient/shutdown %s: freeing outData", pobj->v_identifier);
-		free(this->v_outData.data);
-		pinst->v_outData.length = 0;
-		pinst->v_outData.data = NULL;
-		pinst->v_outData.readPT = NULL;
-		pinst->v_outData.writePT = NULL;
+		ov_free(this->v_outData.data);
+		this->v_outData.length = 0;
+		this->v_outData.data = NULL;
+		this->v_outData.readPT = NULL;
+		this->v_outData.writePT = NULL;
 	}
 	/* set the object's state to "shut down" */
     ov_object_shutdown(pobj);

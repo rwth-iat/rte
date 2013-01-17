@@ -34,3 +34,10 @@ OV_DLLFNCEXPORT OV_BOOL ksbase_ProtocolIdentificator_identify(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT ksbase_ProtocolIdentificator_createClientHandler(
+	OV_INSTPTR_ksbase_ProtocolIdentificator this,
+	OV_INSTPTR_ksbase_Channel pchannel
+) {
+    ks_logfile_warning("This protocol identificator has no functionality: %s", this->v_identifier);
+	return OV_ERR_OK;
+}
