@@ -9,7 +9,7 @@ LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
 	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
-	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent off protocols and transport bindings.";
+	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
 	
 	////////////////// Scheduling / Tasking components
 
@@ -35,7 +35,7 @@ LIBRARY ksbase
 		COMMENT = "communication task baseclass - get called typemethod every $cycInterval by root task. Functionality is implemented by derived classes";
 		VARIABLES
 			actimode: INT HAS_ACCESSORS 
-				COMMENT	=	"0=NonActive, 1=Active"
+				COMMENT	=	"0=inactive, 1=active"
 				INITIALVALUE	=	1;
 			cycIntervalCount	: INT HAS_GET_ACCESSOR
 				COMMENT	=	"current wait cycles until next execution"
@@ -100,9 +100,9 @@ LIBRARY ksbase
 				COMMENT			=	"Version of the ks protocol"
 				INITIALVALUE	=	2;
 			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
-				COMMENT			=	"list of protocols a server can handle";	
+				COMMENT			=	"list of protocols a server can handle. Double entries are allowed if they are on different ports.";	
 			port []						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
-				COMMENT			=	"list of addresses / ports corresponding to the protocols. List has to be of same length as protocols[]";
+				COMMENT			=	"list of addresses / ports corresponding to the protocols. List has to be of same length as protocols[]. Could be for example a tcp port or COM1";
 			timetolive				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"time in which server has to do callback"
 				INITIALVALUE	=	0;
@@ -112,7 +112,7 @@ LIBRARY ksbase
 			regtime					:	TIME	HAS_ACCESSORS							FLAGS =	"i"
 				COMMENT			=	"time the server registered at the manager";
 			state						:	INT		HAS_ACCESSORS						FLAGS =	"i"
-				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactiv"
+				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactive"
 				INITIALVALUE	=	0;
 		END_VARIABLES;
 		OPERATIONS
