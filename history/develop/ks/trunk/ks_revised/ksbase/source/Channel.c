@@ -40,19 +40,65 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_constate_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT void ksbase_Channel_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+	OV_INSTPTR_ksbase_Channel this = Ov_StaticPtrCast(ksbase_Channel, pobj);
+    /* do what the base class does first */
+    ov_object_startup(pobj);
+
+    /* do what */
+    //run cyclic and fast
+    this->v_actimode = 1;
+    this->v_cycInterval = 0;
+
+    //initialize datastructures
+    this->v_inData.length = 0;
+    this->v_inData.data = NULL;
+    this->v_inData.readPT = NULL;
+    this->v_inData.writePT = NULL;
+    this->v_outData.length = 0;
+    this->v_outData.data = NULL;
+    this->v_outData.readPT = NULL;
+    this->v_outData.writePT = NULL;
+
+    return;
+}
+
 OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-
+	OV_INSTPTR_ksbase_Channel this = Ov_StaticPtrCast(ksbase_Channel, pobj);
     /* do what */
+	//free heap memory
+	if(this->v_inData.length > 0)
+	{
+		ks_logfile_debug("tcpclient/shutdown %s: freeing inData", pobj->v_identifier);
+		free(this->v_inData.data);
+		pinst->v_inData.length = 0;
+		pinst->v_inData.data = NULL;
+		pinst->v_inData.readPT = NULL;
+		pinst->v_inData.writePT = NULL;
+	}
 
-    /* set the object's state to "shut down" */
+	if(this->v_outData.length > 0)
+	{
+		ks_logfile_debug("tcpclient/shutdown %s: freeing outData", pobj->v_identifier);
+		free(this->v_outData.data);
+		pinst->v_outData.length = 0;
+		pinst->v_outData.data = NULL;
+		pinst->v_outData.readPT = NULL;
+		pinst->v_outData.writePT = NULL;
+	}
+	/* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
-    /*destroy the object. this object may not be created at next startup*/
-    Ov_DeleteObject(pobj);
+
     return;
 }
 

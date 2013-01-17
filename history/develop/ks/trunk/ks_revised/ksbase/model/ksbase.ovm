@@ -172,6 +172,9 @@ LIBRARY ksbase
 		OPERATIONS
 			//real sending of data
 			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			//initialize inData and outData
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			//free heap memory of inData and outData
 			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
