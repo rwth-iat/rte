@@ -669,6 +669,14 @@ LIBRARY cshmi
 		END_PARTS;
 	END_CLASS;
 
+	CLASS Confirm : CLASS cshmi/Condition
+		IS_INSTANTIABLE;
+		COMMENT = "a yes/no question to the operator";
+		PARTS
+			question : CLASS cshmi/GetValue;
+		END_PARTS;
+	END_CLASS;
+
 	/* Events */
 	
 	CLASS Event : CLASS cshmi/Object
