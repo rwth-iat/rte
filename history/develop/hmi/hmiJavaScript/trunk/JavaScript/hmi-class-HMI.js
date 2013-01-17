@@ -263,7 +263,15 @@ HMI.prototype = {
 			
 			//html5 Session history management
 			//reload sheet on history navigation event
-			window.onpopstate = function(){ HMI.interpreteUrlParameter(); };
+			window.onpopstate = function(){
+				if(window.history.state !== undefined && window.history.state !== null){
+					if(	window.history.state.Host !== HMI.InputHost.value ||
+							window.history.state.Server !== HMI.PossServers.options[HMI.PossServers.selectedIndex].value ||
+							window.history.state.Sheet !== HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value){
+						HMI.interpreteUrlParameter(); 
+					}
+				}
+			};
 		}
 		if(ErrorDetail !== ""){
 			if (document.getElementById("idThrobbler") !== null){
@@ -681,7 +689,7 @@ HMI.prototype = {
 		//try because the button could be nonvisible
 		try{
 			HMI.ButShowServers.focus();
-		}catch(e){ }
+		}catch(e){/* nothing to do*/}
 		
 		//append html5 datalist if supported and provided
 		if(this.InputHost.list !== undefined & HMI_Parameter_Liste !== null && HMI_Parameter_Liste.hostlist !== undefined){
@@ -712,15 +720,19 @@ HMI.prototype = {
 	 */
 	updateDeepLink: function (){
 		var newDeepLink = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1);
+		var SheetInfo = {"Host":"", "Server":"", "Sheet":""};
 		newDeepLink += "?RefreshTime="+HMI.RefreshTime;
 		if(HMI.InputHost.value !== ""){
 			newDeepLink += "&Host="+HMI.InputHost.value;
+			SheetInfo.Host = HMI.InputHost.value;
 		}
 		if(HMI.PossServers.selectedIndex >= 0 && HMI.PossServers.options[HMI.PossServers.selectedIndex].value !== ""){
 			newDeepLink += "&Server="+HMI.PossServers.options[HMI.PossServers.selectedIndex].value;
+			SheetInfo.Server = HMI.PossServers.options[HMI.PossServers.selectedIndex].value;
 		}
 		if(HMI.PossSheets.selectedIndex >= 0 && HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value !== ""){
 			newDeepLink += "&Sheet="+HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value;
+			SheetInfo.Sheet = HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value;
 		}
 		if (HMI.trace === true){
 			newDeepLink += "&trace=true";
@@ -733,7 +745,7 @@ HMI.prototype = {
 		//add sheet to html5 Session history management, if new
 		if (window.history.pushState){
 			if (newDeepLink != window.location.href){
-				window.history.pushState("", "", newDeepLink);
+				window.history.pushState(SheetInfo, "", newDeepLink);
 			}
 		}else{
 			//show deeplink if history management is not available
@@ -1052,7 +1064,7 @@ HMI.prototype = {
 			return false;
 		} else {
 			HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option('- select sheet -', '');
-			for (i = 0; i < SheetList.length; i++){
+			for (var i = 0; i < SheetList.length; i++){
 				//spaces in objectname are encoded as %20 within OV
 				HMI.PossSheets.options[HMI.PossSheets.options.length] = new Option(decodeURI(SheetList[i]), SheetList[i]);
 			}
@@ -1149,7 +1161,7 @@ HMI.prototype = {
 			document.mozHidden === true||
 			document.webkitHidden === true
 		){
-			var skipRefresh = true;
+			skipRefresh = true;
 		}
 		//load hmi if playground is empty or with empty view (load in background)
 		if (skipRefresh === false || HMI.Playground.childNodes.length === 0){
@@ -1644,7 +1656,7 @@ HMI.prototype = {
 	/**
 	 * mouse position from an event object
 	 * @param evt
-	 * @param Component, if not null detect the mouse position relative to this component
+	 * @param Component if not null detect the mouse position relative to this component
 	 * @return an array with x and y position
 	 */
 	getClickPosition: function (evt, Component) {
