@@ -158,7 +158,7 @@ LIBRARY ksbase
 			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
 			/**
 			*	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
-			*	in the containment of the Channel calling it.
+			*	and Link it to the Channel calling it with AssocChannelClientHandler.
 			*/
 			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;	
 		END_OPERATIONS;
