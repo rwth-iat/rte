@@ -122,8 +122,6 @@ OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 	OV_INSTPTR_ksbase_RootComTask rcTask;
 	OV_TIME now;
 
-	ks_logfile_debug("ComTask: %s , cyc %d ", this->v_identifier, this->v_cycInterval);
-
 	rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
 
 	if(this->v_actimode == 0) return FALSE; //disabled ComTask
