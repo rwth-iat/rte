@@ -69,7 +69,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 			return OV_ERR_HEAPOUTOFMEMORY;
 		}
 		packet->length = addlength;
-		packet->readPT = NULL;
+		memcpy(packet->data, data, addlength);
+		packet->readPT = packet->data;
 		packet->writePT = packet->data + addlength;
 	}
 
@@ -92,7 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 	packet->length = addlength;
-	packet->readPT = NULL;
+	packet->readPT = packet->data;
 	packet->writePT = packet->data + addlength;
 
 
