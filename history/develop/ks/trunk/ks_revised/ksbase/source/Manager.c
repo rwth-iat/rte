@@ -24,7 +24,7 @@
 #include "ksbase.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
-#include "helper.h"
+#include "ksbase_helper.h"
 #include "ks_logfile.h"
 
 

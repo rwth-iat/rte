@@ -145,7 +145,14 @@ LIBRARY ksbase
 	CLASS	ProtocolIdentificator				:	CLASS ov/domain
 		COMMENT	=	"Baseclass for Protocol-Identificators. Provides an identify operation. This operation scans a chunk of bytes if the data contained matches a specific protocol.";
 		OPERATIONS
+			/**
+			*	Function to identify the protocol. Gets a pointer to the Channel which received the data. Has to check in inData structure to determine if the protocol fits.
+			*/
 			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
+			/**
+			*	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
+			*	in the containment of the Channel calling it.
+			*/
 			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;	
 		END_OPERATIONS;
 	END_CLASS;	
