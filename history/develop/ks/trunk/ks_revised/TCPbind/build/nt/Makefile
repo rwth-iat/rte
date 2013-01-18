@@ -8,10 +8,10 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
 DATABASECREATEKEYS = 
-MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS = 
+MAKMAKOPTIONS = -o
+EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1
 EXTRA_LIBS = 
-LD_FLAGS = -lwsock32
+LD_FLAGS = -lws2_32
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl

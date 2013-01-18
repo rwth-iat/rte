@@ -46,10 +46,14 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <netdb.h>
 /* for select */
 #include <sys/select.h>
 #else
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x501
 #include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 
 
@@ -125,7 +129,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 			return OV_ERR_OK;
 		}
-			//issue send command
+		//issue send command
 		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
 		if (sentChunkSize == -1)
 		{
@@ -152,8 +156,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 	ksbase_Channel_startup(pobj);
 
 	/* do what */
-	//get called every 5th cycle before receiving first data (we have some time here)
-	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_cycInterval = 5;
+	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_cycInterval = 1;
 
 	//set time of creation of the connection
 	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
@@ -207,6 +210,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	OV_RESULT result;
 	OV_BYTE* tempdata = NULL;
 
+	OV_INSTPTR_ksbase_RootComTask RCTask = NULL;
+
+	RCTask = Ov_StaticPtrCast(ksbase_RootComTask, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask));
+	if(RCTask)
+		Ov_Link(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+
 	ks_logfile_debug("TCPChannel typemethod called ");
 
 	/*******************************************************************************************************************************************************
@@ -245,14 +254,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 	}
 
-	/**********************************************************************************************************************************************************
-	 *	Associate ClientHandler if needed
-	 *********************************************************************************************************************************************************/
-	if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
-	{
-		TCPbind_TCPChannel_AssociateClientHandler(thisCh);
-	}
-
 	/***********************************************************************************************************************************************************************************
 	 *	Handle incoming data
 	 **********************************************************************************************************************************************************************************/
@@ -263,6 +264,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		ks_logfile_debug("%s/typemethod: no socket set, disabling typemethod",this->v_identifier);
 		this->v_actimode = 0;
 		thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+		Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 		return;
 	}
 
@@ -287,6 +289,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			{
 				ks_logfile_error("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+TCPbind_CHUNKSIZE);
 				ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+				Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 				return;
 			}
 			else
@@ -308,6 +311,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					CLOSE_SOCKET(socket);
 					TCPbind_TCPChannel_socket_set(thisCh, -1);
 					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
 
@@ -319,10 +323,25 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			thisCh->v_inData.writePT += err;
 
 		}
+		else	//no data received
+		{
+			Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+			return;
+		}
+
+
 	}while(FD_ISSET(socket, &read_flags));
 
 	//update receivetime
 	ov_time_gettime(&(thisCh->v_LastReceiveTime));
+
+	/**********************************************************************************************************************************************************
+	 *	Associate ClientHandler if needed
+	 *********************************************************************************************************************************************************/
+	if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+	{
+		TCPbind_TCPChannel_AssociateClientHandler(thisCh);
+	}
 
 	/*****************************************************************************************************************************************************************************
 	 *	Process received data
@@ -345,11 +364,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					ov_memstack_unlock();
 					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 					ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
 				else
 				{
 					TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
 			}
@@ -384,11 +405,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					ov_memstack_unlock();
 					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 					ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
 				else
 				{
 					TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
 			}
@@ -407,15 +430,80 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	if(thisCh->v_outData.length)
 		TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
+	Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 	return;
 }
 
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		OV_INSTPTR_TCPbind_TCPChannel this,
 		OV_STRING host,
-		OV_INT port,
-		OV_INT* socket
+		OV_STRING port,
+		OV_INT* opensocket
 ) {
+	struct addrinfo hints;
+	struct addrinfo *res;
+	int ret;
+	int sockfd = -1;
+	struct addrinfo *walk;
+	struct sockaddr_storage sa_stor;
+	socklen_t sas = sizeof(sa_stor);
+	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
+	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
+	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
+
+	//set connection information
+	memset(&hints, 0, sizeof(struct addrinfo));
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	//resolve address
+	if ((ret = getaddrinfo(host, port, &hints, &res))!=0)
+	{
+		ks_logfile_error("%s: getaddrinfo failed", this->v_identifier);
+		return OV_ERR_GENERIC;
+	}
+
+	//check addresses (if there are several ones) and connect
+	for (walk = res; walk != NULL; walk = walk->ai_next) {
+		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+		if (sockfd < 0){
+			ks_logfile_debug("%s: address not usable", this->v_identifier);
+			continue;
+		}
+		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
+			CLOSE_SOCKET(sockfd);
+			sockfd = -1;
+			ks_logfile_debug("%s: conenct failed", this->v_identifier);
+			continue;
+		}
+		break;
+	}
+
+	//free structures
+	freeaddrinfo(res);
+	if (sockfd == -1)
+	{
+		ks_logfile_error("%s: could not establish connection", this->v_identifier);
+		return OV_ERR_GENERIC;
+	}
+
+	//resolve connected peer
+	if( getpeername(sockfd, sa, &sas))
+	{
+		ks_logfile_error("%s: could not resolve connected peer", this->v_identifier);
+		return OV_ERR_GENERIC;
+	}
+
+	// resolve peername
+	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
+	{
+		ks_logfile_error("%s: could not resolve connected peer's address", this->v_identifier);
+		return OV_ERR_GENERIC;
+	}
+
+	ov_string_setvalue(&(this->v_address), hbuf);
+	this->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+	*opensocket = sockfd;
 
 	return OV_ERR_OK;
 }
