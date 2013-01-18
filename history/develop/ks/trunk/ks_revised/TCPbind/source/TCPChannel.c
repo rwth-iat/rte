@@ -504,7 +504,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	ov_string_setvalue(&(this->v_address), hbuf);
 	this->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
 	*opensocket = sockfd;
-
+	TCPbind_TCPChannel_socket_set(this, sockfd);
 	return OV_ERR_OK;
 }
 
