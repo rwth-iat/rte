@@ -97,14 +97,15 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientHandler_HandleRequest(
 	OV_UINT i = 0;
 	char temp [9];
 	ks_logfile_warning("Empty HandleRequest function. No functionality implemented for ClientHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier);
-
+#if LOG_KS || LOG_KS_DEBUG
 	ks_logfile_debug("ClientHandler: %s dataReceived first 64 bytes:\n");
 
 	for(i=0; i < 8; i++)
 	{
-		snprintf(temp, 9, &(dataReceived->data[i*8]));
+		snprintf(temp, 9, (char*)&(dataReceived->data[i*8]));
 		fprintf(stdout, "\t%#08x %08x %s\n", (unsigned int) dataReceived->data[i*8], (unsigned int) dataReceived->data[i*8+4], temp);
 	}
+#endif
 	return OV_ERR_OK;
 }
 

@@ -12,9 +12,9 @@
  typedef struct
  {
  	OV_UINT length;
- 	OV_STRING data;
- 	OV_STRING readPT;
- 	OV_STRING writePT;
+ 	OV_BYTE* data;
+ 	OV_BYTE* readPT;
+ 	OV_BYTE* writePT;
  } KS_DATAPACKET;
  
  
