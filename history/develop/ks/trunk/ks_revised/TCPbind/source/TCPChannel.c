@@ -100,6 +100,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 
 	if(thisCh->v_outData.length)	//check if there is data to send
 	{
+		if(!thisCh->v_outData.readPT)
+			thisCh->v_outData.readPT = thisCh->v_outData.data;
 		socket = TCPbind_TCPChannel_socket_get(thisCh);
 
 		//Check if socket is ok
@@ -133,18 +135,25 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
 		if (sentChunkSize == -1)
 		{
+//DEBUG
+			errno = WSAGetLastError();
+			perror ("send error:");
+//DEBUG END
 			ks_logfile_error("%s: send() failed", thisCh->v_identifier);
 			return OV_ERR_GENERIC;
 		}
 
-		thisCh->v_outData.writePT += sentChunkSize;
+		thisCh->v_outData.readPT += sentChunkSize;
 
-		if((thisCh->v_outData.writePT - thisCh->v_outData.data) >= thisCh->v_outData.length)
+		ks_logfile_debug("%s: sent %u bytes", this->v_identifier, sentChunkSize);
+
+		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length)
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 	}
 
 	//set time of sending
 	ov_time_gettime(&(thisCh->v_LastReceiveTime));
+	thisCh->v_actimode = 1;
 	return OV_ERR_OK;
 }
 
@@ -248,10 +257,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	tstemp.secs = thisCh->v_UnusedDataTimeOut;
 	tstemp.usecs = 0;
 	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
-	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED)
-			|| ((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER)))
+	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
 	{
 		ks_logfile_info("%s: received nothing for %u seconds. Deleting inData.", this->v_identifier, thisCh->v_UnusedDataTimeOut);
+		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+	}
+	if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED)
+	{
+		ks_logfile_info("%s: connection closed. Deleting inData.", this->v_identifier);
 		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 	}
 
@@ -296,6 +309,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			else
 				thisCh->v_inData.data = tempdata;
 
+			if(!thisCh->v_inData.writePT)
+				thisCh->v_inData.writePT = thisCh->v_inData.data;
+
 			err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
 			if(err < TCPbind_CHUNKSIZE)
 			{
@@ -308,6 +324,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				else if (err == -1)
 				{
 					ks_logfile_error("%s: error receiving. Deleting data and closing socket.", this->v_identifier);
+//DEBUG
+					errno = WSAGetLastError();
+					perror ("receive error:");
+//DEBUG END
 					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 					CLOSE_SOCKET(socket);
 					TCPbind_TCPChannel_socket_set(thisCh, -1);
