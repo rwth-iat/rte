@@ -7,6 +7,11 @@
 
 /**
  *	KS_DATAPACKET	
+ *	This structure is used for transmitted data.
+ *	Reading of data is always ok (it does not matter if read via readPT or data).
+ *	Writing data can be critical depending on the usage. Mostly one should append data to the structure (via the ksbase_KSDATAPACKET_append function) since the PACKET may contain data which is not yet send.
+ *	Hence, one should use the writePT for write operations.
+ *	When ClientHandlers or DataHandlers get DATAPACKETs from a Channel some rules apply which are written in the comments of the HandleData and HandleRequest functions in ksbase.ovm.
  */
  
  typedef struct

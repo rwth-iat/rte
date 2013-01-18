@@ -39,3 +39,56 @@ OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 	}
 	return;
 }
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength)
+{
+	OV_BYTE* tempdata;
+
+	if(packet->length)
+	{
+		tempdata = ov_realloc(packet->data, packet->length + addlength);
+		if(!tempdata)
+			return OV_ERR_HEAPOUTOFMEMORY;
+		memcpy(packet->writePT, data, addlength);
+		packet->writePT += addlength;
+	}
+	else
+	{
+		packet->data = ov_malloc(addlength);
+		if(!packet->data)
+		{
+			packet->length = 0;
+			packet->readPT = NULL;
+			packet->writePT = NULL;
+			return OV_ERR_HEAPOUTOFMEMORY;
+		}
+		packet->length = addlength;
+		packet->readPT = NULL;
+		packet->writePT = packet->data + addlength;
+	}
+
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength)
+{
+	if(packet->length)
+	{
+		ksbase_free_KSDATAPACKET(packet);
+	}
+
+	packet->data = ov_malloc(addlength);
+	if(!packet->data)
+	{
+		packet->length = 0;
+		packet->readPT = NULL;
+		packet->writePT = NULL;
+		return OV_ERR_HEAPOUTOFMEMORY;
+	}
+	packet->length = addlength;
+	packet->readPT = NULL;
+	packet->writePT = packet->data + addlength;
+
+
+	return OV_ERR_OK;
+}
