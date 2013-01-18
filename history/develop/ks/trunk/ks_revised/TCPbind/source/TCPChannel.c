@@ -24,9 +24,12 @@
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
+#include "libov/ov_result.h"
+#include "libov/ov_memstack.h"
 #include "TCPbind_helper.h"
 #include "ks_logfile.h"
 #include "TCPbind_config.h"
+#include "ksbase_helper.h"
 
 
 #include <stdio.h>
@@ -139,39 +142,129 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	 *   local variables
 	 */
 	OV_INSTPTR_TCPbind_TCPChannel thisCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+	OV_INSTPTR_ov_class pClassProtIdent = NULL;
+	OV_INSTPTR_ksbase_ProtocolIdentificator pProtIdent = NULL;
+	OV_VTBLPTR_ksbase_ProtocolIdentificator pVTBLProtIdent = NULL;
+	OV_INSTPTR_ksbase_ClientHandler pClientHandler = NULL;
+	OV_VTBLPTR_ksbase_ClientHandler pVTBLClientHandler = NULL;
+	OV_INSTPTR_ksbase_DataHandler pDataHandler = NULL;
+	OV_VTBLPTR_ksbase_DataHandler pVTBLDataHandler = NULL;
 	OV_INT socket = -1;
 	fd_set read_flags;
 	struct timeval waitd;
-	int off = 0;
 	int err = 0;
 	OV_TIME now;
 	OV_TIME_SPAN tstemp;
 	OV_TIME ttemp;
-
-	//Associate ClientHandler if needed
-	if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
-	{
-		//TODO identify protocol and create chlienthandlers
-	}
-
-	//check timeouts
-	ov_time_gettime(&now);
-		//TODO check timeouts
-
-	socket = TCPbind_TCPChannel_socket_get(thisCh);
+	OV_RESULT result;
+	OV_BYTE* tempdata = NULL;
 
 	ks_logfile_debug("TCPChannel typemethod called ");
+
+/*******************************************************************************************************************************************************
+ *	check timeouts
+ ******************************************************************************************************************************************************/
+	ov_time_gettime(&now);
+
+	//TimeOut of connection
+	tstemp.secs = thisCh->v_ConnectionTimeOut;
+	tstemp.usecs = 0;
+	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
+	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
+	{
+		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)
+		{
+			ks_logfile_info("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut);
+			CLOSE_SOCKET(socket);
+			TCPbind_TCPChannel_socket_set(thisCh, -1);
+			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+		}
+		else
+		{
+			ks_logfile_info("%s: received nothing for %u seconds. Deleting channel.", this->v_identifier, thisCh->v_ConnectionTimeOut);
+			Ov_DeleteObject(Ov_StaticPtrCast(ov_object, this));
+		}
+	}
+
+	//Timeout of Data in inData (in Buffer)
+	tstemp.secs = thisCh->v_UnusedDataTimeOut;
+	tstemp.usecs = 0;
+	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
+	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED)
+			|| ((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER)))
+	{
+		ks_logfile_info("%s: received nothing for %u seconds. Deleting inData.", this->v_identifier, thisCh->v_UnusedDataTimeOut);
+		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+	}
+
+/**********************************************************************************************************************************************************
+ *	Associate ClientHandler if needed
+ *********************************************************************************************************************************************************/
+	if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+	{
+		//iterate over all classes derived from ksbase_ProtocolIdentificator
+		pClassProtIdent = (Ov_StaticPtrCast(ov_class, Ov_GetFirstChild(ov_inheritance, pclass_ksbase_ProtocolIdentificator)));
+		while(pClassProtIdent)
+		{
+			//iterate over all instances of the identificator class
+			pProtIdent = Ov_StaticPtrCast(ksbase_ProtocolIdentificator, Ov_GetFirstChild(ov_instantiation, pClassProtIdent));
+			while(pProtIdent)
+			{
+				//get VTable of protocol identificator
+				Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
+				if(!pVTBLProtIdent)
+				{
+					ks_logfile_error("Could not determine VTable of ProtocolIdentificator %s - Cancelling operation.", pProtIdent->v_identifier);
+					return;
+				}
+				else
+				{
+					//check if protocol is recognized by this Identificator
+					if(pVTBLProtIdent->m_identify(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, thisCh)))
+					{	//if so, create ClientHandler
+						ks_logfile_debug("Protocol identified by %s. Creating Clienthandler", pProtIdent->v_identifier);
+						result = pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+						if(Ov_Fail(result))
+						{
+							ov_memstack_lock();
+							ks_logfile_error("ClientHandler could not be created. Reason: %s", ov_result_getresulttext(result));
+							ov_memstack_unlock();
+							return;
+						}
+						ks_logfile_debug("ClientHandler created.");
+						thisCh->v_ClientHandlerAssociated = TCPbind_CH_ASSOCIATED;
+						thisCh->v_ConnectionTimeOut = TCPbind_TTL_AFTER_ASSOC;
+						break;
+					}
+				}
+				pProtIdent = Ov_StaticPtrCast(ksbase_ProtocolIdentificator, Ov_GetNextChild(ov_instantiation, pProtIdent));
+			}
+			//if ClientHandler could be Associated, do not go on
+			if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+				break;
+			else
+				pClassProtIdent = Ov_StaticPtrCast(ov_class, Ov_GetNextChild(ov_inheritance, pClassProtIdent));
+		}
+		//if no ClientHanlder could be associated Delete Channel
+		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+		{
+			thisCh->v_ClientHandlerAssociated = TCPbind_CH_NOTFOUND;
+			ks_logfile_error("No ClientHandler could be associated. Deleting TCPChannel");
+			Ov_DeleteObject(Ov_StaticPtrCast(ov_object, this));
+		}
+
+	}
+
+/***********************************************************************************************************************************************************************************
+ *	Handle incoming data
+ **********************************************************************************************************************************************************************************/
+
+	socket = TCPbind_TCPChannel_socket_get(thisCh);
 
 	if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
 		ks_logfile_debug("%s/typemethod: no socket set, disabling typemethod",this->v_identifier);
 		this->v_actimode = 0;
 		thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-		return;
-	}
-
-	//blocking
-	if ((IOCTL_SOCKET(socket, FIONBIO, (char*) &off)) == -1) {
-		ks_logfile_error("%s: ioctl(tcpclient) failed (set to blocking)", this->v_identifier);
 		return;
 	}
 
@@ -190,20 +283,18 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		if((err > 0) && FD_ISSET(socket, &read_flags))
 		{
 			//Data arrived
-			//reallocate memory for receiving data
-			err = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
-			if(!err)
+			//reallocate memory for receiving data. Note the temp-pointer: if realloc fails, the original pointer is NOT freed
+			tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
+			if(!tempdata)
 			{
 				ks_logfile_error("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+TCPbind_CHUNKSIZE);
-				ov_free(thisCh->v_inData.data);
-				thisCh->v_inData.length = 0;
-				thisCh->v_inData.data = NULL;
-				thisCh->v_inData.readPT = NULL;
-				thisCh->v_inData.writePT = NULL;
+				ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 				return;
 			}
+			else
+				thisCh->v_inData.data = tempdata;
 
-			err = recv(socket, thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
+			err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
 			if(err < TCPbind_CHUNKSIZE)
 			{
 				if(err == 0)
@@ -215,13 +306,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				else if (err == -1)
 				{
 					ks_logfile_error("%s: error receiving. Deleting data and closing socket.", this->v_identifier);
-					ov_free(thisCh->v_inData.data);
-					thisCh->v_inData.length = 0;
-					thisCh->v_inData.data = NULL;
-					thisCh->v_inData.readPT = NULL;
-					thisCh->v_inData.writePT = NULL;
+					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 					CLOSE_SOCKET(socket);
-					TCPbind_TCPChannel_socket_set(this, -1);
+					TCPbind_TCPChannel_socket_set(thisCh, -1);
 					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 					return;
 				}
@@ -239,8 +326,77 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	//update receivetime
 	ov_time_gettime(&(thisCh->v_LastReceiveTime));
 
-	//data received...process it
-		//TODO process data if necessarry
+/*****************************************************************************************************************************************************************************
+ *	Process received data
+ ****************************************************************************************************************************************************************************/
+
+	if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+	{	//there is a ClientHandler associated. Call its HandleRequest function.
+		pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, thisCh);
+		if(pClientHandler)
+		{
+			Ov_GetVTablePtr(ksbase_ClientHandler, pVTBLClientHandler, pClientHandler);
+			if(pVTBLClientHandler)
+			{
+				ks_logfile_debug("%s: handing over data to %s to handle it.", thisCh->v_identifier, pClientHandler->v_identifier);
+				result = pVTBLClientHandler->m_HandleRequest(pClientHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+				if(Ov_Fail(result))
+				{
+					ov_memstack_lock();
+					ks_logfile_error("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result));
+					ov_memstack_unlock();
+					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+					ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+					return;
+				}
+				else
+					TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+			}
+			else
+			{
+				ks_logfile_error("%s: no Vtable found for ClientHandler %s. Shutting down", thisCh->v_identifier, pClientHandler->v_identifier);
+				Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+				return;
+			}
+		}
+		else
+		{
+			ks_logfile_error("%s: no ClientHandler associated. Shutting down", thisCh->v_identifier);
+			Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+			return;
+		}
+	}
+	else if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)	//if acting on the client side, check if a "callback" has to be done
+	{
+		pDataHandler = Ov_GetChild(ksbase_AssocChannelDataHandler, thisCh);
+		if(pDataHandler)
+		{	//there is a DataHandler --> call its HandleData Function
+			Ov_GetVTablePtr(ksbase_DataHandler, pVTBLDataHandler, pDataHandler);
+			if(pVTBLDataHandler)
+			{
+				ks_logfile_debug("%s: handing over data to %s to handle it.", thisCh->v_identifier, pDataHandler->v_identifier);
+				result = pVTBLDataHandler->m_HandleData(pDataHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+				if(Ov_Fail(result))
+				{
+					ov_memstack_lock();
+					ks_logfile_error("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pDataHandler->v_identifier, ov_result_getresulttext(result));
+					ov_memstack_unlock();
+					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+					ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+					return;
+				}
+				else
+					TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+			}
+			else
+			{
+				ks_logfile_error("%s: no Vtable found for DataHandler %s. Shutting down", thisCh->v_identifier, pDataHandler->v_identifier);
+				Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+				return;
+			}
+		}
+	}
+
 
 	return;
 }
