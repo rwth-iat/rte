@@ -82,6 +82,13 @@ LIBRARY ksbase
 			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
 		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS DataHandler : CLASS ksbase/ComTask
+		COMMENT = "DataHandler used for callbacks";
+	 	OPERATIONS
+			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		END_OPERATIONS;
+	END_CLASS;
 
 /**
  *	Representative for a server. These objects are used by the manager to save the data for all servers on the specific machine.	
@@ -163,7 +170,6 @@ LIBRARY ksbase
  
  
 	 CLASS	Channel					:	CLASS	ksbase/ComTask
-		FLAGS	=	"v";
 		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
 		VARIABLES
 			constate :	INT	HAS_ACCESSORS 
@@ -195,6 +201,22 @@ LIBRARY ksbase
 	ASSOCIATION AssocComTaskList : ONE_TO_MANY
 		PARENT rootcomtask : CLASS ksbase/RootComTask;
 		CHILD  comtaskchild  : CLASS ksbase/ComTask;
+	END_ASSOCIATION;
+	
+/* 
+ * This is the Association, which connects the a ClientHandler to a Channel
+ */
+	ASSOCIATION AssocChannelClientHandler : ONE_TO_ONE
+		PARENT Channel : CLASS ksbase/Channel;
+		CHILD  ClientHandler  : CLASS ksbase/ClientHandler;
+	END_ASSOCIATION;
+	
+/* 
+ * This is the Association, which connects a DataHandler to a Channel (used for callbacks)
+ */
+	ASSOCIATION AssocChannelDataHandler : ONE_TO_MANY
+		PARENT Channel : CLASS ksbase/Channel;
+		CHILD  DataHandler  : CLASS ksbase/DataHandler;
 	END_ASSOCIATION;
 	
 END_LIBRARY;
