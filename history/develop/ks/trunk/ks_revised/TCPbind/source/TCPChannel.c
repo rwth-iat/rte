@@ -148,7 +148,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		ks_logfile_debug("%s: sent %u bytes", this->v_identifier, sentChunkSize);
 
 		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length)
+		{
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+			ks_logfile_debug("%s: everything sent", thisCh->v_identifier);
+		}
 	}
 
 	//set time of sending
