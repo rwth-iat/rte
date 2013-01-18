@@ -1,9 +1,10 @@
 
-#include "helper.h"
+#include "ksbase_helper.h"
 #include <string.h>
 #include "libov/ov_macros.h"
+#include "ksbase.h"
 
-OV_BOOL ks_isvalidname(OV_STRING name)
+OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 {
 
 	OV_UINT i = 0;
@@ -23,4 +24,18 @@ OV_BOOL ks_isvalidname(OV_STRING name)
 	}
 	else
 		return FALSE;
+}
+
+
+OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
+{
+	if(packet->length)
+	{
+		ov_free(packet->data);
+		packet->data = NULL;
+		packet->length = 0;
+		packet->writePT = NULL;
+		packet->readPT = NULL;
+	}
+	return;
 }
