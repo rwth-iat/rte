@@ -219,8 +219,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	if(RCTask)
 		Ov_Link(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
-	ks_logfile_debug("TCPChannel typemethod called ");
-
 	/*******************************************************************************************************************************************************
 	 *	check timeouts
 	 ******************************************************************************************************************************************************/
