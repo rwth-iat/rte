@@ -86,7 +86,7 @@ LIBRARY ksbase
 	CLASS DataHandler : CLASS ksbase/ComTask
 		COMMENT = "DataHandler used for callbacks";
 	 	OPERATIONS
-			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;	
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -214,7 +214,7 @@ LIBRARY ksbase
 /* 
  * This is the Association, which connects a DataHandler to a Channel (used for callbacks)
  */
-	ASSOCIATION AssocChannelDataHandler : ONE_TO_MANY
+	ASSOCIATION AssocChannelDataHandler : ONE_TO_ONE
 		PARENT Channel : CLASS ksbase/Channel;
 		CHILD  DataHandler  : CLASS ksbase/DataHandler;
 	END_ASSOCIATION;
