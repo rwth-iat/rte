@@ -173,25 +173,30 @@ void ksbase_RootComTask_execute(
 				//go via the methodtable to call the "real" implementation of the typemethod
 				//ks_logfile_debug("RootComTask: %s was executed", childTask->v_identifier);
 				Ov_GetVTablePtr(ksbase_ComTask, pvtable, childTask);
-				pvtable->m_typemethod(childTask);
-				//calculate and set next execution time of child task
-				ov_time_gettime(&now);
-				ts.secs = rcTask->v_cycsecs * childTask->v_cycInterval;
-				ts.usecs = rcTask->v_cycusecs * childTask->v_cycInterval;
-				if(ts.usecs >= 1000000)
+				if(pvtable)
 				{
-					ts.secs += (ts.usecs / 1000000);
-					ts.usecs %= 1000000;
-				}
-				ov_time_add(&(childTask->v_NextExecTime), &(now), &ts);
+					pvtable->m_typemethod(childTask);
+					//calculate and set next execution time of child task
+					ov_time_gettime(&now);
+					ts.secs = rcTask->v_cycsecs * childTask->v_cycInterval;
+					ts.usecs = rcTask->v_cycusecs * childTask->v_cycInterval;
+					if(ts.usecs >= 1000000)
+					{
+						ts.secs += (ts.usecs / 1000000);
+						ts.usecs %= 1000000;
+					}
+					ov_time_add(&(childTask->v_NextExecTime), &(now), &ts);
 
-				//get the earliest child task to be run again; just to estimate possible sleep time
-				//sequence of child-task, however, remains
-				if(ov_time_compare(&(childTask->v_NextExecTime), &(earliestChild)) < 0)
-				{
-					earliestChild = childTask->v_NextExecTime;
+					//get the earliest child task to be run again; just to estimate possible sleep time
+					//sequence of child-task, however, remains
+					if(ov_time_compare(&(childTask->v_NextExecTime), &(earliestChild)) < 0)
+					{
+						earliestChild = childTask->v_NextExecTime;
 
+					}
 				}
+				else
+					ks_logfile_error("No Vtable found for %s.", childTask->v_identifier);
 			}
 
 

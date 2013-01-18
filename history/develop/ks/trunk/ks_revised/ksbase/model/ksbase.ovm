@@ -235,4 +235,13 @@ LIBRARY ksbase
 		CHILD  DataHandler  : CLASS ksbase/DataHandler;
 	END_ASSOCIATION;
 	
+/* 
+ * This Associations points to the Channel taht is currently running its typemethod
+ */
+	ASSOCIATION AssocCurrentChannel : ONE_TO_ONE
+		PARENT RootComTask : CLASS ksbase/RootComTask;
+		CHILD  CurrentChannel  : CLASS ksbase/Channel;
+	END_ASSOCIATION;
+	
+	
 END_LIBRARY;
