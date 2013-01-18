@@ -142,6 +142,9 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		if((thisCh->v_outData.writePT - thisCh->v_outData.data) >= thisCh->v_outData.length)
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 	}
+
+	//set time of sending
+	ov_time_gettime(&(thisCh->v_LastReceiveTime));
 	return OV_ERR_OK;
 }
 
@@ -276,8 +279,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		waitd.tv_sec = 0;     // Set Timeout
 		waitd.tv_usec = 0;    //  do not wait
 		err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
-
-		ks_logfile_debug("select returned: %d; line %d", err, __LINE__);
+		if(err)
+			ks_logfile_debug("select returned: %d; line %d", err, __LINE__);
 
 		//check if data arrived
 		if((err > 0) && FD_ISSET(socket, &read_flags))
@@ -503,8 +506,13 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 
 	ov_string_setvalue(&(this->v_address), hbuf);
 	this->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-	*opensocket = sockfd;
+	if(opensocket)
+		*opensocket = sockfd;
 	TCPbind_TCPChannel_socket_set(this, sockfd);
+
+	ks_logfile_debug("%s: connected to %s.", this->v_identifier, this->v_address);
+	//set time of Opening the Connection
+	ov_time_gettime(&(this->v_LastReceiveTime));
 	return OV_ERR_OK;
 }
 
