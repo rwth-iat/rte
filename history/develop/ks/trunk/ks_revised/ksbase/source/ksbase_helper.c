@@ -49,6 +49,12 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 		tempdata = ov_realloc(packet->data, packet->length + addlength);
 		if(!tempdata)
 			return OV_ERR_HEAPOUTOFMEMORY;
+		//set write pointer
+		if(!packet->writePT)
+			packet->writePT = tempdata;
+		else
+			packet->writePT = tempdata + (packet->writePT - packet->data);
+
 		memcpy(packet->writePT, data, addlength);
 		packet->writePT += addlength;
 	}
