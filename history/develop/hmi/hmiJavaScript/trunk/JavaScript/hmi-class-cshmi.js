@@ -910,12 +910,16 @@ cshmi.prototype = {
 			
 			//the callback fills the callerObserver with data and call the checkAndTrigger()
 			GetVarCbfnc = function(Client, req){
-				var response = req.responseText;
-				var responseArray = HMI.KSClient.splitKsResponse(response);
-				if (responseArray.length === 0){
+				if(req.status !== 200){
 					var newValue = false;
 				}else{
-					newValue = responseArray[0];
+					var response = req.responseText;
+					var responseArray = HMI.KSClient.splitKsResponse(response);
+					if (responseArray.length === 0){
+						newValue = false;
+					}else{
+						newValue = responseArray[0];
+					}
 				}
 				callerObserver.updateValueInArray(ObjectPath, newValue);
 				callerObserver.checkAndTrigger();
@@ -2158,6 +2162,8 @@ cshmi.prototype = {
 				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver);
 			}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
 				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver);
+			}else if (varName[1].indexOf("/cshmi/Confirm") !== -1){
+				ConditionMatched = this._checkConfirm(VisualObject, ObjectPath+".if/"+varName[0], IfThenElseObserver);
 			}
 			if(ConditionMatched === undefined){
 				//the checkCondition is handled via a callback
@@ -2424,6 +2430,36 @@ cshmi.prototype = {
 			IfThenElseObserver.checkAndTrigger();
 			return;
 		}
+	},
+	
+	/**
+	 * checks Confirm
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return {Boolean} true if condition matched, false if not matched, null on error, undefined if callback is in charge
+	 */
+	_checkConfirm: function(VisualObject, ObjectPath, IfThenElseObserver){
+		var checkConfirmObserver = new cshmiObserver(VisualObject, ObjectPath, 1, this);
+		checkConfirmObserver.triggerActivity = function(){
+			IfThenElseObserver.updateValueInArray(ObjectPath, window.confirm(checkConfirmObserver.ObserverEntryArray[0].value));
+			IfThenElseObserver.checkAndTrigger();
+		};
+		
+		var thisObserverEntry = new ObserverEntry("question", ".");
+		checkConfirmObserver.ObserverEntryArray[0] = thisObserverEntry;
+		question = this._getValue(VisualObject, ObjectPath+".question", checkConfirmObserver);
+		if(question === true){
+			//the setVar is handled via a callback
+		}else{
+			thisObserverEntry.requirementsFulfilled = true;
+			thisObserverEntry.value = question;
+			var result = checkConfirmObserver.checkAndTrigger();
+			if (result === false){
+				//in an known error state, skip processing
+				//break;
+			}
+		}
+		return;
 	},
 	
 	/**
