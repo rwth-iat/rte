@@ -56,15 +56,17 @@ LIBRARY TCPbind
 		IS_INSTANTIABLE;
 		FLAGS	=	"v";
 		VARIABLES
-			socket	:	INT	HAS_ACCESSORS
-				COMMENT	=	"listening on socket"
-				INITIALVALUE	=	-1;
+			socket [2]	:	INT	
+				COMMENT	=	"listening on socket(s) (IPv4 and IPv6)";
 			SocketState	:	UINT
 				COMMENT	=	"State of the socket: 0 - closed; 1 - opening; 2 - open; 4 - closing; 128 - indicates error; 255 generic error"
 				INITIALVALUE	=	0;
 			port	:	INT	HAS_ACCESSORS
 				COMMENT	=	"port listening on"
 				INITIALVALUE	=	-1;
+			ChannelNeedsClientHandler	:	BOOL
+				COMMENT	=	"TRUE: TCPChannels created by this TCPListener need ClientHandlers"
+				INITIALVALUE = TRUE;
 		END_VARIABLES;
 		OPERATIONS
 			startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
@@ -73,4 +75,11 @@ LIBRARY TCPbind
 		END_OPERATIONS;
 	END_CLASS;
 	
+	/* 
+ 	 * This Association is used on a TCPListener to make it create Channels with a specific ClientsHandler 
+ 	 */
+	ASSOCIATION AssocSpecificClientHandler : ONE_TO_ONE
+		PARENT Listener : CLASS TCPbind/TCPListener;
+		CHILD  Identificator  : CLASS ksbase/ProtocolIdentificator;
+	END_ASSOCIATION;	
 END_LIBRARY;
