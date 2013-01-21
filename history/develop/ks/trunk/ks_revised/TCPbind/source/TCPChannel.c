@@ -300,6 +300,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				{
 					ks_logfile_debug("%s: nothing received. connection was gracefully closed", this->v_identifier);
 					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+					TCPbind_TCPChannel_socket_set(thisCh, -1);
 					break;
 				}
 				else if (err == -1)
@@ -493,6 +494,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
+	int on = 1; 	//used to disable nagle algorithm
 
 	//set connection information
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -553,6 +555,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	ks_logfile_debug("%s: connected to %s.", this->v_identifier, this->v_address);
 	//set time of Opening the Connection
 	ov_time_gettime(&(this->v_LastReceiveTime));
+
+	//disable nagle for the receivesocket
+	setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+
 	return OV_ERR_OK;
 }
 
