@@ -52,6 +52,7 @@ LIBRARY ksbase
 			calcExec    : C_FUNCTION <KSBASE_FNC_CALCEXEC>;       //provides bool if typemethod need to be called. decreases cyc
 								      //would be nice to do this check locally by overloading typemethod, by....
 			typemethod  : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;     //gets called by roottask and should be implemented 
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -215,7 +216,7 @@ LIBRARY ksbase
  * This is the Association, which connects the RootComTask to the real ComTasks
  */
 	ASSOCIATION AssocComTaskList : ONE_TO_MANY
-		PARENT rootcomtask : CLASS ksbase/RootComTask;
+		PARENT RootomTask : CLASS ksbase/RootComTask;
 		CHILD  comtaskchild  : CLASS ksbase/ComTask;
 	END_ASSOCIATION;
 	
@@ -239,7 +240,7 @@ LIBRARY ksbase
  * This Associations points to the Channel taht is currently running its typemethod
  */
 	ASSOCIATION AssocCurrentChannel : ONE_TO_ONE
-		PARENT RootComTask : CLASS ksbase/RootComTask;
+		PARENT ChannelParent : CLASS ksbase/RootComTask;
 		CHILD  CurrentChannel  : CLASS ksbase/Channel;
 	END_ASSOCIATION;
 	
