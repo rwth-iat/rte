@@ -57,6 +57,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 
 		memcpy(packet->writePT, data, addlength);
 		packet->writePT += addlength;
+		packet->data = tempdata;
 	}
 	else
 	{
