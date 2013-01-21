@@ -216,7 +216,7 @@ LIBRARY ksbase
  * This is the Association, which connects the RootComTask to the real ComTasks
  */
 	ASSOCIATION AssocComTaskList : ONE_TO_MANY
-		PARENT RootomTask : CLASS ksbase/RootComTask;
+		PARENT RootComTask : CLASS ksbase/RootComTask;
 		CHILD  comtaskchild  : CLASS ksbase/ComTask;
 	END_ASSOCIATION;
 	
