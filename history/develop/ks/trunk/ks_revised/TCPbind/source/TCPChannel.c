@@ -126,9 +126,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		sendlength = thisCh->v_outData.length;
 		sendlength -= (thisCh->v_outData.readPT - thisCh->v_outData.data);
 
-		if(!sendlength) //nothing more to send
+		if(sendlength <= 0) //nothing more to send
 		{
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+			ks_logfile_debug("no more send needed");
 			return OV_ERR_OK;
 		}
 		//issue send command
@@ -260,14 +261,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	tstemp.secs = thisCh->v_UnusedDataTimeOut;
 	tstemp.usecs = 0;
 	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
-	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
+	if((ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
 	{
 		ks_logfile_info("%s: received nothing for %u seconds. Deleting inData.", this->v_identifier, thisCh->v_UnusedDataTimeOut);
-		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
-	}
-	if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED)
-	{
-		ks_logfile_info("%s: connection closed. Deleting inData.", this->v_identifier);
 		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 	}
 
@@ -278,8 +274,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	socket = TCPbind_TCPChannel_socket_get(thisCh);
 
 	if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
-		ks_logfile_debug("%s/typemethod: no socket set, disabling typemethod",this->v_identifier);
-		this->v_actimode = 0;
 		thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 		Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 		return;
@@ -314,6 +308,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 
 			if(!thisCh->v_inData.writePT)
 				thisCh->v_inData.writePT = thisCh->v_inData.data;
+			else
+				thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
 
 			err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
 			if(err < TCPbind_CHUNKSIZE)
