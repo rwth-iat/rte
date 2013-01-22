@@ -20,6 +20,10 @@
 #define OV_COMPILE_LIBRARY_ksbase
 #endif
 
+#if !OV_SYSTEM_NT
+#define _POSIX_C_SOURCE	 199309L
+#include <time.h>
+#endif
 
 #include "ksbase.h"
 #include "libov/ov_macros.h"
@@ -212,7 +216,11 @@ void ksbase_RootComTask_execute(
 
 		//	ks_logfile_debug("sleepin %d usecs", time_left.usecs);
 #if !OV_SYSTEM_NT
-		usleep(time_left.secs * 1000000 + time_left.usecs);
+		//usleep(time_left.secs * 1000000 + time_left.usecs);
+		struct timespec s;
+		s.tv_sec = time_left.secs;
+		s.tv_nsec = time_left.usecs*1000;
+	    nanosleep(&s, NULL);
         // Not work on LINUX: select(0,  0,0,0,  &delay);
 #else
         if( (time_left.secs == 0) && (time_left.usecs == 0) ) {

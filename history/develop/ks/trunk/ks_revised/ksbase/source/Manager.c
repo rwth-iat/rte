@@ -52,7 +52,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 		if(Ov_OK(result))
 		{//domain with servername created
 
-			sprintf(cntstr, "%i", version);
+			sprintf(cntstr, "%li", version);
 			if(Ov_OK(Ov_CreateObject(ksbase_ServerRep, pNewSrvRep, pNewSrvRepDomain, cntstr)))
 			{//object with name = version created (this structure is for compatibility with magellan and xfbspro)
 
@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 			pExistingSrvRepDomain = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, pServersDomain, name);
 			pExistingSrvRep = NULL;
 
-			sprintf(cntstr, "%i", version);
+			sprintf(cntstr, "%li", version);
 			pExistingSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, pExistingSrvRepDomain, cntstr);
 			if(pExistingSrvRep)
 			{

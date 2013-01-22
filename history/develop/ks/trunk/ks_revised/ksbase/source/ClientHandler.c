@@ -94,9 +94,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientHandler_HandleRequest(
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 )	{
-	OV_UINT i = 0;
+#if LOG_KS || LOG_KS_DEBUG
 	char temp [9];
+	OV_UINT i = 0;
+#endif
+
 	ks_logfile_warning("Empty HandleRequest function. No functionality implemented for ClientHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier);
+
 #if LOG_KS || LOG_KS_DEBUG
 	ks_logfile_debug("ClientHandler: %s dataReceived first 64 bytes:\n");
 

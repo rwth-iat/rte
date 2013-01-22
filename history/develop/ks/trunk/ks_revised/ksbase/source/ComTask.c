@@ -119,10 +119,10 @@ OV_DLLFNCEXPORT void ksbase_ComTask_destructor(
 OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
-	OV_INSTPTR_ksbase_RootComTask rcTask;
+	//OV_INSTPTR_ksbase_RootComTask rcTask;
 	OV_TIME now;
 
-	rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
+	//rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
 
 	if(this->v_actimode == 0) return FALSE; //disabled ComTask
 
