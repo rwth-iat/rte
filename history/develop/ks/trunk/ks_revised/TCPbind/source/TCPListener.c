@@ -189,6 +189,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 		{
 			ks_logfile_error("%s: getaddrinfo failed: %d", this->v_identifier, ret);
+			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return;
 		}
 
@@ -217,12 +218,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if(getsockname(fd, sa, &sas))
 			{
 				ks_logfile_error("%s: getsockname failed", this->v_identifier);
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
 			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 			{
 				ks_logfile_error("%s: getnameinfo failed", this->v_identifier);
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 

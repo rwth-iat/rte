@@ -148,6 +148,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			perror ("send error:");
 			//DEBUG END
 			ks_logfile_error("%s: send() failed", thisCh->v_identifier);
+			thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
 			return OV_ERR_GENERIC;
 		}
 
@@ -505,6 +506,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if ((ret = getaddrinfo(host, port, &hints, &res))!=0)
 	{
 		ks_logfile_error("%s: getaddrinfo failed", this->v_identifier);
+		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -529,6 +531,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if (sockfd == -1)
 	{
 		ks_logfile_error("%s: could not establish connection", this->v_identifier);
+		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -536,6 +539,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if( getpeername(sockfd, sa, &sas))
 	{
 		ks_logfile_error("%s: could not resolve connected peer", this->v_identifier);
+		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -543,6 +547,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 	{
 		ks_logfile_error("%s: could not resolve connected peer's address", this->v_identifier);
+		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
