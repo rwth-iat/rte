@@ -164,7 +164,11 @@ void ksserv_RootComTask_execute(
     	Sleep(time_left.secs * 1000 + time_left.usecs / 1000);
 #endif
 		}
-	}while(ov_time_compare(&time_next, &now) > 0);
+
+
+		// Checking of ov_activitylock prevents the communication system from freezing when activity lock is set by a ks-command
+
+	}while((ov_time_compare(&time_next, &now) > 0) || ov_activitylock);
 
 
 	//ksserv_logfile_debug("leaving loop");
