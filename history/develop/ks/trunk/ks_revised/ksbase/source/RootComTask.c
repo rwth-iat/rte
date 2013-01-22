@@ -152,7 +152,10 @@ void ksbase_RootComTask_execute(
 	OV_VTBLPTR_ksbase_ComTask	pvtable;
 	OV_TIME time_next, now, earliestChild;
 	OV_TIME_SPAN time_left, ts;
-	rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
+#if !OV_SYSTEM_NT
+		struct timespec s;
+#endif
+		rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
 
 	//get time_span until next event
 	time_left = *(ov_scheduler_getnexteventtime());
@@ -217,7 +220,6 @@ void ksbase_RootComTask_execute(
 		//	ks_logfile_debug("sleepin %d usecs", time_left.usecs);
 #if !OV_SYSTEM_NT
 		//usleep(time_left.secs * 1000000 + time_left.usecs);
-		struct timespec s;
 		s.tv_sec = time_left.secs;
 		s.tv_nsec = time_left.usecs*1000;
 	    nanosleep(&s, NULL);
