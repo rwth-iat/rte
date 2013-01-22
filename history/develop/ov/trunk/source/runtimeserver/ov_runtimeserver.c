@@ -486,7 +486,7 @@ ERRORMSG:
 		*   run server
 		*/
 		ov_logfile_info("Starting server...");
-		result = ov_ksserver_stripped_create(servername, port, ov_server_sighandler, reuse);
+		result = ov_ksserver_stripped_create(servername, ov_server_sighandler);
 		if(Ov_OK(result)) {
 			ov_logfile_info("Server started.");
 			ov_logfile_info("Servername: %s.",servername);
