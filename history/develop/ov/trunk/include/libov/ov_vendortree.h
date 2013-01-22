@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	25
+#define	OV_NUM_VENDOROBJECTS	26
 
 /*
 *	Number of configuration bits
@@ -407,6 +407,21 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_gettimeoffset(
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_settimeoffset(
 	const OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
+);
+
+/*
+*	Get commandline options
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getcmdlineoptions(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+);
+
+/*
+*	Set commandline options
+*/
+OV_DLLFNCEXPORT void ov_vendortree_setcmdlineoptions(
+	OV_STRING	options
 );
 
 #ifdef __cplusplus

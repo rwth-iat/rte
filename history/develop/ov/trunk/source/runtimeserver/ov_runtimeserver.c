@@ -8,6 +8,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_scheduler.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_malloc.h"
 #include "ov_ksserver_stripped.h"
 /*	----------------------------------------------------------------------	*/
 /*
@@ -45,9 +46,7 @@ static void ov_server_sighandler(
 
 OV_DLLFNCEXPORT OV_RESULT ov_ksserver_stripped_create(
 	OV_STRING			servername,
-	int					port,
-	OV_FNC_SIGHANDLER	*sighandler,
-	OV_BOOL				reuse
+	OV_FNC_SIGHANDLER	*sighandler
 ) {
       //ov_logfile_info("ov_ksserver_stripped_create");
 		if(!ov_object_identifierok(servername)) {
@@ -144,7 +143,7 @@ static void ov_server_usage(void)
 				"-t TASKID, --terminate TASKID    Terminate server (RMOS option only)\n"
 #endif
 				"-a , --activity-lock             Locks OV activities (scheduler and accessorfnc)\n"
-				"-r , --reuse-address             Reuses the socket address/port\n"
+				"-o , --option [OPTION]           appends the option OPTION to the cmdline_options variable in Vendortree\n\t\tOPTION is mandatory"
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
 				"-x, --exit                       Exit immediately (test if database loads)\n"
@@ -168,6 +167,8 @@ int main(int argc, char **argv) {
 	OV_STRING	            servername = NULL;
 	OV_STRING	            password = NULL;
 	OV_STRING               libraries[16];
+	OV_STRING				commandline_options = NULL;
+	OV_STRING				tempstr = NULL;
 	OV_INSTPTR_ov_library   plib;
 	OV_INSTPTR_ov_domain    pdom;
 	OV_INT                  i;
@@ -257,15 +258,22 @@ int main(int argc, char **argv) {
 		*	set activity lock
 		*/
 		else if(!strcmp(argv[i], "-a") || !strcmp(argv[i], "--activity-lock")) {
-			i++;
 			ov_activitylock = TRUE;
 		}
 		/*
-		*	set reuse of socket address/port
+		*	handle commandline options
 		*/
-		else if(!strcmp(argv[i], "-r") || !strcmp(argv[i], "--reuse-address")) {
+		else if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--option")) {
 			i++;
-			reuse = TRUE;
+			if(i<argc) {
+				tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+1);
+				if(tempstr)
+				{
+					commandline_options = strcat(tempstr, argv[i]);
+				}
+			} else {
+				goto HELP;
+			}
 		}
 		/*
 		*	start with library
@@ -457,6 +465,21 @@ ERRORMSG:
 	*	set the serverpassword of the database
 	*/
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
+
+	/*
+	 * set the commandline options
+	 * if port is set put it in front as PORT
+	 */
+	if(port)
+	{
+		tempstr = realloc(commandline_options, strlen(commandline_options)+15); //PORT + max characters in INT
+		if(tempstr)
+		{
+			sprintf(commandline_options, "PORT=%d %s", port, commandline_options);
+		}
+	}
+	if(commandline_options)
+		ov_vendortree_setcmdlineoptions(commandline_options);
 
 	if(!exit){
 		/*
