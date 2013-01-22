@@ -232,7 +232,17 @@ void ksbase_RootComTask_execute(
     	Sleep(time_left.secs * 1000 + time_left.usecs / 1000);
 #endif
 		}
-	}while(ov_time_compare(&time_next, &now) > 0);
+
+		// Checking of ov_activitylock prevents the communication system from freezing when activity lock is set by a ks-command
+
+	}while((ov_time_compare(&time_next, &now) > 0) || ov_activitylock);
+
+	/*
+	 * Eine "prexec" Option für den Runtimeserver wäre eine Möglichkeit den Server im activitylock zu starten und trotzdem den RootComTask zu starten (Start mit activitylock
+	 * friert KS-System momentan ein, da die initiale Ausführung des RootComTasks fehlt). Der Runtimeserver könnte vor ksserver_run eine prexecute-Funktion ausführen, die ein
+	 * benamtes event des Schedulers einmalig ausführt. Wenn dieses Event der RootcomTask ist, läuft das KS-System weiter bei abgeschaltetem OV-Scheduling.
+	 *
+	 */
 
 
 	//ks_logfile_debug("leaving loop");
