@@ -434,9 +434,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
 
 OV_DLLFNCEXPORT OV_RESULT ov_ksserver_stripped_create(
 	OV_STRING			servername,
-	int					port,
-	OV_FNC_SIGHANDLER	*sighandler,
-	OV_BOOL				reuse
+	OV_FNC_SIGHANDLER	*sighandler
 );
 OV_DLLFNCEXPORT void ov_ksserver_stripped_delete(void);
 OV_DLLFNCEXPORT void ov_ksserver_stripped_start(void);
