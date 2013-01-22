@@ -54,6 +54,8 @@ static OV_STRING	semantic_flag[32] = {
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 						NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 					};
+static OV_STRING	cmdlineoptions = NULL;
+
 OV_DLLVAREXPORT OV_BOOL ov_activitylock;
 OV_DLLVAREXPORT OV_BOOL ov_backup;
 OV_DLLVAREXPORT OV_BOOL ov_explain;
@@ -86,7 +88,8 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 	{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
 	{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
 	{ "server_password",			NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
-	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset }
+	{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset },
+	{ "cmdline_options",		NULL,	ov_vendortree_getcmdlineoptions, NULL }
 };
 
 /*	----------------------------------------------------------------------	*/
@@ -1025,6 +1028,40 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_settimeoffset(
 		return OV_ERR_OK;
 	}
 	return OV_ERR_BADTYPE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Get commandline options
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getcmdlineoptions(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_STRING;
+	pvarcurrprops->value.valueunion.val_string = databasename;
+	return OV_ERR_OK;
+}
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+*	Set commandline options
+*/
+OV_DLLFNCEXPORT void ov_vendortree_setcmdlineoptions(
+	OV_STRING	options
+) {
+	if(cmdlineoptions) {
+		ov_free(cmdlineoptions);
+		cmdlineoptions = NULL;
+	}
+	if(options) {
+		cmdlineoptions = (OV_STRING)ov_malloc(strlen(options)+1);
+		if(cmdlineoptions) {
+		    strcpy(cmdlineoptions, options);
+		}
+	}
 }
 
 /*	----------------------------------------------------------------------	*/
