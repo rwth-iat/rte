@@ -107,6 +107,18 @@ void ov_scheduler_insertevent(
 	OV_SCHEDULER_EVENT		*pevent
 );
 
+/**
+*	Execute the first event in the queue that matches concerning identifier, library and class
+*	empty strings / NULL-pointers are treated as a wildcard
+*	returns TRUE after execution
+*	returns FALSE if there was no matching event found
+*/
+OV_BOOL ov_scheduler_execnamedeventonce(
+		OV_STRING ident,
+		OV_STRING class,
+		OV_STRING lib
+);
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif
