@@ -118,7 +118,7 @@ ACPLTKS_LIBS			= ../../../plt/build/cygwin/libplt$(_LIB) $(LIBRPC_LIB)
 #	Targets
 #	-------
 
-targets: $(TARGETS) $(OV_NTSERVICE_EXE) $(OV_CONTROLPANEL_CPL)
+targets: $(TARGETS)
 
 	
 example: $(EXAMPLE)
