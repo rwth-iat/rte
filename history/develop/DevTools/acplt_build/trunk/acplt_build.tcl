@@ -468,10 +468,10 @@ proc create_release {} {
 	copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/include/libovks
 	file mkdir $releasedir/include/plt
 	copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/include/plt
-	#if { $os == "nt" } then {
-	#	file mkdir $releasedir/include/rpc
-	#	copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
-	#}
+	if { $os == "nt" } then {
+		file mkdir $releasedir/include/rpc
+		copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
+	}
 	#user dir
 	file mkdir $releasedir/user
 	file mkdir $releasedir/user/libs
@@ -486,7 +486,7 @@ proc create_release {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
+set included_libs {ksserv fb iec61131stdfb ksservtcp ksapi ksapitcp fbcomlib}
 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
