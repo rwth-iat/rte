@@ -114,9 +114,21 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
    ov_ksserver_stripped_run_server=FALSE;
 }
 /*
-*	End of file
+*	Tell the server to shut down
 */
+OV_DLLFNCEXPORT void ov_ksserver_downserver(void)
+{
+	 ov_ksserver_stripped_run_server=FALSE;
+	 return;
+}
 
+/*
+*	Test if the ACPLT/KS server for ACPLKT/OV is going down
+*/
+OV_DLLFNCEXPORT OV_BOOL ov_ksserver_isgoingdown(void)
+{
+	return ov_ksserver_stripped_run_server;
+}
 
 
 /*	----------------------------------------------------------------------	*/
