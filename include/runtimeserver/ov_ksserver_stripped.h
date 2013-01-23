@@ -155,14 +155,14 @@ OV_DLLFNCEXPORT OV_BOOL ov_ksserver_isgoingdown(void);
 /*
 *	Test the ACPLT/KS server for ACPLKT/OV has pending I/O events
 */
-OV_DLLFNCEXPORT OV_BOOL ov_ksserver_haspendingevents(void);
+//OV_DLLFNCEXPORT OV_BOOL ov_ksserver_haspendingevents(void);
 
 /*
 *	Serve pending I/O events of the ACPLT/KS server for ACPLKT/OV
 */
-OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
+/*OV_DLLFNCEXPORT OV_BOOL ov_ksserver_servependingevents(
 	OV_TIME_SPAN	*ptimeout
-);
+);*/
 
 /*
 *	Dispatch a service (subroutine)
