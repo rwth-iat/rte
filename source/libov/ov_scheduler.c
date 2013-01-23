@@ -360,6 +360,7 @@ OV_BOOL ov_scheduler_execnamedeventonce(
 	OV_INSTPTR_ov_library plib = NULL;
 
 	for(pevent=pfirstevent; pevent; pevent = pevent->pnext) {	//iterate over event queue
+		ov_logfile_debug("event identifier: %s", pevent->pobj->v_identifier);
 		if((!ident)
 			|| (!*ident)
 			|| (ov_string_compare(ident, pevent->pobj->v_identifier) == OV_STRCMP_EQUAL))	//empty string, NULL-pointer or matching identifiers
@@ -367,7 +368,7 @@ OV_BOOL ov_scheduler_execnamedeventonce(
 			pclass = Ov_GetParent(ov_instantiation, pevent->pobj);
 			if(!pclass)		// no class --> something is wrong
 				return FALSE;
-
+			ov_logfile_debug("event identifiers match\nclassname: %s", pclass->v_identifier);
 			if((!class)				//empty string, NULL-pointer or matching class
 				|| (!*class)
 				|| (ov_string_compare(class, pclass->v_identifier)))
@@ -375,7 +376,7 @@ OV_BOOL ov_scheduler_execnamedeventonce(
 				plib = Ov_GetParent(ov_containment, pclass);
 				if(!plib)		// no library --> something is wrong
 					return FALSE;
-
+				ov_logfile_debug("classnames match\nlibname: %s", plib->v_identifier);
 				if((!lib)				//empty string, NULL-pointer or matching library
 					|| (!*lib)
 					|| (ov_string_compare(lib, plib->v_identifier)))
