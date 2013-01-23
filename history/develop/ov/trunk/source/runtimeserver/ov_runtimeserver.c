@@ -268,10 +268,11 @@ int main(int argc, char **argv) {
 			if(i<argc) {
 				if(commandline_options)
 				{
-					tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+1);
+					tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+2); //oldlength + new option length + ' ' + '\0'
 					if(tempstr)
 					{
-						commandline_options = strcat(tempstr, argv[i]);
+						sprintf(tempstr, "%s %s", commandline_options, argv[i]);
+						commandline_options = tempstr;
 					}
 				}
 				else	//first time commandline_options is a NULL-pointer --> strlen would crash
@@ -486,7 +487,8 @@ ERRORMSG:
 			tempstr = realloc(commandline_options, strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(commandline_options, "PORT=%d %s", port, commandline_options);
+				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
+				commandline_options = tempstr;
 			}
 		}
 		else
