@@ -188,12 +188,12 @@ proc checkout_acplt {} {
     global os
     global included_libs
     cd $builddir
-    checkout cvs-legacy libml
+    checkout archive libml
     #for source release - checkout all
     #if { $os == "nt" } then { 
-    checkout cvs-legacy oncrpc
+    checkout archive oncrpc
     #}
-    checkout cvs-legacy acplt base
+    checkout archive acplt base
     cd $builddir/base
     #checkout libmpm
     checkout develop ov
@@ -642,7 +642,7 @@ if {$release == 1} {
 if { $os == "nt" } then {
     puts "Build finished, set the environment variable ACPLT_HOME to '[string map {/ \\} $basedir
 ]\\acplt'."
-    puts "Also, include the directories '%ACPLT_HOME%\\bin' and '%ACPLT_HOME%\\user\\libs' in your path."
+    puts "Also, include the directory '%ACPLT_HOME%\\bin' in your PATH and '%ACPLT_HOME%\\user\\libs' in OV_LIBRARY_PATH"
 } else {
     puts "Build finished, set the environment variable ACPLT_HOME to '$basedir/acplt'."
     puts "Also, include the directory '\$ACPLT_HOME/bin' in PATH, and '\$ACPLT_HOME/bin:\$ACPLT_HOME/user/libs' in LD_LIBRARY_PATH."
