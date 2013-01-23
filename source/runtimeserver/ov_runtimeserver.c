@@ -143,11 +143,17 @@ static void ov_server_usage(void)
 				"-t TASKID, --terminate TASKID    Terminate server (RMOS option only)\n"
 #endif
 				"-a, --activity-lock              Locks OV activities (scheduler and accessorfnc)\n"
-				"-o OPTION, --option OPTION       appends the option OPTION to the \n\t\tcmdline_options variable in Vendortree\n\t\tOPTION is mandatory\n"
+				"-o OPTION, --option OPTION       Appends the option OPTION to the \n"
+            	"                                 cmdline_options variable in Vendortree.\n"
+            	"                                 OPTION is mandatory\n"
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
 				"-x, --exit                       Exit immediately (test if database loads)\n"
-				"-h, --help                       Display this help message\n");
+				"--exec IDENTIFIER CLASS LIBRARY  Executes the first event in the schedulers queue\n"
+            	"                                 that matches concerning IDENTIFIER, CLASS and\n"
+            	"                                 LIBRARY before starting the server."
+            	"                                 All parameters are mandatory. Use '*' as wildcard.\n"
+            	"-h, --help                       Display this help message\n");
 
 
 }
@@ -170,6 +176,10 @@ int main(int argc, char **argv) {
 	OV_STRING				commandline_options = NULL;
 	OV_STRING				tempstr = NULL;
 	OV_STRING				tempstr2 = NULL;
+	OV_BOOL					exec = FALSE;
+	OV_STRING				execIdent = NULL;
+	OV_STRING				execClass = NULL;
+	OV_STRING				execLib = NULL;
 	OV_INSTPTR_ov_library   plib;
 	OV_INSTPTR_ov_domain    pdom;
 	OV_INT                  i;
@@ -356,6 +366,40 @@ int main(int argc, char **argv) {
 			return EXIT_FAILURE;
 		}
 		/*
+		 *	exec option
+		 *	before the server is started up ths first event in the schedulers event queue that matchers identifier, class and / or library
+		 *	is executed ONCE
+		 *	This is useful to start the RootComTask on a database with set activitylock ("forensic mode" / dead database with communication)
+		 */
+		else if(!strcmp(argv[i], "--exec")) {
+			exec = TRUE;
+			i++;
+			if(i<argc) {
+				if(argv[i]!='*')			//get Identifier
+					execIdent = argv[i];
+
+				i++;
+				if(i<argc) {
+					if(argv[i]!='*')		//get Class
+						execClass = argv[i];
+
+					i++;
+					if(i<argc) {
+						if(argv[i]!='*')	//get Library
+							execLib = argv[i];
+
+					} else {
+						goto HELP;
+					}
+				} else {
+					goto HELP;
+				}
+			} else {
+				goto HELP;
+			}
+		}
+
+		/*
 		*	display help option
 		*/
 		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -515,6 +559,14 @@ ERRORMSG:
 			ov_logfile_info("Server started.");
 			ov_logfile_info("Servername: %s.",servername);
 			ov_ksserver_stripped_start();
+
+			/*
+			 * If exec option is set execute the demanded task here
+			 */
+			if(exec)
+				if(!ov_scheduler_execnamedeventonce(execIdent, execClass, execLib))
+					ov_logfile_error("Requested task not found in schedulers event queue");
+
 
 			ov_ksserver_stripped_run();
 
