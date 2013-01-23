@@ -309,7 +309,6 @@ proc install_acplt { target } {
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
     install $builddir/base/acplt_makmak/build/$target
-    install $builddir/base/ov_runtimeserver/build/$target
 }
 
 proc makmak {library opts} {
