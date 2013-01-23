@@ -266,10 +266,19 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-o") || !strcmp(argv[i], "--option")) {
 			i++;
 			if(i<argc) {
-				tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+1);
-				if(tempstr)
+				if(commandline_options)
 				{
-					commandline_options = strcat(tempstr, argv[i]);
+					tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+1);
+					if(tempstr)
+					{
+						commandline_options = strcat(tempstr, argv[i]);
+					}
+				}
+				else	//first time commandline_options is a NULL-pointer --> strlen would crash
+				{
+					commandline_options = malloc(strlen(argv[i])+1);
+					if(commandline_options)
+						strcpy(commandline_options, argv[i]);
 				}
 			} else {
 				goto HELP;
@@ -472,10 +481,21 @@ ERRORMSG:
 	 */
 	if(port)
 	{
-		tempstr = realloc(commandline_options, strlen(commandline_options)+15); //PORT + max characters in INT
-		if(tempstr)
+		if(commandline_options)
 		{
-			sprintf(commandline_options, "PORT=%d %s", port, commandline_options);
+			tempstr = realloc(commandline_options, strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
+			if(tempstr)
+			{
+				sprintf(commandline_options, "PORT=%d %s", port, commandline_options);
+			}
+		}
+		else
+		{
+			commandline_options = malloc(11);
+			if(commandline_options)
+			{
+				sprintf(commandline_options, "PORT=%d", port);
+			}
 		}
 	}
 	if(commandline_options)
