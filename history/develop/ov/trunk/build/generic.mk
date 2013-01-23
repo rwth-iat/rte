@@ -397,7 +397,7 @@ OV_SERVER_RES  = ov_server$(_RES)
 OV_RUNTIMESERVER_SRC := $(wildcard $(OV_SOURCE_RUNTIMESERVER_DIR)*.c)
 OV_RUNTIMESERVER_OBJ  = $(foreach source, $(OV_RUNTIMESERVER_SRC), $(basename $(notdir $(source)))$(_OBJ))
 OV_RUNTIMESERVER_EXE  = ov_runtimeserver$(_EXE)
-OV_RUNTIMESERVER_RES  = ov_server$(_RES)
+OV_RUNTIMESERVER_RES  = ov_runtimeserver$(_RES)
 
 #	ACPLT/KS-Server for ACPLT/OV as Windows NT service
 #   	--------------------------------------------------
