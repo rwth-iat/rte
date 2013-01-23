@@ -271,7 +271,7 @@ int main(int argc, char **argv) {
 					tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(argv[i])+2); //oldlength + new option length + ' ' + '\0'
 					if(tempstr)
 					{
-						sprintf(tempstr, "%s %s", commandline_options, argv[i]);
+						sprintf(tempstr, "%s %s", tempstr, argv[i]);
 						commandline_options = tempstr;
 					}
 				}
@@ -487,7 +487,7 @@ ERRORMSG:
 			tempstr = realloc(commandline_options, strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
+				sprintf(tempstr, "PORT=%d %s", port, tempstr);
 				commandline_options = tempstr;
 			}
 		}
