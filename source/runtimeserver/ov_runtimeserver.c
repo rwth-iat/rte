@@ -169,6 +169,7 @@ int main(int argc, char **argv) {
 	OV_STRING               libraries[16];
 	OV_STRING				commandline_options = NULL;
 	OV_STRING				tempstr = NULL;
+	OV_STRING				tempstr2 = NULL;
 	OV_INSTPTR_ov_library   plib;
 	OV_INSTPTR_ov_domain    pdom;
 	OV_INT                  i;
@@ -487,8 +488,8 @@ ERRORMSG:
 			tempstr = realloc(commandline_options, strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(tempstr, "PORT=%d %s", port, tempstr);
-				commandline_options = tempstr;
+				sprintf(tempstr2, "PORT=%d %s", port, tempstr);
+				commandline_options = tempstr2;
 			}
 		}
 		else
