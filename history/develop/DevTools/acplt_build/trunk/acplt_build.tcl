@@ -191,7 +191,7 @@ proc checkout_acplt {} {
     checkout cvs-legacy libml
     #for source release - checkout all
     #if { $os == "nt" } then { 
-    #checkout cvs-legacy oncrpc
+    checkout cvs-legacy oncrpc
     #}
     checkout cvs-legacy acplt base
     cd $builddir/base
@@ -492,7 +492,7 @@ if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
 if {$checkout != 1} {
-	puts "Running this script with 'chcekout' option will checkout only"
+	puts "Running this script with 'checkout' option will checkout only"
 }
 
 if {$checkout == 1} {
