@@ -357,7 +357,7 @@ OV_BOOL ov_scheduler_execnamedeventonce(
 	*/
 	OV_SCHEDULER_EVENT	*pevent;
 	OV_INSTPTR_ov_class	pclass = NULL;
-	OV_INSTPTR_oc_library plib = NULL;
+	OV_INSTPTR_ov_library plib = NULL;
 
 	for(pevent=pfirstevent; pevent; pevent = pevent->pnext) {	//iterate over event queue
 		if((!ident)
