@@ -485,11 +485,12 @@ ERRORMSG:
 	{
 		if(commandline_options)
 		{
-			tempstr = realloc(commandline_options, strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
+			tempstr = malloc(strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(tempstr2, "PORT=%d %s", port, tempstr);
-				commandline_options = tempstr2;
+				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
+				free(commandline_options);
+				commandline_options = tempstr;
 			}
 		}
 		else
