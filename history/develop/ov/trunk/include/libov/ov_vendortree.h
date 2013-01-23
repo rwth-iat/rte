@@ -424,6 +424,23 @@ OV_DLLFNCEXPORT void ov_vendortree_setcmdlineoptions(
 	OV_STRING	options
 );
 
+/**
+ *	Get the value of the specified option
+ *	returns a NULL-pointer if option was not found
+ *	returns an empty string if option has no value
+ *	otherwise returns the value of the specified option
+ *	This functions uses the memstack, so call ov_memstack_lock() / ov_memstack_unlock() around
+ *	If no memory can be allocated a NULL-pointer is returned
+ */
+
+OV_DLLFNCEXPORT OV_STRING ov_vendortree_getcmdlineoption_value(OV_STRING option);
+
+/**
+ * Get the PORT number out of the cmdlineoptions string if it is set
+ *	returns -1 if PORT is not set
+ *	returns port number on success
+ */
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif

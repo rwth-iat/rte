@@ -340,6 +340,58 @@ void ov_scheduler_insertevent(
 
 /*	----------------------------------------------------------------------	*/
 
+
+/**
+*	Execute the first event in the queue that matches concerning identifier, library and class
+*	empty strings / NULL-pointers are treated as a wildcard
+*	returns TRUE after execution
+*	returns FALSE if there was no matching event found
+*/
+OV_BOOL ov_scheduler_execnamedeventonce(
+		OV_STRING ident,
+		OV_STRING class,
+		OV_STRING lib
+) {
+	/*
+	*	local variables
+	*/
+	OV_SCHEDULER_EVENT	*pevent;
+	OV_INSTPTR_ov_class	pclass = NULL;
+	OV_INSTPTR_oc_library plib = NULL;
+
+	for(pevent=pfirstevent; pevent; pevent = pevent->pnext) {	//iterate over event queue
+		if((!ident)
+			|| (!*ident)
+			|| (ov_string_compare(ident, pevent->pobj->v_identifier) == OV_STRCMP_EQUAL))	//empty string, NULL-pointer or matching identifiers
+		{
+			pclass = Ov_GetParent(ov_instantiation, pevent->pobj);
+			if(!pclass)		// no class --> something is wrong
+				return FALSE;
+
+			if((!class)				//empty string, NULL-pointer or matching class
+				|| (!*class)
+				|| (ov_string_compare(class, pclass->v_identifier)))
+			{
+				plib = Ov_GetParent(ov_containment, pclass);
+				if(!plib)		// no library --> something is wrong
+					return FALSE;
+
+				if((!lib)				//empty string, NULL-pointer or matching library
+					|| (!*lib)
+					|| (ov_string_compare(lib, plib->v_identifier)))
+				{
+					/* Call method of pevent */
+					(pevent->executefnc)(pevent->pobj);
+				}
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+/*	----------------------------------------------------------------------	*/
+
 /*
 *	End of file
 */
