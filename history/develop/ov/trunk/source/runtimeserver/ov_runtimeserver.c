@@ -114,21 +114,9 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
    ov_ksserver_stripped_run_server=FALSE;
 }
 /*
-*	Tell the server to shut down
+*	End of file
 */
-OV_DLLFNCEXPORT void ov_ksserver_downserver(void)
-{
-	 ov_ksserver_stripped_run_server=FALSE;
-	 return;
-}
 
-/*
-*	Test if the ACPLT/KS server for ACPLKT/OV is going down
-*/
-OV_DLLFNCEXPORT OV_BOOL ov_ksserver_isgoingdown(void)
-{
-	return ov_ksserver_stripped_run_server;
-}
 
 
 /*	----------------------------------------------------------------------	*/
@@ -161,10 +149,10 @@ static void ov_server_usage(void)
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
 				"-x, --exit                       Exit immediately (test if database loads)\n"
-				"--exec IDENTIFIER CLASS LIBRARY  Executes the first event in the schedulers queue\n"
-            	"                                 that matches concerning IDENTIFIER, CLASS and\n"
-            	"                                 LIBRARY before starting the server."
-            	"                                 All parameters are mandatory. Use '*' as wildcard.\n"
+				"--exec IDENTIFIER CLASS LIBRARY  Executes the first event in the schedulers\n"
+            	"                                 queue that matches concerning IDENTIFIER,\n"
+            	"                                 CLASS and LIBRARY before starting the server."
+            	"                                 All parameters are mandatory. Use '/' as wildcard.\n"
             	"-h, --help                       Display this help message\n");
 
 
@@ -392,12 +380,12 @@ int main(int argc, char **argv) {
 
 				i++;
 				if(i<argc) {
-					if(argv[i]!='*')		//get Class
+					if(argv[i]!='/')		//get Class
 						execClass = argv[i];
 
 					i++;
 					if(i<argc) {
-						if(argv[i]!='*')	//get Library
+						if(argv[i]!='/')	//get Library
 							execLib = argv[i];
 
 					} else {
