@@ -8,7 +8,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
 MAKMAKOPTIONS = -o
-EXTRA_LIBS = $$(BASE_LIB_DIR)oncrpcms$$(_LIB)
+EXTRA_LIBS = 
 LD_FLAGS = -lwsock32
 COMPILER = GCC
 COMPILER_LO = $(call lc,$(COMPILER))
