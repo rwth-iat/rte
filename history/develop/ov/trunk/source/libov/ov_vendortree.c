@@ -1040,7 +1040,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getcmdlineoptions(
 	const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
-	pvarcurrprops->value.valueunion.val_string = databasename;
+	pvarcurrprops->value.valueunion.val_string = cmdlineoptions;
 	return OV_ERR_OK;
 }
 
