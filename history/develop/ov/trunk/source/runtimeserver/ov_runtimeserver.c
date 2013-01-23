@@ -142,8 +142,8 @@ static void ov_server_usage(void)
 #if OV_SYSTEM_RMOS
 				"-t TASKID, --terminate TASKID    Terminate server (RMOS option only)\n"
 #endif
-				"-a , --activity-lock             Locks OV activities (scheduler and accessorfnc)\n"
-				"-o , --option OPTION             appends the option OPTION to the \n\t\tcmdline_options variable in Vendortree\n\t\tOPTION is mandatory\n"
+				"-a, --activity-lock              Locks OV activities (scheduler and accessorfnc)\n"
+				"-o OPTION, --option OPTION       appends the option OPTION to the \n\t\tcmdline_options variable in Vendortree\n\t\tOPTION is mandatory\n"
 				"-n, --no-startup                 Do not startup the database\n"
 				"-v, --version                    Display version information\n"
 				"-x, --exit                       Exit immediately (test if database loads)\n"
