@@ -191,7 +191,7 @@ proc checkout_acplt {} {
     checkout cvs-legacy libml
     #for source release - checkout all
     #if { $os == "nt" } then { 
-    checkout cvs-legacy oncrpc
+    #checkout cvs-legacy oncrpc
     #}
     checkout cvs-legacy acplt base
     cd $builddir/base
@@ -226,19 +226,18 @@ proc build_acplt_mingw {} {
     global make
     global basedir
 	global builddir
-	print_msg "Building oncrpc"
-	cd $builddir/oncrpc/
-    #execute makemingw.bat
-	execute makemingw.bat
-	file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
+	#print_msg "Building oncrpc"
+	#cd $builddir/oncrpc/
+	#execute makemingw.bat
+	#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
-	cd $builddir/base/plt/build/cygwin
-    build_cygwin plt make -f makefile
-	cd $builddir/base/ks/build/cygwin
-    build_cygwin ks make -f makefile
+	#cd $builddir/base/plt/build/cygwin
+    #build_cygwin plt make -f makefile
+	#cd $builddir/base/ks/build/cygwin
+    #build_cygwin ks make -f makefile
 	cd $builddir/base/ov/build/cygwin
     build_cygwin ov make -f makefile
 	cd $builddir/base/acplt_makmak/build/cygwin
@@ -262,16 +261,16 @@ proc build_acplt {} {
     }
     # build libmpm make -C $builddir/base/libmpm -f $makefile
     if { $os == "nt" } then {
-        cd $builddir/base/plt/build/ntvc
-        build plt nmake /f $makefile
-        cd $builddir/base/ks/build/ntvc
-        build ks nmake /f $makefile
+        #cd $builddir/base/plt/build/ntvc
+        #build plt nmake /f $makefile
+        #cd $builddir/base/ks/build/ntvc
+        #build ks nmake /f $makefile
         cd $builddir/base/ov/build/ntvc
         build ov make -f $makefile -k
         cd $basedir
     } else {
-        build plt make -C $builddir/base/plt/build/$os
-        build ks make -C $builddir/base/ks/build/$os
+        #build plt make -C $builddir/base/plt/build/$os
+        #build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
    }
    if { $os == "nt" } then {
@@ -443,14 +442,14 @@ proc create_release {} {
 	#}
 	set lib ".a"
 
-	set libfiles [list "$builddir/lib/libks$lib" "$builddir/lib/libkscln$lib" "$builddir/lib/libkssvr$lib" "$builddir/lib/libov$lib" "$builddir/lib/libovks$lib" "$builddir/lib/libplt$lib"]
+	set libfiles [list "$builddir/lib/libov$lib"]
 	foreach file $libfiles {
 		file copy -force $file $releasedir/lib/
 	}
-	if { $os == "nt" } then {
-		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
-		file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
-	}
+	#if { $os == "nt" } then {
+	#	file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
+	#	file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
+	#}
 	#model dir
 	file mkdir $releasedir/model
 	set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
@@ -469,10 +468,10 @@ proc create_release {} {
 	copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/include/libovks
 	file mkdir $releasedir/include/plt
 	copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/include/plt
-	if { $os == "nt" } then {
-		file mkdir $releasedir/include/rpc
-		copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
-	}
+	#if { $os == "nt" } then {
+	#	file mkdir $releasedir/include/rpc
+	#	copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/include/rpc
+	#}
 	#user dir
 	file mkdir $releasedir/user
 	file mkdir $releasedir/user/libs
