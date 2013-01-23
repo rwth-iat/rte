@@ -226,9 +226,9 @@ proc build_acplt_mingw {} {
     global make
     global basedir
 	global builddir
-	#print_msg "Building oncrpc"
-	#cd $builddir/oncrpc/
-	#execute makemingw.bat
+	print_msg "Building oncrpc"
+	cd $builddir/oncrpc/
+	execute makemingw.bat
 	#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
@@ -256,7 +256,7 @@ proc build_acplt {} {
     if { $os == "nt" } then { 
         cd $builddir/oncrpc
         execute make.bat
-        file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
+        #file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
         cd $basedir
     }
     # build libmpm make -C $builddir/base/libmpm -f $makefile
@@ -446,10 +446,10 @@ proc create_release {} {
 	foreach file $libfiles {
 		file copy -force $file $releasedir/lib/
 	}
-	#if { $os == "nt" } then {
-	#	file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
+	if { $os == "nt" } then {
+		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/lib/
 	#	file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
-	#}
+	}
 	#model dir
 	file mkdir $releasedir/model
 	set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
@@ -486,7 +486,7 @@ proc create_release {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {ksserv fb iec61131stdfb ksservtcp ksapi ksapitcp fbcomlib}
+set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
