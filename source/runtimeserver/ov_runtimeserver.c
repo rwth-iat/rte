@@ -375,17 +375,17 @@ int main(int argc, char **argv) {
 			exec = TRUE;
 			i++;
 			if(i<argc) {
-				if(argv[i]!='*')			//get Identifier
+				if(*(argv[i])!='/')			//get Identifier
 					execIdent = argv[i];
 
 				i++;
 				if(i<argc) {
-					if(argv[i]!='/')		//get Class
+					if(*(argv[i])!='/')		//get Class
 						execClass = argv[i];
 
 					i++;
 					if(i<argc) {
-						if(argv[i]!='/')	//get Library
+						if(*(argv[i])!='/')	//get Library
 							execLib = argv[i];
 
 					} else {
