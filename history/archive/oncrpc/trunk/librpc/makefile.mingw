@@ -52,7 +52,7 @@ OBJS =          CLNT_RAW.o \
 		BCOPY.o \
 		NT.o
 
-all: oncrpc.dll oncrpc.a portmap.exe
+all: oncrpc.dll oncrpc.a #portmap.exe
 
 clean:
 	cmd /c del $(OBJS) oncrpc.dll oncrpc.lib oncrpc.exp portmap.o portmap.exe ..\rpcgen\oncrpc.dll *.pdb
