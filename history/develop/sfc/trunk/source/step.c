@@ -32,9 +32,9 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_mode_set(
     OV_INSTPTR_sfc_step          pinst,
     const OV_UINT  value
 ) {
-	OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
-	OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
+	//OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
+	//OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+	//OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
 
 	// if mode 1, it should exist no exit-actions stopping or breaking subSFCs
 
@@ -124,6 +124,8 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     OV_INSTPTR_sfc_step pNextStep = NULL;
     OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
     OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+    // helper vaiables
+    OV_BOOL	  exitLoop=FALSE;
 
     // check location
     if (pSFC==NULL)
@@ -140,8 +142,7 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = TRUE;
     pinst->v_evTransTrigger=FALSE;
-    // helper vaiables
-    OV_BOOL	  exitLoop;
+
 
 
     // execute subtasks

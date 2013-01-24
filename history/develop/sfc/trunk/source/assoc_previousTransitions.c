@@ -36,10 +36,10 @@ OV_DLLFNCEXPORT OV_RESULT sfc_previousTransitions_link
 ) {
 	//	local Pointers
 	//
-	OV_INSTPTR_sfc_transition pTrans = Ov_StaticPtrCast(sfc_transition, pchild);
+	//OV_INSTPTR_sfc_transition pTrans = Ov_StaticPtrCast(sfc_transition, pchild);
 
 	OV_INSTPTR_sfc_step pPreviousStep = Ov_GetParent(sfc_nextTransitions, pchild);
-	OV_RESULT    result;
+	//OV_RESULT    result;
 
 	// check if the previousStep and nextStep are the same
 	if ( pPreviousStep == pparent)

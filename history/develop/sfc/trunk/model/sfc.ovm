@@ -66,6 +66,10 @@ LIBRARY sfc
   COPYRIGHT = "2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
   COMMENT   = "ACPLT Sequntial Function Chart Library";
 
+  /* Yu: Viele Engineeringaspekte wurden bei der Modellierung mitberücksichtig. Es wird z.B. bei jeder Instanzierung automatisch überprüft, 
+  ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
+  Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
+   
   CLASS sfcHeader : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		COMMENT = "SFC header";
@@ -92,6 +96,7 @@ LIBRARY sfc
     	END_OPERATIONS;
   END_CLASS;
 
+  /* Yu: TODO: nach Absprache mit Prof. Epple soll nur "mode 1" unterstützt werden. Also Eingang "mode" löschen*/
   CLASS step : CLASS fb/functionblock
 		IS_INSTANTIABLE;
   	COMMENT = "step";
@@ -162,6 +167,10 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
+  /* TODO: setVariable für Wertzuweisung auf einen internen FB-Eingang. */
+  /* TODO: setVariable für variable A = variable B (Die jetzige setVariable ist nur variable A = value) */
+  
+  
    CLASS executeFb : CLASS sfc/actionBlock
 	IS_INSTANTIABLE;
   	COMMENT = "action block calling FB- or CFC-action ";
@@ -174,6 +183,7 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
+  /*Yu: in der Zunkunft kann überlegt werden, executeFb und executeSfc als eine Klasse zusammenzufassen. */
    CLASS executeSfc : CLASS sfc/executeFb
 	IS_INSTANTIABLE;
   	COMMENT = "action block calling SFC action";
@@ -186,6 +196,7 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
+  /* Yu: Diese Klasse ist noch funktionslos und ist nicht mehr zeitgemäß. Nach dem neuen Dienstkonzept soll Auftrag mittels spezifischen FB verschickt werden */ 
   CLASS requestService : CLASS sfc/actionBlock
 	IS_INSTANTIABLE;
   	COMMENT = "action block for call service action";
@@ -204,6 +215,8 @@ LIBRARY sfc
 
   /* Associations */
     /* Connections from steps to next transitions. */
+    /* Yu: Diese Assoziation ist zwar praktisch, sollte aber entfernt werden, damit nicht jeder FB eine zusätzliche Assoziation bekommt. 
+           Lösung: Wenn ein AB bei der Initialisierung seine Aktion findet, linkt sie als TaskChild zu sich. */
   ASSOCIATION actionBlocks : ONE_TO_MANY
     PARENT action  		: CLASS fb/functionblock;
     CHILD  actionBlocks : CLASS sfc/executeFb;

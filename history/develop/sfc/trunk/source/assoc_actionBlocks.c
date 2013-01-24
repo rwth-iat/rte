@@ -89,9 +89,9 @@ OV_DLLFNCEXPORT void sfc_actionBlocks_unlink
 	OV_INSTPTR_sfc_executeFb    pActionBlock = Ov_StaticPtrCast(sfc_executeFb, pchild);
 
 	// reset parameter
-	if (ov_string_compare(pchild->v_actionName, pparent->v_identifier) == 0)
+	if (ov_string_compare(pActionBlock->v_actionName, pparent->v_identifier) == 0)
 	{
-		ov_string_setvalue(&pchild->v_actionName, NULL);
+		ov_string_setvalue(&pActionBlock->v_actionName, NULL);
 		pActionBlock->v_error=TRUE;
 		ov_string_setvalue(&pActionBlock->v_errorDetail, "action is not defined");
 

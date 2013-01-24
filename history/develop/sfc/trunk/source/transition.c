@@ -100,9 +100,9 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     if (pTransCond != NULL)
     {
         // check location
-    	if (pTransCondsContainer != pFC)
+    	if (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC))
     	{
-    		if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != pFC) )
+    		if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC)) )
     		{
     			pinst->v_error=TRUE;
     			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
@@ -121,7 +121,7 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     		pResultConnection->v_on = 1;
     		pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
     		// execute transtion condition
-    		Ov_Call1 (fb_functionblock, pTransCond, execute, pltc);
+    		Ov_Call1(fb_task, pTransCond, execute, pltc);
     	}
     }
 

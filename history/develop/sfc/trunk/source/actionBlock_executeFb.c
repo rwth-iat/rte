@@ -128,8 +128,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
     OV_INSTPTR_fb_functionblock pAction=NULL;
     OV_INSTPTR_fb_functionblock pCurrentAction=NULL;
-    OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
-    OV_RESULT    result;
+    //OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
+    //OV_RESULT    result;
 
     // init parameters
     pinst->v_cyctime.secs = 0;
@@ -189,6 +189,6 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     	return ov_string_setvalue(&pinst->v_actionName,value);
 	}
 	
- return;
+ return OV_ERR_OK;
 }
 

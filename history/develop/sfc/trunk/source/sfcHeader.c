@@ -97,12 +97,12 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
     *   local variables
     */
     OV_INSTPTR_sfc_sfcHeader pinst = Ov_StaticPtrCast(sfc_sfcHeader, pfb);
-    OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_step      pInitStep = NULL;
+    //OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
+    //OV_INSTPTR_sfc_step      pInitStep = NULL;
     OV_INSTPTR_sfc_step      pActiveStep = NULL;
-    OV_INSTPTR_fb_task       pTask = NULL;
+    //OV_INSTPTR_fb_task       pTask = NULL;
     OV_INSTPTR_fb_task 		 intask = &pinst->p_intask;
-    OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
+    //OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
     // helper vaiables
     OV_RESULT    			 result;
     OV_BOOL	                 exitLoop;
@@ -315,7 +315,8 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
         		}
       		    //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pActiveStep), execute, pltc);
         		//Frage: Warum funktionier hier der Aufruf von execute nicht?
-        		Ov_Call1 (sfc_step, pActiveStep, typemethod, pltc);
+        		//Ov_Call1 (sfc_step, pActiveStep, typemethod, pltc);
+        		Ov_Call1 (fb_functionblock, pActiveStep, typemethod, pltc);
 
 
         		ov_string_setvalue(&pinst->v_woStText, "STOP");
@@ -386,8 +387,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
 	OV_INSTPTR_sfc_sfcHeader pSfcAction = NULL;
-    OV_TIME *pTime;
-    ov_time_gettime(&pTime);
+    //OV_TIME *pTime;
+    //ov_time_gettime(&pTime);
 
     //reset all steps; find and link INIT-step to intask
 	  Ov_ForEachChildEx(ov_containment, pinst, pStep, sfc_step)
