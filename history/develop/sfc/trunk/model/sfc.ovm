@@ -70,6 +70,9 @@ LIBRARY sfc
   ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
   Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
    
+  /* Konzeptionell wurde entschieden (Epple, Qurios, Krausser, Yu), dass man nicht von fb/functionchart ableiten darf. 
+  Deswegen wurde die Verwaltungsfunktion für ein SFC als eine eigenständige Klasse definiert.
+  Es kann jedoch überlegt werden, ob dieser Design noch nötig ist.*/
   CLASS sfcHeader : CLASS fb/functionblock
 		IS_INSTANTIABLE;
 		COMMENT = "SFC header";
@@ -194,22 +197,6 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
-  /* Yu: Diese Klasse ist noch funktionslos und ist nicht mehr zeitgemäß. Nach dem neuen Dienstkonzept soll Auftrag mittels spezifischen FB verschickt werden */ 
-  CLASS requestService : CLASS sfc/actionBlock
-	IS_INSTANTIABLE;
-  	COMMENT = "action block for call service action";
-    VARIABLES
-      requester			: STRING 		FLAGS = "p"	COMMENT = "service requester";
-      provider  		: STRING 		FLAGS = "p"	COMMENT = "service provider";
-      service			: STRING		FLAGS = "p"	COMMENT = "required service";
-      parameters[]		: STRING		FLAGS = "p"	COMMENT = "service parameters";  
-    END_VARIABLES;
-    OPERATIONS
-      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      setActionName		: 	C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
-    END_OPERATIONS;
-  END_CLASS;
-   
 
   /* Associations */
     /* Connections from steps to next transitions. */

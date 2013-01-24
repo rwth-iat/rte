@@ -259,7 +259,6 @@
       T : OUTPUT TIME_SPAN = 0.000000;
       phase : OUTPUT UINT = 1;
       qualifier : OUTPUT UINT = 1;
-      mode : INPUT UINT = 1;
       evTransTrigger : OUTPUT BOOL = TRUE;
       hasSubSfc : OUTPUT BOOL = FALSE;
       subSfcTerminated : OUTPUT BOOL = FALSE;
@@ -350,7 +349,6 @@
       T : OUTPUT TIME_SPAN = 0.000000;
       phase : OUTPUT UINT = 1;
       qualifier : OUTPUT UINT = 1;
-      mode : INPUT UINT = 1;
       evTransTrigger : OUTPUT BOOL = FALSE;
       hasSubSfc : OUTPUT BOOL = FALSE;
       subSfcTerminated : OUTPUT BOOL = FALSE;
@@ -419,7 +417,6 @@
       T : OUTPUT TIME_SPAN = 0.000000;
       phase : OUTPUT UINT = 2;
       qualifier : OUTPUT UINT = 2;
-      mode : INPUT UINT = 1;
       evTransTrigger : OUTPUT BOOL = FALSE;
       hasSubSfc : OUTPUT BOOL = FALSE;
       subSfcTerminated : OUTPUT BOOL = FALSE;
