@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     OV_INSTPTR_sfc_transition 	pinst = Ov_StaticPtrCast(sfc_transition, pfb);
     //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
     OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
-    OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
+    OV_INSTPTR_fb_functionblock pTransCond = Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
     OV_INSTPTR_sfc_step  		pPreStep = Ov_GetParent(sfc_nextTransitions, pinst);
     OV_INSTPTR_sfc_step  		pNextStep = Ov_GetParent(sfc_previousTransitions, pinst);
     OV_INSTPTR_sfc_sfcHeader	pSFC = Ov_StaticPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
@@ -124,6 +124,7 @@ OV_DLLFNCEXPORT void sfc_transition_typemethod(
     		Ov_Call1(fb_task, pTransCond, execute, pltc);
     	}
     }
+
 
     // trigger
     if (pinst->v_result)
