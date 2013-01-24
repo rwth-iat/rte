@@ -136,7 +136,7 @@
     CLASS /acplt/fb/boolport;
     VARIABLE_VALUES
       value : INPUT BOOL = TRUE;
-      flags : INPUT UINT = 0;
+      flags : INPUT UINT = 256;
       unit : INPUT STRING = "";
       comment : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -359,7 +359,6 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
       actimode : INPUT INT = 0;
       proctime : INPUT TIME = 2013-01-22 11:27:03.156000;
       cyctime : INPUT TIME_SPAN = 0.000000;
