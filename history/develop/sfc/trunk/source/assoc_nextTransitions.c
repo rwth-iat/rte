@@ -19,6 +19,8 @@
 
 
 #include "sfc.h"
+#include "sfclib.h"
+
 #include "libov/ov_association.h"
 
 #include "libov/ov_macros.h"
