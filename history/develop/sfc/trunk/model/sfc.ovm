@@ -141,6 +141,11 @@ LIBRARY sfc
     END_OPERATIONS;
   END_CLASS;
   
+  /* Aktion ist abstrakt, und dient als Träger für eine Aktion.
+  Eine Aktion kann ein FB sein, kann auch eine Zuweisung sein, z.B. "OUT=1". 
+  Laut IEC 61131-3 ist ein Aktionsblock nur eine grafische Element. Er kann explizit implementiert werden, muss aber nicht. 
+  In OV muss actionBlock als eine Klasse definiert werden. actionBlock veranschaulicht die Lokalisierung einer Aktion im ov-containment- und fb-task-Struktur.
+  */
   CLASS actionBlock : CLASS fb/functionblock
   	COMMENT = "action block ";
     VARIABLES
