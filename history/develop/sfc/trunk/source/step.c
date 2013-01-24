@@ -28,40 +28,6 @@
 #include "sfc.h"
 #include "sfclib.h"
 
-OV_DLLFNCEXPORT OV_RESULT sfc_step_mode_set(
-    OV_INSTPTR_sfc_step          pinst,
-    const OV_UINT  value
-) {
-	//OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
-	//OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
-	//OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
-
-	// if mode 1, it should exist no exit-actions stopping or breaking subSFCs
-
-/*
-	// find all action blocks calling subSFC
-	Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
-	{
-		// find all subSFCs for exit
-		if (pExecuteSfc->v_actionQualifier == ACT_EXIT)
-		{
-			if ( (pExecuteSfc->v_enableSfc==SFCCMD_STOP) || (pExecuteSfc->v_enableSfc==SFCCMD_BREAK))
-			{
-				ov_logfile_error("%s: for mode 1 may exist no action blocks for stopping or breaking SFCs");
-				return OV_ERR_BADINITPARAM;
-			}
-
-		}
-	}
-
-	// if mode 2, every entry or do subSFC must have an exit-action, and its cmd must be STOP
-
-	// if mode 3, every entry or do subSFC must have an exit-action, and its cmd must be BREAK
-*/
-	pinst->v_mode=value;
-	return OV_ERR_OK;
-
-}
 
 OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -176,18 +142,13 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     	/* phase 2: transitions, exit*/
     	case 2:
 
-    		/* mode 1: subSFCs run to the end without interruption. */
-    			if (pinst->v_hasSubSfc && (pinst->v_mode==1) )
+    		    /* subSFCs run to the end without interruption. */
+    			if (pinst->v_hasSubSfc )
     			{
     				if (pinst->v_subSfcTerminated)
     					pTrans->v_actimode=1;
     				else
     					pTrans->v_actimode=0;
-    			}else
-    			{
-    	    		/* mode 2: if trigger, stop and reset subSFCs. */
-    				/* mode 3: if trigger, break subSFCs. */
-    				pTrans->v_actimode=1;
     			}
 
     		// if stopping SFC, do not check transitions
@@ -214,7 +175,6 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
 						{
 							// stop subSFC
     						pSubSfc->v_EN=0;
-    						if (pinst->v_mode==3) pSubSfc->v_EN=2;
     						Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pSubSfc), execute, pltc);
 						}
 					}

@@ -96,7 +96,6 @@ LIBRARY sfc
     	END_OPERATIONS;
   END_CLASS;
 
-  /* Yu: TODO: nach Absprache mit Prof. Epple soll nur "mode 1" unterstützt werden. Also Eingang "mode" löschen*/
   CLASS step : CLASS fb/functionblock
 		IS_INSTANTIABLE;
   	COMMENT = "step";
@@ -106,7 +105,6 @@ LIBRARY sfc
 			T				:TIME_SPAN 	FLAGS = "o"	COMMENT = "elapsed time since initiation of a step according to IEC61131-3";
 			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
 			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
-			mode            :UINT		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "1: subSFCs run to the end without interruption. 2: if trigger, stop and reset subSFCs. 3: if trigger, break subSFCs." INITIALVALUE = 1;
 			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
 			hasSubSfc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSFC(s) (only for entry- and do-actions)";
 			subSfcTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSFC is/are terminated";
