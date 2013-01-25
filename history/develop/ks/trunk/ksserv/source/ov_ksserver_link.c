@@ -37,7 +37,7 @@
 /*
 *	Execute the Link service (subroutine)
 */
-void ov_ksserver_link(
+OV_DLLFNCEXPORT void ov_ksserver_link(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_LINK_PAR	*params,

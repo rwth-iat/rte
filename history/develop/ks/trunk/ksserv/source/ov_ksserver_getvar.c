@@ -38,7 +38,7 @@
 /*
 *	Execute the GetVar service (subroutine)
 */
-void ov_ksserver_getvar(
+OV_DLLFNCEXPORT void ov_ksserver_getvar(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_GETVAR_PAR	*params,

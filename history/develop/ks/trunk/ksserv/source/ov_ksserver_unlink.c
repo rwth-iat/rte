@@ -37,7 +37,7 @@
 /*
 *	Execute the Unlink service (subroutine)
 */
-void ov_ksserver_unlink(
+OV_DLLFNCEXPORT void ov_ksserver_unlink(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_UNLINK_PAR	*params,
