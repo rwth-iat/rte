@@ -164,7 +164,7 @@ HMIJavaScriptKSClient.prototype = {
 				//the expr syntax works for one entry, too, but we save a few bytes :-)
 				optionalurlparameter += "%20-output%20$::TKS::"+requestOutput[0];
 			}else if(requestOutput.length > 1){
-				optionalurlparameter += "%20-output%20[expr%20$::TKS::"
+				optionalurlparameter += "%20-output%20[expr%20$::TKS::";
 				for (var i = 0; i < requestOutput.length;i++){
 					optionalurlparameter += requestOutput[i];
 					if(i+1 < requestOutput.length){
@@ -322,7 +322,7 @@ HMIJavaScriptKSClient.prototype = {
 				//the expr syntax works for one entry, too, but we save a few bytes :-)
 				optionalurlparameter = "%20-output%20$::TKS::"+requestOutput[0];
 			}else if(requestOutput.length > 1){
-				optionalurlparameter = "%20-output%20[expr%20$::TKS::"
+				optionalurlparameter = "%20-output%20[expr%20$::TKS::";
 				for (var i = 0; i < requestOutput.length;i++){
 					optionalurlparameter += requestOutput[i];
 					if(i+1 < requestOutput.length){
@@ -344,7 +344,7 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = "/getVar?";
 			for(var i=1; i < ServerAndPath.length;i++){
 				if(i>1){
-					urlparameter += "&"
+					urlparameter += "&";
 				}
 				urlparameter += "path["+i+"]=" +ServerAndPath[i];
 			}
@@ -388,7 +388,7 @@ HMIJavaScriptKSClient.prototype = {
 	 */
 	setVar: function(Handle, path, value, cbfnc, async) {
 		//wrapper function for old hmi gestures
-		return this.setVar_NG(path, value, null, cbfnc, async)
+		return this.setVar_NG(path, value, null, cbfnc, async);
 	},
 	setVar_NG: function(path, value, type, cbfnc, async) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
@@ -1086,9 +1086,8 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		SheetList = SheetList.concat(sortedList);
 		
-		var responseArray = null;
-		var lastEntry = null;
-		var sortedList = null;
+		lastEntry = null;
+		sortedList = null;
 		
 		//get Sheets from hmi library
 		
@@ -1360,7 +1359,7 @@ HMIJavaScriptKSClient.prototype = {
 			currentArrayElement = response.slice(startIndexOfCurrentString, indexOfCurrentOpenBracket-1);
 			//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
 			currentArrayElement = currentArrayElement.split(" ");
-			for (i=0; i < currentArrayElement.length; i++) {
+			for (var i=0; i < currentArrayElement.length; i++) {
 				responseArray.push(currentArrayElement[i]);
 			}
 		}
@@ -1435,11 +1434,16 @@ HMIJavaScriptKSClient.prototype = {
 	/**
 	 * returns the childs of an Object as an Array, or an empty Array
 	 */
-	getChildObjArray: function (ObjectPath, cachingTarget) {
+	getChildObjArray: function (ObjectPath, cachingTarget, cbfnc) {
 		var responseArray;
 		if (!(cachingTarget.ResourceList.ChildList && cachingTarget.ResourceList.ChildList[ObjectPath] !== undefined)){
 			
-			var response = this.getEP(encodeURI(ObjectPath), "OT_DOMAIN", ["OP_NAME", "OP_CLASS"], null);
+			if(cbfnc === undefined){
+				var response = this.getEP(encodeURI(ObjectPath), "OT_DOMAIN", ["OP_NAME", "OP_CLASS"], null);
+			}else{
+				response = this.getEP(encodeURI(ObjectPath), "OT_DOMAIN", ["OP_NAME", "OP_CLASS"], cbfnc, true);
+				return;
+			}
 			
 			//no caching with an communication error
 			if (response === false){
