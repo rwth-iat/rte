@@ -145,7 +145,11 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message){
 		if(Ov_Fail((result.obj_results_val+i)->result)){
 			//todo better info which element had an error
 			fr = (result.obj_results_val+i)->result;
-			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+			if(fr == OV_ERR_UNKNOWNCLASSDEF){
+				ov_string_print(&temp, "%s; perhaps a base library is not loaded", ov_result_getresulttext(fr));
+			}else{
+				ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+			}
 		}
 	}
 

@@ -254,7 +254,7 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_GENERIC (unknown): %s%s", HTTP_503_BODY, tmp_body);
+		ov_string_print(body, "KS_ERR (unknown): %s%s", HTTP_503_BODY, tmp_body);
 		break;
 	}
 

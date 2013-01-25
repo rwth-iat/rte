@@ -72,7 +72,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_UINT output_format;
 	OV_UINT requestOutputDefault[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
 	OV_RESULT fr = OV_ERR_OK;
-	char flagiterator = 'a';
+	unsigned char flagiterator = 'a';
 	int i = 0;
 
 	//path=/TechUnits
@@ -372,7 +372,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}
 				break;
 			case OP_SEMANTIC:
-				//semantic_flags is 32 bit long
+				//semantic_flags is a u_long (32 bit) aka UINT, but a unsigned char for flagiterator is nicer in the debugger
+				//and save enough, as we iterate only to 129
 				for (flagiterator = 'a';flagiterator < 'a'+32;flagiterator++){
 					if(IsFlagSet(one_result->semantic_flags, flagiterator)){
 						ov_string_print(&temp, "%s%c", temp, flagiterator);

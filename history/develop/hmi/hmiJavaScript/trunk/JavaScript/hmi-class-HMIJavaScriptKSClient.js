@@ -506,10 +506,7 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - "+ServerAndPath[0]+" is not on the same host as our source. rename on a remote host is not supported right now. ");
 				return null;
 			}
-			
-			//urlparameter = "";
-			//not implemented
-			return null;
+			urlparameter = "/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -581,10 +578,7 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.creatObject - "+ServerAndPath[0]+" is not on the same host as our source. create on a remote host is not supported right now. ");
 				return null;
 			}
-			
-			//urlparameter = "";
-			//not implemented
-			return null;
+			urlparameter = "/createObject?path="+ServerAndPath[1]+"&factory="+classname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -649,9 +643,7 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			
-			//urlparameter = "";
-			//not implemented
-			return null;
+			urlparameter = "/deleteObject?path="+ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getHandleID(ServerAndPath[0]);
 			if(Handle === null){
@@ -727,10 +719,7 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObject - "+ServerAndPath[0]+" is not on the same host as our source. Link on a remote host is not supported right now. ");
 				return null;
 			}
-			
-			//urlparameter = "";
-			//not implemented
-			return null;
+			urlparameter = "/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
@@ -808,10 +797,7 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObject - "+ServerAndPath[0]+" is not on the same host as our source. unlink on a remote host is not supported right now. ");
 				return null;
 			}
-			
-			//urlparameter = "";
-			//not implemented
-			return null;
+			urlparameter = "/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getHandleID(ServerAndPath[0]);
