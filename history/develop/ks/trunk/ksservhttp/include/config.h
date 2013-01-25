@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -92,6 +92,7 @@
 #define REQUEST_HANDLED_BY_RENAMEOBJECT 12
 #define REQUEST_HANDLED_BY_LINK 13
 #define REQUEST_HANDLED_BY_UNLINK 14
+#define REQUEST_HANDLED_BY_GETSERVER 15
 
 //authorization.c
 #define REALM "Top secret! User: root Pass: pass"
@@ -150,6 +151,7 @@
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
+//fixme welche davon gibts noch?
 OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UINT format, OV_STRING* message);
 OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* newcontent, OV_STRING* message);
 OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive);
@@ -163,6 +165,7 @@ OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format);
 OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format);
 
+OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message);
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re);
 OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message);
 OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re);

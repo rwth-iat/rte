@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2012
+ *	Copyright (C) 2013
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -512,7 +512,12 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//BEGIN command routine
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
-			if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
+				//http GET
+				result = exec_getserver(&args, &body);
+				request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
+			}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+				//http GET
 				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
 				//it is caused by the second dot in the filename
 				result = exec_getvar(&args, &body);
@@ -542,24 +547,32 @@ void ksservhttp_httpclienthandler_typemethod(
 					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
+				//http PUT, used in OData or PROPPATCH, used in WebDAV
 				result = exec_setvar(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
+				//http PROPFIND, used in WebDAV
 				result = exec_getep(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
+				//http PUT, used in WebDAV
+				//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
 				result = exec_createObject(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
 			}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
+				//http DELETE, used in WebDAV
 				result = exec_deleteObject(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
 			}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
+				//http MOVE, used in WebDAV
 				result = exec_renameObject(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
 			}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
+				//http LINK
 				result = exec_link(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_LINK;
 			}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
+				//http UNLINK
 				result = exec_unlink(&args, &body);
 				request_handled_by = REQUEST_HANDLED_BY_UNLINK;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){

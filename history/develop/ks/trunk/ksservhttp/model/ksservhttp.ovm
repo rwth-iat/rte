@@ -73,9 +73,11 @@ LIBRARY ksservhttp
 			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
 			typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
 		END_OPERATIONS;
-	
 	END_CLASS;
 	
+	/**
+		handles on TCP Connection to a http client
+	*/
 	CLASS httpclienthandler : CLASS ksserv/Client
 		IS_INSTANTIABLE;
 		COMMENT = "class for handling the connection to a client";

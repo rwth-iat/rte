@@ -66,8 +66,15 @@ static OV_TICKET *ov_ksservhttp_ticket_defaultticket_createticket(XDR *xdr, OV_T
 }
 */
 
+/*
+falsche ergebnisse bei: evtl behoben durch neuen code
+http://localhost:8080/getVar?path[1]=/TechUnits/cshmi/Templates/Engineering/Domainv1/Trash.SVGcontent&path[9]=.Bitmapcontent
+http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{010}%20{/TechUnits/HMIManager}%20{SHOWSHEETS}
+*/
 
-#define EXEC_GETVAR_RETURN ov_string_freelist(pVarsList); \
+
+
+#define EXEC_GETVAR_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		ov_string_setvalue(&temp2, NULL);\
@@ -86,7 +93,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	*/
 	OV_UINT output_format;
 	OV_STRING_VEC match = {0,NULL};
-	OV_STRING *pVarsList = NULL;
 
 	OV_STRING *addrp = NULL;
 
