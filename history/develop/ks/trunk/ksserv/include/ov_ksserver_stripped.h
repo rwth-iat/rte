@@ -269,7 +269,7 @@ void ov_ksserver_getvar_getitem(
 /*
 *	Execute the SetVar service (subroutine)
 */
-void ov_ksserver_setvar(
+OV_DLLFNCEXPORT void ov_ksserver_setvar(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_SETVAR_PAR	*params,
