@@ -287,7 +287,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				return;
 			}
 			else
+			{
+					//if this is the first chunk of data in the packet, initialize the read pointer
+				if(!thisCh->v_inData.data)
+					thisCh->v_inData.readPT = tempdata;
+
 				thisCh->v_inData.data = tempdata;
+			}
 
 			if(!thisCh->v_inData.writePT)
 				thisCh->v_inData.writePT = thisCh->v_inData.data;
