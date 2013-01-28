@@ -256,183 +256,185 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 
 	socket = TCPbind_TCPChannel_socket_get(thisCh);
 
-	if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
-		thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-		Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-		return;
-	}
-
-	//receive data in chunks (we dont know how much it will be)
-	do
+	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
 	{
-		FD_ZERO(&read_flags);
-		FD_SET(socket, &read_flags); // get read flags
-		waitd.tv_sec = 0;     // Set Timeout
-		waitd.tv_usec = 0;    //  do not wait
-		err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
-		if(err)
-			KS_logfile_debug(("select returned: %d; line %d", err, __LINE__));
-
-		//check if data arrived
-		if((err > 0) && FD_ISSET(socket, &read_flags))
+		//receive data in chunks (we dont know how much it will be)
+		do
 		{
-			//Data arrived
-			//reallocate memory for receiving data. Note the temp-pointer: if realloc fails, the original pointer is NOT freed
-			tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
-			if(!tempdata)
-			{
-				KS_logfile_error(("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+TCPbind_CHUNKSIZE));
-				ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
-				Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-				return;
-			}
-			else
-			{
-					//if this is the first chunk of data in the packet, initialize the read pointer
-				if(!thisCh->v_inData.data)
-					thisCh->v_inData.readPT = tempdata;
+			FD_ZERO(&read_flags);
+			FD_SET(socket, &read_flags); // get read flags
+			waitd.tv_sec = 0;     // Set Timeout
+			waitd.tv_usec = 0;    //  do not wait
+			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
+			if(err)
+				KS_logfile_debug(("select returned: %d; line %d", err, __LINE__));
 
-				thisCh->v_inData.data = tempdata;
-			}
-
-			if(!thisCh->v_inData.writePT)
-				thisCh->v_inData.writePT = thisCh->v_inData.data;
-			else
-				thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
-
-			err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
-			if(err < TCPbind_CHUNKSIZE)
+			//check if data arrived
+			if((err > 0) && FD_ISSET(socket, &read_flags))
 			{
-				if(err == 0)
+				//Data arrived
+				//reallocate memory for receiving data. Note the temp-pointer: if realloc fails, the original pointer is NOT freed
+				tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
+				if(!tempdata)
 				{
-					KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
-					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-					TCPbind_TCPChannel_socket_set(thisCh, -1);
-					break;
-				}
-				else if (err == -1)
-				{
-					KS_logfile_error(("%s: error receiving. Deleting data and closing socket.", this->v_identifier));
-					//DEBUG
-					errno = WSAGetLastError();
-					perror ("receive error:");
-					//DEBUG END
+					KS_logfile_error(("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+TCPbind_CHUNKSIZE));
 					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
-					CLOSE_SOCKET(socket);
-					TCPbind_TCPChannel_socket_set(thisCh, -1);
-					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
+				else
+				{
+					//if this is the first chunk of data in the packet, initialize the read pointer
+					if(!thisCh->v_inData.data)
+						thisCh->v_inData.readPT = tempdata;
 
+					thisCh->v_inData.data = tempdata;
+				}
+
+				if(!thisCh->v_inData.writePT)
+					thisCh->v_inData.writePT = thisCh->v_inData.data;
+				else
+					thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
+
+				err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
+				if(err < TCPbind_CHUNKSIZE)
+				{
+					if(err == 0)
+					{
+						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
+						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+						TCPbind_TCPChannel_socket_set(thisCh, -1);
+						break;
+					}
+					else if (err == -1)
+					{
+						KS_logfile_error(("%s: error receiving. Deleting data and closing socket.", this->v_identifier));
+						//DEBUG
+						errno = WSAGetLastError();
+						perror ("receive error:");
+						//DEBUG END
+						ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+						CLOSE_SOCKET(socket);
+						TCPbind_TCPChannel_socket_set(thisCh, -1);
+						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+						return;
+					}
+
+				}
+
+				//update data length
+				thisCh->v_inData.length += err;
+				//move writept to end of data
+				thisCh->v_inData.writePT += err;
+
+				datareceived = TRUE;
 			}
 
-			//update data length
-			thisCh->v_inData.length += err;
-			//move writept to end of data
-			thisCh->v_inData.writePT += err;
+		}while(FD_ISSET(socket, &read_flags));
 
-			datareceived = TRUE;
-		}
-
-	}while(FD_ISSET(socket, &read_flags));
-
-	if(datareceived)
-	{
-
-		/**********************************************************************************************************************************************************
-		 *	Associate ClientHandler if needed
-		 *********************************************************************************************************************************************************/
-		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+		if(datareceived)
 		{
-			TCPbind_TCPChannel_AssociateClientHandler(thisCh);
-		}
 
+			/**********************************************************************************************************************************************************
+			 *	Associate ClientHandler if needed
+			 *********************************************************************************************************************************************************/
+			if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+			{
+				TCPbind_TCPChannel_AssociateClientHandler(thisCh);
+			}
+
+			/*****************************************************************************************************************************************************************************
+			 *	Process received data
+			 ****************************************************************************************************************************************************************************/
+
+			//update receivetime
+			ov_time_gettime(&(thisCh->v_LastReceiveTime));
+
+			if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+			{	//there is a ClientHandler associated. Call its HandleRequest function.
+				pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, thisCh);
+				if(pClientHandler)
+				{
+					Ov_GetVTablePtr(ksbase_ClientHandler, pVTBLClientHandler, pClientHandler);
+					if(pVTBLClientHandler)
+					{
+						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pClientHandler->v_identifier));
+						result = pVTBLClientHandler->m_HandleRequest(pClientHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+						if(Ov_Fail(result))
+						{
+							ov_memstack_lock();
+							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
+							ov_memstack_unlock();
+							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							return;
+						}
+						else
+						{
+							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							return;
+						}
+					}
+					else
+					{
+						KS_logfile_error(("%s: no Vtable found for ClientHandler %s. Shutting down", thisCh->v_identifier, pClientHandler->v_identifier));
+						Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+						return;
+					}
+				}
+				else
+				{
+					KS_logfile_error(("%s: no ClientHandler associated. Shutting down", thisCh->v_identifier));
+					Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+					return;
+				}
+			}
+			else if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)	//if acting on the client side, check if a "callback" has to be done
+			{
+				pDataHandler = Ov_GetChild(ksbase_AssocChannelDataHandler, thisCh);
+				if(pDataHandler)
+				{	//there is a DataHandler --> call its HandleData Function
+					Ov_GetVTablePtr(ksbase_DataHandler, pVTBLDataHandler, pDataHandler);
+					if(pVTBLDataHandler)
+					{
+						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pDataHandler->v_identifier));
+						result = pVTBLDataHandler->m_HandleData(pDataHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+						if(Ov_Fail(result))
+						{
+							ov_memstack_lock();
+							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pDataHandler->v_identifier, ov_result_getresulttext(result)));
+							ov_memstack_unlock();
+							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							return;
+						}
+						else
+						{
+							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							return;
+						}
+					}
+					else
+					{
+						KS_logfile_error(("%s: no Vtable found for DataHandler %s. Shutting down", thisCh->v_identifier, pDataHandler->v_identifier));
+						Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+						return;
+					}
+				}
+			}
+		}
 		/*****************************************************************************************************************************************************************************
-		 *	Process received data
+		 * Send data if there is still something in the buffer
 		 ****************************************************************************************************************************************************************************/
+		if(thisCh->v_outData.length)
+			TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
-		//update receivetime
-		ov_time_gettime(&(thisCh->v_LastReceiveTime));
-
-		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
-		{	//there is a ClientHandler associated. Call its HandleRequest function.
-			pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, thisCh);
-			if(pClientHandler)
-			{
-				Ov_GetVTablePtr(ksbase_ClientHandler, pVTBLClientHandler, pClientHandler);
-				if(pVTBLClientHandler)
-				{
-					KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pClientHandler->v_identifier));
-					result = pVTBLClientHandler->m_HandleRequest(pClientHandler, &(thisCh->v_inData), &(thisCh->v_outData));
-					if(Ov_Fail(result))
-					{
-						ov_memstack_lock();
-						KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
-						ov_memstack_unlock();
-						ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
-						ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
-						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						return;
-					}
-					else
-					{
-						TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						return;
-					}
-				}
-				else
-				{
-					KS_logfile_error(("%s: no Vtable found for ClientHandler %s. Shutting down", thisCh->v_identifier, pClientHandler->v_identifier));
-					Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
-					return;
-				}
-			}
-			else
-			{
-				KS_logfile_error(("%s: no ClientHandler associated. Shutting down", thisCh->v_identifier));
-				Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
-				return;
-			}
-		}
-		else if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)	//if acting on the client side, check if a "callback" has to be done
-		{
-			pDataHandler = Ov_GetChild(ksbase_AssocChannelDataHandler, thisCh);
-			if(pDataHandler)
-			{	//there is a DataHandler --> call its HandleData Function
-				Ov_GetVTablePtr(ksbase_DataHandler, pVTBLDataHandler, pDataHandler);
-				if(pVTBLDataHandler)
-				{
-					KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pDataHandler->v_identifier));
-					result = pVTBLDataHandler->m_HandleData(pDataHandler, &(thisCh->v_inData), &(thisCh->v_outData));
-					if(Ov_Fail(result))
-					{
-						ov_memstack_lock();
-						KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pDataHandler->v_identifier, ov_result_getresulttext(result)));
-						ov_memstack_unlock();
-						ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
-						ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
-						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						return;
-					}
-					else
-					{
-						TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						return;
-					}
-				}
-				else
-				{
-					KS_logfile_error(("%s: no Vtable found for DataHandler %s. Shutting down", thisCh->v_identifier, pDataHandler->v_identifier));
-					Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
-					return;
-				}
-			}
-		}
 	}
-
 	/*******************************************************************************************************************************************************
 	 *	check timeouts
 	 ******************************************************************************************************************************************************/
@@ -467,12 +469,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		KS_logfile_info(("%s: received nothing for %u seconds. Deleting inData.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
 		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 	}
-
-	/*****************************************************************************************************************************************************************************
-	 * Send data if there is still something in the buffer
-	 ****************************************************************************************************************************************************************************/
-	if(thisCh->v_outData.length)
-		TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
 	Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 	return;
