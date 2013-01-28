@@ -73,25 +73,25 @@
 #if LOG_KS || LOG_KS_DEBUG
 #define KS_logfile_debug(_x_) ks_logfile_debug _x_
 #else
-#define KS_logfile_debug(_x_)
+#define KS_logfile_debug(_x_) ;
 #endif
 
 #if LOG_KS || LOG_KS_INFO
 #define KS_logfile_info(_x_) ks_logfile_info _x_
 #else
-#define KS_logfile_info(_x_)
+#define KS_logfile_info(_x_) ;
 #endif
 
 #if LOG_KS || LOG_KS_WARNING
 #define KS_logfile_warning(_x_) ks_logfile_warning _x_
 #else
-#define KS_logfile_warning(_x_)
+#define KS_logfile_warning(_x_) ;
 #endif
 
 #if LOG_KS || LOG_KS_ERROR
 #define KS_logfile_error(_x_) ks_logfile_error _x_
 #else
-#define KS_logfile_error(_x_)
+#define KS_logfile_error(_x_) ;
 #endif
 
 /**
