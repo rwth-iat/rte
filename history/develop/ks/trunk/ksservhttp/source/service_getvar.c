@@ -76,8 +76,9 @@ http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{
 
 #define EXEC_GETVAR_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
-		ov_string_setvalue(&temp, NULL);\
-		ov_string_setvalue(&temp2, NULL);\
+		ov_string_setvalue(&LoopEntryValue, NULL);\
+		ov_string_setvalue(&singleVecEntry, NULL);\
+		ov_string_setvalue(&LoopEntryTypeString, NULL);\
 		ov_string_setvalue(&LoopEntryList, NULL);\
 		return
 
@@ -102,9 +103,10 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 	OV_ANY		Variable;
 	OV_UINT i = 0;
 	OV_UINT j = 0;
-	OV_STRING temp = NULL;
-	OV_STRING temp2 = NULL;
+	OV_STRING LoopEntryValue = NULL;
+	OV_STRING singleVecEntry = NULL;
 	OV_STRING LoopEntryList = NULL;
+	OV_STRING LoopEntryTypeString = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 
 	static OV_TICKET ticket = { &defaultticketvtblVar,  OV_TT_NONE };
@@ -151,256 +153,325 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message){
 		//general problem like memory problem or NOACCESS
 		ov_memstack_unlock();
 		fr = result.result;
-		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
-		ov_string_append(message, temp);
+		ov_string_print(&LoopEntryValue, "Problem: %s", ov_result_getresulttext(fr));
+		ov_string_append(message, LoopEntryValue);
 		EXEC_GETVAR_RETURN fr;
 	}
 	for (j=0; j< result.items_len;j++){
 		one_result = *(result.items_val + j);
 		if(Ov_Fail(one_result.result)){
-			//todo better info which element had an error
-			fr = one_result.result;
-			ov_string_setvalue(&temp, ov_result_getresulttext(fr));
+			ov_string_setvalue(&LoopEntryTypeString, "failure");
+			ov_string_print(&LoopEntryValue, "%i", one_result.result);
 		}else{
 			Variable = one_result.var_current_props;
 
+			if(Variable.value.vartype & OV_VT_ISVECTOR){
+				//the nonVEC cases write into LoopEntryValue,
+				//the VEC cases appends in a loop
+				ov_string_setvalue(&LoopEntryValue, NULL);
+			}
 			switch (Variable.value.vartype){
 				case OV_VT_VOID:															//unused ANY with explicit no content
 				case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
-					ov_string_print(&temp, "%s", "");
+					ov_string_setvalue(&LoopEntryTypeString, "void");
+					ov_string_print(&LoopEntryValue, "%s", "");
 					break;
 
 				case OV_VT_BYTE:
 				case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%d", Variable.value.valueunion.val_byte);
-				break;
+					ov_string_setvalue(&LoopEntryTypeString, "byte");
+					ov_string_print(&LoopEntryValue, "%d", Variable.value.valueunion.val_byte);
+					break;
 
 				case OV_VT_BOOL:
 				case OV_VT_BOOL_PV:
+					ov_string_setvalue(&LoopEntryTypeString, "bool");
 					if (Variable.value.valueunion.val_bool == TRUE){
-						ov_string_setvalue(&temp, "TRUE");
+						ov_string_setvalue(&LoopEntryValue, "TRUE");
 					}else{
-						ov_string_setvalue(&temp, "FALSE");
+						ov_string_setvalue(&LoopEntryValue, "FALSE");
 					}
 					break;
 
 				case OV_VT_INT:
 				case OV_VT_INT_PV:
-					ov_string_print(&temp, "%i", Variable.value.valueunion.val_int);
+					ov_string_setvalue(&LoopEntryTypeString, "int");
+					ov_string_print(&LoopEntryValue, "%i", Variable.value.valueunion.val_int);
 					break;
 
 				case OV_VT_UINT:
 				case OV_VT_UINT_PV:
-					ov_string_print(&temp, "%u", Variable.value.valueunion.val_uint);
+					ov_string_setvalue(&LoopEntryTypeString, "uint");
+					ov_string_print(&LoopEntryValue, "%u", Variable.value.valueunion.val_uint);
 					break;
 
 				case OV_VT_SINGLE:
 				case OV_VT_SINGLE_PV:
-					ov_string_print(&temp, "%g", Variable.value.valueunion.val_single);
+					ov_string_setvalue(&LoopEntryTypeString, "single");
+					ov_string_print(&LoopEntryValue, "%g", Variable.value.valueunion.val_single);
 					break;
 
 				case OV_VT_DOUBLE:
 				case OV_VT_DOUBLE_PV:
-					ov_string_print(&temp, "%g", Variable.value.valueunion.val_double);
+					ov_string_setvalue(&LoopEntryTypeString, "double");
+					ov_string_print(&LoopEntryValue, "%g", Variable.value.valueunion.val_double);
 					break;
 
 				case OV_VT_STRING:
 				case OV_VT_STRING_PV:
+					ov_string_setvalue(&LoopEntryTypeString, "string");
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
-						ov_string_setvalue(&temp, "");
+						ov_string_setvalue(&LoopEntryValue, "");
 					}else{
-						//FIXME: temp can be empty if there is no memory in the database
-						//check it with Ov_OK!
-						ov_string_print(&temp, "%s", Variable.value.valueunion.val_string);
+						ov_string_print(&LoopEntryValue, "%s", Variable.value.valueunion.val_string);
 					}
 					break;
 
 				case OV_VT_TIME:
 				case OV_VT_TIME_PV:
-					ov_string_print(&temp, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time));
+					ov_string_setvalue(&LoopEntryTypeString, "time");
+					ov_string_print(&LoopEntryValue, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time));
 					break;
 
 				case OV_VT_TIME_SPAN:
 				case OV_VT_TIME_SPAN_PV:
-					ov_string_print(&temp, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
+					ov_string_setvalue(&LoopEntryTypeString, "timespan");
+					ov_string_print(&LoopEntryValue, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
 					break;
 
 				case OV_VT_STATE:
 				case (OV_VT_STATE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%s", "unknown");
-				break;
+					ov_string_setvalue(&LoopEntryTypeString, "state");
+					ov_string_print(&LoopEntryValue, "%s", "unknown");
+					break;
 
 				case OV_VT_STRUCT:
 				case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_print(&temp, "%s", "unknown");
-				break;
+				ov_string_setvalue(&LoopEntryTypeString, "struct");
+					ov_string_print(&LoopEntryValue, "%s", "unknown");
+					break;
 
 				//****************** VEC: *******************
 				case OV_VT_BYTE_VEC:
 				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				init_vector_output(&temp, output_format, "");
-				for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
-					if (i != 0){
-						split_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
+					begin_vector_output(&LoopEntryValue, output_format, "failure");
+					ov_string_print(&singleVecEntry, "%i", OV_ERR_NOTIMPLEMENTED);
+					ov_string_append(&LoopEntryValue, singleVecEntry);
+					ov_string_setvalue(&singleVecEntry, NULL);
+					finalize_vector_output(&LoopEntryValue, output_format, "failure");
+					/* todo should be base64 encoded content
+					for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
+						ov_string_print(&singleVecEntry, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
 					}
-					//TODO: I know copy-pasting all appends around is mad, however i went even more mad by passing
-					//variable number of arguments around :(
-					ov_string_print(&temp2, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
-				}
-				finalize_vector_output(&temp, output_format, "");
-				break;
+					*/
+					break;
 
 				case OV_VT_BOOL_VEC:
 				case OV_VT_BOOL_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "boolvec");
 					for ( i = 0; i < Variable.value.valueunion.val_bool_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
+						begin_vector_output(&LoopEntryValue, output_format, "bool");
 						if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
-							ov_string_setvalue(&temp2, "TRUE");
+							ov_string_setvalue(&singleVecEntry, "TRUE");
 						}else{
-							ov_string_setvalue(&temp2, "FALSE");
+							ov_string_setvalue(&singleVecEntry, "FALSE");
 						}
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "bool");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_INT_VEC:
 				case OV_VT_INT_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "intvec");
 					for ( i = 0; i < Variable.value.valueunion.val_int_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%i", Variable.value.valueunion.val_int_vec.value[i]);
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "int");
+						ov_string_print(&singleVecEntry, "%i", Variable.value.valueunion.val_int_vec.value[i]);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "int");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_UINT_VEC:
 				case OV_VT_UINT_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "uintvec");
 					for ( i = 0; i < Variable.value.valueunion.val_uint_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%i", Variable.value.valueunion.val_uint_vec.value[i]);
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "uint");
+						ov_string_print(&singleVecEntry, "%u", Variable.value.valueunion.val_uint_vec.value[i]);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "uint");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_SINGLE_VEC:
 				case OV_VT_SINGLE_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "singlevec");
 					for ( i = 0; i < Variable.value.valueunion.val_single_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%g", Variable.value.valueunion.val_single_vec.value[i]);
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "single");
+						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_single_vec.value[i]);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "single");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_DOUBLE_VEC:
 				case OV_VT_DOUBLE_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "doublevec");
 					for ( i = 0; i < Variable.value.valueunion.val_double_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%g", Variable.value.valueunion.val_double_vec.value[i]);
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "double");
+						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_double_vec.value[i]);
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "double");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_STRING_VEC:
 				case OV_VT_STRING_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_print(&LoopEntryTypeString, "stringvec length=\"%i\"", Variable.value.valueunion.val_string_vec.veclen);
 					for ( i = 0; i < Variable.value.valueunion.val_string_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
+						begin_vector_output(&LoopEntryValue, output_format, "string");
 						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
-							ov_string_append(&temp, "");
+							ov_string_append(&LoopEntryValue, "");
 						}else{
-							ov_string_print(&temp2, "%s", Variable.value.valueunion.val_string_vec.value[i]);
-							ov_string_append(&temp, temp2);
-							ov_string_setvalue(&temp2, NULL);
+							ov_string_print(&singleVecEntry, "%s", Variable.value.valueunion.val_string_vec.value[i]);
+							ov_string_append(&LoopEntryValue, singleVecEntry);
+							ov_string_setvalue(&singleVecEntry, NULL);
 						}
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "string");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_TIME_VEC:
 				case OV_VT_TIME_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "timevec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "time");
+						ov_string_print(&singleVecEntry, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "time");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_TIME_SPAN_VEC:
 				case OV_VT_TIME_SPAN_PV_VEC:
-					init_vector_output(&temp, output_format, "");
+					ov_string_setvalue(&LoopEntryTypeString, "timespanvec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
-						if (i != 0){
-							split_vector_output(&temp, output_format, "");
+						if(i>0 && output_format==RESPONSE_FORMAT_TCL){
+							//maintain visual compatibility
+							ov_string_append(&LoopEntryValue, " ");
 						}
-						ov_string_print(&temp2, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
-						ov_string_append(&temp, temp2);
-						ov_string_setvalue(&temp2, NULL);
+						begin_vector_output(&LoopEntryValue, output_format, "timespan");
+						ov_string_print(&singleVecEntry, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
+						ov_string_append(&LoopEntryValue, singleVecEntry);
+						ov_string_setvalue(&singleVecEntry, NULL);
+						finalize_vector_output(&LoopEntryValue, output_format, "timespan");
 					}
-					finalize_vector_output(&temp, output_format, "");
 					break;
 
 				case OV_VT_STATE_VEC:
 				case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-					ov_string_print(&temp, "%s", "unknown");
+					ov_string_setvalue(&LoopEntryTypeString, "statevec");
+					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 
 				case OV_VT_STRUCT_VEC:
 				case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-					ov_string_print(&temp, "%s", "unknown");
+					ov_string_setvalue(&LoopEntryTypeString, "structvec");
+					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 
 				default:
-					ov_string_print(&temp, "unknown value, VarType: %#X", Variable.value.vartype);
+					ov_string_print(&LoopEntryValue, "unknown value, VarType: %#X", Variable.value.vartype);
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
-			}
-		}
-		if(j>0){
+			}//end switch vartype
+		}//end if ov_fail
+		if(j>0 && output_format==RESPONSE_FORMAT_TCL){
 			ov_string_append(&LoopEntryList, " ");
 		}
-		begin_vector_output(&LoopEntryList, output_format, "");
+		begin_vector_output(&LoopEntryList, output_format, "currprops");
+		if(output_format == RESPONSE_FORMAT_KSX){
+			//get additional data if we serve ksx
+			begin_vector_output(&LoopEntryList, output_format, "value");
+			begin_vector_output(&LoopEntryList, output_format, LoopEntryTypeString);
+			ov_string_append(&LoopEntryList, LoopEntryValue);
+			if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
+				//why a string has a length attribute??? thank harry for that mess
+				ov_string_print(&LoopEntryTypeString, "stringvec");
+			}
+			finalize_vector_output(&LoopEntryList, output_format, LoopEntryTypeString);
+			finalize_vector_output(&LoopEntryList, output_format, "value");
 
-		ov_string_append(&LoopEntryList, temp);
-
-
-		finalize_vector_output(&LoopEntryList, output_format, "");
-
-	}
+			begin_vector_output(&LoopEntryList, output_format, "timestamp");
+			ov_string_append(&LoopEntryList, ov_time_timetoascii(&(Variable.time)));
+			finalize_vector_output(&LoopEntryList, output_format, "timestamp");
+			begin_vector_output(&LoopEntryList, output_format, "state");
+			switch (Variable.state) {
+				case OV_ST_NOTSUPPORTED:
+					ov_string_append(&LoopEntryList, "notsupported");
+					break;
+				case OV_ST_UNKNOWN:
+					ov_string_append(&LoopEntryList, "unknown");
+					break;
+				case OV_ST_BAD:
+					ov_string_append(&LoopEntryList, "bad");
+					break;
+				case OV_ST_QUESTIONABLE:
+					ov_string_append(&LoopEntryList, "questionable");
+					break;
+				case OV_ST_GOOD:
+					ov_string_append(&LoopEntryList, "good");
+					break;
+				default:
+					break;
+			}
+			finalize_vector_output(&LoopEntryList, output_format, "state");
+		}else{
+			ov_string_append(&LoopEntryList, LoopEntryValue);
+		}
+		finalize_vector_output(&LoopEntryList, output_format, "currprops");
+	}//end for entry
 
 	ov_string_append(message, LoopEntryList);
 

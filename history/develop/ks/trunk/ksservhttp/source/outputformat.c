@@ -21,15 +21,29 @@ OV_UINT extract_output_format(OV_STRING_VEC* args){
 	return re;
 }
 
+/**
+ * appends the header for communication to the output string
+ * in ksx opens the ks service xml element
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
+ */
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	if(format==RESPONSE_FORMAT_KSX){
 		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">");
 		begin_vector_output(output, format, entry_type);
-	}else if(format==RESPONSE_FORMAT_PLAIN){
-		ov_string_append(output, ";");
 	}
 	return OV_ERR_OK;
 }
+/**
+ * appends the footer for communication to the output string
+ * in ksx closes the ks service xml element
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
+ */
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	if(format==RESPONSE_FORMAT_KSX){
 		finalize_vector_output(output, format, entry_type);
@@ -38,14 +52,25 @@ OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT format, OV_STRING entry
 	return OV_ERR_OK;
 }
 
-/*
- * VECTOR OUTPUT BUSINESS
+/**
+ * clears output string and opens element
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
  */
 OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	ov_string_setvalue(output, "");
 	return begin_vector_output(output, format, entry_type);
 }
 
+/**
+ * unused
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
+ */
 OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	if(format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "} {");
@@ -62,6 +87,13 @@ OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry
 	return OV_ERR_OK;
 }
 
+/**
+ * appends opening of element to output string
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
+ */
 OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	if(format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "{");
@@ -77,6 +109,13 @@ OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry
 	return OV_ERR_OK;
 }
 
+/**
+ * appends closing of element to output string
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @param entry_type string for naming the following content (xml node name in KSX)
+ * @return return code always ov_err_ok
+ */
 OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type){
 	if(format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "}");

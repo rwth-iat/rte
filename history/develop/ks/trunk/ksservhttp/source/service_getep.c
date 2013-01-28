@@ -39,16 +39,15 @@
 #include "config.h"
 #include <ctype.h> //toupper
 
-/*todo mapping auf
-      <xs:enumeration value="local-1-1"/>
-      <xs:enumeration value="local-1-m"/>
-      <xs:enumeration value="local-m-m"/>
-      <xs:enumeration value="local-m-1"/>
-      <xs:enumeration value="global-1-1"/>
-      <xs:enumeration value="global-1-m"/>
-      <xs:enumeration value="global-m-m"/>
-      <xs:enumeration value="global-m-1"/>
- * */
+/**
+ * Appends a text info to a string, if ksx is requested skipping a prefix and lowercased
+ * a "_" is skipped if ksx
+ * @param resultstr Pointer to a string to append
+ * @param prefix String, for example KS_VT
+ * @param value String, for example BOOL
+ * @param output_format UINT format descriptor
+ * @return
+ */
 OV_BOOL getEPprintprefixedvalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, OV_UINT output_format){
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
@@ -70,7 +69,7 @@ OV_BOOL getEPprintprefixedvalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRIN
 		return OV_ERR_OK;
 	}else{
 		ov_memstack_lock();
-		ov_string_print(resultstr, "%s%s_%s", *resultstr, prefix, ov_string_tolower(value));
+		ov_string_print(resultstr, "%s%s_%s", *resultstr, prefix, value);
 		ov_memstack_unlock();
 		return OV_ERR_OK;
 	}
@@ -120,8 +119,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	//requestOutput or requestOutput[i] with OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME and OP_CLASS
 
 	output_format = extract_output_format(args);
-
-	printresponseheader(&temp, output_format, "getep");
 
 	/**
 	 * Build Parameter for KS function
@@ -334,30 +331,62 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}else if(one_result->objtype & KS_OT_LINK){
 					begin_vector_output(&temp, output_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype) {
-					//fixme KS_LT_ raus und lowercase bei ksx!
 						case KS_LT_LOCAL_1_1:
-							ov_string_append(&temp, "KS_LT_LOCAL_1_1");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "local-1-1");
+							}else{
+								ov_string_append(&temp, "KS_LT_LOCAL_1_1");
+							}
 							break;
 						case KS_LT_LOCAL_1_MANY:
-							ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "local-1-m");
+							}else{
+								ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
+							}
 							break;
 						case KS_LT_LOCAL_MANY_MANY:
-							ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "local-m-m");
+							}else{
+								ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
+							}
 							break;
 						case KS_LT_LOCAL_MANY_1:
-							ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "local-m-1");
+							}else{
+								ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
+							}
 							break;
 						case KS_LT_GLOBAL_1_1:
-							ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "global-1-1");
+							}else{
+								ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
+							}
 							break;
 						case KS_LT_GLOBAL_1_MANY:
-							ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "global-1-m");
+							}else{
+								ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
+							}
 							break;
 						case KS_LT_GLOBAL_MANY_MANY:
-							ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "global-m-m");
+							}else{
+								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
+							}
 							break;
 						case KS_LT_GLOBAL_MANY_1:
-							ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
+							if(output_format == RESPONSE_FORMAT_KSX){
+								ov_string_append(&temp, "global-m-1");
+							}else{
+								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
+							}
+							break;
 							break;
 						default:
 							ov_string_append(&temp, "unknown");
@@ -408,6 +437,20 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 					getEPprintprefixedvalue(&temp, "KS_AC", "WRITE", output_format);
 					EntryFound = TRUE;
 				}
+				if(one_result->access & KS_AC_INSTANTIABLE){
+					if(EntryFound == TRUE){
+						ov_string_append(&temp, " ");
+					}
+					getEPprintprefixedvalue(&temp, "KS_AC", "INSTANTIABLE", output_format);
+					EntryFound = TRUE;
+				}
+				if(one_result->access & KS_AC_PART){
+					if(EntryFound == TRUE){
+						ov_string_append(&temp, " ");
+					}
+					getEPprintprefixedvalue(&temp, "KS_AC", "PART", output_format);
+					EntryFound = TRUE;
+				}
 				if(one_result->access & KS_AC_DELETEABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
@@ -436,13 +479,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 					getEPprintprefixedvalue(&temp, "KS_AC", "UNLINKABLE", output_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_INSTANTIABLE){
-					if(EntryFound == TRUE){
-						ov_string_append(&temp, " ");
-					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "INSTANTIABLE", output_format);
-					EntryFound = TRUE;
-				}
 				finalize_vector_output(&temp, output_format, "access");
 				break;
 			case OP_SEMANTIC:
@@ -469,6 +505,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}
 				break;
 			case OP_ASSOCIDENT:
+				// as a view at an connection: could be /acplt/fb/inputconnections
 				if(one_result->objtype & KS_OT_LINK) {
 					begin_vector_output(&temp, output_format, "associationIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier);
@@ -476,6 +513,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}
 				break;
 			case OP_ROLEIDENT:
+				// as a view at an connection: could be inputcon
 				if(one_result->objtype & KS_OT_LINK) {
 					begin_vector_output(&temp, output_format, "oppositeRoleIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.opposite_role_identifier);
@@ -509,7 +547,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	ov_memstack_unlock();
 
-	printresponsefooter(&temp, output_format, "getep");
 	//save our hard work
 	ov_string_setvalue(&message, temp);
 	ov_string_setvalue(&temp, NULL);

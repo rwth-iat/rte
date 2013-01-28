@@ -374,6 +374,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_STRING header, body, cmd, http_request_type, http_request_header;
 	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
+	OV_UINT output_format;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
 	OV_BOOL gzip_accepted = FALSE; //default on enconding
 	OV_BOOL gzip_applicable = FALSE;
@@ -513,6 +514,8 @@ void ksservhttp_httpclienthandler_typemethod(
 			}
 		}
 
+		output_format = extract_output_format(&args);
+
 		//BEGIN command routine
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
@@ -523,7 +526,9 @@ void ksservhttp_httpclienthandler_typemethod(
 				//http GET
 				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
 				//it is caused by the second dot in the filename
+				printresponseheader(&body, output_format, "getvar");
 				result = exec_getvar(&args, &body);
+				printresponsefooter(&body, output_format, "getvar");
 				//stream required?
 				find_arguments(&args, "stream", &match);
 				if(match.veclen>0){
@@ -546,6 +551,9 @@ void ksservhttp_httpclienthandler_typemethod(
 					}
 					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
+					if(RESPONSE_FORMAT_KSX == output_format){
+						ov_string_setvalue(&content_type, "text/xml");
+					}
 					//no
 					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
@@ -555,10 +563,12 @@ void ksservhttp_httpclienthandler_typemethod(
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				//http PROPFIND, used in WebDAV
+				printresponseheader(&body, output_format, "getep");
 				result = exec_getep(&args, &body);
+				printresponsefooter(&body, output_format, "getep");
 
 				//fixme make nicer!
-				if(RESPONSE_FORMAT_KSX == extract_output_format(&args)){
+				if(RESPONSE_FORMAT_KSX == output_format){
 					ov_string_setvalue(&content_type, "text/xml");
 				}
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
