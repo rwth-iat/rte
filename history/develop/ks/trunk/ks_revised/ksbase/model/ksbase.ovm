@@ -28,6 +28,7 @@ LIBRARY ksbase
 			constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
 			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -157,7 +158,8 @@ LIBRARY ksbase
 		OPERATIONS
 			register		:	C_FUNCTION <KSBASE_FNC_REGISTER>;
 			unregister		:	C_FUNCTION <KSBASE_FNC_UNREGISTER>;
-			getserverdata	:	C_FUNCTION <KSBASE_FNC_GETSERVERDATA>;	
+			getserverdata	:	C_FUNCTION <KSBASE_FNC_GETSERVERDATA>;
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
 		END_OPERATIONS;
 	END_CLASS;	
 
@@ -177,7 +179,8 @@ LIBRARY ksbase
 			*	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
 			*	and Link it to the Channel calling it with AssocChannelClientHandler.
 			*/
-			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;	
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS		
 		END_OPERATIONS;
 	END_CLASS;	
 

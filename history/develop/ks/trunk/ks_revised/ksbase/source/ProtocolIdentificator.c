@@ -41,3 +41,31 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ProtocolIdentificator_createClientHandler(
 	ks_logfile_warning("This protocol identificator has no functionality: %s", this->v_identifier);
 	return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_ACCESS ksbase_ProtocolIdentificator_getaccess(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+) {
+	/*
+	*	local variables
+	*/
+
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			  if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+				  return OV_AC_NONE;
+			  else
+				  return OV_AC_READWRITE;
+			}
+			break;
+		default:
+			break;
+	}
+
+	return ov_object_getaccess(pobj, pelem, pticket);
+}
