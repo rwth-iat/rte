@@ -444,14 +444,17 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	tstemp.secs = thisCh->v_ConnectionTimeOut;
 	tstemp.usecs = 0;
 	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
-	if((thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN) && (ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
+	if(ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER)
 	{
 		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)
 		{
-			KS_logfile_info(("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut));
-			CLOSE_SOCKET(socket);
-			TCPbind_TCPChannel_socket_set(thisCh, -1);
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)
+			{
+				KS_logfile_info(("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut));
+				CLOSE_SOCKET(socket);
+				TCPbind_TCPChannel_socket_set(thisCh, -1);
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			}
 		}
 		else
 		{
