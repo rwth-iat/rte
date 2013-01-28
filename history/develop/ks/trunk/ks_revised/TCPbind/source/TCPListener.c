@@ -237,6 +237,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				break;
 		}
 		freeaddrinfo(res);
+		if(thisLi->v_port == -1)
+		{
+			TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
+		}
 		thisLi->v_socket[0] = sockfds[0];
 		thisLi->v_socket[1] = sockfds[1];
 		thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
