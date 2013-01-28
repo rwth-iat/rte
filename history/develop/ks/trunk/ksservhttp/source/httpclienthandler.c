@@ -209,6 +209,9 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 	}else{
 		tmp_body = *body;
 	}
+
+	//fixme i see HTTP status 0 after createObject...
+
 	//no free needed since no memory allocated
 	switch (*result)
 	{
@@ -553,6 +556,11 @@ void ksservhttp_httpclienthandler_typemethod(
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				//http PROPFIND, used in WebDAV
 				result = exec_getep(&args, &body);
+
+				//fixme make nicer!
+				if(RESPONSE_FORMAT_KSX == extract_output_format(&args)){
+					ov_string_setvalue(&content_type, "text/xml");
+				}
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
 				//http PUT, used in WebDAV
