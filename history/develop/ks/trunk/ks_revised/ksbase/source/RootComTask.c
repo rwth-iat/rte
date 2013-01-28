@@ -113,7 +113,7 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
     t.usecs = rcTask->v_cycusecs;
     ov_scheduler_register(pobj, ksbase_RootComTask_execute);
     ov_scheduler_setreleventtime(pobj, &t);
-    ks_logfile_debug("RootComTask registered at ov_scheduler with default intervall %d %d", t.secs, t.usecs);
+    KS_logfile_debug(("RootComTask registered at ov_scheduler with default intervall %d %d", t.secs, t.usecs));
     return;
 
 }
@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_shutdown(
 
     /* do what */
     ov_scheduler_unregister((OV_INSTPTR_ov_object)pobj);
-    ks_logfile_debug("RootComTask UNregistered at ov_scheduler");
+    KS_logfile_debug(("RootComTask UNregistered at ov_scheduler"));
 
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
@@ -178,7 +178,7 @@ void ksbase_RootComTask_execute(
 		while(childTask) {
 			if(ksbase_ComTask_calcExec(childTask)) {//if TRUE, its time to execute this object
 				//go via the methodtable to call the "real" implementation of the typemethod
-				//ks_logfile_debug("RootComTask: %s was executed", childTask->v_identifier);
+				//KS_logfile_debug(("RootComTask: %s was executed", childTask->v_identifier));
 				Ov_GetVTablePtr(ksbase_ComTask, pvtable, childTask);
 				if(pvtable)
 				{
@@ -203,7 +203,7 @@ void ksbase_RootComTask_execute(
 					}
 				}
 				else
-					ks_logfile_error("No Vtable found for %s.", childTask->v_identifier);
+					KS_logfile_error(("No Vtable found for %s.", childTask->v_identifier));
 			}
 
 
@@ -217,7 +217,7 @@ void ksbase_RootComTask_execute(
 		if((time_left.secs > 0) || ((time_left.secs == 0) && (time_left.usecs > 0)))
 		{
 
-		//	ks_logfile_debug("sleepin %d usecs", time_left.usecs);
+		//	KS_logfile_debug(("sleepin %d usecs", time_left.usecs));
 #if !OV_SYSTEM_NT
 		//usleep(time_left.secs * 1000000 + time_left.usecs);
 		s.tv_sec = time_left.secs;
@@ -245,11 +245,11 @@ void ksbase_RootComTask_execute(
 	 */
 
 
-	//ks_logfile_debug("leaving loop");
+	//KS_logfile_debug(("leaving loop"));
 	//get called again in a few moments
 	t.secs = rcTask->v_cycsecs;
 	t.usecs = rcTask->v_cycusecs;
-	//ks_logfile_debug("RootComTask reschedule with intervall %d %d", t.secs, t.usecs);
+	//KS_logfile_debug(("RootComTask reschedule with intervall %d %d", t.secs, t.usecs));
     ov_scheduler_setreleventtime(pobj, &t);
     return;
 }

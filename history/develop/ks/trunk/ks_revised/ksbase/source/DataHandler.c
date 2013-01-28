@@ -43,9 +43,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_DataHandler_HandleData(
 	OV_UINT i = 0;
 	char temp [9];
 #endif
-	ks_logfile_warning("Empty HandleData function. No functionality implemented for DataHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier);
+	KS_logfile_warning(("Empty HandleData function. No functionality implemented for DataHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier));
 #if LOG_KS || LOG_KS_DEBUG
-	ks_logfile_debug("DataHandler: %s dataReceived first 64 bytes:\n");
+	KS_logfile_debug(("DataHandler: %s dataReceived first 64 bytes:\n"));
 
 	for(i=0; i < 8; i++)
 	{

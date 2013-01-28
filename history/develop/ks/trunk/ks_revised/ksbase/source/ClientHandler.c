@@ -99,10 +99,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientHandler_HandleRequest(
 	OV_UINT i = 0;
 #endif
 
-	ks_logfile_warning("Empty HandleRequest function. No functionality implemented for ClientHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier);
+	KS_logfile_warning(("Empty HandleRequest function. No functionality implemented for ClientHandler %s of class %s", this->v_identifier, Ov_GetParent(ov_instantiation, this)->v_identifier));
 
 #if LOG_KS || LOG_KS_DEBUG
-	ks_logfile_debug("ClientHandler: %s dataReceived first 64 bytes:\n");
+	KS_logfile_debug(("ClientHandler: %s dataReceived first 64 bytes:\n"));
 
 	for(i=0; i < 8; i++)
 	{

@@ -22,7 +22,7 @@ DLLFNCEXPORT void ks_logfile_info(
 	const char*	format,
 	...
 ) {
-#if LOG_KS || LOG_KS_INFO
+#if LOG_KS || LOG_KS_INFO || LOG_KS_COMPILE
 	time_t now;
 	struct tm *ptr;
 	char str[60];
@@ -57,7 +57,7 @@ DLLFNCEXPORT void ks_logfile_debug(
 	const char*	format,
 	...
 ) {
-#if LOG_KS || LOG_KS_DEBUG
+#if LOG_KS || LOG_KS_DEBUG || LOG_KS_COMPILE
 	time_t now;
 	struct tm *ptr;
 	char str[60];
@@ -91,7 +91,7 @@ DLLFNCEXPORT void ks_logfile_warning(
 	const char*	format,
 	...
 ) {
-#if LOG_KS || LOG_KS_WARNING
+#if LOG_KS || LOG_KS_WARNING || LOG_KS_COMPILE
 	time_t now;
 	struct tm *ptr;
 	char str[60];
@@ -125,7 +125,7 @@ DLLFNCEXPORT void ks_logfile_error(
 	const char*	format,
 	...
 ) {
-#if LOG_KS || LOG_KS_ERROR
+#if LOG_KS || LOG_KS_ERROR || LOG_KS_COMPILE
 	time_t now;
 	struct tm *ptr;
 	char str[60];

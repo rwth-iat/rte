@@ -79,9 +79,9 @@ OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	OV_INSTPTR_ksbase_Channel this = Ov_StaticPtrCast(ksbase_Channel, pobj);
     /* do what */
 	//free heap memory
-	ks_logfile_debug("tcpclient/shutdown %s: freeing inData", pobj->v_identifier);
+	KS_logfile_debug(("tcpclient/shutdown %s: freeing inData", pobj->v_identifier));
 	ksbase_free_KSDATAPACKET(&(this->v_inData));
-	ks_logfile_debug("tcpclient/shutdown %s: freeing outData", pobj->v_identifier);
+	KS_logfile_debug(("tcpclient/shutdown %s: freeing outData", pobj->v_identifier));
 	ksbase_free_KSDATAPACKET(&(this->v_outData));
 	/* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
@@ -94,7 +94,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_SendData(
 	OV_INSTPTR_ksbase_Channel this
 ) {
 
-	ks_logfile_warning("This channel has no SendData function, but it should. Nothing Send. Identifier: %s", this->v_identifier);
+	KS_logfile_warning(("This channel has no SendData function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
 	return OV_ERR_OK;
 }
 

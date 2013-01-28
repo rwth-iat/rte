@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_constructor(
     rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
     //link for getting called
     Ov_Link(ksbase_AssocComTaskList,rcTask,cTask);
-    ks_logfile_debug("Registered %s at ComTasks", pobj->v_identifier);
+    KS_logfile_debug(("Registered %s at ComTasks", pobj->v_identifier));
     //set time for next execution
     ov_time_gettime(&t);
     ts.secs = rcTask->v_cycsecs * cTask->v_cycInterval;
@@ -140,7 +140,7 @@ OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 OV_DLLFNCEXPORT void ksbase_ComTask_typemethod(
     OV_INSTPTR_ksbase_ComTask          this
 ) {
-	ks_logfile_warning("This ComTask has no typemethod - but it should!!! Identifier: %s", this->v_identifier);
+	KS_logfile_warning(("This ComTask has no typemethod - but it should!!! Identifier: %s", this->v_identifier));
 	return;
 }
 

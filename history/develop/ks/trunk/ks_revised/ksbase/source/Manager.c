@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	char cntstr[11];
 	OV_RESULT result;
 	
-	ks_logfile_debug("register:\n\tname: %s\n\tversion: %d\n\tttl: %d\n", name, version, timetolive);
+	KS_logfile_debug(("register:\n\tname: %s\n\tversion: %d\n\tttl: %d\n", name, version, timetolive));
 
 	if(name && ks_isvalidname(name) && ports.veclen && (protocols.veclen == ports.veclen) && timetolive && pServersDomain)
 	{//all values are set
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 			}
 			else
 			{
-				ks_logfile_error("could not create Server Representative");
+				KS_logfile_error(("could not create Server Representative"));
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -97,14 +97,14 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				}
 				else
 				{//version does not match --> error
-					ks_logfile_error("register: server with this name but different version already exits.");
+					KS_logfile_error(("register: server with this name but different version already exits."));
 					pExistingSrvRep = NULL;
 					return OV_ERR_BADPARAM;
 				}
 			}
 			else
 			{
-				ks_logfile_error("register: unknown error.");
+				KS_logfile_error(("register: unknown error."));
 				return OV_ERR_GENERIC;
 			}
 		}
@@ -112,7 +112,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	else
 	{//not all values are set
 
-		ks_logfile_error("register: Not all values are set.");
+		KS_logfile_error(("register: Not all values are set."));
 		return OV_ERR_GENERIC;
 	}
 
@@ -136,13 +136,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 		}
 		else
 		{
-			ks_logfile_error("unregister:	entry not found");
+			KS_logfile_error(("unregister:	entry not found"));
 			return OV_ERR_GENERIC;
 		}
 	}
 	else
 	{
-		ks_logfile_error("unregister: not all values set.");
+		KS_logfile_error(("unregister: not all values set."));
 		return OV_ERR_BADPARAM;
 	}
 
@@ -180,16 +180,16 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 			}
 			else
 			{
-				ks_logfile_error("getserverdata: entry not found");
+				KS_logfile_error(("getserverdata: entry not found"));
 				return OV_ERR_GENERIC;
 			}
 		}while(veriterator <= pSrvRep->v_version);
-		ks_logfile_error("getserverdata: version conflict");
+		KS_logfile_error(("getserverdata: version conflict"));
 		return OV_ERR_BADVALUE;
 	}
 	else
 	{
-		ks_logfile_error("getserverdata: not all values set.");
+		KS_logfile_error(("getserverdata: not all values set."));
 		return OV_ERR_BADPARAM;
 	}
 
