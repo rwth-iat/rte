@@ -188,7 +188,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 		{
-			ks_logfile_error("%s: getaddrinfo failed: %d", this->v_identifier, ret);
+			KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
 			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return;
 		}
@@ -217,20 +217,20 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 			if(getsockname(fd, sa, &sas))
 			{
-				ks_logfile_error("%s: getsockname failed", this->v_identifier);
+				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
 			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 			{
-				ks_logfile_error("%s: getnameinfo failed", this->v_identifier);
+				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
 
-			ks_logfile_debug("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hbuf, sbuf, fd);
+			KS_logfile_debug(("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hbuf, sbuf, fd));
 
 			sockfds[n++] = fd;
 			if(n>=NFDS)
@@ -268,7 +268,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		waitd.tv_usec = 0;    //  do not wait
 		ret = select(highest+1, &fds, NULL, NULL, &waitd);
 		if(ret)
-			ks_logfile_debug("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__);
+			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
 
 		if(ret)	//if there is activity on the socket(s)
 		{
@@ -280,15 +280,15 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 				if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
 				{
-					ks_logfile_error("%s: getnameinfo for newly connected client failed", this->v_identifier);
+					KS_logfile_error(("%s: getnameinfo for newly connected client failed", this->v_identifier));
 				}
 
-				ks_logfile_debug("%s: new client connected: %s", this->v_identifier, buf);
+				KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
 
 				//disable nagle for the receivesocket
 				setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
 
-				//TODO create channels etc.
+
 				//get first free "TCPChannel"-name
 				do {
 					pNewChannel = NULL;
@@ -299,11 +299,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 				//create receiving TCPChannel
 				if (Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer))) {
-					ks_logfile_debug("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf);
+					KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf));
 					//copy socket to created object
 					TCPbind_TCPChannel_socket_set(pNewChannel, cfd);
 					if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))
-							ks_logfile_error("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier);
+							KS_logfile_error(("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier));
 					pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
 					if(thisLi->v_ChannelNeedsClientHandler)
 					{
@@ -314,12 +314,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 							Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
 							if(!pVTBLProtIdent)
 							{
-								ks_logfile_error("%s: error getting VTablePtr for %s", this->v_identifier, pProtIdent->v_identifier);
+								KS_logfile_error(("%s: error getting VTablePtr for %s", this->v_identifier, pProtIdent->v_identifier));
 							}
 							else
 							{
 								if(Ov_Fail(pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, pNewChannel))))
-									ks_logfile_error("%s: error creating ClientHandler for %s. (ProtocolIdentificator %s)", this->v_identifier, pNewChannel->v_identifier, pProtIdent->v_identifier);
+									KS_logfile_error(("%s: error creating ClientHandler for %s. (ProtocolIdentificator %s)", this->v_identifier, pNewChannel->v_identifier, pProtIdent->v_identifier));
 							}
 						}
 					}
@@ -327,7 +327,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 						pNewChannel->v_ClientHandlerAssociated = TCPbind_CH_NOTNEEDED;
 
 				} else {
-					ks_logfile_error("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd);
+					KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));
 				}
 			}
 		}

@@ -41,7 +41,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 	{
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData)){
-			ks_logfile_error("initializing Wonsick failed");
+			KS_logfile_error(("initializing Wonsick failed"));
 		}
 	}
 #endif
