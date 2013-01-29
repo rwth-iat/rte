@@ -484,6 +484,36 @@ ERRORMSG:
 		return EXIT_FAILURE;
 	}
 	ov_logfile_info("Database mapped.");
+
+	/*
+	 * set the commandline options
+	 * if port is set put it in front as PORT
+	 */
+	if(port)
+	{
+		if(commandline_options)
+		{
+			tempstr = malloc(strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
+			if(tempstr)
+			{
+				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
+				free(commandline_options);
+				commandline_options = tempstr;
+			}
+		}
+		else
+		{
+			commandline_options = malloc(11);
+			if(commandline_options)
+			{
+				sprintf(commandline_options, "PORT=%d", port);
+			}
+		}
+	}
+	if(commandline_options)
+		ov_vendortree_setcmdlineoptions(commandline_options);
+
+
 	/*
 	*	start up the database if appropriate
 	*/
@@ -520,34 +550,6 @@ ERRORMSG:
 	*	set the serverpassword of the database
 	*/
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
-
-	/*
-	 * set the commandline options
-	 * if port is set put it in front as PORT
-	 */
-	if(port)
-	{
-		if(commandline_options)
-		{
-			tempstr = malloc(strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
-			if(tempstr)
-			{
-				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
-				free(commandline_options);
-				commandline_options = tempstr;
-			}
-		}
-		else
-		{
-			commandline_options = malloc(11);
-			if(commandline_options)
-			{
-				sprintf(commandline_options, "PORT=%d", port);
-			}
-		}
-	}
-	if(commandline_options)
-		ov_vendortree_setcmdlineoptions(commandline_options);
 
 	if(!exit){
 		/*
