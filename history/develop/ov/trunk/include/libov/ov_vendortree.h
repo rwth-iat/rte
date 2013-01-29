@@ -441,6 +441,8 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getcmdlineoption_value(OV_STRING option)
  *	returns port number on success
  */
 
+OV_DLLFNCEXPORT OV_INT ov_vendortree_getport();
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif
