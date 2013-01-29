@@ -45,12 +45,6 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	if(Ov_Fail(result))
 		return result;
 
-	//I don't know if this can happen, but for historical reasons and since this code is only run once........
-	if(!pdb) {
-		ov_logfile_error("Weird but Fatal: No root domain '/'! - Fatal Error");
-		return OV_ERR_GENERIC;
-	}
-
 	// create "communication" container for collecting all types of communication objects
 	pcommunication = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, &(pdb->root), "communication");
 	if(!pcommunication) {

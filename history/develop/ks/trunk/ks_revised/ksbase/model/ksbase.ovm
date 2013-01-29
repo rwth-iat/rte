@@ -192,8 +192,8 @@ LIBRARY ksbase
 	 CLASS	Channel					:	CLASS	ksbase/ComTask
 		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
 		VARIABLES
-			constate :	INT	HAS_ACCESSORS 
-				COMMENT	=	"state of channel: 0 - closed; 1 - opening; 2 - open; 4 - closing; 8 - sending; 16 - receiving; 32 - awaiting response; 128 - indicates error; 255 generic error"
+			ConnectionState	:	UINT
+				COMMENT	=	"State of the Connection: 0 - closed; 1 - opening; 2 - open; 4 - closing; 8 - sending; 16 - receiving; 32 - awaiting response; 128 - indicates error; 255 generic error"
 				INITIALVALUE	=	0;
 			address	:	STRING	
 				COMMENT	=	"Address to communicate with"
