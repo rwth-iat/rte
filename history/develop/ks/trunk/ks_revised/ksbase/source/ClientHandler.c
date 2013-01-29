@@ -76,10 +76,13 @@ OV_DLLFNCEXPORT void ksbase_ClientHandler_shutdown(
 
     /* do what */
 
-    /* set the object's state to "shut down" */
-    ov_object_shutdown(pobj);
-    /*destroy the object. this object may not be created at next startup*/
-    Ov_DeleteObject(pobj);
+    if(pobj->v_objectstate & OV_OS_STARTED)
+    {
+    	/* set the object's state to "shut down" */
+    	ov_object_shutdown(pobj);
+    	/*destroy the object. this object may not be created at next startup*/
+		Ov_DeleteObject(pobj);
+    }
     return;
 }
 

@@ -79,13 +79,15 @@ OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	OV_INSTPTR_ksbase_Channel this = Ov_StaticPtrCast(ksbase_Channel, pobj);
     /* do what */
 	//free heap memory
-	KS_logfile_debug(("tcpclient/shutdown %s: freeing inData", pobj->v_identifier));
-	ksbase_free_KSDATAPACKET(&(this->v_inData));
-	KS_logfile_debug(("tcpclient/shutdown %s: freeing outData", pobj->v_identifier));
-	ksbase_free_KSDATAPACKET(&(this->v_outData));
-	/* set the object's state to "shut down" */
-    ov_object_shutdown(pobj);
-
+	if(pobj->v_objectstate & OV_OS_STARTED)
+	{
+		KS_logfile_debug(("tcpclient/shutdown %s: freeing inData", pobj->v_identifier));
+		ksbase_free_KSDATAPACKET(&(this->v_inData));
+		KS_logfile_debug(("tcpclient/shutdown %s: freeing outData", pobj->v_identifier));
+		ksbase_free_KSDATAPACKET(&(this->v_outData));
+		/* set the object's state to "shut down" */
+		ov_object_shutdown(pobj);
+	}
     return;
 }
 
