@@ -56,6 +56,7 @@
 #define MINIMAL_LENGTH_FOR_GZIP  150
 
 //output format of getvar
+#define RESPONSE_FORMAT_NONE 0
 #define RESPONSE_FORMAT_TCL 1
 #define RESPONSE_FORMAT_PLAIN 2
 #define RESPONSE_FORMAT_KSX 3
@@ -155,25 +156,25 @@
 //fixme welche davon gibts noch?
 OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UINT format, OV_STRING* message);
 OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* newcontent, OV_STRING* message);
-OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive);
+OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd);
 OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
-OV_UINT extract_output_format(OV_STRING_VEC* args);
-OV_RESULT printresponseheader(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
-OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
-OV_RESULT init_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
-OV_RESULT split_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
-OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
-OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT format, OV_STRING entry_type);
+OV_UINT extract_response_format(OV_STRING_VEC* args);
+OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT init_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT split_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 
-OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re);
-OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re);
-OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message);
-OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message);
+OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format);
+OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format);
+OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);

@@ -50,7 +50,7 @@
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message){
+OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -62,7 +62,14 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message){
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "servername", &match);
 	if(match.veclen<1){
-		ov_string_append(message, "Variable servername not found");
+		begin_vector_output(message, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&temp, "Variable servername not found");
+		}
+		finalize_vector_output(&temp, response_format, "failure");
+		ov_string_append(message, temp);
 		EXEC_GETSERVER_RETURN OV_ERR_BADPARAM; //400
 	}
 	EXEC_GETSERVER_RETURN OV_ERR_NOTIMPLEMENTED;

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -61,7 +61,7 @@
 		ov_string_setvalue(&prefix, NULL);\
 		return
 
-OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
 	OV_STRING *pPathList = NULL;
 	OV_UINT len;
 	int i;
@@ -72,7 +72,14 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
-		ov_string_append(re, "Variable path not found");
+		begin_vector_output(re, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&message, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&message, "Variable path not found");
+		}
+		finalize_vector_output(&message, response_format, "failure");
+		ov_string_append(re, message);
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400
 	}
 	pPathList = ov_string_split(match.value[0], ".", &len);
@@ -90,7 +97,14 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* re){
 	}
 	find_arguments(args, "newvalue", &match);
 	if(match.veclen!=1){
-		ov_string_print(re, "Variable newvalue not found");
+		begin_vector_output(re, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&message, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&message, "Variable newvalue not found");
+		}
+		finalize_vector_output(&message, response_format, "failure");
+		ov_string_append(re, message);
 		EXEC_SETVAR_RETURN OV_ERR_BADPARAM; //400;
 	}
 	result = setvar_at_object(ov_path_getobjectpointer(prefix,2),&(pPathList[len-1]),&match.value[0], &message);

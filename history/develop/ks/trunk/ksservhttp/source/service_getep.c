@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2012
+ *	Copyright (C) 2013
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -45,14 +45,14 @@
  * @param resultstr Pointer to a string to append
  * @param prefix String, for example KS_VT
  * @param value String, for example BOOL
- * @param output_format UINT format descriptor
+ * @param response_format UINT format descriptor
  * @return
  */
-OV_BOOL getEPprintprefixedvalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, OV_UINT output_format){
+OV_BOOL getEPprintprefixedvalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, OV_UINT response_format){
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
-	if(output_format == RESPONSE_FORMAT_KSX){
+	if(response_format == RESPONSE_FORMAT_KSX){
 		//kill all underscores. TIME_SPAN_VEC for example has two...
 		ov_memstack_lock();
 		changedValue = ov_memstack_alloc(ov_string_getlength(value)+1);
@@ -92,7 +92,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
 		Ov_SetDynamicVectorLength(&requestOutput,0,UINT);\
 		ov_string_setvalue(&temp, NULL);\
 		return
-OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
+OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -106,7 +106,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	OV_STRING temp = NULL;
 	OV_BOOL EntryFound = FALSE;
 	OV_BOOL anyRequested = FALSE;
-	OV_UINT output_format;
 	OV_UINT requestOutputDefaultDomain[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
 	OV_UINT requestOutputDefaultVariable[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS, OP_TECHUNIT};
 	OV_UINT requestOutputDefaultLink[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS, OP_ASSOCIDENT, OP_ROLEIDENT};
@@ -118,8 +117,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	//requestType=OT_DOMAIN|OT_VARIABLE|... (siehe tcl-tks doku)
 	//requestOutput or requestOutput[i] with OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME and OP_CLASS
 
-	output_format = extract_output_format(args);
-
 	/**
 	 * Build Parameter for KS function
 	 */
@@ -127,7 +124,14 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-		ov_string_append(re, "Path not found or multiple path given");
+		begin_vector_output(re, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&temp, "Path not found or multiple path given");
+		}
+		finalize_vector_output(&temp, response_format, "failure");
+		ov_string_append(re, temp);
 		EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 	}
 
@@ -150,7 +154,14 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 		}else if(ov_string_compare(match.value[0], "OT_ANY") == OV_STRCMP_EQUAL){
 			params.type_mask = KS_OT_ANY;
 		}else{
-			ov_string_append(re, "Requesttype not supported");
+			begin_vector_output(re, response_format, "failure");
+			if(response_format == RESPONSE_FORMAT_KSX){
+				ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
+			}else{
+				ov_string_print(&temp, "Requesttype not supported");
+			}
+			finalize_vector_output(&temp, response_format, "failure");
+			ov_string_append(re, temp);
 			EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
 		}
 	}else{
@@ -159,7 +170,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 	}
 
 	find_arguments(args, "requestOutput", &match);
-	if(output_format == RESPONSE_FORMAT_KSX || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+	if(response_format == RESPONSE_FORMAT_KSX || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
 	}else{
@@ -197,31 +208,38 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		ov_string_setvalue(&temp, ov_result_getresulttext(result.result));
 		ov_memstack_unlock();
-		//todo <failure>1</failure>
+		fr = result.result;
+		begin_vector_output(re, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", fr);
+		}else{
+			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+		}
+		finalize_vector_output(&temp, response_format, "failure");
+		ov_string_append(re, temp);
 		EXEC_GETEP_RETURN result.result;
 	}
 
 	one_result = result.pfirst;
 	while(one_result != NULL){
 		//open Child item level
-		if(result.pfirst != one_result && output_format==RESPONSE_FORMAT_TCL){
+		if(result.pfirst != one_result && response_format==RESPONSE_FORMAT_TCL){
 			//append here a space to maintain compatibility with tcl format handling
 			ov_string_append(&temp, " ");
 		}
 		//change target output
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			begin_vector_output(&temp, output_format, "DomainEngProps");
+			begin_vector_output(&temp, response_format, "DomainEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultDomain, 7, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			begin_vector_output(&temp, output_format, "VariableEngProps");
+			begin_vector_output(&temp, response_format, "VariableEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultVariable, 8, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			begin_vector_output(&temp, output_format, "LinkEngProps");
+			begin_vector_output(&temp, response_format, "LinkEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultLink, 9, UINT);
 		}else {
-			begin_vector_output(&temp, output_format, "HistoryStructureUnsupported");
+			begin_vector_output(&temp, response_format, "HistoryStructureUnsupported");
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
@@ -229,159 +247,159 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 			EXEC_GETEP_RETURN OV_ERR_GENERIC; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
-			if(i >= 1 && output_format==RESPONSE_FORMAT_TCL){
+			if(i >= 1 && response_format==RESPONSE_FORMAT_TCL){
 				//append here a space to maintain compatibility with tcl format
 				ov_string_append(&temp, " ");
 			}
-			if(requestOutput.veclen > 1 && output_format==RESPONSE_FORMAT_TCL){
+			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//open request item level, if we have more than one entry
-				begin_vector_output(&temp, output_format, "");
+				begin_vector_output(&temp, response_format, "");
 			}
 
 			//######################### iterate over response ###############
 			switch(requestOutput.value[i]){
 			case OP_NAME:
-				begin_vector_output(&temp, output_format, "identifier");
+				begin_vector_output(&temp, response_format, "identifier");
 				ov_string_append(&temp, one_result->identifier);
-				finalize_vector_output(&temp, output_format, "identifier");
+				finalize_vector_output(&temp, response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
 				//fixme ksx wants 2002-02-02T02:02:02.123
-				begin_vector_output(&temp, output_format, "creationTimestamp");
+				begin_vector_output(&temp, response_format, "creationTimestamp");
 				ov_string_append(&temp, ov_time_timetoascii(&(one_result->creation_time)));
-				finalize_vector_output(&temp, output_format, "creationTimestamp");
+				finalize_vector_output(&temp, response_format, "creationTimestamp");
 				break;
 			case OP_CLASS:
 				if(one_result->objtype & KS_OT_DOMAIN) {
-					begin_vector_output(&temp, output_format, "classIdentifier");
+					begin_vector_output(&temp, response_format, "classIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier);
-					finalize_vector_output(&temp, output_format, "classIdentifier");
+					finalize_vector_output(&temp, response_format, "classIdentifier");
 				}else if(one_result->objtype & KS_OT_VARIABLE){
-					begin_vector_output(&temp, output_format, "type");
+					begin_vector_output(&temp, response_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype) {
 						case KS_VT_VOID:
-							getEPprintprefixedvalue(&temp, "KS_VT", "VOID", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "VOID", response_format);
 							break;
 						case KS_VT_BOOL:
-							getEPprintprefixedvalue(&temp, "KS_VT", "BOOL", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "BOOL", response_format);
 							break;
 						case KS_VT_INT:
-							getEPprintprefixedvalue(&temp, "KS_VT", "INT", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "INT", response_format);
 							break;
 						case KS_VT_UINT:
-							getEPprintprefixedvalue(&temp, "KS_VT", "UINT", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "UINT", response_format);
 							break;
 						case KS_VT_SINGLE:
-							getEPprintprefixedvalue(&temp, "KS_VT", "SINGLE", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "SINGLE", response_format);
 							break;
 						case KS_VT_DOUBLE:
-							getEPprintprefixedvalue(&temp, "KS_VT", "DOUBLE", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "DOUBLE", response_format);
 							break;
 						case KS_VT_STRING:
-							getEPprintprefixedvalue(&temp, "KS_VT", "STRING", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "STRING", response_format);
 							break;
 						case KS_VT_TIME:
-							getEPprintprefixedvalue(&temp, "KS_VT", "TIME", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "TIME", response_format);
 							break;
 						case KS_VT_TIME_SPAN:
-							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_SPAN", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_SPAN", response_format);
 							break;
 						case KS_VT_STATE:
-							getEPprintprefixedvalue(&temp, "KS_VT", "STATE", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "STATE", response_format);
 							break;
 						case KS_VT_STRUCT:
-							getEPprintprefixedvalue(&temp, "KS_VT", "STRUCT", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "STRUCT", response_format);
 							break;
 
 						case KS_VT_BYTE_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "BYTE_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "BYTE_VEC", response_format);
 							break;
 						case KS_VT_BOOL_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "BOOL_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "BOOL_VEC", response_format);
 							break;
 						case KS_VT_INT_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "INT_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "INT_VEC", response_format);
 							break;
 						case KS_VT_UINT_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "UINT_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "UINT_VEC", response_format);
 							break;
 						case KS_VT_SINGLE_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "SINGLE_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "SINGLE_VEC", response_format);
 							break;
 						case KS_VT_DOUBLE_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "DOUBLE_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "DOUBLE_VEC", response_format);
 							break;
 						case KS_VT_STRING_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "STRING_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "STRING_VEC", response_format);
 							break;
 						case KS_VT_TIME_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_VEC", response_format);
 							break;
 						case KS_VT_TIME_SPAN_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_SPAN_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "TIME_SPAN_VEC", response_format);
 							break;
 						case KS_VT_STATE_VEC:
-							getEPprintprefixedvalue(&temp, "KS_VT", "STATE_VEC", output_format);
+							getEPprintprefixedvalue(&temp, "KS_VT", "STATE_VEC", response_format);
 							break;
 						default:
 							ov_string_append(&temp, "unknown");
 							break;
 					}
-					finalize_vector_output(&temp, output_format, "type");
+					finalize_vector_output(&temp, response_format, "type");
 				}else if(one_result->objtype & KS_OT_LINK){
-					begin_vector_output(&temp, output_format, "type");
+					begin_vector_output(&temp, response_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype) {
 						case KS_LT_LOCAL_1_1:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "local-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_1");
 							}
 							break;
 						case KS_LT_LOCAL_1_MANY:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "local-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_MANY:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "local-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_1:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "local-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_1:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "global-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_MANY:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "global-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_MANY:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "global-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_1:
-							if(output_format == RESPONSE_FORMAT_KSX){
+							if(response_format == RESPONSE_FORMAT_KSX){
 								ov_string_append(&temp, "global-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
@@ -392,12 +410,12 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 							ov_string_append(&temp, "unknown");
 							break;
 					}
-					finalize_vector_output(&temp, output_format, "type");
+					finalize_vector_output(&temp, response_format, "type");
 				}
 				break;
 			case OP_TYPE:
 				//ksx has this information in the surrounding XML element
-				if(output_format != RESPONSE_FORMAT_KSX){
+				if(response_format != RESPONSE_FORMAT_KSX){
 					if(one_result->objtype == KS_OT_DOMAIN){
 						ov_string_append(&temp, "KS_OT_DOMAIN");
 					}else if(one_result->objtype == KS_OT_VARIABLE){
@@ -412,78 +430,78 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 				}
 				break;
 			case OP_COMMENT:
-				begin_vector_output(&temp, output_format, "comment");
+				begin_vector_output(&temp, response_format, "comment");
 				ov_string_append(&temp, one_result->comment);
-				finalize_vector_output(&temp, output_format, "comment");
+				finalize_vector_output(&temp, response_format, "comment");
 				break;
 			case OP_ACCESS:
-				begin_vector_output(&temp, output_format, "access");
+				begin_vector_output(&temp, response_format, "access");
 				EntryFound = FALSE;
 				if(one_result->access & KS_AC_NONE){
-					getEPprintprefixedvalue(&temp, "KS_AC", "NONE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "NONE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_READ){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "READ", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "READ", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_WRITE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "WRITE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "WRITE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_INSTANTIABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "INSTANTIABLE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "INSTANTIABLE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_PART){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "PART", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "PART", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_DELETEABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "DELETEABLE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "DELETEABLE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_RENAMEABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "RENAMEABLE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "RENAMEABLE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_LINKABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "LINKABLE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "LINKABLE", response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_UNLINKABLE){
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEPprintprefixedvalue(&temp, "KS_AC", "UNLINKABLE", output_format);
+					getEPprintprefixedvalue(&temp, "KS_AC", "UNLINKABLE", response_format);
 					EntryFound = TRUE;
 				}
-				finalize_vector_output(&temp, output_format, "access");
+				finalize_vector_output(&temp, response_format, "access");
 				break;
 			case OP_SEMANTIC:
-				begin_vector_output(&temp, output_format, "semantics");
-				if(output_format == RESPONSE_FORMAT_KSX){
+				begin_vector_output(&temp, response_format, "semantics");
+				if(response_format == RESPONSE_FORMAT_KSX){
 					//could add a char info, as an additional xml element
 					ov_string_print(&temp, "%s%i", temp, one_result->semantic_flags);
 				}else{
@@ -495,52 +513,52 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re){
 						}
 					}
 				}
-				finalize_vector_output(&temp, output_format, "semantics");
+				finalize_vector_output(&temp, response_format, "semantics");
 				break;
 			case OP_TECHUNIT:
 				if(one_result->objtype & KS_OT_VARIABLE) {
-					begin_vector_output(&temp, output_format, "techunit");
+					begin_vector_output(&temp, response_format, "techunit");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit);
-					finalize_vector_output(&temp, output_format, "techunit");
+					finalize_vector_output(&temp, response_format, "techunit");
 				}
 				break;
 			case OP_ASSOCIDENT:
 				// as a view at an connection: could be /acplt/fb/inputconnections
 				if(one_result->objtype & KS_OT_LINK) {
-					begin_vector_output(&temp, output_format, "associationIdentifier");
+					begin_vector_output(&temp, response_format, "associationIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier);
-					finalize_vector_output(&temp, output_format, "associationIdentifier");
+					finalize_vector_output(&temp, response_format, "associationIdentifier");
 				}
 				break;
 			case OP_ROLEIDENT:
 				// as a view at an connection: could be inputcon
 				if(one_result->objtype & KS_OT_LINK) {
-					begin_vector_output(&temp, output_format, "oppositeRoleIdentifier");
+					begin_vector_output(&temp, response_format, "oppositeRoleIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.opposite_role_identifier);
-					finalize_vector_output(&temp, output_format, "oppositeRoleIdentifier");
+					finalize_vector_output(&temp, response_format, "oppositeRoleIdentifier");
 				}
 				break;
 			default:
-				begin_vector_output(&temp, output_format, "NOT_IMPLEMENTED");
+				begin_vector_output(&temp, response_format, "NOT_IMPLEMENTED");
 				ov_string_append(&temp, "NOT IMPLEMENTED");
 				fr = OV_ERR_NOTIMPLEMENTED;
-				finalize_vector_output(&temp, output_format, "NOT_IMPLEMENTED");
+				finalize_vector_output(&temp, response_format, "NOT_IMPLEMENTED");
 				break;
 			}
-			if(requestOutput.veclen > 1 && output_format==RESPONSE_FORMAT_TCL){
+			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//close request item level, if we have more than one entry
-				finalize_vector_output(&temp, output_format, "");
+				finalize_vector_output(&temp, response_format, "");
 			}
 		}
 		//close Child item level
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			finalize_vector_output(&temp, output_format, "DomainEngProps");
+			finalize_vector_output(&temp, response_format, "DomainEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			finalize_vector_output(&temp, output_format, "VariableEngProps");
+			finalize_vector_output(&temp, response_format, "VariableEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			finalize_vector_output(&temp, output_format, "LinkEngProps");
+			finalize_vector_output(&temp, response_format, "LinkEngProps");
 		}else {
-			finalize_vector_output(&temp, output_format, "HistoryStructureUnsupported");
+			finalize_vector_output(&temp, response_format, "HistoryStructureUnsupported");
 		}
 
 		one_result = one_result->pnext;

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -86,7 +86,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive)
+OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_type, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderslength = 0;
@@ -116,8 +116,17 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 			//scan header for Connection: close - the default behavior is keep-alive
 			*keep_alive = FALSE;
 		}else if(ov_string_match(pallheaderslist[i], "Accept:*") == TRUE){
-			//fixme define http handler
-			//move extract_output_format into this
+			if(ov_string_compare(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
+				*response_format = RESPONSE_FORMAT_PLAIN;
+			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
+				*response_format = RESPONSE_FORMAT_TCL;
+			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
+					ov_string_compare(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
+					ov_string_compare(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
+				*response_format = RESPONSE_FORMAT_KSX;
+			//}else if(ov_string_compare(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
+				//*response_format = RESPONSE_FORMAT_JSON;
+			}
 		}
 	}
 	ov_string_freelist(pallheaderslist);
@@ -176,6 +185,13 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 		}else{
 			PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400;
 		}
+	}
+	if(*response_format == RESPONSE_FORMAT_NONE){
+		//none specified in the http header, try url parameter
+		*response_format = extract_response_format(args);
+	}
+	if(*response_format == RESPONSE_FORMAT_NONE){
+		*response_format = RESPONSE_FORMAT_DEFAULT;
 	}
 
 	PARSE_HTTP_HEADER_RETURN OV_ERR_OK;

@@ -194,7 +194,7 @@ OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
  * @param header will be overwritten
  * @param body will be overwritten in an error state
  */
-void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body){
+void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body, OV_UINT response_format){
 	OV_STRING tmp_header = NULL;
 	OV_STRING tmp_body = NULL;
 	//this is very ugly, but better than code duplication
@@ -221,46 +221,65 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		break;
 	case OV_ERR_BADNAME:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADNAME: %s%s", HTTP_400_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_BADNAME: %s%s", HTTP_400_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_BADPARAM:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADPARAM: %s%s", HTTP_400_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_BADPARAM: %s%s", HTTP_400_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_BADAUTH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADAUTH: %s%s", HTTP_401_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_BADAUTH: %s%s", HTTP_401_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_NOACCESS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_NOACCESS: %s%s", HTTP_403_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_NOACCESS: %s%s", HTTP_403_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_BADPATH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_BADVALUE:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_406_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_406_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_NOTIMPLEMENTED:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_NOTIMPLEMENTED: %s%s", HTTP_501_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_NOTIMPLEMENTED: %s%s", HTTP_501_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_GENERIC:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
+		}
 		break;
 	case OV_ERR_ALREADYEXISTS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_409_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
+		}
 		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		ov_string_print(body, "KS_ERR (unknown): %s%s", HTTP_503_BODY, tmp_body);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR (unknown): %s%s", HTTP_503_BODY, tmp_body);
+		}
 		break;
 	}
-
 }
 
 /*
@@ -374,7 +393,7 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_STRING header, body, cmd, http_request_type, http_request_header;
 	int bodylength = 0; //length of the return body
 	OV_RESULT result = OV_ERR_OK;
-	OV_UINT output_format;
+	OV_UINT response_format = RESPONSE_FORMAT_NONE;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
 	OV_BOOL gzip_accepted = FALSE; //default on enconding
 	OV_BOOL gzip_applicable = FALSE;
@@ -494,7 +513,7 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//parse request header into get command and arguments request
 		if(!Ov_Fail(result)){
-			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive);
+			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive, &response_format);
 		}
 
 		//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
@@ -514,21 +533,19 @@ void ksservhttp_httpclienthandler_typemethod(
 			}
 		}
 
-		output_format = extract_output_format(&args);
-
 		//BEGIN command routine
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
 				//http GET
-				result = exec_getserver(&args, &body);
+				result = exec_getserver(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
 			}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 				//http GET
 				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
 				//it is caused by the second dot in the filename
-				printresponseheader(&body, output_format, "getvar");
-				result = exec_getvar(&args, &body);
-				printresponsefooter(&body, output_format, "getvar");
+				printresponseheader(&body, response_format, "getvar");
+				result = exec_getvar(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "getvar");
 				//stream required?
 				find_arguments(&args, "stream", &match);
 				if(match.veclen>0){
@@ -551,7 +568,7 @@ void ksservhttp_httpclienthandler_typemethod(
 					}
 					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
-					if(RESPONSE_FORMAT_KSX == output_format){
+					if(RESPONSE_FORMAT_KSX == response_format){
 						ov_string_setvalue(&content_type, "text/xml");
 					}
 					//no
@@ -559,39 +576,41 @@ void ksservhttp_httpclienthandler_typemethod(
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
 				//http PUT, used in OData or PROPPATCH, used in WebDAV
-				result = exec_setvar(&args, &body);
+				result = exec_setvar(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				//http PROPFIND, used in WebDAV
-				printresponseheader(&body, output_format, "getep");
-				result = exec_getep(&args, &body);
-				printresponsefooter(&body, output_format, "getep");
+				printresponseheader(&body, response_format, "getep");
+				result = exec_getep(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "getep");
 
 				//fixme make nicer!
-				if(RESPONSE_FORMAT_KSX == output_format){
+				if(RESPONSE_FORMAT_KSX == response_format){
 					ov_string_setvalue(&content_type, "text/xml");
 				}
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
 				//http PUT, used in WebDAV
 				//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
-				result = exec_createObject(&args, &body);
+				result = exec_createObject(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
 			}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
 				//http DELETE, used in WebDAV
-				result = exec_deleteObject(&args, &body);
+				result = exec_deleteObject(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
 			}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
 				//http MOVE, used in WebDAV
-				result = exec_renameObject(&args, &body);
+				result = exec_renameObject(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
 			}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
 				//http LINK
-				result = exec_link(&args, &body);
+				printresponseheader(&body, response_format, "link");
+				result = exec_link(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "link");
 				request_handled_by = REQUEST_HANDLED_BY_LINK;
 			}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
 				//http UNLINK
-				result = exec_unlink(&args, &body);
+				result = exec_unlink(&args, &body, response_format);
 				request_handled_by = REQUEST_HANDLED_BY_UNLINK;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
 				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
@@ -665,7 +684,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//now we have to format the raw http answer
-		map_result_to_http(&result, &http_version, &header, &body);
+		map_result_to_http(&result, &http_version, &header, &body, response_format);
 
 		//Append common data to header:
 		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);

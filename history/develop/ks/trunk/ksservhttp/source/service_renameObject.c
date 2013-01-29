@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2012
+ *	Copyright (C) 2013
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -38,7 +38,6 @@
 
 #include "config.h"
 
-
 static OV_ACCESS ov_ksservhttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_RENAMEABLE;
 }
@@ -62,7 +61,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblRenameObj = {
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
+OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -82,14 +81,28 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
-		ov_string_append(message, "Variable path not found");
+		begin_vector_output(message, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&temp, "Variable path not found");
+		}
+		finalize_vector_output(&temp, response_format, "failure");
+		ov_string_append(message, temp);
 		EXEC_RENAMEOBJECT_RETURN OV_ERR_BADPARAM; //400
 	}
 	//process factory
 	Ov_SetDynamicVectorLength(&newnamematch,0,STRING);
 	find_arguments(args, "newname", &newnamematch);
 	if(newnamematch.veclen < match.veclen){
-		ov_string_append(message, "not enough Variables newname found");
+		begin_vector_output(message, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
+		}else{
+			ov_string_print(&temp, "not enough Variables newname found");
+		}
+		finalize_vector_output(&temp, response_format, "failure");
+		ov_string_append(message, temp);
 		EXEC_RENAMEOBJECT_RETURN OV_ERR_BADPARAM; //400
 	}
 
@@ -124,15 +137,29 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message){
 		//general problem like memory problem or NOACCESS
 		ov_memstack_unlock();
 		fr = result.result;
-		ov_string_print(&temp, "Problem: %s", ov_result_getresulttext(fr));
+		begin_vector_output(message, response_format, "failure");
+		if(response_format == RESPONSE_FORMAT_KSX){
+			ov_string_print(&temp, "%i", fr);
+		}else{
+			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+		}
+		finalize_vector_output(&temp, response_format, "failure");
 		ov_string_append(message, temp);
 		EXEC_RENAMEOBJECT_RETURN fr;
 	}
 	for (i=0; i< result.results_len;i++){
 		if(Ov_Fail(result.results_val[i])){
-			//todo better info which element had an error
 			fr = result.results_val[i];
-			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+			begin_vector_output(&temp, response_format, "failure");
+			if(response_format == RESPONSE_FORMAT_KSX){
+				ov_string_print(&temp, "%i", fr);
+			}else{
+				ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
+			}
+			finalize_vector_output(&temp, response_format, "failure");
+		}else{
+			begin_vector_output(&temp, response_format, "success");
+			finalize_vector_output(&temp, response_format, "success");
 		}
 	}
 
