@@ -23,9 +23,6 @@ LIBRARY TCPbind
 			ClientHandlerAssociated	:	UINT
 				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
 				INITIALVALUE	=	0;
-			ConnectionState	:	UINT
-				COMMENT	=	"State of the Connection: 0 - closed; 1 - opening; 2 - open; 4 - closing; 8 - sending; 16 - receiving; 32 - awaiting response; 128 - indicates error; 255 generic error"
-				INITIALVALUE	=	0;	
 			LastReceiveTime	:	TIME
 				COMMENT	=	"Time of last receive";
 			ConnectionTimeOut	:	UINT
@@ -43,6 +40,7 @@ LIBRARY TCPbind
 			//receive data and hand it over
 			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
 			OpenConnection	:	C_FUNCTION	<TCPBIND_FNC_OPENCONNECTION>;
+			CloseConnection	:	C_FUNCTION	<TCPBIND_FNC_CLOSECONNECTION>;
 			AssociateClientHandler	:	C_FUNCTION	<TCPBIND_FNC_ASSOCIATECLIENTHANDLER>;
 		END_OPERATIONS;
 	END_CLASS;

@@ -200,10 +200,15 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			if (walk->ai_family == AF_INET6) {
-				int on = 1;
+
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
 					continue;
 				}
+			}
+			else if(walk->ai_family != AF_INET)
+			{		//Whitelisting IPV4 and IPV6
+				CLOSE_SOCKET(fd);
+				continue;
 			}
 
 			if (bind(fd, walk->ai_addr, walk->ai_addrlen)) {

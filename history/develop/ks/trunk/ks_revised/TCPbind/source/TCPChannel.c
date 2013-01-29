@@ -76,6 +76,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 		KS_logfile_debug(("TCPChannel/socket %s closing socket %d", pobj->v_identifier, socket));
 	}
 	pobj->v_socket = value;
+	if(pobj->v_socket < 0)
+		pobj->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 
 	//activate typemethod if a socket is there
 	if(value >= 0)
@@ -553,7 +555,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
 			CLOSE_SOCKET(sockfd);
 			sockfd = -1;
-			KS_logfile_debug(("%s: conenct failed", this->v_identifier));
+			KS_logfile_debug(("%s: connect failed", this->v_identifier));
 			continue;
 		}
 		break;
@@ -599,6 +601,19 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 
 	return OV_ERR_OK;
 }
+
+
+OV_DLLFNCEXPORT void TCPbind_TCPChannel_CloseConnection(
+		OV_INSTPTR_TCPbind_TCPChannel this
+) {
+	if(this->v_socket >= 0)
+	{
+		CLOSE_SOCKET(socket);
+		KS_logfile_debug(("TCPChannel %s socket %d closed", this->v_identifier, this->v_socket));
+	}
+	return;
+}
+
 
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 		OV_INSTPTR_TCPbind_TCPChannel this
