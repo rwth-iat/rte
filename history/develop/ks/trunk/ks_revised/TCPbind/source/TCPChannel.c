@@ -195,20 +195,52 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 	 *   local variables
 	 */
 	OV_INSTPTR_TCPbind_TCPChannel this = Ov_StaticPtrCast(TCPbind_TCPChannel, pobj);
+	OV_INSTPTR_ksbase_ClientHandler pClientHandler = NULL;
+	OV_VTBLPTR_ksbase_ClientHandler pVTBLClientHandler = NULL;
 	int socket;
 	/* do what */
-
-	KS_logfile_debug(("tcpclient/shutdown: %s", pobj->v_identifier));
-	socket = TCPbind_TCPChannel_socket_get(this);
-	if(socket >= 0)
+	if(pobj->v_objectstate & OV_OS_STARTED)
 	{
-		CLOSE_SOCKET(socket);
-		KS_logfile_debug(("TCPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
-		TCPbind_TCPChannel_socket_set(this, -1);
-		this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-	}
+		KS_logfile_debug(("TCPChannel/shutdown: %s", pobj->v_identifier));
+		socket = TCPbind_TCPChannel_socket_get(this);
+		if(socket >= 0)
+		{
+			CLOSE_SOCKET(socket);
+			KS_logfile_debug(("TCPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
+			TCPbind_TCPChannel_socket_set(this, -1);
+			this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+		}
 
-	ksbase_Channel_shutdown(pobj);
+
+		/*
+		 * when acting on the server side, delete associated ClientHandlers (they won't be used anymore)
+		 *  and then delete oneself (connections to a server are not static)
+		 */
+
+		if(this->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+		{
+			pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
+			if(pClientHandler)
+			{
+				Ov_GetVTablePtr(ksbase_ClientHandler, pVTBLClientHandler, pClientHandler);
+				if(pVTBLClientHandler)
+				{		//just call shutdown since this will delete the ClientHandler
+					pVTBLClientHandler->m_shutdown(Ov_StaticPtrCast(ov_object, pClientHandler));
+				}
+			}
+			this->v_ClientHandlerAssociated = TCPbind_CH_NOTASSOCATIED;
+		}
+
+		/*
+		 * call baseclass' shutdown
+		 */
+		ksbase_Channel_shutdown(pobj);
+
+
+		if(this->v_ClientHandlerAssociated != TCPbind_CH_NOTNEEDED)
+			Ov_DeleteObject(this);
+
+	}
 	return;
 
 }
@@ -285,7 +317,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				else
 				{
 					//if this is the first chunk of data in the packet, initialize the read pointer
-					if(!thisCh->v_inData.data)
+					if(!thisCh->v_inData.readPT)
 						thisCh->v_inData.readPT = tempdata;
 
 					thisCh->v_inData.data = tempdata;
@@ -308,15 +340,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					}
 					else if (err == -1)
 					{
-						KS_logfile_error(("%s: error receiving. Deleting data and closing socket.", this->v_identifier));
-						//DEBUG
-						errno = WSAGetLastError();
-						perror ("receive error:");
-						//DEBUG END
-						ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
+						KS_logfile_error(("%s: error receiving. Closing socket and setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
 						CLOSE_SOCKET(socket);
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+						thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
 						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 						return;
 					}
@@ -381,14 +409,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					else
 					{
 						KS_logfile_error(("%s: no Vtable found for ClientHandler %s. Shutting down", thisCh->v_identifier, pClientHandler->v_identifier));
-						Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+						TCPbind_TCPChannel_shutdown(Ov_StaticPtrCast(ov_object, thisCh));
 						return;
 					}
 				}
 				else
 				{
 					KS_logfile_error(("%s: no ClientHandler associated. Shutting down", thisCh->v_identifier));
-					Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+					TCPbind_TCPChannel_shutdown(Ov_StaticPtrCast(ov_object, thisCh));
 					return;
 				}
 			}
@@ -422,7 +450,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					else
 					{
 						KS_logfile_error(("%s: no Vtable found for DataHandler %s. Shutting down", thisCh->v_identifier, pDataHandler->v_identifier));
-						Ov_DeleteObject(Ov_StaticPtrCast(ov_object, thisCh));
+						TCPbind_TCPChannel_shutdown(Ov_StaticPtrCast(ov_object, thisCh));
 						return;
 					}
 				}
@@ -458,8 +486,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		}
 		else
 		{
-			KS_logfile_info(("%s: received nothing for %u seconds. Deleting channel.", this->v_identifier, thisCh->v_ConnectionTimeOut));
-			Ov_DeleteObject(Ov_StaticPtrCast(ov_object, this));
+			KS_logfile_info(("%s: received nothing for %u seconds. Shutting down and deleting TCPChannel", this->v_identifier, thisCh->v_ConnectionTimeOut));
+			TCPbind_TCPChannel_shutdown(Ov_StaticPtrCast(ov_object, thisCh));
 		}
 	}
 
@@ -467,7 +495,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	tstemp.secs = thisCh->v_UnusedDataTimeOut;
 	tstemp.usecs = 0;
 	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
-	if((ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER))
+	if((ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER) && thisCh->v_inData.length)
 	{
 		KS_logfile_info(("%s: received nothing for %u seconds. Deleting inData.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
 		ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
@@ -627,8 +655,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 	if(this->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
 	{
 		this->v_ClientHandlerAssociated = TCPbind_CH_NOTFOUND;
-		KS_logfile_error(("No ClientHandler could be associated. Deleting TCPChannel"));
-		Ov_DeleteObject(Ov_StaticPtrCast(ov_object, this));
+		KS_logfile_error(("No ClientHandler could be associated. Shutting down and deleting TCPChannel"));
+		TCPbind_TCPChannel_shutdown(Ov_StaticPtrCast(ov_object, this));
 	}
 	return OV_ERR_OK;
 }
