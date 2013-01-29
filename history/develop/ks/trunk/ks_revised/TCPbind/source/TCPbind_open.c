@@ -172,6 +172,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		 */
 		if(port == 7509)
 		{
+			KS_logfile_debug(("TCPbind library open: creating Manager (/servers)"));
 			result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
 			if(Ov_Fail(result))
 			{
