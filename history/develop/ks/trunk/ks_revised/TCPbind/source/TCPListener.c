@@ -88,24 +88,24 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
  * Starts the listening on the port declared by the environment variable KS_OWNPORT or by default on port 7509.
  */
 
-OV_DLLFNCEXPORT void TCPbind_TCPListener_startup(
+OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_constructor(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
 	OV_INSTPTR_TCPbind_TCPListener pinst = Ov_StaticPtrCast(TCPbind_TCPListener, pobj);
-
+	OV_RESULT result;
 	/* do what the base class does first */
-	ov_object_startup(pobj);
-
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
 	/* do what */
 
-	//start inactive. Begin listening in typemethod
+	//start inactive at construction. Begin listening in typemethod
 	pinst->v_actimode = 0;
 
-
-	return;
+	return result;
 }
 
 OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
@@ -130,6 +130,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 		pinst->v_socket[1] = -1;
 	}
 	pinst->v_SocketState = 0;
+	pinst->v_actimode = 0;
 	/* set the object's state to "shut down" */
 	ov_object_shutdown(pobj);
 
