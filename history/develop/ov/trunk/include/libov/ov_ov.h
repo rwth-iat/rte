@@ -638,12 +638,26 @@ typedef struct {
 *	---------------
 *	VTable associated with an authentification/verification ticket (see ACPLT/KS)
 */
+
+/*
+ * since version 1.9 we are not limited to ks-xdr. Hence we need a more flexible way to work with tickets.
+ * To use the new definition old code does not need many changes. A simple typecast inside the respective functions should be enough.
+ */
+#ifndef OV_OLD_TICKET
+struct OV_TICKET_VTBL {
+	OV_TICKET	*(* createticket)(void *data, OV_TICKET_TYPE type);
+	void 		(* deleteticket)(OV_TICKET *pticket);
+	OV_BOOL		(* encodereply)(void *data, OV_TICKET *pticket);
+	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
+};
+#else
 struct OV_TICKET_VTBL {
 	OV_TICKET	*(* createticket)(XDR *xdr, OV_TICKET_TYPE type);
 	void 		(* deleteticket)(OV_TICKET *pticket);
 	OV_BOOL		(* encodereply)(XDR *xdr, OV_TICKET *pticket);
 	OV_ACCESS	(* getaccess)(const OV_TICKET *pticket);
 };
+#endif
 typedef struct OV_TICKET_VTBL	OV_TICKET_VTBL;
 
 /*
