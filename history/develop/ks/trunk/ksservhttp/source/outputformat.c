@@ -153,9 +153,17 @@ OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESU
 			fr = results[i];
 			begin_vector_output(&temp, response_format, "failure");
 			if(response_format == RESPONSE_FORMAT_KSX){
-				ov_string_print(&temp, "%s%i", temp, fr);
+				if(temp == NULL){
+					ov_string_print(&temp, "%i", fr);
+				}else{
+					ov_string_print(&temp, "%s%i", temp, fr);
+				}
 			}else{
-				ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
+				if(temp == NULL){
+					ov_string_print(&temp, "%s%s", ov_result_getresulttext(fr), explain_text);
+				}else{
+					ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
+				}
 			}
 			finalize_vector_output(&temp, response_format, "failure");
 		}else{

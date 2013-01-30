@@ -516,7 +516,6 @@ void ksservhttp_httpclienthandler_typemethod(
 			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive, &response_format);
 		}
 
-		//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
 		if(!Ov_Fail(result)){
 			result = OV_ERR_NOTIMPLEMENTED;
 			//check which kind of request is coming in
@@ -540,7 +539,9 @@ void ksservhttp_httpclienthandler_typemethod(
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
 				//http GET
+				printresponseheader(&body, response_format, "getserver");
 				result = exec_getserver(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "getserver");
 				request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
 			}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 				//http GET
@@ -588,16 +589,21 @@ void ksservhttp_httpclienthandler_typemethod(
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
 				//http PUT, used in WebDAV
-				//todo setvar should be http PUT, createObject und Link POST, UnLink und DeleteObject DELETE
+				printresponseheader(&body, response_format, "createobject");
 				result = exec_createObject(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "createobject");
 				request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
 			}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
 				//http DELETE, used in WebDAV
+				printresponseheader(&body, response_format, "deleteobject");
 				result = exec_deleteObject(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "deleteobject");
 				request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
 			}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
 				//http MOVE, used in WebDAV
+				printresponseheader(&body, response_format, "renameobject");
 				result = exec_renameObject(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "renameobject");
 				request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
 			}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
 				//http LINK
@@ -607,7 +613,9 @@ void ksservhttp_httpclienthandler_typemethod(
 				request_handled_by = REQUEST_HANDLED_BY_LINK;
 			}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
 				//http UNLINK
+				printresponseheader(&body, response_format, "unlink");
 				result = exec_unlink(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "unlink");
 				request_handled_by = REQUEST_HANDLED_BY_UNLINK;
 			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
 				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
