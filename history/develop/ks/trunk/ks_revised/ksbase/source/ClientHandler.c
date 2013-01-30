@@ -70,19 +70,16 @@ OV_DLLFNCEXPORT void ksbase_ClientHandler_startup(
 OV_DLLFNCEXPORT void ksbase_ClientHandler_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*
-    *   local variables
-    */
+	/*
+	 *   local variables
+	 */
 
-    /* do what */
+	/* do what */
 
-    if(pobj->v_objectstate & OV_OS_STARTED)
-    {
-    	/* set the object's state to "shut down" */
-    	ov_object_shutdown(pobj);
-    	/*destroy the object. this object may not be created at next startup*/
-		Ov_DeleteObject(pobj);
-    }
+	/* set the object's state to "shut down" */
+	ov_object_shutdown(pobj);
+
+
     return;
 }
 

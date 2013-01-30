@@ -68,10 +68,16 @@ OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	//free heap memory
 	if(pobj->v_objectstate & OV_OS_STARTED)
 	{
-		KS_logfile_debug(("Channel shutdown %s: freeing inData", pobj->v_identifier));
-		ksbase_free_KSDATAPACKET(&(this->v_inData));
-		KS_logfile_debug(("Channel shutdown %s: freeing outData", pobj->v_identifier));
-		ksbase_free_KSDATAPACKET(&(this->v_outData));
+		if(this->v_inData.length)
+		{
+			KS_logfile_debug(("Channel shutdown %s: freeing inData", pobj->v_identifier));
+			ksbase_free_KSDATAPACKET(&(this->v_inData));
+		}
+		if(this->v_outData.length)
+		{
+			KS_logfile_debug(("Channel shutdown %s: freeing outData", pobj->v_identifier));
+			ksbase_free_KSDATAPACKET(&(this->v_outData));
+		}
 		/* set the object's state to "shut down" */
 		ov_object_shutdown(pobj);
 	}

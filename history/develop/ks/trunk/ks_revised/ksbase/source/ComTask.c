@@ -79,9 +79,15 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_constructor(
              return result;
     cTask = Ov_StaticPtrCast(ksbase_ComTask, pobj);
     rcTask = (OV_INSTPTR_ksbase_RootComTask) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask);
-    //link for getting called
-    Ov_Link(ksbase_AssocComTaskList,rcTask,cTask);
-    KS_logfile_debug(("Registered %s at ComTasks", pobj->v_identifier));
+    if(rcTask)
+    {
+    	//link for getting called
+    	Ov_Link(ksbase_AssocComTaskList,rcTask,cTask);
+    	KS_logfile_debug(("Registered %s at %s", pobj->v_identifier, rcTask->v_identifier));
+    }
+    else
+    	KS_logfile_warning(("%s: No RootComTask object found. Could not register.", pobj->v_identifier));
+
     //set time for next execution
     ov_time_gettime(&t);
     ts.secs = rcTask->v_cycsecs * cTask->v_cycInterval;
@@ -92,6 +98,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_constructor(
     	ts.usecs %= 1000000;
     }
     ov_time_add(&(cTask->v_NextExecTime), &(t), &ts);
+
     return OV_ERR_OK;
 
 }
