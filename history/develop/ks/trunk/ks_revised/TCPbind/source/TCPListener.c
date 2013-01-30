@@ -83,10 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
 	return OV_ERR_OK;
 }
 
-/**
- * Procedure called on object startup.
- * Starts the listening on the port declared by the environment variable KS_OWNPORT or by default on port 7509.
- */
+
 
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_constructor(
 		OV_INSTPTR_ov_object 	pobj
@@ -97,7 +94,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_constructor(
 	OV_INSTPTR_TCPbind_TCPListener pinst = Ov_StaticPtrCast(TCPbind_TCPListener, pobj);
 	OV_RESULT result;
 	/* do what the base class does first */
-	result = ov_object_constructor(pobj);
+	result = ksbase_ComTask_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 	/* do what */
@@ -115,6 +112,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 	 *   local variables
 	 */
 	OV_INSTPTR_TCPbind_TCPListener pinst = Ov_StaticPtrCast(TCPbind_TCPListener, pobj);
+	OV_INSTPTR_TCPbind_TCPChannel pChannel = NULL;
+	OV_INSTPTR_TCPbind_TCPChannel pNextChannel = NULL;
 
 	/* do what */
 	//close socket
@@ -131,6 +130,27 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 	}
 	pinst->v_SocketState = 0;
 	pinst->v_actimode = 0;
+
+	/*
+	 * iterate over all TCPChannels in containment and delete them if they act as Servers (probably all of them)
+	 * we cannot use Ov_ForEachChildEx here since we would delete an object before getting the next child
+	 */
+	pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetFirstChild(ov_containment, Ov_StaticPtrCast(ov_domain, pinst)));
+	while(pNextChannel)
+	{
+		if(Ov_CanCastTo(TCPbind_TCPChannel, pNextChannel))
+		{
+			pChannel = pNextChannel;
+			pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pChannel)));
+			if(pChannel->v_ClientHandlerAssociated != TCPbind_CH_NOTNEEDED)
+				Ov_DeleteObject(pChannel);
+		}
+		else
+			pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pNextChannel)));
+
+	}
+
+
 	/* set the object's state to "shut down" */
 	ov_object_shutdown(pobj);
 
@@ -176,7 +196,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	 * If no socket is open, open one and start listening.
 	 * This code was copied from ct 19/12. If is meant to make the sockets IPv6 compatible.
 	 */
-
 	if(!thisLi->v_SocketState)	//no socket open
 	{
 
