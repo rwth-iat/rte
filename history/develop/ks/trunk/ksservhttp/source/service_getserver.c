@@ -55,22 +55,16 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	*	parameter and result objects
 	*/
 	OV_STRING_VEC match = {0,NULL};
-	//OV_RESULT fr = OV_ERR_OK;
+	OV_RESULT fr = OV_ERR_OK;
 	OV_STRING temp = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "servername", &match);
 	if(match.veclen<1){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&temp, "Variable servername not found");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_GETSERVER_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": Variable servername not found");
+		EXEC_GETSERVER_RETURN fr; //400
 	}
 	EXEC_GETSERVER_RETURN OV_ERR_NOTIMPLEMENTED;
 }

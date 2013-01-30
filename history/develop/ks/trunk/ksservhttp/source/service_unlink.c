@@ -83,29 +83,17 @@ OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&temp, "Variable path not found");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_UNLINK_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		EXEC_UNLINK_RETURN fr; //400
 	}
 	//process element
 	Ov_SetDynamicVectorLength(&elementmatch,0,STRING);
 	find_arguments(args, "element", &elementmatch);
 	if(elementmatch.veclen < match.veclen){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&temp, "not enough Variables element found");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_UNLINK_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": not enough Variables element found");
+		EXEC_UNLINK_RETURN fr; //400
 	}
 
 	ov_memstack_lock();
@@ -134,36 +122,12 @@ OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
+		print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
-		fr = result.result;
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", fr);
-		}else{
-			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_UNLINK_RETURN fr;
+		EXEC_UNLINK_RETURN result.result;
 	}
 
-	for (i=0; i< result.results_len;i++){
-		if(Ov_Fail(result.results_val[i])){
-			fr = result.results_val[i];
-			begin_vector_output(&temp, response_format, "failure");
-			if(response_format == RESPONSE_FORMAT_KSX){
-				ov_string_print(&temp, "%i", fr);
-			}else{
-				ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
-			}
-			finalize_vector_output(&temp, response_format, "failure");
-		}else{
-			begin_vector_output(&temp, response_format, "success");
-			finalize_vector_output(&temp, response_format, "success");
-		}
-	}
-
+	fr = print_result_array(message, response_format, result.results_val, result.results_len, "");
 	ov_memstack_unlock();
-	ov_string_append(message, temp);
 	EXEC_UNLINK_RETURN fr;
 }

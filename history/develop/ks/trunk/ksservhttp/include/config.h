@@ -168,6 +168,7 @@ OV_RESULT init_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRI
 OV_RESULT split_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text);
 
 OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format);

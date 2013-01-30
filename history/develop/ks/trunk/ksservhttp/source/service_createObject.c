@@ -81,29 +81,17 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&temp, "Variable path not found");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_CREATEOBJECT_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		EXEC_CREATEOBJECT_RETURN fr; //400
 	}
 	//process factory
 	Ov_SetDynamicVectorLength(&factorymatch,0,STRING);
 	find_arguments(args, "factory", &factorymatch);
 	if(factorymatch.veclen<1){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_append(message, "Variable factory not found");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
-		EXEC_CREATEOBJECT_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": Variable factory not found");
+		EXEC_CREATEOBJECT_RETURN fr; //400
 	}
 
 	ov_memstack_lock();
@@ -147,34 +135,14 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
+		print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
-		fr = result.result;
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", fr);
-		}else{
-			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(message, temp);
 		EXEC_CREATEOBJECT_RETURN fr;
 	}
 	for (i=0; i< result.obj_results_len;i++){
-		if(Ov_Fail((result.obj_results_val+i)->result)){
-			fr = (result.obj_results_val+i)->result;
-			begin_vector_output(&temp, response_format, "failure");
-			if(response_format == RESPONSE_FORMAT_KSX){
-				ov_string_print(&temp, "%i", fr);
-			}else{
-				ov_string_print(&temp, "problem: %s; perhaps a base library is not loaded", ov_result_getresulttext(fr));
-			}
-			finalize_vector_output(&temp, response_format, "failure");
-		}else{
-			begin_vector_output(&temp, response_format, "success");
-			finalize_vector_output(&temp, response_format, "success");
-		}
+		fr = (result.obj_results_val+i)->result;
+		print_result_array(&temp, response_format, &fr, 1, ": perhaps a base library is not loaded");
 	}
-
 	ov_memstack_unlock();
 	ov_string_append(message, temp);
 	EXEC_CREATEOBJECT_RETURN fr;

@@ -118,15 +118,9 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen<1){
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&singleVecEntry, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&singleVecEntry, "Variable path not found");
-		}
-		finalize_vector_output(&singleVecEntry, response_format, "failure");
-		ov_string_append(message, singleVecEntry);
-		EXEC_GETVAR_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		EXEC_GETVAR_RETURN fr; //400
 	}
 
 	ov_memstack_lock();
@@ -135,7 +129,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 	*addrp = (OV_STRING)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
 	if(!*addrp) {
 		ov_memstack_unlock();
-		EXEC_GETVAR_RETURN OV_ERR_TARGETGENERIC;
+		EXEC_GETVAR_RETURN OV_ERR_TARGETGENERIC; //400
 	}
 
 
@@ -156,29 +150,16 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
+		print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
-		fr = result.result;
-		begin_vector_output(message, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&LoopEntryValue, "%i", fr);
-		}else{
-			ov_string_print(&LoopEntryValue, "problem: %s", ov_result_getresulttext(fr));
-		}
-		finalize_vector_output(&LoopEntryValue, response_format, "failure");
-		ov_string_append(message, singleVecEntry);
-		EXEC_GETVAR_RETURN fr;
+		EXEC_GETVAR_RETURN result.result;
 	}
 	for (j=0; j< result.items_len;j++){
 		one_result = *(result.items_val + j);
 		fr = one_result.result;
 		if(Ov_Fail(fr)){
 			lasterror = fr;
-			ov_string_setvalue(&LoopEntryTypeString, "failure");
-			if(response_format == RESPONSE_FORMAT_KSX){
-				ov_string_print(&LoopEntryValue, "%i", fr);
-			}else{
-				ov_string_print(&LoopEntryValue, "%s", ov_result_getresulttext(fr));
-			}
+			print_result_array(message, response_format, &fr, 1, "");
 		}else{
 			Variable = one_result.var_current_props;
 
@@ -240,6 +221,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 						ov_string_setvalue(&LoopEntryValue, "");
 					}else{
+						//fixme escaping
 						ov_string_print(&LoopEntryValue, "%s", Variable.value.valueunion.val_string);
 					}
 					break;
@@ -274,11 +256,9 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				case OV_VT_BYTE_VEC:
 				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
-					begin_vector_output(&LoopEntryValue, response_format, "failure");
-					ov_string_print(&singleVecEntry, "%i", OV_ERR_NOTIMPLEMENTED);
-					ov_string_append(&LoopEntryValue, singleVecEntry);
-					ov_string_setvalue(&singleVecEntry, NULL);
-					finalize_vector_output(&LoopEntryValue, response_format, "failure");
+					fr = OV_ERR_NOTIMPLEMENTED;
+					lasterror = fr;
+					print_result_array(message, response_format, &fr, 1, ": bytevec");
 					/* todo should be base64 encoded content
 					for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
 						ov_string_print(&singleVecEntry, "%d", Variable.value.valueunion.val_byte_vec.value[i]);

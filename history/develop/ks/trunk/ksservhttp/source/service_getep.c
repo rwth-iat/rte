@@ -124,15 +124,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
-		begin_vector_output(re, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-		}else{
-			ov_string_print(&temp, "Path not found or multiple path given");
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(re, temp);
-		EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+		fr = OV_ERR_BADPARAM;
+		print_result_array(re, response_format, &fr, 1, ": Path not found or multiple path given");
+		EXEC_GETEP_RETURN fr; //400
 	}
 
 	//initialize ov_string
@@ -154,15 +148,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		}else if(ov_string_compare(match.value[0], "OT_ANY") == OV_STRCMP_EQUAL){
 			params.type_mask = KS_OT_ANY;
 		}else{
-			begin_vector_output(re, response_format, "failure");
-			if(response_format == RESPONSE_FORMAT_KSX){
-				ov_string_print(&temp, "%i", OV_ERR_BADPARAM);
-			}else{
-				ov_string_print(&temp, "Requesttype not supported");
-			}
-			finalize_vector_output(&temp, response_format, "failure");
-			ov_string_append(re, temp);
-			EXEC_GETEP_RETURN OV_ERR_BADPARAM; //400
+			fr = OV_ERR_BADPARAM;
+			print_result_array(re, response_format, &fr, 1, ": Requesttype not supported");
+			EXEC_GETEP_RETURN fr; //400
 		}
 	}else{
 		//default to OT_DOMAIN
@@ -208,16 +196,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
+		print_result_array(re, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
-		fr = result.result;
-		begin_vector_output(re, response_format, "failure");
-		if(response_format == RESPONSE_FORMAT_KSX){
-			ov_string_print(&temp, "%i", fr);
-		}else{
-			ov_string_print(&temp, "problem: %s", ov_result_getresulttext(fr));
-		}
-		finalize_vector_output(&temp, response_format, "failure");
-		ov_string_append(re, temp);
 		EXEC_GETEP_RETURN result.result;
 	}
 

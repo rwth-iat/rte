@@ -533,6 +533,9 @@ void ksservhttp_httpclienthandler_typemethod(
 			}
 		}
 
+		if(RESPONSE_FORMAT_KSX == response_format){
+			ov_string_setvalue(&content_type, "text/xml");
+		}
 		//BEGIN command routine
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
@@ -568,26 +571,20 @@ void ksservhttp_httpclienthandler_typemethod(
 					}
 					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 				}else{
-					if(RESPONSE_FORMAT_KSX == response_format){
-						ov_string_setvalue(&content_type, "text/xml");
-					}
 					//no
 					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 				}
 			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
 				//http PUT, used in OData or PROPPATCH, used in WebDAV
+				printresponseheader(&body, response_format, "setvar");
 				result = exec_setvar(&args, &body, response_format);
+				printresponsefooter(&body, response_format, "setvar");
 				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
 			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
 				//http PROPFIND, used in WebDAV
 				printresponseheader(&body, response_format, "getep");
 				result = exec_getep(&args, &body, response_format);
 				printresponsefooter(&body, response_format, "getep");
-
-				//fixme make nicer!
-				if(RESPONSE_FORMAT_KSX == response_format){
-					ov_string_setvalue(&content_type, "text/xml");
-				}
 				request_handled_by = REQUEST_HANDLED_BY_GETEP;
 			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
 				//http PUT, used in WebDAV

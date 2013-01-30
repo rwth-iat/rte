@@ -32,7 +32,7 @@ OV_UINT extract_response_format(OV_STRING_VEC* args){
  */
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
-		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">");
+		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
 		begin_vector_output(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
@@ -131,4 +131,38 @@ OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT response_format, OV_
 		ov_string_append(output, ";");
 	}
 	return OV_ERR_OK;
+}
+
+/**
+ * prints the info of one result or one result array
+ * could be <failure> or <success> in ksx
+ * clear text in tcl
+ * @param output string to append to
+ * @param response_format
+ * @param results one result, or one array of results
+ * @param len length of array, 1 if no array
+ * @param explain_text additional text, which will be appended after the error
+ * @return last error we had
+ */
+OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text){
+	OV_UINT i = 0;
+	OV_STRING temp = NULL;
+	OV_RESULT fr = OV_ERR_OK;
+	for (i=0; i< len;i++){
+		if(Ov_Fail(results[i])){
+			fr = results[i];
+			begin_vector_output(&temp, response_format, "failure");
+			if(response_format == RESPONSE_FORMAT_KSX){
+				ov_string_print(&temp, "%s%i", temp, fr);
+			}else{
+				ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
+			}
+			finalize_vector_output(&temp, response_format, "failure");
+		}else{
+			begin_vector_output(&temp, response_format, "success");
+			finalize_vector_output(&temp, response_format, "success");
+		}
+	}
+	ov_string_append(output, temp);
+	return fr;
 }
