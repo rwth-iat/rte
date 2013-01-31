@@ -111,6 +111,23 @@ OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT response_format, OV_STR
 }
 
 /**
+ * adds a seperator if needed in the response format
+ * @param output pointer to the string to manipulate
+ * @param format UINT for the type of response
+ * @return return code always ov_err_ok
+ */
+OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
+	if(response_format==RESPONSE_FORMAT_TCL){
+		ov_string_append(output, " ");
+	}else if(response_format==RESPONSE_FORMAT_PLAIN){
+		ov_string_append(output, " ");
+	}else if(response_format==RESPONSE_FORMAT_KSX){
+		//none
+	}
+	return OV_ERR_OK;
+}
+
+/**
  * appends closing of element to output string
  * @param output pointer to the string to manipulate
  * @param format UINT for the type of response

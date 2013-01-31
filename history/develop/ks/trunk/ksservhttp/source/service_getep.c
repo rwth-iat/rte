@@ -204,9 +204,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	one_result = result.pfirst;
 	while(one_result != NULL){
 		//open Child item level
-		if(result.pfirst != one_result && response_format==RESPONSE_FORMAT_TCL){
-			//append here a space to maintain compatibility with tcl format handling
-			ov_string_append(&temp, " ");
+		if(result.pfirst != one_result){
+			seperate_response_parts(&temp, response_format);
 		}
 		//change target output
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
@@ -227,9 +226,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			EXEC_GETEP_RETURN OV_ERR_GENERIC; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
-			if(i >= 1 && response_format==RESPONSE_FORMAT_TCL){
-				//append here a space to maintain compatibility with tcl format
-				ov_string_append(&temp, " ");
+			if(i >= 1){
+				seperate_response_parts(&temp, response_format);
 			}
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//open request item level, if we have more than one entry

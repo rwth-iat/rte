@@ -155,14 +155,18 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 	//no ? -> return the full command, args are empty
 	if(len<0){
 		ov_string_setvalue(cmd, rawrequest);
-		*response_format = RESPONSE_FORMAT_DEFAULT;
+		if(*response_format == RESPONSE_FORMAT_NONE){
+			*response_format = RESPONSE_FORMAT_DEFAULT;
+		}
 		PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 	}
 	//at least one ? -> split up the command
 	ov_string_setvalue(cmd, plist[0]);
 	//exactly one ? -> we are done
 	if(len == 1) {
-		*response_format = RESPONSE_FORMAT_DEFAULT;
+		if(*response_format == RESPONSE_FORMAT_NONE){
+			*response_format = RESPONSE_FORMAT_DEFAULT;
+		}
 		PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 	}
 	//not yet done, parsing args
@@ -171,7 +175,9 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 	ov_string_freelist(plist);
 	plist = ov_string_split(rawrequest, "&", &len);
 	if(len <= 0){
-		*response_format = RESPONSE_FORMAT_DEFAULT;
+		if(*response_format == RESPONSE_FORMAT_NONE){
+			*response_format = RESPONSE_FORMAT_DEFAULT;
+		}
 		PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 	}
 	Ov_SetDynamicVectorLength(args,2*len,STRING);
@@ -192,9 +198,9 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 	if(*response_format == RESPONSE_FORMAT_NONE){
 		//none specified in the http header, try url parameter
 		*response_format = extract_response_format(args);
-	}
-	if(*response_format == RESPONSE_FORMAT_NONE){
-		*response_format = RESPONSE_FORMAT_DEFAULT;
+		if(*response_format == RESPONSE_FORMAT_NONE){
+			*response_format = RESPONSE_FORMAT_DEFAULT;
+		}
 	}
 
 	PARSE_HTTP_HEADER_RETURN OV_ERR_OK;

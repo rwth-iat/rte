@@ -141,7 +141,11 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	}
 	for (i=0; i< result.obj_results_len;i++){
 		fr = (result.obj_results_val+i)->result;
-		print_result_array(&temp, response_format, &fr, 1, ": perhaps a base library is not loaded");
+		if(fr == OV_ERR_GENERIC){
+			print_result_array(&temp, response_format, &fr, 1, ": perhaps a base library is not loaded");
+		}else{
+			print_result_array(&temp, response_format, &fr, 1, "");
+		}
 	}
 	ov_memstack_unlock();
 	ov_string_append(message, temp);
