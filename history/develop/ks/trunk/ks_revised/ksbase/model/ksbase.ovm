@@ -109,13 +109,15 @@ LIBRARY ksbase
 	END_CLASS;
 
 /**
- *	Representative for a server. These objects are used by the manager to save the data for all servers on the specific machine.	
+ *	Representative for a server. These objects are used by the manager to save the data for all servers on the specific machine and there is always 
+ *		one of these objects in the /communications-domain. The latter object stores the data for this server itself. Here the different ks-protocol-libraries 
+ *		store their ports and protocol identifiers	
 */
 
 	CLASS	ServerRep			:	CLASS	ksbase/ComTask //ov/domain
 		IS_INSTANTIABLE;
 		FLAGS	=	"v";
-		COMMENT	=	"object to save connected server";
+		COMMENT	=	"object to store serverdata";
 		VARIABLES
 			/* server data *************************************************/
 			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"

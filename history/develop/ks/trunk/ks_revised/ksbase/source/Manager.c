@@ -97,9 +97,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				}
 				else
 				{//version does not match --> error
-					KS_logfile_error(("register: server with this name but different version already exits."));
+					KS_logfile_info(("register: server with this name but different version already exits."));
 					pExistingSrvRep = NULL;
-					return OV_ERR_BADPARAM;
+					return KS_ERR_BADVALUE;
 				}
 			}
 			else
@@ -112,7 +112,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	else
 	{//not all values are set
 
-		KS_logfile_error(("register: Not all values are set."));
+		KS_logfile_warning(("register: Not all values are set."));
 		return OV_ERR_GENERIC;
 	}
 
@@ -136,13 +136,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 		}
 		else
 		{
-			KS_logfile_error(("unregister:	entry not found"));
+			KS_logfile_info(("unregister: entry not found"));
 			return OV_ERR_GENERIC;
 		}
 	}
 	else
 	{
-		KS_logfile_error(("unregister: not all values set."));
+		KS_logfile_warning(("unregister: not all values set."));
 		return OV_ERR_BADPARAM;
 	}
 
@@ -186,16 +186,16 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 			}
 			else
 			{
-				KS_logfile_error(("getserverdata: entry not found"));
+				KS_logfile_info(("getserverdata: entry not found"));
 				return KS_ERR_SERVERUNKNOWN;
 			}
 		}while(veriterator <= pSrvRep->v_version);
-		KS_logfile_error(("getserverdata: version conflict"));
-		return OV_ERR_BADVALUE;
+		KS_logfile_info(("getserverdata: version conflict"));
+		return KS_ERR_BADVALUE;
 	}
 	else
 	{
-		KS_logfile_error(("getserverdata: not all values set."));
+		KS_logfile_warning(("getserverdata: not all values set."));
 		return OV_ERR_BADPARAM;
 	}
 
