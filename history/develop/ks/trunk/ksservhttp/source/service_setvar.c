@@ -96,7 +96,6 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	OV_UINT len = 0;
 	OV_STRING *pArgumentList = NULL;
 	OV_STRING Temp = NULL;
-	OV_ANY		Variable;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_VAR_TYPE lastVarType = OV_VT_VOID;
 

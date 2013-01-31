@@ -164,10 +164,10 @@ OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
 OV_UINT extract_response_format(OV_STRING_VEC* args);
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
-OV_RESULT init_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
-OV_RESULT split_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
-OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
-OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT split_response_parts(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
+OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format);
 
 OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text);

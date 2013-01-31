@@ -33,7 +33,7 @@ OV_UINT extract_response_format(OV_STRING_VEC* args){
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
 		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
-		begin_vector_output(output, response_format, entry_type);
+		begin_response_part(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
 }
@@ -47,8 +47,8 @@ OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STR
  */
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
-		finalize_vector_output(output, response_format, entry_type);
-		finalize_vector_output(output, response_format, "result");
+		finalize_response_part(output, response_format, entry_type);
+		finalize_response_part(output, response_format, "result");
 	}
 	return OV_ERR_OK;
 }
@@ -60,9 +60,9 @@ OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STR
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT init_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	ov_string_setvalue(output, "");
-	return begin_vector_output(output, response_format, entry_type);
+	return begin_response_part(output, response_format, entry_type);
 }
 
 /**
@@ -72,7 +72,7 @@ OV_RESULT init_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRI
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT split_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT split_response_parts(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "} {");
 	}else if(response_format==RESPONSE_FORMAT_KSX){
@@ -95,7 +95,7 @@ OV_RESULT split_vector_output(OV_STRING* output, OV_UINT response_format, OV_STR
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT begin_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "{");
 	}else if(response_format==RESPONSE_FORMAT_KSX){
@@ -134,7 +134,7 @@ OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT finalize_vector_output(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_TCL){
 		ov_string_append(output, "}");
 	}else if(response_format==RESPONSE_FORMAT_KSX){
@@ -168,7 +168,7 @@ OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESU
 	for (i=0; i< len;i++){
 		if(Ov_Fail(results[i])){
 			fr = results[i];
-			begin_vector_output(&temp, response_format, "failure");
+			begin_response_part(&temp, response_format, "failure");
 			if(response_format == RESPONSE_FORMAT_KSX){
 				if(temp == NULL){
 					ov_string_print(&temp, "%i", fr);
@@ -182,10 +182,10 @@ OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESU
 					ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
 				}
 			}
-			finalize_vector_output(&temp, response_format, "failure");
+			finalize_response_part(&temp, response_format, "failure");
 		}else{
-			begin_vector_output(&temp, response_format, "success");
-			finalize_vector_output(&temp, response_format, "success");
+			begin_response_part(&temp, response_format, "success");
+			finalize_response_part(&temp, response_format, "success");
 		}
 	}
 	ov_string_append(output, temp);

@@ -275,7 +275,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "bool");
+						begin_response_part(&LoopEntryValue, response_format, "bool");
 						if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
 							ov_string_setvalue(&singleVecEntry, "TRUE");
 						}else{
@@ -283,7 +283,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "bool");
+						finalize_response_part(&LoopEntryValue, response_format, "bool");
 					}
 					break;
 
@@ -294,11 +294,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "int");
+						begin_response_part(&LoopEntryValue, response_format, "int");
 						ov_string_print(&singleVecEntry, "%i", Variable.value.valueunion.val_int_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "int");
+						finalize_response_part(&LoopEntryValue, response_format, "int");
 					}
 					break;
 
@@ -309,11 +309,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "uint");
+						begin_response_part(&LoopEntryValue, response_format, "uint");
 						ov_string_print(&singleVecEntry, "%u", Variable.value.valueunion.val_uint_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "uint");
+						finalize_response_part(&LoopEntryValue, response_format, "uint");
 					}
 					break;
 
@@ -324,11 +324,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "single");
+						begin_response_part(&LoopEntryValue, response_format, "single");
 						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_single_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "single");
+						finalize_response_part(&LoopEntryValue, response_format, "single");
 					}
 					break;
 
@@ -339,11 +339,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "double");
+						begin_response_part(&LoopEntryValue, response_format, "double");
 						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_double_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "double");
+						finalize_response_part(&LoopEntryValue, response_format, "double");
 					}
 					break;
 
@@ -354,7 +354,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "string");
+						begin_response_part(&LoopEntryValue, response_format, "string");
 						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
 							ov_string_append(&LoopEntryValue, "");
 						}else{
@@ -364,7 +364,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "string");
+						finalize_response_part(&LoopEntryValue, response_format, "string");
 					}
 					break;
 
@@ -375,12 +375,12 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "time");
+						begin_response_part(&LoopEntryValue, response_format, "time");
 						//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
 						ov_string_print(&singleVecEntry, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "time");
+						finalize_response_part(&LoopEntryValue, response_format, "time");
 					}
 					break;
 
@@ -391,11 +391,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						if(i>0){
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
-						begin_vector_output(&LoopEntryValue, response_format, "timespan");
+						begin_response_part(&LoopEntryValue, response_format, "timespan");
 						ov_string_print(&singleVecEntry, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
-						finalize_vector_output(&LoopEntryValue, response_format, "timespan");
+						finalize_response_part(&LoopEntryValue, response_format, "timespan");
 					}
 					break;
 
@@ -422,24 +422,24 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 		if(j>0){
 			seperate_response_parts(&LoopEntryList, response_format);
 		}
-		begin_vector_output(&LoopEntryList, response_format, "currprops");
+		begin_response_part(&LoopEntryList, response_format, "currprops");
 		if(response_format == RESPONSE_FORMAT_KSX){
 			//get additional data if we serve ksx
-			begin_vector_output(&LoopEntryList, response_format, "value");
-			begin_vector_output(&LoopEntryList, response_format, LoopEntryTypeString);
+			begin_response_part(&LoopEntryList, response_format, "value");
+			begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
 			ov_string_append(&LoopEntryList, LoopEntryValue);
 			if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
 				//why a string has a length attribute??? thank harry for that mess
 				ov_string_print(&LoopEntryTypeString, "stringvec");
 			}
-			finalize_vector_output(&LoopEntryList, response_format, LoopEntryTypeString);
-			finalize_vector_output(&LoopEntryList, response_format, "value");
+			finalize_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
+			finalize_response_part(&LoopEntryList, response_format, "value");
 
-			begin_vector_output(&LoopEntryList, response_format, "timestamp");
+			begin_response_part(&LoopEntryList, response_format, "timestamp");
 			//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
 			ov_string_append(&LoopEntryList, ov_time_timetoascii(&(Variable.time)));
-			finalize_vector_output(&LoopEntryList, response_format, "timestamp");
-			begin_vector_output(&LoopEntryList, response_format, "state");
+			finalize_response_part(&LoopEntryList, response_format, "timestamp");
+			begin_response_part(&LoopEntryList, response_format, "state");
 			switch (Variable.state) {
 				case OV_ST_NOTSUPPORTED:
 					ov_string_append(&LoopEntryList, "notsupported");
@@ -459,11 +459,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				default:
 					break;
 			}
-			finalize_vector_output(&LoopEntryList, response_format, "state");
+			finalize_response_part(&LoopEntryList, response_format, "state");
 		}else{
 			ov_string_append(&LoopEntryList, LoopEntryValue);
 		}
-		finalize_vector_output(&LoopEntryList, response_format, "currprops");
+		finalize_response_part(&LoopEntryList, response_format, "currprops");
 	}//end for entry
 
 	ov_string_append(message, LoopEntryList);
