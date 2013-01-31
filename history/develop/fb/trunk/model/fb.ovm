@@ -182,7 +182,7 @@ LIBRARY fb
     CLASS port : CLASS fb/object
         COMMENT = "variable for function charts";
         VARIABLES
-          flags   : UINT    HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "semantic flags of the variable" INITIALVALUE = 256;
+          flags   : UINT    HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "semantic flags of the variable";
           unit    : STRING                   FLAGS = "p" COMMENT = "physical unit of the variable";
           comment : STRING                   FLAGS = "p" COMMENT = "comment that describes the variable";
         END_VARIABLES;
