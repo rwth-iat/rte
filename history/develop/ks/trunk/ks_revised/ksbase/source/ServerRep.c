@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_shutdown(
     *   local variables
     */
     OV_INSTPTR_ksbase_ServerRep pinst = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
-ov_logfile_debug("ServerRep shutdown");
+
     /* do what */
     Ov_SetDynamicVectorLength(&(pinst->v_protocols), 0, STRING);
     Ov_SetDynamicVectorLength(&(pinst->v_port), 0, STRING);

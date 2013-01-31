@@ -34,25 +34,30 @@ OV_DLLFNCEXPORT void ksbase_Manager_shutdown(
     /*
     *   local variables
     */
-    OV_INSTPTR_ksbase_Manager pinst = Ov_StaticPtrCast(ksbase_Manager, pobj);
     OV_INSTPTR_ov_object pServerRep = NULL;
     OV_INSTPTR_ov_object pChildObject = NULL;
+    OV_INSTPTR_ov_domain pServersDom = NULL;
     /* do what */
-   /*	Iterate over all ServerReps in containment and delete them	*/
-    pChildObject = Ov_GetFirstChild(ov_containment, pinst);
-    while(pChildObject)
+
+    pServersDom = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/servers",2);
+    if(pServersDom)
     {
-    	if(Ov_CanCastTo(ksbase_ServerRep, pChildObject))
+    	/*	Iterate over all ServerReps in containment and delete them	*/
+    	pChildObject = Ov_GetFirstChild(ov_containment, pServersDom);
+    	while(pChildObject)
     	{
-    		pServerRep = pChildObject;
-    		pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
-    		Ov_DeleteObject(pServerRep);
-    		continue;
-    	}
-    	else
-    	{
-    		pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
-    		continue;
+    		if(Ov_CanCastTo(ksbase_ServerRep, pChildObject))
+    		{
+    			pServerRep = pChildObject;
+    			pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
+    			Ov_DeleteObject(pServerRep);
+    			continue;
+    		}
+    		else
+    		{
+    			pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
+    			continue;
+    		}
     	}
     }
     /* set the object's state to "shut down" */
@@ -192,8 +197,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 	OV_INSTPTR_ov_domain pServersDomain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/servers",2);
 	OV_INSTPTR_ov_domain pSrvRepDomain = NULL;
 	OV_INSTPTR_ksbase_ServerRep pSrvRep = NULL;
-	char verstr[12];
-	unsigned int veriterator = 0;
 
 	if((name)
 			&& ks_isvalidname(name)
@@ -204,26 +207,25 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 			&& ExpirationTime)
 	{//all values are set
 		pSrvRepDomain = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, pServersDomain, name);
-		do
+		if(pSrvRepDomain)
 		{
-			sprintf(verstr, "%i", veriterator);
-			pSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, pSrvRepDomain, verstr);
-			if(pSrvRep)
+			Ov_ForEachChildEx(ov_containment, pSrvRepDomain, pSrvRep, ksbase_ServerRep)
 			{
-				Ov_SetDynamicVectorValue(protocols, pSrvRep->v_protocols.value, pSrvRep->v_protocols.veclen, STRING);
-				Ov_SetDynamicVectorValue(ports, pSrvRep->v_port.value, pSrvRep->v_port.veclen, STRING);
-				*TimeToLive = pSrvRep->v_timetolive;
-				*ExpirationTime = pSrvRep->v_expirationtime;
-				return OV_ERR_OK;
+				if(pSrvRep->v_version >= version && atoi(pSrvRep->v_identifier) >= version)
+				{
+					Ov_SetDynamicVectorValue(protocols, pSrvRep->v_protocols.value, pSrvRep->v_protocols.veclen, STRING);
+					Ov_SetDynamicVectorValue(ports, pSrvRep->v_port.value, pSrvRep->v_port.veclen, STRING);
+					*TimeToLive = pSrvRep->v_timetolive;
+					*ExpirationTime = pSrvRep->v_expirationtime;
+					return OV_ERR_OK;
+				}
 			}
-			else
-			{
-				KS_logfile_info(("getserverdata: entry not found"));
-				return KS_ERR_SERVERUNKNOWN;
-			}
-		}while(veriterator <= pSrvRep->v_version);
-		KS_logfile_info(("getserverdata: version conflict"));
-		return KS_ERR_BADVALUE;
+
+			KS_logfile_info(("getserverdata: entry not found"));
+			return KS_ERR_SERVERUNKNOWN;
+		}
+		KS_logfile_info(("getserverdata: entry not found"));
+		return KS_ERR_SERVERUNKNOWN;
 	}
 	else
 	{

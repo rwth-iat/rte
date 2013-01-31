@@ -9,6 +9,8 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 
 	OV_UINT i = 0;
 	OV_UINT length;
+	if(!name || !(*name))
+		return FALSE;
 	length = strlen(name);
 	if(length <= KS_NAME_MAXLEN)
 	{
@@ -18,7 +20,7 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 					|| (name[i] >= 97 && name[i] <= 122)	//a-z
 					|| name[i] == 95))		//'_'
 					return FALSE;
-
+			i++;
 		}
 		return TRUE;
 	}
