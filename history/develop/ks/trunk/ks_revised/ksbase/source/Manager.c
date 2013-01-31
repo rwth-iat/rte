@@ -163,7 +163,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 	char verstr[12];
 	unsigned int veriterator = 0;
 
-	if((name) && ks_isvalidname(name) && (pServersDomain))
+	if((name)
+			&& ks_isvalidname(name)
+			&& (pServersDomain)
+			&& protocols
+			&& ports
+			&& TimeToLive
+			&& ExpirationTime)
 	{//all values are set
 		pSrvRepDomain = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, pServersDomain, name);
 		do
@@ -181,7 +187,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 			else
 			{
 				KS_logfile_error(("getserverdata: entry not found"));
-				return OV_ERR_GENERIC;
+				return KS_ERR_SERVERUNKNOWN;
 			}
 		}while(veriterator <= pSrvRep->v_version);
 		KS_logfile_error(("getserverdata: version conflict"));

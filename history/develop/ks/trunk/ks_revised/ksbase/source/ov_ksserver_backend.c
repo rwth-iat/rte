@@ -37,7 +37,9 @@ static void ksxdr_ticket_noneticket_deleteticket(OV_TICKET *pticket);
 static OV_BOOL ksxdr_ticket_noneticket_encodereply(void *data, OV_TICKET *pticket);
 static OV_ACCESS ksxdr_ticket_noneticket_getaccess(const OV_TICKET *pticket);
 
-static OV_ACCESS noneticketaccess = OV_AC_READ;
+static OV_ACCESS noneticketaccess = (OV_AC_READWRITE | OV_AC_INSTANTIABLE
+		| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
+		| OV_AC_UNLINKABLE);
 
 OV_DLLVAREXPORT OV_TICKET_VTBL noneticketvtbl = {
 		ksxdr_ticket_noneticket_createticket,
