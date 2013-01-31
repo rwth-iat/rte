@@ -153,6 +153,25 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_state_set(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	OV_RESULT result;
+	OV_INSTPTR_ksbase_ServerRep pthis = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
+
+	/*	baseclass' constructor first	*/
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	pthis->v_protocols.veclen = 0;
+	pthis->v_protocols.value = NULL;
+	pthis->v_port.veclen = 0;
+	pthis->v_port.value = NULL;
+
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT void ksbase_ServerRep_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -176,13 +195,12 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_shutdown(
     *   local variables
     */
     OV_INSTPTR_ksbase_ServerRep pinst = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
-
+ov_logfile_debug("ServerRep shutdown");
     /* do what */
     Ov_SetDynamicVectorLength(&(pinst->v_protocols), 0, STRING);
     Ov_SetDynamicVectorLength(&(pinst->v_port), 0, STRING);
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
-    Ov_DeleteObject(pobj);
     return;
 }
 

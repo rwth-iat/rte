@@ -143,6 +143,7 @@ LIBRARY ksbase
 				INITIALVALUE	=	0;
 		END_VARIABLES;
 		OPERATIONS
+			constructor		:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 			typemethod 		: 	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
@@ -158,6 +159,7 @@ LIBRARY ksbase
 		FLAGS	=	"v";
 		COMMENT	=	"Manager. Provides operations for handling servers (register, unregister, getserverdata).";
 		OPERATIONS
+			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 			register		:	C_FUNCTION <KSBASE_FNC_REGISTER>;
 			unregister		:	C_FUNCTION <KSBASE_FNC_UNREGISTER>;
 			getserverdata	:	C_FUNCTION <KSBASE_FNC_GETSERVERDATA>;

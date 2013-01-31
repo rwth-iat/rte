@@ -28,6 +28,38 @@
 #include "ks_logfile.h"
 
 
+OV_DLLFNCEXPORT void ksbase_Manager_shutdown(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_ksbase_Manager pinst = Ov_StaticPtrCast(ksbase_Manager, pobj);
+    OV_INSTPTR_ov_object pServerRep = NULL;
+    OV_INSTPTR_ov_object pChildObject = NULL;
+    /* do what */
+   /*	Iterate over all ServerReps in containment and delete them	*/
+    pChildObject = Ov_GetFirstChild(ov_containment, pinst);
+    while(pChildObject)
+    {
+    	if(Ov_CanCastTo(ksbase_ServerRep, pChildObject))
+    	{
+    		pServerRep = pChildObject;
+    		pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
+    		Ov_DeleteObject(pServerRep);
+    		continue;
+    	}
+    	else
+    	{
+    		pChildObject = Ov_GetNextChild(ov_containment, pChildObject);
+    		continue;
+    	}
+    }
+    /* set the object's state to "shut down" */
+    ov_object_shutdown(pobj);
+    return;
+}
+
 OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	OV_STRING name,
 	OV_INT version,
