@@ -31,50 +31,15 @@
 #ifndef OV_KSSERVER_H_INCLUDED
 #define OV_KSSERVER_H_INCLUDED
 
-//#include "libovks/ov_ksserver_xdr.h"
 #include "libov/ov_ov.h"
 #include "libov/ov_element.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_logfile.h"
 
 
-/*
-*	OV_FNC_SIGHANDLER:
-*	------------------
-*	Signal hander function prototype for server shutdown
-*/
-typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
-	int signal
-);
 
-/*
-*	Flags for installing the signal handler
-*/
-#define OV_SIGHANDLER_DEFAULT	((OV_FNC_SIGHANDLER *)0)
-#define OV_SIGHANDLER_NONE		((OV_FNC_SIGHANDLER *)-1)
 
-/*
-*	Create a ticket from an incoming XDR stream (internal)
-*/
-OV_TICKET *ov_ksserver_ticket_create(XDR *xdr);
-
-//by hmersch
-OV_TICKET *ov_ksserver_ticket_defaultticket_createticket_wrap(XDR *xdr, OV_TICKET_TYPE type);
-
-/*
-*	Register a new ticket
-*/
-OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_register(
-	const OV_TICKET_TYPE	type,
-	const OV_TICKET_VTBL	*vtbl
-);
-
-/*
-*	Unregister a given ticket
-*/
-OV_DLLFNCEXPORT OV_RESULT ov_ksserver_ticket_unregister(
-	const OV_TICKET_TYPE	type
-);
+OV_DLLVARIMPORT OV_TICKET_VTBL noneticketvtbl;
 
 /*
 *	OV_SVCLOG_VTBL:

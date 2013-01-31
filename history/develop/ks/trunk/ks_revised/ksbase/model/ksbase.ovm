@@ -212,6 +212,38 @@ LIBRARY ksbase
 			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
+	
+/**
+ *	Baseclass for ticketauthenticators
+ *	TicketAuthenticators have to be singletons!!!
+ *	The constructor of the baseclass tests if there is already an object of the same type. If so, it returns OV_ERR_ALLREADYEXISTS. For each Protocol and each tickettype only one
+ *		authenticator may exist. There has to be a static global pointer to the object to make the ticket-functions find neccessary data.
+ */
+ 
+ 	CLASS	TicketAuthenticator		:	CLASS	ov/domain
+ 		COMMENT	=	"Abstract baseclass for ticketauthenticators. For each ks-protocol different authenticators have to be implemented. An authenticator for tickets of simple type is mandatory (ks-specification). TicketAuthenticators have to be singletons!!";
+ 		VARIABLES
+ 			TicketType	:	C_TYPE	<OV_TICKET_TYPE>
+ 				COMMENT	=	"TicketType this authenticator can handle";
+ 			ticket	:	C_TYPE <OV_TICKET>
+ 				COMMENT	=	"Ticket this object works with.";
+ 			access	:	C_TYPE <OV_ACCESS>
+ 				COMMENT	=	"Acces rights of the last tested ticket";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+ 			/*
+ 			*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 			*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 			*/
+ 			createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 			deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+			encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+			TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+ 		END_OPERATIONS;
+ 	END_CLASS; 	
  
 ///////////////Assocs
 
