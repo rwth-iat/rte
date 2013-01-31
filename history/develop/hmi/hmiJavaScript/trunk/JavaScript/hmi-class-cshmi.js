@@ -1141,12 +1141,19 @@ cshmi.prototype = {
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return PathArray.join("/");
+			}else if (ParameterValue === "absolutepathname"){
+				return HMI.KSClient._splitKSPath(FBRef)[1];
+			}else if (ParameterValue === "absoluteparentpathname"){
+				var PathArray = FBRef.split("/");
+				PathArray.pop();
+				return HMI.KSClient._splitKSPath(PathArray.join("/"))[1];
 			}else if (ParameterValue === "identifier"){
-				//todo add1.IN1 sollte hier nur IN1 liefern
-				
 				//if the identifier is requested calculate this to avoid network request
 				var Objectname = FBRef.split("/");
-				return Objectname[Objectname.length - 1];
+				var identifier = Objectname[Objectname.length - 1];
+				//if we refer to an variable return this name only
+				identifier = identifier.split(".");
+				return identifier[identifier.length - 1];
 			}else if(preventNetworkRequest === true){
 				//intentionally no value
 				return null;
