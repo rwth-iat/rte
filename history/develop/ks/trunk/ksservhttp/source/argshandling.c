@@ -124,8 +124,8 @@ OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* arg
 					ov_string_compare(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
 					ov_string_compare(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
 				*response_format = RESPONSE_FORMAT_KSX;
-			//}else if(ov_string_compare(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
-				//*response_format = RESPONSE_FORMAT_JSON;
+			}else if(ov_string_compare(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
+				*response_format = RESPONSE_FORMAT_JSON;
 			}
 		}
 	}

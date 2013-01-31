@@ -534,6 +534,9 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		if(RESPONSE_FORMAT_KSX == response_format){
 			ov_string_setvalue(&content_type, "text/xml");
+		}else if(RESPONSE_FORMAT_JSON == response_format){
+			//fixme wieder an
+			//ov_string_setvalue(&content_type, "application/json");
 		}
 		//BEGIN command routine
 		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){

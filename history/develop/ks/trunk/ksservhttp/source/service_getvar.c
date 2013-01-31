@@ -423,7 +423,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 			seperate_response_parts(&LoopEntryList, response_format);
 		}
 		begin_response_part(&LoopEntryList, response_format, "currprops");
-		if(response_format == RESPONSE_FORMAT_KSX){
+		if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON){
 			//get additional data if we serve ksx
 			begin_response_part(&LoopEntryList, response_format, "value");
 			begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);

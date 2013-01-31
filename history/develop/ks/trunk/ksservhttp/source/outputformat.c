@@ -12,6 +12,8 @@ OV_UINT extract_response_format(OV_STRING_VEC* args){
 	if(match.veclen>=1){
 		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
 			re = RESPONSE_FORMAT_KSX;
+		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
+			re = RESPONSE_FORMAT_JSON;
 		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
 			re = RESPONSE_FORMAT_TCL;
 		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
@@ -34,6 +36,8 @@ OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STR
 	if(response_format==RESPONSE_FORMAT_KSX){
 		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
 		begin_response_part(output, response_format, entry_type);
+	}else if(response_format==RESPONSE_FORMAT_JSON){
+		begin_response_part(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
 }
@@ -48,6 +52,8 @@ OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STR
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
 		finalize_response_part(output, response_format, entry_type);
+		finalize_response_part(output, response_format, "result");
+	}else if(response_format==RESPONSE_FORMAT_JSON){
 		finalize_response_part(output, response_format, "result");
 	}
 	return OV_ERR_OK;
@@ -104,6 +110,12 @@ OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STR
 		}else{
 			ov_string_print(output, "%s<%s>", *output, entry_type);
 		}
+	}else if(response_format==RESPONSE_FORMAT_JSON){
+		if(*output == NULL){
+			ov_string_print(output, "{\"%s\": ", entry_type);
+		}else{
+			ov_string_print(output, "%s{\"%s\": ", *output, entry_type);
+		}
 	}else if(response_format==RESPONSE_FORMAT_PLAIN){
 		ov_string_append(output, "");
 	}
@@ -123,6 +135,8 @@ OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
 		ov_string_append(output, " ");
 	}else if(response_format==RESPONSE_FORMAT_KSX){
 		//none
+	}else if(response_format==RESPONSE_FORMAT_JSON){
+		ov_string_append(output, ", ");
 	}
 	return OV_ERR_OK;
 }
@@ -143,6 +157,13 @@ OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_
 			ov_string_print(output, "</%s>\n", entry_type);
 		}else{
 			ov_string_print(output, "%s</%s>\n", *output, entry_type);
+		}
+	}else if(response_format==RESPONSE_FORMAT_JSON){
+		if(*output == NULL){
+			//should not happen
+			ov_string_print(output, "}\n");
+		}else{
+			ov_string_print(output, "%s}\n", *output);
 		}
 	}else if(response_format==RESPONSE_FORMAT_PLAIN){
 		ov_string_append(output, ";");

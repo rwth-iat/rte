@@ -52,7 +52,7 @@ OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_ST
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
-	if(response_format == RESPONSE_FORMAT_KSX){
+	if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON){
 		//kill all underscores. TIME_SPAN_VEC for example has two...
 		ov_memstack_lock();
 		changedValue = ov_memstack_alloc(ov_string_getlength(value)+1);
@@ -83,8 +83,13 @@ OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_ST
  * @return return code always ov_err_ok
  */
 OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(response_format != RESPONSE_FORMAT_TCL){
+	if(response_format == RESPONSE_FORMAT_KSX){
 		return begin_response_part(output, response_format, entry_type);
+	}else if(response_format == RESPONSE_FORMAT_TCL){
+		//nothing
+	}else if(response_format == RESPONSE_FORMAT_JSON){
+		begin_response_part(output, response_format, entry_type);
+		return ov_string_append(output, "\"");
 	}
 	return OV_ERR_OK;
 }
@@ -96,7 +101,12 @@ OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_form
  * @return return code always ov_err_ok
  */
 OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(response_format != RESPONSE_FORMAT_TCL){
+	if(response_format == RESPONSE_FORMAT_KSX){
+		return finalize_response_part(output, response_format, entry_type);
+	}else if(response_format == RESPONSE_FORMAT_TCL){
+		//nothing
+	}else if(response_format == RESPONSE_FORMAT_JSON){
+		ov_string_append(output, "\"");
 		return finalize_response_part(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
@@ -185,7 +195,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	}
 
 	find_arguments(args, "requestOutput", &match);
-	if(response_format == RESPONSE_FORMAT_KSX || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+	if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
 	}else{
@@ -253,7 +263,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			EXEC_GETEP_RETURN OV_ERR_GENERIC; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
-			if(i >= 1){
+			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
+					(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON))){
+				//OP_TYPE is not displayed in ksx and json, so skip the seperator here
 				seperate_response_parts(&temp, response_format);
 			}
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
@@ -421,7 +433,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				break;
 			case OP_TYPE:
 				//ksx has this information in the surrounding XML element
-				if(response_format != RESPONSE_FORMAT_KSX){
+				if(response_format != RESPONSE_FORMAT_KSX && response_format != RESPONSE_FORMAT_JSON){
 					if(one_result->objtype == KS_OT_DOMAIN){
 						ov_string_append(&temp, "KS_OT_DOMAIN");
 					}else if(one_result->objtype == KS_OT_VARIABLE){

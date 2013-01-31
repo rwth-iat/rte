@@ -60,6 +60,7 @@
 #define RESPONSE_FORMAT_TCL 1
 #define RESPONSE_FORMAT_PLAIN 2
 #define RESPONSE_FORMAT_KSX 3
+#define RESPONSE_FORMAT_JSON 4
 #define RESPONSE_FORMAT_DEFAULT RESPONSE_FORMAT_TCL
 
 //requestOutput for getVar and getEP, only internal used!
