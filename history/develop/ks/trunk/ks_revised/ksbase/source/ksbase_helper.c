@@ -62,6 +62,11 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 			packet->writePT = tempdata;
 		else
 			packet->writePT = tempdata + (packet->writePT - packet->data);
+		// set read pointer
+		if(!packet->readPT)
+			packet->readPT = tempdata;
+		else
+			packet->readPT = tempdata + (packet->readPT - packet->data);
 
 		memcpy(packet->writePT, data, addlength);
 		packet->writePT += addlength;
