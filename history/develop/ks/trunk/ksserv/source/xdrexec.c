@@ -130,10 +130,10 @@ OV_DLLFNCEXPORT OV_STRING ksserv_xdrexec(XDR *in, XDR *out, OV_INSTPTR_ksserv_Cl
 
 	//this is trash within the XDR - or better: I dont know what it is for!
 	//this has to be skipped
-	xdr_u_long(in, &trash);
-	xdr_u_long(in, &trash2);
-	xdr_u_long(in, &trash3);
-	xdr_u_long(in, &trash4);
+	xdr_u_long(in, &trash);		/*	Lars: these are the rpc-authentication fields. the first contains the authentication credential's "flavor" (in pricipal a ticket indicator)	*/
+	xdr_u_long(in, &trash2);	/*	Lars: this contains opaque authentication data. This means there could be more than 4 bates but as we do not use this stuff, there normally are only 4	*/
+	xdr_u_long(in, &trash3);	/*	Lars: This onecontains the authentication verifiers's "flavor" (in pricipal a ticket indicator)	*/
+	xdr_u_long(in, &trash4);	/*	Lars: this contains opaque authentication data. This means there could be more than 4 bates but as we do not use this stuff, there normally are only 4	*/
 	xdr_u_long(in, &ticketindicator);
 	//ksserv_logfile_info("trash: %d", trash);
 	//ksserv_logfile_info("trash2: %d", trash2);
