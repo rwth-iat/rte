@@ -202,7 +202,9 @@ HMI.prototype = {
 			}else{
 				addEventSimple(HMI.PossServers, "change", 
 					function () {
-						HMI.showSheets(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value);
+						if(HMI.PossServers.selectedIndex >= 0){
+							HMI.showSheets(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value);
+						}
 					}
 				);
 			}
@@ -212,7 +214,9 @@ HMI.prototype = {
 			}else{
 				addEventSimple(HMI.PossSheets, "change", 
 					function () {
-						HMI.showSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
+						if(HMI.PossSheets.selectedIndex >= 0){
+							HMI.showSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
+						}
 					}
 				);
 			}
@@ -266,8 +270,8 @@ HMI.prototype = {
 			window.onpopstate = function(){
 				if(window.history.state !== undefined && window.history.state !== null){
 					if(	window.history.state.Host !== HMI.InputHost.value ||
-							window.history.state.Server !== HMI.PossServers.options[HMI.PossServers.selectedIndex].value ||
-							window.history.state.Sheet !== HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value){
+							(HMI.PossServers.selectedIndex >= 0 && window.history.state.Server !== HMI.PossServers.options[HMI.PossServers.selectedIndex].value)||
+							(HMI.PossSheets.selectedIndex >= 0 && window.history.state.Sheet !== HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value)){
 						HMI.interpreteUrlParameter(); 
 					}
 				}
@@ -337,7 +341,7 @@ HMI.prototype = {
 			var DatePreventsCaching = new Date();
 			try{
 				var req = new XMLHttpRequest();
-				req.open("GET", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
+				req.open("HEAD", window.location.pathname+'?preventCaching='+DatePreventsCaching.getTime(), false);
 				req.send(null);
 				var ResponseServerString = req.getResponseHeader('server');
 				if (req.readyState != 4){

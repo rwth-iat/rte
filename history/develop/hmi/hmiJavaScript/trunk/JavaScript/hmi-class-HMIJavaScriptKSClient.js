@@ -64,7 +64,7 @@
 *		-	auto select if only one server and Sheet
 *
 *	22-September-2008			Je
-*		-	HMI Requests changed to getEP, getVar, setVar, getHandle, delHandle
+*		-	HMI Requests changed to getEP, getVar, setVar, getHandle, deleteCommunicationPoint
 *
 *	25-February-2009			Je
 *		-	General Revision and full commented
@@ -111,13 +111,14 @@ HMIJavaScriptKSClient.prototype = {
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', 'OP_NAME', this._cbGetServers);
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', ['OP_NAME', 'OP_CLASS'], this._cbGetServers);
 	 * @param path of object to query
-	 * @param [requestType = OT_DOMAIN] type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
+	 * @param requestType = OT_DOMAIN type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
 	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS or OT_ANY)
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
 	 */
-	getEP: function(path, requestType, requestOutput, cbfnc, async) {
+	getEP: function(path, requestType, requestOutput, cbfnc, async, responseFormat) {
 		if(requestType === undefined){
 			requestType = "OT_DOMAIN";
 		}
@@ -145,8 +146,11 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var optionalurlparameter = "";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -174,13 +178,9 @@ HMIJavaScriptKSClient.prototype = {
 				}
 				optionalurlparameter += "]";
 			}
-			
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getep%20" +ServerAndPath[1]+"%20*" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - "+ServerAndPath[0]+" is not on the same host as our source. GetEP on a remote host is not supported right now. ");
-				return null;
-			}
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			
 			optionalurlparameter = "&requestType="+requestType;
 			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
@@ -194,10 +194,11 @@ HMIJavaScriptKSClient.prototype = {
 					optionalurlparameter += "&requestOutput["+i+"]="+requestOutput[i];
 				}
 			}
-			urlparameter = "/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
+			;
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//todo implement requestType, requestOutput
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -207,70 +208,17 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
 			return ReturnText;
 		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - End");
 		return true;
-	},
-	
-	/**
-	 * usage example:
-	 *		getHandle("localhost/MANAGER", this._cbInit);
-	 *		getHandle("localhost/fb_hmi1", null);
-	 * @param {String} HostAndServername Host and Servername concat with a slash
-	 * @param cbfnc callback function
-	 * @param async request async communication
-	 * @return {String} TKS Handle of the requested Server or null
-	 */
-	_getHandle: function(HostAndServer, cbfnc, async) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._getHandle - Start on "+HostAndServer);
-		
-		//fixme auf async umstellen
-		var urlparameter;
-		var newhost;
-		var method = "GET";
-		var hostArray = HostAndServer.split("/");
-		if (hostArray.length !== 2){
-			return null;
-		}
-		if (hostArray[0].indexOf(":") === -1){
-			//add default port if the request did not set it
-			newhost = hostArray[0]+ ':7509/' + hostArray[1];
-		}else{
-			newhost = HostAndServer;
-		}
-		
-		if ("tcl" === HMI.HMI_Constants.ServerType){
-			urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+newhost;
-		}else if("php" === HMI.HMI_Constants.ServerType){
-			urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+newhost;
-		}
-		var ReturnText = this._sendRequest(this, method, false, urlparameter, null);
-		
-		if (ReturnText === false){
-			//communication error
-			return null;
-		}else if(ReturnText === true){
-			//no async communication. oops
-			return null;
-		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
-			//on error retest without default acplt port
-			if ("tcl" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+HostAndServer;
-			}else if("php" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+HostAndServer;
-			}
-			ReturnText = this._sendRequest(this, method, false, urlparameter, null);
-		}
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._getHandle - End");
-		return ReturnText;
 	},
 	
 	/**
@@ -282,9 +230,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_VALUE, OP_TIMESTAMP or OP_STATE)
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	 */
-	getVar: function(path, requestOutput, cbfnc, async) {
+	getVar: function(path, requestOutput, cbfnc, async, responseFormat) {
 		if(requestOutput === undefined){
 			requestOutput = "OP_VALUE";
 		}
@@ -309,8 +258,11 @@ HMIJavaScriptKSClient.prototype = {
 		var urlparameter;
 		var method = "GET";
 		var optionalurlparameter = "";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -336,12 +288,9 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getvar%20" +
 				"{"+ServerAndPath.slice(1).join(" ")+"}" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - "+ServerAndPath[0]+" is not on the same host as our source. GetVar on a remote host is not supported right now. ");
-				return null;
-			}
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			
-			urlparameter = "/getVar?";
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/getVar?";
 			for(var i=1; i < ServerAndPath.length;i++){
 				if(i>1){
 					urlparameter += "&";
@@ -349,7 +298,7 @@ HMIJavaScriptKSClient.prototype = {
 				urlparameter += "path["+i+"]=" +ServerAndPath[i];
 			}
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -360,11 +309,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - End");
 			return ReturnText;
 		}
@@ -384,13 +333,14 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param {String} type variable type to set, null if no change
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return "" or null
 	 */
 	setVar: function(Handle, path, value, cbfnc, async) {
 		//wrapper function for old hmi gestures
 		return this.setVar_NG(path, value, null, cbfnc, async);
 	},
-	setVar_NG: function(path, value, type, cbfnc, async) {
+	setVar_NG: function(path, value, type, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
@@ -407,8 +357,11 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var optionalurlparameter = "";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -419,15 +372,11 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=setvar%20"+
 			"{"+ServerAndPath[1]+"%20{"+value+"}}"+optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar_NG - "+ServerAndPath[0]+" is not on the same host as our source. SetVar on a remote host is not supported right now. ");
-				return null;
-			}
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			
-			//method = "PUT"; //REST conform
-			urlparameter = "/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -439,11 +388,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - End");
 			return ReturnText;
 		}
@@ -459,9 +408,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param newname (optional with full path) of the object
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return true, "" or null
 	 */
-	renameObject: function(oldname, newname, cbfnc, async) {
+	renameObject: function(oldname, newname, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - Start: "+oldname);
 		if(!oldname || oldname.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no oldname found");
@@ -479,6 +429,9 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var ServerAndPath = this._splitKSPath(oldname);
 		var ServerAndPathNewname = this._splitKSPath(newname);
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if(newname.charAt(0) !== "/"){
 			//we have a plain name, add path of the oldname
 			var PathArray = ServerAndPath[1].split("/");
@@ -495,21 +448,18 @@ HMIJavaScriptKSClient.prototype = {
 		var urlparameter;
 		var method = "GET";
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=rename%20"+
 				ServerAndPath[1]+"%20"+newname;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - "+ServerAndPath[0]+" is not on the same host as our source. rename on a remote host is not supported right now. ");
-				return null;
-			}
-			urlparameter = "/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -521,11 +471,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.renameObject - End");
 			return ReturnText;
 		}
@@ -541,9 +491,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return true, "" or null
 	 */
-	createObject: function(path, classname, cbfnc, async) {
+	createObject: function(path, classname, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no path found");
@@ -566,22 +517,22 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var method = "GET";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=create%20{"+
 			ServerAndPath[1]+"%20"+classname+"}";
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.creatObject - "+ServerAndPath[0]+" is not on the same host as our source. create on a remote host is not supported right now. ");
-				return null;
-			}
-			urlparameter = "/createObject?path="+ServerAndPath[1]+"&factory="+classname;
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/createObject?path="+ServerAndPath[1]+"&factory="+classname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -593,11 +544,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.createObject - End");
 			return ReturnText;
 		}
@@ -612,9 +563,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param path ob the object to delete
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return true, "" or null
 	 */
-	deleteObject: function(path, cbfnc, async) {
+	deleteObject: function(path, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - no path found");
@@ -630,22 +582,21 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var method = "GET";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=delete%20"+
 			ServerAndPath[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - "+ServerAndPath[0]+" is not on the same host as our source. delete on a remote host is not supported right now. ");
-				return null;
-			}
-			
-			urlparameter = "/deleteObject?path="+ServerAndPath[1];
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/deleteObject?path="+ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -656,11 +607,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.deleteObject - End");
 			return ReturnText;
 		}
@@ -676,9 +627,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return true, "" or null
 	 */
-	linkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
+	linkObjects: function(pathA, pathB, portnameA, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects");
 		if(!pathA || pathA.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no pathA found");
@@ -707,22 +659,22 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var method = "GET";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=link%20"+
 			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObject - "+ServerAndPath[0]+" is not on the same host as our source. Link on a remote host is not supported right now. ");
-				return null;
-			}
-			urlparameter = "/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -734,11 +686,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, true, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.linkObjects - End");
 			return ReturnText;
 		}
@@ -748,15 +700,16 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/**
-	 * links two objects
+	 * unlinks two objects
 	 * 
 	 * @param path of the object to create
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
+	 * @param responseFormat Mime-Type of requested response
 	 * @return true, "" or null
 	 */
-	unlinkObjects: function(pathA, pathB, portnameA, cbfnc, async) {
+	unlinkObjects: function(pathA, pathB, portnameA, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects");
 		if(!pathA || pathA.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no pathA found");
@@ -785,22 +738,22 @@ HMIJavaScriptKSClient.prototype = {
 		var Handle;
 		var urlparameter;
 		var method = "GET";
+		if(responseFormat === undefined){
+			responseFormat = "text/tcl";
+		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=unlink%20"+
 			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if (ServerAndPath[0].indexOf(window.location.hostname) === -1){
-				HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObject - "+ServerAndPath[0]+" is not on the same host as our source. unlink on a remote host is not supported right now. ");
-				return null;
-			}
-			urlparameter = "/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
-			Handle = this.getHandleID(ServerAndPath[0]);
+			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
 			}
@@ -812,11 +765,11 @@ HMIJavaScriptKSClient.prototype = {
 			return null;
 		}
 		if (async === true && cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, true, urlparameter, cbfnc);
+			this._sendRequest(this, method, async, urlparameter, cbfnc, responseFormat);
 		}else if (cbfnc !== null && cbfnc !== undefined){
-			this._sendRequest(this, method, false, urlparameter, cbfnc);
+			this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 		}else{
-			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc);
+			var ReturnText = this._sendRequest(this, method, false, urlparameter, cbfnc, responseFormat);
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.unlinkObjects - End");
 			return ReturnText;
 		}
@@ -826,54 +779,31 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/**
-	 * usage example:
-	 * 		this.delHandle("TksS-0042");
-	 * @param Handle Handle to be destroyed
-	 * @return none
-	 */
-	delHandle: function(Handle) {
-		var urlparameter;
-		var method = "GET";
-		if ("tcl" === HMI.HMI_Constants.ServerType){
-			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=destroy";
-		}else if ("php" === HMI.HMI_Constants.ServerType){
-			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=destroy";
-		}else{
-			//communication type not implemented
-			return;
-		}
-		if (Handle !== null){
-			//the result is not interesting, so can be ignored (async, no callback)
-			this._sendRequest(this, method, true, urlparameter, null);
-		}
-	},
-	
-	/**
 	 * @param {String} HostAndServername Host and Servername concat with a slash
 	 * @return {String} TKS Handle of the requested Server or null
-	 * @todo add timeout für unused delHandle
+	 * @todo add timeout für unused deleteCommunicationPoint
 	 */
-	getHandleID: function(HostAndServername) {
+	getCommunicationPoint: function(HostAndServername) {
 		if (this.ResourceList.Servers[HostAndServername] && this.ResourceList.Servers[HostAndServername].HandleString !== undefined){
 			return this.ResourceList.Servers[HostAndServername].HandleString;
 		}else{
-			var HandleString = this._getHandle(HostAndServername, null);
+			var HandleString = this._findCommunicationPoint(HostAndServername, null);
 			if (HandleString === null || HandleString === false){
 				//occures in shutdown
 				return null;
 			}else if (HandleString.indexOf("KS_ERR_SERVERUNKNOWN") !== -1){
 				//the Manager sometimes reject connection to a valid server, so retry once
-				//HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHandleID - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
+				//HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getCommunicationPoint - got KS_ERR_SERVERUNKNOWN but do not trust. Retrying");
 				
 				//retry disabled for performance reasons!
-				//HandleString = this._getHandle(HostAndServername, null);
+				//HandleString = this._findCommunicationPoint(HostAndServername, null);
 			}
 			if (HandleString.indexOf("KS_ERR") !== -1){
 				//the server is really not available. Could be the case if there is an active KS-Bridge and its destination is not available
 				
 				//caching the result of the failure
 				HandleString = null;
-			}else if (!/^TksS-\b/.exec(HandleString)){
+			}else if ("tcl" === HMI.HMI_Constants.ServerType && !/^TksS-\b/.exec(HandleString)){
 				//The handle must have the right format aka start with "TksS-"
 				if (HandleString.length < 250){
 					HMI.hmi_log_onwebsite('Could not initialize TCLKSGateway. Server responded: ' + HandleString);
@@ -890,10 +820,98 @@ HMIJavaScriptKSClient.prototype = {
 		}
 	},
 	
-	_cbSetDefaultHandle: function(Client, req) {
-		//fixme work in progress
-		Client.ResourceList.Servers[HostAndServername] = Object();
-		Client.ResourceList.Servers[HostAndServername].HandleString = HandleString;
+	/**
+	 * finds the TCL handle or TCP Port of ksservhttp server
+	 * usage example:
+	 *		_findCommunicationPoint("localhost/MANAGER", this._cbInit);
+	 *		_findCommunicationPoint("localhost/fb_hmi1", null);
+	 * @param {String} HostAndServername Host and Servername concat with a slash
+	 * @param cbfnc callback function
+	 * @param async request async communication
+	 * @return {String} TKS Handle of the requested Server or null
+	 */
+	_findCommunicationPoint: function(HostAndServer, cbfnc, async) {
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._findCommunicationPoint - Start on "+HostAndServer);
+		
+		//fixme auf async umstellen
+		var urlparameter;
+		var newhost;
+		var method = "GET";
+		var hostArray = HostAndServer.split("/");
+		var responseFormat = "text/tcl";
+		if (hostArray.length !== 2){
+			return null;
+		}
+		if ("kshttp" === HMI.HMI_Constants.ServerType){
+			if(hostArray[1] === "MANAGER"){
+				//manager is always on port 7509 with ksservhttp
+				return "8080";
+			}else if(hostArray[0].indexOf(":") !== -1){
+				return hostArray[0].split(":")[1];
+			}else{
+				urlparameter = "http://"+hostArray[0]+"/getServer?servername="+hostArray[1];
+				responseFormat = "text/plain";
+			}
+		}else{
+			if (hostArray[0].indexOf(":") === -1){
+				//add default port if the request did not set it
+				newhost = hostArray[0]+ ':7509/' + hostArray[1];
+			}else{
+				newhost = HostAndServer;
+			}
+			
+			if ("tcl" === HMI.HMI_Constants.ServerType){
+				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+newhost;
+			}else if("php" === HMI.HMI_Constants.ServerType){
+				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+newhost;
+			}
+		}
+		var ReturnText = this._sendRequest(this, method, false, urlparameter, null, responseFormat);
+		
+		if (ReturnText === false){
+			//communication error
+			return null;
+		}else if(ReturnText === true){
+			//no async communication. oops
+			return null;
+		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
+			//on error retest without default acplt port
+			if ("tcl" === HMI.HMI_Constants.ServerType){
+				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+HostAndServer;
+			}else if("php" === HMI.HMI_Constants.ServerType){
+				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+HostAndServer;
+			}
+			ReturnText = this._sendRequest(this, method, false, urlparameter, null, responseFormat);
+		}
+		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._findCommunicationPoint - End");
+		return ReturnText;
+	},
+	
+	/**
+	 * usage example:
+	 * 		this.deleteCommunicationPoint("TksS-0042");
+	 * @param Handle Handle to be destroyed
+	 * @return none
+	 */
+	deleteCommunicationPoint: function(Handle) {
+		var urlparameter;
+		var method = "GET";
+		if ("tcl" === HMI.HMI_Constants.ServerType){
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=destroy";
+		}else if ("php" === HMI.HMI_Constants.ServerType){
+			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&cmd=destroy";
+		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//ksserv does not need this
+			return;
+		}else{
+			//communication type not implemented
+			return;
+		}
+		var responseFormat = "text/tcl";
+		if (Handle !== null){
+			//the result is not interesting, so can be ignored (async, no callback)
+			this._sendRequest(this, method, true, urlparameter, null, responseFormat);
+		}
 	},
 	
 	/*********************************
@@ -1146,9 +1164,10 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param async request async communication
 	 * @param urlparameter the URL of the request
 	 * @param cbfnc Name of the callack function or null
+	 * @param responseFormat Mime-Type of requested response
 	 * @return if no cbfnc submitted returnvalue of request or false on an communication error
 	 */
-	_sendRequest: function(Client, method, async, urlparameter, cbfnc) {
+	_sendRequest: function(Client, method, async, urlparameter, cbfnc, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - Start, Async:"+async+" Meth:"+method+", requested: "+urlparameter);
 		
 		var req = new XMLHttpRequest();
@@ -1165,6 +1184,9 @@ HMIJavaScriptKSClient.prototype = {
 			
 			//prevent caching of request in all browsers (ie was the problem - as usual)
 			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
+			if(responseFormat){
+				req.setRequestHeader("Accept", responseFormat);
+			}
 			
 			if (req.timeout !== undefined && async === true){
 				//timeout is not allowed with sync requests
@@ -1380,10 +1402,10 @@ HMIJavaScriptKSClient.prototype = {
 					currentArrayElement = response.slice(indexOfNextClosedBracket+2, indexOfNextOpenBracket-1);
 					//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
 					currentArrayElement = currentArrayElement.split(" ");
-					for (i=0; i < currentArrayElement.length; i++) {
+					for (var i=0; i < currentArrayElement.length; i++) {
 						responseArray.push(currentArrayElement[i]);
 					}
-				}		
+				}
 				
 				//check if we have reached the last closed bracket
 				if (indexOfNextOpenBracket === -1){
@@ -1393,10 +1415,9 @@ HMIJavaScriptKSClient.prototype = {
 						currentArrayElement = response.slice(indexOfNextClosedBracket+2);
 						//if there are space characters, we need to split currentArrayElement and append each of the elements to the responseArray
 						currentArrayElement = currentArrayElement.split(" ");
-						for (i=0; i < currentArrayElement.length; i++) {
+						for (var i=0; i < currentArrayElement.length; i++) {
 							responseArray.push(currentArrayElement[i]);
 						}
-
 					}
 					
 					//we are done with the split
@@ -1490,7 +1511,12 @@ HMIJavaScriptKSClient.prototype = {
 			}else if(FullKSpath[i].charAt(0) === "/"){
 				//no Host and Server found, so replace with Model location
 				if(resultArray[0] === null){
-					resultArray[0] = this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer;
+					if(this.ResourceList.ModelHost !== null && this.ResourceList.ModelServer !== null){
+						resultArray[0] = this.ResourceList.ModelHost+"/"+this.ResourceList.ModelServer;
+					}else{
+						//not configured. Fall back to same server
+						resultArray[0] = "";
+					}
 				}
 				resultArray.push(FullKSpath[i]);
 			}else if(i>0){
@@ -1511,7 +1537,7 @@ HMIJavaScriptKSClient.prototype = {
 		//destroy all handles
 		for (var i in this.ResourceList.Servers){
 			if(this.ResourceList.Servers[i].HandleString !== undefined){
-				this.delHandle(this.ResourceList.Servers[i].HandleString);
+				this.deleteCommunicationPoint(this.ResourceList.Servers[i].HandleString);
 				delete this.ResourceList.Servers[i].HandleString;
 			}
 			delete this.ResourceList.Servers[i];

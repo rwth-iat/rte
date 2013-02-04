@@ -516,16 +516,23 @@ void ksservhttp_httpclienthandler_typemethod(
 			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive, &response_format);
 		}
 
+		//allow javascript connection from any source
+		ov_string_setvalue(&header, "Access-Control-Allow-Origin:*\r\n");
+
 		if(!Ov_Fail(result)){
 			result = OV_ERR_NOTIMPLEMENTED;
 			//check which kind of request is coming in
-			if(	ov_string_compare(http_request_type, "GET") != OV_STRCMP_EQUAL ||
-					ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL){
+			if(	ov_string_compare(http_request_type, "GET") == OV_STRCMP_EQUAL ||
+					ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
 				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "PUSH") != OV_STRCMP_EQUAL){
+			}else if(ov_string_compare(http_request_type, "PUSH") == OV_STRCMP_EQUAL){
 				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "OPTIONS") != OV_STRCMP_EQUAL){
+			}else if(ov_string_compare(http_request_type, "OPTIONS") == OV_STRCMP_EQUAL){
 				//used for Cross-Origin Resource Sharing (CORS)
+				//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
+
+				//hmi uses this headers, which is no problem for us
+				ov_string_append(&header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
 				result = OV_ERR_OK;
 				//only an 200 is required
 				request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
@@ -686,16 +693,16 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//adding encoding and content-type to the header
 		if (ov_string_compare(encoding, "") == OV_STRCMP_EQUAL){
-				ov_string_print(&header, "Content-Type: %s\r\n", content_type);
+				ov_string_print(&header, "%sContent-Type: %s\r\n", header, content_type);
 			}else{
-				ov_string_print(&header, "Content-Type: %s; charset=%s\r\n", content_type, encoding);
+				ov_string_print(&header, "%sContent-Type: %s; charset=%s\r\n", header, content_type, encoding);
 		}
 
 		//now we have to format the raw http answer
 		map_result_to_http(&result, &http_version, &header, &body, response_format);
 
 		//Append common data to header:
-		ov_string_print(&header, "%sAccess-Control-Allow-Origin:*\r\nServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);
+		ov_string_print(&header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);
 		//no-cache
 		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 			ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
