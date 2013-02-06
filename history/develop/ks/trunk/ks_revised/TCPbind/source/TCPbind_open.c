@@ -197,8 +197,9 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 				return result;
 			}
 			/*	register empty server with 30 seconds ttl	*/
-			pVtblManager->m_register("MANAGER", 2, protocols, ports, 30);
-
+			result = pVtblManager->m_register("MANAGER", 2, protocols, ports, 30);
+			if(Ov_Fail(result))
+				ov_logfile_error("TCPbind library open: could not register myself at Manager. reason %s", ov_result_getresulttext(result));
 		}
 	}
 	ov_memstack_unlock();
