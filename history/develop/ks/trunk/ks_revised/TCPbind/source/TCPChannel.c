@@ -126,15 +126,17 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		FD_ZERO(&write_flags);
 		FD_SET(socket, &write_flags); // get write flags
 		waitd.tv_sec = 0;     // Set Timeout
-		waitd.tv_usec = 1000;    //  1 millisecond
+		waitd.tv_usec = 0;    //  do not wait
 		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 
-		KS_logfile_debug(("select returned: %d; line %d", err, __LINE__));
+		KS_logfile_debug(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
 
 		//determine how many bytes have to be sent
 		sendlength = thisCh->v_outData.length;
 		sendlength -= (thisCh->v_outData.readPT - thisCh->v_outData.data);
-
+		//DEBUG
+		//KS_logfile_debug(("%s SendData: outData.length:\t%u\n\toutData.retPT\t%p\n\toutData.data\t%p", thisCh->v_identifier, thisCh->v_outData.length, thisCh->v_outData.readPT,thisCh->v_outData.data));
+		//DEBUG_END
 		if(sendlength <= 0) //nothing more to send
 		{
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
@@ -142,14 +144,15 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			return OV_ERR_OK;
 		}
 		//issue send command
+		KS_logfile_debug(("%s SendData: have to send %d bytes", thisCh->v_identifier, sendlength));
 		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
 		if (sentChunkSize == -1)
 		{
-			//DEBUG
+#if OV_SYSTE_NT
 			errno = WSAGetLastError();
-			perror ("send error:");
-			//DEBUG END
-			KS_logfile_error(("%s: send() failed", thisCh->v_identifier));
+#endif
+
+			KS_logfile_error(("%s: send() failed: %d", thisCh->v_identifier, errno));
 			thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
 			return OV_ERR_GENERIC;
 		}
@@ -293,7 +296,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			waitd.tv_usec = 0;    //  do not wait
 			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
 			if(err)
-				KS_logfile_debug(("select returned: %d; line %d", err, __LINE__));
+				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
 
 			//check if data arrived
 			if((err > 0) && FD_ISSET(socket, &read_flags))
