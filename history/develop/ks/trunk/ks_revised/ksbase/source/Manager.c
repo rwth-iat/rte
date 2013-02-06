@@ -83,7 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	
 	KS_logfile_debug(("register:\n\tname: %s\n\tversion: %d\n\tttl: %d\n", name, version, timetolive));
 
-	if(name && ks_isvalidname(name) && ports.veclen && (protocols.veclen == ports.veclen) && timetolive && pServersDomain)
+	if(name && ks_isvalidname(name) && (protocols.veclen == ports.veclen) && timetolive && pServersDomain)
 	{//all values are set
 		result = Ov_CreateObject(ov_domain, pNewSrvRepDomain, pServersDomain, name);
 		if(Ov_OK(result))
