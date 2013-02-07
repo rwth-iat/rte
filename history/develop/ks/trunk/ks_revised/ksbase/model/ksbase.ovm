@@ -206,6 +206,9 @@ LIBRARY ksbase
 				COMMENT	=	"data to be sent";
 			inData	:	C_TYPE	<KS_DATAPACKET>	
 				COMMENT	=	"data received";
+			ClientHandlerAssociated	:	UINT
+				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
+				INITIALVALUE	=	0;
 			END_VARIABLES;	
 		OPERATIONS
 			//real sending of data
