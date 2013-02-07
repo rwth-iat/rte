@@ -285,7 +285,7 @@ cshmi.prototype = {
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else{
-			HMI.hmi_log_info("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
+			HMI.hmi_log_info_onwebsite("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 		}
 		
 		//check type of returnvalue
@@ -1025,7 +1025,11 @@ cshmi.prototype = {
 						return true;
 					}
 					for (var i = 0; i < currentNode.cshmiOriginalOrderList[myTemplateClass].length;i++){
-						if (currentNode.cshmiOriginalOrderList[myTemplateClass][i] === VisualObject){
+						if (currentNode.cshmiOriginalOrderList[myTemplateClass][i].ownerDocument === HMI.cshmi.trashDocument){
+							currentNode.cshmiOriginalOrderList[myTemplateClass].splice(i, 1);
+							//this child was replaced with rebuildObject, so remove from the orderList
+							i--; //we need i at the same value in the next loop
+						}else if (currentNode.cshmiOriginalOrderList[myTemplateClass][i] === VisualObject){
 							//we found ourself, break
 							return false;
 						}else if (currentNode.cshmiOriginalOrderList[myTemplateClass][i].getAttribute("display") !== "none"){
