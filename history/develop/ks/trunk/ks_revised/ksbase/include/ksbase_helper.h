@@ -13,4 +13,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength);
 
+//association of ClientHandler
+#define KSBASE_CH_NOTNEEDED			0
+#define KSBASE_CH_ASSOCIATED			1
+#define KSBASE_CH_NOTASSOCATIED		2
+#define KSBASE_CH_NOTFOUND			252
+
 #endif
