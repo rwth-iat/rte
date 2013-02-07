@@ -25,11 +25,5 @@
 #define TCPbind_CONNSTATE_SENDERROR			136	//0x80 | 0x08
 #define TCPbind_CONNSTATE_RECEIVEERROR		144	//0x80 | 0x10
 
-//association of ClientHandler
-#define TCPbind_CH_NOTNEEDED			0
-#define TCPbind_CH_ASSOCIATED			1
-#define TCPbind_CH_NOTASSOCATIED		2
-#define TCPbind_CH_NOTFOUND			252
-
 
 #endif

@@ -142,7 +142,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 		{
 			pChannel = pNextChannel;
 			pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pChannel)));
-			if(pChannel->v_ClientHandlerAssociated != TCPbind_CH_NOTNEEDED)
+			if(pChannel->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED)
 				Ov_DeleteObject(pChannel);
 		}
 		else
@@ -332,7 +332,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
 					if(thisLi->v_ChannelNeedsClientHandler)
 					{
-						pNewChannel->v_ClientHandlerAssociated = TCPbind_CH_NOTASSOCATIED;
+						pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
 						pProtIdent = Ov_GetChild(TCPbind_AssocSpecificClientHandler, thisLi);
 						if(pProtIdent)
 						{
@@ -349,7 +349,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 						}
 					}
 					else
-						pNewChannel->v_ClientHandlerAssociated = TCPbind_CH_NOTNEEDED;
+						pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
 
 				} else {
 					KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));

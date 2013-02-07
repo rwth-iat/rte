@@ -220,14 +220,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 		 *  and then delete oneself (connections to a server are not static)
 		 */
 
-		if(this->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+		if(this->v_ClientHandlerAssociated == KSBASE_CH_ASSOCIATED)
 		{
 			pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
 			if(pClientHandler)
 			{
 				Ov_DeleteObject(pClientHandler);
 			}
-			this->v_ClientHandlerAssociated = TCPbind_CH_NOTASSOCATIED;
+			this->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
 		}
 
 		/*
@@ -364,7 +364,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			/**********************************************************************************************************************************************************
 			 *	Associate ClientHandler if needed
 			 *********************************************************************************************************************************************************/
-			if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+			if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTASSOCATIED)
 			{
 				TCPbind_TCPChannel_AssociateClientHandler(thisCh);
 			}
@@ -376,7 +376,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			//update receivetime
 			ov_time_gettime(&(thisCh->v_LastReceiveTime));
 
-			if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+			if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_ASSOCIATED)
 			{	//there is a ClientHandler associated. Call its HandleRequest function.
 				pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, thisCh);
 				if(pClientHandler)
@@ -417,7 +417,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					return;
 				}
 			}
-			else if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)	//if acting on the client side, check if a "callback" has to be done
+			else if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTNEEDED)	//if acting on the client side, check if a "callback" has to be done
 			{
 				pDataHandler = Ov_GetChild(ksbase_AssocChannelDataHandler, thisCh);
 				if(pDataHandler)
@@ -471,7 +471,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	ov_time_add(&ttemp, &(thisCh->v_LastReceiveTime), &tstemp);
 	if(ov_time_compare(&now, &ttemp) == OV_TIMECMP_AFTER)
 	{
-		if(thisCh->v_ClientHandlerAssociated == TCPbind_CH_NOTNEEDED)
+		if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTNEEDED)
 		{
 			if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)
 			{
@@ -648,7 +648,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 						return result;
 					}
 					KS_logfile_debug(("ClientHandler created."));
-					this->v_ClientHandlerAssociated = TCPbind_CH_ASSOCIATED;
+					this->v_ClientHandlerAssociated = KSBASE_CH_ASSOCIATED;
 					this->v_ConnectionTimeOut = TCPbind_TTL_AFTER_ASSOC;
 					break;
 				}
@@ -656,15 +656,15 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 			pProtIdent = Ov_StaticPtrCast(ksbase_ProtocolIdentificator, Ov_GetNextChild(ov_instantiation, pProtIdent));
 		}
 		//if ClientHandler could be Associated, do not go on
-		if(this->v_ClientHandlerAssociated == TCPbind_CH_ASSOCIATED)
+		if(this->v_ClientHandlerAssociated == KSBASE_CH_ASSOCIATED)
 			break;
 		else
 			pClassProtIdent = Ov_StaticPtrCast(ov_class, Ov_GetNextChild(ov_inheritance, pClassProtIdent));
 	}
 	//if no ClientHanlder could be associated Delete Channel
-	if(this->v_ClientHandlerAssociated == TCPbind_CH_NOTASSOCATIED)
+	if(this->v_ClientHandlerAssociated == KSBASE_CH_NOTASSOCATIED)
 	{
-		this->v_ClientHandlerAssociated = TCPbind_CH_NOTFOUND;
+		this->v_ClientHandlerAssociated = KSBASE_CH_NOTFOUND;
 		KS_logfile_error(("No ClientHandler could be associated. Deleting TCPChannel"));
 		Ov_DeleteObject(this);
 	}
