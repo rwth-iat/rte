@@ -148,6 +148,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 					}/*	protocol found --> just reregister	*/
 					ksbase_ServerRep_regtime_set(pExistingSrvRep, &timenow);
 					ksbase_ServerRep_state_set(pExistingSrvRep, 1);
+					if(ksbase_ServerRep_timetolive_get(pExistingSrvRep) > timetolive)
+						ksbase_ServerRep_timetolive_set(pExistingSrvRep, timetolive);
 					return OV_ERR_OK;
 				}
 				else
