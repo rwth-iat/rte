@@ -197,7 +197,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 				else
 				{
 					KS_logfile_info(("unregister: protocol not found"));
-					return OV_ERR_GENERIC;
+					return OV_ERR_BADVALUE;
 				}
 			}
 			else
@@ -222,14 +222,14 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 				else
 				{
 					KS_logfile_info(("unregister: protocol not found"));
-					return OV_ERR_GENERIC;
+					return OV_ERR_BADVALUE;
 				}
 			}
 		}
 		else
 		{
 			KS_logfile_info(("unregister: entry not found"));
-			return OV_ERR_GENERIC;
+			return OV_ERR_BADVALUE;
 		}
 	}
 	else
