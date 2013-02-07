@@ -68,8 +68,8 @@ OV_DLLFNCEXPORT void ksbase_Manager_shutdown(
 OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	OV_STRING name,
 	OV_INT version,
-	OV_STRING_VEC protocols,
-	OV_STRING_VEC ports,
+	OV_STRING protocol,
+	OV_STRING port,
 	OV_UINT timetolive
 ) {
 	OV_INSTPTR_ov_domain pNewSrvRepDomain=NULL;
@@ -80,10 +80,12 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 	OV_TIME timenow;
 	char cntstr[11];
 	OV_RESULT result;
+	unsigned int i;
+
 	
 	KS_logfile_debug(("register:\n\tname: %s\n\tversion: %d\n\tttl: %d\n", name, version, timetolive));
 
-	if(name && ks_isvalidname(name) && (protocols.veclen == ports.veclen) && timetolive && pServersDomain)
+	if(name && ks_isvalidname(name) && protocol && port && timetolive && pServersDomain)
 	{//all values are set
 		result = Ov_CreateObject(ov_domain, pNewSrvRepDomain, pServersDomain, name);
 		if(Ov_OK(result))
@@ -92,11 +94,11 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 			sprintf(cntstr, "%li", version);
 			if(Ov_OK(Ov_CreateObject(ksbase_ServerRep, pNewSrvRep, pNewSrvRepDomain, cntstr)))
 			{//object with name = version created (this structure is for compatibility with magellan and xfbspro)
-
+					/*	at this point we only have one protocol	*/
 				ksbase_ServerRep_name_set(pNewSrvRep, name);
 				ksbase_ServerRep_version_set(pNewSrvRep, version);
-				ksbase_ServerRep_port_set(pNewSrvRep, ports.value, ports.veclen);
-				ksbase_ServerRep_protocols_set(pNewSrvRep, protocols.value, protocols.veclen);
+				ksbase_ServerRep_port_set(pNewSrvRep, &port, 1);
+				ksbase_ServerRep_protocols_set(pNewSrvRep, &protocol, 1);
 				ksbase_ServerRep_timetolive_set(pNewSrvRep, timetolive);
 				ov_time_gettime(&timenow);
 				ksbase_ServerRep_regtime_set(pNewSrvRep, &timenow);
@@ -126,9 +128,25 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 
 					ksbase_ServerRep_timetolive_set(pExistingSrvRep, timetolive);
 					ov_time_gettime(&timenow);
+					for(i=0; i<pExistingSrvRep->v_protocols.veclen; i++)
+						if(ov_string_compare(pExistingSrvRep->v_protocols.value[i], protocol) == OV_STRCMP_EQUAL)
+							break;
+					if(i>=pExistingSrvRep->v_protocols.veclen)
+					{/*	protocol not found --> add it and reregister	*/
+						result = Ov_SetDynamicVectorLength(&(pExistingSrvRep->v_protocols), pExistingSrvRep->v_protocols.veclen + 1, STRING);
+						if(Ov_Fail(result))
+							return result;
+						result = ov_string_setvalue(&(pExistingSrvRep->v_protocols.value[pExistingSrvRep->v_protocols.veclen-1]), protocol);
+						if(Ov_Fail(result))
+							return result;
+						result = Ov_SetDynamicVectorLength(&(pExistingSrvRep->v_port), pExistingSrvRep->v_port.veclen + 1, STRING);
+						if(Ov_Fail(result))
+							return result;
+						result = ov_string_setvalue(&(pExistingSrvRep->v_port.value[pExistingSrvRep->v_port.veclen-1]), port);
+						if(Ov_Fail(result))
+							return result;
+					}/*	protocol found --> just reregister	*/
 					ksbase_ServerRep_regtime_set(pExistingSrvRep, &timenow);
-					ksbase_ServerRep_port_set(pExistingSrvRep, ports.value, ports.veclen);
-					ksbase_ServerRep_protocols_set(pExistingSrvRep, protocols.value, protocols.veclen);
 					ksbase_ServerRep_state_set(pExistingSrvRep, 1);
 					return OV_ERR_OK;
 				}
@@ -159,17 +177,54 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 	OV_STRING name,
-	OV_INT version
+	OV_INT version,
+	OV_STRING protocol
 ) {
 	OV_INSTPTR_ov_domain ServerRepDomain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/servers",2);
 	OV_INSTPTR_ksbase_ServerRep pSrvRep = NULL;
+	unsigned int i;
+	OV_RESULT result;
 
 	if((name) && (ServerRepDomain))
 	{//all values are set
 		pSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, ServerRepDomain, name);
 		if(pSrvRep)
 		{
-			Ov_DeleteObject(pSrvRep);
+			if((pSrvRep->v_protocols.veclen == 1))
+			{
+				if((ov_string_compare(pSrvRep->v_protocols.value[0], protocol) == OV_STRCMP_EQUAL))
+					Ov_DeleteObject(pSrvRep);	/*	it is the only protocol --> delete Server Representative	*/
+				else
+				{
+					KS_logfile_info(("unregister: protocol not found"));
+					return OV_ERR_GENERIC;
+				}
+			}
+			else
+			{
+				for(i=0; i < pSrvRep->v_protocols.veclen; i++)
+					if((ov_string_compare(pSrvRep->v_protocols.value[i], protocol) == OV_STRCMP_EQUAL))
+						break;
+				if(i < pSrvRep->v_protocols.veclen)
+				{/*	protocol found --> delete it from list	*/
+					for(;i<pSrvRep->v_protocols.veclen-1; i++)
+					{
+						pSrvRep->v_protocols.value[i] = pSrvRep->v_protocols.value[i+1];
+						pSrvRep->v_protocols.value[i] = pSrvRep->v_port.value[i+1];
+					}
+					result = Ov_SetDynamicVectorLength(&(pSrvRep->v_protocols), pSrvRep->v_protocols.veclen - 1, STRING);	/*	frees the last element and does not touch the rest	*/
+					if(Ov_Fail(result))
+						return result;
+					result = Ov_SetDynamicVectorLength(&(pSrvRep->v_port), pSrvRep->v_port.veclen - 1, STRING);
+					if(Ov_Fail(result))
+						return result;
+				}
+				else
+				{
+					KS_logfile_info(("unregister: protocol not found"));
+					return OV_ERR_GENERIC;
+				}
+			}
 		}
 		else
 		{
