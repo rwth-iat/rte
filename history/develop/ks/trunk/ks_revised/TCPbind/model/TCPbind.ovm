@@ -20,9 +20,6 @@ LIBRARY TCPbind
 			socket	:	INT	HAS_ACCESSORS
 				COMMENT	=	"Socket to receive and send data"
 				INITIALVALUE	=	-1;
-			ClientHandlerAssociated	:	UINT
-				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
-				INITIALVALUE	=	0;
 			LastReceiveTime	:	TIME
 				COMMENT	=	"Time of last receive";
 			ConnectionTimeOut	:	UINT
