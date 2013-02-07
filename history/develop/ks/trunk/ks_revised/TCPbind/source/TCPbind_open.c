@@ -177,18 +177,17 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		if(port == 7509)
 		{
 			pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_SearchChild(ov_containment, &(pdb->root), "servers"));
-			if(pManager)
-				Ov_DeleteObject(pManager);
-
-			KS_logfile_debug(("TCPbind library open: creating Manager (/servers)"));
-			result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
-			if(Ov_Fail(result))
+			if(!pManager)
 			{
-				ov_logfile_error("TCPbind library open: could not create Manager");
-				ov_memstack_unlock();
-				return result;
+				KS_logfile_debug(("TCPbind library open: creating Manager (/servers)"));
+				result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
+				if(Ov_Fail(result))
+				{
+					ov_logfile_error("TCPbind library open: could not create Manager");
+					ov_memstack_unlock();
+					return result;
+				}
 			}
-
 			Ov_GetVTablePtr(ksbase_Manager, pVtblManager, pManager);
 			if(!pVtblManager)
 			{
@@ -196,10 +195,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 				ov_memstack_unlock();
 				return result;
 			}
-			/*	register empty server with 30 seconds ttl	*/
-			result = pVtblManager->m_register("MANAGER", 2, protocols, ports, 30);
-			if(Ov_Fail(result))
-				ov_logfile_error("TCPbind library open: could not register myself at Manager. reason %s", ov_result_getresulttext(result));
+
 		}
 	}
 	ov_memstack_unlock();
