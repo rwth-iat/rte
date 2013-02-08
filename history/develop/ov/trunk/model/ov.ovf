@@ -49,7 +49,7 @@
 #define OV_OVF_INCLUDED
 
 #include "libov/ov_element.h"
-#include "libovks/ov_ksserver_xdr.h"
+
 
 #ifdef __cplusplus
 extern "C" {
