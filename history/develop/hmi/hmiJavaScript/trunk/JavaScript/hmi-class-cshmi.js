@@ -1026,8 +1026,9 @@ cshmi.prototype = {
 					}
 					for (var i = 0; i < currentNode.cshmiOriginalOrderList[myTemplateClass].length;i++){
 						if (currentNode.cshmiOriginalOrderList[myTemplateClass][i].ownerDocument === HMI.cshmi.trashDocument){
-							currentNode.cshmiOriginalOrderList[myTemplateClass].splice(i, 1);
 							//this child was replaced with rebuildObject, so remove from the orderList
+							//should not happen if we made no error in rebuildObject
+							currentNode.cshmiOriginalOrderList[myTemplateClass].splice(i, 1);
 							i--; //we need i at the same value in the next loop
 						}else if (currentNode.cshmiOriginalOrderList[myTemplateClass][i] === VisualObject){
 							//we found ourself, break
@@ -3211,7 +3212,19 @@ cshmi.prototype = {
 		if(VisualParentObject !== null && VisualParentObject.cshmiOriginalOrderList !== undefined){
 			//place the new object to the same order position as the old object
 			var OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-ModelSource")];
-			for (var i; OrderArray !== undefined && i < OrderArray.length;) {
+			for (var i = 0; OrderArray !== undefined && i < OrderArray.length;) {
+				if (OrderArray[i] === VisualObject){
+					//we found an old entry, change to new
+					OrderArray[i] = newVisualObject;
+					i++;
+				}else if(OrderArray[i] === newVisualObject){
+					//we found an new entry, inserted in the creation, remove
+					OrderArray.splice(i, 1);
+				}
+			}
+			//same for Template Objects
+			OrderArray = VisualParentObject.cshmiOriginalOrderList[VisualObject.getAttribute("data-TemplateModelSource")];
+			for (var i = 0; OrderArray !== undefined && i < OrderArray.length;) {
 				if (OrderArray[i] === VisualObject){
 					//we found an old entry, change to new
 					OrderArray[i] = newVisualObject;
