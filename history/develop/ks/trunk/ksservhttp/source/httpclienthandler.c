@@ -705,8 +705,17 @@ void ksservhttp_httpclienthandler_typemethod(
 		ov_string_print(&header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);
 		//no-cache
 		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
-			ov_string_print(&header, "%sPragma: no-cache\r\nCache-Control: no-cache\r\n", header);
+			if(ov_string_compare(http_version, "1.0") == OV_STRCMP_EQUAL){
+				//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
+				ov_string_print(&header, "%sPragma: no-cache\r\n", header);
+			}else{
+				//todo mal testen ob hier ein caching im cshmi hilft
+				//Cache-Control: max-age=2
+				ov_string_print(&header, "%sExpires: 0\r\n", header);
+			}
 		}
+		//HTTP1.1 says, we MUST send a Date: header if we have a clock. Do we have one? :)
+
 		//handle keep_alives
 		if (keep_alive == TRUE) {
 			ov_string_print(&header, "%sConnection: keep-alive\r\n", header);

@@ -181,7 +181,9 @@ HMIJavaScriptKSClient.prototype = {
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=getep%20" +ServerAndPath[1]+"%20*" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			
+			if(Handle === null){
+				return null;
+			}
 			optionalurlparameter = "&requestType="+requestType;
 			if(Object.prototype.toString.call(requestOutput) !== "[object Array]"){
 				//fail save array detection
@@ -195,7 +197,7 @@ HMIJavaScriptKSClient.prototype = {
 				}
 			}
 			;
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
+			urlparameter = "http://"+Handle+"/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//todo implement requestType, requestOutput
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
@@ -289,8 +291,11 @@ HMIJavaScriptKSClient.prototype = {
 				"{"+ServerAndPath.slice(1).join(" ")+"}" + optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
 			
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/getVar?";
+			urlparameter = "http://"+Handle+"/getVar?";
 			for(var i=1; i < ServerAndPath.length;i++){
 				if(i>1){
 					urlparameter += "&";
@@ -373,8 +378,11 @@ HMIJavaScriptKSClient.prototype = {
 			"{"+ServerAndPath[1]+"%20{"+value+"}}"+optionalurlparameter;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
+			if(Handle === null){
+				return null;
+			}
 			
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
+			urlparameter = "http://"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
@@ -456,7 +464,11 @@ HMIJavaScriptKSClient.prototype = {
 				ServerAndPath[1]+"%20"+newname;
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
+			if(Handle === null){
+				return null;
+			}
+			
+			urlparameter = "http://"+Handle+"/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
@@ -529,7 +541,11 @@ HMIJavaScriptKSClient.prototype = {
 			ServerAndPath[1]+"%20"+classname+"}";
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/createObject?path="+ServerAndPath[1]+"&factory="+classname;
+			if(Handle === null){
+				return null;
+			}
+			
+			urlparameter = "http://"+Handle+"/createObject?path="+ServerAndPath[1]+"&factory="+classname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
@@ -594,7 +610,11 @@ HMIJavaScriptKSClient.prototype = {
 			ServerAndPath[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/deleteObject?path="+ServerAndPath[1];
+			if(Handle === null){
+				return null;
+			}
+			
+			urlparameter = "http://"+Handle+"/deleteObject?path="+ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
@@ -671,7 +691,11 @@ HMIJavaScriptKSClient.prototype = {
 			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
+			if(Handle === null){
+				return null;
+			}
+			
+			urlparameter = "http://"+Handle+"/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
@@ -750,7 +774,11 @@ HMIJavaScriptKSClient.prototype = {
 			ServerAndPath[1]+"."+portnameA+"%20"+ServerAndPathB[1];
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
-			urlparameter = "http://"+ServerAndPath[0].split("/")[0]+":"+Handle+"/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
+			if(Handle === null){
+				return null;
+			}
+			
+			urlparameter = "http://"+Handle+"/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			//not implemented!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
@@ -835,35 +863,47 @@ HMIJavaScriptKSClient.prototype = {
 		
 		//fixme auf async umstellen
 		var urlparameter;
-		var newhost;
 		var method = "GET";
-		var hostArray = HostAndServer.split("/");
+		var tempArray = HostAndServer.split("/");
 		var responseFormat = "text/tcl";
-		if (hostArray.length !== 2){
+		if (tempArray.length !== 2){
 			return null;
 		}
+		var Host = tempArray[0];
+		var Server = tempArray[1];
+		var ManagerPort = "7509";
+		var Serverport = "";
+		if(Host.indexOf(":") !== -1){
+			tempArray = Host.split(":");
+			Host = tempArray[0];
+			ManagerPort = tempArray[1];
+			var ManagerPortGiven = true;
+		}
+		if(Server.indexOf(":") !== -1){
+			tempArray = Server.split(":");
+			Server = tempArray[0];
+			Serverport = tempArray[1];
+		}
 		if ("kshttp" === HMI.HMI_Constants.ServerType){
-			if(hostArray[1] === "MANAGER"){
+			if(Serverport !== ""){
+				return Host+":"+Serverport;
+			}else if(Server === "MANAGER" && ManagerPortGiven === true){
+				//manager port is known if set
+				return Host+":"+ManagerPort;
+			}else if(Server === "MANAGER"){
 				//manager is always on port 7509 with ksservhttp
-				return "8080";
-			}else if(hostArray[0].indexOf(":") !== -1){
-				return hostArray[0].split(":")[1];
+				//fixme diesen teil loeschen und ManagerPortGiven === true oben raus
+				return Host+":8080";
 			}else{
-				urlparameter = "http://"+hostArray[0]+"/getServer?servername="+hostArray[1];
+				urlparameter = "http://"+Host+":"+ManagerPort+"/getServer?servername="+Server;
 				responseFormat = "text/plain";
 			}
 		}else{
-			if (hostArray[0].indexOf(":") === -1){
-				//add default port if the request did not set it
-				newhost = hostArray[0]+ ':7509/' + hostArray[1];
-			}else{
-				newhost = HostAndServer;
-			}
-			
+			//tcl and php gateway
 			if ("tcl" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+newhost;
+				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+Host+ ':' + ManagerPort+"/"+Server;
 			}else if("php" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+newhost;
+				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+Host+ ':' + ManagerPort+"/"+Server;
 			}
 		}
 		var ReturnText = this._sendRequest(this, method, false, urlparameter, null, responseFormat);
@@ -874,14 +914,17 @@ HMIJavaScriptKSClient.prototype = {
 		}else if(ReturnText === true){
 			//no async communication. oops
 			return null;
-		}else if (ReturnText.indexOf("KS_ERR") !== -1 && HostAndServer !== newhost){
+		}else if (ReturnText.indexOf("KS_ERR") !== -1 && ManagerPortGiven !== true){
 			//on error retest without default acplt port
 			if ("tcl" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+HostAndServer;
+				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+Host+"/"+Server;
 			}else if("php" === HMI.HMI_Constants.ServerType){
-				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+HostAndServer;
+				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+Host+"/"+Server;
 			}
 			ReturnText = this._sendRequest(this, method, false, urlparameter, null, responseFormat);
+		}else if("kshttp" === HMI.HMI_Constants.ServerType){
+			//prefix hostname if kshttp
+			ReturnText = Host+":"+ReturnText;
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._findCommunicationPoint - End");
 		return ReturnText;
@@ -1182,8 +1225,11 @@ HMIJavaScriptKSClient.prototype = {
 			
 			req.open(method, urlparameter, async);
 			
-			//prevent caching of request in all browsers (ie was the problem - as usual)
-			req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
+			if ("kshttp" !== HMI.HMI_Constants.ServerType){
+				//tcl webserver has buggy Cache-Control headers, so
+				//prevent caching of request in all browsers (ie was the problem - as usual)
+				req.setRequestHeader("If-Modified-Since", "Wed, 15 Nov 1995 04:58:08 GMT");
+			}
 			if(responseFormat){
 				req.setRequestHeader("Accept", responseFormat);
 			}
@@ -1212,8 +1258,13 @@ HMIJavaScriptKSClient.prototype = {
 					req.send(null);
 				}
 			} catch (e) {
-				HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
-				HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
+				if ("kshttp" === HMI.HMI_Constants.ServerType){
+					HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent.');
+					HMI.hmi_log_onwebsite('Request could not be sent. Is the Server running?');
+				}else{
+					HMI.hmi_log_error('HMIJavaScriptKSClient._sendRequest: Request could not be sent. Is the gateway started?');
+					HMI.hmi_log_onwebsite('Request could not be sent. Is the gateway started?');
+				}
 				window.clearInterval(HMI.RefreshTimeoutID);
 				HMI.RefreshTimeoutID = null;
 				return false;
