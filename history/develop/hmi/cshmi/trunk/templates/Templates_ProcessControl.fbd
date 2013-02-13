@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-01-14 14:57:33
+  Erstellt : 2013-01-30 11:00:38
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -4977,6 +4977,40 @@ buttontitle";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "title";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "buttontitle";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -5116,6 +5150,40 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "buttoncontent";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "title";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "buttontitle";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7602,7 +7670,7 @@ FaceplateYPos";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Flt" , "buttontitle:Error state"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Flt" , "buttontitle:Error Status"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8204,7 +8272,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         y : INPUT  SINGLE = 29.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:Occupancy state (Hand/Auto/Free/Local)"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:Betriebsstatus (Hand/Auto/Free/Local)"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8740,7 +8808,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Hand" , "buttontitle:manual operation"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Hand" , "buttontitle:Handbetrieb"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8874,7 +8942,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Auto" , "buttontitle:automatic operation"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:Auto" , "buttontitle:Automatischer Betrieb"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9008,7 +9076,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         y : INPUT  SINGLE = 57.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:all possible commands"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:alle möglichen Befehle"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9133,7 +9201,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value[18] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR" , "CHG_FLOW" , "CHG_LIM" , "CHG_POS" , "CHG_RPM" , "HOLD" , "POSITION" , "SEL_SP" , "SET_MV_MAN" , "SET_ONCE" , "SET_SP" , "START1" , "START2" , "OCCSCU" , "LIBSCU"};
+        value[17] : INPUT  STRING = {"INT" , "EXT" , "!RESET!" , "SETCMDR" , "CHG_FLOW" , "CHG_LIM" , "CHG_POS" , "CHG_RPM" , "POSITION" , "SEL_SP" , "SET_MV_MAN" , "SET_ONCE" , "SET_SP" , "START1" , "START2" , "OCCSCU" , "LIBSCU"};
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
