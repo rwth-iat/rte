@@ -37,7 +37,7 @@
 /*
 *	Execute the DataExchange service (subroutine)
 */
-void ov_ksserver_exgdata(
+OV_DLLFNCEXPORT void ov_ksserver_exgdata(
 	const OV_UINT			version,
 	const OV_TICKET			*pticket,
 	const OV_EXGDATA_PAR	*params,

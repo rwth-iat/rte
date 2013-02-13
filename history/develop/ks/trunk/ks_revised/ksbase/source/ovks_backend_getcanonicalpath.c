@@ -38,7 +38,7 @@
 /*
 *	Execute the GetCanonicalPath service (subroutine)
 */
-void ov_ksserver_getcanonicalpath(
+OV_DLLFNCEXPORT void ov_ksserver_getcanonicalpath(
 	const OV_UINT					version,
 	const OV_TICKET					*pticket,
 	const OV_GETCANONICALPATH_PAR	*params,

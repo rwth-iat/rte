@@ -74,7 +74,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_GETHIST (
 /*
 *	Execute the GetHist service (subroutine)
 */
-void ov_ksserver_gethist(
+OV_DLLFNCEXPORT void ov_ksserver_gethist(
 	const OV_UINT			version,
 	const OV_TICKET			*pticket,
 	const OV_GETHIST_PAR		*params,

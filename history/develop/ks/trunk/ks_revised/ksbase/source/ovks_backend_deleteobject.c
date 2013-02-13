@@ -38,7 +38,7 @@
 /*
 *	Execute the DeleteObject service (subroutine)
 */
-void ov_ksserver_deleteobject(
+OV_DLLFNCEXPORT void ov_ksserver_deleteobject(
 	const OV_UINT				version,
 	const OV_TICKET				*pticket,
 	const OV_DELETEOBJECT_PAR	*params,

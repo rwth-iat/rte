@@ -40,7 +40,7 @@
 /*
 *	Execute the GetPP service (subroutine)
 */
-void ov_ksserver_getpp(
+OV_DLLFNCEXPORT void ov_ksserver_getpp(
 	const OV_UINT		version,
 	const OV_TICKET		*pticket,
 	const OV_GETPP_PAR	*params,

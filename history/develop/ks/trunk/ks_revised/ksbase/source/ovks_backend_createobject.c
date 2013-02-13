@@ -49,7 +49,7 @@ typedef struct {
 /*
 *	Execute the CreateObject service (subroutine)
 */
-void ov_ksserver_createobject(
+OV_DLLFNCEXPORT void ov_ksserver_createobject(
 	const OV_UINT				version,
 	const OV_TICKET				*pticket,
 	const OV_CREATEOBJECT_PAR	*params,
