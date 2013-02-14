@@ -2126,6 +2126,8 @@ cshmi.prototype = {
 		//newwrite
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
+		
+		//fixme bei UND verknüpfung kann man evtl frühzeitig eine lösung haben
 		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
@@ -4825,6 +4827,7 @@ cshmi.prototype = {
 		var contentLength = parseInt(NewText.length, 10);
 		var trimmedContent;
 		var trimFromRight = null;
+		deleteChilds(VisualObject);
 		if(trimToLength > 0 && isNumeric(NewText)){
 			//we have a numeric NewText
 			if(NewText.indexOf(".") === -1){
@@ -4852,7 +4855,6 @@ cshmi.prototype = {
 		}
 		
 		trimmedContent = HMI.svgDocument.createTextNode(trimmedContent);
-		deleteChilds(VisualObject);
 		VisualObject.appendChild(trimmedContent);
 		
 		var dots = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'tspan');
