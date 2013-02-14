@@ -249,7 +249,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 	OV_STRING_VEC* protocols,
 	OV_STRING_VEC* ports,
 	OV_UINT* TimeToLive,
-	OV_TIME* ExpirationTime
+	OV_TIME* ExpirationTime,
+	OV_INT* registeredVersion
 ) {
 	OV_INSTPTR_ov_domain pServersDomain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/servers",2);
 	OV_INSTPTR_ov_domain pSrvRepDomain = NULL;
@@ -261,7 +262,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 			&& protocols
 			&& ports
 			&& TimeToLive
-			&& ExpirationTime)
+			&& ExpirationTime
+			&& registeredVersion)
 	{//all values are set
 		pSrvRepDomain = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, pServersDomain, name);
 		if(pSrvRepDomain)
@@ -274,6 +276,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_getserverdata(
 					Ov_SetDynamicVectorValue(ports, pSrvRep->v_port.value, pSrvRep->v_port.veclen, STRING);
 					*TimeToLive = pSrvRep->v_timetolive;
 					*ExpirationTime = pSrvRep->v_expirationtime;
+					*registeredVersion = pSrvRep->v_version;
 					return OV_ERR_OK;
 				}
 			}
