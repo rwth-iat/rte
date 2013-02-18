@@ -1,0 +1,93 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+
+LIBRARY ksxdr
+	VERSION   = "V0.1 (28-Jan-2013)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COMMENT   = "Library for handling ks-requests in XDR-format";
+	
+	/**
+	 *	Checks whether received data is conforming to the ks-xdr protocol
+	 *	Criteria are: first byte equals 0x00 (not finished stream-fragment) or 0x80 (last stream-fragment) and program number equals ks program number
+	 *	ks-program number is 0x49678 (obtained from Sun)		
+	 */
+	CLASS xdrIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing xdr-ks communication";
+		VARIABLES
+			ksProgramnumber	: UINT	
+				COMMENT	=	"identification number of ks requests (obtained from Sun). KS RPC program number is 0x49678 (DEC: 300664)"
+				INITIALVALUE	=	300664;				//0x49678
+		END_VARIABLES;
+		OPERATIONS
+			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS xdrClientHandler	:	CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for XDR-ks clients. Processes XDR-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	OPERATIONS
+		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS xdrSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	IS_INSTANTIABLE;
+	COMMENT	=	"Authenticator for simple tickets transportes via ks-xdr";
+	OPERATIONS
+		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/*
+ 		*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 		*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 		*/
+ 		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS xdrManagerCom	:	CLASS ksbase/DataHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shorcut is used.";
+	VARIABLES
+		ManagerPort	:	STRING
+			COMMENT	=	"Port part of Manager address"
+			INITIALVALUE = "7509";
+		UseShortCut	:	BOOL
+			COMMENT	=	"use the ov-shortcut (do not create a channel)"
+			INITIALVALUE = FALSE;
+		RegisterState	:	UINT
+			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
+			INITIALVALUE = 0;
+		Tries		:	UINT
+			COMMENT	=	"Tries before successfull register. 5 is maximum"
+			INITIALVALUE = 0;
+		OwnPort		:	STRING
+			COMMENT	=	"Port this server listens on"
+			INITIALVALUE	=	"7509";
+	END_VARIABLES;	
+	OPERATIONS
+		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
+	END_OPERATIONS;
+	END_CLASS;
+	
+END_LIBRARY;
