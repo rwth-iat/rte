@@ -81,7 +81,7 @@ return KS_DATAPACKET_read_xdr_OV_EP_FLAGS(dataReceived, &params->scope_flags);
 /*
 *	XDR routine for OV_HISTORY_ENGINEERED_PROPS
 */
-OV_RESULT xdr_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_HISTORY_ENGINEERED_PROPS *objp) {
+OV_RESULT xdr_write_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_HISTORY_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
 	result = KS_DATAPACKET_write_xdr_OV_HIST_TYPE(serviceAnswer, &objp->historytype);
@@ -102,7 +102,7 @@ OV_RESULT xdr_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_HISTO
 /*
 *	XDR routine for OV_DOMAIN_ENGINEERED_PROPS
 */
-OV_RESULT xdr_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_DOMAIN_ENGINEERED_PROPS *objp) {
+OV_RESULT xdr_write_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_DOMAIN_ENGINEERED_PROPS *objp) {
 
 	return KS_DATAPACKET_write_xdr_string(serviceAnswer, &objp->class_identifier);
 }
@@ -110,7 +110,7 @@ OV_RESULT xdr_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_DOMAIN
 /*
 *	XDR routine for OV_VAR_ENGINEERED_PROPS
 */
-OV_RESULT xdr_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_ENGINEERED_PROPS *objp) {
+OV_RESULT xdr_write_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
 	if(objp->tech_unit && strlen(objp->tech_unit) > KS_TECHUNIT_MAXLEN)
@@ -125,7 +125,7 @@ OV_RESULT xdr_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_ENGIN
 /*
 *	XDR routine for OV_LINK_ENGINEERED_PROPS
 */
-OV_RESULT xdr_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_ENGINEERED_PROPS *objp) {
+OV_RESULT xdr_write_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
 	result = KS_DATAPACKET_write_xdr_OV_LINK_TYPE(serviceAnswer, &objp->linktype);
@@ -144,7 +144,7 @@ OV_RESULT xdr_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_ENG
  * XDR routine for OBJ engineered props
  */
 
-OV_RESULT xdr_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGINEERED_PROPS *objp) {
+OV_RESULT xdr_write_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
 	result = KS_DATAPACKET_write_xdr_OV_OBJ_TYPE(serviceAnswer, &objp->objtype);
@@ -153,25 +153,25 @@ OV_RESULT xdr_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGIN
 KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: objecttype encoded"));
 	switch(objp->objtype) {
 	case KS_OT_HISTORY:
-		result = xdr_OV_HISTORY_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props);
+		result = xdr_write_OV_HISTORY_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props);
 		if(Ov_Fail(result))
 			return result;
 		break;
 
 	case KS_OT_DOMAIN:
-		result = xdr_OV_DOMAIN_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props);
+		result = xdr_write_OV_DOMAIN_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props);
 		if(Ov_Fail(result))
 			return result;
 		break;
 
 	case KS_OT_VARIABLE:
-		result = xdr_OV_VAR_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props);
+		result = xdr_write_OV_VAR_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props);
 		if(Ov_Fail(result))
 			return result;
 		break;
 
 	case KS_OT_LINK:
-		result = xdr_OV_LINK_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props);
+		result = xdr_write_OV_LINK_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props);
 		if(Ov_Fail(result))
 			return result;
 		break;
@@ -241,7 +241,7 @@ KS_logfile_debug(("getEP_encoderesults: %d elements found", items_len));
 				return OV_ERR_GENERIC;
 			}
 KS_logfile_debug(("getEP_encoderesults: encoding element %d,\n\tidentifier: %s", i, pprops->identifier));
-			fncresult = xdr_OV_OBJ_ENGINEERED_PROPS(serviceAnswer, pprops);
+			fncresult = xdr_write_OV_OBJ_ENGINEERED_PROPS(serviceAnswer, pprops);
 			if(Ov_Fail(fncresult)) {
 				return fncresult;
 			}

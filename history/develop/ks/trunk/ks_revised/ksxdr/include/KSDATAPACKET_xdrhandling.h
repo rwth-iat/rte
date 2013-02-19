@@ -1,4 +1,6 @@
 
+#include "ov_ksserver_backend.h"
+
 /**
  * The read functions defined herein read data conforming to an xdr-stream from a KS_DATAPACKET
  * They all take a pointer to the datapacket as first parameter. The second parameter is a pointer to the variable where the data shall be stored
@@ -35,13 +37,6 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque(KS_DATAPACKET* datapack
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_opaque_fixedlength(KS_DATAPACKET* datapacket, char** value, OV_UINT length);
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque_fixedlength(KS_DATAPACKET* datapacket, const char* value, OV_UINT length);
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME(KS_DATAPACKET* datapacket, OV_TIME *ptime);
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME(KS_DATAPACKET* datapacket, const OV_TIME* ptime);
-
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, OV_TIME_SPAN *ptimespan);
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, const OV_TIME_SPAN* ptimespan);
-
-
 /*
  * XDR routines for arrays
  */
@@ -54,6 +49,22 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_array_tomemstack(KS_DATAPACKET*
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_array(KS_DATAPACKET* datapacket, void** value, OV_UINT elementSize,
 		OV_UINT* length, xdr_writefncptr);
+
+/*
+ * OV-specific XDR routines that are used for more than one service
+ */
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME(KS_DATAPACKET* datapacket, OV_TIME *ptime);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME(KS_DATAPACKET* datapacket, const OV_TIME* ptime);
+
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, OV_TIME_SPAN *ptimespan);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, const OV_TIME_SPAN* ptimespan);
+
+OV_RESULT xdr_read_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* dataReceived, OV_VAR_CURRENT_PROPS* currprops);
+OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* item);
+
+OV_RESULT xdr_read_OV_PLACEMENT (KS_DATAPACKET* dataReceived, OV_PLACEMENT* pplacement);
+
+OV_RESULT xdr_read_OV_LINK_ITEM (KS_DATAPACKET* dataReceived, OV_LINK_ITEM*	pitem);
 
 /*
  * XDR functions for OV_VAR_VALUE (ANY variable)

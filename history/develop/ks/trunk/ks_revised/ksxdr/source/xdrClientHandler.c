@@ -218,9 +218,14 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &ProgVersion))	//offset 16
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &procedure)))	//offset 20
 	{
-		KS_logfile_error(("%s: HandleRequest: cold not decode header"));
+		KS_logfile_error(("%s: HandleRequest: cold not decode header", this->v_identifier));
 		return OV_ERR_GENERIC;
 	}
+
+/*
+ * TODO: check if request is in the buffer completely, if not, return ERR_OK and wait until it is complete. While waiting set the receive timeout value to a few seconds
+ * 	(we received a fragmented package so there will come more data. if no data arrives within a second, we can assume the package is broken)
+ */
 
 	KS_logfile_debug(("%s: Header values:\n\theader\t%0#8x\n\txid\t\t%0#8x\n\tmessageType\t%0#8x\n\trpcVersion\t%0#8x\n\tprogId\t\t%0#8x\n\tProgVersion\t%0#8x\n\tprocedure\t%0#8x\n\n",
 				this->v_identifier, header, xid, messageType, rpcVersion, progId, ProgVersion, procedure));
@@ -438,12 +443,15 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 
 	case KS_CREATEOBJECT:
 		KS_logfile_debug(("%s: HandleRequest: processing CREATEOBJECT (%0#8x)", this->v_identifier, procedure));
+		result = ksxdr_createObject(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+		if(Ov_Fail(result))
 		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
-			msgAccepted = XDR_MSG_ACCEPTED;
-			msgState = XDR_MSGST_SUCCESS;
-			ksErrCode = KS_ERR_NOTIMPLEMENTED;
-			ksbase_free_KSDATAPACKET(dataReceived);
+			ov_memstack_lock();
+			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
+			ov_memstack_unlock();
+			ksbase_free_KSDATAPACKET(&serviceAnswer);
+			ksbase_free_KSDATAPACKET(answer);
+			return result;
 		}
 		break;
 		/***********************************************************************************************************************************************************************/

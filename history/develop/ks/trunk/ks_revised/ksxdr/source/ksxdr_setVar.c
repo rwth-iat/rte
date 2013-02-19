@@ -15,45 +15,6 @@
 #include "ov_ksserver_backend.h"
 #include "ksbase_helper.h"
 
-/*
-*	XDR routine for OV_VAR_CURRENT_PROPS
-*/
-OV_RESULT xdr_read_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* dataReceived, OV_VAR_CURRENT_PROPS* currprops)
-{
-	OV_RESULT result;
-
-	result = KS_DATAPACKET_read_xdr_OV_VAR_VALUE(dataReceived, &currprops->value);
-	if(Ov_Fail(result))
-		return result;
-
-	result = KS_DATAPACKET_read_xdr_OV_TIME(dataReceived, &currprops->time);
-	if(Ov_Fail(result))
-		return result;
-
-	return KS_DATAPACKET_read_xdr_OV_STATE(dataReceived, &currprops->state);
-}
-
-/*
-*	XDR routine for decoding OV_SETVAR_ITEM
-*/
-OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* item)
-{
-	OV_OBJ_TYPE	objtype;
-	OV_RESULT result;
-
-	result = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataReceived, &(item->path_and_name));
-	if(Ov_Fail(result))
-		return result;
-
-	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &objtype);
-	if(Ov_Fail(result))
-		return result;
-
-	if(objtype != KS_OT_VARIABLE)
-		return FALSE;
-
-	return xdr_read_OV_VAR_CURRENT_PROPS(dataReceived, &item->var_current_props);
-}
 
 /*
  * xdr routine for decoding setVar parameters
