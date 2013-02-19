@@ -58,10 +58,6 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 	OV_INSTPTR_ov_domain pTCPbindDom = NULL;
 
 	OV_INSTPTR_ksbase_Manager pManager = NULL;
-	OV_VTBLPTR_ksbase_Manager pVtblManager = NULL;
-	OV_STRING_VEC ports = {0, NULL};
-	OV_STRING_VEC protocols = {0, NULL};
-
 
 	/*
 	 * set the global variables of the original version
@@ -176,7 +172,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		 */
 		if(port == 7509)
 		{
-			pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_SearchChild(ov_containment, &(pdb->root), "servers"));
+			pManager = Ov_SearchChildEx(ov_containment, &(pdb->root), "servers", ksbase_Manager);
 			if(!pManager)
 			{
 				KS_logfile_debug(("TCPbind library open: creating Manager (/servers)"));
@@ -188,19 +184,11 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 					return result;
 				}
 			}
-			Ov_GetVTablePtr(ksbase_Manager, pVtblManager, pManager);
-			if(!pVtblManager)
-			{
-				ov_logfile_error("TCPbind library open: could not get Manager vtable pointer");
-				ov_memstack_unlock();
-				return result;
-			}
-
 		}
 	}
 	ov_memstack_unlock();
 
-
+	KS_logfile_debug(("leaving TCPbind_open"));
 	return result;
 }
 /*

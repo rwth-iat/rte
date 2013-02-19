@@ -316,7 +316,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					//if this is the first chunk of data in the packet, initialize the read pointer
 					if(!thisCh->v_inData.readPT)
 						thisCh->v_inData.readPT = tempdata;
-
+					else
+					{
+						/*	get the readPT index and set readPT to this index in the newly allocated memory	*/
+						thisCh->v_inData.readPT = tempdata + (thisCh->v_inData.readPT - thisCh->v_inData.data);
+					}
 					thisCh->v_inData.data = tempdata;
 				}
 
@@ -337,12 +341,25 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					}
 					else if (err == -1)
 					{
-						KS_logfile_error(("%s: error receiving. Closing socket and setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
 						CLOSE_SOCKET(socket);
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-						thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
-						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+								&& !thisCh->v_inData.length)
+						{
+							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+							Ov_DeleteObject(thisCh);
+
+						}
+						else
+						{
+							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+							thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+						}
+
 						return;
 					}
 
