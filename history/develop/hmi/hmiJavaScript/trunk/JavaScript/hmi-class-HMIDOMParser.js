@@ -92,26 +92,38 @@ HMIDOMParser.prototype = {
 				GraphicElement = Parser.parseFromString(GraphicDescription, "text/xml");
 			} catch (e) {
 				//IE9 throws a SYNTAX_ERR DOM Exception: http://blogs.msdn.com/b/ie/archive/2010/10/15/domparser-and-xmlserializer-in-ie9-beta.aspx
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription');
-				HMI.hmi_log_onwebsite('Could not parse GraphicDescription');
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse GraphicDescription: '+e.message);
+				HMI.hmi_log_onwebsite('Could not parse XML: '+e.message);
 				return null;
 			};
 			//Mozilla has a very strange way of presenting an error
 			//supported by Opera
 			//not supported by Webkit https://bugs.webkit.org/show_bug.cgi?id=13057
-			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on GraphicDescription');
-				HMI.hmi_log_onwebsite('ParseError on GraphicDescription');
+			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml" && GraphicElement.documentElement.tagName == "parsererror"){
+				//opera/firefox has a highlighting of the error here:
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String: \n'+GraphicElement.documentElement.lastChild.textContent);
+				//opera/firefox has a readable description here:
+				HMI.hmi_log_onwebsite('Could not parse XML: '+GraphicElement.documentElement.firstChild.textContent);
 				return null;
-			};
+			}else if (GraphicElement.documentElement.firstChild.tagName == "parsererror"){
+				if(GraphicElement.documentElement.firstChild && GraphicElement.documentElement.firstChild.children.length > 2 && GraphicElement.documentElement.firstChild.children[1].tagName == "div"){
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String');
+					//chrome Feb 2013 has the error info hidden in a div...
+					HMI.hmi_log_onwebsite('Could not parse XML: '+GraphicElement.documentElement.firstChild.children[1].textContent);
+				}else{
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String');
+					HMI.hmi_log_onwebsite('Could not parse XML');
+				}
+				return null;
+			}
 			//StyleDescription is optional
 			if (StyleDescription !== null && StyleDescription !== undefined){
 				try {
 					StyleElement = Parser.parseFromString(StyleDescription, "text/xml");
 				} catch (e) {
 					//IE9 throws a SYNTAX_ERR DOM Exception: http://blogs.msdn.com/b/ie/archive/2010/10/15/domparser-and-xmlserializer-in-ie9-beta.aspx
-					HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription');
-					HMI.hmi_log_onwebsite('Could not parse StyleDescription');
+					HMI.hmi_log_error('HMIDOMParser.prototype.parse: Could not parse StyleDescription: '+e.message);
+					HMI.hmi_log_onwebsite('Could not parse StyleDescription: '+e.message);
 				};
 				if (StyleElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml"){
 				//Mozilla has a very strange way of presenting an error
