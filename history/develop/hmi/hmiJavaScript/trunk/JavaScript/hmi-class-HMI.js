@@ -187,17 +187,17 @@ HMI.prototype = {
 			//all js files loaded, continue testing of the website
 			
 			//Object of ShowServer-Button
-			if ((this.ButShowServers = $('idShowServers'))){
+			if ((this.ButShowServers = document.getElementById('idShowServers'))){
 				addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
 			}else{
 				ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
 			}
 			//Object of ErrorOutput
-			if (!(this.ErrorOutput = $('idErrorOutput'))){
+			if (!(this.ErrorOutput = document.getElementById('idErrorOutput'))){
 				ErrorDetail += "HTML Tag with the ID: idErrorOutput not found.\n";
 			}
 			//Object of Server-Selectbox
-			if (!(this.PossServers = $('idServers'))){
+			if (!(this.PossServers = document.getElementById('idServers'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
 				addEventSimple(HMI.PossServers, "change", 
@@ -209,7 +209,7 @@ HMI.prototype = {
 				);
 			}
 			//Object of Sheet-Selectbox
-			if (!(this.PossSheets = $('idSheets'))){
+			if (!(this.PossSheets = document.getElementById('idSheets'))){
 				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
 			}else{
 				addEventSimple(HMI.PossSheets, "change", 
@@ -221,20 +221,20 @@ HMI.prototype = {
 				);
 			}
 			//Element of SVG insertion (div for firefox, container for IE < v9)
-			if (!(this.Playground = $('idPlayground'))){
+			if (!(this.Playground = document.getElementById('idPlayground'))){
 				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
 			}else{
 				//prevent right click in supported Browsers (no Opera < 10.5, no IE6-8)
 				addEventSimple(HMI.Playground, "contextmenu", function (evt) {if (evt.preventDefault) evt.preventDefault();});
 			}
 			//Object of RefreshTime
-			if ((this.InputRefreshTime = $('idRefreshTime'))){
+			if ((this.InputRefreshTime = document.getElementById('idRefreshTime'))){
 				addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
 			}else{
 				ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
 			}
 			//Object of Server-Hostname
-			if ((this.InputHost = $('idHost'))){
+			if ((this.InputHost = document.getElementById('idHost'))){
 				//change is wrong here, since a click on the "reload"-button is a change here and a click there => duplicate action
 				addEventSimple(HMI.InputHost, 'keyup',function(evt){
 						if (evt.keyCode === 13){	// return key
@@ -245,22 +245,22 @@ HMI.prototype = {
 				ErrorDetail += "HTML Input with the ID: idHost not found.\n";
 			}
 			//Object of the Deep Link
-			if (!($('idBookmark'))){
+			if (!(document.getElementById('idBookmark'))){
 				ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
 			}
 			//Object of the hideable header
-			if (!(this.HideableHeader = $('idHideableHeader'))){
+			if (!(this.HideableHeader = document.getElementById('idHideableHeader'))){
 				ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
 			}
 			
 			//init the plain HTML website with events
-			if ($('idHeaderRow')){
-				addEventSimple($('idHeaderRow'),'click',function(){HMI.hideHeader(null);});
+			if (document.getElementById('idHeaderRow')){
+				addEventSimple(document.getElementById('idHeaderRow'),'click',function(){HMI.hideHeader(null);});
 			}else{
 				ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
 			}
-			if ($('idKeepHeader')){
-				addEventSimple($('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
+			if (document.getElementById('idKeepHeader')){
+				addEventSimple(document.getElementById('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
 			}else{
 				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
 			}
@@ -286,24 +286,24 @@ HMI.prototype = {
 		}
 		
 		//init the optional Buttons
-		if ($('idRefresh')){
-			addEventSimple($('idRefresh'),'click',function(){HMI.cbrefreshSheet();});
+		if (document.getElementById('idRefresh')){
+			addEventSimple(document.getElementById('idRefresh'),'click',function(){HMI.cbrefreshSheet();});
 		}
-		if ($('idStopRefresh')){
-			addEventSimple($('idStopRefresh'),'click',function(){
+		if (document.getElementById('idStopRefresh')){
+			addEventSimple(document.getElementById('idStopRefresh'),'click',function(){
 					window.clearTimeout(HMI.RefreshTimeoutID);
 					HMI.RefreshTimeoutID = null;
 				}
 			);
 		}
 		
-		if ($('idStartRefresh')){
-			addEventSimple($('idStartRefresh'),'click',function(){
+		if (document.getElementById('idStartRefresh')){
+			addEventSimple(document.getElementById('idStartRefresh'),'click',function(){
 				HMI.RefreshTimeoutID = window.setTimeout(function () {HMI.cbrefreshSheet();}, HMI.InputRefreshTime.value);});
 		}
 		
 		//Object of InfoOutput, optional, not necessary
-		if ((this.InfoOutput = $('idInfoOutput'))){
+		if ((this.InfoOutput = document.getElementById('idInfoOutput'))){
 			deleteChilds(HMI.InfoOutput);
 		}
 		
@@ -543,7 +543,7 @@ HMI.prototype = {
 			MagellanLink.style.paddingRight = '10px';
 			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
 			
-			$("idBookmark").parentNode.insertBefore(MagellanLink, $("idBookmark").parentNode.firstChild);
+			document.getElementById("idBookmark").parentNode.insertBefore(MagellanLink, document.getElementById("idBookmark").parentNode.firstChild);
 			MagellanLink = null;
 		}
 		
@@ -634,8 +634,8 @@ HMI.prototype = {
 			
 			//correct ShowComponents Status in website with user wish
 			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
-				if (HMI_Parameter_Liste.ShowComp == "true" && $("idShowcomponents")){
-					$("idShowcomponents").checked = true;
+				if (HMI_Parameter_Liste.ShowComp == "true" && document.getElementById("idShowcomponents")){
+					document.getElementById("idShowcomponents").checked = true;
 				}
 			}
 			HMI.ChangeRefreshTime();
@@ -741,10 +741,10 @@ HMI.prototype = {
 		if (HMI.trace === true){
 			newDeepLink += "&trace=true";
 		}
-		if ($("idShowcomponents") && $("idShowcomponents").checked){
+		if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
 			newDeepLink += "&ShowComp=true";
 		}
-		$("idBookmark").href = newDeepLink;
+		document.getElementById("idBookmark").href = newDeepLink;
 		
 		//add sheet to html5 Session history management, if new
 		if (window.history.pushState){
@@ -753,7 +753,7 @@ HMI.prototype = {
 			}
 		}else{
 			//show deeplink if history management is not available
-			$("idBookmark").style.display = "inline";
+			document.getElementById("idBookmark").style.display = "inline";
 		}
 	},
 	
@@ -1026,9 +1026,9 @@ HMI.prototype = {
 		//correct magellan URL
 		//
 		if (this.WebmagellanPath !== null){
-			$("idWebmagellan").style.display = '';
+			document.getElementById("idWebmagellan").style.display = '';
 			//todo gefälscher host dings
-			$("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+this.getHostname() : "");
+			document.getElementById("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+this.getHostname() : "");
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
@@ -1048,7 +1048,7 @@ HMI.prototype = {
 		deleteChilds(this.InfoOutput);
 		
 		HMI.PossSheets.disabled = true;
-		$("idBookmark").style.display = "none";
+		document.getElementById("idBookmark").style.display = "none";
 		document.title = "Startcenter - ACPLT/HMI";
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1102,7 +1102,7 @@ HMI.prototype = {
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
-		$("idBookmark").style.display = "none";
+		document.getElementById("idBookmark").style.display = "none";
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;

@@ -64,14 +64,6 @@
 *
 ************************************************************************/
 
-
-/**
- * short for document.getElementById
- */
-function $(id) {
-	return document.getElementById(id);
-}
-
 /**
  * deletes all childs of a Node
  * @param ParentNode

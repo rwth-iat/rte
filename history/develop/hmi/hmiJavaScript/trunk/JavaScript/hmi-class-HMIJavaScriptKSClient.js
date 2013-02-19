@@ -1146,7 +1146,7 @@ HMIJavaScriptKSClient.prototype = {
 		}
 		
 		var Command = null;
-		if ($("idShowcomponents") && $("idShowcomponents").checked){
+		if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
 			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
 				'{010}%20' +
 				'{' + this.HMIMANAGER_PATH + '}%20' + 
