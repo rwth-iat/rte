@@ -501,16 +501,19 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-//NOT IMPLEMENTED YET
+
 	case KS_GETCANONICALPATH:
 		KS_logfile_debug(("%s: HandleRequest: processing GETCANONICALPATH (%0#8x)", this->v_identifier, procedure));
 
+		result = ksxdr_getCanonicalPath(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+		if(Ov_Fail(result))
 		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
-			msgAccepted = XDR_MSG_ACCEPTED;
-			msgState = XDR_MSGST_SUCCESS;
-			ksErrCode = KS_ERR_NOTIMPLEMENTED;
-			ksbase_free_KSDATAPACKET(dataReceived);
+			ov_memstack_lock();
+			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
+			ov_memstack_unlock();
+			ksbase_free_KSDATAPACKET(&serviceAnswer);
+			ksbase_free_KSDATAPACKET(answer);
+			return result;
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
@@ -545,16 +548,19 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-//NOT IMPLEMENTED YET
+
 	case KS_RENAMEOBJECT:
 		KS_logfile_debug(("%s: HandleRequest: processing RENAMEOBJECT (%0#8x)", this->v_identifier, procedure));
 
+		result = ksxdr_renameObject(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+		if(Ov_Fail(result))
 		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
-			msgAccepted = XDR_MSG_ACCEPTED;
-			msgState = XDR_MSGST_SUCCESS;
-			ksErrCode = KS_ERR_NOTIMPLEMENTED;
-			ksbase_free_KSDATAPACKET(dataReceived);
+			ov_memstack_lock();
+			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
+			ov_memstack_unlock();
+			ksbase_free_KSDATAPACKET(&serviceAnswer);
+			ksbase_free_KSDATAPACKET(answer);
+			return result;
 		}
 		break;
 		/***********************************************************************************************************************************************************************/

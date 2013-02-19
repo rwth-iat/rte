@@ -23,3 +23,7 @@ OV_RESULT ksxdr_link(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPAC
 OV_RESULT ksxdr_deleteObject(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPACKET* dataReceived, KS_DATAPACKET* serviceAnswer, OV_UINT* msgState, OV_UINT* ksErrCode);
 
 OV_RESULT ksxdr_unlink(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPACKET* dataReceived, KS_DATAPACKET* serviceAnswer, OV_UINT* msgState, OV_UINT* ksErrCode);
+
+OV_RESULT ksxdr_getCanonicalPath(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPACKET* dataReceived, KS_DATAPACKET* serviceAnswer, OV_UINT* msgState, OV_UINT* ksErrCode);
+
+OV_RESULT ksxdr_renameObject(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPACKET* dataReceived, KS_DATAPACKET* serviceAnswer, OV_UINT* msgState, OV_UINT* ksErrCode);
