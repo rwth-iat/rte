@@ -219,6 +219,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &procedure)))	//offset 20
 	{
 		KS_logfile_error(("%s: HandleRequest: cold not decode header", this->v_identifier));
+		KS_logfile_debug(("datapacket: \n\tlength:\t\t%lu\n\tdata:\t\t%p\n\treadPT:\t\t%p\n\twritePt:\t%p\n", dataReceived->length, dataReceived->data, dataReceived->readPT, dataReceived->writePT));
 		return OV_ERR_GENERIC;
 	}
 
@@ -455,7 +456,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_DELETEOBJECT:
 		KS_logfile_debug(("%s: HandleRequest: processing DELETEOBJECT (%0#8x)", this->v_identifier, procedure));
 
@@ -498,7 +499,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_GETCANONICALPATH:
 		KS_logfile_debug(("%s: HandleRequest: processing GETCANONICALPATH (%0#8x)", this->v_identifier, procedure));
 
@@ -530,16 +531,19 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	case KS_LINK:
 		KS_logfile_debug(("%s: HandleRequest: processing LINK (%0#8x)", this->v_identifier, procedure));
 
+		result = ksxdr_link(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+		if(Ov_Fail(result))
 		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
-			msgAccepted = XDR_MSG_ACCEPTED;
-			msgState = XDR_MSGST_SUCCESS;
-			ksErrCode = KS_ERR_NOTIMPLEMENTED;
-			ksbase_free_KSDATAPACKET(dataReceived);
+			ov_memstack_lock();
+			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
+			ov_memstack_unlock();
+			ksbase_free_KSDATAPACKET(&serviceAnswer);
+			ksbase_free_KSDATAPACKET(answer);
+			return result;
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_RENAMEOBJECT:
 		KS_logfile_debug(("%s: HandleRequest: processing RENAMEOBJECT (%0#8x)", this->v_identifier, procedure));
 
@@ -568,7 +572,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_UNLINK:
 		KS_logfile_debug(("%s: HandleRequest: processing UNLINK (%0#8x)", this->v_identifier, procedure));
 
@@ -581,7 +585,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_EXGDATA:
 		KS_logfile_debug(("%s: HandleRequest: processing EXGDATA (%0#8x)", this->v_identifier, procedure));
 
@@ -594,7 +598,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-
+//NOT IMPLEMENTED YET
 	case KS_GETHIST:
 		KS_logfile_debug(("%s: HandleRequest: processing GETHIST (%0#8x)", this->v_identifier, procedure));
 
