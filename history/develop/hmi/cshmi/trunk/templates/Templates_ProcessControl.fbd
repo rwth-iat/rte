@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-01-30 11:00:38
+  Erstellt : 2013-02-21 13:48:50
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -2085,7 +2085,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -2094,7 +2094,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2102,7 +2102,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2110,7 +2110,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -2118,7 +2118,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isDigital :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.if/isDigital :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -2128,7 +2128,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isDigital.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.if/isDigital.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2146,7 +2146,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isDigital.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.if/isDigital.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2164,17 +2164,50 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isAlarm :
-    CLASS /Libraries/cshmi/Compare;
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm :
+    CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 1;
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isAlarm.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.if/isAlarm :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.if/isAlarm.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2192,7 +2225,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.if/isAlarm.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.if/isAlarm.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2204,13 +2237,13 @@ isDigital:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  BOOL = TRUE;
+        value : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.then/setRed :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setRed :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2226,7 +2259,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.then/setRed.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setRed.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2244,68 +2277,23 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.if/isDigital :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.if/isDigital.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setTitle :
+    CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
         persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "isDigital";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.if/isDigital.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setTitle.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2317,13 +2305,13 @@ isDigital:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  BOOL = TRUE;
+        value : INPUT  STRING = "Signalwert UNWAHR";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.then/setGreen :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setGreen :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2339,7 +2327,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/status.else/isDigital.then/setGreen.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setGreen.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2352,6 +2340,40 @@ isDigital:TRUE|FALSE";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "limegreen";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setTitle :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "title";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setTitle.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "Signalwert WAHR";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -4977,40 +4999,6 @@ buttontitle";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setTitle :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "title";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setTitle.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "buttontitle";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1 :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -5150,40 +5138,6 @@ buttontitle";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "buttoncontent";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setTitle :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "title";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setTitle.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "buttontitle";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
