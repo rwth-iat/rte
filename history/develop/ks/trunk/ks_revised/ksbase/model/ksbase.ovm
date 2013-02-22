@@ -212,6 +212,9 @@ LIBRARY ksbase
 			isLocal	:	BOOL
 				COMMENT	=	"TRUE: this Channel holds a local connection (Important for manager commands"
 				INITIALVALUE	=	FALSE;
+			usesStreamProtocol	:	BOOL
+				COMMENT	=	"Set this to TRUE when the Channel uses a stream-oriented Protocol (e.g. TCP). Set to FALSE when using a packet-oriented Protocol (e.g. UDP)"
+				INITIALVALUE	=	TRUE;
 			LastReceiveTime	:	TIME
 				COMMENT	=	"Time of last receive";
 			ConnectionTimeOut	:	UINT
@@ -262,6 +265,47 @@ LIBRARY ksbase
 			TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
  		END_OPERATIONS;
  	END_CLASS; 	
+ 	
+ /**
+ *	Baseclass for client functionality
+ *	This class provides the operation prototypes for generating client Messages (getEP, getVar etc.)
+ *	the functionality of these routines is protocol denpendent and hence has to be implemented in the protocol specific libraries
+ */
+ 
+	CLASS	ClientBase	:	CLASS	ov/domain
+		COMMENT	=	"Abstract baseclass for clients. ks-protocol libraries can derive classes from this one for generating client messages (getEP, getVar etc.).";
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			generateRegister	:	C_FUNCTION	<KSBASE_FNC_GENREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			genereateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+			generateGetServer	:	C_FUNCTION	<KSBASE_FNC_GENGETSRV>;
+			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
+			generateGetPP		:	C_FUNCTION	<KSBASE_FNC_GENGETPP>;
+			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
+			generateGetEP		:	C_FUNCTION	<KSBASE_FNC_GENGETEP>;
+			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
+			generateGetVar		:	C_FUNCTION	<KSBASE_FNC_GENGETVAR>;
+			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
+			generateSetVar		:	C_FUNCTION	<KSBASE_FNC_GENSETVAR>;
+			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
+			generateGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_GENGETCANONPATH>;
+			processGetCanonicalPath			:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
+			generateCreateObject			:	C_FUNCTION	<KSBASE_FNC_GENCREATEOBJ>;
+			processCreateObject				:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
+			generateDeleteObject			:	C_FUNCTION	<KSBASE_FNC_GENDELOBJ>;
+			processDeleteObject				:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
+			generateRenameObject			:	C_FUNCTION	<KSBASE_FNC_GENRENAMEOBJ>;
+			processRenameObject				:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
+			generateLink		:	C_FUNCTION	<KSBASE_FNC_GENLINK>;
+			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
+			generateUnLink		:	C_FUNCTION	<KSBASE_FNC_GENUNLINK>;
+			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
+		END_OPERATIONS;
+	END_CLASS;
  
 ///////////////Assocs
 

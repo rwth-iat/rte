@@ -1,6 +1,8 @@
 #ifndef ksbase_OVF_INCLUDED
 #define ksbase_OVF_INCLUDED
 
+#include "ov_ksserver_backend.h"
+
 //is called by execute to determine if executime of Task is reached
 typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_CALCEXEC (
 	OV_INSTPTR_ksbase_ComTask	this
@@ -78,6 +80,186 @@ typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_ENCODEREPLY(
 
 typedef OV_DLLFNCEXPORT OV_ACCESS KSBASE_FNC_GETACCESS(
 	const OV_TICKET *pticket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENREG(
+	const OV_STRING servername,
+	const OV_UINT	version,
+	const OV_UINT port,
+	const OV_UINT ttl,
+	KS_DATAPACKET* datapacket
+);
+	
+	
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCREG(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result
+);
+			
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
+	const OV_STRING servername,
+	const OV_UINT version,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNREG(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result
+);
+
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETSRV(
+	const OV_STRING servername,
+	const OV_UINT leastVersion,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_STRING* servername,
+	OV_UINT* regVersion,
+	OV_TIME* expirationTime,
+	OV_UINT serverState
+);
+
+/*	the dummy-parameter is here to be complete. these 4 bytes are not decoded right now, but they are always sent. maybe they will be used in the future, so...	*/
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETPP(
+	const OV_STRING path,
+	const OV_OBJ_TYPE typeMask,
+	const OV_STRING	nameMask,
+	const OV_UINT dummy,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_len,
+	OV_OBJ_PROJECTED_PROPS* items_val
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETEP(
+	const OV_STRING path,
+	const OV_OBJ_TYPE typeMask,
+	const OV_STRING	nameMask,
+	const OV_EP_FLAGS scopeFlags,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_len,
+	OV_OBJ_ENGINEERED_PROPS* items_val
+);
+
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETVAR(
+	const OV_UINT items_length,
+	const OV_STRING* paths,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_len,
+	OV_VAR_CURRENT_PROPS* items_val
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENSETVAR(
+	const OV_UINT items_length,
+	const OV_SETVAR_ITEM* items_val,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results
+);
+			
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETCANONPATH(
+	const OV_UINT items_length,
+	const OV_STRING* paths,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results,
+	OV_STRING* items_canonicalPaths
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENCREATEOBJ(
+	const OV_UINT items_length,
+	const OV_CREATEOBJ_ITEM* items_val,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_CREATEOBJECTITEM_RES* items_val
+);
+
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENDELOBJ(
+	const OV_UINT items_length,
+	const OV_STRING* paths,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENRENAMEOBJ(
+	const OV_UINT items_length,
+	const OV_RENAMEOBJECT_ITEM* items_val,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENLINK(
+	const OV_UINT items_length,
+	const OV_LINK_ITEM teims_val,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNLINK(
+	const OV_UINT items_length,
+	const OV_STRING* link_paths,
+	const OV_STRING* element_paths,
+	KS_DATAPACKET* datapacket
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
+	const KS_DATAPACKET* datapacket,
+	OV_RESULT* result,
+	OV_UINT* items_length,
+	OV_RESULT* items_results
 );
 
 #endif
