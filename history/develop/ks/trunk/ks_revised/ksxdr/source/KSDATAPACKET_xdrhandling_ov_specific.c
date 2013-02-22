@@ -284,7 +284,7 @@ OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* 
 		return result;
 
 	if(objtype != KS_OT_VARIABLE)
-		return FALSE;
+		return OV_ERR_BADOBJTYPE;
 
 	return xdr_read_OV_VAR_CURRENT_PROPS(dataReceived, &item->var_current_props);
 }

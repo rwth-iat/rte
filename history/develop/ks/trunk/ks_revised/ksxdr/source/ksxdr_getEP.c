@@ -6,37 +6,6 @@
  */
 
 
-/*	the following defines reduce the loglevel to warning and error for this file
- * As soon as the development phase is over these lines should be deleted and the loglevel should be reduced to warning and error globally in the Makefile
- * */
-#if LOG_KS
-#undef LOG_KS
-#define LOG_KS 0
-#endif
-
-#if LOG_KS_DEBUG
-#undef LOG_KS_DBUG
-#define LOG_KS_DEBUG 0
-#endif
-
-#if LOG_KS_INFO
-#undef LOG_KS_INFO
-#define LOG_KS_INFO 0
-#endif
-
-#if !LOG_KS_WARNING
-#ifdef LOG_KS_WARNING
-#undef LOG_KS_WARNING
-#endif
-#define LOG_KS_WARNING 1
-#endif
-
-#if !LOG_KS_ERROR
-#ifdef LOG_KS_ERROR
-#undef LOG_KS_ERROR
-#endif
-#define LOG_KS_ERROR 1
-#endif
 
 #include "ksxdr.h"
 #include "ksxdr_config.h"
