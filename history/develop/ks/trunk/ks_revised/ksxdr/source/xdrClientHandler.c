@@ -79,18 +79,10 @@ void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin)
 	return;
 }
 
-OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT msgAccepted, OV_UINT msgState, OV_UINT* beginAnswer)
+OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT msgAccepted, OV_UINT msgState)
 {
 	OV_RESULT result;
 	OV_UINT dummy;
-
-	/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
-	dummy = 0x80;
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
-	if(Ov_Fail(result))
-			return result;
-	/*	save index of first byte of answer in packet in beginAnswer	*/
-	*beginAnswer = ((answer->writePT - answer->data) - 4);
 
 	/*	xid is always here	*/
 	result = KS_DATAPACKET_write_xdr_u_long(answer, &xid);
@@ -254,6 +246,7 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 	OV_UINT* writeptr = NULL;
 	OV_UINT* readptr = NULL;
 
+
 	tempread = dataReceived->readPT;	/*	tore pointers to reset them before returning	*/
 	tempwrite = dataReceived->writePT;
 
@@ -265,8 +258,8 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 	if(Ov_Fail(result))
 		return result;
 	dataReceived->writePT += 4;	/*	let writePT point to the same spot as readPT	*/
-	fragmentLength = fragmentHeader & 0x00ffffff;	/*	zero most significant bytes (they do not contain length information)	*/
-	length = fragmentLength;	/*	up to now just one fragment	*/
+	fragmentLength = fragmentHeader & 0x00ffffff;	/*	zero most significant byte (does not contain length information)	*/
+	length = fragmentLength + 4;	/*	up to now just one fragment and 4 bytes header	*/
 	dataReceived->writePT += fragmentLength;	/*	let writePT and readPT point behind the first fragment	*/
 	dataReceived->readPT += fragmentLength;
 	while(!(fragmentHeader & 0x80000000))	/*	while the current fragment is not the last one	*/
@@ -281,24 +274,25 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 			dataReceived->writePT = tempwrite;
 			return result;
 		}
-		fragmentLength = fragmentHeader & 0x00ffffff;	/*	zero most significant bytes (they do not contain length information)	*/
+		fragmentLength = fragmentHeader & 0x00ffffff;	/*	zero most significant byte (does not contain length information)	*/
 		length += fragmentLength;
 		writeptr = (OV_UINT*) dataReceived->writePT;	/*	these pointers are used to need less typecasts	*/
 		readptr = (OV_UINT*) dataReceived->readPT;
-		do{
+		while(writeptr < (OV_UINT*) (dataReceived->data + length)
+				&& (length < dataReceived->length)
+				&& readptr < (OV_UINT*) (dataReceived->data + dataReceived->length))
+		{
 			*writeptr = *readptr;	/*	xdrs are alingned in 4 byte blocks so we can copy 4 bytes per cycle (speedup)	*/
 			writeptr++;
 			readptr++;
-		}while((readptr < (OV_UINT*) (dataReceived->data + fragmentLength))
-				&& writeptr < (OV_UINT*) (dataReceived->data + fragmentLength)
-				&& (fragmentLength < dataReceived->length));
+		}
 		dataReceived->readPT = (OV_BYTE*) readptr;
 		dataReceived->writePT = (OV_BYTE*) writeptr;
 	}
 
 	dataReceived->readPT = tempread;
 	dataReceived->writePT = tempwrite;
-	dataReceived->length = length +4; /*	length of all fragments plus 4 bytes header of the first one	*/
+	dataReceived->length = length; /*	length of all fragments plus 4 bytes header of the first one	*/
 	return OV_ERR_OK;
 }
 
@@ -334,9 +328,10 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_INSTPTR_ov_domain pDomAuthenticators	= NULL;
 	OV_INSTPTR_ksbase_Channel pChannel = NULL;
 	KS_DATAPACKET serviceAnswer = {0, NULL, NULL, NULL};
-	OV_UINT beginAnswer = 0;	/*	indicates the beginning of the answer in the packet, set by create_global_answer, used by prepend_length	*/
+	OV_UINT beginAnswer = 0;	/*	indicates the beginning of the answer in the packet, set before create_global_answer, used by prepend_length	*/
 	OV_BYTE* BeginOfMessage = NULL;	/*	stores the pointer to the very beginning of the message.
 										this is needed if the message is valid but incomplete and has to be processed in the next cycle	*/
+	OV_UINT dummy;
 
 	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
@@ -393,8 +388,20 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			|| (msgState != XDR_MSGST_SUCCESS))
 	{
 		KS_logfile_error(("%s: HandleRequest: Message denied or decoding not successfull. Sending Answer.", this->v_identifier));
-		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState, &beginAnswer);
-		ksxdr_prepend_length(answer, beginAnswer);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+		{
+			/*	save index of first byte of answer in packet in beginAnswer	*/
+			beginAnswer = ((answer->writePT - answer->data));
+			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
+			dummy = 0x80;
+			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			if(Ov_Fail(result))
+					return result;
+
+		}
+		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+			ksxdr_prepend_length(answer, beginAnswer);
 		return OV_ERR_OK;		/*	this function worked properly, the error is encoded in the reply message	*/
 	}
 
@@ -486,8 +493,20 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	if(msgAccepted != XDR_MSG_ACCEPTED)
 	{
 		KS_logfile_error(("%s: HandleRequest: Message denied. Sending Answer.", this->v_identifier));
-		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState, &beginAnswer);
-		ksxdr_prepend_length(answer, beginAnswer);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+		{
+			/*	save index of first byte of answer in packet in beginAnswer	*/
+			beginAnswer = ((answer->writePT - answer->data));
+			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
+			dummy = 0x80;
+			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			if(Ov_Fail(result))
+				return result;
+
+		}
+		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+			ksxdr_prepend_length(answer, beginAnswer);
 		return OV_ERR_OK;		/*	this function worked properly, the error is encoded in the reply message	*/
 	}
 
@@ -550,8 +569,20 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	if(msgState != XDR_MSGST_SUCCESS)
 	{
 		KS_logfile_error(("%s: HandleRequest: Error while authenticating. Sending Answer.", this->v_identifier));
-		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState, &beginAnswer);
-		ksxdr_prepend_length(answer, beginAnswer);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+		{
+			/*	save index of first byte of answer in packet in beginAnswer	*/
+			beginAnswer = ((answer->writePT - answer->data));
+			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
+			dummy = 0x80;
+			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			if(Ov_Fail(result))
+				return result;
+
+		}
+		ksxdr_create_global_answer(answer, xid, msgAccepted, msgState);
+		if(pChannel->v_usesStreamProtocol == TRUE)
+			ksxdr_prepend_length(answer, beginAnswer);
 		return OV_ERR_OK;		/*	this function worked properly, the error is encoded in the reply message	*/
 	}
 
@@ -815,7 +846,18 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	// KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
 	//DEBUG_END
 	/*	create global part of answer, append service specific part (answerMessage) and send it	*/
-	ksxdr_create_global_answer(answer, xid, msgAccepted, msgState, &beginAnswer);
+	if(pChannel->v_usesStreamProtocol == TRUE)
+	{
+		/*	save index of first byte of answer in packet in beginAnswer	*/
+		beginAnswer = ((answer->writePT - answer->data));
+		/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
+		dummy = 0x80;
+		result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+		if(Ov_Fail(result))
+			return result;
+
+	}
+	ksxdr_create_global_answer(answer, xid, msgAccepted, msgState);
 	//DEBUG
 	// KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
 	//DEBUG_END
@@ -858,7 +900,8 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	//DEBUG
 	 //KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
 	//DEBUG_END
-	ksxdr_prepend_length(answer, beginAnswer);
+	if(pChannel->v_usesStreamProtocol == TRUE)
+		ksxdr_prepend_length(answer, beginAnswer);
 
 	/*	if the whole buffer was decoded free it	*/
 	if((dataReceived->readPT - dataReceived->data) >= dataReceived->length)
