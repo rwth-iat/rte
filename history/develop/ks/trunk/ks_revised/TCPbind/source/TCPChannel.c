@@ -186,6 +186,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 
 	/* do what */
 	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_cycInterval = 1;
+	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_usesStreamProtocol = TRUE;	/*	TCP is a stream oriented protocol	*/
 
 	//set time of creation of the connection
 	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
