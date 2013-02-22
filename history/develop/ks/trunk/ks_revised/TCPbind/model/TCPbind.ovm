@@ -20,14 +20,6 @@ LIBRARY TCPbind
 			socket	:	INT	HAS_ACCESSORS
 				COMMENT	=	"Socket to receive and send data"
 				INITIALVALUE	=	-1;
-			LastReceiveTime	:	TIME
-				COMMENT	=	"Time of last receive";
-			ConnectionTimeOut	:	UINT
-				COMMENT	=	"Time (in seconds) to hold the connection after a receive operations."
-				INITIALVALUE	=	60;
-			UnusedDataTimeOut	:	UINT
-				COMMENT	=	"Time (in seconds) to keep unused data in outData. (Partialpackages or so that cannot be processed)"
-				INITIALVALUE	=	300;
 		END_VARIABLES;
 		OPERATIONS
 			//real sending of data

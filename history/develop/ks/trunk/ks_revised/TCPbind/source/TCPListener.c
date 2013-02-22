@@ -330,6 +330,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))
 							KS_logfile_error(("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier));
 					pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+					/*	check for local connection and set flag appropriately	*/
+					if((ov_string_compare(buf, "127.0.0.1") == OV_STRCMP_EQUAL)
+							|| (ov_string_compare(buf, "::1") == OV_STRCMP_EQUAL))
+						pNewChannel->v_isLocal = TRUE;
+
 					if(thisLi->v_ChannelNeedsClientHandler)
 					{
 						pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
