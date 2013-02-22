@@ -209,6 +209,17 @@ LIBRARY ksbase
 			ClientHandlerAssociated	:	UINT
 				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
 				INITIALVALUE	=	0;
+			isLocal	:	BOOL
+				COMMENT	=	"TRUE: this Channel holds a local connection (Important for manager commands"
+				INITIALVALUE	=	FALSE;
+			LastReceiveTime	:	TIME
+				COMMENT	=	"Time of last receive";
+			ConnectionTimeOut	:	UINT
+				COMMENT	=	"Time (in seconds) to hold the connection after a receive operations."
+				INITIALVALUE	=	60;
+			UnusedDataTimeOut	:	UINT
+				COMMENT	=	"Time (in seconds) to keep unused data in outData. (Partialpackages or so that cannot be processed)"
+				INITIALVALUE	=	300;
 			END_VARIABLES;	
 		OPERATIONS
 			//real sending of data
