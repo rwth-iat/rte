@@ -37,6 +37,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ksbase_RootComTask rcTask = NULL;
+	OV_INSTPTR_ksbase_NoneTicketAuthenticator pNoneAuth = NULL;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -71,6 +72,19 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 		if(Ov_Fail(result)) {
 			ov_memstack_lock();
 			ov_logfile_error("Fatal: Could not create RootComTask: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+	}
+
+	/*	create NoneTicketAuthenticator	*/
+	pNoneAuth = (OV_INSTPTR_ksbase_NoneTicketAuthenticator) Ov_GetFirstChild(ov_instantiation, pclass_ksbase_NoneTicketAuthenticator);
+	if(!pNoneAuth)
+	{
+		result = Ov_CreateObject(ksbase_NoneTicketAuthenticator, pNoneAuth, pcommunication, "NoneAuthenticator");
+		if(Ov_Fail(result)) {
+			ov_memstack_lock();
+			ov_logfile_error("Fatal: Could not create NoneAuthenticator: %s", ov_result_getresulttext(result));
 			ov_memstack_unlock();
 			return result;
 		}

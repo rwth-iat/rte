@@ -266,6 +266,53 @@ LIBRARY ksbase
  		END_OPERATIONS;
  	END_CLASS; 	
  	
+ 	CLASS	NoneTicketAuthenticator	:	CLASS	ksbase/TicketAuthenticator
+ 		IS_INSTANTIABLE;
+ 		COMMENT	=	"Authenticator for None-Tickets. It does nothing to a Message. The ticket-routines are basically empty. This Class is just used to be able to set the access rights for none tickets";
+ 		VARIABLES
+ 			ACRead	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant ReadAccess to none-tickets";
+ 			ACWrite	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant WriteAccess to none-tickets";
+ 			ACInstantiate	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant InstantiateAccess to none-tickets";
+ 			ACDelete	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant DeleteAccess to none-tickets";
+ 			ACRename	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant RenameAccess to none-tickets";
+ 			ACLink	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant LinkAccess to none-tickets";
+ 			ACUnlink	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant UnlinkAccess to none-tickets";			
+ 			NoneTicketAccess	:	C_TYPE <OV_ACCESS>
+ 				COMMENT	=	"Acces for NoneTickets";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 			/*
+ 			*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 			*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 			*/
+ 			createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 			deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+			encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+			TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+ 		END_OPERATIONS;
+ 	END_CLASS;
  /**
  *	Baseclass for client functionality
  *	This class provides the operation prototypes for generating client Messages (getEP, getVar etc.)

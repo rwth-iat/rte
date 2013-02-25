@@ -624,12 +624,11 @@ typedef struct {
 	OV_GETHISTSINGLERESULT	*results_val;	/* only, if result == OV_ERR_OK */
 }	OV_GETHIST_RES;
 
+
 /*
 *	The following part is only visible inside the library
 *	-----------------------------------------------------
 */
-
-OV_DLLVARIMPORT OV_TICKET_VTBL noneticketvtbl;
 
 /*
 *	OV_SVCLOG_VTBL:
