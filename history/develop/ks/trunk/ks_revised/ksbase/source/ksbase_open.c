@@ -37,7 +37,6 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ksbase_RootComTask rcTask = NULL;
-	OV_INSTPTR_ksbase_ServerRep	pThisServer = NULL;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -76,20 +75,6 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 			return result;
 		}
 	}
-
-	// create thisServer representative
-	pThisServer = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, pcommunication, "thisServer");
-	if(pThisServer)
-		Ov_DeleteObject(pThisServer);
-
-	result = Ov_CreateObject(ksbase_ServerRep, pThisServer, pcommunication, "thisServer");
-	if(Ov_Fail(result)) {
-		ov_memstack_lock();
-		ov_logfile_error("Fatal: Could not create Object 'thisServer': %s", ov_result_getresulttext(result));
-		ov_memstack_unlock();
-		return result;
-	}
-
 
 	return OV_ERR_OK;
 
