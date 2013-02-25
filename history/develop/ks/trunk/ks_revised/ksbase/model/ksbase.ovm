@@ -306,6 +306,18 @@ LIBRARY ksbase
 			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
 		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS ClientTicketGenerator	:	CLASS	ov/domain
+		COMMENT	=	"Abstract baseclass for TicketGenerators. for each ks-protocol different TicketGenerators have to be implemented. Their task is to set the ticket part in a call message";
+		VARIABLES
+ 			TicketType	:	C_TYPE	<OV_TICKET_TYPE>
+ 				COMMENT	=	"TicketType this generator can generates";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			encodeTicket	:	C_FUNCTION	<KSBASE_FNC_ENCODETICKET>;
+			decodeReply		:	C_FUNCTION	<KSBASE_FNC_DECODEREPLY>;
+ 		END_OPERATIONS;
+	END_CLASS;
  
 ///////////////Assocs
 
@@ -334,12 +346,11 @@ LIBRARY ksbase
 	END_ASSOCIATION;
 	
 /* 
- * This Associations points to the Channel taht is currently running its typemethod
+ * This Association points to the Channel taht is currently running its typemethod
  */
 	ASSOCIATION AssocCurrentChannel : ONE_TO_ONE
 		PARENT ChannelParent : CLASS ksbase/RootComTask;
 		CHILD  CurrentChannel  : CLASS ksbase/Channel;
 	END_ASSOCIATION;
-	
 	
 END_LIBRARY;

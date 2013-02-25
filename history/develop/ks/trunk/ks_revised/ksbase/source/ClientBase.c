@@ -27,6 +27,8 @@
 
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRegister(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT	version,
 	const OV_UINT port,
@@ -38,6 +40,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRegister(
 
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRegister(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 ){
@@ -46,6 +50,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRegister(
 
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_genereateUnRegister(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
 	KS_DATAPACKET* datapacket
@@ -54,6 +60,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_genereateUnRegister(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnRegister(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 ) {
@@ -61,6 +69,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnRegister(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetServer(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
 	KS_DATAPACKET* datapacket
@@ -69,6 +79,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetServer(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_STRING* servername,
@@ -81,6 +93,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
 
 /*	the dummy-parameter is here to be complete. these 4 bytes are not decoded right now, but they are always sent. maybe they will be used in the future, so...	*/
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetPP(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
@@ -91,6 +105,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetPP(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
@@ -100,6 +116,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetEP(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
@@ -110,6 +128,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetEP(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
@@ -119,6 +139,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetVar(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
 	KS_DATAPACKET* datapacket
@@ -127,6 +149,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetVar(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
@@ -136,6 +160,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateSetVar(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
 	KS_DATAPACKET* datapacket
@@ -144,6 +170,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateSetVar(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -153,6 +181,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetCanonicalPath(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
 	KS_DATAPACKET* datapacket
@@ -161,6 +191,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetCanonicalPath(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -171,6 +203,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateCreateObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
 	KS_DATAPACKET* datapacket
@@ -179,6 +213,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateCreateObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -188,6 +224,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateDeleteObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
 	KS_DATAPACKET* datapacket
@@ -196,6 +234,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateDeleteObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -205,6 +245,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRenameObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
 	KS_DATAPACKET* datapacket
@@ -213,6 +255,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRenameObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -222,6 +266,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateLink(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
 	KS_DATAPACKET* datapacket
@@ -230,6 +276,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateLink(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
@@ -239,6 +287,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnLink(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
@@ -248,6 +298,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnLink(
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnLink(
+	const OV_INSTPTR_ksbase_ClientBase this,
+	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
