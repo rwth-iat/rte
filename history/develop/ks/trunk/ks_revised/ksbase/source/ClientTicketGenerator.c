@@ -36,7 +36,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientTicketGenerator_encodeTicket(
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientTicketGenerator_decodeReply(
 	OV_INSTPTR_ksbase_ClientTicketGenerator this,
-	const KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
