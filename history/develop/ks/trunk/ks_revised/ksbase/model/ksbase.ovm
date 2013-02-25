@@ -365,6 +365,14 @@ LIBRARY ksbase
 			decodeReply		:	C_FUNCTION	<KSBASE_FNC_DECODEREPLY>;
  		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS NoneTicketGenerator	:	CLASS ksbase/ClientTicketGenerator
+		IS_INSTANTIABLE;
+		COMMENT	=	"TicketGenerator for None-Tickets. Basically this one does nothing";
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+		END_OPERATIONS;
+	END_CLASS;
  
 ///////////////Assocs
 
