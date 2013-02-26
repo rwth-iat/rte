@@ -1077,13 +1077,20 @@ cshmi.prototype = {
 				return "";
 			}
 		}else if (ParameterName === "persistentGlobalVar"){
-			if (localStorage !== undefined){
-				if (localStorage.getItem(ParameterValue) !== null){
-					return localStorage.getItem(ParameterValue);
+			try {
+				if (localStorage !== undefined){
+					if (localStorage.getItem(ParameterValue) !== null){
+						return localStorage.getItem(ParameterValue);
+					}
+				}else if(this.ResourceList.GlobalVar[ParameterValue] !== undefined){
+					//fall back to globalVar if no persistent storage is available
+					return this.ResourceList.GlobalVar[ParameterValue];
 				}
-			}else if(this.ResourceList.GlobalVar[ParameterValue] !== undefined){
-				//fall back to globalVar if no persistent storage is available
-				return this.ResourceList.GlobalVar[ParameterValue];
+			} catch (e) {
+				if(this.ResourceList.GlobalVar[ParameterValue] !== undefined){
+					//fall back to globalVar if no persistent storage is allowed
+					return this.ResourceList.GlobalVar[ParameterValue];
+				}
 			}
 			return "";
 		}else if (ParameterName === "OperatorInput"){
@@ -1262,7 +1269,7 @@ cshmi.prototype = {
 					}
 					NewValue = thisObserverEntry.value;
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
 				return true;
 			};
 			var thisObserverEntry = new ObserverEntry("value", ".");
@@ -1309,7 +1316,7 @@ cshmi.prototype = {
 					//force string to clean append
 					NewValue = NewValue + thisObserverEntry.value.toString();
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
 				return true;
 			};
 			
@@ -1403,7 +1410,7 @@ cshmi.prototype = {
 				//force string format
 				NewValue = NewValue.toString();
 				
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
 				return true;
 			};
 			
@@ -1440,10 +1447,11 @@ cshmi.prototype = {
 	 * sets a given value
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @param {String} NewValue Value to set
 	 * @return false on error, true on success
 	 */
-	_setVarExecute: function(VisualObject, ObjectPath, NewValue){
+	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue){
 		//get info where to set the NewValue
 		
 		var ParameterName;
@@ -1459,6 +1467,9 @@ cshmi.prototype = {
 			requestList[ObjectPath]["TemplateFBReferenceVariable"] = null;
 			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
+			if (GetType === "static"){
+				//requestList[ObjectPath]["translationSource"] = null;
+			}
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode === false){
@@ -1687,10 +1698,15 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
 			//persistentGlobalVar
-			if (localStorage !== undefined){
-				localStorage.setItem(ParameterValue, NewValue);
-			}else{
-				//fall back to globalVar if no persistent storage is available
+			try {
+				if (localStorage !== undefined){
+						localStorage.setItem(ParameterValue, NewValue);
+				}else{
+					//fall back to globalVar if no persistent storage is available
+					this.ResourceList.GlobalVar[ParameterValue] = NewValue;
+				}
+			} catch (e) {
+				//fall back to globalVar if no persistent storage is allowed
 				this.ResourceList.GlobalVar[ParameterValue] = NewValue;
 			}
 			for (var i = 0; i < this.ResourceList.globalvarChangedCallStack.length;){
