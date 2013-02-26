@@ -148,6 +148,40 @@ LIBRARY cshmi
 		COMMENT = "internal class for container elements as parts of ifThenElse";
 	END_CLASS;
 	
+	CLASS Blackbox : CLASS cshmi/ContainerElement
+		IS_INSTANTIABLE;
+		COMMENT = "a grouping of elements";
+		VARIABLES
+			x : SINGLE
+			COMMENT = "x-axis coordinate of the group"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			COMMENT = "y-axis coordinate of the group"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			COMMENT = "width of the group"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			COMMENT = "height of the group"
+			INITIALVALUE = 100.0;
+			visible : BOOL
+			COMMENT = "the element is visible"
+			INITIALVALUE = TRUE;
+			sourceOfLibrary[] : STRING
+			COMMENT = "exact link of the libraries located available via http";
+			HTMLcontent : STRING
+			COMMENT = "insert the required HTML-code here"
+			INITIALVALUE = "";
+			jsOnload : STRING
+			COMMENT = "insert your javascript-code here"
+			INITIALVALUE = "";
+			jsOnglobalvarchanged : STRING
+			COMMENT = "insert your javascript-code here"
+			INITIALVALUE = "";
+		END_VARIABLES;
+	END_CLASS;
+	
+	
 	/* Graphical Elements */
 	CLASS Element : CLASS cshmi/Object
 		COMMENT = "base class for graphical elements";

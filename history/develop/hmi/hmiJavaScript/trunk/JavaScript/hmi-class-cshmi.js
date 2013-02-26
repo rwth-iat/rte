@@ -102,6 +102,7 @@ function cshmi() {
 	
 	//we want to add all elements to a class to find it later
 	this.cshmiGroupClass = "cshmi-group";
+	this.cshmiBlackboxClass = "cshmi-blackbox";
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
 	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
@@ -125,11 +126,11 @@ JavaScript:
 - check return value of gethandleid
 
 var varName = responseArray[i].split(" ");
-varName[1] evtl nicht verfügbar!
+varName[1] evtl nicht verfï¿½gbar!
 
 - Nach dem Laden (nur gebrauchter Objecte), sollte ein Hintergrund thread die restliche Config nachladen
 - Auch das laden sollte asyncrone requests nutzen. 
-	Dafür muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
+	Dafï¿½r muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
 - Nur einige wenige cycTimes (enum like?) erlauben
 - ks befehle konsolidieren bei zyklischer abarbeitung
 #########################################################################################################################*/
@@ -258,6 +259,8 @@ cshmi.prototype = {
 		var Result = true;
 		if (ObjectType.indexOf("/cshmi/Group") !== -1){
 			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, preventNetworkRequest);
+		}else if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
+			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
@@ -284,10 +287,12 @@ cshmi.prototype = {
 			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
+		}else if (ObjectType.indexOf("/cshmi/SetValue") !== -1 && HMI.instanceOf(VisualParentObject, "cshmi-blackbox")){
+			// SetValue is ok to be Child of Blackbox
+			return null;
 		}else{
 			HMI.hmi_log_info_onwebsite("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 		}
-		
 		//check type of returnvalue
 		if (!(Result === true || Result === false)){
 			HMI.hmi_log_error("Action "+ObjectPath+" given a non boolean returnvalue.");
@@ -1234,7 +1239,7 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType){
-		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList übergeben...?
+		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList ï¿½bergeben...?
 		
 		//get Value to set
 		if (GetType === "static"){
@@ -1631,6 +1636,12 @@ cshmi.prototype = {
 					return false;
 				}
 				VisualObject.setAttribute(ParameterValue, NewValue);
+				if (ParameterValue === "width" || ParameterValue === "height"){
+					if (HMI.instanceOf(VisualObject, "cshmi-blackbox")) {
+						var secondchild = VisualObject.firstChild.firstChild;
+						secondchild.setAttribute(ParameterValue, NewValue);
+					}
+				}
 				//reposition absolutex/y if x, y, width or height was changed
 				if (ParameterValue === "x" || ParameterValue === "y"){
 					HMI.saveAbsolutePosition(VisualObject);
@@ -1655,6 +1666,24 @@ cshmi.prototype = {
 					i++;
 				}
 			}
+			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			
+			for (var i = 0; i < blackboxes.length; ++i){	
+	
+				//get string of "jsOnglobalvarchanged"
+				//TODO iteration through all objects
+				var blackboxObjectpath = blackboxes[i].getAttribute("data-ModelSource");
+				var requestList = new Object();
+				
+				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
+					//the object is asked this session, so reuse the config to save communication requests
+					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].ElementParameters;
+					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
+				}else{
+					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
+				}
+			}
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
 			//persistentGlobalVar
@@ -1672,6 +1701,24 @@ cshmi.prototype = {
 				}else{
 					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
 					i++;
+				}
+			}
+			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			
+			for (var i = 0; i < blackboxes.length; ++i){	
+	
+				//get string of "jsOnglobalvarchanged"
+				//TODO iteration through all objects
+				var blackboxObjectpath = blackboxes[i].getAttribute("data-ModelSource");
+				var requestList = new Object();
+				
+				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
+					//the object is asked this session, so reuse the config to save communication requests
+					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].ElementParameters;
+					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
+				}else{
+					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
 				}
 			}
 			return true;
@@ -1996,7 +2043,7 @@ cshmi.prototype = {
 	 * 
 	 * fixme: baseKsPath darf nicht ov_containment sondern instanziierungsbaum abgehen
 	 * sollte den vollen pfad zwischen speichern
-	 * sollte gefüllt werden von den containern, die sowieso abfragen machen
+	 * sollte gefï¿½llt werden von den containern, die sowieso abfragen machen
 	 */
 	_generateFullKsPath: function(VisualObject, ObjectPath, PartialPath){
 		var returnValue = "";
@@ -2127,7 +2174,7 @@ cshmi.prototype = {
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
 		
-		//fixme bei UND verknüpfung kann man evtl frühzeitig eine lösung haben
+		//fixme bei UND verknï¿½pfung kann man evtl frï¿½hzeitig eine lï¿½sung haben
 		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
@@ -3674,6 +3721,285 @@ cshmi.prototype = {
 			return VisualObject;
 		}
 	},
+
+	/***************************************************************************************************************
+	 
+	 * HIER BLACKBOX ï¿½NDERUNG
+	 * 
+	 * builds SVG container, gets the parameter via KS
+	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
+	 * @return {SVGElement} VisualObject the new constructed element or null
+	 */
+	
+	//newwrite
+	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ï¿½hnlich. Mit this.ModellVariables...
+	
+	_buildBlackbox: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+		var requestList = new Object();
+		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//the object is asked this session, so reuse the config to save communication requests
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			this.ResourceList.Elements[ObjectPath].useCount++;
+		}else if(preventNetworkRequest === true){
+			//build a skeleton to preserve zindex/sequence
+			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+			VisualObject.id= ObjectPath;
+			return VisualObject;
+		}else{
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["x"] = null;
+			requestList[ObjectPath]["y"] = null;
+			requestList[ObjectPath]["width"] = null;
+			requestList[ObjectPath]["height"] = null;
+			requestList[ObjectPath]["visible"] = null;
+			requestList[ObjectPath]["sourceOfLibrary"] = null;
+			requestList[ObjectPath]["HTMLcontent"] = null;
+			
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode === false){
+				return null;
+			}
+			
+			//slice braces '{}' if any
+			var HTMLcontent_braces = HMI.KSClient.getVar(ObjectPath+".HTMLcontent", "OP_VALUE", null);
+			var j = 0;
+			while(HTMLcontent_braces.charAt(0) === '{') {
+				HTMLcontent_braces = HTMLcontent_braces.substr(1);
+				j++;
+			}
+			HTMLcontent_braces = HTMLcontent_braces.substr(0, HTMLcontent_braces.length - j);
+			requestList[ObjectPath]["HTMLcontent"] = HTMLcontent_braces;
+			
+			//get via KSClient because of problems getting '{}' caused by splitKsResponse
+			//slice braces '{}' if any
+			var jsOnload_braces = HMI.KSClient.getVar(ObjectPath+".jsOnload", "OP_VALUE", null);
+			var j = 0;
+			while(jsOnload_braces.charAt(0) === '{') {
+				jsOnload_braces = jsOnload_braces.substr(1);
+				j++;
+			}
+			jsOnload_braces = jsOnload_braces.substr(0, jsOnload_braces.length - j);
+			requestList[ObjectPath]["jsOnload"] = jsOnload_braces;
+
+			//slice braces '{}' if any
+			var jsOnglobalvarchanged_braces = HMI.KSClient.getVar(ObjectPath+".jsOnglobalvarchanged", "OP_VALUE", null);
+			var j = 0;
+			while(jsOnglobalvarchanged_braces.charAt(0) === '{') {
+				jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(1);
+				j++;
+			}
+			jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(0, jsOnglobalvarchanged_braces.length - j);
+			requestList[ObjectPath]["jsOnglobalvarchanged"] = jsOnglobalvarchanged_braces;
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Elements[ObjectPath] = new Object();
+			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].useCount = 1;
+			HMI.hmi_log_trace("cshmi._buildBlackbox: remembering config of "+ObjectPath+" ");
+		}
+		
+		if (VisualParentObject !== null){
+			//search a predefined children
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}
+		
+		if (VisualObject === null || VisualObject === undefined){
+			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
+		}
+		
+		if (VisualParentObject !== null){
+			//id should be the name of the parent plus our identifier
+			var NameList = ObjectPath.split("/");
+			VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+			NameList = null;
+		}else{
+			//we are the main sheet, so no parent available
+			VisualObject.id = "//"+HMI.KSClient.ResourceList.ModelHost+"/"+HMI.KSClient.ResourceList.ModelServer+ObjectPath;
+		}
+		VisualObject.setAttribute("data-ModelSource", ObjectPath);
+		
+		HMI.addClass(VisualObject, this.cshmiBlackboxClass);
+		
+		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
+
+		VisualObject.setAttribute("overflow", "visible");
+		
+		var sourceList = requestList[ObjectPath]["sourceOfLibrary"];
+		var jsOnload = requestList[ObjectPath]["jsOnload"];
+		var HTMLcontent = requestList[ObjectPath]["HTMLcontent"];
+				
+		var sourceListSplitted = sourceList.split(" ");
+		jsloadObserver = new cshmiObserver(VisualObject, ObjectPath, sourceListSplitted.length);
+		
+
+		loadLibrary:
+		//externe (via http erreichbare) Bibliotheken in head anhaengen
+		for(var i = 0; i < sourceListSplitted.length; ++i){
+			var thisEntry = new ObserverEntry(sourceListSplitted[i]);
+			jsloadObserver.ObserverEntryArray[i] = thisEntry;
+
+			//append only if same JS-library is not already loaded
+			var scripts = document.getElementsByTagName('script');
+			
+			for (var j = 0; j < scripts.length; ++j) {
+				if (sourceListSplitted[i] === scripts[j].src){
+					continue loadLibrary;
+				}
+			}
+			
+			var node = document.createElement("script");
+			node.type = "text/javascript";
+			node.src = sourceListSplitted[i];
+			node.async = false;
+//			node.onload = node.onerror = function(evt){
+//				//todo hier sauber insertvalue oder so nutzen. parameter muss man rausfinden
+//				thisEntry.requirementsFulfilled = true;
+//				if(evt.type !== "load"){
+//				};
+//				HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
+//				jsloadObserver.checkAndTrigger();
+//				//jsonload muss auch gestartet werden, wenn wir keine Bib laden!
+//			};
+
+			document.head.appendChild(node);
+			var evt = window.event;
+			HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
+			jsloadObserver.checkAndTrigger();
+		}
+
+		//create foreignObject in <SVG>-Element
+		var SVGWidth = VisualObject.getAttribute("width");
+		var SVGLength = VisualObject.getAttribute("height");
+		var HTML = "<foreignObject x=\"0\" y=\"0\" width=\""+SVGWidth+"\" height=\""+SVGLength+"\"><body xmlns=\"http://www.w3.org/1999/xhtml\">"+HTMLcontent+"</body></foreignObject>";
+		var svgContent =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
+		+"xmlns:xlink=\""+HMI.HMI_Constants.NAMESPACE_XLINK+"\">"
+		+HTML
+		+"</svg:svg>";
+		
+		//append foreignObject to VisualObject
+		var newNode = HMI.HMIDOMParser.parse(svgContent);
+		VisualObject.appendChild(newNode);
+		
+		
+		//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
+		if (csHMIgetElementsByClassName(VisualObject, 'autosize').length != 0) {
+			var classList = csHMIgetElementsByClassName(VisualObject, 'autosize');
+			for (var i = 0; i < classList.length; ++i) {
+				//special adjustment for <canvas>-Element
+				if (classList[i].tagName === "canvas") {
+					classList[i].width = VisualObject.getAttribute("width");
+					classList[i].height = VisualObject.getAttribute("height");
+				}
+				classList[i].style.width = VisualObject.getAttribute("width")+"px";
+				classList[i].style.height = VisualObject.getAttribute("height")+"px";
+			}		
+		}
+		if (csHMIgetElementsByClassName(VisualObject, 'autosizeX').length != 0) {
+			var classListX = csHMIgetElementsByClassName(VisualObject, 'autosizeX');
+			for (var i = 0; i < classListX.length; ++i) {
+				if (classListX[i].tagName === "canvas") {
+					classListX[i].width = VisualObject.getAttribute("width");
+				}
+				classListX[0].style.width = VisualObject.getAttribute("width")+"px";
+			}
+		}
+		if (csHMIgetElementsByClassName(VisualObject, 'autosizeY').length != 0) {
+			var classListY = csHMIgetElementsByClassName(VisualObject, 'autosizeY');
+			for (var i = 0; i < classListY.length; ++i) {
+				if (classListY[i].tagName === "canvas") {
+					classListY[i].height = VisualObject.getAttribute("height");
+				}
+				classListY[0].style.height = VisualObject.getAttribute("height")+"px";
+			}
+		}
+		
+		//create object 'cshmimodel'
+		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, HMI.cshmi);
+		var varNames = new Array();
+
+		//find out at which position a SetValue stands
+		for(var i = 0; i < responseArray.length; ++i){
+			
+			var objectType = responseArray[i].split(' ')[1];
+			
+			if(objectType.match(/SetValue/)){	
+				//get names of created SetValues
+				varNames.push(responseArray[i].split(' ')[0]);
+			}
+		}
+		
+		function myVariable(VisualObject, ObjectPath, varName) {
+			this.VisualObject = VisualObject;
+			this.ObjectPath = ObjectPath;
+			this.varName = varName;
+			this.getValue = function () {
+				var getValueObjectPath = ObjectPath+"/"+varName+".value";
+				return HMI.cshmi._getValue(VisualObject, getValueObjectPath);
+			};
+			this.setValue = function (newValue) {
+				var setValueObjectPath = ObjectPath+"/"+varName;
+				HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue);
+			};
+		};
+		
+		var cshmimodel = new Object();
+		cshmimodel.variables = new Object();
+
+		for(var i = 0; i < varNames.length; ++i){
+			cshmimodel.variables[varNames[i]] = new myVariable(VisualObject, ObjectPath, varNames[i]);
+		}
+		
+		cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters = new Object();
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["x"] = x;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["y"] = y;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["rotate"] = rotate;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["hideable"] = hideable;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["TemplateDefinition"] = PathOfTemplateDefinition;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBReference"] = FBReference;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBVariableReference"] = FBVariableReference;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["ConfigValues"] = ConfigValues;
+			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBReference"] = FBReference;
+			VisualObject.appendChild(HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false));
+		};
+		
+		cshmimodel.GetEP = function(path, requestType, requestOutput) {
+			return HMI.KSClient.GetEP(path, requestType, requestOutput);
+		};
+		
+		VisualObject.ResourceList = new Object();
+		VisualObject.ResourceList.cshmimodel = cshmimodel;
+		
+		//"onload" - TODO: noch sporadisch
+		window.setTimeout(function(){
+			HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload);
+		}, 1000);
+		
+		return VisualObject;
+	},
+
+	/***************************************************************************************************************
+	 
+	 * executes JavaScript Code
+	 * @param {SVGElement} VisualObject visual Object which is active Object
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param {String} jsOnload JavaScript-Code inserted in Blackbox and hereby executed via eval()
+	 */
+
+	_executeScript: function(VisualObject, ObjectPath, jsOnload){
+		HMI.hmi_log_info("triggered");
+		
+		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
+		var cshmimodel = VisualObject.ResourceList.cshmimodel;
+		
+		//evaluate JS-Code of Blackbox
+		eval(jsOnload);
+		
+	},
 	
 	/***************************************************************************************************************
 	 * builds SVG container, gets the parameter via KS
@@ -3684,7 +4010,7 @@ cshmi.prototype = {
 	 */
 	
 	//newwrite
-	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ähnlich. Mit this.ModellVariables...
+	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ï¿½hnlich. Mit this.ModellVariables...
 	
 	_buildSvgGroup: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();

@@ -140,7 +140,7 @@ function removeEventSimple(obj,evt,fn) {
  * @param {String} newText a string representing the list of class names to match; class names are separated by whitespace
  * @return {NodeList} returnElements a live NodeList (but see the note below) of found elements in the order they appear in the tree.
  */
-/*
+
 function csHMIgetElementsByClassName(node, className){
 	if (node.getElementsByClassName){
 		return node.getElementsByClassName(className);
@@ -160,7 +160,7 @@ function csHMIgetElementsByClassName(node, className){
 		return returnElements;
 	}
 }
-*/
+
 
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);

@@ -87,6 +87,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Action_constructor(
 		}else if (Ov_CanCastTo(cshmi_Event, pParent) ){
 			//whiteliste Actions under Events
 			return OV_ERR_OK;
+		}else if (Ov_CanCastTo(cshmi_Blackbox, pParent) && Ov_CanCastTo(cshmi_SetValue, pobj)){
+			//
+			return OV_ERR_OK;
 		}else if (Ov_CanCastTo(cshmi_csContainer, pParent)){
 			if(ov_string_compare(pParent->v_identifier, "if") == OV_STRCMP_EQUAL){
 				ov_logfile_warning("An action is not allowed below an if container. Action: %s", pobj->v_identifier);

@@ -75,7 +75,7 @@
 	@param hubFilelist
 ***********************************************************************/
 
-function SCRIPT_HUB(hubFilePattern, hubFilelist) {
+function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 	
 	/********************************************************************
 		We first try to find from where this hub file has been loaded.
@@ -91,11 +91,12 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			- <xhtml:script type="" src="">, where the xhtml
 				namespace is "http://www.w3.org/1999/xhtml".
 	********************************************************************/
+	
 	var scripts = document.getElementsByTagName("script");
 	
 	var p = new RegExp(hubFilePattern);
-	var base = null;
-	var scriptAnchor = null;
+	var base = "";
+	var scriptAnchor = document.head;
 	var match = null;
 	var scriptNode = null;
 	var idx;
@@ -103,14 +104,16 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	/********************************************************************
 		search our scriptNode for path of the JS-files and <head> element
 	********************************************************************/
-	for ( idx = 0; idx < scripts.length; ++idx )
-	{
+	for ( idx = 0; hubFilePattern !== null && idx < scripts.length; ++idx ) {
 		scriptNode = scripts[idx];
 		match = null;
 		
 		if (scriptNode.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
 			//opera sometimes gets the Filename as "hmi%2fhub%2floader.js". Fixed with decodeURI
+			//
+			//TODO: prevent scripts from dublicate loading
+			//
 			match = p.exec(decodeURI(scriptNode.src));
 		}else if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
 			match = p.exec(scriptNode.getAttribute("src"));
@@ -123,7 +126,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		if (match)
 		{
 			base = match[1];
-			scriptAnchor = scriptNode.parentNode;
 			break;
 		};
 	};
@@ -133,10 +135,11 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 		window.alert("Fatal error: script hub loader unable to locate base in document");
 		return false;
 	};
-	
+
 	/********************************************************************
 		Decide on the proper way of creating a script element.
 	********************************************************************/
+	
 	var node = null;
 	for ( idx in hubFilelist ){
 		if (document.createElementNS !== undefined){
@@ -147,7 +150,6 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			window.alert("Fatal error: script hub loader unable to create new script node in document");
 			return false;
 		}
-		
 		if (node.type !== undefined){
 			node.type = "text/javascript";
 		}else{
@@ -162,14 +164,14 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 			node.setAttribute("src", base+hubFilelist[idx]);
 		}
 		//the code should get parsed async as soon as it is fetched, without blocking the html parser
-		if (node.async === false){
+		if (node.async !== undefined && async === true){
 			node.async = true;
-		}else if (node.defer === false){
+		}else if (node.defer !== undefined && async === true){
 			//the code should get parsed as soon the html parser is ready, without him
 			//(only if async is not supported) 
 			node.defer = true;
 		}
-		if (scriptAnchor.appendChild !== undefined){
+		if (scriptAnchor !== null && scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 			//some blackberrys kill scriptAnchor, so HMI will not work after that
 			if (scriptAnchor === undefined){
@@ -186,6 +188,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist) {
 	}
 	return true;
 }
+
 
 /***********************************************************************
 	Finally let the whole strange magic commence.
@@ -210,7 +213,8 @@ SCRIPT_HUB(
 		//wheelsupport is not supported by the HMI Team and probably firefox only
 		"./hmi-class-gesture-wheelscroll.js",
 		"./hmi-class-HMI.js"
-	]
+	],
+	true
 );
 
 var HMIdate;	//this is the first file, so the var declaration is allowed
