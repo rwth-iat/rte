@@ -150,7 +150,7 @@ LIBRARY cshmi
 	
 	CLASS Blackbox : CLASS cshmi/ContainerElement
 		IS_INSTANTIABLE;
-		COMMENT = "a grouping of elements";
+		COMMENT = "allows HTML content and/or native JS code";
 		VARIABLES
 			x : SINGLE
 			COMMENT = "x-axis coordinate of the group"

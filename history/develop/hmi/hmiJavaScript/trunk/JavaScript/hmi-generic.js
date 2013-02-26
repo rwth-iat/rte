@@ -142,11 +142,11 @@ function removeEventSimple(obj,evt,fn) {
  */
 
 function csHMIgetElementsByClassName(node, className){
+	node = node || HMI.svgDocument;
 	if (node.getElementsByClassName){
 		return node.getElementsByClassName(className);
 	} else {
 		var testClass = new RegExp("(^|\\s)" + className + "(\\s|$)");
-		node = node || HMI.svgDocument;
 		var elements = node.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
 		var returnElements = [];
 		var current;
