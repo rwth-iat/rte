@@ -42,7 +42,7 @@ FILETYPE		VFT_DLL
   BLOCK "040904E4"
   {
    VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
-   VALUE "FileDescription", "ACPLT/KS Server for ACPLT/OV\000"
+   VALUE "FileDescription", "ACPLT/OV Server\000"
    VALUE "FileVersion", "1.0.0\000\000"
    VALUE "InternalName", "ov_runtimeserver.exe\000"
    VALUE "LegalCopyright", "Copyright © PLT 1998-2010\000\000"
