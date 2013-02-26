@@ -3882,8 +3882,6 @@ cshmi.prototype = {
 //			};
 
 			document.head.appendChild(node);
-			var evt = window.event;
-			HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
 			jsloadObserver.checkAndTrigger();
 		}
 
