@@ -3904,7 +3904,7 @@ cshmi.prototype = {
 			var classList = csHMIgetElementsByClassName(VisualObject, 'autosize');
 			for (var i = 0; i < classList.length; ++i) {
 				//special adjustment for <canvas>-Element
-				if (classList[i].tagName === "canvas") {
+				if (classList[i].tagName.toLowerCase() === "canvas") {
 					classList[i].width = VisualObject.getAttribute("width");
 					classList[i].height = VisualObject.getAttribute("height");
 				}
@@ -3915,7 +3915,7 @@ cshmi.prototype = {
 		if (csHMIgetElementsByClassName(VisualObject, 'autosizeX').length != 0) {
 			var classListX = csHMIgetElementsByClassName(VisualObject, 'autosizeX');
 			for (var i = 0; i < classListX.length; ++i) {
-				if (classListX[i].tagName === "canvas") {
+				if (classListX[i].tagName.toLowerCase() === "canvas") {
 					classListX[i].width = VisualObject.getAttribute("width");
 				}
 				classListX[0].style.width = VisualObject.getAttribute("width")+"px";
@@ -3924,7 +3924,7 @@ cshmi.prototype = {
 		if (csHMIgetElementsByClassName(VisualObject, 'autosizeY').length != 0) {
 			var classListY = csHMIgetElementsByClassName(VisualObject, 'autosizeY');
 			for (var i = 0; i < classListY.length; ++i) {
-				if (classListY[i].tagName === "canvas") {
+				if (classListY[i].tagName.toLowerCase() === "canvas") {
 					classListY[i].height = VisualObject.getAttribute("height");
 				}
 				classListY[0].style.height = VisualObject.getAttribute("height")+"px";
