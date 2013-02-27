@@ -963,9 +963,10 @@ HMI.prototype = {
 			HMI.InputHost.value = window.location.hostname;
 		}
 		
-		//if the hostname is identical to the http server, translate into "localhost"
 		var Host;
-		if (HMI.InputHost.value == window.location.hostname){
+		if (("tcl" === HMI.HMI_Constants.ServerType || "php" === HMI.HMI_Constants.ServerType) 
+				&& HMI.InputHost.value == window.location.hostname){
+			//if we have a gateway and the hostname is identical to this, translate into "localhost"
 			Host = "localhost";
 		}else{
 			Host = HMI.InputHost.value;
