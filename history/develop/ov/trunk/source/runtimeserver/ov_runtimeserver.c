@@ -110,7 +110,7 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_stop(void) {
 }
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
-   ov_logfile_info("ov_ksserver_stripped_sighandler");
+   ov_logfile_info("Received signal. Shuting server down...");
    ov_ksserver_stripped_run_server=FALSE;
 }
 /*
