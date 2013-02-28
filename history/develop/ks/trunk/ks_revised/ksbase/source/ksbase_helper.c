@@ -75,7 +75,8 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	}
 	else
 	{
-		packet->data = ov_malloc(addlength);
+		tempdata = ov_malloc(addlength);
+		packet->data = tempdata;
 		if(!packet->data)
 		{
 			packet->length = 0;

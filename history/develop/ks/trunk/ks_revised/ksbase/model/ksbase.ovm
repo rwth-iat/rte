@@ -227,6 +227,8 @@ LIBRARY ksbase
 		OPERATIONS
 			//real sending of data
 			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			/*	open a local connection (needed for communication with manager)	*/
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
 			//initialize inData and outData
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
 			//free heap memory of inData and outData
@@ -302,6 +304,7 @@ LIBRARY ksbase
  				COMMENT	=	"Acces for NoneTickets";
  		END_VARIABLES;
  		OPERATIONS
+ 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
  			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
  			/*
  			*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.

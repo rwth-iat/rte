@@ -30,6 +30,23 @@
  */
 OV_DLLVAREXPORT OV_INSTPTR_ksbase_NoneTicketAuthenticator ksbase_NoneAuth = NULL;
 
+OV_DLLFNCEXPORT OV_RESULT ksbase_NoneTicketAuthenticator_constructor(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	OV_RESULT result;
+
+	result = ksbase_TicketAuthenticator_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	((OV_INSTPTR_ksbase_NoneTicketAuthenticator) pobj)->v_NoneTicketAccess = (OV_AC_READWRITE
+																			| OV_AC_DELETEABLE
+																			| OV_AC_INSTANTIABLE
+																			| OV_AC_LINKABLE
+																			| OV_AC_RENAMEABLE
+																			| OV_AC_UNLINKABLE);
+	return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT void ksbase_NoneTicketAuthenticator_startup(
 		OV_INSTPTR_ov_object 	pobj

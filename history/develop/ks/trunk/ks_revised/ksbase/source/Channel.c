@@ -93,3 +93,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_SendData(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_OpenLocalConn(
+	OV_INSTPTR_ksbase_Channel this,
+	OV_STRING port
+) {
+
+	KS_logfile_warning(("This channel has no OpenLocalConn function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
+	return OV_ERR_OK;
+}
+
+
