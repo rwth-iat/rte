@@ -114,8 +114,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENREG(
 	const OV_UINT	version,
 	const OV_UINT port,
 	const OV_UINT ttl,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 	
 	
@@ -132,8 +131,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNREG(
@@ -150,8 +148,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETSRV(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
@@ -174,8 +171,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETPP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_UINT dummy,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
@@ -195,8 +191,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETEP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_EP_FLAGS scopeFlags,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
@@ -215,8 +210,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
@@ -234,8 +228,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENSETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
@@ -253,8 +246,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETCANONPATH(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
@@ -273,8 +265,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
@@ -293,8 +284,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENDELOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
@@ -312,8 +302,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
@@ -331,8 +320,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
@@ -351,8 +339,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNLINK(
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(

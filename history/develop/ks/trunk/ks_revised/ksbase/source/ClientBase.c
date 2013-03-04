@@ -33,8 +33,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRegister(
 	const OV_UINT	version,
 	const OV_UINT port,
 	const OV_UINT ttl,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -56,8 +55,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_genereateUnRegister(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -77,8 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetServer(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -105,8 +102,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetPP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_UINT dummy,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -130,8 +126,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetEP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_EP_FLAGS scopeFlags,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -153,8 +148,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -176,8 +170,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateSetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -199,8 +192,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetCanonicalPath(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -223,8 +215,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateCreateObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -246,8 +237,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateDeleteObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -269,8 +259,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRenameObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ){
 	return OV_ERR_NOTIMPLEMENTED;
 }
@@ -292,8 +281,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateLink(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -316,8 +304,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnLink(
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
-	KS_DATAPACKET* datapacket,
-	OV_UINT* xid
+	KS_DATAPACKET* datapacket
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
