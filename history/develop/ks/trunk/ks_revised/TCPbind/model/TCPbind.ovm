@@ -28,8 +28,10 @@ LIBRARY TCPbind
 			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			//receive data and hand it over
 			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
-			OpenConnection	:	C_FUNCTION	<TCPBIND_FNC_OPENCONNECTION>;
-			CloseConnection	:	C_FUNCTION	<TCPBIND_FNC_CLOSECONNECTION>;
+			/*	open a local connection (needed for communication with manager)	*/
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
 			AssociateClientHandler	:	C_FUNCTION	<TCPBIND_FNC_ASSOCIATECLIENTHANDLER>;
 		END_OPERATIONS;
 	END_CLASS;

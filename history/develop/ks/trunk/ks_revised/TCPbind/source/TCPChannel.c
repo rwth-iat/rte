@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 
 		//Check if socket is ok
 		if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
-			KS_logfile_debug(("%s/SendData: no socket set, nothing sent",this->v_identifier));
+			KS_logfile_error(("%s/SendData: no socket set, nothing sent",this->v_identifier));
 			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 			return OV_ERR_GENERIC;
 		}
@@ -520,6 +520,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	return;
 }
 
+OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenLocalConn(
+		OV_INSTPTR_ksbase_Channel this,
+		OV_STRING port
+) {
+
+	return TCPbind_TCPChannel_OpenConnection(this, "127.0.0.1", port);
+}
+
 /**
  * The TCHChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
  * It furthermore takes a pointer to an int used to return the socket selector.
@@ -528,10 +536,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
  */
 
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
-		OV_INSTPTR_TCPbind_TCPChannel this,
+		OV_INSTPTR_ksbase_Channel this,
 		OV_STRING host,
-		OV_STRING port,
-		OV_INT* opensocket
+		OV_STRING port
 ) {
 	struct addrinfo hints;
 	struct addrinfo *res;
@@ -544,6 +551,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	int on = 1; 	//used to disable nagle algorithm
+	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
 
 	//set connection information
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -554,7 +562,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if ((ret = getaddrinfo(host, port, &hints, &res))!=0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
-		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -568,7 +576,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
 			CLOSE_SOCKET(sockfd);
 			sockfd = -1;
-			KS_logfile_debug(("%s: connect failed", this->v_identifier));
+			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
 			continue;
 		}
 		break;
@@ -579,7 +587,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if (sockfd == -1)
 	{
 		KS_logfile_error(("%s: could not establish connection", this->v_identifier));
-		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -587,7 +595,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if( getpeername(sockfd, sa, &sas))
 	{
 		KS_logfile_error(("%s: could not resolve connected peer", this->v_identifier));
-		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -595,17 +603,15 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 	{
 		KS_logfile_error(("%s: could not resolve connected peer's address", this->v_identifier));
-		this->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
-	ov_string_setvalue(&(this->v_address), hbuf);
-	this->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-	if(opensocket)
-		*opensocket = sockfd;
-	TCPbind_TCPChannel_socket_set(this, sockfd);
+	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
+	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+	TCPbind_TCPChannel_socket_set(thisTCPCh, sockfd);
 
-	KS_logfile_debug(("%s: connected to %s.", this->v_identifier, this->v_address));
+	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, this->v_address));
 	//set time of Opening the Connection
 	ov_time_gettime(&(this->v_LastReceiveTime));
 
@@ -617,11 +623,12 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 
 
 OV_DLLFNCEXPORT void TCPbind_TCPChannel_CloseConnection(
-		OV_INSTPTR_TCPbind_TCPChannel this
+		OV_INSTPTR_ksbase_Channel this
 ) {
-	if(this->v_socket >= 0)
+	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+	if(thisTCPCh->v_socket >= 0)
 	{
-		CLOSE_SOCKET(this->v_socket);
+		TCPbind_TCPChannel_socket_set(thisTCPCh, -1);
 		KS_logfile_debug(("TCPChannel %s socket %d closed", this->v_identifier, this->v_socket));
 	}
 	return;
