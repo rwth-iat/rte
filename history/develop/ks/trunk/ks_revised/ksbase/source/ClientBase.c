@@ -43,8 +43,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result,
-	OV_UINT* rpcErrCode
+	OV_RESULT* result
 ){
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -64,8 +63,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result,
-	OV_UINT* rpcErrCode
+	OV_RESULT* result
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -85,7 +83,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
 	OV_TIME* expirationTime,
@@ -112,7 +109,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_PROJECTED_PROPS* items_val
 ) {
@@ -136,7 +132,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_ENGINEERED_PROPS* items_val
 ) {
@@ -158,7 +153,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_VAR_CURRENT_PROPS* items_val
 ) {
@@ -180,7 +174,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 ) {
@@ -202,7 +195,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
 	OV_STRING* items_canonicalPaths
@@ -225,7 +217,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_CREATEOBJECTITEM_RES* items_val
 ) {
@@ -247,7 +238,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 ) {
@@ -269,7 +259,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 ){
@@ -291,7 +280,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 ) {
@@ -314,7 +302,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnLink(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 ) {

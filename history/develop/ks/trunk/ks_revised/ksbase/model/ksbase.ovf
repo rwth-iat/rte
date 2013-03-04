@@ -122,8 +122,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result,
-	OV_UINT* rpcErrCode
+	OV_RESULT* result
 );
 			
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
@@ -138,8 +137,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result,
-	OV_UINT* rpcErrCode
+	OV_RESULT* result
 );
 
 
@@ -156,7 +154,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
 	OV_TIME* expirationTime,
@@ -179,7 +176,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_PROJECTED_PROPS* items_val
 );
@@ -199,7 +195,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_ENGINEERED_PROPS* items_val
 );
@@ -218,7 +213,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_VAR_CURRENT_PROPS* items_val
 );
@@ -236,7 +230,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -254,7 +247,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
 	OV_STRING* items_canonicalPaths
@@ -273,7 +265,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_CREATEOBJECTITEM_RES* items_val
 );
@@ -292,7 +283,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -310,7 +300,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -328,7 +317,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -347,7 +335,6 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
-	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
