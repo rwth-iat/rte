@@ -4,6 +4,7 @@
 #include "libov/ov_macros.h"
 #include "ksbase.h"
 
+
 OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 {
 
@@ -56,7 +57,14 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	{
 		tempdata = ov_realloc(packet->data, packet->length + addlength);
 		if(!tempdata)
+		{
+			ov_free(packet->data);
+			packet->data = NULL;
+			packet->length = 0;
+			packet->readPT = NULL;
+			packet->writePT = NULL;
 			return OV_ERR_HEAPOUTOFMEMORY;
+		}
 		//set write pointer
 		if(!packet->writePT)
 			packet->writePT = tempdata;
@@ -75,8 +83,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	}
 	else
 	{
-		tempdata = ov_malloc(addlength);
-		packet->data = tempdata;
+		packet->data = ov_malloc(addlength);
 		if(!packet->data)
 		{
 			packet->length = 0;

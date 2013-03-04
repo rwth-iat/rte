@@ -56,6 +56,16 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_OPENLOCAL(
 	OV_STRING port
 );
 
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_OPENCONN(
+	OV_INSTPTR_ksbase_Channel this,
+	OV_STRING host,
+	OV_STRING port
+);
+
+typedef OV_DLLFNCEXPORT void KSBASE_FNC_CLOSECONN(
+	OV_INSTPTR_ksbase_Channel this
+);
+
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_HANDLEREQUEST(
 	OV_INSTPTR_ksbase_ClientHandler this,
 	KS_DATAPACKET* dataReceived,
@@ -104,7 +114,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENREG(
 	const OV_UINT	version,
 	const OV_UINT port,
 	const OV_UINT ttl,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 	
 	
@@ -112,7 +123,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result
+	OV_RESULT* result,
+	OV_UINT* rpcErrCode
 );
 			
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
@@ -120,14 +132,16 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
-	OV_RESULT* result
+	OV_RESULT* result,
+	OV_UINT* rpcErrCode
 );
 
 
@@ -136,7 +150,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETSRV(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
@@ -144,6 +159,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
 	OV_TIME* expirationTime,
@@ -158,7 +174,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETPP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_UINT dummy,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
@@ -166,6 +183,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_PROJECTED_PROPS* items_val
 );
@@ -177,7 +195,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETEP(
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_EP_FLAGS scopeFlags,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
@@ -185,6 +204,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_OBJ_ENGINEERED_PROPS* items_val
 );
@@ -195,7 +215,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
@@ -203,6 +224,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_len,
 	OV_VAR_CURRENT_PROPS* items_val
 );
@@ -212,7 +234,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENSETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
@@ -220,6 +243,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -229,7 +253,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETCANONPATH(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
@@ -237,6 +262,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
 	OV_STRING* items_canonicalPaths
@@ -247,7 +273,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
@@ -255,6 +282,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_CREATEOBJECTITEM_RES* items_val
 );
@@ -265,7 +293,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENDELOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
@@ -273,6 +302,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -282,7 +312,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
@@ -290,6 +321,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -299,7 +331,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
@@ -307,6 +340,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
@@ -317,7 +351,8 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNLINK(
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
-	KS_DATAPACKET* datapacket
+	KS_DATAPACKET* datapacket,
+	OV_UINT* xid
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
@@ -325,6 +360,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
+	OV_UINT* rpcErrCode,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
