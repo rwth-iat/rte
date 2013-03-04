@@ -129,10 +129,10 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 			KS_logfile_debug(("TCPbind library open: no port specified. trying to connect to localhost:7509 to check for a manager"));
 			if(Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, ptestchannel, pTCPbindDom, "porttest")))
 			{
-				if(Ov_Fail(TCPbind_TCPChannel_OpenConnection(ptestchannel, "localhost", "7509")))
+				if(Ov_Fail(TCPbind_TCPChannel_OpenConnection(Ov_StaticPtrCast(ksbase_Channel, ptestchannel), "localhost", "7509")))
 				{
 					port = 7509;
-					TCPbind_TCPChannel_CloseConnection(ptestchannel);
+					TCPbind_TCPChannel_CloseConnection(Ov_StaticPtrCast(ksbase_Channel, ptestchannel));
 					KS_logfile_debug(("TCPbind library open: could not connect to 7509. Setting port to 7509."));
 				}
 				Ov_DeleteObject(ptestchannel);
