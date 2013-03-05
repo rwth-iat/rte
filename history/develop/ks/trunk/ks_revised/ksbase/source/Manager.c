@@ -103,7 +103,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				ov_time_gettime(&timenow);
 				ksbase_ServerRep_regtime_set(pNewSrvRep, &timenow);
 				ksbase_ServerRep_state_set(pNewSrvRep, 1);
-
 			}
 			else
 			{
@@ -183,49 +182,68 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 	OV_STRING protocol
 ) {
 	OV_INSTPTR_ov_domain ServerRepDomain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer("/servers",2);
+	OV_INSTPTR_ov_domain pSrvRepContainer = NULL;
 	OV_INSTPTR_ksbase_ServerRep pSrvRep = NULL;
 	unsigned int i;
 	OV_RESULT result;
+	char versionstring[12];
 
 	if((name) && (ServerRepDomain))
 	{//all values are set
-		pSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, ServerRepDomain, name);
-		if(pSrvRep)
+		KS_logfile_debug(("Manager: unregister: unregistering %s for %s", protocol, name));
+		pSrvRepContainer = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, ServerRepDomain, name);
+		if(pSrvRepContainer)
 		{
-			if((pSrvRep->v_protocols.veclen == 1))
+			sprintf(versionstring, "%ld", version);
+			pSrvRep = (OV_INSTPTR_ksbase_ServerRep)Ov_SearchChild(ov_containment, pSrvRepContainer, versionstring);
+			if(pSrvRep)
 			{
-				if((ov_string_compare(pSrvRep->v_protocols.value[0], protocol) == OV_STRCMP_EQUAL))
-					Ov_DeleteObject(pSrvRep);	/*	it is the only protocol --> delete Server Representative	*/
+				if((pSrvRep->v_protocols.veclen == 1))
+				{
+					if((ov_string_compare(pSrvRep->v_protocols.value[0], protocol) == OV_STRCMP_EQUAL))
+					{
+						Ov_DeleteObject(pSrvRep);	/*	it is the only protocol --> delete Server Representative	*/
+						Ov_DeleteObject(pSrvRepContainer);
+					}
+					else
+					{
+						KS_logfile_info(("unregister: protocol not found (one left)"));
+						return OV_ERR_BADVALUE;
+					}
+				}
 				else
 				{
-					KS_logfile_info(("unregister: protocol not found"));
-					return OV_ERR_BADVALUE;
+					KS_logfile_debug(("Manager unregister: %u protocols found", pSrvRep->v_protocols.veclen));
+					for(i=0; i < pSrvRep->v_protocols.veclen; i++)
+					{
+						if((ov_string_compare(pSrvRep->v_protocols.value[i], protocol) == OV_STRCMP_EQUAL))
+							break;
+					}
+					if(i < pSrvRep->v_protocols.veclen)
+					{/*	protocol found --> delete it from list	*/
+						for(;i<pSrvRep->v_protocols.veclen-1; i++)
+						{
+							pSrvRep->v_protocols.value[i] = pSrvRep->v_protocols.value[i+1];
+							pSrvRep->v_protocols.value[i] = pSrvRep->v_port.value[i+1];
+						}
+						result = Ov_SetDynamicVectorLength(&(pSrvRep->v_protocols), pSrvRep->v_protocols.veclen - 1, STRING);	/*	frees the last element and does not touch the rest	*/
+						if(Ov_Fail(result))
+							return result;
+						result = Ov_SetDynamicVectorLength(&(pSrvRep->v_port), pSrvRep->v_port.veclen - 1, STRING);
+						if(Ov_Fail(result))
+							return result;
+					}
+					else
+					{
+						KS_logfile_info(("unregister: protocol not found"));
+						return OV_ERR_BADVALUE;
+					}
 				}
 			}
 			else
 			{
-				for(i=0; i < pSrvRep->v_protocols.veclen; i++)
-					if((ov_string_compare(pSrvRep->v_protocols.value[i], protocol) == OV_STRCMP_EQUAL))
-						break;
-				if(i < pSrvRep->v_protocols.veclen)
-				{/*	protocol found --> delete it from list	*/
-					for(;i<pSrvRep->v_protocols.veclen-1; i++)
-					{
-						pSrvRep->v_protocols.value[i] = pSrvRep->v_protocols.value[i+1];
-						pSrvRep->v_protocols.value[i] = pSrvRep->v_port.value[i+1];
-					}
-					result = Ov_SetDynamicVectorLength(&(pSrvRep->v_protocols), pSrvRep->v_protocols.veclen - 1, STRING);	/*	frees the last element and does not touch the rest	*/
-					if(Ov_Fail(result))
-						return result;
-					result = Ov_SetDynamicVectorLength(&(pSrvRep->v_port), pSrvRep->v_port.veclen - 1, STRING);
-					if(Ov_Fail(result))
-						return result;
-				}
-				else
-				{
-					KS_logfile_info(("unregister: protocol not found"));
-					return OV_ERR_BADVALUE;
-				}
+				KS_logfile_info(("unregister: version missmatch"));
+				return OV_ERR_BADVALUE;
 			}
 		}
 		else

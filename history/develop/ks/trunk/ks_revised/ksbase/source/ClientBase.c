@@ -49,7 +49,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRegister(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_genereateUnRegister(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,

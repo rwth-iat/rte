@@ -334,7 +334,7 @@ LIBRARY ksbase
 			*/
 			generateRegister	:	C_FUNCTION	<KSBASE_FNC_GENREG>;
 			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
-			genereateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
+			generateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
 			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
 			generateGetServer	:	C_FUNCTION	<KSBASE_FNC_GENGETSRV>;
 			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
