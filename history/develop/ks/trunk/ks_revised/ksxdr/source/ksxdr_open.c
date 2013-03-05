@@ -136,18 +136,22 @@ OV_RESULT ov_library_setglobalvars_ksxdr_new(void) {
 	{
 		result = Ov_CreateObject(ksxdr_xdrManagerCom, xdrMngCom, pDomksxdr, "ManagerCom");
 		if(Ov_Fail(result))
+		{
 			KS_logfile_error(("ksxdr_open: ManagerCom could not be created"));
+			return result;
+		}
 
 		/*	if we are manager, we don't need a channel	*/
-		if(!Ov_GetChild(ov_instantiation, pclass_ksbase_Manager))
+		if(!Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager))
 		{
 			/*
 			 * Checking KSXDR_USECHANNEL and KS_USECHANNEL options to determine which channel type to use. use TCPChannel per default.
 			 */
+			ov_memstack_lock();
 			OptValTemp = ov_vendortree_getcmdlineoption_value("KSXDR_USECHANNEL");
 			if(!OptValTemp)
 				OptValTemp = ov_vendortree_getcmdlineoption_value("KS_USECHANNEL");
-			ov_memstack_lock();
+
 			if(!OptValTemp)
 			{/*	Neither option specified, use TCPChannel as default	*/
 				OptValTemp = ov_memstack_alloc(sizeof("TCPChannel"));
@@ -156,10 +160,17 @@ OV_RESULT ov_library_setglobalvars_ksxdr_new(void) {
 
 			if(*OptValTemp)
 			{	/*	empty option means do not create channel	*/
-				pClassChannel = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_instantiation, pclass_ov_class, OptValTemp));
+				pClassChannel = Ov_StaticPtrCast(ov_class, Ov_GetFirstChild(ov_instantiation, pclass_ov_class));
+				while(pClassChannel)
+				{
+					if(ov_string_compare(pClassChannel->v_identifier, OptValTemp) == OV_STRCMP_EQUAL)
+						break;
+					pClassChannel = Ov_StaticPtrCast(ov_class, Ov_GetNextChild(ov_instantiation, pClassChannel));
+				}
+
 				if(pClassChannel)
 				{/*	channel found create it	*/
-					result = ov_class_createobject(pClassChannel, Ov_StaticPtrCast(ov_domain, pChannel), "MngComChannel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) &xdrMngCom);
+					result = ov_class_createobject(pClassChannel, Ov_StaticPtrCast(ov_domain, xdrMngCom), "MngComChannel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) &pChannel);
 					if(Ov_Fail(result))
 					{
 						KS_logfile_error(("ksxdr_open: could not create channel for manager communication. reason: %s", ov_result_getresulttext(result)));
@@ -177,7 +188,9 @@ OV_RESULT ov_library_setglobalvars_ksxdr_new(void) {
 			ov_memstack_unlock();
 		}
 		else
+		{
 			xdrMngCom->v_UseShortCut = TRUE;
+		}
 	}
 
 	KS_logfile_debug(("leaving ksxdr_open"));

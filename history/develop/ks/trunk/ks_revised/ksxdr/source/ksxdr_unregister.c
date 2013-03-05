@@ -5,6 +5,7 @@
  *      Author: lars
  */
 
+
 #include "ksxdr.h"
 #include "ksxdr_config.h"
 #include "ks_logfile.h"
@@ -46,6 +47,7 @@ OV_RESULT ksxdr_unregister(const OV_UINT version, const OV_TICKET* pticket, KS_D
 		/*
 		 * issue unregister command
 		 */
+		KS_logfile_debug(("ksxdr_unregister: unregistering KSXDR for %s (version %lu)", servername, serverversion));
 		result = ksbase_Manager_unregister(servername, serverversion, KSXDR_IDENTIFIER);
 		if(Ov_Fail(result))
 		{
@@ -56,6 +58,7 @@ OV_RESULT ksxdr_unregister(const OV_UINT version, const OV_TICKET* pticket, KS_D
 				*msgState = XDR_MSGST_SYSTEM_ERR;
 				*ksErrCode = result;
 			}
+			KS_logfile_debug(("unregister for %s failed with code %0#6x", servername, result));
 		}
 
 	}

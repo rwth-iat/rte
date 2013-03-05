@@ -18,7 +18,7 @@ LIBRARY ksxdr
 		VARIABLES
 			ksProgramnumber	: UINT	
 				COMMENT	=	"identification number of ks requests (obtained from Sun). KS RPC program number is 0x49678 (DEC: 300664)"
-				INITIALVALUE	=	300664;				//0x49678
+				INITIALVALUE	=	300664;				/*	0x49678	*/
 		END_VARIABLES;
 		OPERATIONS
 			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
@@ -62,6 +62,7 @@ LIBRARY ksxdr
 	END_OPERATIONS;	
 	END_CLASS;
 	
+	
 	CLASS xdrManagerCom	:	CLASS ksbase/DataHandler
 	IS_INSTANTIABLE;
 	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shorcut is used.";
@@ -69,18 +70,36 @@ LIBRARY ksxdr
 		ManagerPort	:	STRING
 			COMMENT	=	"Port part of Manager address"
 			INITIALVALUE = "7509";
+		OwnPort		:	STRING
+			COMMENT	=	"Port this server listens on"
+			INITIALVALUE	=	"";
 		UseShortCut	:	BOOL
 			COMMENT	=	"use the ov-shortcut (do not create a channel)"
 			INITIALVALUE = FALSE;
 		RegisterState	:	UINT
 			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
 			INITIALVALUE = 0;
+		ErrCode		:	INT
+			COMMENT	=	"Error Code returned by register command"
+			INITIALVALUE = 0;
+		msgAccepted	:	INT
+			COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+			INITIALVALUE = 0;
+		msgStatus	:	INT
+			COMMENT	=	"0 = message could be processed; otherwise: errorcode"
+			INITIALVALUE = 0;
+		rpcErrCode	:	INT
+			COMMENT	=	"reasons for denial"
+			INITIALVALUE = 0;
 		Tries		:	UINT
 			COMMENT	=	"Tries before successfull register. 5 is maximum"
 			INITIALVALUE = 0;
-		OwnPort		:	STRING
-			COMMENT	=	"Port this server listens on"
-			INITIALVALUE	=	"7509";
+		sentXID		:	UINT
+			COMMENT	=	"xid of the request sent to be compared with the one of the reply"
+			INITIALVALUE = 0;
+		sentProcID	:	UINT
+			COMMENT	=	"last requested procedure number (used to determine whether a register or an unregister reply is received)"
+			INITIALVALUE = 0;
 	END_VARIABLES;	
 	OPERATIONS
 		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
@@ -88,6 +107,41 @@ LIBRARY ksxdr
 		HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
 		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
 	END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	xdrClient	:	CLASS	ksbase/ClientBase
+		COMMENT	=	"message generation and reply processing for xdr protocol";
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			generateRegister	:	C_FUNCTION	<KSBASE_FNC_GENREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			generateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+			generateGetServer	:	C_FUNCTION	<KSBASE_FNC_GENGETSRV>;
+			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
+			generateGetPP		:	C_FUNCTION	<KSBASE_FNC_GENGETPP>;
+			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
+			generateGetEP		:	C_FUNCTION	<KSBASE_FNC_GENGETEP>;
+			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
+			generateGetVar		:	C_FUNCTION	<KSBASE_FNC_GENGETVAR>;
+			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
+			generateSetVar		:	C_FUNCTION	<KSBASE_FNC_GENSETVAR>;
+			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
+			generateGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_GENGETCANONPATH>;
+			processGetCanonicalPath			:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
+			generateCreateObject			:	C_FUNCTION	<KSBASE_FNC_GENCREATEOBJ>;
+			processCreateObject				:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
+			generateDeleteObject			:	C_FUNCTION	<KSBASE_FNC_GENDELOBJ>;
+			processDeleteObject				:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
+			generateRenameObject			:	C_FUNCTION	<KSBASE_FNC_GENRENAMEOBJ>;
+			processRenameObject				:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
+			generateLink		:	C_FUNCTION	<KSBASE_FNC_GENLINK>;
+			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
+			generateUnLink		:	C_FUNCTION	<KSBASE_FNC_GENUNLINK>;
+			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 END_LIBRARY;

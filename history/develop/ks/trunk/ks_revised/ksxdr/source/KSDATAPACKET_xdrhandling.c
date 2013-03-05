@@ -415,12 +415,13 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque(KS_DATAPACKET* datapack
 {
 	unsigned char* temp = 0;
 	unsigned int xdradd;
-	unsigned int i;
+	unsigned int i = 0;
 	OV_RESULT result;
+
 
 	/*	NULL-pointers are treated as empty values because the xdr-stream structure is predefined	*/
 	if(!value)
-		return KS_DATAPACKET_write_xdr_u_long(datapacket, 0);
+		return KS_DATAPACKET_write_xdr_u_long(datapacket, (OV_UINT*) &i);	/*	at this point i contains 0	*/
 
 	xdradd = length;
 	while(xdradd%4)	/*	alignment!	*/

@@ -128,7 +128,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, OV_UINT* xid
 	}
 
 	/*	acceptance	*/
-	result = KS_DATAPACKET_write_xdr_long(datapacket, msgAccepted);
+	result = KS_DATAPACKET_read_xdr_long(datapacket, msgAccepted);
 	if(Ov_Fail(result))
 		return result;
 	if(*msgAccepted != XDR_MSG_ACCEPTED)
@@ -252,18 +252,34 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRegister(
  * 				un-register
  ******************************************************************************************************************************************************************************/
 
-OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_genereateUnRegister(
+OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateUnRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
 	KS_DATAPACKET* datapacket
 ) {
-    /*    
-    *   local variables
-    */
+	/*
+	    *   local variables
+	    */
+		OV_RESULT result;
+		OV_UINT varToSet;
 
-    return OV_ERR_NOTIMPLEMENTED;
+
+		/*	set ticket Type, for unregister, we use always the none-ticket	*/
+		varToSet = OV_TT_NONE;
+		result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+		if(Ov_Fail(result))
+			return result;
+
+		/*	name	*/
+		result = KS_DATAPACKET_write_xdr_string(datapacket, &servername);
+		if(Ov_Fail(result))
+			return result;
+
+		/*	server version	*/
+		return KS_DATAPACKET_write_xdr_u_long(datapacket, &version);
+
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnRegister(
@@ -276,7 +292,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnRegister(
     *   local variables
     */
 
-    return OV_ERR_NOTIMPLEMENTED;
+	return KS_DATAPACKET_read_xdr_OV_RESULT(datapacket, result);
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateGetServer(

@@ -102,7 +102,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 				return OV_ERR_OK;
 			}
 			else
-			{/*	not alle values set...how can this happen?	*/
+			{/*	not all values set...how can this happen?	*/
 
 				*msgState = XDR_MSGST_SYSTEM_ERR;
 				*ksErrCode = KS_ERR_TARGETGENERIC;

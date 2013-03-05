@@ -21,6 +21,7 @@
 #endif
 
 
+
 #include "ksxdr.h"
 #include "ksxdr_config.h"
 #include "libov/ov_macros.h"
@@ -31,6 +32,7 @@
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ov_ksserver_backend.h"
 #include "ksbase_helper.h"
+#include "NoneTicketAuthenticator.h"
 #include "ksxdr_services.h"
 
 
@@ -108,7 +110,7 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 			return result;
 
 		if(msgState == XDR_DEN_AUTH_ERROR)
-		{/*	rejection because of bad authentication --> generic reason	*/
+		{/*	rejection because of bad authentication	*/
 			dummy = XDR_AUTH_FAILED;
 			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
 			if(Ov_Fail(result))
@@ -151,7 +153,7 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 	if(msgState != XDR_MSGST_SUCCESS)
 	{	/*	processing failed	*/
 		if(msgState == XDR_MSGST_PROG_MISMATCH)
-		{/*rejection because of program verion mismatch -->return highest and lowest supported ks-version (here both 2)	*/
+		{/*rejection because of program version mismatch -->return highest and lowest supported ks-version (here both 2)	*/
 			dummy = 0x02;
 			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
 			if(Ov_Fail(result))
@@ -184,9 +186,6 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 		return FALSE;
 
 	length = (header & 0x00ffffff);		/*	mask away the most significant byte as this does not contain length information	*/
-/*		DEBUG
-	KS_logfile_debug(("checking for complete request: \n\tlength is:\t%0#10x\n\tbuffer is:\t%0#10x\n\theader is: \t%0#10x\n", length, dataReceived->length- (dataReceived->readPT - dataReceived->data), header));
-DEBUG END	*/
 	if(header & 0x80000000)	/*	first byte of header == 0x80 means this is the last fragment	*/
 	{
 		KS_logfile_debug(("checking for complete request: last fragment"));
@@ -322,7 +321,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_UINT authflavour = 0;					/*also used as ticketindicator*/
 	OV_STRING authdata = NULL;
 	OV_UINT decodeLength = 0;
-	OV_TICKET noneticket = {&noneticketvtbl, OV_TT_NONE};
 	OV_TICKET* pticket = NULL;
 	OV_INSTPTR_ksbase_TicketAuthenticator pTicketAuth = NULL;
 	OV_INSTPTR_ov_domain pDomAuthenticators	= NULL;
@@ -339,9 +337,17 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	 * decode header
 	 ********************************************************************************************************************************************************************/
 
-	BeginOfMessage = dataReceived->readPT;
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &header))				//not part of rpc call
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &xid))					//offset 0 in rpc call
+	if(pChannel->v_usesStreamProtocol == TRUE)
+	{
+		BeginOfMessage = dataReceived->readPT;
+		if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &header)))				//not part of rpc call
+		{
+			KS_logfile_error(("%s: HandleRequest: cold not decode stream protocol header", this->v_identifier));
+			return OV_ERR_GENERIC;
+		}
+	}
+
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &xid))					//offset 0 in rpc call
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &messageType))	//offset 4
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &rpcVersion))	//offset 8
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &progId))		//offset 12
@@ -409,40 +415,40 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	 * checking if request is in the buffer completely, if not, return ERR_OK and wait until it is complete. While waiting set the receive timeout value to a few seconds
 	 * 	(we received a fragmented package so there will come more data. if no data arrives within a second, we can assume the package is broken)
 	 ***************************************************************************************************************************************************************************/
-
-	if(!bufferHoldsCompleteRequest(dataReceived, BeginOfMessage, &result))
+	if(pChannel->v_usesStreamProtocol == TRUE)
 	{
-		if(Ov_Fail(result))
+		if(!bufferHoldsCompleteRequest(dataReceived, BeginOfMessage, &result))
 		{
-			ov_memstack_lock();
-			KS_logfile_error(("%s: HandleRequest: error checking if message is complete: %s", this->v_identifier, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
-			return result;
+			if(Ov_Fail(result))
+			{
+				ov_memstack_lock();
+				KS_logfile_error(("%s: HandleRequest: error checking if message is complete: %s", this->v_identifier, ov_result_getresulttext(result)));
+				ov_memstack_unlock();
+				return result;
+			}
+			KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
+			pChannel->v_ConnectionTimeOut = 2;
+			dataReceived->readPT = BeginOfMessage; 	/*	reset the read pointer to the place where the message began (to be read again next time)	*/
+			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
+											Yes, this could block the ClientHanlder for a longer time.	*/
 		}
-		KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
-		pChannel->v_ConnectionTimeOut = 2;
-		dataReceived->readPT = BeginOfMessage; 	/*	reset the read pointer to the place where the message began (to be read again next time)	*/
-		return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
-											Yes, this could block the ClientHanlder for a longer time.
-											TODO: move the connection timeout variable from TCPChannel to the baseclass.
-											So we can set a shorter timeout when waiting for completion of a request	*/
-	}
-	else
-	{
-		pChannel->v_ConnectionTimeOut = 1200;
-	}
+		else
+		{
+			pChannel->v_ConnectionTimeOut = 1200;
+		}
 
-	/*
-	 * unfragment large xdrs
-	 */
-	if(!(header & (0x80000000)))	/*	a 0x80 in the first byte means this is the last (or only in this case) fragment. 	*/
-	{
-		KS_logfile_debug(("%s: defragmenting rpc message", this->v_identifier));
-		result = unfragmentXDRmessage(dataReceived, BeginOfMessage);
-		if(Ov_Fail(result))
-			return result;
-		KS_logfile_debug(("%s: message defragmented", this->v_identifier));
+		/*
+		 * unfragment large xdrs
+		 */
+		if(!(header & (0x80000000)))	/*	a 0x80 in the first byte means this is the last (or only in this case) fragment. 	*/
+		{
+			KS_logfile_debug(("%s: defragmenting rpc message", this->v_identifier));
+			result = unfragmentXDRmessage(dataReceived, BeginOfMessage);
+			if(Ov_Fail(result))
+				return result;
+			KS_logfile_debug(("%s: message defragmented", this->v_identifier));
 
+		}
 	}
 	/***************************************************************************************************************************************************************************
 	 * first part of message decoded. Now the xdr auth-parts follow: we do not use them.
@@ -527,7 +533,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 
 	if(authflavour == OV_TT_NONE)
 	{
-		pticket = noneticket.vtbl->createticket(NULL, OV_TT_NONE);
+		pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
 	}
 	else
 	{
@@ -885,9 +891,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		ksbase_free_KSDATAPACKET(answer);
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
-//DEBUG
-		//KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
-//DEBUG_END
 	/*	append service specific data (if service succeeded)	*/
 	if(ksErrCode == KS_ERR_OK)
 		if(serviceAnswer.length)
@@ -897,9 +900,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ksbase_free_KSDATAPACKET(answer);
 				return OV_ERR_HEAPOUTOFMEMORY;
 			}
-	//DEBUG
-	 //KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
-	//DEBUG_END
+
 	if(pChannel->v_usesStreamProtocol == TRUE)
 		ksxdr_prepend_length(answer, beginAnswer);
 
