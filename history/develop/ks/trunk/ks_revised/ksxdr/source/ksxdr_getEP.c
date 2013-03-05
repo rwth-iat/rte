@@ -6,7 +6,6 @@
  */
 
 
-
 #include "ksxdr.h"
 #include "ksxdr_config.h"
 #include "ks_logfile.h"
@@ -167,7 +166,7 @@ KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: special properties encoded"));
 	result = KS_DATAPACKET_write_xdr_OV_ACCESS(serviceAnswer, &objp->access);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: only semantic flags missing"));
+KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: access encoded"));
 	return KS_DATAPACKET_write_xdr_OV_SEMANTIC_FLAGS(serviceAnswer, &objp->semantic_flags);
 }
 

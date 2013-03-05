@@ -170,7 +170,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* dat
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_time_span_vec.value, sizeof(OV_TIME_SPAN),
 					&value->valueunion.val_time_span_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_OV_TIME_SPAN);
 		case OV_VT_VOID:
-			return TRUE;
+			return OV_ERR_OK;
 		case OV_VT_BYTE_VEC:
 			return KS_DATAPACKET_read_xdr_opaque_tomemstack(datapacket, (char**) &value->valueunion.val_byte_vec.value, &value->valueunion.val_byte_vec.veclen, ~0);
 		default:
@@ -240,7 +240,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_VAR_VALUE(KS_DATAPACKET* da
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_time_span_vec.value, sizeof(OV_TIME_SPAN),
 				&value->valueunion.val_time_span_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_OV_TIME_SPAN);
 	case OV_VT_VOID:
-		return TRUE;
+		return OV_ERR_OK;
 	case OV_VT_BYTE_VEC:
 		return KS_DATAPACKET_write_xdr_opaque(datapacket, (char*) value->valueunion.val_byte_vec.value, value->valueunion.val_byte_vec.veclen);
 	default:
