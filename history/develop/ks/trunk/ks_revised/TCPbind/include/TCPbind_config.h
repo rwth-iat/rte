@@ -2,7 +2,7 @@
 #define TCPbind_confih_INCLUDED
 
 //Size of data received per chunk
-#define TCPbind_CHUNKSIZE			256
+#define TCPbind_CHUNKSIZE			1460	/*	maximum size of tcp segment over ethernet IP 	*/
 
 //timeouts for destroying inactive Channels
 #define TCPbind_TTL_AFTER_ASSOC		1200
