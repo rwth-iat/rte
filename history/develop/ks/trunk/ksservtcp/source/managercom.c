@@ -532,7 +532,7 @@ OV_DLLFNCEXPORT void ksservtcp_managercom_mngregister(
 		pobj->v_xdr[3-c] = tmpfragment[c];
 	pobj->v_xdr[0] = 0x80;
 
-	//set xid (martin+=4)
+	//set xid (martin+=4)	/*	CONSTANT xid...cool^^	*/
 	pobj->v_xdr[4] = 0x4a;
 	pobj->v_xdr[5] = 0x5d;
 	pobj->v_xdr[6] = 0x4f;

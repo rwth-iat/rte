@@ -396,7 +396,7 @@ void ksservtcp_tcpclient_typemethod(
 				return;
 			}
 			//generate answer
-			size_return = 32;
+			size_return = 32;	/*	this does NOT!!!! comply to the rpc-spec. Message type is set to call instead of reply	*/
 			xdr_return = (char*)malloc(size_return);
 			memset(xdr_return, 0, size_return);
 			for(j=0;j<4;j++)
