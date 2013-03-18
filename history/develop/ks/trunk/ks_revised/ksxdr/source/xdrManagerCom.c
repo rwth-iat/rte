@@ -313,7 +313,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 
 
 
-	if(thisMngCom->v_Tries < 5)
+	if(thisMngCom->v_Tries < 3)
 	{
 		/*	if the OwnPort is not set check commandline options and if they are not set check for a TCPListener (default binding)	*/
 		if(!thisMngCom->v_OwnPort || !(*thisMngCom->v_OwnPort) || ov_string_compare(thisMngCom->v_OwnPort, "-1") == OV_STRCMP_EQUAL)
@@ -350,8 +350,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 						}
 						if(!pClListener)
 						{
-							KS_logfile_error(("%s: typemethod: OwnPort not set and class TCPListener (default binding) not found. deactivating registration.", this->v_identifier));
-							this->v_actimode = 0;
+							KS_logfile_error(("%s: typemethod: OwnPort not set and class TCPListener (default binding) not found. retry in 2 minutes.", this->v_identifier));
+							this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
 							ov_memstack_unlock();
 							return;
 						}
@@ -359,8 +359,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 						pListener = Ov_StaticPtrCast(ksbase_ComTask, Ov_GetFirstChild(ov_instantiation, pClListener));
 						if(!pListener)
 						{
-							KS_logfile_error(("%s: typemethod: OwnPort not set and TCPListner instance (default binding) not found. deactivating registration.", this->v_identifier));
-							this->v_actimode = 0;
+							KS_logfile_error(("%s: typemethod: OwnPort not set and TCPListner instance (default binding) not found. retry in 2 minutes.", this->v_identifier));
+							this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
 							ov_memstack_unlock();
 							return;
 						}
@@ -383,7 +383,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 								port = *((OV_INT*) elemPort.pvalue);
 							}
 							else
-								KS_logfile_error(("elemen value* is NULL"));
+								KS_logfile_error(("element value* is NULL"));
 							OptValTemp = ov_memstack_alloc(12);	/*	this way prevent us from NULL-pointer exceptions in ov_string_print	*/
 							if(OptValTemp)
 							{
@@ -443,12 +443,12 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 			}
 		}
 		else
-		{	/*	no shortcut, check if there is a channel (library open creates a a channel (TCPChannel per default))	*/
+		{	/*	no shortcut, check if there is a channel (library open creates a channel (TCPChannel per default))	*/
 			pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisMngCom);
 			if(!pChannel)
 			{
-				KS_logfile_error(("%s: typemethod: no Channel object associated. deactivating registration.", this->v_identifier));
-				this->v_actimode = 0;
+				KS_logfile_error(("%s: typemethod: no Channel object associated. retry in 2 minutes.", this->v_identifier));
+				this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
 				return;
 			}
 
@@ -542,8 +542,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 	}
 	else
 	{
-		KS_logfile_error(("%s: registering at Manager failed 5 times. deactivating typemethod.", thisMngCom->v_identifier));
-		thisMngCom->v_actimode = 0;
+		KS_logfile_error(("%s: registering at Manager failed 3 times. retry in 2 minutes.", thisMngCom->v_identifier));
+		this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
 		return;
 	}
 	return;
