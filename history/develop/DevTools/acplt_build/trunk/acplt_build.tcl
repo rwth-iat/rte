@@ -174,7 +174,9 @@ proc checkout {prefix module {dirname ""} {notrunk ""}} {
 }
 
 proc checkout_lib {x} {
-	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } then {
+	if { [string equal $x ksbase] } {
+			checkout develop/ks/trunk/ks_revised $x $x notrunk
+	} elseif { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
 	    	checkout develop/ks/trunk $x $x notrunk
 	} else {
 	    	checkout develop $x
@@ -419,7 +421,7 @@ proc create_release {} {
 	global builddir
 	global env
 
-        #create a release
+    #create a release
 	set env(ACPLT_HOME) $releasedir
 	if { $os == "nt" } then {
 		set env(PATH) $releasedir/bin/\;$env(PATH)
@@ -486,7 +488,7 @@ proc create_release {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
+set included_libs {ksbase fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
