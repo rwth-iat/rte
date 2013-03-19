@@ -15,6 +15,12 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
+/*	this is the current ks-system
+*	#include "ov_ksserver_backend.h"
+*/
+/* This one uses the "old" ks2nd. it is used to get the build script work	*/
+#include "ov_ksserver_xdr_stripped.h"
+
 #include "assert.h"
 #if !OV_SYSTEM_NT
 #include <unistd.h>
