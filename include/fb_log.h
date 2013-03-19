@@ -40,10 +40,12 @@
 
 #include "libov/ov_ov.h"
 
-#include "ov_ksserver_backend.h"	/*	this is the current ks-system for use with "old" ks2nd use the includebelow	*/
-/*
+/*	this is the current ks-system
+*	#include "ov_ksserver_backend.h"
+*/
+/* This one uses the "old" ks2nd. it is used to get the build script work	*/
 #include "ov_ksserver_xdr_stripped.h"
- */
+
 
 #ifdef __cplusplus
 extern "C" {

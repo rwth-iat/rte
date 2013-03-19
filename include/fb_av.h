@@ -57,7 +57,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_server_ticket_register(void);
 *   Zugriffsrechte fuer Variablen pruefen
 *   -------------------------------------
 */
-OV_BOOL fb_ticket_canwrite(const OV_ELEMENT *pelem, const OV_TICKET *pticket);
+//OV_BOOL fb_ticket_canwrite(const OV_ELEMENT *pelem, const OV_TICKET *pticket);
 
 /*
 *	Set licence infos
