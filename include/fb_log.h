@@ -40,9 +40,10 @@
 
 #include "libov/ov_ov.h"
 
-/***************** ov_runtimeserver FIX
-#include "libovks/ov_ksserver.h"
-*/
+#include "ov_ksserver_backend.h"	/*	this is the current ks-system for use with "old" ks2nd use the includebelow	*/
+/*
+#include "ov_ksserver_xdr_stripped.h"
+ */
 
 #ifdef __cplusplus
 extern "C" {
