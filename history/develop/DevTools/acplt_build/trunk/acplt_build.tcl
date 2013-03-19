@@ -488,7 +488,7 @@ proc create_release {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {ksbase fb iec61131stdfb ksserv ksservtcp ksapi ksapitcp fbcomlib}
+set included_libs {ksserv fb iec61131stdfb ksservtcp ksapi ksapitcp fbcomlib}
 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
