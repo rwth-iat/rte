@@ -39,7 +39,7 @@
 #include "fb.h"
 #include "libov/ov_string.h"
 #include "libov/ov_macros.h"
-#include "libovks/ov_ksserver.h"
+/*#include "libovks/ov_ksserver.h"*/
 #include "fb_av.h"
 #include "fb_namedef.h"
 #include "fb_macros.h"
