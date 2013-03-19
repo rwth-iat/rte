@@ -44,11 +44,14 @@
 ******************************************************************************/
 
 #include "ov.ovm"
-#include "ksbase.ovm"	
-/*	this is the current ks-system for use with "old" ks2nd use the includebelow	*/
-/*
-* #include "ksserv.ovm"
+/*	this is the current ks-system
+*	#include "ksbase.ovm"	
 */
+
+/*	this is to get the build script work. it bases on the "old" ks2nd	*/
+#include "ksserv.ovm"
+
+
 LIBRARY fb
 
 	VERSION   = "2.7";
