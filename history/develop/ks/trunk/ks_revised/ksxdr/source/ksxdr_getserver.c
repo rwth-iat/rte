@@ -32,7 +32,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(dataReceived, &servername, KS_NAME_MAXLEN))
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverversion)))
 	{
-		KS_logfile_error(("ksxdr_getserver: Error decoding Unregister message. Sending answer."));
+		KS_logfile_error(("ksxdr_getserver: Error decoding getserver message. Sending answer."));
 		*msgState = XDR_MSGST_GARBAGE_ARGS;
 		*ksErrCode = KS_ERR_TARGETGENERIC;
 		if(servername)

@@ -98,6 +98,63 @@ OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, KS_DATAPACK
 
 	return OV_ERR_OK;
 }
+
+OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
+{
+	OV_UINT varToSet;
+	OV_VTBLPTR_ksbase_ClientTicketGenerator pVtblTicketGen = NULL;
+	OV_RESULT result;
+
+	if(!TicketGenerator)	/*	use none ticket if no Generator specified	*/
+	{
+		varToSet = OV_TT_NONE;
+		result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+		if(Ov_Fail(result))
+			return result;
+	}
+	else
+	{
+		result = KS_DATAPACKET_write_xdr_OV_TICKET_TYPE(datapacket, &(TicketGenerator->v_TicketType));
+		if(Ov_Fail(result))
+			return result;
+		Ov_GetVTablePtr(ksbase_ClientTicketGenerator, pVtblTicketGen, TicketGenerator);
+		if(!pVtblTicketGen)
+			return OV_ERR_GENERIC;
+
+		return pVtblTicketGen->m_encodeTicket(TicketGenerator, datapacket);
+	}
+	return OV_ERR_OK;
+}
+
+OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator)
+{
+	OV_RESULT result;
+	OV_INT TicketType;
+	OV_VTBLPTR_ksbase_ClientTicketGenerator pVtblTicketGen = NULL;
+
+	result = KS_DATAPACKET_read_xdr_long(datapacket, &TicketType);
+	if(Ov_Fail(result))
+		return result;
+
+	if(!TicketGenerator)
+		if( TicketType == OV_TT_NONE)
+			return OV_ERR_OK;
+		else
+			return OV_ERR_GENERIC;
+	else
+	{
+		if(TicketGenerator->v_TicketType != TicketType)
+			return OV_ERR_BADAUTH;
+		else
+		{
+			Ov_GetVTablePtr(ksbase_ClientTicketGenerator, pVtblTicketGen, TicketGenerator);
+			if(!pVtblTicketGen)
+				return OV_ERR_GENERIC;
+			return pVtblTicketGen->m_decodeReply(TicketGenerator, datapacket);
+		}
+	}
+}
+
 /*************************************************************************************************************************************************************
  * 	decode header of replies (params are not checked for NULL-pointers)
  * @param datapacket: datapacket to read out
@@ -190,7 +247,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, OV_UINT* xid
 /*******************************************************************************************************************************************************************************
  * 				register
  ******************************************************************************************************************************************************************************/
-//TODO: Message haeder should be created outside this function as this function does not jknow about stream protocols or so
+
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
@@ -295,6 +352,10 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnRegister(
 	return KS_DATAPACKET_read_xdr_OV_RESULT(datapacket, result);
 }
 
+/*******************************************************************************************************************************************************************************
+ * 				getserver
+ ******************************************************************************************************************************************************************************/
+
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateGetServer(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
@@ -305,8 +366,24 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateGetServer(
     /*    
     *   local variables
     */
+	OV_RESULT result;
 
-    return OV_ERR_NOTIMPLEMENTED;
+	/*	Tickethandling	*/
+	result = ksxdr_insertTicket(datapacket, TicketGenerator);
+	if(Ov_Fail(result))
+		return result;
+
+	/* name	*/
+	result = KS_DATAPACKET_write_xdr_string(datapacket, &servername);
+	if(Ov_Fail(result))
+		return result;
+
+	/*	least version	*/
+	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &leastVersion);
+	if(Ov_Fail(result))
+		return result;
+
+    return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetServer(
@@ -316,14 +393,53 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetServer(
 	OV_RESULT* result,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
+	OV_STRING* port,
 	OV_TIME* expirationTime,
-	OV_UINT serverState
+	OV_UINT* serverState
 ) {
     /*    
     *   local variables
     */
+	OV_RESULT fncresult;
+	OV_UINT xdr_port;
 
-    return OV_ERR_NOTIMPLEMENTED;
+	/*	Tickethandling	*/
+	fncresult = ksxdr_readBackTicket(datapacket, TicketGenerator);
+	if(Ov_Fail(result))
+		return fncresult;
+
+	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(datapacket, result);
+	if(Ov_Fail(fncresult))
+		return fncresult;
+
+	/*	servername	*/
+	fncresult = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(datapacket, servername);
+	if(Ov_Fail(fncresult))
+		return fncresult;
+	/*	version	*/
+	fncresult = KS_DATAPACKET_read_xdr_u_long(datapacket, regVersion);
+	if(Ov_Fail(fncresult))
+		return fncresult;
+	/*	port	*/
+	fncresult = KS_DATAPACKET_read_xdr_u_long(datapacket, &xdr_port);
+	if(Ov_Fail(fncresult))
+		return fncresult;
+	*port = ov_memstack_alloc(12 * sizeof(char));
+	if(!(*port))
+		return OV_ERR_HEAPOUTOFMEMORY;
+	sprintf(*port, "%lu", xdr_port);
+
+	/*	Expiration Time	*/
+	fncresult = KS_DATAPACKET_read_xdr_u_long(datapacket, &(expirationTime->secs));
+	if(Ov_Fail(fncresult))
+		return fncresult;
+	fncresult = KS_DATAPACKET_read_xdr_u_long(datapacket, &(expirationTime->usecs));
+	if(Ov_Fail(fncresult))
+		return fncresult;
+
+	/*	state	*/
+	return KS_DATAPACKET_read_xdr_u_long(datapacket, serverState);
+
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_generateGetPP(
