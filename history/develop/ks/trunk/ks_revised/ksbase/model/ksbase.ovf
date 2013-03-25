@@ -156,8 +156,9 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
 	OV_RESULT* result,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
+	OV_STRING* port,
 	OV_TIME* expirationTime,
-	OV_UINT serverState
+	OV_UINT* serverState
 );
 
 /*	the dummy-parameter is here to be complete. these 4 bytes are not decoded right now, but they are always sent. maybe they will be used in the future, so...	*/

@@ -85,8 +85,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
 	OV_RESULT* result,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
+	OV_STRING* port,
 	OV_TIME* expirationTime,
-	OV_UINT serverState
+	OV_UINT* serverState
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
