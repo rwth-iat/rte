@@ -2608,6 +2608,7 @@ cshmi.prototype = {
 				}
 				//Domains were requested or ANY and we got a Domain right now
 				else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
+					//todo prefix path from active fbref
 					responseDictionary["OP_NAME"] = response[i][0];
 					responseDictionary["OP_TYPE"] = response[i][1];
 					responseDictionary["OP_COMMENT"] = response[i][2];
@@ -2670,6 +2671,7 @@ cshmi.prototype = {
 				for (var j=0; j<responseArray.length; j++){
 					var responseDictionary = Array();
 					responseDictionary["OP_VALUE"] = responseArray[j];
+					responseDictionary["OP_NAME"] = responseArray[j];
 					
 					//doku
 					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
@@ -3430,16 +3432,16 @@ cshmi.prototype = {
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
+		var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
 		if (requestList[ObjectPath]["TemplateDefinition"] === ""){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
 			return null;
-		}else if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0){
-			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself");
+		}else if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
 			return null;
 		}
 		
 		var requestListTemplate = new Object();
-		var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
@@ -3610,36 +3612,41 @@ cshmi.prototype = {
 		
 		//ConfigValue is something like "pumpcolor:yellow pumpname:N18"
 		var ConfigValueList = requestList[ObjectPath]["ConfigValues"].split(" ");
-		var ConfigValueEntry = null;
+		var KeyValueEntry = null;
 		var lastEntry = null;
 		for (var i=0; i < ConfigValueList.length; i++) {
-			ConfigValueEntry = ConfigValueList[i].split(":");
-			if (ConfigValueEntry.length === 2){
+			KeyValueEntry = ConfigValueList[i].split(":");
+			if (KeyValueEntry.length >= 2){
+				if (KeyValueEntry.length > 2){
+					var Value = KeyValueEntry.slice(1).join(":");
+				}else{
+					Value = KeyValueEntry[1];
+				}
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]] !== undefined){
-					VisualObject.ConfigValues[ConfigValueEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[ConfigValueEntry[1]];
+				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[Value] !== undefined){
+					VisualObject.ConfigValues[KeyValueEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[Value];
 				}
 				else{
-					VisualObject.ConfigValues[ConfigValueEntry[0]] = ConfigValueEntry[1];
+					VisualObject.ConfigValues[KeyValueEntry[0]] = Value;
 				}
 				//doku
-				if(ConfigValueEntry[0] === "Name"){
+				if(KeyValueEntry[0] === "Name"){
 					//if an template has the configValue Name:Dieter, this should be the object id
 					if (VisualParentObject.getAttribute("data-NameOrigin") !== "TemplateName"){
 						//if the parent was named, append our name
-						VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[ConfigValueEntry[0]];
+						VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[KeyValueEntry[0]];
 						VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
 					}else{
 						//our parent was named with an TemplateName, append our Name
-						VisualObject.id = VisualObject.ConfigValues[ConfigValueEntry[0]];
+						VisualObject.id = VisualObject.ConfigValues[KeyValueEntry[0]];
 						VisualObject.setAttribute("data-NameOrigin", "ConfigValue");
 					}
 				}
-				lastEntry = ConfigValueEntry[0];
-			}else if (ConfigValueEntry.length === 1 && lastEntry !== null){
+				lastEntry = KeyValueEntry[0];
+			}else if (KeyValueEntry.length === 1 && lastEntry !== null){
 				//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
-				VisualObject.ConfigValues[lastEntry] = VisualObject.ConfigValues[lastEntry]+" "+ConfigValueEntry[0];
+				VisualObject.ConfigValues[lastEntry] = VisualObject.ConfigValues[lastEntry]+" "+KeyValueEntry[0];
 			}
 		}
 		
