@@ -73,7 +73,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/csDemoSheet/circle/halbsekundenzyklus :
     CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
-        cyctime : INPUT  UINT = 4;
+        cyctime : INPUT  SINGLE = 4.0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -105,29 +105,13 @@ Dieser Server ist registriert fuer :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "scale.OUT";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/csDemoSheet/circle/halbsekundenzyklus/changecolor.if/testlimit.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  SINGLE = 0.500000;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -153,15 +137,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/csDemoSheet/circle/halbsekundenzyklus/changecolor.then/setred.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "red";
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -187,15 +163,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/csDemoSheet/circle/halbsekundenzyklus/changecolor.else/setgreen.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "green";
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -215,14 +183,6 @@ Dieser Server ist registriert fuer :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "scale.OUT";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -250,7 +210,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/csDemoSheet/valuelabel/halbsekundenzyklus :
     CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
-        cyctime : INPUT  UINT = 4;
+        cyctime : INPUT  SINGLE = 4.0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -271,14 +231,6 @@ Dieser Server ist registriert fuer :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "scale.OUT";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -397,14 +349,6 @@ Dieser Server ist registriert fuer :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "/vendor/server_name";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -421,8 +365,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 85.000000;
         height : INPUT  SINGLE = 28.000000;
-        hideable : INPUT  BOOL = FALSE;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -485,15 +427,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setContent.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "buttoncontent";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -502,7 +436,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 42.000000;
         height : INPUT  SINGLE = 28.000000;
-        hideable : INPUT  BOOL = FALSE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -566,15 +499,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setContent.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        eventVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "buttoncontent";
-        value : INPUT  UNKNOWN = ;
-        baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -583,7 +508,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 28.000000;
-        hideable : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -627,7 +551,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 28.000000;
-        hideable : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -691,7 +614,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -735,7 +657,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 30.000000;
-        hideable : INPUT  BOOL = TRUE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -875,7 +796,6 @@ Dieser Server ist registriert fuer :
         eventVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "pumpname";
-        value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1025,7 +945,6 @@ Dieser Server ist registriert fuer :
     VARIABLE_VALUES
         width : INPUT  SINGLE = 42.000000;
         height : INPUT  SINGLE = 58.000000;
-        hideable : INPUT  BOOL = FALSE;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1074,7 +993,6 @@ Dieser Server ist registriert fuer :
         eventVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "pumpcolor";
-        value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1119,7 +1037,6 @@ Dieser Server ist registriert fuer :
         eventVar : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "iexreq";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -1238,7 +1155,7 @@ Dieser Server ist registriert fuer :
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pumpv1/Text/cycl :
     CLASS /Libraries/cshmi/TimeEvent;
     VARIABLE_VALUES
-        cyctime : INPUT  UINT = 3;
+        cyctime : INPUT  SINGLE = 3.0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
