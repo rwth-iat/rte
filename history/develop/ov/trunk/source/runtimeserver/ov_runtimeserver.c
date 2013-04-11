@@ -422,6 +422,8 @@ int main(int argc, char **argv) {
 						/*	set terminating '\0' at occurance of newline or '#'	*/
 					terminateLine(startRead);
 
+					ov_logfile_debug("%s", startRead);
+
 					/**********************************************************************************
 					 * parse parameters
 					 *********************************************************************************/
