@@ -223,41 +223,11 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 	*	look for a DLL/shared library
 	*/
 	if(!openfnc) {
-		/*
-		*	create a copy of the search path in which we can modify chars
-		*/
-		if(getenv(OV_LIBRARY_PATH_ENV)) {
-			tmpenv =  Ov_HeapStrdup(getenv(OV_LIBRARY_PATH_ENV));
-		} else {
-			tmpenv =  Ov_HeapStrdup("");
-		}
-		if(!tmpenv) {
-			return NULL;
-		}
-		/*
-		*	iterate over all paths in the search paths
-		*/
-		for(path=tmpenv; path && !openfnc; path=nextpath) {
-			nextpath = strstr(path, OV_DIRPATHSEPARATOR);
-			if(nextpath) {
-				*nextpath = 0;
-				nextpath++;
-			}
-			/*
-			*	if there is a path given, determine the path delimiter;
-			*	otherwise there is none
-			*/
-			if(*path) {
-				delim = OV_DIRPATHDELIMITER;
-			} else {
-				delim = "";
-			}
 			/*
 			*	allocate memory for the DLL name and the function name;
 			*	we allocate enough memory for both.
 			*/
-			tmpstring = (OV_STRING)Ov_HeapMalloc(strlen(path)+strlen(delim)
-				+strlen(plib->v_identifier)+strlen(OV_DLLFLNSUFFIX)
+			tmpstring = (OV_STRING)Ov_HeapMalloc(strlen(plib->v_identifier)+strlen(OV_DLLFLNSUFFIX)
 				+strlen(OV_CONST_OPENFNC_PREFIX)+1);
 			if(!tmpstring) {
 				return NULL;
@@ -265,8 +235,7 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 			/*
 			*	enter the DLL name into the string and try to open the DLL
 			*/
-			sprintf(tmpstring, "%s%s%s" OV_DLLFLNSUFFIX, path, delim,
-				plib->v_identifier);
+			sprintf(tmpstring, "%s" OV_DLLFLNSUFFIX, plib->v_identifier);
 			handle = Ov_Library_OpenDLL(tmpstring);
 			if(handle) {
 				plib->v_handle = handle;
