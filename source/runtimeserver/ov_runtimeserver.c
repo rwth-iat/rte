@@ -40,7 +40,7 @@ int isWhiteSpace(const char* character)
 		return 0;
 }
 
-char* skipWhiteSpace(const char* line)
+char* skipWhiteSpace(char* line)
 {
 	char* temp;
 	temp = line;
@@ -85,7 +85,7 @@ void stripSpaceAtEnd(char* line)
  * returns string containing the value; 0 when out of memory; empty string when no value found
  * allocates memory for value on heap
  */
-char* readValue(const char* line)
+char* readValue(char* line)
 {
 	char* temp;
 	char* value = NULL;
@@ -267,7 +267,6 @@ int main(int argc, char **argv) {
 	OV_BOOL					logfileSpecified = FALSE;
 	OV_STRING				commandline_options = NULL;
 	OV_STRING				tempstr = NULL;
-	OV_STRING				tempstr2 = NULL;
 	OV_BOOL					exec = FALSE;
 	OV_STRING				execIdent = NULL;
 	OV_STRING				execClass = NULL;
@@ -279,7 +278,6 @@ int main(int argc, char **argv) {
 	OV_RESULT	            result;
 	OV_INT 		            port = 0; /* KS_ANYPORT */
 	OV_BOOL		            startup = TRUE;
-	OV_BOOL		            reuse = FALSE;
 	int	   	            exit_status = EXIT_SUCCESS;
 	OV_BOOL		        exit = FALSE;
 
@@ -351,7 +349,6 @@ int main(int argc, char **argv) {
 			{
 				char lineStr[257];
 				char* startRead = NULL;
-				char* startVal = NULL;
 				char* temp = NULL;
 				char* temp2 = NULL;
 				/*
@@ -417,10 +414,10 @@ int main(int argc, char **argv) {
 					}
 
 					startRead = skipWhiteSpace(lineStr);
-					if(startRead == '\0')
+					if(*startRead == '\0')
 						break;	/*	probably EOF	*/
 
-					if(startRead == '\n' || startRead == '\r')
+					if(*startRead == '\n' || *startRead == '\r')
 						continue;	/*	empty line	*/
 						/*	set terminating '\0' at occurance of newline or '#'	*/
 					terminateLine(startRead);
@@ -470,10 +467,10 @@ int main(int argc, char **argv) {
 							temp = readValue(startRead);
 						if(!temp || !*temp)
 							return EXIT_FAILURE;
-						port = strtol(temp, temp2, 0);
+						port = strtol(temp, &temp2, 0);
 						if(*temp2)
 						{
-							ov_logfile_error("Error parsing line %u: too many argumenty for PORT.", line);
+							ov_logfile_error("Error parsing line %u: too many arguments for PORT.", line);
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -852,8 +849,7 @@ MAPBACKUP:
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 		ov_result_getresulttext(result), result);
 		ov_logfile_info("Mapping backup-database \"%s\"...", db_backup_filename);
-		/* Adding database path prefix */
-		CONCATENATE_DATABASE_PATH(db_backup_filename, help);
+
 #ifdef OV_CATCH_EXCEPTIONS
 		result = ov_supervised_database_map(db_backup_filename);
 #else
@@ -879,7 +875,7 @@ ERRORMSG:
 			tempstr = malloc(strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(tempstr, "PORT=%d %s", port, commandline_options);
+				sprintf(tempstr, "PORT=%ld %s", port, commandline_options);
 				free(commandline_options);
 				commandline_options = tempstr;
 			}
@@ -889,7 +885,7 @@ ERRORMSG:
 			commandline_options = malloc(16);
 			if(commandline_options)
 			{
-				sprintf(commandline_options, "PORT=%d", port);
+				sprintf(commandline_options, "PORT=%ld", port);
 			}
 		}
 	}
