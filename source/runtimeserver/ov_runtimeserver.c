@@ -429,7 +429,7 @@ int main(int argc, char **argv) {
 					 *********************************************************************************/
 
 					/*	DBFILE	*/
-					if(strcasestr(startRead, "DBFILE")==startRead)
+					if(strstr(startRead, "DBFILE")==startRead)
 					{
 						if(!filename)
 							filename = readValue(startRead);
@@ -437,7 +437,7 @@ int main(int argc, char **argv) {
 							return EXIT_FAILURE;
 					}
 					/*	SERVERNAME	*/
-					else if(!strstr(startRead, "SERVERNAME"))
+					else if(strstr(startRead, "SERVERNAME")==startRead)
 					{
 						if(!servername)
 							servername = readValue(startRead);
