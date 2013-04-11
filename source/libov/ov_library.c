@@ -194,9 +194,6 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 #endif
 #if OV_DYNAMIC_LIBRARIES
 	OV_STRING			tmpstring;
-	OV_STRING			tmpenv;
-	OV_STRING			path, nextpath;
-	OV_STRING			delim;
 	OV_DLLHANDLE		handle;
 #endif
 	/*
@@ -223,55 +220,51 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 	*	look for a DLL/shared library
 	*/
 	if(!openfnc) {
-			/*
-			*	allocate memory for the DLL name and the function name;
-			*	we allocate enough memory for both.
-			*/
-			tmpstring = (OV_STRING)Ov_HeapMalloc(strlen(plib->v_identifier)+strlen(OV_DLLFLNSUFFIX)
+		/*
+		 *	allocate memory for the DLL name and the function name;
+		 *	we allocate enough memory for both.
+		 */
+		tmpstring = (OV_STRING)Ov_HeapMalloc(strlen(plib->v_identifier)+strlen(OV_DLLFLNSUFFIX)
 				+strlen(OV_CONST_OPENFNC_PREFIX)+1);
-			if(!tmpstring) {
-				return NULL;
-			}
-			/*
-			*	enter the DLL name into the string and try to open the DLL
-			*/
-			sprintf(tmpstring, "%s" OV_DLLFLNSUFFIX, plib->v_identifier);
-			handle = Ov_Library_OpenDLL(tmpstring);
-			if(handle) {
-				plib->v_handle = handle;
-				/*
-				*	we opened the DLL, get the address of the open function;
-				*	for that purpose enter its name into the string
-				*/
-				sprintf(tmpstring, OV_CONST_OPENFNC_PREFIX "%s",
-					plib->v_identifier);
-				/*
-				*	get the address of the open function
-				*/
-				openfnc = (OV_FNC_LIBRARY_OPEN*)Ov_Library_GetAddr(
-					handle, tmpstring);
-				if(!openfnc) {
-					/*
-					*	we got no open function, close the DLL
-					*/
-					ov_library_close(plib);
-				}
-			}
-#if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
-			else {
-				if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
-			}
-#endif
-			/*
-			*	free the temporary string
-			*/
-			Ov_HeapFree(tmpstring);
+		if(!tmpstring) {
+			return NULL;
 		}
 		/*
-		*	free the temporary search path
-		*/
-		Ov_HeapFree(tmpenv);
+		 *	enter the DLL name into the string and try to open the DLL
+		 */
+		sprintf(tmpstring, "%s" OV_DLLFLNSUFFIX, plib->v_identifier);
+		handle = Ov_Library_OpenDLL(tmpstring);
+		if(handle) {
+			plib->v_handle = handle;
+			/*
+			 *	we opened the DLL, get the address of the open function;
+			 *	for that purpose enter its name into the string
+			 */
+			sprintf(tmpstring, OV_CONST_OPENFNC_PREFIX "%s",
+					plib->v_identifier);
+			/*
+			 *	get the address of the open function
+			 */
+			openfnc = (OV_FNC_LIBRARY_OPEN*)Ov_Library_GetAddr(
+					handle, tmpstring);
+			if(!openfnc) {
+				/*
+				 *	we got no open function, close the DLL
+				 */
+				ov_library_close(plib);
+			}
+		}
+#if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
+		else {
+			if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
+		}
+#endif
+		/*
+		 *	free the temporary string
+		 */
+		Ov_HeapFree(tmpstring);
 	}
+
 #endif
 	if(openfnc) {
 		return openfnc();
