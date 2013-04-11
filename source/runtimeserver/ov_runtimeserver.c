@@ -422,8 +422,6 @@ int main(int argc, char **argv) {
 						/*	set terminating '\0' at occurance of newline or '#'	*/
 					terminateLine(startRead);
 
-					ov_logfile_debug("%s", startRead);
-
 					/**********************************************************************************
 					 * parse parameters
 					 *********************************************************************************/
@@ -455,7 +453,7 @@ int main(int argc, char **argv) {
 						}
 					}
 					/*	ID	*/
-					else if(!strcmp(startRead, "ID"))
+					else if(strstr(startRead, "ID")==startRead)
 					{
 						if(!password)
 							password = readValue(startRead);
@@ -463,7 +461,7 @@ int main(int argc, char **argv) {
 							return EXIT_FAILURE;
 					}
 					/*	PORT	*/
-					else if(!strcmp(startRead, "PORT"))
+					else if(strstr(startRead, "PORT")==startRead)
 					{
 						if(!port)
 							temp = readValue(startRead);
@@ -478,7 +476,7 @@ int main(int argc, char **argv) {
 						free(temp);
 					}
 					/*	LIBRARY	*/
-					else if(!strcmp(startRead, "LIBRARY"))
+					else if(strstr(startRead, "LIBRARY")==startRead)
 					{
 						if (libcount<16) {
 							libraries[libcount] = readValue(startRead);
@@ -489,7 +487,7 @@ int main(int argc, char **argv) {
 						else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
 					}
 					/*	LOGFILE	*/
-					else if(!strcmp(startRead, "LOGFILE"))
+					else if(strstr(startRead, "LOGFILE")==startRead)
 					{
 						if(logfileSpecified == FALSE)
 						{
@@ -515,7 +513,7 @@ int main(int argc, char **argv) {
 						}
 					}
 					/*	ACTIVITYLOCK	*/
-					else if(!strcmp(startRead, "ACTIVITYLOCK"))
+					else if(strstr(startRead, "ACTIVITYLOCK")==startRead)
 					{
 						ov_activitylock = TRUE;
 						if(*(startRead+12))
@@ -525,7 +523,7 @@ int main(int argc, char **argv) {
 						}
 					}
 					/*	OPTION	*/
-					else if(!strcmp(startRead, "OPTION"))
+					else if(strstr(startRead, "OPTION")==startRead)
 					{
 						temp = readValue(startRead);
 						if(!temp || !*temp)
@@ -555,7 +553,7 @@ int main(int argc, char **argv) {
 						free(temp);
 					}
 					/*	NOSTARTUP	*/
-					else if(!strcmp(startRead, "NOSTARTUP"))
+					else if(strstr(startRead, "NOSTARTUP")==startRead)
 					{
 						startup = FALSE;
 						if(*(startRead+9))
@@ -565,7 +563,7 @@ int main(int argc, char **argv) {
 						}
 					}
 					/*	EXIT	*/
-					else if(!strcmp(startRead, "EXIT"))
+					else if(strstr(startRead, "EXIT")==startRead)
 					{
 						exit = TRUE;
 						if(*(startRead+4))
@@ -575,7 +573,7 @@ int main(int argc, char **argv) {
 						}
 					}
 					/*	EXEC	*/
-					else if(!strcmp(startRead, "EXEC"))
+					else if(strstr(startRead, "EXEC")==startRead)
 					{
 						if(!exec)
 						{
