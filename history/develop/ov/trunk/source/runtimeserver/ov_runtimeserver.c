@@ -1,5 +1,7 @@
 #include <ctype.h>
 #include <signal.h>
+#include <stdio.h>
+#include <errno.h>
 
 //#include "libovks/ov_ksserver.h"
 #include "libov/ov_database.h"
@@ -15,14 +17,8 @@
 *	Constants
 */
 
-#if OV_SYSTEM_UNIX || OV_SYSTEM_OPENVMS
-#define OV_USERNAME getenv("USER")
-#elif OV_SYSTEM_NT
-#define OV_USERNAME getenv("USERNAME")
-#else
-#define OV_USERNAME NULL
-#endif
-
+/*	set this to 0 to remove the help output (reduces size for small systems)	*/
+#define OV_SERVER_HELP 1
 
 /*
 *	Global variables: the ACPLT/KS server for ACPLT/OV and the logger object
@@ -32,6 +28,91 @@ static OV_BOOL ov_ksserver_stripped_run_server=TRUE;
 
 
 /*	----------------------------------------------------------------------	*/
+/*
+ * Helper functions to parse config file
+ */
+
+int isWhiteSpace(const char* character)
+{
+	if(*character == ' ' || *character == '\t')
+		return 1;
+	else
+		return 0;
+}
+
+char* skipWhiteSpace(const char* line)
+{
+	char* temp;
+	temp = line;
+	while(*temp != '\n' && *temp!= '\r' && *temp != '\0' && isWhiteSpace(temp))
+		temp++;
+	return temp;
+}
+
+int isComment(const char* line)
+{
+	char* temp;
+
+	temp = skipWhiteSpace(line);
+	if(*line == '#')
+		return 1;
+	else
+		return 0;
+}
+
+void terminateLine(char* line)
+{
+	for(; *line !='\0' && *line!='\n' && *line!='\r' && *line!='#'; line++)
+		;
+	*line='\0';
+	return;
+}
+
+void stripSpaceAtEnd(char* line)
+{
+	char* temp = line;
+	if(line)
+	{
+		line = line + strlen(line);
+		while(line > temp && isWhiteSpace(--line))
+		{
+			*line='\0';
+		}
+	}
+}
+
+/*
+ * returns string containing the value; 0 when out of memory; empty string when no value found
+ * allocates memory for value on heap
+ */
+char* readValue(const char* line)
+{
+	char* temp;
+	char* value = NULL;
+
+	temp = line;
+	/*	move after option name (next whitespace)	*/
+	for(; *temp!='\0' && *temp!='\n' && *temp!='\r' && *temp!=' ' && *temp!='\t'; temp++)
+		;
+	temp = skipWhiteSpace(temp);
+	stripSpaceAtEnd(temp);
+	if(*temp)
+	{
+		value = malloc(strlen(temp) + 1);
+		if(!value)	/*	out of memory	*/
+			return NULL;
+
+		strcpy(value, temp);
+		return value;
+	}
+	else
+	{
+		value = calloc(1, sizeof(char));
+		if(!value)	/*	out of memory	*/
+			return NULL;
+		return value;
+	}
+}
 
 /*
 *	Signal handler for server shutdown
@@ -110,7 +191,7 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_stop(void) {
 }
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
-   ov_logfile_info("Received signal. Shuting server down...");
+   ov_logfile_info("Received signal. Shutting down server...");
    ov_ksserver_stripped_run_server=FALSE;
 }
 /*
@@ -123,13 +204,20 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
 
 static void ov_server_usage(void)
 {	
-            fprintf(stderr, "Usage: ov_server [arguments]\n"
+#if OV_SERVER_HELP
+		fprintf(stderr, "Usage: ov_server (-f DATABASE -s SERVERNAME):(-c CONFIGFILE) [arguments]\n"
 				"\n"
+            	"Database file and servername must be set. This can be done either with\n"
+            	"\tthe -f and -s options or inside a config file (-c option)\n"
+            	"\tAbsolute paths are recommended. Relative paths may leed to\n"
+            	"\tunwanted results since the base path is not specified.\n"
+            	"\n"
 				"The following optional arguments are available:\n"
 				"-f FILE, --file FILE             Set database filename (*.ovd)\n"
 				"-b FILE, --backup FILE           Set backup database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER  Set server name\n"
-				"-i ID, --identify ID             Set Ticket Identification for server access\n"
+				"-c CONFIGFILE                    Set filename to read configuration from\n"
+            	"-i ID, --identify ID             Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT      Set server port number\n"
 				"-w LIBRARY, --start-with LIBRARY Start server with library\n"
 				"-l LOGFILE, --logfile LOGFILE    Set logfile name, you may use stdout"
@@ -154,7 +242,9 @@ static void ov_server_usage(void)
             	"                                 CLASS and LIBRARY before starting the server."
             	"                                 All parameters are mandatory. Use '/' as wildcard.\n"
             	"-h, --help                       Display this help message\n");
-
+#else
+		fprintf(stderr, "No help output implemented for this server. Sorry.");
+#endif
 
 }
 
@@ -167,12 +257,14 @@ int main(int argc, char **argv) {
 	*	local variables
 	*/
 
-	OV_STRING	        help = NULL;
-
-	OV_STRING	            filename = "database.ovd";
+	OV_STRING	            filename = NULL;
 	OV_STRING	            servername = NULL;
+	OV_STRING				configFile	=	NULL;
+	OV_UINT					line = 0;
+	FILE*					cfFile	=	NULL;
 	OV_STRING	            password = NULL;
 	OV_STRING               libraries[16];
+	OV_BOOL					logfileSpecified = FALSE;
 	OV_STRING				commandline_options = NULL;
 	OV_STRING				tempstr = NULL;
 	OV_STRING				tempstr2 = NULL;
@@ -244,6 +336,295 @@ int main(int argc, char **argv) {
 			}
 		}
 		/*
+		 * set config file option and read out file if set
+		 */
+		else if(!strcmp(argv[i], "-c"))
+		{
+			i++;
+			if(i<argc){
+				configFile = argv[i];
+			}
+				else
+					goto HELP;
+
+			if(configFile)
+			{
+				char lineStr[257];
+				char* startRead = NULL;
+				char* startVal = NULL;
+				char* temp = NULL;
+				char* temp2 = NULL;
+				/*
+				 * parse config file
+				 * some memory is allocated on the heap. these variables are used while the server is running
+				 * hence this is no memleak. they are freed by the operating system on termination of the server
+				 *
+				 *
+				 * options from the commandline are NOT overwritten
+				 * lines starting with # and empty lines are ignored
+				 * Space and tab serve as whitespaces
+				 * lines are parsed as a whole
+				 * lines may be 256 characters long
+				 * no multi-line entries
+				 *
+				 * lines have the pattern
+				 * KEY VALUE
+				 * e.g. SERVERNAME ov_server1
+				 *
+				 * recognized options are:
+				 * DBFILE		path to database file
+				 * SERVERNAME	name of this ov_server
+				 * ID			Ticket Identification for server access
+				 * PORT			server port number
+				 * LIBRARY		Start server with library. one library per line
+				 * LOGFILE		logfile name, you may use stdout, stderr or (on NT-systems) ntlog
+				 * ACTIVITYLOCK	Locks OV activities (scheduler and accessorfnc). No argument
+				 * OPTION text	Appends the option text to the
+				 * 				cmdline_options variable in Vendortree
+				 * 				text is mandatory
+				 * NOSTARTUP	Do not startup the database. No argument
+				 * EXIT			Exit immediately (test if database loads). No argument
+				 * EXEC IDENTIFIER CLASS LIBRARY	Executes the first event in the schedulers
+				 * 									queue that matches concerning IDENTIFIER
+				 * 									CLASS and LIBRARY before starting the server.
+				 * 									All parameters are mandatory. Use '/' as wildcard.
+				 */
+
+				cfFile = fopen(configFile, "r");
+				if(!cfFile)
+				{
+					perror("Could not open config file: ");
+					return EXIT_FAILURE;
+				}
+				clearerr(cfFile);
+
+				/*
+				 * loop over lines
+				 */
+				while(fgets(lineStr, sizeof(lineStr), cfFile))
+				{
+					line++;
+					/*	check if line complete	 */
+					if(!strchr(lineStr, '\n'))
+					{
+						ov_logfile_error("Error reading config file: line %u too long", line);
+						return EXIT_FAILURE;
+					}
+
+					if(isComment(lineStr))
+					{	/*	skip line if comment	*/
+						continue;
+					}
+
+					startRead = skipWhiteSpace(lineStr);
+					if(startRead == '\0')
+						break;	/*	probably EOF	*/
+
+					if(startRead == '\n' || startRead == '\r')
+						continue;	/*	empty line	*/
+						/*	set terminating '\0' at occurance of newline or '#'	*/
+					terminateLine(startRead);
+
+					/**********************************************************************************
+					 * parse parameters
+					 *********************************************************************************/
+
+					/*	DBFILE	*/
+					if(!strcmp(startRead, "DBFILE"))
+					{
+						if(!filename)
+							filename = readValue(startRead);
+						if(!filename || !*filename)
+							return EXIT_FAILURE;
+					}
+					/*	SERVERNAME	*/
+					else if(!strcmp(startRead, "SERVERNAME"))
+					{
+						if(!servername)
+							servername = readValue(startRead);
+						if(!servername || !*servername)
+							return EXIT_FAILURE;
+						temp2 = servername;
+						while((*temp2>='0' && *temp2<='9')
+								|| (*temp2>='A' && *temp2<='Z')
+								|| (*temp2>='a' && *temp2<='z')
+								|| *temp2=='_')
+							temp2++;
+						if(*temp2!='\0')
+						{	/*	whitespaces at line end are stripped: nothing may follow here	*/
+							ov_logfile_error("Error parsing SERVERNAME in line %u: only A-Z, a-z, 0-9 and _ allowed in servername.", line);
+						}
+					}
+					/*	ID	*/
+					else if(!strcmp(startRead, "ID"))
+					{
+						if(!password)
+							password = readValue(startRead);
+						if(!password || !*password)
+							return EXIT_FAILURE;
+					}
+					/*	PORT	*/
+					else if(!strcmp(startRead, "PORT"))
+					{
+						if(!port)
+							temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						port = strtol(temp, temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many argumenty for PORT.", line);
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	LIBRARY	*/
+					else if(!strcmp(startRead, "LIBRARY"))
+					{
+						if (libcount<16) {
+							libraries[libcount] = readValue(startRead);
+							if(!libraries[libcount] || !*libraries[libcount])
+								return EXIT_FAILURE;
+							libcount++;
+						}
+						else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
+					}
+					/*	LOGFILE	*/
+					else if(!strcmp(startRead, "LOGFILE"))
+					{
+						if(logfileSpecified == FALSE)
+						{
+							if(!temp)
+								temp = readValue(startRead);
+							if(!temp || !*temp)
+								return EXIT_FAILURE;
+							if(!strcmp(temp, "stdout")) {
+								ov_logfile_logtostdout(NULL);
+							} else if(!strcmp(temp, "stderr")) {
+								ov_logfile_logtostderr(NULL);
+#if OV_SYSTEM_NT
+							} else if(!strcmp(temp, "ntlog")) {
+								ov_logfile_logtontlog(NULL);
+#endif
+							} else {
+								if(Ov_Fail(ov_logfile_open(NULL, temp, "w"))) {
+									ov_logfile_error("Could not open log file: \"%s\".\n", temp);
+									return EXIT_FAILURE;
+								}
+							}
+							free(temp);
+						}
+					}
+					/*	ACTIVITYLOCK	*/
+					else if(!strcmp(startRead, "ACTIVITYLOCK"))
+					{
+						ov_activitylock = TRUE;
+						if(*(startRead+12))
+						{
+							ov_logfile_error("Error parsing line %u: ACTIVITYLOCK does not accept parameters.", line);
+							return EXIT_FAILURE;
+						}
+					}
+					/*	OPTION	*/
+					else if(!strcmp(startRead, "OPTION"))
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						temp2 = temp;
+						while(!isWhiteSpace(temp2))
+							temp2++;
+						if(*temp2!='\0')
+						{	/*	whitespaces at line end are stripped: nothing may follow here	*/
+							ov_logfile_error("Error parsing OPTION in line %u: no whitespaces in allowed in options.", line);
+						}
+						if(commandline_options)
+						{
+							tempstr = realloc(commandline_options, strlen(commandline_options)+strlen(temp)+2); //oldlength + new option length + ' ' + '\0'
+							if(tempstr)
+							{
+								sprintf(tempstr, "%s %s", tempstr, temp);
+								commandline_options = tempstr;
+							}
+						}
+						else	//first time commandline_options is a NULL-pointer --> strlen would crash
+						{
+							commandline_options = malloc(strlen(temp)+1);
+							if(commandline_options)
+								strcpy(commandline_options, temp);
+						}
+						free(temp);
+					}
+					/*	NOSTARTUP	*/
+					else if(!strcmp(startRead, "NOSTARTUP"))
+					{
+						startup = FALSE;
+						if(*(startRead+9))
+						{
+							ov_logfile_error("Error parsing line %u: NOSTARTUP does not accept parameters.", line);
+							return EXIT_FAILURE;
+						}
+					}
+					/*	EXIT	*/
+					else if(!strcmp(startRead, "EXIT"))
+					{
+						exit = TRUE;
+						if(*(startRead+4))
+						{
+							ov_logfile_error("Error parsing line %u: EXIT does not accept parameters.", line);
+							return EXIT_FAILURE;
+						}
+					}
+					/*	EXEC	*/
+					else if(!strcmp(startRead, "EXEC"))
+					{
+						if(!exec)
+						{
+							temp = readValue(startRead);
+							if(!temp || !*temp)
+								return EXIT_FAILURE;
+							temp2 = temp;
+							while(!isWhiteSpace(temp2))
+								temp2++;
+							*temp2 = '\0';
+							execIdent = temp;
+							temp = ++temp2;
+							while(!isWhiteSpace(temp2))
+								temp2++;
+							*temp2 = '\0';
+							execClass = temp;
+							temp = ++temp2;
+							execLib = temp;
+							temp2++;
+							while(!isWhiteSpace(temp2))
+								temp2++;
+							if(*temp2)
+							{
+								ov_logfile_error("Error parsing line %u: too many arguments to EXEC option.", line);
+								return EXIT_FAILURE;
+							}
+							exec = TRUE;
+						}
+					}
+
+					/*
+					 * default: option unknown
+					 */
+					else
+					{
+						ov_logfile_error("Error parsing line %u: unknown option", line);
+						return EXIT_FAILURE;
+					}
+				}
+				/*	fgets returns 0 on error or eof. eof is ok, error aborts program	*/
+				if(ferror(cfFile))
+				{
+					perror("Error reading config file: ");
+					return EXIT_FAILURE;
+				}
+			}
+		}
+		/*
 		*	set port number option
 		*/
 		else if(!strcmp(argv[i], "-p") || !strcmp(argv[i], "--port-number")) {
@@ -305,7 +686,7 @@ int main(int argc, char **argv) {
 			        libraries[libcount] = argv[i];
            			libcount++;
                         }
-                        else 	ov_logfile_error("Too many libraries in start command.\n");
+                        else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
 		}
 		/*
 		*	exit immideately
@@ -319,6 +700,7 @@ int main(int argc, char **argv) {
 		*/
 		else if(!strcmp(argv[i], "-l") || !strcmp(argv[i], "--logfile")) {
 			i++;
+			logfileSpecified = TRUE;
 			if(i<argc) {
 				if(!strcmp(argv[i], "stdout")) {
 					ov_logfile_logtostdout(NULL);
@@ -424,19 +806,12 @@ HELP:	   ov_server_usage();
 	}
 #endif
 	/*
-	*	determine the servername
+	*	check servername
 	*/
 	if(!servername) {
-		if(OV_USERNAME) {
-			OV_STRING pc;
-			servername = (OV_STRING)malloc(strlen("ov_server_")+strlen(OV_USERNAME)+1);
-			sprintf(servername, "ov_server_%s", OV_USERNAME);
-			for(pc=servername; *pc; pc++) {
-				*pc = tolower(*pc);
-			}
-		} else {
-			servername = "ov_server";
-		}
+		ov_logfile_error("No server name set. Aborting.");
+		ov_server_usage();
+		return EXIT_FAILURE;
 	}
 #ifdef OV_TICKET_DEMO
 	/*
@@ -452,12 +827,20 @@ HELP:	   ov_server_usage();
 	ov_vendortree_setserverdescription("generic ACPLT/OV server");
 	ov_vendortree_setserverversion(OV_VER_SERVER);
 	ov_vendortree_setservername(servername);	//02.04.06 add by Senad
+
 	/*
 	*	map existing database
+	*	abort if no file set
 	*/
+
+	if(!filename)
+	{
+		ov_logfile_error("No database file set. Aborting.");
+		ov_server_usage();
+		return EXIT_FAILURE;
+	}
 	ov_logfile_info("Mapping database \"%s\"...", filename);
-	/* Adding database path prefix */
-	CONCATENATE_DATABASE_PATH(filename, help);
+
 #ifdef OV_CATCH_EXCEPTIONS
 	result = ov_supervised_database_map(filename);
 #else
@@ -503,7 +886,7 @@ ERRORMSG:
 		}
 		else
 		{
-			commandline_options = malloc(11);
+			commandline_options = malloc(16);
 			if(commandline_options)
 			{
 				sprintf(commandline_options, "PORT=%d", port);
