@@ -390,7 +390,7 @@ int main(int argc, char **argv) {
 				cfFile = fopen(configFile, "r");
 				if(!cfFile)
 				{
-					perror("Could not open config file \"%s\"", configFile);
+					perror("Could not open config file");
 					return EXIT_FAILURE;
 				}
 				clearerr(cfFile);
