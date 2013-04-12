@@ -390,7 +390,7 @@ int main(int argc, char **argv) {
 				cfFile = fopen(configFile, "r");
 				if(!cfFile)
 				{
-					perror("Could not open config file: ");
+					perror("Could not open config file \"%s\"", configFile);
 					return EXIT_FAILURE;
 				}
 				clearerr(cfFile);
@@ -616,7 +616,7 @@ int main(int argc, char **argv) {
 				/*	fgets returns 0 on error or eof. eof is ok, error aborts program	*/
 				if(ferror(cfFile))
 				{
-					perror("Error reading config file: ");
+					perror("Error reading config file");
 					return EXIT_FAILURE;
 				}
 			}
