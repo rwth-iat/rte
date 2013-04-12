@@ -259,7 +259,11 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 			if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
 		}
 #endif
-		/*
+#if OV_SYSTEM_NT
+		else {
+			ov_logfile_error("Can't load library. Errorcode: %d", GetLastError());
+		}
+#endif		/*
 		 *	free the temporary string
 		 */
 		Ov_HeapFree(tmpstring);
