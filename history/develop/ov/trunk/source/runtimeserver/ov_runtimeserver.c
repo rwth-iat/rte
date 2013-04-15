@@ -40,20 +40,16 @@ int isWhiteSpace(const char* character)
 		return 0;
 }
 
-char* skipWhiteSpace(char* line)
+char* skipWhiteSpace(const char* line)
 {
-	char* temp;
-	temp = line;
-	while(*temp != '\n' && *temp!= '\r' && *temp != '\0' && isWhiteSpace(temp))
-		temp++;
-	return temp;
+	while(*line != '\n' && *line!= '\r' && *line != '\0' && isWhiteSpace(line))
+		line++;
+	return line;
 }
 
 int isComment(const char* line)
 {
-	char* temp;
-
-	temp = skipWhiteSpace(line);
+	line = skipWhiteSpace(line);
 	if(*line == '#')
 		return 1;
 	else
