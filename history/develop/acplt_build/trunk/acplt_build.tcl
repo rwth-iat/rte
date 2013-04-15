@@ -199,7 +199,7 @@ proc checkout_acplt {} {
     cd $builddir/base
     #checkout libmpm
     checkout develop ov
-    checkout develop/DevTools acplt_makmak
+    #checkout develop/DevTools acplt_makmak
     cd $builddir/user
     foreach x $included_libs {
 	checkout_lib $x
@@ -241,9 +241,9 @@ proc build_acplt_mingw {} {
 	#cd $builddir/base/ks/build/cygwin
     #build_cygwin ks make -f makefile
 	cd $builddir/base/ov/build/cygwin
-    build_cygwin ov make -f makefile
-	cd $builddir/base/acplt_makmak/build/cygwin
-    build_cygwin acplt_makmak make -f makefile
+   #build_cygwin ov make -f makefile
+	#cd $builddir/base/acplt_makmak/build/cygwin
+   #build_cygwin acplt_makmak make -f makefile
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
@@ -275,11 +275,11 @@ proc build_acplt {} {
         #build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
    }
-   if { $os == "nt" } then {
-   	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
-   } else {
-	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
-   }
+   #if { $os == "nt" } then {
+   #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
+   #} else {
+   #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
+   #}
 }
 
 proc install {dir} {
@@ -309,7 +309,7 @@ proc install_acplt { target } {
     install $builddir/base/plt/build/$target
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
-    install $builddir/base/acplt_makmak/build/$target
+    #install $builddir/base/acplt_makmak/build/$target
 }
 
 proc makmak {library opts} {
