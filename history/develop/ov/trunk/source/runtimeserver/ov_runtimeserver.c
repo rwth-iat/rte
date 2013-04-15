@@ -44,7 +44,7 @@ char* skipWhiteSpace(const char* line)
 {
 	while(*line != '\n' && *line!= '\r' && *line != '\0' && isWhiteSpace(line))
 		line++;
-	return line;
+	return ((char*)line);
 }
 
 int isComment(const char* line)
