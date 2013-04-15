@@ -770,7 +770,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n");
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)libovks$(_LIB)\n");
+	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
 	if(acplt != 1){
 		fprintf(fd,"FBLIBS = $(BASE_LIB_DIR)fb$(_LIB)\n");
 	}
@@ -966,7 +966,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n");
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)libovks$(_LIB)\n");
+	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
 	fprintf(fd,"ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))\n\n");
 	if(acplt != 1){
 		fprintf(fd,"FBLIBS = $(BASE_LIB_DIR)fb_msvc$(_LIB)\n");
