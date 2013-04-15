@@ -256,7 +256,7 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 		}
 #if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 		else {
-			if (!nextpath) ov_logfile_error("Can't load library. Reason: %s", dlerror());
+			ov_logfile_error("Can't load library. Reason: %s", dlerror());
 		}
 #endif
 #if OV_SYSTEM_NT
