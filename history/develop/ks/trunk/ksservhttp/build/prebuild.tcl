@@ -12,6 +12,24 @@ proc processDir {dirname} {
 	set filelist [glob -nocomplain -types {f} *]
 	foreach filename $filelist {
 		puts -nonewline "Including file: $filename..."
+		#reading file
+		set in [open $filename r]
+		#mimetype business
+		set extension [file extension $filename]
+		
+		#default value
+		set mimetype "text/html"
+		if { $extension == ".js" } {
+			set mimetype "text/javascript"
+		} elseif { $extension == ".css" } {
+			set mimetype "text/css"
+		} elseif { $extension == ".svg" } {
+			set mimetype "image/svg+xml"
+		} elseif { $extension == ".jpg" || $extension == ".jpeg" || $extension == ".png" || $extension == ".ico" || $extension == ".gif"} {
+			#ignore binary formats
+			puts "skipping binary file"
+			continue
+		}
 		puts $out "	pindexhtml = Ov_SearchChildEx(ov_containment, pdom, \"$filename\", ksservhttp_staticfile);"
 		puts $out "	if(!pindexhtml)"
 		puts $out "	\{"
@@ -22,23 +40,7 @@ proc processDir {dirname} {
 		puts $out "			return result;"
 		puts $out "		\}"
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_content), \"\\"
-		#reading file
-		set in  [open $filename r]
-		#mimetype business
-		set extension [file extension $filename]
 		
-		if { $extension == ".jpg" || $extension == ".jpeg" || $extension == ".png" || $extension == ".ico"} {
-			#ignore binary formats
-			continue
-		}
-		
-		#default value
-		set mimetype "text/html"
-		if { $extension == ".js" } {
-			set mimetype "text/javascript"
-		} elseif { $extension == ".css" } {
-			set mimetype "text/css"
-		}
 		# line-by-line, read the original file
 		while {[gets $in line] != -1} {
 			#transform $line somehow, order of manipulation matters
