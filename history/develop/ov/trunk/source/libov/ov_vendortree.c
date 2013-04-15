@@ -1159,7 +1159,6 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getcmdlineoption_value(OV_STRING option)
 
 OV_DLLFNCEXPORT OV_INT ov_vendortree_getport()
 {
-	OV_INT port = -1;
 	OV_STRING begin_option = NULL;	//points to the beginning of "PORT" in cmdlineoptions
 	OV_STRING space_ptr = NULL;		//points to the first space after the option in cmdlineoptions
 	OV_STRING equ_ptr = NULL;		//points to the first '=' after the option in cmdlineoptions
