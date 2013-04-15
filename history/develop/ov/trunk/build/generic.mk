@@ -44,16 +44,16 @@ OV_SOURCE_DIR				= $(ACPLT_OV_DIR)source/
 
 OV_SOURCE_CODEGEN_DIR			= $(OV_SOURCE_DIR)codegen/
 OV_SOURCE_BUILDER_DIR			= $(OV_SOURCE_DIR)builder/
-OV_SOURCE_LIBOV_DIR			= $(OV_SOURCE_DIR)libov/
+OV_SOURCE_LIBOV_DIR				= $(OV_SOURCE_DIR)libov/
 OV_SOURCE_DBUTIL_DIR			= $(OV_SOURCE_DIR)dbutil/
 OV_SOURCE_LIBOVKS_DIR			= $(OV_SOURCE_DIR)libovks/
 OV_SOURCE_SERVER_DIR			= $(OV_SOURCE_DIR)server/
 OV_SOURCE_RUNTIMESERVER_DIR		= $(OV_SOURCE_DIR)runtimeserver/
-OV_RUNTIMESERVER_INCLUDE_DIR		= $(OV_INCLUDE_DIR)runtimeserver/
+OV_RUNTIMESERVER_INCLUDE_DIR	= $(OV_INCLUDE_DIR)runtimeserver/
 OV_SOURCE_NTSERVICE_DIR			= $(OV_SOURCE_DIR)ntservice/
 OV_SOURCE_EXAMPLE_DIR			= $(OV_SOURCE_DIR)example/
 OV_SOURCE_KSHISTLIB_DIR			= $(OV_SOURCE_DIR)kshist/
-OV_SOURCE_DYNOV_DIR			= $(OV_SOURCE_DIR)dynov/
+OV_SOURCE_DYNOV_DIR				= $(OV_SOURCE_DIR)dynov/
 OV_SOURCE_TASKLIB_DIR			= $(OV_SOURCE_DIR)tasklib/
 OV_SOURCE_DBDUMP_DIR			= $(OV_SOURCE_DIR)dbdump/
 OV_SOURCE_DBPARSE_DIR			= $(OV_SOURCE_DIR)dbparse/
@@ -61,6 +61,7 @@ OV_SOURCE_OVXIPARSE_DIR			= $(OV_SOURCE_DIR)ovxiparse/
 OV_SOURCE_MAKMAK_DIR			= $(OV_SOURCE_DIR)makmak/
 OV_SOURCE_DBINFO_DIR			= $(OV_SOURCE_DIR)dbinfo/
 OV_SOURCE_LIBINFO_DIR			= $(OV_SOURCE_DIR)libinfo/
+OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR	= $(OV_SOURCE_DIR)acplt_makmak_builder/
 
 ACPLT_PLT_DIR				= ../../../plt/
 
@@ -123,7 +124,8 @@ SOURCE_DIRS	= \
 	$(OV_SOURCE_DBINFO_DIR) \
 	$(OV_SOURCE_LIBINFO_DIR) \
 	$(OV_SOURCE_EXAMPLE_DIR) \
-	$(ACPLT_KS_SOURCE_DIR)
+	$(ACPLT_KS_SOURCE_DIR)	\
+	$(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)
 
 #	C-Includes
 #	----------
@@ -504,6 +506,23 @@ LIBINFO_OBJ  = $(foreach source, $(LIBINFO_SRC), $(basename $(notdir $(source)))
 LIBINFO_EXE  = ov_libinfo$(_EXE)
 LIBINFO_RES  = $(basename $(LIBINFO_EXE))$(_RES)
 
+
+#	new ACPLT/OV acplt_builder
+#	---------------
+
+ACPLT_BUILDER_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_builder.c
+ACPLT_BUILDER_OBJ  = $(foreach source, $(ACPLT_BUILDER_SRC), $(basename $(notdir $(source)))$(_OBJ))
+ACPLT_BUILDER_EXE  = acplt_builder$(_EXE)
+ACPLT_BUILDER_RES  = $(basename $(ACPLT_BUILDER_EXE))$(_RES)
+
+#	new ACPLT/OV acplt_makmak
+#	---------------
+
+ACPLT_MAKMAK_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_makmak.c
+ACPLT_MAKMAK_OBJ  = $(foreach source, $(ACPLT_MAKMAK_SRC), $(basename $(notdir $(source)))$(_OBJ))
+ACPLT_MAKMAK_EXE  = acplt_makmak$(_EXE)
+ACPLT_MAKMAK_RES  = $(basename $(ACPLT_MAKMAK_EXE))$(_RES)
+
 #	Targets and their sources
 #	-------------------------
 
@@ -512,7 +531,9 @@ TARGETS = \
 	$(OV_LIBOV_DLL) \
 	$(OV_LIBOV_LIB) \
 	$(OV_DBUTIL_EXE) \
-	$(OV_RUNTIMESERVER_EXE)
+	$(OV_RUNTIMESERVER_EXE) \
+	$(ACPLT_BUILDER_EXE) \
+    $(ACPLT_MAKMAK_EXE)
 
 #TARGETS = \
 #	$(OV_CODEGEN_EXE) \
@@ -558,4 +579,5 @@ SOURCES = \
 	$(OVXIPARSE_SRC) \
 	$(MAKMAK_SRC) \
 	$(LIBINFO_SRC) \
-	$(EXAMPLE_SRC)
+	$(EXAMPLE_SRC) \
+    $(ACPLT_MAKMAK_SRC)
