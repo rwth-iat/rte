@@ -295,6 +295,19 @@ $(EXAMPLE_DLL) : $(EXAMPLE_OBJ)
 
 example.c example.h : $(OV_CODEGEN_EXE)
 
+#	acplt_builder
+#	------------------------
+$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+	strip --strip-debug $(ACPLT_BUILDER_EXE)
+
+#	acplt_makmak
+#	------------------------
+$(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+	strip --strip-debug $(ACPLT_MAKMAK_EXE)
+
+
 #	Install
 #	-------
 
@@ -312,9 +325,9 @@ install : all
 
 clean :
 	@echo Cleaning up...
-	@rm -f core *.c ov.h example.h dynov.h kshist.h db_y.h db_lex.h \
+	@rm -f core *.c ov_ovmparser.h ov.h example.h dynov.h kshist.h db_y.h db_lex.h \
 		*$(_LIB) *$(_DLL) *$(_OBJ) $(OV_CODEGEN_EXE) $(OV_BUILDER_EXE) \
-		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE)
+		$(OV_DBUTIL_EXE) $(OV_SERVER_EXE) $(OV_RUNTIMESERVER_EXE) $(DBDUMP_EXE) $(DBPARSE_EXE) $(MAKMAK_EXE) $(LIBINFO_EXE) $(ACPLT_MAKMAK_EXE) $(ACPLT_BUILDER_EXE)
 	@for i in *_inst.h ; do echo > $$i ; done
 	@echo Done.
 
