@@ -1,5 +1,6 @@
 
-CC = gcc -mno-cygwin
+#CC = gcc -mno-cygwin
+CC = gcc
 AR = ar
 
 # If the rpc include directory is not included in the standard path
