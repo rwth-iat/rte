@@ -3436,7 +3436,7 @@ cshmi.prototype = {
 		if (requestList[ObjectPath]["TemplateDefinition"] === ""){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
 			return null;
-		}else if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+		}else if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
 			return null;
 		}
