@@ -241,7 +241,7 @@ proc build_acplt_mingw {} {
 	#cd $builddir/base/ks/build/cygwin
     #build_cygwin ks make -f makefile
 	cd $builddir/base/ov/build/cygwin
-   #build_cygwin ov make -f makefile
+    build_cygwin ov make -f makefile
 	#cd $builddir/base/acplt_makmak/build/cygwin
    #build_cygwin acplt_makmak make -f makefile
 }
