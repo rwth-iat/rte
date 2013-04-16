@@ -189,6 +189,7 @@ proc checkout_acplt {} {
     global basedir
     global os
     global included_libs
+	global release
     cd $builddir
     checkout archive libml
     #for source release - checkout all
@@ -201,9 +202,11 @@ proc checkout_acplt {} {
     checkout develop ov
     #checkout develop/DevTools acplt_makmak
     cd $builddir/user
-    foreach x $included_libs {
-	checkout_lib $x
-    }
+	if {$release == 1} {
+		foreach x $included_libs {
+		checkout_lib $x
+		}
+	}
 
     cd $basedir
  }
