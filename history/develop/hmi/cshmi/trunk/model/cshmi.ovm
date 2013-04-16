@@ -148,39 +148,6 @@ LIBRARY cshmi
 		COMMENT = "internal class for container elements as parts of ifThenElse";
 	END_CLASS;
 	
-	CLASS Blackbox : CLASS cshmi/ContainerElement
-		IS_INSTANTIABLE;
-		COMMENT = "allows HTML content and/or native JS code";
-		VARIABLES
-			x : SINGLE
-			COMMENT = "x-axis coordinate of the group"
-			INITIALVALUE = 0.0;
-			y : SINGLE
-			COMMENT = "y-axis coordinate of the group"
-			INITIALVALUE = 0.0;
-			width : SINGLE
-			COMMENT = "width of the group"
-			INITIALVALUE = 100.0;
-			height : SINGLE
-			COMMENT = "height of the group"
-			INITIALVALUE = 100.0;
-			visible : BOOL
-			COMMENT = "the element is visible"
-			INITIALVALUE = TRUE;
-			sourceOfLibrary[] : STRING
-			COMMENT = "exact link of the libraries located available via http";
-			HTMLcontent : STRING
-			COMMENT = "insert the required HTML-code here"
-			INITIALVALUE = "";
-			jsOnload : STRING
-			COMMENT = "insert your javascript-code here"
-			INITIALVALUE = "";
-			jsOnglobalvarchanged : STRING
-			COMMENT = "insert your javascript-code here"
-			INITIALVALUE = "";
-		END_VARIABLES;
-	END_CLASS;
-	
 	
 	/* Graphical Elements */
 	CLASS Element : CLASS cshmi/Object
@@ -415,6 +382,36 @@ LIBRARY cshmi
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
+	
+	CLASS Blackbox : CLASS cshmi/Element
+		IS_INSTANTIABLE;
+		COMMENT = "allows HTML content and/or native JS code";
+		VARIABLES
+			x : SINGLE
+			COMMENT = "x-axis coordinate of the Blackbox"
+			INITIALVALUE = 0.0;
+			y : SINGLE
+			COMMENT = "y-axis coordinate of the Blackbox"
+			INITIALVALUE = 0.0;
+			width : SINGLE
+			COMMENT = "width of the Blackbox"
+			INITIALVALUE = 100.0;
+			height : SINGLE
+			COMMENT = "height of the Blackbox"
+			INITIALVALUE = 100.0;
+			sourceOfLibrary[] : STRING
+			COMMENT = "exact link of the libraries";
+			HTMLcontent : STRING
+			COMMENT = "insert your HTML-Code here"
+			INITIALVALUE = "";
+			jsOnload : STRING
+			COMMENT = "insert your JavaScript-Code here; interpretation while loading"
+			INITIALVALUE = "";
+			jsOnglobalvarchange : STRING
+			COMMENT = "insert your JavaScript-Code here; interpretation while changing globalvar"
+			INITIALVALUE = "";
+		END_VARIABLES;
+	END_CLASS;
 
 	/* Actions */
 
@@ -629,7 +626,7 @@ LIBRARY cshmi
 	
 	CLASS UnlinkObjects : CLASS cshmi/Action
 		IS_INSTANTIABLE;
-		COMMENT = "link two Objects with an association. Association is the 'varname' of object A in KS.";
+		COMMENT = "unlink two Objects with an association. Association is the 'varname' of object A in KS.";
 		PARTS
 			ObjectA : CLASS cshmi/GetValue;
 			ObjectB : CLASS cshmi/GetValue;

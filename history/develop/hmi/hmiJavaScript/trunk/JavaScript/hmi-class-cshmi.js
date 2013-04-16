@@ -3745,20 +3745,13 @@ cshmi.prototype = {
 		}
 	},
 
-	/***************************************************************************************************************
-	 
-	 * HIER BLACKBOX �NDERUNG
-	 * 
+	/**
 	 * builds SVG container, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	
-	//newwrite
-	//alle buildSvg* in eine Funktion zusammenfassen, da sehr �hnlich. Mit this.ModellVariables...
-	
 	_buildBlackbox: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -3778,8 +3771,11 @@ cshmi.prototype = {
 			requestList[ObjectPath]["width"] = null;
 			requestList[ObjectPath]["height"] = null;
 			requestList[ObjectPath]["visible"] = null;
+			requestList[ObjectPath]["opacity"] = null;
+			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["sourceOfLibrary"] = null;
 			requestList[ObjectPath]["HTMLcontent"] = null;
+			
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode === false){
@@ -3988,9 +3984,32 @@ cshmi.prototype = {
 			VisualObject.appendChild(HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false));
 		};
 		
-		cshmimodel.GetEP = function(path, requestType, requestOutput) {
-			return HMI.KSClient.GetEP(path, requestType, requestOutput);
+		cshmimodel.getEP = function(path, requestType, requestOutput) {
+			return HMI.KSClient.getEP(path, requestType, requestOutput);
 		};
+
+		cshmimodel.createObject = function(path, classname) {
+			return HMI.KSClient.createObject(path, classname);
+		};
+		
+		cshmimodel.deleteObject = function(path) {
+			return HMI.KSClient.deleteObject(path);
+		};
+		
+		cshmimodel.linkObjects = function(pathA, pathB, portnameA) {
+			return HMI.KSClient.linkObjects(pathA, pathB, portnameA);
+		};
+		
+		cshmimodel.unlinkObjects = function(pathA, pathB, portnameA) {
+			return HMI.KSClient.unlinkObjects(pathA, pathB, portnameA);
+		};
+		
+		cshmimodel.renameObjects = function(oldName, newName) {
+			return HMI.KSClient.renameObject(oldName, newName);
+		};
+		
+		//TODO: 
+		//Error-log aufnehmen in API
 		
 		VisualObject.ResourceList = new Object();
 		VisualObject.ResourceList.cshmimodel = cshmimodel;
@@ -3998,13 +4017,12 @@ cshmi.prototype = {
 		//"onload" - TODO: noch sporadisch
 		window.setTimeout(function(){
 			HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload);
-		}, 1000);
+		}, 4000);
 		
 		return VisualObject;
 	},
 
-	/***************************************************************************************************************
-	 
+	/**
 	 * executes JavaScript Code
 	 * @param {SVGElement} VisualObject visual Object which is active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
@@ -4012,14 +4030,13 @@ cshmi.prototype = {
 	 */
 
 	_executeScript: function(VisualObject, ObjectPath, jsOnload){
-		HMI.hmi_log_info("triggered");
 		
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
 		var cshmimodel = VisualObject.ResourceList.cshmimodel;
-		
+
 		//evaluate JS-Code of Blackbox
 		eval(jsOnload);
-		
+					
 	},
 	
 	/***************************************************************************************************************

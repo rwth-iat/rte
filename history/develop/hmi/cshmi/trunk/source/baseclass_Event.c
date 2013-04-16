@@ -85,7 +85,6 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Event_constructor(
 		if (!(	Ov_CanCastTo(cshmi_Template, pParent)
 				||	Ov_CanCastTo(cshmi_TemplateDefinition, pParent)
 				||	Ov_CanCastTo(cshmi_Group, pParent)
-				||	Ov_CanCastTo(cshmi_Blackbox, pParent)
 				||	Ov_CanCastTo(cshmi_Element, pParent)
 				)){
 			ov_logfile_warning("An Event is not allowed below this parent. Event: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
