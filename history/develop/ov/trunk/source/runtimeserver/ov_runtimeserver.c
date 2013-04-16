@@ -255,7 +255,10 @@ int main(int argc, char **argv) {
 
 	OV_STRING	            filename = NULL;
 	OV_STRING	            servername = NULL;
+	OV_STRING				acplt_home = NULL;
 	OV_STRING				configFile	=	NULL;
+	OV_STRING				helper = NULL;
+	OV_UINT					hlpindex = 0;
 	OV_UINT					line = 0;
 	FILE*					cfFile	=	NULL;
 	OV_STRING	            password = NULL;
@@ -292,6 +295,10 @@ int main(int argc, char **argv) {
 #ifdef OV_DEBUG
 	ov_logfile_logtostderr(NULL);
 #endif
+	/*
+	 * get ACPLT_HOME
+	 */
+	acplt_home = getenv("ACPLT_HOME");
 	/*
 	*	parse command line arguments
 	*/
@@ -341,7 +348,7 @@ int main(int argc, char **argv) {
 				else
 					goto HELP;
 
-			if(configFile)
+			if(configFile && *configFile)
 			{
 				char lineStr[257];
 				char* startRead = NULL;
@@ -382,6 +389,42 @@ int main(int argc, char **argv) {
 				 * 									CLASS and LIBRARY before starting the server.
 				 * 									All parameters are mandatory. Use '/' as wildcard.
 				 */
+
+				/*
+				 * prepend ACPLT_HOME to configfile path if it is relative
+				 */
+#if OV_SYSTEM_UNIX
+				if(!(configFile[0]=='/'))
+#else
+				if(!(configFile[1]==':'|| configFile[0]=='\\'))
+#endif
+				{/*	relative path --> prepend ACPLT_HOME	*/
+					if(acplt_home && *acplt_home)
+					{
+						hlpindex = strlen(acplt_home);
+						helper = calloc(hlpindex+strlen(configFile)+2, sizeof(char));
+						if(!helper)
+						{
+							ov_logfile_error("Could not reserver memory for configfile path. Aborting.");
+							return EXIT_FAILURE;
+						}
+						strcpy(helper, acplt_home);
+						if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
+						{
+#if OV_SYSTEM_NT
+							helper[hlpindex] = '\';
+#else
+							helper[hlpindex] = '/';
+#endif
+							hlpindex++;
+						}
+						strcpy((helper+hlpindex), configFile);
+						configFile = helper;
+					}
+					else
+						ov_logfile_error("Relative path to configfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
+
+				}
 
 				cfFile = fopen(configFile, "r");
 				if(!cfFile)
@@ -500,6 +543,38 @@ int main(int argc, char **argv) {
 								ov_logfile_logtontlog(NULL);
 #endif
 							} else {
+#if OV_SYSTEM_UNIX
+								if(!(temp[0]=='/'))
+#else
+								if(!(temp[1]==':'|| temp[0]=='\\'))
+#endif
+								{/*	relative path --> prepend ACPLT_HOME	*/
+									if(acplt_home && *acplt_home)
+									{
+										hlpindex = strlen(acplt_home);
+										helper = calloc(hlpindex+strlen(temp)+2, sizeof(char));
+										if(!helper)
+										{
+											ov_logfile_error("Could not reserver memory for logfile path. Aborting.");
+											return EXIT_FAILURE;
+										}
+										strcpy(helper, acplt_home);
+										if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
+										{
+#if OV_SYSTEM_NT
+											helper[hlpindex] = '\';
+#else
+											helper[hlpindex] = '/';
+#endif
+											hlpindex++;
+										}
+										strcpy((helper+hlpindex), temp);
+										temp = helper;
+									}
+									else
+										ov_logfile_error("Relative path to logfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
+
+								}
 								if(Ov_Fail(ov_logfile_open(NULL, temp, "w"))) {
 									ov_logfile_error("Could not open log file: \"%s\".\n", temp);
 									return EXIT_FAILURE;
@@ -704,7 +779,40 @@ int main(int argc, char **argv) {
 					ov_logfile_logtontlog(NULL);
 #endif
 				} else {
-					if(Ov_Fail(ov_logfile_open(NULL, argv[i], "w"))) {
+					helper = argv[i];
+#if OV_SYSTEM_UNIX
+					if(!(argv[i][0]=='/'))
+#else
+					if(!(argv[i][1]==':'|| argv[i][0]=='\\'))
+#endif
+					{/*	relative path --> prepend ACPLT_HOME	*/
+						if(acplt_home && *acplt_home)
+						{
+							hlpindex = strlen(acplt_home);
+							helper = calloc(hlpindex+strlen(argv[i])+2, sizeof(char));
+							if(!helper)
+							{
+								ov_logfile_error("Could not reserver memory for logfile path. Aborting.");
+								return EXIT_FAILURE;
+							}
+							strcpy(helper, acplt_home);
+							if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
+							{
+#if OV_SYSTEM_NT
+								helper[hlpindex] = '\';
+#else
+								helper[hlpindex] = '/';
+#endif
+								hlpindex++;
+						}
+						strcpy((helper+hlpindex), argv[i]);
+
+					}
+					else
+						ov_logfile_error("Relative path to logfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
+
+				}
+				if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
 						ov_logfile_error("Could not open log file: \"%s\".\n", argv[i]);
 						return EXIT_FAILURE;
 					}
@@ -784,6 +892,11 @@ HELP:	   ov_server_usage();
 			goto HELP;
 		}
 	}
+
+	/**********************************************************************************************************************************************************
+	 * End of commandline / logfile parsing
+	 **********************************************************************************************************************************************************/
+
 	/*
 	*	terminate server if appropriate (RMOS only)
 	*/
@@ -826,11 +939,46 @@ HELP:	   ov_server_usage();
 	*	abort if no file set
 	*/
 
-	if(!filename)
+	if(!filename || !(*filename))
 	{
 		ov_logfile_error("No database file set. Aborting.");
 		ov_server_usage();
 		return EXIT_FAILURE;
+	}
+	/*
+	 * check if filename is a relative path. if so put $(ACPLT_HOME) in front of it
+	 */
+#if OV_SYSTEM_UNIX
+	if(!(filename[0]=='/'))
+#else
+	if(!(filename[1]==':'|| filename[0]=='\\'))
+#endif
+	{/*	relative path --> prepend ACPLT_HOME	*/
+		if(acplt_home && *acplt_home)
+		{
+			hlpindex = strlen(acplt_home);
+			helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
+			if(!helper)
+			{
+				ov_logfile_error("Could not reserver memory for filename path. Aborting.");
+				return EXIT_FAILURE;
+			}
+			strcpy(helper, acplt_home);
+			if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
+			{
+#if OV_SYSTEM_NT
+				helper[hlpindex] = '\';
+#else
+				helper[hlpindex] = '/';
+#endif
+				hlpindex++;
+			}
+			strcpy((helper+hlpindex), filename);
+			filename = helper;
+		}
+		else
+			ov_logfile_error("Relative path to database given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
+
 	}
 	ov_logfile_info("Mapping database \"%s\"...", filename);
 
