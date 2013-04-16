@@ -412,7 +412,7 @@ int main(int argc, char **argv) {
 						if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 						{
 #if OV_SYSTEM_NT
-							helper[hlpindex] = '\';
+							helper[hlpindex] = '\\';
 #else
 							helper[hlpindex] = '/';
 #endif
@@ -562,7 +562,7 @@ int main(int argc, char **argv) {
 										if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 										{
 #if OV_SYSTEM_NT
-											helper[hlpindex] = '\';
+											helper[hlpindex] = '\\';
 #else
 											helper[hlpindex] = '/';
 #endif
@@ -799,7 +799,7 @@ int main(int argc, char **argv) {
 							if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 							{
 #if OV_SYSTEM_NT
-								helper[hlpindex] = '\';
+								helper[hlpindex] = '\\';
 #else
 								helper[hlpindex] = '/';
 #endif
@@ -967,7 +967,7 @@ HELP:	   ov_server_usage();
 			if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 			{
 #if OV_SYSTEM_NT
-				helper[hlpindex] = '\';
+				helper[hlpindex] = '\\';
 #else
 				helper[hlpindex] = '/';
 #endif
