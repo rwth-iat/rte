@@ -326,7 +326,7 @@ LIBRARY ksbase
  *	the functionality of these routines is protocol denpendent and hence has to be implemented in the protocol specific libraries
  */
  
-	CLASS	ClientBase	:	CLASS	ksbase/ComTask
+	CLASS	ClientBase	:	CLASS	ksbase/DataHandler
 		COMMENT	=	"Abstract baseclass for clients. ks-protocol libraries can derive classes from this one for generating client messages (getEP, getVar etc.).";
 		OPERATIONS
 			/**
