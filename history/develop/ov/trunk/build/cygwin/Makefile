@@ -61,19 +61,23 @@ FLEX			= flex
 BISON			= bison
 CPP 			= cpp
 
-CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
+#CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
+CC				= gcc -I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g -Wall -Wno-attributes -O2 -fno-strict-aliasing -Wstrict-aliasing=2
 #-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
+#LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
+LINK			= gcc  -L$(MINGWLIBPATH)
 C_LIBS			= 
 
-CXX				= g++ -mno-cygwin -I$(MINGWINCLUDEPATH)
+#CXX				= g++ -mno-cygwin -I$(MINGWINCLUDEPATH)
+CXX				= g++ -I$(MINGWINCLUDEPATH)
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
+#CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
+CXX_LINK		= g++ -L$(MINGWLIBPATH)
 #CXX_LINK		= MAKE=$(MAKE) perl ../../../plt/build/templ.pl g++ -mno-cygwin -L$(MINGWLIBPATH)
 CXX_LIBS		= $(C_LIBS) -lwsock32
 
@@ -81,7 +85,8 @@ AR				= ar
 RANLIB			= ranlib
 
 DLLTOOL			= dlltool
-DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
+#DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
+DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mdll -L$(MINGWLIBPATH)
 CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 
 WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \
@@ -314,6 +319,18 @@ $(EXAMPLE_DLL) : $(EXAMPLE_OBJ) $(OV_LIBOVKS_LIB) $(OV_LIBOV_LIB)
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
 
 example.c example.h : $(OV_CODEGEN_EXE)
+
+#	acplt_builder
+#	------------------------
+$(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+	strip --strip-debug $(ACPLT_BUILDER_EXE)
+
+#	acplt_makmak
+#	------------------------
+$(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS)
+	strip --strip-debug $(ACPLT_MAKMAK_EXE)
 
 #	ACPLT/OV dynov library
 #	--------------------------
