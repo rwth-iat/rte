@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-04-09 16:30:10
+  Erstellt : 2013-04-17 16:50:17
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -2243,7 +2243,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setRed :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setGreen :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2259,7 +2259,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setRed.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setGreen.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2271,7 +2271,7 @@ isDigital:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
+        value : INPUT  STRING = "limegreen";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -2311,7 +2311,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setGreen :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setRed :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2327,7 +2327,7 @@ isDigital:TRUE|FALSE";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setGreen.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setRed.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -2339,7 +2339,7 @@ isDigital:TRUE|FALSE";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "limegreen";
+        value : INPUT  STRING = "red";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
