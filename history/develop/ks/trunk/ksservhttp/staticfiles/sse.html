@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Stats of database_free</title>
-    <script type="text/javascript" src="smoothie.js"></script>
-  </head>
-  <body>
-
-    <h1>Stats of database_free</h1>
-
-    <canvas id="mycanvas" width="400" height="100"></canvas>
-    
-    <script type="text/javascript">
+<head>
+	<meta charset="Windows-1252">
+	<title>Stats of database_free</title>
+	<script type="text/javascript" src="smoothie.js"></script>
+</head>
+<body>
+	<h1>Stats of database_free</h1>
+	
+	<canvas id="mycanvas" width="400" height="100"></canvas>
+	
+	<script type="text/javascript">
 	//an ajax request first
 	var ajaxRequest;	
 	try{
@@ -25,7 +25,7 @@
 				ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
 			} catch (e){
 				// Something went wrong
-				alert("Your browser broke!");
+				document.getElementsByTagName("h1")[0].innerHTML = "Your browser is too old, sorry!";
 			}
 		}
 	}
@@ -33,12 +33,11 @@
 	ajaxRequest.onreadystatechange = function(){
 		if(ajaxRequest.readyState == 4){
 			setInterval(function() {
-			  	var time = new Date().getTime();
-			  	if(time-lastUpdate > 990){
-			   		line1.append(time, lastData);
-			  	}
+				var time = new Date().getTime();
+				if(time-lastUpdate > 990){
+					line1.append(time, lastData);
+				}
 			}, 1000);
-
 			if(typeof EventSource !== 'undefined'){
 				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
 				source.onmessage = function(e) {
@@ -52,7 +51,7 @@
 					smoothie.stop();
 				};
 			}else{
-				alert("Your browser does not support EventSource");
+				document.getElementsByTagName("h1")[0].innerHTML = "An error occured. Your browser does not support EventSource";
 			}
 
 			var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: ajaxRequest.responseText, minValue: 0});
@@ -61,8 +60,12 @@
 		}
 	}
 	ajaxRequest.open('GET', '/getVar?path=/vendor/database_size&format=plain', true);
-	ajaxRequest.send(null); 
-
+	try{
+		ajaxRequest.send(null);
+	} catch(err){
+		document.getElementsByTagName("h1")[0].innerHTML = "An error occured. Perhaps this file was not served from an OV webserver.";
+	}
+	
 	var line1 = new TimeSeries();
 	var lastUpdate = 0;
 	var lastData = 0;

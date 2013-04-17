@@ -1,10 +1,56 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="Windows-1252">
 		<title>OV-http Server</title>
+		<style type="text/css">
+			code{
+				background-color: #DDDDFF;
+				border: 1px solid #8080FF;
+				color: #000080;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>It works!</h1>
-		Powered by ACPLT/OV.
+		<h1>The Webserver is running!</h1>
+		<p>Powered by ACPLT/OV. This server has some static files as a <a href="sse.html">demo</a> and supports KS commands. This page is only a quick reference.</p>
+		<h1>Supported KS commands</h1>
+		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
+		It is possible to select KSX with the 
+		<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">HTTP accept header</a>
+		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=tcl</code>.</p>
+		<h2>GetVar</h2>
+		<p>Gets one or multiple Variables.</p>
+		example: <code>/getVar?path=/vendor/database_free</code><br>
+		example: <code>/getVar?path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
+		<h2>SetVar</h2>
+		<p>Sets one or multiple Variables.</p>
+		example: <code>/setVar?path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
+		example: <code>/setVar?path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[1]=1</code>
+		<h2>GetEP</h2>
+		<p>Gets the engineering properties of an object. Can give all childrens with the parameter <code>requestType</code>(default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</p>
+		example: <code>/getEP?path=/TechUnits/add1</code><br>
+		example: <code>/getEP?path=/TechUnits/add1&amp;requestType=OT_ANY</code><br>
+		<h2>createObject</h2>
+		<p>Instantiates new objects.</p>
+		example: <code>/createObject?path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		example: <code>/createObject?Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		<h2>deleteObject</h2>
+		<p>Deletes objects.</p>
+		example: <code>/deleteObject?path=/TechUnits/add1</code><br>
+		example: <code>/deleteObject?path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
+		<h2>renameObject</h2>
+		<p>Renames objects.</p>
+		example: <code>/renameObject?path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
+		example: <code>/renameObject?path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
+		<h2>linkObject</h2>
+		<p>Links two pairs of objects with an OV association.</p>
+		example: <code>/link?path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
+		example: <code>/link?path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		<h2>unlinkObject</h2>
+		<p>Unlinks two pairs of objects with an OV association.</p>
+		example: <code>/unlink?path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
+		example: <code>/unlink?path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		
 	</body>
 </html>
