@@ -3891,9 +3891,9 @@ cshmi.prototype = {
 		//create foreignObject in <SVG>-Element
 		var SVGWidth = VisualObject.getAttribute("width");
 		var SVGLength = VisualObject.getAttribute("height");
-		var HTML = "<foreignObject x=\"0\" y=\"0\" width=\""+SVGWidth+"\" height=\""+SVGLength+"\"><body xmlns=\"http://www.w3.org/1999/xhtml\">"+HTMLcontent+"</body></foreignObject>";
-		var svgContent =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
-		+"xmlns:xlink=\""+HMI.HMI_Constants.NAMESPACE_XLINK+"\">"
+		var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'><body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
+		var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
+		+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
 		+HTML
 		+"</svg:svg>";
 		
@@ -4770,8 +4770,8 @@ cshmi.prototype = {
 			//"<rect stroke='red' x='0' y='0' width='10' height='20'></rect>"
 			//"<svg:rect stroke='red' x='0' y='0' width='10' height='20'></svg:rect>"
 			
-			var svgContent =	"<svg:svg xmlns:svg=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" xmlns=\""+HMI.HMI_Constants.NAMESPACE_SVG+"\" "
-				+"xmlns:xlink=\""+HMI.HMI_Constants.NAMESPACE_XLINK+"\">"
+			var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
+				+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
 				+requestList[ObjectPath]["SVGcontent"]
 				+"</svg:svg>";
 			VisualObject = HMI.HMIDOMParser.parse(svgContent);
