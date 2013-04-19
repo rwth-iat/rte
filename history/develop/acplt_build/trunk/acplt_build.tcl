@@ -200,7 +200,8 @@ proc checkout_acplt {} {
     cd $builddir/base
     #checkout libmpm
     checkout develop ov
-    #checkout develop/DevTools acplt_makmak
+	checkout archive fb_dbcommands "" notrunk
+
     cd $builddir/user
 	if {$release == 1} {
 		foreach x $included_libs {
@@ -239,14 +240,17 @@ proc build_acplt_mingw {} {
 	build_cygwin libml make -f mingw.mk
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
-	#cd $builddir/base/plt/build/cygwin
-    #build_cygwin plt make -f makefile
-	#cd $builddir/base/ks/build/cygwin
-    #build_cygwin ks make -f makefile
 	cd $builddir/base/ov/build/cygwin
     build_cygwin ov make -f makefile
 	#cd $builddir/base/acplt_makmak/build/cygwin
-   #build_cygwin acplt_makmak make -f makefile
+    #build_cygwin acplt_makmak make -f makefile
+	#enabling plt and ks just for fb_dbcommands	
+	cd $builddir/base/plt/build/cygwin
+    build_cygwin plt make -f makefile
+	cd $builddir/base/ks/build/cygwin
+    build_cygwin ks make -f makefile
+	cd $builddir/base/fb_dbcommands/build/cygwin
+    build_cygwin fb_dbcommands make -f makefile
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
@@ -266,17 +270,22 @@ proc build_acplt {} {
     }
     # build libmpm make -C $builddir/base/libmpm -f $makefile
     if { $os == "nt" } then {
-        #cd $builddir/base/plt/build/ntvc
-        #build plt nmake /f $makefile
-        #cd $builddir/base/ks/build/ntvc
-        #build ks nmake /f $makefile
+		#enabling plt and ks just for fb_dbcommands
+        cd $builddir/base/plt/build/ntvc
+        build plt nmake /f $makefile
+        cd $builddir/base/ks/build/ntvc
+        build ks nmake /f $makefile
         cd $builddir/base/ov/build/ntvc
         build ov make -f $makefile -k
+        cd $builddir/base/fb_dbcommands/build/ntvc
+        build fb_dbcommands make -f $makefile -k
         cd $basedir
     } else {
-        #build plt make -C $builddir/base/plt/build/$os
-        #build ks make -C $builddir/base/ks/build/$os
+		#enabling plt and ks just for fb_dbcommands
+        build plt make -C $builddir/base/plt/build/$os
+        build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
+		build fb_dbcommands make -C $builddir/base/fb_dbcommands/build/$os
    }
    #if { $os == "nt" } then {
    #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
@@ -313,6 +322,12 @@ proc install_acplt { target } {
     install $builddir/base/ks/build/$target
     install $builddir/base/ov/build/$target
     #install $builddir/base/acplt_makmak/build/$target
+	#install solely fb_dbcommands executable
+	if { $target == "linux" } then {
+		file copy -force $builddir/base/fb_dbcommands/build/$target/fb_dbcommands $builddir/bin
+	} else {
+		file copy -force $builddir/base/fb_dbcommands/build/$target/fb_dbcommands.exe $builddir/bin
+	}
 }
 
 proc makmak {library opts} {
@@ -410,10 +425,10 @@ proc release_lib {libname option} {
 		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
 		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
 		#}
-		if { [file exists $releasedir/user/$libname.build/build/linux/$libname.a] } {
-		    file mkdir $releasedir/user/$libname/build/linux/
-			file copy -force $releasedir/user/$libname.build/build/linux/$libname.a $releasedir/user/$libname/build/linux/
-		}
+		#if { [file exists $releasedir/user/$libname.build/build/linux/$libname.a] } {
+		#    file mkdir $releasedir/user/$libname/build/linux/
+		#	file copy -force $releasedir/user/$libname.build/build/linux/$libname.a $releasedir/user/$libname/build/linux/
+		#}
     }
     file delete -force $releasedir/user/$libname.build/
 }
