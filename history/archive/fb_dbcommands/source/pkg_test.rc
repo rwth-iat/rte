@@ -1,0 +1,42 @@
+/****************************************************************************
+
+
+fbserver.rc
+
+produced by Borland Resource Workshop
+
+
+*****************************************************************************/
+
+#define VERSIONINFO_1	1
+#define IDI_ICON1	1
+
+IDI_ICON1 ICON "ks.ico"
+
+
+VERSIONINFO_1 VERSIONINFO 
+FILEVERSION 1, 1, 0, 0
+PRODUCTVERSION 1, 0, 0, 0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "LTSoft GmbH\r\nH.-Hertz-Str. 9\r\n50170 Kerpen, Germany.\r\n\r\nTel.: 02273/9893-0\r\nFax : 02273/9893-33\r\ne-Mail : ltsoft@ltsoft.de\r\n\r\nInternet : http://www.ltsoft.de\000\000"
+   VALUE "FileVersion", "1.1\000\000"
+   VALUE "InternalName", "pkg_test.exe\000"
+   VALUE "LegalCopyright", "Copyright © 2002 LTSoft GmbH\000"
+   VALUE "Author", "Alexander Neugebauer <neugebauer@ltsoft.de>\000"
+   VALUE "License", "Copyright © 2002\r\nLTSoft GmbH,\r\nAll rights reserved.\000"
+  }
+
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+
+}

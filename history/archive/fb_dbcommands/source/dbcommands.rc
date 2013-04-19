@@ -1,0 +1,42 @@
+/*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   dbcommands.rc                                                             *
+******************************************************************************/
+
+#define VERSIONINFO_1        1
+#define IDI_ICON1        1
+
+IDI_ICON1 ICON "fb.ico"
+
+
+
+VERSIONINFO_1 VERSIONINFO 
+FILEVERSION 2, 0, 1, 0
+PRODUCTVERSION 2, 0, 1, 0
+#ifdef __BORLANDC__
+FILEOS                        VOS_NT_WINDOWS32
+FILETYPE                VFT_APP
+#endif
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "LTSoft GmbH\r\nBrabanterstr. 13\r\n50171 Kerpen, Germany.\r\n\r\nTel.: 02237/92869-0\r\nFax : 02237/92869-9\r\ne-Mail : ltsoft@ltsoft.de\r\n\r\nInternet : http://www.ltsoft.de\000\000"
+   VALUE "FileDescription", "iFBSpro command tool\000"
+   VALUE "FileVersion", "2.01\000\000"
+   VALUE "LegalCopyright", "Copyright © 2000-2008 LTSoft GmbH\000"
+   VALUE "OriginalFilename", "fb_dbcommands.exe\000"
+   VALUE "Author", "A.Neugebauer <neugebauer@ltsoft.de>\000"
+   VALUE "Licence", "Copyright © 2000-2008\r\nLTSoft GmbH,\r\nAll rights reserved.\000"
+  }
+ }
+
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
+ }
+
+}

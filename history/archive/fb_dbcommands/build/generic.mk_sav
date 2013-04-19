@@ -1,0 +1,194 @@
+#/*****************************************************************************
+#*                                                                            *
+#*    i F B S p r o                                                           *
+#*    #############                                                           *
+#*                                                                            *
+#*   L T S o f t                                                              *
+#*   Agentur für Leittechnik Software GmbH                                    *
+#*   Heinrich-Hertz-Straße 10                                                 *
+#*   50170 Kerpen                                                             *
+#*   Tel      : 02273/9893-0                                                  *
+#*   Fax      : 02273/9893-33                                                 *
+#*   e-Mail   : ltsoft@ltsoft.de                                              *
+#*   Internet : http://www.ltsoft.de                                          *
+#*                                                                            *
+#******************************************************************************
+#*                                                                            *
+#*   iFBSpro - Client-Bibliothek                                              *
+#*   ==============================================================           *
+#*                                                                            *
+#*   Datei                                                                    *
+#*   -----                                                                    *
+#*   generic.mk                                                               *
+#*                                                                            *
+#*   Historie                                                                 *
+#*   --------                                                                 *
+#*   1999-04-07  Alexander Neugebauer: Erstellung, LTSoft, Kerpen             *
+#*                                                                            *
+#*                                                                            *
+#*   Beschreibung                                                             *
+#*   ------------                                                             *
+#*   Makefile fuer die iFBS-Dienste (generischer Teil)                        *
+#*                                                                            *
+#*****************************************************************************/
+
+
+IFBSPRO_DIR                 = ../../../../ifbspro
+
+ACPLT_DIR					= $(IFBSPRO_DIR)/acplt123_sles/
+GOV_DIR						= $(ACPLT_DIR)ov/
+
+BIN_DIR						= $(ACPLT_DIR)/bin/$(SYSDIR)/
+
+SOURCE_DIR					= $(IFBSPRO_DIR)/fbs/fbs_dienste/source/
+INCLUDE_DIR					= $(IFBSPRO_DIR)/fbs/fbs_dienste/include/
+
+FBS_OV_DIR					= $(IFBSPRO_DIR)/fbs/fb/
+FBS_OV_INCLUDE_DIR			= $(FBS_OV_DIR)include/
+
+ACPLT_PLT_DIR				= $(ACPLT_DIR)plt/
+ACPLT_KS_DIR				= $(ACPLT_DIR)ks/
+ACPLT_PLT_INCLUDE_DIR		= $(ACPLT_PLT_DIR)include/
+ACPLT_KS_INCLUDE_DIR		= $(ACPLT_KS_DIR)include/
+
+GOV_INCLUDE_DIR				= $(GOV_DIR)include/
+
+SOURCE_DIRS = $(SOURCE_DIR) $(INCLUDE_DIR) $(FBS_OV_INCLUDE_DIR)
+
+ifeq ($(COMPILER), MSVC)
+DEFINES     = /DOV_SYSTEM_$(SYSTEM)=1 /DFD_SETSIZE=128 /DPLT_SYSTEM_$(SYSTEM)=1 \
+              /DPLT_USE_BUFFERED_STREAMS=1
+INCLUDES    = /I$(GOV_INCLUDE_DIR) /I$(ACPLT_PLT_INCLUDE_DIR) /I$(ACPLT_KS_INCLUDE_DIR) \
+			  /I$(ONCRPC_DIR) /I$(INCLUDE_DIR) /I$(FBS_OV_INCLUDE_DIR) -I.
+else
+DEFINES     = -DOV_SYSTEM_$(SYSTEM)=1 -DDFD_SETSIZE=128 -DPLT_SYSTEM_$(SYSTEM)=1 \
+              -DPLT_USE_BUFFERED_STREAMS=1
+INCLUDES    = -I$(GOV_INCLUDE_DIR) -I$(ACPLT_PLT_INCLUDE_DIR) -I$(ACPLT_KS_INCLUDE_DIR) \
+			  -I$(ONCRPC_DIR) -I$(INCLUDE_DIR) -I$(FBS_OV_INCLUDE_DIR) -I.
+endif
+
+#   ACPLT/KS Libraries (server side)
+#   --------------------------------
+
+ifeq ($(COMPILER), MSVC)
+LIBRPC 	= $(BIN_DIR)oncrpc$(LIB)
+endif
+
+LIBPLT		= $(BIN_DIR)libplt$(LIB)
+LIBKS		= $(BIN_DIR)libks$(LIB)
+LIBKSCLN 	= $(BIN_DIR)libkscln$(LIB)
+#LIBKSSVR	= $(BIN_DIR)libkssvr$(LIB)
+
+ACPLTKSLIBS	= $(LIBKSCLN) $(LIBKS) $(LIBPLT) $(LIBRPC)
+
+#   Dienst-Lib
+#   ----------
+DIENST_LIB_SRC = \
+	$(SOURCE_DIR)ifb_getserver.cpp \
+	$(SOURCE_DIR)ifb_logerror.cpp \
+	$(SOURCE_DIR)ifb_varprops.cpp \
+	$(SOURCE_DIR)ifb_readblockparam.cpp \
+	$(SOURCE_DIR)ifb_getcondata.cpp \
+	$(SOURCE_DIR)ifb_getportdata.cpp \
+	$(SOURCE_DIR)ifb_createcomcon.cpp \
+	$(SOURCE_DIR)ifb_setpar.cpp \
+	$(SOURCE_DIR)ifb_av.cpp \
+	$(SOURCE_DIR)ifb_delobj.cpp \
+	$(SOURCE_DIR)ifb_crobj.cpp \
+	$(SOURCE_DIR)ifb_tasklink.cpp \
+	$(SOURCE_DIR)ifb_rename.cpp \
+	$(SOURCE_DIR)ifb_delfulltu.cpp \
+	fb_parser.c \
+	fb_scanner.c \
+	$(SOURCE_DIR)ifb_dbsaveinstream.cpp \
+	$(SOURCE_DIR)ifb_memfre.cpp \
+	$(SOURCE_DIR)ifb_importproject.cpp \
+	$(SOURCE_DIR)ifb_aufraeumen.cpp \
+	$(SOURCE_DIR)ifb_importeval.cpp \
+	$(SOURCE_DIR)ifb_compproject.cpp \
+	$(SOURCE_DIR)ifb_compeval.cpp \
+	$(SOURCE_DIR)ifb_updateproject.cpp \
+	$(SOURCE_DIR)ifb_updateeval.cpp \
+	$(SOURCE_DIR)ifb_dir.cpp \
+	$(SOURCE_DIR)ifb_selectsave.cpp \
+	$(SOURCE_DIR)ifb_dupl.cpp \
+	$(SOURCE_DIR)ifb_cleandb.cpp
+
+
+DIENST_LIB_OBJ1 = \
+	ifb_getserver$(OBJ) \
+	ifb_logerror$(OBJ) \
+	ifb_varprops$(OBJ) \
+	ifb_readblockparam$(OBJ) \
+	ifb_getcondata$(OBJ)
+
+DIENST_LIB_OBJ2 = \
+	ifb_getportdata$(OBJ) \
+	ifb_createcomcon$(OBJ) \
+	ifb_setpar$(OBJ) \
+	ifb_av$(OBJ) \
+	ifb_delobj$(OBJ)\
+	ifb_crobj$(OBJ)
+
+DIENST_LIB_OBJ3 = \
+	ifb_tasklink$(OBJ) \
+	ifb_rename$(OBJ) \
+	ifb_delfulltu$(OBJ)\
+	fb_parser$(OBJ) \
+	fb_scanner$(OBJ)
+	
+DIENST_LIB_OBJ4 = \
+	ifb_dbsaveinstream$(OBJ) \
+	ifb_memfre$(OBJ) \
+	ifb_importproject$(OBJ) \
+	ifb_aufraeumen$(OBJ) \
+	ifb_importeval$(OBJ)
+
+DIENST_LIB_OBJ5 = \
+	ifb_compproject$(OBJ) \
+	ifb_compeval$(OBJ) \
+	ifb_updateproject$(OBJ) \
+	ifb_updateeval$(OBJ) \
+	ifb_dir$(OBJ)
+
+DIENST_LIB_OBJ6 = \
+	ifb_selectsave$(OBJ) \
+	ifb_dupl$(OBJ) \
+	ifb_cleandb$(OBJ)
+
+
+DIENST_LIB_OBJ = \
+	$(DIENST_LIB_OBJ1) \
+	$(DIENST_LIB_OBJ2) \
+	$(DIENST_LIB_OBJ3) \
+	$(DIENST_LIB_OBJ4) \
+	$(DIENST_LIB_OBJ5) \
+	$(DIENST_LIB_OBJ6)
+	
+DIENST_LIB_LIB = ifbslib$(LIB)
+DIENST_LIB_DLL = ifbslib$(DLL)
+
+#	Targets und deren Quellen
+#	-------------------------
+
+all: $(DIENST_LIB_LIB) fb_dbcommands$(EXE) fb_init$(EXE)
+
+
+#	ov.h \
+#	$(FBS_DIA_LIB_LIB) \
+#	$(FBS_DIENSTE_EXE)	 
+
+SOURCES = \
+	$(DIENST_LIB_SRC)
+
+#	$(FBS_DIA_LIB_SRC) \
+#	$(FBS_DIENSTE_SRC)
+
+#   Rules
+#   -----
+
+.SUFFIXES:
+
+.SUFFIXES: .c .cpp .h .y .lex .rc .ovm $(RES) $(LIB) $(OBJ) $(EXE)
+
+VPATH = $(SOURCE_DIRS) .
