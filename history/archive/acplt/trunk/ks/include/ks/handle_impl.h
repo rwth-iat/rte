@@ -42,7 +42,7 @@ KsPtrHandle<T>::xdrDecode(XDR *xdr)
 {
     T * p = T::xdrNew(xdr);
     if (!p) return false;
-    if (!bindTo(p, KsOsNew) ) {
+    if (!this->bindTo(p, KsOsNew) ) {
         delete p;
         return false;
     }
@@ -59,7 +59,7 @@ KsPtrHandle<T>::KsPtrHandle(XDR * xdr, bool & success)
         // Allocation ok, streaming succeeded.
         // Bind handle and object
         //
-        success = bindTo(p, PltOsNew);
+        success = this->bindTo(p, PltOsNew);
     } else {
         success = false;
     }

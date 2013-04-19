@@ -68,7 +68,7 @@ KsList<T>::xdrDecode(XDR * xdr)
         bool ok=false;
         T elem(xdr, ok);
         if (! ok) return false;
-        if (! addLast(elem) ) return false;
+        if (! this->addLast(elem) ) return false;
     } 
     return true;
 }
