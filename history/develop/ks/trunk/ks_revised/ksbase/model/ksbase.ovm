@@ -210,7 +210,7 @@ LIBRARY ksbase
 				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
 				INITIALVALUE	=	0;
 			isLocal	:	BOOL
-				COMMENT	=	"TRUE: this Channel holds a local connection (Important for manager commands"
+				COMMENT	=	"TRUE: this Channel holds a local connection (Important for manager commands)"
 				INITIALVALUE	=	FALSE;
 			usesStreamProtocol	:	BOOL
 				COMMENT	=	"Set this to TRUE when the Channel uses a stream-oriented Protocol (e.g. TCP). Set to FALSE when using a packet-oriented Protocol (e.g. UDP)"
@@ -322,41 +322,59 @@ LIBRARY ksbase
  	END_CLASS;
  /**
  *	Baseclass for client functionality
- *	This class provides the operation prototypes for generating client Messages (getEP, getVar etc.)
- *	the functionality of these routines is protocol denpendent and hence has to be implemented in the protocol specific libraries
+ *	This class provides the operation prototypes for requesting KS services as well as for processing the answers.
+ *	The functionality of these routines is protocol denpendant and hence has to be implemented in the protocol specific libraries.
+ *	The routine to interact with a client is the following: Request a service via the respective request-function. Give the request function a pointer to a callback function if you want to be called back.
+ *	When the client's state changes to request complete (no error bit set) call the respective process routine. 
+ *	Different states while requesting a service are handled by the client. The request and process routines must be programmed in a non-blocking manner. They must not
+ *	need a technological timespan to return (no waits allowed, see non-blocking requirement). 
  */
  
 	CLASS	ClientBase	:	CLASS	ksbase/DataHandler
 		COMMENT	=	"Abstract baseclass for clients. ks-protocol libraries can derive classes from this one for generating client messages (getEP, getVar etc.).";
+		VARIABLES
+			state	:	UINT
+				COMMENT	=	"State of Client: 0 initial; 1 waiting for connection; 2 waiting for answer; 4 waiting for answer completion; 8 processing completed; 128 error; everything > 128: subclass specific"
+				INITIALVALUE = 0;
+			runningKSservice	:	UINT
+				COMMENT	=	"Number of the KS service currently requested / processed by this client. 0 means none"
+				INITIALVALUE = 0;
+			callback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
+				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
+			holdConnection	:	BOOL
+				COMMENT	=	"If TRUE the corresponding channel will not be requested to close the connection after a request completed. Used for cyclic transfers"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;	
 		OPERATIONS
 			/**
 			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
 			*/
-			generateRegister	:	C_FUNCTION	<KSBASE_FNC_GENREG>;
+			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
 			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
-			generateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
 			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
-			generateGetServer	:	C_FUNCTION	<KSBASE_FNC_GENGETSRV>;
+			requestGetServer	:	C_FUNCTION	<KSBASE_FNC_REQGETSRV>;
 			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
-			generateGetPP		:	C_FUNCTION	<KSBASE_FNC_GENGETPP>;
+			requestGetPP		:	C_FUNCTION	<KSBASE_FNC_REQGETPP>;
 			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
-			generateGetEP		:	C_FUNCTION	<KSBASE_FNC_GENGETEP>;
+			requestGetEP		:	C_FUNCTION	<KSBASE_FNC_REQGETEP>;
 			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
-			generateGetVar		:	C_FUNCTION	<KSBASE_FNC_GENGETVAR>;
+			requestGetVar		:	C_FUNCTION	<KSBASE_FNC_REQGETVAR>;
 			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
-			generateSetVar		:	C_FUNCTION	<KSBASE_FNC_GENSETVAR>;
+			requestSetVar		:	C_FUNCTION	<KSBASE_FNC_REQSETVAR>;
 			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
-			generateGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_GENGETCANONPATH>;
+			requestGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_REQGETCANONPATH>;
 			processGetCanonicalPath			:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
-			generateCreateObject			:	C_FUNCTION	<KSBASE_FNC_GENCREATEOBJ>;
+			requestCreateObject			:	C_FUNCTION	<KSBASE_FNC_REQCREATEOBJ>;
 			processCreateObject				:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
-			generateDeleteObject			:	C_FUNCTION	<KSBASE_FNC_GENDELOBJ>;
+			requestDeleteObject			:	C_FUNCTION	<KSBASE_FNC_REQDELOBJ>;
 			processDeleteObject				:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
-			generateRenameObject			:	C_FUNCTION	<KSBASE_FNC_GENRENAMEOBJ>;
+			requestRenameObject			:	C_FUNCTION	<KSBASE_FNC_REQRENAMEOBJ>;
 			processRenameObject				:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
-			generateLink		:	C_FUNCTION	<KSBASE_FNC_GENLINK>;
+			requestLink			:	C_FUNCTION	<KSBASE_FNC_REQLINK>;
 			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
-			generateUnLink		:	C_FUNCTION	<KSBASE_FNC_GENUNLINK>;
+			requestUnLink		:	C_FUNCTION	<KSBASE_FNC_REQUNLINK>;
 			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -408,11 +426,19 @@ LIBRARY ksbase
 	END_ASSOCIATION;
 	
 /* 
- * This Association points to the Channel taht is currently running its typemethod
+ * This Association points to the Channel that is currently running its typemethod
  */
 	ASSOCIATION AssocCurrentChannel : ONE_TO_ONE
 		PARENT ChannelParent : CLASS ksbase/RootComTask;
 		CHILD  CurrentChannel  : CLASS ksbase/Channel;
+	END_ASSOCIATION;
+	
+/* 
+ * This Association connects a client with a ticket generator
+ */
+	ASSOCIATION AssocClientToTicketGenerator : ONE_TO_ONE
+		PARENT PClient : CLASS ksbase/ClientBase;
+		CHILD  CTicketGenerator  : CLASS ksbase/ClientTicketGenerator;
 	END_ASSOCIATION;
 	
 END_LIBRARY;

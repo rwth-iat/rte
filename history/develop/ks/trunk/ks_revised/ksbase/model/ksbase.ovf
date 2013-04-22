@@ -107,52 +107,56 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_DECODEREPLY(
 	KS_DATAPACKET* datapacket
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENREG(
+typedef OV_DLLFNCEXPORT	OV_RESULT KSBASE_FNC_RESET(
+	OV_INSTPTR_ksbase_ClientBase this
+);
+
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT	version,
 	const OV_UINT port,
 	const OV_UINT ttl,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)	
 );
 	
 	
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 );
 			
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNREG(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQUNREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNREG(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 );
 
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETSRV(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETSRV(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
@@ -162,179 +166,179 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETSRV(
 );
 
 /*	the dummy-parameter is here to be complete. these 4 bytes are not decoded right now, but they are always sent. maybe they will be used in the future, so...	*/
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETPP(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETPP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_UINT dummy,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_OBJ_PROJECTED_PROPS* items_val
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETEP(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETEP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_EP_FLAGS scopeFlags,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_OBJ_ENGINEERED_PROPS* items_val
 );
 
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETVAR(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETVAR(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_VAR_CURRENT_PROPS* items_val
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENSETVAR(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQSETVAR(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
 			
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENGETCANONPATH(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETCANONPATH(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
 	OV_STRING* items_canonicalPaths
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENCREATEOBJ(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_CREATEOBJECTITEM_RES* items_val
 );
 
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENDELOBJ(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQDELOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)	
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENRENAMEOBJ(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENLINK(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQLINK(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_GENUNLINK(
+typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQUNLINK(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
-	KS_DATAPACKET* datapacket	
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)		
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results

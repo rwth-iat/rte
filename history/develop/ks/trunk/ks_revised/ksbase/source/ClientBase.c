@@ -25,15 +25,21 @@
 #include "libov/ov_macros.h"
 #include "ov_ksserver_backend.h"
 
+OV_DLLFNCEXPORT	OV_RESULT ksbase_ClientBase_reset(
+	OV_INSTPTR_ksbase_ClientBase this
+){
+	return OV_ERR_NOTIMPLEMENTED;
+}
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRegister(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT	version,
 	const OV_UINT port,
 	const OV_UINT ttl,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -42,19 +48,19 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRegister(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 ){
     return OV_ERR_NOTIMPLEMENTED;
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnRegister(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestUnRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT version,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -62,18 +68,18 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnRegister(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnRegister(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetServer(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestGetServer(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING servername,
 	const OV_UINT leastVersion,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -81,7 +87,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetServer(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_STRING* servername,
 	OV_UINT* regVersion,
@@ -93,14 +98,15 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetServer(
 }
 
 /*	the dummy-parameter is here to be complete. these 4 bytes are not decoded right now, but they are always sent. maybe they will be used in the future, so...	*/
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetPP(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestGetPP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_UINT dummy,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -108,7 +114,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetPP(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_OBJ_PROJECTED_PROPS* items_val
@@ -116,14 +121,15 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetEP(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestGetEP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_STRING path,
 	const OV_OBJ_TYPE typeMask,
 	const OV_STRING	nameMask,
 	const OV_EP_FLAGS scopeFlags,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -131,7 +137,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetEP(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_OBJ_ENGINEERED_PROPS* items_val
@@ -139,12 +144,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetVar(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestGetVar(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -152,7 +158,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetVar(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_len,
 	OV_VAR_CURRENT_PROPS* items_val
@@ -160,12 +165,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateSetVar(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestSetVar(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_SETVAR_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -173,7 +179,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateSetVar(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
@@ -181,12 +186,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetCanonicalPath(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestGetCanonicalPath(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -194,7 +200,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateGetCanonicalPath(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
@@ -203,12 +208,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateCreateObject(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestCreateObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_CREATEOBJ_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -216,7 +222,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateCreateObject(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_CREATEOBJECTITEM_RES* items_val
@@ -224,12 +229,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateDeleteObject(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestDeleteObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* paths,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -237,7 +243,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateDeleteObject(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
@@ -245,12 +250,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRenameObject(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestRenameObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_RENAMEOBJECT_ITEM* items_val,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ){
 	return OV_ERR_NOTIMPLEMENTED;
 }
@@ -258,7 +264,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateRenameObject(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
@@ -266,12 +271,13 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
 	return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateLink(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestLink(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_LINK_ITEM teims_val,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -279,7 +285,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateLink(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
@@ -287,13 +292,14 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
     return OV_ERR_NOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnLink(
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestUnLink(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
 	const OV_STRING* link_paths,
 	const OV_STRING* element_paths,
-	KS_DATAPACKET* datapacket
+	const OV_INSTPTR_ov_domain	callbackThat,
+	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -301,7 +307,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_generateUnLink(
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnLink(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
-	KS_DATAPACKET* datapacket,
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results
