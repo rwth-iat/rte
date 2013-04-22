@@ -31,7 +31,7 @@
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ksxdr_services.h"
 
-
+void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling);
 
 
 OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
@@ -61,13 +61,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
     */
 	OV_INSTPTR_ksxdr_xdrManagerCom thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, pobj);
 	OV_INSTPTR_ksbase_Manager pManager = NULL;
-	OV_INSTPTR_ksbase_Channel pChannel = NULL;
-	OV_VTBLPTR_ksbase_Channel pVtblChannel = NULL;
-	OV_UINT BeginOfMessage = 0;
-	OV_UINT varToSet = 0;
-	OV_ANY servername;
-	OV_RESULT result;
-	OV_UINT i;
+
 
 
 	if(thisMngCom->v_UseShortCut == TRUE)
@@ -97,196 +91,18 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 			return;
 		}
 	}
-	else
-	{	/*	no shortcut, check if there is a channel (library open creates a a channel (TCPChannel per default))	*/
-		pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisMngCom);
-		if(!pChannel)
-		{
-			KS_logfile_error(("%s: shutdown: no Channel object associated. no unregister sent", thisMngCom->v_identifier));
-			return;
-		}
+	thisMngCom->v_RegisterState = 0;	/*	set state to unregistered	*/
+	thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
+	thisMngCom->v_Tries = 0;
 
-
-		Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
-		if(!pVtblChannel)
-		{
-			KS_logfile_error(("%s: shutdown: could not get VTable of channel object. no unregister sent", thisMngCom->v_identifier));
-			return;
-		}
-
-		ov_vendortree_getservername(&servername, NULL);
-
-		BeginOfMessage = (pChannel->v_outData.writePT - pChannel->v_outData.data);
-
-		/*	reserve space for stream header	*/
-		if(pChannel->v_usesStreamProtocol)	/*	Stream protocol --> we have 4 extra bytes in front containing the length (and 0x80 in the first of them to show it is the last fragment)	*/
-		{	/*	reserve space for rpc-header	*/
-			varToSet = 0x80000000;
-			result = KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &varToSet);
-			if(Ov_Fail(result))
-			{
-				ov_memstack_lock();
-				KS_logfile_error(("%s: shutdown: could not reserve space for length prepention. reason: %s no unregister sent", thisMngCom->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
-				ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-				return;
-			}
-		}
-
-		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_UNREGISTER, &(pChannel->v_outData), &(thisMngCom->v_sentXID));
-		if(Ov_Fail(result))
-		{
-			ov_memstack_lock();
-			KS_logfile_error(("%s: shutdown: could not generate unregister message header. reason: %s no unregister sent", thisMngCom->v_identifier, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
-			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-			return;
-		}
-
-		result = ksxdr_xdrClient_generateUnRegister(NULL, NULL, servername.value.valueunion.val_string, 2, &(pChannel->v_outData));
-		if(Ov_Fail(result))
-		{
-			ov_memstack_lock();
-			KS_logfile_error(("%s: shutdown: could not generate unregister message. reason: %s", thisMngCom->v_identifier, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
-			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-			return;
-		}
-
-		if(pChannel->v_usesStreamProtocol)	/*	Stream protocol --> we have 4 extra bytes in front containing the length (and 0x80 in the first of them to show it is the last fragment)	*/
-		{
-			varToSet = (pChannel->v_outData.length - BeginOfMessage) - 4;	/*	4 bytes containing length are not counted	*/
-			for(i=0; i<4; i++)
-				pChannel->v_outData.data[BeginOfMessage + i] = ((OV_BYTE*)&varToSet)[3-i];
-
-			pChannel->v_outData.data[BeginOfMessage] = 0x80;
-		}
-
-		/*	send created Message	*/
-		if(pChannel->v_ConnectionState != 2)	/*	2: Connstate open	*/
-		{
-			result = pVtblChannel->m_OpenLocalConn(pChannel, thisMngCom->v_ManagerPort);
-			if(Ov_Fail(result))
-			{
-				KS_logfile_error(("%s: shutdown: could not open local connection", thisMngCom->v_identifier));
-				thisMngCom->v_Tries++;
-				return;
-			}
-		}
-
-		if(pChannel->v_ConnectionState == 2)
-		{
-			pVtblChannel->m_SendData(pChannel);
-		}
-		else
-			KS_logfile_error(("%s: no connection to manager", thisMngCom->v_identifier));
-
-		thisMngCom->v_sentProcID = KS_UNREGISTER;
-		return;
-	}
-
+		//TODO insert call to xdrClient here
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrManagerCom_HandleData(
-	OV_INSTPTR_ksbase_DataHandler this,
-	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* answer
-) {
-    /*    
-    *   local variables
-    */
-	OV_RESULT result;
-	OV_RESULT fnc_result;
-	OV_INSTPTR_ksxdr_xdrManagerCom thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, this);
-	OV_UINT xid;
-	OV_INSTPTR_ksbase_Channel pChannel = NULL;
-	OV_UINT msgLenght = 0;
-	OV_UINT ticketindicator = 0;
 
-
-	pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisMngCom);
-	if(!pChannel)
-	{
-		KS_logfile_error(("%s: HandleData: no Channel object associated. cannot process data.", this->v_identifier));
-		return OV_ERR_GENERIC;
-	}
-
-	/*	checking for incomplete or fragmented messages is omitted here since the reply to a register command only has 4 bytes of data behind header and ticket	*/
-
-	if(pChannel->v_usesStreamProtocol)
-	{
-		result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &msgLenght);
-		if(Ov_Fail(result))
-			return result;
-
-		if(!(msgLenght & 0x80000000))
-		{
-			KS_logfile_error(("%s: HandleData: answer not valid (or fragmented). header: %0#10x", this->v_identifier, msgLenght));
-			return OV_ERR_BADPARAM;
-		}
-
-	}
-
-	result = ksxdr_processServerReplyHeader(dataReceived, &xid, &(thisMngCom->v_msgAccepted), &(thisMngCom->v_msgStatus));
-	if(Ov_Fail(result))
-		return result;
-	if(xid != thisMngCom->v_sentXID)
-	{
-		thisMngCom->v_RegisterState = 128;	/*	ERROR	*/
-		thisMngCom->v_ErrCode = 0;
-		thisMngCom->v_cycInterval = 5000;	/*	not registered, try again in 5 seconds	*/
-		KS_logfile_error(("%s: HandleData: xids of call and reply do not match", this->v_identifier));
-		return OV_ERR_OK;
-	}
-
-	if(thisMngCom->v_msgAccepted != XDR_MSG_ACCEPTED
-			|| thisMngCom->v_msgStatus != XDR_MSGST_SUCCESS)
-	{
-		thisMngCom->v_RegisterState = 128;	/*	ERROR	*/
-		thisMngCom->v_ErrCode = 0;
-		thisMngCom->v_cycInterval = 5000;	/*	not registered, try again in 5 seconds	*/
-		KS_logfile_error(("%s: HandleData: call message was not processed by the server", this->v_identifier));
-		return OV_ERR_OK;
-	}
-
-	result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &ticketindicator);
-	if(Ov_Fail(result))
-		return result;
-	if(ticketindicator)	/*	TicketType != none	*/
-	{
-		KS_logfile_error(("%s: HandleData: tickettype not none --> not implemented (and it probably never will be for register)", this->v_identifier));
-		return OV_ERR_NOTIMPLEMENTED;
-	}
-
-	result = ksxdr_xdrClient_processRegister(NULL, NULL, dataReceived, &fnc_result);
-	if(Ov_Fail(result))
-		return result;
-
-	if(Ov_OK(fnc_result))
-	{
-		if(thisMngCom->v_sentProcID == KS_REGISTER)
-			thisMngCom->v_RegisterState = 2; /*	registered	*/
-		else	/*	unregister	*/
-			thisMngCom->v_RegisterState = 0; /*	unregistered	*/
-
-		thisMngCom->v_ErrCode = fnc_result;
-		thisMngCom->v_Tries = 0;
-		thisMngCom->v_cycInterval = 30000;	/*	get called every 30 seconds	*/
-	}
-	else
-	{
-		thisMngCom->v_RegisterState = 128;	/*	ERROR	*/
-		thisMngCom->v_ErrCode = fnc_result;
-		thisMngCom->v_cycInterval = 5000;	/*	not registered, try again in 5 seconds	*/
-	}
-
-	return OV_ERR_OK;
-}
 
 OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
@@ -294,259 +110,258 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
     /*
     *   local variables
     */
-	OV_INSTPTR_ksxdr_xdrManagerCom thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, this);
-	OV_INSTPTR_ksbase_Manager pManager = NULL;
-	OV_INSTPTR_ksbase_Channel pChannel = NULL;
-	OV_VTBLPTR_ksbase_Channel pVtblChannel = NULL;
-	OV_INSTPTR_ksbase_ComTask pListener = NULL;
-	OV_INSTPTR_ov_class pClListener = NULL;
-	OV_INT port = -1;
-	OV_STRING OptValTemp = NULL;
-	OV_ELEMENT elemPort;
-	OV_ELEMENT ListenerElement;
-	OV_ANY servername;
-	OV_RESULT result;
-	OV_UINT BeginOfMessage = 0;
-	OV_UINT varToSet;
-	OV_UINT i;
+	OV_INSTPTR_ksxdr_xdrManagerCom	thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, this);
+	OV_INSTPTR_ksbase_Manager 		pManager = NULL;
+	OV_INSTPTR_ksbase_ComTask		pListener = NULL;
+	OV_INSTPTR_ov_class				pClListener = NULL;
+	OV_INT							port = -1;
+	OV_STRING						OptValTemp = NULL;
+	OV_ELEMENT						elemPort;
+	OV_ELEMENT						ListenerElement;
+	OV_ANY							servername;
+	OV_INSTPTR_ksxdr_xdrClient		xdrClient = NULL;
+	OV_RESULT						result;
 
-
-
-
-	if(thisMngCom->v_Tries < 3)
+	switch(thisMngCom->v_RegisterState)
 	{
-		/*	if the OwnPort is not set check commandline options and if they are not set check for a TCPListener (default binding)	*/
-		if(!thisMngCom->v_OwnPort || !(*thisMngCom->v_OwnPort) || ov_string_compare(thisMngCom->v_OwnPort, "-1") == OV_STRCMP_EQUAL)
+
+	case 0:	/*	if not registered or registered successfully (in latter case typemethod is slowed down to TTL * 0.9) or error (in this case typemethod is slowed down for retries)	*/
+	case 2:
+	case 128:
+		if(thisMngCom->v_Tries < 3)
 		{
-			/*
-			 * Determine port
-			 */
-			ov_memstack_lock();
-			port = ov_vendortree_getport();
-			if(port < 0 )// PORT not set
+			/*	if the OwnPort is not set check commandline options and if they are not set check for a TCPListener (default binding)	*/
+			if(!thisMngCom->v_OwnPort || !(*thisMngCom->v_OwnPort) || ov_string_compare(thisMngCom->v_OwnPort, "-1") == OV_STRCMP_EQUAL)
 			{
-				//check environment Variable OWNPORT (for compatibility reasons)
-				if (getenv("OWNPORT")) //OWNPORT set
+				/*
+				 * Determine port
+				 */
+				ov_memstack_lock();
+				port = ov_vendortree_getport();
+				if(port < 0 )// PORT not set
 				{
-					OptValTemp = getenv("OWNPORT");
-					ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
-				}
-				else
-				{	//check option KS_PORT
-					OptValTemp = ov_vendortree_getcmdlineoption_value("KS_PORT");
-					if(OptValTemp && *OptValTemp)
+					//check environment Variable OWNPORT (for compatibility reasons)
+					if (getenv("OWNPORT")) //OWNPORT set
 					{
+						OptValTemp = getenv("OWNPORT");
 						ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
 					}
-					else	/*	check the TCPListener (default binding) WITHOUT creating a dependency on TCPBind	*/
-					{	/*	get TCPlistener class	*/
-						/*	ov_searchchild does not work here, as ov_instanciation lacks the property OV_AP_LOCAL	*/
-						pClListener = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_ComTask);
-						while(pClListener)
+					else
+					{	//check option KS_PORT
+						OptValTemp = ov_vendortree_getcmdlineoption_value("KS_PORT");
+						if(OptValTemp && *OptValTemp)
 						{
-							if(ov_string_compare(pClListener->v_identifier, "TCPListener") == OV_STRCMP_EQUAL)
-								break;
-							pClListener = Ov_GetNextChild(ov_inheritance, pClListener);
+							ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
 						}
-						if(!pClListener)
-						{
-							KS_logfile_error(("%s: typemethod: OwnPort not set and class TCPListener (default binding) not found. retry in 2 minutes.", this->v_identifier));
-							this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
-							ov_memstack_unlock();
-							return;
-						}
-						/*	get TCPListener instance	*/
-						pListener = Ov_StaticPtrCast(ksbase_ComTask, Ov_GetFirstChild(ov_instantiation, pClListener));
-						if(!pListener)
-						{
-							KS_logfile_error(("%s: typemethod: OwnPort not set and TCPListner instance (default binding) not found. retry in 2 minutes.", this->v_identifier));
-							this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
-							ov_memstack_unlock();
-							return;
-						}
-
-						/*	read out port variable	*/
-						ListenerElement.elemtype = OV_ET_OBJECT;
-						ListenerElement.pobj = Ov_StaticPtrCast(ov_object, pListener);
-
-						if(Ov_Fail(ov_element_searchpart(&ListenerElement, &elemPort, OV_ET_VARIABLE, "port")))
-						{
-							KS_logfile_error(("%s: typemethod: element port not found. deactivating registration.", this->v_identifier));
-							ov_memstack_unlock();
-							this->v_actimode = 0;
-							return;
-						}
-						if(elemPort.elemtype == OV_ET_VARIABLE)
-						{
-							if(elemPort.pvalue)
+						else	/*	check the TCPListener (default binding) WITHOUT creating a dependency on TCPBind	*/
+						{	/*	get TCPlistener class	*/
+							/*	ov_searchchild does not work here, as ov_instanciation lacks the property OV_AP_LOCAL	*/
+							pClListener = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_ComTask);
+							while(pClListener)
 							{
-								port = *((OV_INT*) elemPort.pvalue);
+								if(ov_string_compare(pClListener->v_identifier, "TCPListener") == OV_STRCMP_EQUAL)
+									break;
+								pClListener = Ov_GetNextChild(ov_inheritance, pClListener);
+							}
+							if(!pClListener)
+							{
+								KS_logfile_error(("%s: typemethod: OwnPort not set and class TCPListener (default binding) not found. retry in 2 minutes.", this->v_identifier));
+								this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
+								ov_memstack_unlock();
+								return;
+							}
+							/*	get TCPListener instance	*/
+							pListener = Ov_StaticPtrCast(ksbase_ComTask, Ov_GetFirstChild(ov_instantiation, pClListener));
+							if(!pListener)
+							{
+								KS_logfile_error(("%s: typemethod: OwnPort not set and TCPListner instance (default binding) not found. retry in 2 minutes.", this->v_identifier));
+								this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
+								ov_memstack_unlock();
+								return;
+							}
+
+							/*	read out port variable	*/
+							ListenerElement.elemtype = OV_ET_OBJECT;
+							ListenerElement.pobj = Ov_StaticPtrCast(ov_object, pListener);
+
+							if(Ov_Fail(ov_element_searchpart(&ListenerElement, &elemPort, OV_ET_VARIABLE, "port")))
+							{
+								KS_logfile_error(("%s: typemethod: element port not found. deactivating registration.", this->v_identifier));
+								ov_memstack_unlock();
+								this->v_actimode = 0;
+								return;
+							}
+							if(elemPort.elemtype == OV_ET_VARIABLE)
+							{
+								if(elemPort.pvalue)
+								{
+									port = *((OV_INT*) elemPort.pvalue);
+								}
+								else
+									KS_logfile_error(("element value* is NULL"));
+								OptValTemp = ov_memstack_alloc(12);	/*	this way prevent us from NULL-pointer exceptions in ov_string_print	*/
+								if(OptValTemp)
+								{
+									sprintf(OptValTemp, "%ld", port);
+									ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
+								}
+								else
+								{
+									KS_logfile_error(("%s typemethod: could not set port: HEAPOUTOFMEMORY", thisMngCom->v_identifier));
+								}
 							}
 							else
-								KS_logfile_error(("element value* is NULL"));
-							OptValTemp = ov_memstack_alloc(12);	/*	this way prevent us from NULL-pointer exceptions in ov_string_print	*/
-							if(OptValTemp)
 							{
-								sprintf(OptValTemp, "%ld", port);
-								ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
+								KS_logfile_error(("%s: typemethod: could not obtain port from TCPListener. deactivating registration.", this->v_identifier));
+								ov_memstack_unlock();
+								this->v_actimode = 0;
+								return;
 							}
-							else
-							{
-								KS_logfile_error(("%s typemethod: could not set port: HEAPOUTOFMEMORY", thisMngCom->v_identifier));
-							}
-						}
-						else
-						{
-							KS_logfile_error(("%s: typemethod: could not obtain port from TCPListener. deactivating registration.", this->v_identifier));
-							ov_memstack_unlock();
-							this->v_actimode = 0;
-							return;
 						}
 					}
 				}
+				else
+				{
+					OptValTemp = ov_memstack_alloc(12);
+					sprintf(OptValTemp, "%ld", port);
+					ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
+				}
+				ov_memstack_unlock();
+			}
+			/*************************************************************************************************************************************************************
+			 * here we definitely know the port
+			 ************************************************************************************************************************************************************/
+
+			if(thisMngCom->v_UseShortCut == TRUE)
+			{
+				KS_logfile_debug(("%s: typemethod: using shortCut", this->v_identifier));
+				pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
+				if(!pManager)
+				{
+					KS_logfile_error(("%s: typemethod: no Manager here. Cannot register", this->v_identifier));
+					return;
+				}
+
+				KS_logfile_debug(("%s: registering MANAGER ksxdr protocol on port %s", thisMngCom->v_identifier, thisMngCom->v_OwnPort));
+				if(Ov_Fail(ksbase_Manager_register("MANAGER", 2, KSXDR_IDENTIFIER, thisMngCom->v_OwnPort, 30)))
+				{
+					thisMngCom->v_RegisterState = 128;	/*	set register error	*/
+					thisMngCom->v_Tries++;
+					return;
+				}
+				else
+				{
+					thisMngCom->v_RegisterState = 2;	/*	set state to registered and slow down typemethod	*/
+					thisMngCom->v_cycInterval = 30000;	/*	re-register every 30 seconds (assuming rootcomtask runs at 1 msec)	*/
+					thisMngCom->v_Tries = 0;
+					return;
+				}
 			}
 			else
 			{
-				OptValTemp = ov_memstack_alloc(12);
-				sprintf(OptValTemp, "%ld", port);
-				ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
-			}
-			ov_memstack_unlock();
-		}
-		/*************************************************************************************************************************************************************
-		 * here we definately know the port
-		 ************************************************************************************************************************************************************/
 
-		if(thisMngCom->v_UseShortCut == TRUE)
-		{
-			KS_logfile_debug(("%s: typemethod: using shortCut", this->v_identifier));
-			pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
-			if(!pManager)
-			{
-				KS_logfile_error(("%s: typemethod: no Manager here. Cannot register", this->v_identifier));
-				return;
-			}
+				ov_vendortree_getservername(&servername, NULL);
 
-			KS_logfile_debug(("%s: registering MANAGER ksxdr protocol on port %s", thisMngCom->v_identifier, thisMngCom->v_OwnPort));
-			if(Ov_Fail(ksbase_Manager_register("MANAGER", 2, KSXDR_IDENTIFIER, thisMngCom->v_OwnPort, 30)))
-			{
-				thisMngCom->v_RegisterState = 128;	/*	set register error	*/
+				/*	find the first xdrClient in containment to request register	*/
+				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
+				if(xdrClient)
+				{
+					while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+						xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
+				}
+
+				if(!xdrClient)
+				{/*	no xdrClient in containment --> create one	*/
+					result = Ov_CreateObject(ksxdr_xdrClient, xdrClient, this, "xdrClient");
+					if(Ov_Fail(result))
+					{
+						ov_memstack_lock();
+						KS_logfile_error(("%s: typemethod: could not create xdrClient. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+						ov_memstack_unlock();
+						this->v_actimode = 0;
+						thisMngCom->v_RegisterState = 128;
+						return;
+					}
+				}
+				ksxdr_xdrClient_requestRegister(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient), NULL, servername.value.valueunion.val_string, 2, strtol(thisMngCom->v_OwnPort, NULL, 10), 30, Ov_StaticPtrCast(ov_domain, this), &ksxdr_xdrManagercom_Callback);
+				thisMngCom->v_RegisterState = 1;	/*	set state to waiting for answer	*/
+				thisMngCom->v_cycInterval = 5000;	/*	used as a timeout: 5 seconds should be enough for a local connection (assuming rootcomtask runs at 1 msec)	*/
 				thisMngCom->v_Tries++;
 				return;
 			}
-			else
-			{
-				thisMngCom->v_RegisterState = 2;	/*	set state to registered and slow down typemethod	*/
-				thisMngCom->v_cycInterval = 30000;	/*	re-register every 30 seconds (assuming rootcomtask runs at 1 msec)	*/
-				thisMngCom->v_Tries = 0;
-				return;
-			}
+
 		}
 		else
-		{	/*	no shortcut, check if there is a channel (library open creates a channel (TCPChannel per default))	*/
-			pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisMngCom);
-			if(!pChannel)
+		{
+			KS_logfile_error(("%s: registering at Manager failed 3 times. retry in 2 minutes.", thisMngCom->v_identifier));
+			this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
+			thisMngCom->v_Tries = 0;
+			/*	reset client	*/
+			/*	find the first xdrClient in containment to issue reset	*/
+			xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
+			if(xdrClient)
 			{
-				KS_logfile_error(("%s: typemethod: no Channel object associated. retry in 2 minutes.", this->v_identifier));
-				this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
-				return;
+				while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+					xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 			}
-
-
-			Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
-			if(!pVtblChannel)
-			{
-				KS_logfile_error(("%s: typemethod: could not get VTable of channel object. deactivating registration.", this->v_identifier));
-				this->v_actimode = 0;
-				return;
-			}
-
-
-			ov_vendortree_getservername(&servername, NULL);
-
-
-			BeginOfMessage = (pChannel->v_outData.writePT - pChannel->v_outData.data);
-
-			/*	reserve space for stream header	*/
-			if(pChannel->v_usesStreamProtocol)	/*	Stream protocol --> we have 4 extra bytes in front containing the length (and 0x80 in the first of them to show it is the last fragment)	*/
-			{	/*	reserve space for rpc-header	*/
-				varToSet = 0x80000000;
-				result = KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &varToSet);
-				if(Ov_Fail(result))
-				{
-					ov_memstack_lock();
-					KS_logfile_error(("%s: typemethod: could not reserve space for length prepention. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-					ov_memstack_unlock();
-					thisMngCom->v_Tries++;
-					ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-					return;
-				}
-			}
-
-			/*	generate Header	*/
-			result = ksxdr_generateClientMessageHeader(KS_REGISTER, &(pChannel->v_outData), &(thisMngCom->v_sentXID));
-			if(Ov_Fail(result))
-			{
-				ov_memstack_lock();
-				KS_logfile_error(("%s: typemethod: could not generate register message header. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
-				thisMngCom->v_Tries++;
-				ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-				return;
-			}
-
-			result = ksxdr_xdrClient_generateRegister(NULL, NULL, servername.value.valueunion.val_string, 2, atoi(thisMngCom->v_OwnPort), 30, &(pChannel->v_outData));
-			if(Ov_Fail(result))
-			{
-				ov_memstack_lock();
-				KS_logfile_error(("%s: typemethod: could not generate register message. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
-				thisMngCom->v_Tries++;
-				ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-				return;
-			}
-
-			if(pChannel->v_usesStreamProtocol)	/*	Stream protocol --> we have 4 extra bytes in front containing the length (and 0x80 in the first of them to show it is the last fragment)	*/
-			{
-				varToSet = (pChannel->v_outData.length - BeginOfMessage) - 4;	/*	4 bytes containing length are not counted	*/
-				for(i=0; i<4; i++)
-					pChannel->v_outData.data[BeginOfMessage + i] = ((OV_BYTE*)&varToSet)[3-i];
-
-				pChannel->v_outData.data[BeginOfMessage] = 0x80;
-			}
-
-			/*	send created Message	*/
-			if(pChannel->v_ConnectionState != 2)	/*	2: Connstate open	*/
-			{
-				result = pVtblChannel->m_OpenLocalConn(pChannel, thisMngCom->v_ManagerPort);
-				if(Ov_Fail(result))
-				{
-					KS_logfile_error(("%s: typemethod: could not open local connection", this->v_identifier));
-					thisMngCom->v_Tries++;
-					return;
-				}
-			}
-
-			if(pChannel->v_ConnectionState == 2)
-			{
-				pVtblChannel->m_SendData(pChannel);
-			}
-			else
-				KS_logfile_error(("%s: no connection to manager", this->v_identifier));
-
-			thisMngCom->v_sentProcID = KS_REGISTER;
-			thisMngCom->v_Tries++;
+			ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
 			return;
 		}
+		break;
 
-	}
-	else
-	{
-		KS_logfile_error(("%s: registering at Manager failed 3 times. retry in 2 minutes.", thisMngCom->v_identifier));
-		this->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
-		return;
+	case 1: 	/*	waiting for answer	*/
+		/*	the callbackfunction sets state to registered or to error. if typemethod is run in this state a timeout occurred	*/
+		/*	increment Tries, reset Client, set state to error and be called again in 5 seconds	*/
+		thisMngCom->v_Tries++;
+
+		xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
+		if(xdrClient)
+		{
+			while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
+		}
+		ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
+
+		thisMngCom->v_RegisterState = 128;
+		thisMngCom->v_cycInterval = 5000;
+	break;
+
 	}
 	return;
 }
 
+void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling)
+{
+	OV_INSTPTR_ksbase_ClientBase	xdrClient = Ov_StaticPtrCast(ksbase_ClientBase, instanceCalling);
+	OV_INSTPTR_ksxdr_xdrManagerCom	this = Ov_StaticPtrCast(ksxdr_xdrManagerCom, instanceCalled);
+	OV_RESULT						ksResult;
+	OV_RESULT						result;
 
+	result = ksxdr_xdrClient_processRegister(xdrClient, NULL, &ksResult);
+	if(Ov_Fail(result))
+	{	ov_memstack_lock();
+		KS_logfile_error(("%s: callback: error processing answer: %s", this->v_identifier, ov_result_getresulttext(result)));
+		ov_memstack_unlock();
+		this->v_RegisterState = 128;	/*	error	*/
+		return;
+	}
+
+	ksbase_free_KSDATAPACKET(&(Ov_StaticPtrCast(ksxdr_xdrClient, xdrClient)->v_dataReceived));
+	KS_logfile_debug(("%s: callback: register processed: result: %lu", this->v_identifier, result));
+	if(ksResult == KS_ERR_OK)
+	{
+		this->v_RegisterState = 2;	/*	registered	*/
+		this->v_Tries = 0;
+		this->v_cycInterval = 30000;	/*	reregister in 30 seconds	*/
+		this->v_NextExecTime.secs += 30;
+		return;
+	}
+	else
+	{
+		this->v_RegisterState = 128;	/*	error	*/
+		this->v_ErrCode = ksResult;
+		return;
+	}
+
+	return;
+}

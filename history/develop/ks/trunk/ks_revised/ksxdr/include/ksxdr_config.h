@@ -49,3 +49,20 @@
 #define XDR_AUTH_NONE			(0x00)
 #define XDR_AUTH_SYS			(0x01)
 #define XDR_AUTH_SHORT			(0x02)
+
+/*
+ * KSXDR specific client states
+ */
+
+#define XDRCL_WAITINGFORSENDING	(1<<18)
+#define XDRCL_SERVERNOTFOUND	(1<<24)
+#define XDRCL_MANAGERNOTFOUND	(1<<25)
+#define XDRCL_TIMEOUT			(1<<26)
+
+#define XDRCL_PROCANS_OK			0
+#define XDRCL_PROCANS_INCOMPLETE	(1<<0)
+#define XDRCL_PROCANS_XIDMISSMATCH	(1<<7)
+
+
+
+

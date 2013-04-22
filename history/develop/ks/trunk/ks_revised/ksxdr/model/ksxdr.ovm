@@ -63,7 +63,7 @@ LIBRARY ksxdr
 	END_CLASS;
 	
 	
-	CLASS xdrManagerCom	:	CLASS ksbase/DataHandler
+	CLASS xdrManagerCom	:	CLASS ksbase/ComTask
 	IS_INSTANTIABLE;
 	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shorcut is used.";
 	VARIABLES
@@ -82,65 +82,93 @@ LIBRARY ksxdr
 		ErrCode		:	INT
 			COMMENT	=	"Error Code returned by register command"
 			INITIALVALUE = 0;
-		msgAccepted	:	INT
-			COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
-			INITIALVALUE = 0;
-		msgStatus	:	INT
-			COMMENT	=	"0 = message could be processed; otherwise: errorcode"
-			INITIALVALUE = 0;
-		rpcErrCode	:	INT
-			COMMENT	=	"reasons for denial"
-			INITIALVALUE = 0;
 		Tries		:	UINT
 			COMMENT	=	"Tries before successfull register. 5 is maximum"
-			INITIALVALUE = 0;
-		sentXID		:	UINT
-			COMMENT	=	"xid of the request sent to be compared with the one of the reply"
-			INITIALVALUE = 0;
-		sentProcID	:	UINT
-			COMMENT	=	"last requested procedure number (used to determine whether a register or an unregister reply is received)"
 			INITIALVALUE = 0;
 	END_VARIABLES;	
 	OPERATIONS
 		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
 		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
-		HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
 		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
 	END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS	xdrClient	:	CLASS	ksbase/ClientBase
+		IS_INSTANTIABLE;
 		COMMENT	=	"message generation and reply processing for xdr protocol";
+		VARIABLES
+			serverHost	:	STRING
+				COMMENT	=	"Hostname (or IP Address) of server to communicate with"
+				INITIALVALUE	=	"";
+			ManagerPort	:	STRING
+				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
+				INITIALVALUE	=	"7509";
+			serverPort	:	STRING
+				COMMENT	=	"Port (or IANA-Servicename) to communicate with"
+				INITIALVALUE	=	"";
+			serverName	:	STRING
+				COMMENT	=	"KS-Name of the server to communicate with"
+				INITIALVALUE	=	"";
+			msgAccepted	:	INT
+				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+				INITIALVALUE = 0;
+			msgStatus	:	INT
+				COMMENT	=	"0 = message could be processed; otherwise: errorcode"
+				INITIALVALUE = 0;
+			rpcErrCode	:	INT
+				COMMENT	=	"reasons for denial"
+				INITIALVALUE = 0;
+			sentProcID	:	UINT
+				COMMENT	=	"KS-Servicenumber of the last requested service"
+				INITIALVALUE	=	0;
+			sentXID	:	UINT
+				COMMENT	=	"XID sent with the last request"
+				INITIALVALUE	=	0;
+			timeLastEvent	:	TIME
+				COMMENT	=	"Timestamp of last state change.";
+			timeout		:	UINT
+				COMMENT	=	"Timeout for network operations in seconds"
+				INITIALVALUE	=	30;
+			dataToSend	:	C_TYPE	<KS_DATAPACKET>
+				COMMENT	=	"Data to be send (reqeust XDR).";
+			dataReceived	:	C_TYPE	<KS_DATAPACKET>
+				COMMENT	=	"Data received (answer XDR).";
+		END_VARIABLES;
 		OPERATIONS
 			/**
 			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
 			*/
-			generateRegister	:	C_FUNCTION	<KSBASE_FNC_GENREG>;
+			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
 			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
-			generateUnRegister	:	C_FUNCTION	<KSBASE_FNC_GENUNREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
 			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
-			generateGetServer	:	C_FUNCTION	<KSBASE_FNC_GENGETSRV>;
+			requestGetServer	:	C_FUNCTION	<KSBASE_FNC_REQGETSRV>;
 			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
-			generateGetPP		:	C_FUNCTION	<KSBASE_FNC_GENGETPP>;
+			requestGetPP		:	C_FUNCTION	<KSBASE_FNC_REQGETPP>;
 			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
-			generateGetEP		:	C_FUNCTION	<KSBASE_FNC_GENGETEP>;
+			requestGetEP		:	C_FUNCTION	<KSBASE_FNC_REQGETEP>;
 			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
-			generateGetVar		:	C_FUNCTION	<KSBASE_FNC_GENGETVAR>;
+			requestGetVar		:	C_FUNCTION	<KSBASE_FNC_REQGETVAR>;
 			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
-			generateSetVar		:	C_FUNCTION	<KSBASE_FNC_GENSETVAR>;
+			requestSetVar		:	C_FUNCTION	<KSBASE_FNC_REQSETVAR>;
 			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
-			generateGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_GENGETCANONPATH>;
-			processGetCanonicalPath			:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
-			generateCreateObject			:	C_FUNCTION	<KSBASE_FNC_GENCREATEOBJ>;
-			processCreateObject				:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
-			generateDeleteObject			:	C_FUNCTION	<KSBASE_FNC_GENDELOBJ>;
-			processDeleteObject				:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
-			generateRenameObject			:	C_FUNCTION	<KSBASE_FNC_GENRENAMEOBJ>;
-			processRenameObject				:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
-			generateLink		:	C_FUNCTION	<KSBASE_FNC_GENLINK>;
+			requestGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_REQGETCANONPATH>;
+			processGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
+			requestCreateObject	:	C_FUNCTION	<KSBASE_FNC_REQCREATEOBJ>;
+			processCreateObject	:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
+			requestDeleteObject	:	C_FUNCTION	<KSBASE_FNC_REQDELOBJ>;
+			processDeleteObject	:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
+			requestRenameObject	:	C_FUNCTION	<KSBASE_FNC_REQRENAMEOBJ>;
+			processRenameObject	:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
+			requestLink			:	C_FUNCTION	<KSBASE_FNC_REQLINK>;
 			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
-			generateUnLink		:	C_FUNCTION	<KSBASE_FNC_GENUNLINK>;
+			requestUnLink		:	C_FUNCTION	<KSBASE_FNC_REQUNLINK>;
 			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
+			typemethod 			: 	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
 	

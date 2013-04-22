@@ -29,12 +29,14 @@ OV_RESULT ksxdr_getCanonicalPath(const OV_UINT version, const OV_TICKET* pticket
 OV_RESULT ksxdr_renameObject(const OV_UINT version, const OV_TICKET* pticket, KS_DATAPACKET* dataReceived, KS_DATAPACKET* serviceAnswer, OV_UINT* msgState, OV_UINT* ksErrCode);
 
 /*	Client side	*/
-OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, KS_DATAPACKET* datapacket, OV_UINT* xid);
+OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL usesStreamProtocol, KS_DATAPACKET* datapacket, OV_UINT* xid, OV_UINT* pindex);
 
-OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, OV_UINT* xid, OV_INT* msgAccepted, OV_INT* msgStatus);
+OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		OV_UINT expectedXID, OV_BOOL usesStreamProtocol, OV_UINT* xid, OV_INT* msgAccepted, OV_INT* msgStatus, OV_UINT* functionStatus);
 
 /*	some useful functions	*/
 OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMessage, OV_RESULT* result);
 
 OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMessage);
 
+void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin);
