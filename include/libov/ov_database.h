@@ -49,11 +49,16 @@ extern "C" {
 *  Database-Path-Prefix
 *  --------------------
 */
+#if OV_SYSTEM_NT
+#define FOLDER_DELIMITER 			"\\"
+#else
+#define FOLDER_DELIMITER 			"/"
+#endif
 
 
 #define CONCATENATE_DATABASE_PATH(varname, helpname) \
-	helpname = (OV_STRING)malloc(strlen(varname)+strlen(getenv("ACPLT_HOME"))+1); \
-	sprintf(helpname, "%s%s", getenv("ACPLT_HOME"), varname); \
+	helpname = (OV_STRING)malloc(strlen(varname)+strlen(getenv("ACPLT_HOME"))+2); \
+	sprintf(helpname, "%s%s%s", getenv("ACPLT_HOME"), FOLDER_DELIMITER, varname); \
 	varname = helpname
 
 /*
