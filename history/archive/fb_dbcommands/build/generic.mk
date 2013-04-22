@@ -90,9 +90,9 @@ endif
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(LIB)
 
 ifeq ($(SYSTEM), NT)
-ACPLTKS_LIBS		= $(ACPLT_PLT_DIR)build/$(SYSDIR)/libplt$(LIB) \
-                      $(ACPLT_KS_DIR)build/$(SYSDIR)/libks$(LIB) \
-                      $(ACPLT_KS_DIR)build/$(SYSDIR)/libkscln$(LIB) \
+ACPLTKS_LIBS		= $(ACPLT_KS_DIR)build/$(SYSDIR)/libkscln$(LIB) \
+					  $(ACPLT_KS_DIR)build/$(SYSDIR)/libks$(LIB) \
+					  $(ACPLT_PLT_DIR)build/$(SYSDIR)/libplt$(LIB) \
                       $(LIBRPC_LIB) 
 else
 ACPLTKS_LIBS		= $(ACPLT_KS_DIR)build/$(SYSDIR)/libkscln$(LIB) \

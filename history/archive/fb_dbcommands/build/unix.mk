@@ -46,7 +46,6 @@
 OBJ = .o
 LIB = .a
 DLL = .so
-EXE =
 
 #   Include generic part
 #   --------------------
@@ -174,30 +173,30 @@ fb_dbsave.o : $(SOURCE_DIR)dbsave.cpp
 templ_for_exec.o : $(SOURCE_DIR)templ_for_exec.cpp
 	$(CXX_COMPILE) -o $@ $<
 
-fb_dbsave : fb_dbsave.o templ_for_exec.o
+fb_dbsave$(EXE) : fb_dbsave.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	strip --strip-debug fb_dbsave
+	strip --strip-debug fb_dbsave$(EXE)
 
 fb_dbload.o : $(SOURCE_DIR)dbload.cpp
 	$(CXX_COMPILE) -o $@ $<
 
-fb_dbload : fb_dbload.o templ_for_exec.o
+fb_dbload$(EXE) : fb_dbload.o templ_for_exec.o
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(LIBKSCLN) $(LIBKS) $(LIBPLT) -lstdc++
-	strip --strip-debug fb_dbload
+	strip --strip-debug fb_dbload$(EXE)
 
 fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 	$(CXX_COMPILE) -o $@ $<
 
-fb_dbcommands : fb_dbcommands.o templ_for_exec.o
-	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++
-	strip --strip-debug fb_dbcommands
+fb_dbcommands$(EXE) : fb_dbcommands.o templ_for_exec.o
+	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
+	strip --strip-debug fb_dbcommands$(EXE)
 
 fb_init.o : $(SOURCE_DIR)fb_init.cpp
 	$(CXX_COMPILE) -o $@ $<
 
-fb_init : fb_init.o templ_for_exec.o
-	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++
-	strip --strip-debug fb_init
+fb_init$(EXE) : fb_init.o templ_for_exec.o
+	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
+	strip --strip-debug fb_init$(EXE)
 
 
 # $(LIBKSSVR)  -rdynamic
@@ -214,7 +213,7 @@ clean :
 cleanall : clean
 	rm -f *$(DLL)
 	rm -f *$(LIB)
-	rm -f fb_init fb_dbcommands fb_dbsave fb_dbload
+	rm -f fb_init$(EXE) fb_dbcommands$(EXE) fb_dbsave$(EXE) fb_dbload$(EXE)
 
 #	Include dependencies
 #	--------------------
