@@ -226,7 +226,7 @@
 
 #if PLT_COMPILER_GCC
 #define PLT_SIMULATE_BOOL 0
-#define PLT_SIMULATE_RTTI 1
+#define PLT_SIMULATE_RTTI 0 /* changed by Sten in April 13: it seems that g++ supports rtti by defult for a couple of years already*/
 #define PLT_INSTANTIATE_TEMPLATES 1
 #define PLT_AVOID_DELETE_BUG 0
 
