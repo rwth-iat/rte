@@ -1008,6 +1008,9 @@ cshmi.prototype = {
 				}else{
 					TransformString = VisualObject.getAttribute("transform");
 				}
+				if(TransformString === ""){
+					return 0;
+				}
 				//"rotate(45,21.000000,50.000000)" or "rotate(45)"
 				
 				//remove rotate()
@@ -3691,7 +3694,7 @@ cshmi.prototype = {
 		
 		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
-		if (requestList[ObjectPath]["rotate"] !== "0"){
+		if (requestList[ObjectPath]["rotate"] && requestList[ObjectPath]["rotate"] !== "0"){
 			//rotate is not specified with a svg-Element, so encapsule in a G-Element
 			//http://www.w3.org/Graphics/SVG/WG/track/issues/2252
 			var VisualChildObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
@@ -4645,7 +4648,9 @@ cshmi.prototype = {
 		VisualObject.setAttribute("ry",requestList[ObjectPath]["ry"]);
 		
 		//rotation should be around cx and cy
-		VisualObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
+		if (requestList[ObjectPath]["rotate"] && requestList[ObjectPath]["rotate"] !== "0"){
+			VisualObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
+		}
 		
 		return VisualObject;
 	},
@@ -4901,10 +4906,10 @@ cshmi.prototype = {
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
-			if (configArray["rotate"]){
+			if (configArray["rotate"] && configArray["rotate"] !== "0"){
 				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			}
-		}else if (configArray["rotate"]){
+		}else if (configArray["rotate"] && configArray["rotate"] !== "0"){
 			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
 		}
 		if(configArray["width"] && configArray["width"] !== ""){
