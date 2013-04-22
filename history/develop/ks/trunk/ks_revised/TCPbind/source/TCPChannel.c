@@ -553,6 +553,9 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	int on = 1; 	//used to disable nagle algorithm
 	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
 
+	/*	close old connection	*/
+	TCPbind_TCPChannel_CloseConnection(this);
+
 	//set connection information
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = PF_UNSPEC;
