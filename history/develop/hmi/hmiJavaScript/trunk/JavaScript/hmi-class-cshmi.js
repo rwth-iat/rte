@@ -2812,6 +2812,8 @@ cshmi.prototype = {
 			}else if (null !== (Source = HMI.svgDocument.getElementById(Source))){
 				//todo doku moeglichkeit zur direkten SourceConnectionPoint angabe (inkl richtung und default)
 				
+				
+				//fixme multiple visualisations of the same object are not found correctly! could be the case in the tree and the cfcview
 				if (Source.tagName === "circle"){
 					SourceConnectionPoint = Source;
 				}else{
@@ -4824,25 +4826,10 @@ cshmi.prototype = {
 	_getFBReference: function(VisualObject, giveObject){
 		var TemplateObject = VisualObject;
 		var resultArray = ["", null];
-		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
-			//we are in an getEP-iterator and want to read out a value from the currentchild
-			//search FBReference of root Object
-			do{
-				//FBReference found
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					FBRef = TemplateObject.FBReference["default"];
-					if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
-						//we have an OV-PART, so the separator is a dot
-						resultArray[0] = FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
-					}else{
-						//we have no OV-PART, so the separator is a slash
-						resultArray[0] = FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
-					}
-					break;
-				}
-			//loop upwards to find the Template object
-			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+		var FBRef;
+		
+		//a getVar currentChild has OP_VALUE and OP_NAME set
+		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 			//we are in an GetVar-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
 			do{
@@ -4871,7 +4858,26 @@ cshmi.prototype = {
 				// it could be a path to another server, so we must add the serverName
 				resultArray[0] = ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
 			}
-			//we have an getVar on a variable. Don't know how to guess a FBRef here
+			
+		//a getEP currentChild has OP_NAME set
+		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+			//we are in an getEP-iterator and want to read out a value from the currentchild
+			//search FBReference of root Object
+			do{
+				//FBReference found
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					FBRef = TemplateObject.FBReference["default"];
+					if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+						//we have an OV-PART, so the separator is a dot
+						resultArray[0] = FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+					}else{
+						//we have no OV-PART, so the separator is a slash
+						resultArray[0] = FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+					}
+					break;
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 		}else{
 			//no active iterator, so plain FBReference
 			do{
