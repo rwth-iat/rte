@@ -133,12 +133,15 @@ if {[eq ${in1} t] == 1} {
 #
 #  Einlesen der vorhandenen Templateordner
 #
+if {[file exists $TEMPLATEDIR/*]} then {
 puts "template groups found:"
 puts "\n"
 #
 set i 1
 set out ""
+
 set content1 [glob -tails -directory ${TEMPLATEDIR} "*"]
+
 foreach item $content1 {
 	   append out "$i  "
 	   append out $item
@@ -174,6 +177,9 @@ foreach item $content2 {
        set PRX [open "|$COMMAND1" "RDWR"]
 puts "template loaded:     ${item} \n"
 }
+} else {
+puts "no templates found"
+}
 }
 
 # ********************************************************************************
@@ -186,10 +192,12 @@ if {[eq ${in1} m] == 1} {
 #
 #  Einlesen der vorhandenen Modelle
 #
+if {[file exists $MODELDIR/*]} then {
 puts "modelinstances found:"
 puts "\n"
 #
 set i 1
+
 set content1 [glob -tails -directory ${MODELDIR} "*.fbd"]
 foreach item $content1 {
 	   append out "$i  "
@@ -215,7 +223,12 @@ set LOADFILE "${MODELDIR}/${MODELNAME}"
 set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
 set PRX [open "|$COMMAND1" "RDWR"]
 puts "model loaded:        ${MODELNAME}  \n"
-}
+
+
+} else {
+	puts "no modelinstances found"
+	}
+	}
 }
 
 return
