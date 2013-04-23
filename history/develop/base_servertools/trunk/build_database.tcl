@@ -14,11 +14,11 @@
 #                                                                                   *
 #                                                                                   *
 # ***********************************************************************************
-#      Hinweis:          -  Das Skript "build_database.tcl" sollte sich in          *
-#                           der Domäne acplt/tools/dbmanagemnt befinden             *
+#      Hinweis:          -  Das Skript "build_database.tcl" befindet sich in        *
+#                           der Domäne acplt/system/tools                           *
 #                        -  Das Skript legt eine neue Datenbasis im                 *
-#                           Ordner acplt/database an.                               *
-#                        -  Die Datenbasis erhält den Namen db_$servername           *
+#                           Ordner acplt/servers/$THISSERVER an.                    *
+#                        -  Die Datenbasis erhält den Namen "db"                    *
 #                        -  Eine vorhandene Datenbasis wird gelöscht.               *
 # ***********************************************************************************
 #      verwendete Unterprogramme:                                                   *
@@ -26,24 +26,22 @@
 #                                                                                   *
 #      verwendete Umgebungsvariablen                                                *
 #      lokal                                                                        *
-#        THISACPLTSYSTEM   r/w     Verzeichnis in dem das gesamte ACPLT-System      *
-#                                  liegt(muss individuell gesetzt werden)           *
-#        THISSERVER        r/w     Verzeichnis in dem alles abgelegt wird           *
+#        THISACPLTSYSTEM   set     Verzeichnis in dem das gesamte ACPLT-System      *
+#                                  liegt (wird automatisch ermittelt)               *
+#        THISSERVER        set     Verzeichnis in dem alles abgelegt wird           *
 #                                  was zu diesem Server gehört.                     * 
 #      prozessweit                                                                  *
-#        ACPLT_HOME        r/w     Aktuelles Home-Verzeichnis für die ACPLT-Tools   *
-#                                  (Bemerkung: ist von der Benennung nicht          *
-#                                  glücklich da speziell für Server)                *
-#        OV_Library_PATH   r/w     Verzeichnis in dem die zu ladenden Bibliotheken  * 
-#                                  liegen müssen                                    *
-#                                  standardmäßig "${THISACPLTSYSTEM}/user/libs"     *
-#        INSTALLPATH       r/w     Pfad in dem die Systemprogramme liegen           *
-#                                  hier standardmäßig "${THISACPLTSYSTEM}/bin"      *
+#        ACPLT_HOME        set     Aktuelles Home-Verzeichnis für das ACPLT-System  *
+#                                  entspricht $THISACPLTSYSTEM$                     *
+#        PATH              set     Pfad in dem die zu ladenden Bibliotheken         * 
+#                                  liegen müssen:                                   *
+#                                  "${THISACPLTSYSTEM}/system/addonlib" und     *
+#                                  "${THISACPLTSYSTEM}/system/sysbin"         *
 #                                                                                   *
 #      folgende Variablen werden gesetzt:                                           *
-#        DATABASENAME      r/w     Name der Datenbasis                              *
-#                                  standardmäßig db_$servername                     *
-#        databasesize      r/w     Größe der Datenbasis                             *
+#        DATABASENAME      set     Name der Datenbasis                              *
+#                                  standardmäßig db                                 *
+#        databasesize      get     Größe der Datenbasis                             *
 #                                  Setzen durch Eingabe                             *
 #                                  für einen "unbeschwerten" Betrieb werden         *
 #                                  mindestens 1MB empfohlen                         *
@@ -52,38 +50,35 @@
 #  Ermitteln des Verzeichnisses "THISSERVER"
 # 
 set THISSERVER [pwd]
-puts "Aktives Serververzeichnis ist: ${THISSERVER}"
+puts "serverdomain:       ${THISSERVER}"
 #
 #  Ermitteln des Verzeichnisses "THISACPLTSYTEM"
 #  Dieses Verzeichnis wird auch aktive Directory
 #
-cd ../
+cd ../../
 set THISACPLTSYSTEM [pwd]
-puts "Aktives Systemverzeichnis ist: ${THISACPLTSYSTEM}"
+puts "ACPLT systemdomain: ${THISACPLTSYSTEM}"
 #
 #  Setzen der Prozess-Umgebungsvariablen 
 #
 set env(ACPLT_HOME) ${THISACPLTSYSTEM}
-set env(OV_LIBRARY_PATH) ${THISACPLTSYSTEM}/user/libs
-set env(INSTALLPATH) ${THISACPLTSYSTEM}/bin
 #
 #  Bestimmung des Servernamens 
 #
 set SERVERNAME [file tail ${THISSERVER}]
-puts "Name des servers: ${SERVERNAME}"
+puts "servername:         ${SERVERNAME}"
 #
 #  Festlegung des Namens der Datenbasis 
 #
-set DATABASENAME "db_${SERVERNAME}"
-puts "Bitte geben Sie die gewünschte Größe der Datenbasis $DATABASENAME an:"
+set DATABASENAME "db"
+puts "Please choose the size of the database (in byte)"
 gets stdin databasesize
-puts "Größe der Datenbasis: ${databasesize}"
 #
 #  Löschen einer eventuell vorhandenen alten Datenbasis
 #
 if {
-[file exists ${THISACPLTSYSTEM}/database/${DATABASENAME}.ovd] == 1
-} then {file delete ${THISACPLTSYSTEM}/database/${DATABASENAME}.ovd
+[file exists ${THISSERVER}/${DATABASENAME}.ovd] == 1
+} then {file delete ${THISSERVER}/${DATABASENAME}.ovd
 }
 #
 #   Erstellen der neuen Datenbasis
@@ -91,8 +86,8 @@ if {
 # !!!! Achtung, es ist nicht klar, ob und wie hier die Fehlerinfo übergeben wird.
 #
 set env(ERRORLEVEL) 0
-exec bin/ov_dbutil -c ${databasesize} -f ${DATABASENAME}.ovd -l ${SERVERNAME}/log_builddb.txt
+exec system/sysbin/ov_dbutil -c ${databasesize} -f /servers/${SERVERNAME}/${DATABASENAME}.ovd -l ${THISSERVER}/logfiles/log_builddb.txt
 if { $env(ERRORLEVEL) == 1} then { puts "failed (create)!" } 
 if { $env(ERRORLEVEL) == 1} then { set env(OV_ERROR) 1 }
 #
-puts "Database ${DATABASENAME} erstellt"
+if { $env(ERRORLEVEL) == 0} then {puts "database ${DATABASENAME} created with ${databasesize} byte "}

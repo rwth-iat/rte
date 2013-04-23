@@ -1,103 +1,116 @@
-
-# Skript:   start_server.tcl
-# Skript zum Starten des Servers dieser Domäne
-
-# ***************************************************************************************************
-# **** Hinweise  
-#      29.03.2013   - Vorlage (epple)
-# 
-# ***************************************************************************************************
-# **** Das Skript "start_server.tcl" sollte sich in der Domäne ${THISACPLTSYSTEM}/tools/dbmanagement befinden
-#	   Das Skript startet den Server auf der Datenbasis "databasename" im Ordner "${THISSERVER}/database" 
-#      Die Datenbasis muss bereits exisitieren. 
-#      Der Server erhält den Namen der Serverdomäne
+# ***********************************************************************************
+#      ACPLT                                                                        *
+#      Lehrstuhl für Prozessleittechnik                                             *
+#      RWTH Aachen                                                                  *
+#                                                                                   *
+# ***********************************************************************************
+#      Datei:            start_server.tcl                                           *
+#                                                                                   *
+#      Historie:		 2913-03-29   Epple     erstellt                            *
+#                                                                                   *
+#      Beschreibung:     Skript zum Starten des Servers dieser Domäne               *
+#                        und zum Nachladen von Bibliotheken und Templates           *
+#                                                                                   *
+# ***********************************************************************************
+#      Hinweis:          -  Das Skript start_server.tcl" befindet sich in           *
+#                           der Domäne acplt/system/systools                           *
+#                        -  Die Datenbasis db.ovd muss im Ordner                    *
+#                           acplt/servers/$THISSERVER vorhanden sein.               *
+#                        -  Der Server erhält den Namen der Domäne                  *
+# ***********************************************************************************
 #
-#      folgende Umgebungsvariablen werden gesetzt:
-#      lokal
-#        THISACPLTSYSTEM     r/w   Verzeichnis in dem das gesamte ACPLT-System liegt
-#                                 
-#        THISSERVER          r/w   Verzeichnis in dem alles was zu dem speziellen Server gehört
-#                                  liegt
-#        OLDPATH             r/w   gesicherter Systempfad
-#      prozessweit
-#        ACPLT_HOME          r/w   Aktuelles Home-Verzeichnis für die ACPLT-Tools 
-#                                  (Bemerkung: ist von der Benennung nicht glücklich da speziell
-#                                  für Server)
-#        OV_Library_PATH     r/w   Verzeichnis in dem die zu ladenden Bibliotheken liegen müssen
-#                                  hier standardmäßig "${THISACPLTSYSTEM}/user/libs"
-#        INSTALLPATH         r/w   Pfad in dem die Systemprogramme liegen
-#                                  hier standardmäßig "${THISACPLTSYSTEM}/bin"
-#        PATH                r/w   Systempfad
-#        REGISTRYLANGUAGEGERMAN r  Sprache
-#        ERRORLEVEL             r  Fehlercode
+#      verwendete Unterprogramme:                                                   *
+#      ov_runtimeserver,   fb_dbcommands                                                                    *
+#                                                                                   *
+#      verwendete Umgebungsvariablen                                                *
+#      lokal                                                                        *
+#        THISACPLTSYSTEM   set     Verzeichnis in dem das gesamte ACPLT-System      *
+#                                  liegt (wird automatisch ermittelt)               *
+#        THISSERVER        set     Verzeichnis in dem alles abgelegt wird           *
+#                                  was zu diesem Server gehört.                     * 
+#        SERVERNAME        set     Name des Servers                                 *
+#                                  hier standardmäßig der Name der Domäne           *
+#        DATABASENAME      set     Name der Datenbasis                              *
+#                                  hier standardmäßig "db"                          *
+#      prozessweit                                                                  *
+#        ACPLT_HOME        set     Aktuelles Home-Verzeichnis für das ACPLT-System  *
+#                                  entspricht $THISACPLTSYSTEM$                     *
+#        PATH              set     Pfad in dem die zu ladenden Bibliotheken         * 
+#                                  liegen müssen:                                   *
+#                                  "${THISACPLTSYSTEM}/system/userlibs/bin" und     *
+#                                  "${THISACPLTSYSTEM}/system/userlibs/bin"         *
+#                                                                                   *
+#      folgende Variablen werden gesetzt:                                           *
+#        DATABASENAME      set     Name der Datenbasis                              *
+#                                  standardmäßig db                                 *
+#        databasesize      get     Größe der Datenbasis                             *
+#                                  Setzen durch Eingabe                             *
+#                                  für einen "unbeschwerten" Betrieb werden         *
+#                                  mindestens 1MB empfohlen                         *
+# ***********************************************************************************
 #
-#      folgende Variablen werden gesetzt:
-#        SERVERNAME                Name des Servers
-#                                  hier standardmäßig der Name der Domäne
-#        DATABASENAME              Name der Datenbasis
-#                                  hier standardmäßig "db"
-#
-# ***************************************************************************************************
+# ***********************************************************************************
 namespace path {::tcl::mathop ::tcl::mathfunc}
 #
-# ***************************************************************************************************
+# ***********************************************************************************
 #  Ermitteln des Verzeichnisses "THISSERVER"
-# ***************************************************************************************************#cd F:/130314_demostick/acplt
+# ***********************************************************************************
 set THISSERVER [pwd]
-puts "Aktives Serververzeichnis ist: ${THISSERVER}"
+puts "serverdomain:        ${THISSERVER}"
 #
 #  Ermitteln des Verzeichnisses "THISACPLTSYTEM"
 #
-cd ../
+set MODELDIR $THISSERVER/modelinstances
+puts "modelinstance-domain:${MODELDIR}"
+#
+#  Ermitteln des Verzeichnisses "THISACPLTSYTEM"
+#
+cd ../../
 set THISACPLTSYSTEM [pwd]
-puts "ACPLT Systemverzeichnis ist: ${THISACPLTSYSTEM}"
+puts "ACPLT systemdomain:  ${THISACPLTSYSTEM}"
 #
-#  Setzen der Installationsdatei als DIR#  Dieses Verzeichnis wird auch aktive Directory
+#  Ermitteln des Verzeichnisses "LIBDIR" und "TEMPLATEDIR" in dem sich die zu ladenden
+#  Bibliotheks- und Templateordner befinden
 #
-cd ../
-set INSTDIR [pwd]
-puts "Das Installationsverzeichnis ist: ${INSTDIR}"
-cd acplt
-#
-#  Ermitteln des Verzeichnisses "MODELDIR" in dem sich die zu ladenden
-#  Modellordner befinden
-#
-set MODELDIR ${THISACPLTSYSTEM}/user/models
-puts "Das Modellverzeichnis ist: ${MODELDIR}"
+set USERBINDIR ${THISACPLTSYSTEM}/system/addonlibs
+set PATH1 ${USERBINDIR}
+puts "bin-path userlibs    ${PATH1}"
+set PATH2 ${THISACPLTSYSTEM}/system/sysbin
+puts "bin-path system:     ${PATH2}"
+set BINPATH "${PATH1};${PATH2};$env(PATH)"
+set TEMPLATEDIR ${THISACPLTSYSTEM}/templates
+puts "templatedomain:      ${TEMPLATEDIR}"
 #
 #  Setzen der Prozess-Umgebungsvariablen 
 #
 set env(ACPLT_HOME) ${THISACPLTSYSTEM}
-set env(OV_LIBRARY_PATH) "${THISACPLTSYSTEM}/bin;${THISACPLTSYSTEM}/user/libs;$env(PATH)"
+set env(PATH) ${BINPATH}
 #
 #  Bestimmung des Servernamens 
 #
-set SERVERNAME [file tail ${THISSERVER}]
-puts "Name des servers: ${SERVERNAME}"
+set SERVERNAME [file tail  ${THISSERVER}]
 #
 #  Setzen des Datenbasisnamens
 #
-set DATABASENAME db_${SERVERNAME}
+set DATABASENAME db
 #
 #  Prüfen ob eine Datenbasis existiert
 #
-puts "Name der Datenbasis: ${DATABASENAME}"
+puts "databasename:        ${DATABASENAME}"
 if {
-[file exists ${THISACPLTSYSTEM}/database/$DATABASENAME.ovd] == 0 } { 
-puts "Datenbasis exisitiert nicht"
+[file exists ${THISSERVER}/$DATABASENAME.ovd] == 0 } { 
+puts "database doesn't exist"
 return
-} else { puts "Datenbasis gefunden"}
+} else { puts "database found"}
 #
 #  Starten des Servers
 #
 
-puts "Server ${SERVERNAME} wird gestartet"
-set env(PATH) ${THISACPLTSYSTEM}
-set LOGFILE ${THISACPLTSYSTEM}/${SERVERNAME}/log_serverstart.txt
-set COMMAND "${THISACPLTSYSTEM}/bin/ov_runtimeserver.exe -f ${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l $LOGFILE"
+puts "starting server      ${SERVERNAME}"
+set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
+set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver.exe -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
-puts "-----------------------------------------------------"
-puts "Server ${SERVERNAME} läuft"
+puts "server ${SERVERNAME} is running"
 # ********************************************************************************
 # ********************************************************************************
 # ********************************************************************************
@@ -107,31 +120,77 @@ puts "Server ${SERVERNAME} läuft"
 #
 set k 0
 while {$k<1} {
-puts "ONLINE-Eingabemöglichkeit: l = Load Lib , m = load model"
+puts "-----------------------------------------------------"
+puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template"
 gets stdin in1
 # ********************************************************************************
 # ********************************************************************************
 #
-# Nachladen von Modellen
+# Nachladen von Templates
+#
+# ********************************************************************************
+if {[eq ${in1} t] == 1} {
+#
+#  Einlesen der vorhandenen Templateordner
+#
+puts "template groups found:"
+puts "\n"
+#
+set i 1
+set out ""
+set content1 [glob -tails -directory ${TEMPLATEDIR} "*"]
+foreach item $content1 {
+	   append out "$i  "
+	   append out $item
+       append out "\n"
+	   set i [+ $i 1]
+	   }
+puts "$out"
+#
+#  Auswahl des Templateordners
+#
+puts "please enter the groupnumber"  
+gets stdin DIRNUMBER
+# Templatenummer prüfen
+if {[>= ${DIRNUMBER} $i] == 1} {
+puts "number not allowed"
+continue}
+if {[< ${DIRNUMBER} 1] == 1} {
+puts "number not allowed"
+continue}
+# Name des gewählten Templateordners bestimmen
+set DIRNAME [lindex $content1 ${DIRNUMBER}-1]
+set content2 [glob -tails -directory ${TEMPLATEDIR}/$DIRNAME "*.fbd"]
+# content2 enthält alle Files mit Endung .fbd
+foreach item $content2 {
+	   set out "-  "
+	   append out $item
+       puts "$out laden ? (j/n) \n"
+       gets stdin JN
+       if {[| [eq ${JN} J] [eq ${JN} j]] == 0} {
+       continue}
+	   set LOADFILE "templates/${DIRNAME}/${item}"
+ 	   set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
+       set PRX [open "|$COMMAND1" "RDWR"]
+puts "template loaded:     ${item} \n"
+}
+}
+
+# ********************************************************************************
+# ********************************************************************************
+#
+# Nachladen von Modellinstanzen
 #
 # ********************************************************************************
 if {[eq ${in1} m] == 1} {
 #
-#  Ermitteln des Verzeichnisses "MODELDIR" in dem sich die zu ladenden
-#  Modelle befinden
+#  Einlesen der vorhandenen Modelle
 #
-set MODELDIR ${THISACPLTSYSTEM}/user/models
-puts "Das Modellverzeichnis ist: ${MODELDIR}"
-puts "-----------------------------------------------------"
-#
-#  Einlesen der vorhandenen Modellordner
-#
-puts "-----------------------------------------------------"
-puts "Folgende Modellordner stehen zur Verfügung:"
+puts "modelinstances found:"
 puts "\n"
 #
 set i 1
-set content1 [glob -tails -directory ${MODELDIR} "*"]
+set content1 [glob -tails -directory ${MODELDIR} "*.fbd"]
 foreach item $content1 {
 	   append out "$i  "
 	   append out $item
@@ -140,107 +199,25 @@ foreach item $content1 {
 	   }
 puts $out
 #
-#  Auswahl des Modellordners
+#  Auswahl des zu ladenden Modells
 #
-puts "Bitte geben Sie die Nummer des gewünschten Modellverzeichnisses ein 
-\n ------------------------------------------------------"
-gets stdin DIRNUMBER
-# Modelnummer prüfen
-if {[>= ${DIRNUMBER} $i] == 1} {
-puts "Unzulässige Modellnummer"
+gets stdin MODELNUMBER
+# Modellnummer prüfen
+if {[>= ${MODELNUMBER} $i] == 1} {
+puts "number not allowed"
 continue}
-if {[< ${DIRNUMBER} 1] == 1} {
-puts "Unzulässige Modellnummer"
+if {[< ${MODELNUMBER} 1] == 1} {
+puts "number not allowed"
 continue}
-# Name des gewählten Modellordners bestimmen
-set DIRNAME [lindex $content1 ${DIRNUMBER}-1]
-puts "-----------------------------------------------------"
-
-puts "Modellordner: ${DIRNAME}"
-set content2 [glob -tails -directory ${MODELDIR}/$DIRNAME "*.fbd"]
-# content2 enthält alle Files mit Endung .fbs
-foreach item $content2 {
-	   set out "-  "
-	   append out $item
-       puts "$out laden ? (j/n) \n"
-       gets stdin JN
-       if {[| [eq ${JN} J] [eq ${JN} j]] == 0} {
-       continue}
-	   set LOADFILE $MODELDIR/$DIRNAME/$item
-	   set COMMAND1 "${THISACPLTSYSTEM}/tools/ltsoftbin/fb_dbcommands -s localhost:7509/$SERVERNAME -load -f ${LOADFILE}"
-       set PRX [open "|$COMMAND1" "RDWR"]
-puts "OK  loaded: $item "
+# Name des gewählten Modells bestimmen
+set MODELNAME [lindex $content1 ${MODELNUMBER}-1]
+set LOADFILE "${MODELDIR}/${MODELNAME}"
+set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
+set PRX [open "|$COMMAND1" "RDWR"]
+puts "model loaded:        ${MODELNAME}  \n"
 }
-}
-puts "-------------------------------------------------------"
-
-# ********************************************************************************
-# ********************************************************************************
-#
-# Nachladen von Bibliotheken
-#
-# ********************************************************************************
-if {[eq ${in1} l] == 1} {
-#
-#  Ermitteln des Verzeichnisses "libs" in dem sich die zu ladenden
-#  Modelle befinden
-#
-set LIBDIR ${THISACPLTSYSTEM}/user/libs
-puts "Das Bibliotheksverzeichnis ist: ${LIBDIR}"
-#
-#  Einlesen der vorhandenen Bibliotheken
-#
-puts "-----------------------------------------------------"
-puts "Folgende Bibliotheken stehen zur Verfügung:"
-puts "\n"
-#
-set i 1
-set content31 [glob -tails -directory ${LIBDIR} "*.dll"]
-foreach item $content31 {
-	   append out "$i  "
-	   append out $item
-       append out "\n"
-	   set i [+ $i 1]
-	   }
-puts $out
-#
-#  Auswahl der zu ladenden Bibliothek
-#
-puts "Bitte geben Sie die Nummer der zu ladenden Bibliothek ein 
-\n ------------------------------------------------------"
-gets stdin LIBNUMBER
-# Nummer prüfen
-if {[>= ${LIBNUMBER} $i] == 1} {
-puts "Unzulässige Nummer"
-continue}
-if {[< ${LIBNUMBER} 1] == 1} {
-puts "Unzulässige Nummer"
-continue}
-# Name der gewählten Bibliothek bestimmen
-set LIBNAME [lindex $content31 ${LIBNUMBER}-1]
-puts "Soll die Bibliothek $LIBNAME geladen werden? (j/n)"
-puts "-----------------------------------------------------"
-gets stdin JN
-if {[| [eq ${JN} J] [eq ${JN} j]] == 0} {
-puts "Laden abgebrochen"
-continue
-}
-set FULLLIBNAME $LIBDIR/$LIBNAME
-set env(ERRORLEVEL) 0
-set COMMAND1 "bin/ov_dbutil -f ${DATABASENAME}.ovd -w $FULLLIBNAME -l ${SERVERNAME}/log_builddb.txt"
-set PRNAME [open "|$COMMAND1" "RDWR"]
-if { $env(ERRORLEVEL) == 1} then { puts "failed (loading)!" } 
-if { $env(ERRORLEVEL) == 1} then { set env(OV_ERROR) 1 
-puts "Bibliothek $LIBNAME wird geladen"}
-# set COMMAND1 "${THISACPLTSYSTEM}/tools/ltsoftbin/fb_dbcommands -s localhost:7509/$SERVERNAME -lib $FULLLIBNAME -load"
-# set PRNAME [open "|$COMMAND1" "RDWR"]
-puts "OK  loaded: $LIBNAME "
-}
-puts "-------------------------------------------------------"
-
 }
 
-}
 return
 
 
