@@ -553,7 +553,7 @@ LIBRARY cshmi
 			COMMENT = "y-axis offset to previously instantiated Template"
 			INITIALVALUE = 0.0;
 			maxTemplatesPerDirection : STRING
-			COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset";
+			COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset; same for y:3";
 			FBReference[] : STRING
 			COMMENT = "Probably 'OP_NAME'' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
 			FBVariableReference[] : STRING

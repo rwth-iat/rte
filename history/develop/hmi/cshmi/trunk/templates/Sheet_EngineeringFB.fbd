@@ -10,7 +10,7 @@
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/engineering :
+ INSTANCE  /TechUnits/cshmi/engineeringFBSheet :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -24,7 +24,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/engineering/useDomainTemplate :
+ INSTANCE  /TechUnits/cshmi/engineeringFBSheet/useDomainTemplate :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
       TemplateDefinition : INPUT STRING = "Engineering/Domainv1";

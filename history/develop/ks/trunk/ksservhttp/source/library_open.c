@@ -116,21 +116,6 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
     	   phttpserver->v_cycInterval = 0;
 		}
 
-	   /*
-	    * 		create "staticfiles" container
-	    */
-		pstaticfiles = Ov_SearchChildEx(ov_containment, phttpserver, "staticfiles", ov_domain);
-		if(!phttpservers)
-		{
-			result = Ov_CreateObject(ov_domain, pstaticfiles, phttpserver, "staticfiles");
-
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'staticfiles': %s", ov_result_getresulttext(result));
-				return result;
-			}
-		}
-
 		/*
 		 * 		create "sessions" container
 		 */
@@ -138,6 +123,21 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 		if(!psessions)
 		{
 			result = Ov_CreateObject(ov_domain, psessions, phttpserver, "sessions");
+
+			if(Ov_Fail(result))
+			{
+				ov_logfile_error("Fatal: Could not create Object 'sessions': %s", ov_result_getresulttext(result));
+				return result;
+			}
+		}
+
+		/*
+		* 		create "staticfiles" container
+		*/
+		pstaticfiles = Ov_SearchChildEx(ov_containment, phttpserver, "staticfiles", ov_domain);
+		if(!pstaticfiles)
+		{
+			result = Ov_CreateObject(ov_domain, pstaticfiles, phttpserver, "staticfiles");
 
 			if(Ov_Fail(result))
 			{
