@@ -96,3 +96,45 @@ OV_RESULT ksxdr_setVar(const OV_UINT version, const OV_TICKET* pticket, KS_DATAP
 
 	return fncresult;
 }
+
+
+/*
+*	XDR routine for decoding OV_SETVAR_ITEM
+*/
+OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* item)
+{
+	OV_OBJ_TYPE	objtype;
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataReceived, &(item->path_and_name));
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &objtype);
+	if(Ov_Fail(result))
+		return result;
+
+	if(objtype != KS_OT_VARIABLE)
+		return OV_ERR_BADOBJTYPE;
+
+	return xdr_read_OV_VAR_CURRENT_PROPS(dataReceived, &item->var_current_props);
+}
+
+/*
+*	XDR routine for encoding OV_SETVAR_ITEM
+*/
+OV_RESULT xdr_write_OV_SETVAR_ITEM (KS_DATAPACKET* dataPacket, OV_SETVAR_ITEM* item)
+{
+	OV_OBJ_TYPE	objtype = KS_OT_VARIABLE;
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &(item->path_and_name));
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_write_xdr_OV_OBJ_TYPE(dataPacket, &(objtype));
+	if(Ov_Fail(result))
+		return result;
+
+	return xdr_write_OV_VAR_CURRENT_PROPS(dataPacket, &item->var_current_props);
+}

@@ -49,6 +49,24 @@ return KS_DATAPACKET_read_xdr_OV_EP_FLAGS(dataReceived, &params->scope_flags);
 /*
 *	XDR routine for OV_HISTORY_ENGINEERED_PROPS
 */
+OV_RESULT xdr_read_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_HISTORY_ENGINEERED_PROPS *objp) {
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_OV_HIST_TYPE(dataPacket, &objp->historytype);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_OV_INTERPOLATION_MODE(dataPacket, &objp->default_interpolation);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_OV_INTERPOLATION_MODE(dataPacket, &objp->supported_interpolation);
+	if(Ov_Fail(result))
+		return result;
+
+	return KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataPacket, &objp->type_identifier);
+}
+
 OV_RESULT xdr_write_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_HISTORY_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
@@ -70,6 +88,11 @@ OV_RESULT xdr_write_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV
 /*
 *	XDR routine for OV_DOMAIN_ENGINEERED_PROPS
 */
+OV_RESULT xdr_read_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_DOMAIN_ENGINEERED_PROPS *objp) {
+
+	return KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataPacket, &objp->class_identifier);
+}
+
 OV_RESULT xdr_write_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_DOMAIN_ENGINEERED_PROPS *objp) {
 
 	return KS_DATAPACKET_write_xdr_string(serviceAnswer, &objp->class_identifier);
@@ -78,6 +101,16 @@ OV_RESULT xdr_write_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_
 /*
 *	XDR routine for OV_VAR_ENGINEERED_PROPS
 */
+OV_RESULT xdr_read_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_VAR_ENGINEERED_PROPS *objp) {
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataPacket, &objp->tech_unit, KS_TECHUNIT_MAXLEN);
+	if(Ov_Fail(result))
+		return result;
+
+	return KS_DATAPACKET_read_xdr_OV_VAR_TYPE(dataPacket, &objp->vartype);
+}
+
 OV_RESULT xdr_write_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
@@ -93,6 +126,20 @@ OV_RESULT xdr_write_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR
 /*
 *	XDR routine for OV_LINK_ENGINEERED_PROPS
 */
+OV_RESULT xdr_read_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_LINK_ENGINEERED_PROPS *objp) {
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_OV_LINK_TYPE(dataPacket, &objp->linktype);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataPacket, &objp->opposite_role_identifier);
+	if(Ov_Fail(result))
+		return result;
+
+	return KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataPacket, &objp->association_identifier);
+}
+
 OV_RESULT xdr_write_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
 
@@ -107,10 +154,63 @@ OV_RESULT xdr_write_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LI
 	return KS_DATAPACKET_write_xdr_string(serviceAnswer, &objp->association_identifier);
 }
 
-
 /*
  * XDR routine for OBJ engineered props
  */
+
+OV_RESULT xdr_read_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_OBJ_ENGINEERED_PROPS *objp) {
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataPacket, &objp->objtype);
+	if(Ov_Fail(result))
+		return result;
+
+	switch(objp->objtype) {
+	case KS_OT_HISTORY:
+		result = xdr_read_OV_HISTORY_ENGINEERED_PROPS(dataPacket, &objp->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props);
+		if(Ov_Fail(result))
+			return result;
+		break;
+
+	case KS_OT_DOMAIN:
+		result = xdr_read_OV_DOMAIN_ENGINEERED_PROPS(dataPacket, &objp->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props);
+		if(Ov_Fail(result))
+			return result;
+		break;
+
+	case KS_OT_VARIABLE:
+		result = xdr_read_OV_VAR_ENGINEERED_PROPS(dataPacket, &objp->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props);
+		if(Ov_Fail(result))
+			return result;
+		break;
+
+	case KS_OT_LINK:
+		result = xdr_read_OV_LINK_ENGINEERED_PROPS(dataPacket, &objp->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props);
+		if(Ov_Fail(result))
+			return result;
+		break;
+	default:
+		break;
+	}
+
+	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataPacket, &objp->identifier, KS_NAME_MAXLEN);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_OV_TIME(dataPacket, &objp->creation_time);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataPacket, &objp->comment, KS_COMMENT_MAXLEN);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_read_xdr_OV_ACCESS(dataPacket, &objp->access);
+	if(Ov_Fail(result))
+		return result;
+
+	return KS_DATAPACKET_read_xdr_OV_SEMANTIC_FLAGS(dataPacket, &objp->semantic_flags);
+}
 
 OV_RESULT xdr_write_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGINEERED_PROPS *objp) {
 	OV_RESULT result;
@@ -118,7 +218,7 @@ OV_RESULT xdr_write_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ
 	result = KS_DATAPACKET_write_xdr_OV_OBJ_TYPE(serviceAnswer, &objp->objtype);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: objecttype encoded"));
+
 	switch(objp->objtype) {
 	case KS_OT_HISTORY:
 		result = xdr_write_OV_HISTORY_ENGINEERED_PROPS(serviceAnswer, &objp->OV_OBJ_ENGINEERED_PROPS_u.history_engineered_props);
@@ -146,7 +246,7 @@ KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: objecttype encoded"));
 	default:
 		break;
 	}
-KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: special properties encoded"));
+
 	if(objp->identifier && strlen(objp->identifier) > KS_NAME_MAXLEN)
 		return OV_ERR_BADVALUE;
 	result = KS_DATAPACKET_write_xdr_string(serviceAnswer, &objp->identifier);
@@ -166,7 +266,7 @@ KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: special properties encoded"));
 	result = KS_DATAPACKET_write_xdr_OV_ACCESS(serviceAnswer, &objp->access);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("xdr_OV_OBJ_ENGINEERED_PROPS: access encoded"));
+
 	return KS_DATAPACKET_write_xdr_OV_SEMANTIC_FLAGS(serviceAnswer, &objp->semantic_flags);
 }
 

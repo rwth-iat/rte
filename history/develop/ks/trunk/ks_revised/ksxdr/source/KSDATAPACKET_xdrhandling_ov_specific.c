@@ -5,6 +5,11 @@
  *      Author: lars
  */
 
+/*
+ * The functions defined herein handle OV-specific datatypes.
+ * there are more (specialized functions) for other datatypes (e.g. GETVAR_ITEM) they can be found in the respective ksxdr_xxx.c files. They were not put here in order
+ * 	not to inflate this file too much
+ */
 
 #include "ksxdr.h"
 #include "libov/ov_malloc.h"
@@ -268,27 +273,22 @@ OV_RESULT xdr_read_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* dataReceived, OV_VAR_CURR
 }
 
 /*
-*	XDR routine for decoding OV_SETVAR_ITEM
+*	XDR routine for OV_VAR_CURRENT_PROPS
 */
-OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* item)
+OV_RESULT xdr_write_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_CURRENT_PROPS* pProps)
 {
-	OV_OBJ_TYPE	objtype;
 	OV_RESULT result;
 
-	result = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataReceived, &(item->path_and_name));
+	result = KS_DATAPACKET_write_xdr_OV_VAR_VALUE(serviceAnswer, &pProps->value);
 	if(Ov_Fail(result))
 		return result;
 
-	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &objtype);
+	result = KS_DATAPACKET_write_xdr_OV_TIME(serviceAnswer, &pProps->time);
 	if(Ov_Fail(result))
 		return result;
 
-	if(objtype != KS_OT_VARIABLE)
-		return OV_ERR_BADOBJTYPE;
-
-	return xdr_read_OV_VAR_CURRENT_PROPS(dataReceived, &item->var_current_props);
+	return KS_DATAPACKET_write_xdr_OV_STATE(serviceAnswer, &pProps->state);
 }
-
 
 /*
 *	XDR routine for OV_PLACEMENT

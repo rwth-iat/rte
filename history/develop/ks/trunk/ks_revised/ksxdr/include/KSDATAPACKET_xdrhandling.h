@@ -52,6 +52,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_array(KS_DATAPACKET* datapacke
 
 /*
  * OV-specific XDR routines that are used for more than one service
+ * The read functions allocate space on the memstack for vectors, structs and strings. memory for the parameters themselves is NOT allocated within the read functions
  */
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME(KS_DATAPACKET* datapacket, OV_TIME *ptime);
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME(KS_DATAPACKET* datapacket, const OV_TIME* ptime);
@@ -60,7 +61,13 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME_SPAN(KS_DATAPACKET* dat
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, const OV_TIME_SPAN* ptimespan);
 
 OV_RESULT xdr_read_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* dataReceived, OV_VAR_CURRENT_PROPS* currprops);
+OV_RESULT xdr_write_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_CURRENT_PROPS* pProps);
+
+OV_RESULT xdr_read_OV_GETVAR_ITEM (KS_DATAPACKET* dataPacket, OV_GETVAR_ITEM *pItem);
+OV_RESULT xdr_write_OV_GETVAR_ITEM (KS_DATAPACKET* serviceAnswer, OV_GETVAR_ITEM *pItem);
+
 OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* item);
+OV_RESULT xdr_write_OV_SETVAR_ITEM (KS_DATAPACKET* dataPacket, OV_SETVAR_ITEM* item);
 
 OV_RESULT xdr_read_OV_PLACEMENT (KS_DATAPACKET* dataReceived, OV_PLACEMENT* pplacement);
 
@@ -68,11 +75,42 @@ OV_RESULT xdr_read_OV_LINK_ITEM (KS_DATAPACKET* dataReceived, OV_LINK_ITEM*	pite
 
 /*
  * XDR functions for OV_VAR_VALUE (ANY variable)
- * The read function allocates space on the memstack for vectors and strings. the space for the OV_VAR_VAALUE-object is NOT allocated within the read function
+ * The read function allocates space on the memstack for vectors and strings. the space for the OV_VAR_VALUE-object is NOT allocated within the read function
  */
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* datapacket, OV_VAR_VALUE* value);
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_VAR_VALUE(KS_DATAPACKET* datapacket, OV_VAR_VALUE* value);
+
+/*
+ * OV-Specific routines that are used for only one service
+ * the functions' definitions are located in the respective files (e.g. ksxdr_getPP.c)
+ */
+
+/*	getPP	*/
+OV_RESULT xdr_read_OV_VAR_PROJECTED_PROPS(KS_DATAPACKET* dataPacket, OV_VAR_PROJECTED_PROPS *objp);
+OV_RESULT xdr_write_OV_VAR_PROJECTED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_PROJECTED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_LINK_PROJECTED_PROPS(KS_DATAPACKET* dataPacket, OV_LINK_PROJECTED_PROPS *objp);
+OV_RESULT xdr_write_OV_LINK_PROJECTED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_PROJECTED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_OBJ_PROJECTED_PROPS(KS_DATAPACKET* dataPacket, OV_OBJ_PROJECTED_PROPS *objp);
+OV_RESULT xdr_write_OV_OBJ_PROJECTED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_PROJECTED_PROPS *objp);
+
+/*	getEP	*/
+OV_RESULT xdr_read_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_HISTORY_ENGINEERED_PROPS *objp);
+OV_RESULT xdr_write_OV_HISTORY_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_HISTORY_ENGINEERED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_DOMAIN_ENGINEERED_PROPS *objp);
+OV_RESULT xdr_write_OV_DOMAIN_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_DOMAIN_ENGINEERED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_VAR_ENGINEERED_PROPS *objp);
+OV_RESULT xdr_write_OV_VAR_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_ENGINEERED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_LINK_ENGINEERED_PROPS *objp);
+OV_RESULT xdr_write_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LINK_ENGINEERED_PROPS *objp);
+
+OV_RESULT xdr_read_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_OBJ_ENGINEERED_PROPS *objp);
+OV_RESULT xdr_write_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGINEERED_PROPS *objp);
 
 /*
 *	XDR routines for enumeration values

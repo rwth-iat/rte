@@ -98,7 +98,8 @@ LIBRARY ksxdr
 		COMMENT	=	"message generation and reply processing for xdr protocol";
 		VARIABLES
 			serverHost	:	STRING
-				COMMENT	=	"Hostname (or IP Address) of server to communicate with"
+				HAS_SET_ACCESSOR
+				COMMENT	=	"Hostname (or IP Address) of server to communicate with. Setting a new Hostname will reset serverPort and close connection."
 				INITIALVALUE	=	"";
 			ManagerPort	:	STRING
 				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
@@ -107,7 +108,8 @@ LIBRARY ksxdr
 				COMMENT	=	"Port (or IANA-Servicename) to communicate with"
 				INITIALVALUE	=	"";
 			serverName	:	STRING
-				COMMENT	=	"KS-Name of the server to communicate with"
+				HAS_SET_ACCESSOR
+				COMMENT	=	"KS-Name of the server to communicate with. Setting a new serverName will reset serverPort. Setting serverName to MANAGER will set serverPort to ManagerPort"
 				INITIALVALUE	=	"";
 			msgAccepted	:	INT
 				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
@@ -131,6 +133,11 @@ LIBRARY ksxdr
 				INITIALVALUE	=	30;
 			dataToSend	:	C_TYPE	<KS_DATAPACKET>
 				COMMENT	=	"Data to be send (reqeust XDR).";
+			tempXID	:	UINT
+				COMMENT	=	"XID saved temporarily (whiole a getserver is running)"
+				INITIALVALUE	=	0;
+			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
+				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
 			dataReceived	:	C_TYPE	<KS_DATAPACKET>
 				COMMENT	=	"Data received (answer XDR).";
 		END_VARIABLES;

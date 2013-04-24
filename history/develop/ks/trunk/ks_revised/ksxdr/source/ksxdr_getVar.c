@@ -25,49 +25,6 @@ OV_RESULT ksxdr_getVar_decodeparams(KS_DATAPACKET* dataReceived, OV_GETVAR_PAR* 
 }
 
 
-/*
-*	XDR routine for OV_VAR_CURRENT_PROPS
-*/
-OV_RESULT xdr_write_OV_VAR_CURRENT_PROPS(KS_DATAPACKET* serviceAnswer, OV_VAR_CURRENT_PROPS* pProps)
-{
-	OV_RESULT result;
-
-	result = KS_DATAPACKET_write_xdr_OV_VAR_VALUE(serviceAnswer, &pProps->value);
-	if(Ov_Fail(result))
-		return result;
-
-	result = KS_DATAPACKET_write_xdr_OV_TIME(serviceAnswer, &pProps->time);
-	if(Ov_Fail(result))
-		return result;
-
-	return KS_DATAPACKET_write_xdr_OV_STATE(serviceAnswer, &pProps->state);
-}
-
-
-/*
-*	XDR routine for OV_GETVAR_ITEM
-*/
-OV_RESULT xdr_write_OV_GETVAR_ITEM (KS_DATAPACKET* serviceAnswer, OV_GETVAR_ITEM	*pItem)
-{
-	OV_OBJ_TYPE	objtype = KS_OT_VARIABLE;
-	OV_RESULT result;
-
-	result = KS_DATAPACKET_write_xdr_OV_RESULT(serviceAnswer, &pItem->result);
-	if(Ov_Fail(result))
-		return result;
-
-	switch(pItem->result) {
-	case OV_ERR_OK:
-		result = KS_DATAPACKET_write_xdr_OV_OBJ_TYPE(serviceAnswer, &objtype);
-		if(Ov_Fail(result))
-			return result;
-
-		return xdr_write_OV_VAR_CURRENT_PROPS(serviceAnswer, &pItem->var_current_props);
-	default:
-		break;
-	}
-	return OV_ERR_OK;
-}
 
 /*
  * routine to encode the results
@@ -135,3 +92,55 @@ OV_RESULT ksxdr_getVar(const OV_UINT version, const OV_TICKET* pticket, KS_DATAP
 
 	return fncresult;
 }
+
+/*
+*	XDR routine for OV_GETVAR_ITEM
+*/
+OV_RESULT xdr_read_OV_GETVAR_ITEM (KS_DATAPACKET* dataPacket, OV_GETVAR_ITEM *pItem)
+{
+	OV_OBJ_TYPE	objtype;
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_OV_RESULT(dataPacket, &pItem->result);
+	if(Ov_Fail(result))
+		return result;
+
+	switch(pItem->result) {
+	case OV_ERR_OK:
+		result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataPacket, &objtype);
+		if(Ov_Fail(result))
+			return result;
+
+		if(objtype != KS_OT_VARIABLE)
+			return OV_ERR_BADOBJTYPE;
+
+		return xdr_read_OV_VAR_CURRENT_PROPS(dataPacket, &pItem->var_current_props);
+	default:
+		break;
+	}
+	return OV_ERR_OK;
+}
+
+
+OV_RESULT xdr_write_OV_GETVAR_ITEM (KS_DATAPACKET* serviceAnswer, OV_GETVAR_ITEM	*pItem)
+{
+	OV_OBJ_TYPE	objtype = KS_OT_VARIABLE;
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_OV_RESULT(serviceAnswer, &pItem->result);
+	if(Ov_Fail(result))
+		return result;
+
+	switch(pItem->result) {
+	case OV_ERR_OK:
+		result = KS_DATAPACKET_write_xdr_OV_OBJ_TYPE(serviceAnswer, &objtype);
+		if(Ov_Fail(result))
+			return result;
+
+		return xdr_write_OV_VAR_CURRENT_PROPS(serviceAnswer, &pItem->var_current_props);
+	default:
+		break;
+	}
+	return OV_ERR_OK;
+}
+

@@ -59,10 +59,10 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
     /*    
     *   local variables
     */
-	OV_INSTPTR_ksxdr_xdrManagerCom thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, pobj);
-	OV_INSTPTR_ksbase_Manager pManager = NULL;
-
-
+	OV_INSTPTR_ksxdr_xdrManagerCom	thisMngCom = Ov_StaticPtrCast(ksxdr_xdrManagerCom, pobj);
+	OV_INSTPTR_ksbase_Manager		pManager = NULL;
+	OV_INSTPTR_ksxdr_xdrClient		xdrClient = NULL;
+	OV_ANY							servername;
 
 	if(thisMngCom->v_UseShortCut == TRUE)
 	{
@@ -91,11 +91,28 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 			return;
 		}
 	}
+	else
+	{/*	find the first xdrClient in containment to request unregister	*/
+		xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, thisMngCom));
+		if(xdrClient)
+		{
+			while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
+		}
+
+		servername.value.vartype = OV_VT_VOID;
+		servername.value.valueunion.val_string = NULL;
+		ov_vendortree_getservername(&servername, NULL);
+
+		if(xdrClient)
+			ksxdr_xdrClient_requestUnRegister(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient), NULL, servername.value.valueunion.val_string, 2, NULL, NULL);
+
+	}
 	thisMngCom->v_RegisterState = 0;	/*	set state to unregistered	*/
 	thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
 	thisMngCom->v_Tries = 0;
 
-		//TODO insert call to xdrClient here
+
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
@@ -259,7 +276,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 			}
 			else
 			{
-
+				servername.value.vartype = OV_VT_VOID;
+				servername.value.valueunion.val_string = NULL;
 				ov_vendortree_getservername(&servername, NULL);
 
 				/*	find the first xdrClient in containment to request register	*/
@@ -282,6 +300,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 						thisMngCom->v_RegisterState = 128;
 						return;
 					}
+					xdrClient->v_holdConnection = TRUE;
 				}
 				ksxdr_xdrClient_requestRegister(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient), NULL, servername.value.valueunion.val_string, 2, strtol(thisMngCom->v_OwnPort, NULL, 10), 30, Ov_StaticPtrCast(ov_domain, this), &ksxdr_xdrManagercom_Callback);
 				thisMngCom->v_RegisterState = 1;	/*	set state to waiting for answer	*/
