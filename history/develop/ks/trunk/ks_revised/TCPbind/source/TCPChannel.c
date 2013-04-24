@@ -553,6 +553,9 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	int on = 1; 	//used to disable nagle algorithm
 	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
 
+	if(!host || !(*host) || !port || !(*port))
+		return OV_ERR_BADPARAM;
+
 	/*	close old connection	*/
 	TCPbind_TCPChannel_CloseConnection(this);
 
