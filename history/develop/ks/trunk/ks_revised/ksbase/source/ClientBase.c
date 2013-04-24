@@ -160,7 +160,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_VAR_CURRENT_PROPS* items_val
+	OV_GETVAR_ITEM* items_val
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
