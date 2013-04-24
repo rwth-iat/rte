@@ -97,20 +97,9 @@ LIBRARY ksxdr
 		IS_INSTANTIABLE;
 		COMMENT	=	"message generation and reply processing for xdr protocol";
 		VARIABLES
-			serverHost	:	STRING
-				HAS_SET_ACCESSOR
-				COMMENT	=	"Hostname (or IP Address) of server to communicate with. Setting a new Hostname will reset serverPort and close connection."
-				INITIALVALUE	=	"";
 			ManagerPort	:	STRING
 				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
 				INITIALVALUE	=	"7509";
-			serverPort	:	STRING
-				COMMENT	=	"Port (or IANA-Servicename) to communicate with"
-				INITIALVALUE	=	"";
-			serverName	:	STRING
-				HAS_SET_ACCESSOR
-				COMMENT	=	"KS-Name of the server to communicate with. Setting a new serverName will reset serverPort. Setting serverName to MANAGER will set serverPort to ManagerPort"
-				INITIALVALUE	=	"";
 			msgAccepted	:	INT
 				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
 				INITIALVALUE = 0;
