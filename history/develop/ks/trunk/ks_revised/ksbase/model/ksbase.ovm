@@ -324,15 +324,29 @@ LIBRARY ksbase
  *	Baseclass for client functionality
  *	This class provides the operation prototypes for requesting KS services as well as for processing the answers.
  *	The functionality of these routines is protocol denpendant and hence has to be implemented in the protocol specific libraries.
- *	The routine to interact with a client is the following: Request a service via the respective request-function. Give the request function a pointer to a callback function if you want to be called back.
+ *	The routine to interact with a client is the following: Request a service via the respective request-function. Give the request function a pointer to a callback function 
+ *		if you want to be called back as soon as the client's state changes to complete.
  *	When the client's state changes to request complete (no error bit set) call the respective process routine. 
  *	Different states while requesting a service are handled by the client. The request and process routines must be programmed in a non-blocking manner. They must not
  *	need a technological timespan to return (no waits allowed, see non-blocking requirement). 
+ *	The serverPort Variable specifies a communication port of a ks-server on the target machine. It is a technological representative for the serverName (which is a ks-Name)
+ *		and not necessarrily used by all types of protocols. 
  */
  
 	CLASS	ClientBase	:	CLASS	ksbase/DataHandler
 		COMMENT	=	"Abstract baseclass for clients. ks-protocol libraries can derive classes from this one for generating client messages (getEP, getVar etc.).";
 		VARIABLES
+			serverHost	:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT	=	"Hostname (or IP Address or whatever type of address) of target machine. Setting a new Hostname will reset serverPort and close connection."
+				INITIALVALUE	=	"";
+			serverName	:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT	=	"KS-Name of the target ks-server. Setting a new serverName will reset serverPort."
+				INITIALVALUE	=	"";
+			serverPort	:	STRING
+				COMMENT	=	"Port (or IANA-Servicename or whatever string to specify the communication port) to the target ks-server on the target machine"
+				INITIALVALUE	=	"";
 			state	:	UINT
 				COMMENT	=	"State of Client: 0 initial; 1 waiting for connection; 2 waiting for answer; 4 waiting for answer completion; 8 processing completed; 128 error; everything > 128: subclass specific"
 				INITIALVALUE = 0;

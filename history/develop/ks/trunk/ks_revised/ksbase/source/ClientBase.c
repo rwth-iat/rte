@@ -22,8 +22,82 @@
 
 
 #include "ksbase.h"
+#include "ksbase_helper.h"
 #include "libov/ov_macros.h"
 #include "ov_ksserver_backend.h"
+
+/*****************************************************************************************************************************************************************************
+ * 		SetAccessors
+ *****************************************************************************************************************************************************************************/
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_serverHost_set(
+		OV_INSTPTR_ksbase_ClientBase          pobj,
+		const OV_STRING  value
+) {
+	OV_RESULT					result;
+	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel	=	NULL;
+
+	if(ov_string_compare(pobj->v_serverHost, value) != OV_STRCMP_EQUAL)
+	{	/*	new host	*/
+		/*	reset serverPort	*/
+		result = ov_string_setvalue(&(pobj->v_serverPort), "");
+		if(Ov_Fail(result))
+			return result;
+		/*	get pointer to channel and close connection if one is open	*/
+		/*	check if there is a channel and get pointer to it	*/
+		pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, pobj);
+		if(pChannel)
+		{
+			Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
+			if(pVtblChannel)
+			{
+				if(pChannel->v_ConnectionState != KSBASE_CONNSTATE_CLOSED)
+					pVtblChannel->m_CloseConnection(pChannel);
+			}
+
+		}
+
+		return ov_string_setvalue(&pobj->v_serverHost,value);
+	}
+	return OV_ERR_OK;
+
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_serverName_set(
+		OV_INSTPTR_ksbase_ClientBase          pobj,
+		const OV_STRING  value
+) {
+	OV_RESULT					result;
+	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel	=	NULL;
+
+	if(ov_string_compare(pobj->v_serverName, value) != OV_STRCMP_EQUAL)
+	{	/*	new host	*/
+		/*	reset serverPort	*/
+		result = ov_string_setvalue(&(pobj->v_serverPort), "");
+		if(Ov_Fail(result))
+			return result;
+
+		/*	get pointer to channel and close connection if one is open	*/
+		pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, pobj);
+		if(pChannel)
+		{
+			Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
+			if(pVtblChannel)
+			{
+				if(pChannel->v_ConnectionState != KSBASE_CONNSTATE_CLOSED)
+					pVtblChannel->m_CloseConnection(pChannel);
+			}
+
+		}
+
+		return ov_string_setvalue(&pobj->v_serverName,value);
+	}
+	return OV_ERR_OK;
+
+}
+
 
 OV_DLLFNCEXPORT	OV_RESULT ksbase_ClientBase_reset(
 	OV_INSTPTR_ksbase_ClientBase this
