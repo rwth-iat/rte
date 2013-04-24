@@ -172,6 +172,26 @@ proc checkout {prefix module {dirname ""} {notrunk ""}} {
 	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
     }
 }
+proc checkout_better {module {notrunk ""}}  {
+    global notrunklist
+	set temp [split $module "/"]
+	foreach x $temp {
+	foreach y $notrunklist {
+	if { [string equal $x $y ] } {
+			 set notrunk "bla"
+			}
+		}
+	}
+	set dirname [lindex $temp end]
+	print_msg "Checking out $module"
+    if {$dirname == ""} then { set dirname $module }
+    #execute cvs checkout -P -d $dirname $module
+    if {$notrunk == ""} then {
+	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname	
+    } else {
+	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname	
+    }
+}
 
 proc checkout_lib {x} {
 	if { [string equal $x ksbase] } {
@@ -182,6 +202,8 @@ proc checkout_lib {x} {
 	    	checkout develop $x
 	}
 }
+
+
 
 # Checkout sources
 proc checkout_acplt {} {
@@ -205,7 +227,7 @@ proc checkout_acplt {} {
     cd $builddir/user
 	if {$release == 1} {
 		foreach x $included_libs {
-		checkout_lib $x
+		checkout_better $x
 		}
 	}
 
@@ -396,6 +418,52 @@ proc release_lib {libname option} {
     global make
     cd $releasedir/user/
     file delete -force $releasedir/user/$libname/
+    checkout_better $libname
+	set temp [split $libname "/"]
+	set libname [lindex $temp end]
+    cd $releasedir/user/$libname/build/$os/
+    if { $option == "all" } then {
+	    print_msg "Note: no debug symbols will be created"
+    }
+    build $libname $make $option
+    print_msg "Deploying $libname"
+    file delete -force $releasedir/user/$libname.build/
+    file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
+    file delete -force $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/
+    file mkdir $releasedir/user/$libname/model/
+    copy_wildcard $releasedir/user/$libname.build/model/*.ov? $releasedir/user/$libname/model/
+    file mkdir $releasedir/user/$libname/include/
+    copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
+    #export libname.a file for compiling under windows
+    if { $os == "nt" } then {
+		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+		#}
+		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
+		    file mkdir $releasedir/user/$libname/build/nt/
+			file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
+		}
+    }
+    if { $os == "linux" } then {
+		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+		#}
+		if { [file exists $releasedir/user/$libname.build/build/linux/$libname.a] } {
+		    file mkdir $releasedir/user/$libname/build/linux/
+			file copy -force $releasedir/user/$libname.build/build/linux/$libname.a $releasedir/user/$libname/build/linux/
+		}
+    }
+    file delete -force $releasedir/user/$libname.build/
+}
+
+
+proc release_lib_better {libname option} {
+    global releasedir
+    global os
+    global make
+    cd $releasedir/user/
+    file delete -force $releasedir/user/$libname/
     checkout_lib $libname
     cd $releasedir/user/$libname/build/$os/
     if { $option == "all" } then {
@@ -433,6 +501,11 @@ proc release_lib {libname option} {
     file delete -force $releasedir/user/$libname.build/
 }
 
+
+
+
+
+
 proc create_release {} {
 	global os
 	global releasedir
@@ -448,6 +521,10 @@ proc create_release {} {
 	}
 
 	print_msg "Creating release in $releasedir"
+	 if { [file exists $releasedir] } then {
+	file delete -force $releasedir
+	}
+	
 	file mkdir $releasedir
 	#bin dir
 	file mkdir $releasedir/bin
@@ -505,9 +582,148 @@ proc create_release {} {
 	}
 }
 
-# ============== MAIN STARTS HERE ==================
-set included_libs {ksserv fb iec61131stdfb ksservtcp ksservhttp ksapi ksapitcp fbcomlib}
+#switch ov file structure
+proc separate {} {
+ global included_libs
+ global releasedir
+ global builddir
+ global addon_libs
+ 
+ if { [file exists $releasedir/system] } then {
+	file delete -force $releasedir/system/
+}
+ if { [file exists $releasedir/addons] } then {
+	file delete -force $releasedir/addons/
+}
 
+#create directories
+ file mkdir $releasedir/system/
+ file mkdir $releasedir/system/systools/
+# file mkdir $releasedir/system/sysbin/
+# file mkdir $releasedir/system/sysdevbase/
+ #file mkdir $releasedir/system/userlibs/bin
+ #file mkdir $releasedir/system/userlibs/include
+ file mkdir $releasedir/doc/
+ file mkdir $releasedir/system/addonlibs
+ #file mkdir $releasedir/addons/tools
+ #file mkdir $releasedir/addons/libs
+ file mkdir $releasedir/servers/
+ file mkdir $releasedir/servers/MANAGER
+ file mkdir $releasedir/servers/MANAGER/modelinstances
+ file mkdir $releasedir/servers/MANAGER/logfiles 
+ #file mkdir $releasedir/modelstore/
+ #file mkdir $releasedir/templatestore/
+ #file mkdir $releasedir/user/tools 
+ #file mkdir $releasedir/user/bin
+ file mkdir $releasedir/dev
+ file mkdir $releasedir/templates
+ file mkdir $releasedir/user
+ 
+ 
+ 
+ #release and move addon libs
+ foreach x $addon_libs {
+        set xt $x
+		set temp [split $x "/"]
+		set x [lindex $temp end]
+		if { [file exists $releasedir/user/$x] } then {
+			file delete -force $releasedir/user/$x
+		}
+		
+		release_lib $xt all
+		
+		#file copy $releasedir/user/$x  $releasedir/addons/$x 
+		#file delete -force $releasedir/user/$x 
+		file copy $releasedir/user/libs/${x}.dll  $releasedir/system/addonlibs/${x}.dll 
+		file copy $releasedir/user/$x $releasedir/dev/$x 
+		file mkdir $releasedir/dev/$x/doc
+		file mkdir $releasedir/dev/$x/source
+		#file copy $releasedir/user/libs/${x}.dll  $releasedir/user/$x/bin/${x}.dll 
+    }
+	cd $builddir/user
+
+	file copy $releasedir/bin/  $releasedir/system/sysbin/
+if { [file exists $releasedir/include] } then {
+	file copy $releasedir/include/  $releasedir/system/sysdevbase/
+	file delete -force $releasedir/include
+}
+
+ #move system libs
+ foreach x $included_libs {
+ set temp [split $x "/"]
+	set x [lindex $temp end]
+	if { [file exists $releasedir/user/$x] } then {
+		file copy $releasedir/user/$x  $releasedir/system/sysdevbase/$x 
+		file delete -force $releasedir/user/$x 
+		file copy $releasedir/user/libs/${x}.dll   $releasedir/system/sysbin/${x}.dll 
+	}
+	}
+	
+#move folders in the new structure
+ 
+	#file copy $releasedir/user/libs  $releasedir/system/bin
+	file delete -force $releasedir/user 
+	#set binfiles [glob -nocomplain $releasedir/bin/*.*]
+
+#	foreach x $binfiles {
+  #     file copy $releasedir/bin/$x  $releasedir/system/sysbin/$x
+	   
+   # }
+	
+	
+if { [file exists $releasedir/bin] } then {
+	#file copy $releasedir/bin/  $releasedir/system/bin/
+	file delete -force $releasedir/bin/
+}
+
+#if { [file exists $releasedir/lib] } then {
+#	file copy $releasedir/lib/  $releasedir/system/lib/
+	file delete -force $releasedir/lib
+#}
+if { [file exists $releasedir/model] } then {
+	file mkdir $releasedir/system/sysdevbase/ov/
+	file copy $releasedir/model/  $releasedir/system/sysdevbase/ov/model
+	file delete -force $releasedir/model
+}
+if { [file exists $releasedir/database] } then {
+	file delete -force $releasedir/database
+}
+if { [file exists $releasedir/servers/ov_server.conf.example] } then {
+	file delete $releasedir/servers/ov_server.conf.example
+}
+if { [file exists $releasedir/system/sysbin/tclsh.exe] } then {
+	file copy $releasedir/system/sysbin/tclsh.exe $releasedir/system/systools/tclsh.exe
+	file delete -force $releasedir/system/sysbin/tclsh.exe
+}
+if { [file exists $builddir/base/ov/source/runtimeserver/ov_server.conf] } then {
+	#file copy $builddir/base/ov/source/runtimeserver/ov_server.conf  $releasedir/servers/ov_server.conf.example
+}
+
+#including tools
+
+cd $releasedir/system/systools
+checkout_lib {base_servertools}
+checkout_lib {base_serverstarttools}
+file copy $releasedir/system/systools/base_servertools/build_database.tcl $releasedir/system/systools/build_database.tcl
+file copy $releasedir/system/systools/base_servertools/start_server.tcl $releasedir/system/systools/start_server.tcl
+#file copy $releasedir/system/systools/base_servertools/fb_dbcommands.exe $releasedir/system/sysbin/fb_dbcommands.exe
+file delete -force $releasedir/system/systools/base_servertools/
+
+file copy $releasedir/system/systools/base_serverstarttools/build_database.bat $releasedir/servers/MANAGER/build_database.bat
+file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
+file copy $releasedir/system/systools/base_serverstarttools/start_server.bat $releasedir/servers/MANAGER/start_server.bat
+file copy $releasedir/system/systools/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf
+file delete -force $releasedir/system/systools/base_serverstarttools/
+
+cd $releasedir
+}
+
+
+# ============== MAIN STARTS HERE ==================
+set included_libs {develop/ks/trunk/ksserv develop/fb develop/ks/trunk/ksservtcp develop/ks/trunk/ksservhttp develop/ks/trunk/ksapi develop/ks/trunk/ksapitcp }
+set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib develop/ks/trunk/fbcomlib }
+set notrunklist {ks}
+#iec61131stdfb IOdriverlib fbcomlib
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
@@ -604,7 +820,13 @@ if {$release == 1} {
     create_release
     foreach x $included_libs {
 	release_lib $x debug
+	
     }
+	separate
+#file rename -force $releasedir/user $releasedir/system
+
+
+
 if {$release == 1} {
     set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-develop-$date"
@@ -628,11 +850,16 @@ if {$release == 1} {
     }
     set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-runtime-$date"
-    cd $releasedir/user
-    foreach x $included_libs {
-        file delete -force $x
-    }
-    cd $releasedir/bin
+    separate
+	if { [file exists $releasedir/dev/] } then {
+	file delete -force $releasedir/dev/
+}
+    #cd $releasedir/system/user
+	#foreach x $included_libs {
+    #    file delete -force $x
+    #}
+
+    cd $releasedir/system/sysbin
     file delete -force acplt_makmak
     file delete -force acplt_makmak.exe
     file delete -force acplt_builder
@@ -643,12 +870,33 @@ if {$release == 1} {
     file delete -force ov_codegen.exe
     file delete -force ov_makmak
     file delete -force ov_makmak.exe
-    cd $releasedir
-    file delete -force include
-    file delete -force model
-    file delete -force lib
-    cd $basedir
-	print_msg "Compressing"
+   cd $releasedir/system
+    file delete -force sysdevbase
+	file mkdir  sysdevbase
+    #file delete -force lib
+	#cd $releasedir/system/ov
+	#file delete -force model
+	cd $basedir
+		
+	
+	
+	
+	#if { [file exists $releasedir/system/bin/tclsh.exe] } then {
+	#file copy  $releasedir/system/bin/tclsh.exe $releasedir/system/tclsh.exe
+	#file delete $releasedir/system/bin/tclsh.exe
+#}
+set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
+
+	foreach x $stripfiles {
+       
+	  # execute  "strip --strip-debug" $x
+	  execute  "strip" "-g" "-S" "-d" $x
+    }
+	#file copy  $releasedir/system/tclsh.exe $releasedir/system/bin/tclsh.exe 
+	#	file delete $releasedir/system/tclsh.exe
+
+
+		print_msg "Compressing"
     if { $os == "linux" } then {
     	execute "zip" "-r" "$name-linux" "./acplt"
     } else {
