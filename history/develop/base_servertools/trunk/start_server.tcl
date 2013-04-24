@@ -133,14 +133,11 @@ if {[eq ${in1} t] == 1} {
 #
 #  Einlesen der vorhandenen Templateordner
 #
-if {[file exists $TEMPLATEDIR/*]} then {
-puts "template groups found:"
-puts "\n"
 #
 set i 1
 set out ""
 
-set content1 [glob -tails -directory ${TEMPLATEDIR} "*"]
+set content1 [glob -tails -nocomplain -directory ${TEMPLATEDIR} "*"]
 
 foreach item $content1 {
 	   append out "$i  "
@@ -148,6 +145,9 @@ foreach item $content1 {
        append out "\n"
 	   set i [+ $i 1]
 	   }
+if {[> $i 1]} {
+puts "template groups found:"
+puts "\n"
 puts "$out"
 #
 #  Auswahl des Templateordners
@@ -163,7 +163,7 @@ puts "number not allowed"
 continue}
 # Name des gewählten Templateordners bestimmen
 set DIRNAME [lindex $content1 ${DIRNUMBER}-1]
-set content2 [glob -tails -directory ${TEMPLATEDIR}/$DIRNAME "*.fbd"]
+set content2 [glob -tails -nocomplain -directory ${TEMPLATEDIR}/$DIRNAME "*.fbd"]
 # content2 enthält alle Files mit Endung .fbd
 foreach item $content2 {
 	   set out "-  "
@@ -192,19 +192,19 @@ if {[eq ${in1} m] == 1} {
 #
 #  Einlesen der vorhandenen Modelle
 #
-if {[file exists $MODELDIR/*]} then {
-puts "modelinstances found:"
-puts "\n"
 #
 set i 1
 
-set content1 [glob -tails -directory ${MODELDIR} "*.fbd"]
+set content1 [glob -tails -nocomplain -directory ${MODELDIR} "*.fbd"]
 foreach item $content1 {
 	   append out "$i  "
 	   append out $item
        append out "\n"
 	   set i [+ $i 1]
 	   }
+if {[> $i 1]} {
+puts "modelinstances found:"
+puts "\n"
 puts $out
 #
 #  Auswahl des zu ladenden Modells
