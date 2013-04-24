@@ -7,7 +7,8 @@
 # Usage: tclsh acplt_build.tcl (release) (checkout)
 set release 0
 set checkout 0 
-
+set libsuffix 0
+set exesuffix 0
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -20,6 +21,7 @@ foreach arg $argv {
 		break
 	}
 }
+
 
 set basedir [pwd]
 
@@ -37,10 +39,14 @@ set logfile $basedir/acplt_build.log
 if {$tcl_platform(os) == "Linux"} then { 
     set os "linux" 
     set make "make"
+	set libsuffix ".so"
+	set exesuffix ""
 } elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
     set os "nt"
     set make "mingw32-make"
     set env(CYGWIN) "nodosfilewarning" 
+	set libsuffix ".dll"
+	set exesuffix ".exe"
 } else {
     puts stderr "error: unsupported operating system: $tcl_platform(os)"
     exit 1
@@ -322,7 +328,7 @@ proc install {dir} {
     print_msg "Installing from $dir"
     if { $os == "linux" } then {
         set binfiles [concat [glob -nocomplain $dir/*.so] [glob -nocomplain -type {f x} $dir/*]]
-	set libfiles [concat [glob -nocomplain $dir/*.a]]
+		set libfiles [concat [glob -nocomplain $dir/*.a]]
     } 
     if { $os == "nt" } then {
         set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
@@ -392,21 +398,21 @@ proc dbutil {args} {
     eval "execute $dbutil $args"
 }
 
-proc start_server {} {
-    global releasedir
-    global os
-    set database $releasedir/database/database.ovd
-    if [file exists $database] then {
-    } else {
-        dbutil -f $database -c [expr 1024 * 1024]
-    }
-    execute $releasedir/bin/tmanager.exe &
-    if { $os == "linux" } then {
-        global env
-        set env(LD_LIBRARY_PATH) $releasedir/bin
-    }
-    execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
-}
+#proc start_server {} {
+#    global releasedir
+#    global os
+#    set database $releasedir/database/database.ovd
+#    if [file exists $database] then {
+#    } else {
+#        dbutil -f $database -c [expr 1024 * 1024]
+#    }
+#    execute $releasedir/bin/tmanager.exe &
+#    if { $os == "linux" } then {
+#        global env
+#        set env(LD_LIBRARY_PATH) $releasedir/bin
+#    }
+#    execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
+#}
 
 proc release_lib {libname} {
 	relase_lib libname "all"
@@ -588,7 +594,9 @@ proc separate {} {
  global releasedir
  global builddir
  global addon_libs
- 
+ global libsuffix
+ global	exesuffix
+
  if { [file exists $releasedir/system] } then {
 	file delete -force $releasedir/system/
 }
@@ -634,7 +642,7 @@ proc separate {} {
 		
 		#file copy $releasedir/user/$x  $releasedir/addons/$x 
 		#file delete -force $releasedir/user/$x 
-		file copy $releasedir/user/libs/${x}.dll  $releasedir/system/addonlibs/${x}.dll 
+		file copy $releasedir/user/libs/${x}$libsuffix  $releasedir/system/addonlibs/${x}$libsuffix 
 		file copy $releasedir/user/$x $releasedir/dev/$x 
 		file mkdir $releasedir/dev/$x/doc
 		file mkdir $releasedir/dev/$x/source
@@ -655,7 +663,7 @@ if { [file exists $releasedir/include] } then {
 	if { [file exists $releasedir/user/$x] } then {
 		file copy $releasedir/user/$x  $releasedir/system/sysdevbase/$x 
 		file delete -force $releasedir/user/$x 
-		file copy $releasedir/user/libs/${x}.dll   $releasedir/system/sysbin/${x}.dll 
+		file copy $releasedir/user/libs/${x}$libsuffix   $releasedir/system/sysbin/${x}$libsuffix 
 	}
 	}
 	
@@ -693,9 +701,9 @@ if { [file exists $releasedir/database] } then {
 if { [file exists $releasedir/servers/ov_server.conf.example] } then {
 	file delete $releasedir/servers/ov_server.conf.example
 }
-if { [file exists $releasedir/system/sysbin/tclsh.exe] } then {
-	file copy $releasedir/system/sysbin/tclsh.exe $releasedir/system/systools/tclsh.exe
-	file delete -force $releasedir/system/sysbin/tclsh.exe
+if { [file exists $releasedir/system/sysbin/tclsh$exesuffix] } then {
+	file copy $releasedir/system/sysbin/tclsh$exesuffix $releasedir/system/systools/tclsh$exesuffix
+	file delete -force $releasedir/system/sysbin/tclsh$exesuffix
 }
 if { [file exists $builddir/base/ov/source/runtimeserver/ov_server.conf] } then {
 	#file copy $builddir/base/ov/source/runtimeserver/ov_server.conf  $releasedir/servers/ov_server.conf.example
