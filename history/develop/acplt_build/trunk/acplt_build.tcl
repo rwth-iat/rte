@@ -665,6 +665,8 @@ if { [file exists $releasedir/include] } then {
 	file delete -force $releasedir/user 
 	#set binfiles [glob -nocomplain $releasedir/bin/*.*]
 
+	
+	
 #	foreach x $binfiles {
   #     file copy $releasedir/bin/$x  $releasedir/system/sysbin/$x
 	   
