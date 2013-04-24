@@ -660,7 +660,7 @@ if { [file exists $releasedir/include] } then {
 	}
 	
 #move folders in the new structure
- 
+     
 	#file copy $releasedir/user/libs  $releasedir/system/bin
 	file delete -force $releasedir/user 
 	#set binfiles [glob -nocomplain $releasedir/bin/*.*]
