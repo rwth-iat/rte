@@ -19,7 +19,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 debug:
 
 %:
-        acplt_makmak -l IOdriverlib $(MAKMAKOPTIONS)
-        -tclsh $(PREBUILD) IOdriverlib $(MAKMAKOPTIONS)
-        $(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
-        -tclsh $(POSTBUILD) IOdriverlib
+	acplt_makmak -l IOdriverlib $(MAKMAKOPTIONS)
+	-tclsh $(PREBUILD) IOdriverlib $(MAKMAKOPTIONS)
+	$(MAKE) EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(COMPILER_LO).mk $*
+	-tclsh $(POSTBUILD) IOdriverlib
