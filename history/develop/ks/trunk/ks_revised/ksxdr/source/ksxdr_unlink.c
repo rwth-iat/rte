@@ -29,6 +29,17 @@ OV_RESULT xdr_read_OV_UNLINK_ITEM (KS_DATAPACKET* dataReceived,	OV_UNLINK_ITEM* 
 	return KS_DATAPACKET_read_xdr_string_tomemstack_wolength(dataReceived, &pitem->element_path);
 }
 
+OV_RESULT xdr_write_OV_UNLINK_ITEM (KS_DATAPACKET* dataPacket,	OV_UNLINK_ITEM* pitem)
+{
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->link_path);
+	if(Ov_Fail(result))
+		return result;
+
+	return KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->element_path);
+}
+
 /*
  * xdr routine for decoding unlink parameters
  */

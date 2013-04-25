@@ -33,6 +33,21 @@ OV_RESULT xdr_read_OV_RENAMEOBJECT_ITEM (KS_DATAPACKET* datapacket, OV_RENAMEOBJ
 	return xdr_read_OV_PLACEMENT(datapacket, &pitem->place);
 }
 
+OV_RESULT xdr_write_OV_RENAMEOBJECT_ITEM (KS_DATAPACKET* datapacket, OV_RENAMEOBJECT_ITEM* pitem)
+{
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_string(datapacket, &pitem->old_path);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_write_xdr_string(datapacket, &pitem->new_path);
+	if(Ov_Fail(result))
+		return result;
+
+	return xdr_write_OV_PLACEMENT(datapacket, &pitem->place);
+}
+
 /*
  * xdr routine for decoding renameObject parameters
  */

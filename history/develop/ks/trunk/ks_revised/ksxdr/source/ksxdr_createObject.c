@@ -19,7 +19,7 @@
 /*
 *	XDR routine for OV_CREATEOBJ_ITEM
 */
-OV_RESULT ksxdr_read_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataReceived, OV_CREATEOBJ_ITEM* pitem)
+OV_RESULT xdr_read_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataReceived, OV_CREATEOBJ_ITEM* pitem)
 {
 	OV_RESULT result;
 	OV_UINT i;
@@ -65,6 +65,46 @@ OV_RESULT ksxdr_read_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataReceived, OV_CREATEOB
 	return OV_ERR_OK;
 }
 
+OV_RESULT xdr_write_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataPacket, OV_CREATEOBJ_ITEM* pitem)
+{
+	OV_RESULT result;
+	OV_UINT i;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->factory_path);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->new_path);
+	if(Ov_Fail(result))
+		return result;
+
+	result = xdr_write_OV_PLACEMENT(dataPacket, &pitem->place);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_write_xdr_u_long(dataPacket, &pitem->parameters_len);
+	if(Ov_Fail(result))
+		return result;
+	for(i=0; i<pitem->parameters_len; i++)
+	{
+		result = xdr_write_OV_SETVAR_ITEM(dataPacket, &(pitem->parameters_val[i]));
+		if(Ov_Fail(result))
+			return result;
+	}
+
+	result = KS_DATAPACKET_write_xdr_u_long(dataPacket, &pitem->links_len);
+	if(Ov_Fail(result))
+		return result;
+	for(i=0; i<pitem->links_len; i++)
+	{
+		result = xdr_write_OV_LINK_ITEM(dataPacket, &(pitem->links_val[i]));
+		if(Ov_Fail(result))
+			return result;
+	}
+
+	return OV_ERR_OK;
+}
+
 /*
  * xdr routine for decoding create object parameters
  */
@@ -84,7 +124,7 @@ OV_RESULT ksxdr_createObject_decodeparams(KS_DATAPACKET* dataReceived, OV_CREATE
 
 	for(i=0; i<params->items_len; i++)
 	{
-		result = ksxdr_read_OV_CREATEOBJ_ITEM(dataReceived, &(params->items_val[i]));
+		result = xdr_read_OV_CREATEOBJ_ITEM(dataReceived, &(params->items_val[i]));
 		if(Ov_Fail(result))
 			return result;
 	}
@@ -96,6 +136,30 @@ OV_RESULT ksxdr_createObject_decodeparams(KS_DATAPACKET* dataReceived, OV_CREATE
 /*
 *	XDR routine for OV_CREATEOBJECTITEM_RES
 */
+OV_RESULT xdr_read_OV_CREATEOBJECTITEM_RES (KS_DATAPACKET* datapacket, OV_CREATEOBJECTITEM_RES* pitem)
+{
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_read_xdr_OV_RESULT(datapacket, &pitem->result);
+	if(Ov_Fail(result))
+		return result;
+
+	switch(pitem->result)
+	{
+	case OV_ERR_BADINITPARAM:
+		result = KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &(pitem->params_results_val), sizeof(OV_RESULT), &pitem->params_results_len,
+				(xdr_writefncptr) &KS_DATAPACKET_read_xdr_long);
+		if(Ov_Fail(result))
+			return result;
+
+		return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &(pitem->link_results_val), sizeof(OV_RESULT), &pitem->link_results_len,
+				(xdr_writefncptr) &KS_DATAPACKET_read_xdr_long);
+	default:
+		break;
+	}
+	return OV_ERR_OK;
+}
+
 OV_RESULT xdr_write_OV_CREATEOBJECTITEM_RES (KS_DATAPACKET* datapacket, OV_CREATEOBJECTITEM_RES* pitem)
 {
 	OV_RESULT result;

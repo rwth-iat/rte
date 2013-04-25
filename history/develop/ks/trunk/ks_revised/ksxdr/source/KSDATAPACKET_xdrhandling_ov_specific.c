@@ -311,6 +311,24 @@ OV_RESULT xdr_read_OV_PLACEMENT (KS_DATAPACKET* dataReceived, OV_PLACEMENT* ppla
 	return OV_ERR_OK;
 }
 
+OV_RESULT xdr_write_OV_PLACEMENT (KS_DATAPACKET* dataPacket, OV_PLACEMENT* pplacement)
+{
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_OV_PLACEMENT_HINT(dataPacket, &pplacement->hint);
+	if(Ov_Fail(result))
+		return result;
+
+	switch(pplacement->hint) {
+	case OV_PMH_BEFORE:
+	case OV_PMH_AFTER:
+		return KS_DATAPACKET_write_xdr_string(dataPacket, &pplacement->place_path);
+	default:
+		break;
+	}
+	return OV_ERR_OK;
+}
+
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -334,3 +352,23 @@ OV_RESULT xdr_read_OV_LINK_ITEM (KS_DATAPACKET* dataReceived, OV_LINK_ITEM*	pite
 
 	return xdr_read_OV_PLACEMENT(dataReceived, &pitem->opposite_place);
 }
+
+OV_RESULT xdr_write_OV_LINK_ITEM (KS_DATAPACKET* dataPacket, OV_LINK_ITEM*	pitem)
+{
+	OV_RESULT result;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->link_path);
+	if(Ov_Fail(result))
+		return result;
+
+	result = KS_DATAPACKET_write_xdr_string(dataPacket, &pitem->element_path);
+	if(Ov_Fail(result))
+		return result;
+
+	result = xdr_write_OV_PLACEMENT(dataPacket, &pitem->place);
+	if(Ov_Fail(result))
+		return result;
+
+	return xdr_write_OV_PLACEMENT(dataPacket, &pitem->opposite_place);
+}
+

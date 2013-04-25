@@ -70,8 +70,10 @@ OV_RESULT xdr_read_OV_SETVAR_ITEM (KS_DATAPACKET* dataReceived, OV_SETVAR_ITEM* 
 OV_RESULT xdr_write_OV_SETVAR_ITEM (KS_DATAPACKET* dataPacket, OV_SETVAR_ITEM* item);
 
 OV_RESULT xdr_read_OV_PLACEMENT (KS_DATAPACKET* dataReceived, OV_PLACEMENT* pplacement);
+OV_RESULT xdr_write_OV_PLACEMENT (KS_DATAPACKET* dataPacket, OV_PLACEMENT* pplacement);
 
 OV_RESULT xdr_read_OV_LINK_ITEM (KS_DATAPACKET* dataReceived, OV_LINK_ITEM*	pitem);
+OV_RESULT xdr_write_OV_LINK_ITEM (KS_DATAPACKET* dataPacket, OV_LINK_ITEM*	pitem);
 
 /*
  * XDR functions for OV_VAR_VALUE (ANY variable)
@@ -111,6 +113,20 @@ OV_RESULT xdr_write_OV_LINK_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_LI
 
 OV_RESULT xdr_read_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* dataPacket, OV_OBJ_ENGINEERED_PROPS *objp);
 OV_RESULT xdr_write_OV_OBJ_ENGINEERED_PROPS(KS_DATAPACKET* serviceAnswer, OV_OBJ_ENGINEERED_PROPS *objp);
+
+/*	CreateObject	*/
+OV_RESULT xdr_read_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataReceived, OV_CREATEOBJ_ITEM* pitem);
+OV_RESULT xdr_write_OV_CREATEOBJ_ITEM (KS_DATAPACKET* dataPacket, OV_CREATEOBJ_ITEM* pitem);
+OV_RESULT xdr_read_OV_CREATEOBJECTITEM_RES (KS_DATAPACKET* datapacket, OV_CREATEOBJECTITEM_RES* pitem);
+OV_RESULT xdr_write_OV_CREATEOBJECTITEM_RES (KS_DATAPACKET* datapacket, OV_CREATEOBJECTITEM_RES* pitem);
+
+/*	RenameObject	*/
+OV_RESULT xdr_read_OV_RENAMEOBJECT_ITEM (KS_DATAPACKET* datapacket, OV_RENAMEOBJECT_ITEM* pitem);
+OV_RESULT xdr_write_OV_RENAMEOBJECT_ITEM (KS_DATAPACKET* datapacket, OV_RENAMEOBJECT_ITEM* pitem);
+
+/*	UnLink	*/
+OV_RESULT xdr_read_OV_UNLINK_ITEM (KS_DATAPACKET* dataReceived,	OV_UNLINK_ITEM* pitem);
+OV_RESULT xdr_write_OV_UNLINK_ITEM (KS_DATAPACKET* dataPacket,	OV_UNLINK_ITEM* pitem);
 
 /*
 *	XDR routines for enumeration values
