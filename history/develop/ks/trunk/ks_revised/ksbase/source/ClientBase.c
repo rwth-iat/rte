@@ -349,7 +349,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestLink(
 	const OV_INSTPTR_ksbase_ClientBase this,
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	const OV_UINT items_length,
-	const OV_LINK_ITEM items_val,
+	const OV_LINK_ITEM* items_val,
 	const OV_INSTPTR_ov_domain	callbackThat,
 	void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
