@@ -7,7 +7,7 @@
 # ***********************************************************************************
 #      Datei:            build_database.tcl                                         *
 #                                                                                   *
-#      Historie:		 2913-03-29   Epple     erstellt                            *
+#      Historie:		 2013-03-29   Epple     erstellt                            *
 #                                                                                   *
 #      Beschreibung:     Skript zum Anlegen einer neuen Datenbasis                  *
 #                        für den Server dieser Domäne                               *
@@ -35,8 +35,8 @@
 #                                  entspricht $THISACPLTSYSTEM$                     *
 #        PATH              set     Pfad in dem die zu ladenden Bibliotheken         * 
 #                                  liegen müssen:                                   *
-#                                  "${THISACPLTSYSTEM}/system/addonlib" und     *
-#                                  "${THISACPLTSYSTEM}/system/sysbin"         *
+#                                  "${THISACPLTSYSTEM}/system/addonlib" und         *
+#                                  "${THISACPLTSYSTEM}/system/sysbin"               *
 #                                                                                   *
 #      folgende Variablen werden gesetzt:                                           *
 #        DATABASENAME      set     Name der Datenbasis                              *

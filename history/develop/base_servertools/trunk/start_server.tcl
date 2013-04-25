@@ -6,21 +6,21 @@
 # ***********************************************************************************
 #      Datei:            start_server.tcl                                           *
 #                                                                                   *
-#      Historie:		 2913-03-29   Epple     erstellt                            *
+#      Historie:		 2013-03-29   Epple     erstellt                            *
 #                                                                                   *
 #      Beschreibung:     Skript zum Starten des Servers dieser Domäne               *
 #                        und zum Nachladen von Bibliotheken und Templates           *
 #                                                                                   *
 # ***********************************************************************************
 #      Hinweis:          -  Das Skript start_server.tcl" befindet sich in           *
-#                           der Domäne acplt/system/systools                           *
+#                           der Domäne acplt/system/systools                        *
 #                        -  Die Datenbasis db.ovd muss im Ordner                    *
 #                           acplt/servers/$THISSERVER vorhanden sein.               *
 #                        -  Der Server erhält den Namen der Domäne                  *
 # ***********************************************************************************
-#
+#                                                                                   *
 #      verwendete Unterprogramme:                                                   *
-#      ov_runtimeserver,   fb_dbcommands                                                                    *
+#      ov_runtimeserver, fb_dbcommands                                              *
 #                                                                                   *
 #      verwendete Umgebungsvariablen                                                *
 #      lokal                                                                        *
@@ -108,7 +108,7 @@ return
 
 puts "starting server      ${SERVERNAME}"
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver.exe -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l ${LOGFILE}"
+set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 puts "server ${SERVERNAME} is running"
 # ********************************************************************************
