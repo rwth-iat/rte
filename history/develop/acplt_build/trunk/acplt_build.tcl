@@ -720,7 +720,7 @@ file copy $releasedir/system/systools/base_servertools/start_server.tcl $release
 file delete -force $releasedir/system/systools/base_servertools/
 
 file copy $releasedir/system/systools/base_serverstarttools/build_database.bat $releasedir/servers/MANAGER/build_database.bat
-file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
+#file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
 file copy $releasedir/system/systools/base_serverstarttools/start_server.bat $releasedir/servers/MANAGER/start_server.bat
 file copy $releasedir/system/systools/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf
 file delete -force $releasedir/system/systools/base_serverstarttools/
