@@ -549,7 +549,7 @@ if(new == 0){
 			/* link directly using dll */
 			fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", devLibs[i]);
 		}
-		for(i=0; i<numDevLibs; i++) {
+		for(i=0; i<numSysLibs; i++) {
 			/* link directly using dll */
 			fprintf(fd," $(SYSLIB_DIR)/%s$(_DLL)", sysLibs[i]);
 		}

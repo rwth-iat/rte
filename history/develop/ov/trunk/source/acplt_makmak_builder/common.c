@@ -34,23 +34,23 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		sprintf(help, "%s/../../model/%s.ovm", cCurrentPath, libname);
 		compatiblePath(help);
 		if(stat(help, &st) == 0){
-			sprintf(libPath, "%s/../../", cCurrentPath);
+			sprintf(libPath, "%s/../..", cCurrentPath);
 			//newDirStructure or old structure?
-			sprintf(help, "%s../../user/", libPath);
+			sprintf(help, "%s/../../user", libPath);
 			compatiblePath(help);
 			if(stat(help, &st) == 0){
 				//old
 				*newDirStructure = 0;
-				sprintf(devModelPath, "%s../../user/", libPath);
-				sprintf(devBinPath, "%s../../user/libs/", libPath);
+				sprintf(devModelPath, "%s/../../user/", libPath);
+				sprintf(devBinPath, "%s/../../user/libs/", libPath);
 				//sysModelPath and sysBinPath are empty
 			}else{
 				//newDirStructure
 				*newDirStructure = 1;
-				sprintf(devModelPath, "%s../../dev/", libPath);
-				sprintf(devBinPath, "%s../../addonlibs/", libPath);
-				sprintf(sysModelPath, "%s../../system/sysdevbase/", libPath);
-				sprintf(sysBinPath, "%s../../system/sysbin/", libPath);
+				sprintf(devModelPath, "%s/../../dev/", libPath);
+				sprintf(devBinPath, "%s/../../addonlibs/", libPath);
+				sprintf(sysModelPath, "%s/../../system/sysdevbase/", libPath);
+				sprintf(sysBinPath, "%s/../../system/sysbin/", libPath);
 			}
 		}
 	}
