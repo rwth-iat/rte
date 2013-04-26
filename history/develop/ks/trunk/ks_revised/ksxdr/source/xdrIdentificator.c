@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
 	do {
 		pClientHandler = NULL;
 		namecounter++;
-		sprintf(CHNameBuffer, "XDRClientHandler%u", namecounter);
+		sprintf(CHNameBuffer, "XDRClientHandler%lu", namecounter);
 		pClientHandler	= (OV_INSTPTR_ksxdr_xdrClientHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 

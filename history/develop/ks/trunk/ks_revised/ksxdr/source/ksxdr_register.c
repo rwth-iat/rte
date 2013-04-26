@@ -47,7 +47,7 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 			return OV_ERR_OK;
 		}
 
-		sprintf(portstr, "%u", serverport);
+		sprintf(portstr, "%lu", serverport);
 		if(Ov_Fail(ksbase_Manager_register(servername, serverversion, KSXDR_IDENTIFIER, portstr, serverttl)))
 		{
 			*msgState = XDR_MSGST_SYSTEM_ERR;
