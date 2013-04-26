@@ -608,7 +608,7 @@ proc separate {} {
  file mkdir $releasedir/system/
  file mkdir $releasedir/system/systools/
 # file mkdir $releasedir/system/sysbin/
-# file mkdir $releasedir/system/sysdevbase/
+file mkdir $releasedir/system/sysdevbase/
  #file mkdir $releasedir/system/userlibs/bin
  #file mkdir $releasedir/system/userlibs/include
  file mkdir $releasedir/doc/
@@ -652,7 +652,7 @@ proc separate {} {
 
 	file copy $releasedir/bin/  $releasedir/system/sysbin/
 if { [file exists $releasedir/include] } then {
-	file copy $releasedir/include/  $releasedir/system/sysdevbase/
+	file copy $releasedir/include $releasedir/system/sysdevbase/include
 	file delete -force $releasedir/include
 }
 
@@ -686,10 +686,10 @@ if { [file exists $releasedir/bin] } then {
 	file delete -force $releasedir/bin/
 }
 
-#if { [file exists $releasedir/lib] } then {
-#	file copy $releasedir/lib/  $releasedir/system/lib/
+if { [file exists $releasedir/lib] } then {
+	file copy $releasedir/lib $releasedir/system/sysdevbase/lib
 	file delete -force $releasedir/lib
-#}
+}
 if { [file exists $releasedir/model] } then {
 	file mkdir $releasedir/system/sysdevbase/ov/
 	file copy $releasedir/model/  $releasedir/system/sysdevbase/ov/model
