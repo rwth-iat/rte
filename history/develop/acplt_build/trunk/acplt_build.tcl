@@ -712,12 +712,12 @@ if { [file exists $builddir/base/ov/source/runtimeserver/ov_server.conf] } then 
 #including tools
 
 cd $releasedir/system/systools
-checkout_lib {base_servertools}
+checkout_lib {systools}
 checkout_lib {base_serverstarttools}
-file copy $releasedir/system/systools/base_servertools/build_database.tcl $releasedir/system/systools/build_database.tcl
-file copy $releasedir/system/systools/base_servertools/start_server.tcl $releasedir/system/systools/start_server.tcl
-#file copy $releasedir/system/systools/base_servertools/fb_dbcommands.exe $releasedir/system/sysbin/fb_dbcommands.exe
-file delete -force $releasedir/system/systools/base_servertools/
+file copy $releasedir/system/systools/systools/build_database.tcl $releasedir/system/systools/build_database.tcl
+file copy $releasedir/system/systools/systools/start_server.tcl $releasedir/system/systools/start_server.tcl
+#file copy $releasedir/system/systools/systools/fb_dbcommands.exe $releasedir/system/sysbin/fb_dbcommands.exe
+file delete -force $releasedir/system/systools/systools/
 
 file copy $releasedir/system/systools/base_serverstarttools/build_database.bat $releasedir/servers/MANAGER/build_database.bat
 #file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
