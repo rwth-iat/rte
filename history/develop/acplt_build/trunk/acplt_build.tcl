@@ -27,7 +27,7 @@ set basedir [pwd]
 
 set builddir $basedir/acplt.build
 set releasedir $basedir/acplt
-
+set flag 0;
 set logfile $basedir/acplt_build.log
 
 #if {![info exists env(CVSROOT)]} then {
@@ -596,7 +596,7 @@ proc separate {} {
  global addon_libs
  global libsuffix
  global	exesuffix
-
+global flag
  if { [file exists $releasedir/system] } then {
 	file delete -force $releasedir/system/
 }
@@ -623,10 +623,9 @@ file mkdir $releasedir/system/sysdevbase/
  #file mkdir $releasedir/templatestore/
  #file mkdir $releasedir/user/tools 
  #file mkdir $releasedir/user/bin
- file mkdir $releasedir/dev
  file mkdir $releasedir/templates
  file mkdir $releasedir/user
- 
+  file mkdir $releasedir/dev
  
  
  #release and move addon libs
@@ -637,9 +636,12 @@ file mkdir $releasedir/system/sysdevbase/
 		if { [file exists $releasedir/user/$x] } then {
 			file delete -force $releasedir/user/$x
 		}
-		
+		if {$flag == 1} then {
 		release_lib $xt all
+		} else {
+		release_lib $xt debug
 		
+		}
 		#file copy $releasedir/user/$x  $releasedir/addons/$x 
 		#file delete -force $releasedir/user/$x 
 		file copy $releasedir/user/libs/${x}$libsuffix  $releasedir/system/addonlibs/${x}$libsuffix 
@@ -648,6 +650,7 @@ file mkdir $releasedir/system/sysdevbase/
 		file mkdir $releasedir/dev/$x/source
 		#file copy $releasedir/user/libs/${x}.dll  $releasedir/user/$x/bin/${x}.dll 
     }
+	set flag 1
 	cd $builddir/user
 
 	file copy $releasedir/bin/  $releasedir/system/sysbin/
