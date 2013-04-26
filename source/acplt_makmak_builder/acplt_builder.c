@@ -23,7 +23,8 @@
 *   Historie                                                                  *
 *   --------                                                                  *
 *   2007-04-09 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
-*   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	      *
+*   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	          *
+*   2013-04-24 Sten Gruener: Adoption to the new directory strucure           *
 *                                                                             *
 *   Beschreibung                                                              *
 *   ------------                                                              *
@@ -31,10 +32,29 @@
 *                                                                             *
 ******************************************************************************/
 
-#include <ctype.h>
-#include <time.h>
+/*
+ *	Definitionen
+ *	------------
+ */
 
 #include "definitions.h"
+
+/*
+ *	Include-Dateien
+ *	---------------
+ */
+#include <stdio.h> /* defines FILENAME_MAX */
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+/*
+ *	Common Functions
+ *	------------
+ */
+
+#include "common.h"
 
 #include "ov_codegen.h"
 
@@ -44,23 +64,12 @@
 *	Global variables
 */
 
-char            outputpath[MAX_INCLUDED_FILES + 1];
+	char            outputpath[MAX_INCLUDED_FILES + 1];
 
-char            *libname = NULL;
-extern int	yydebug;
-extern FILE*	yyin;
-int 		addOpenLib = 0;
+	extern int		yydebug;
+	extern FILE*	yyin;
+	int 			addOpenLib = 0;
 
-char        	*libs[MAX_INCLUDED_FILES + 1];
-int        	 anzAddLibs = 0;
-
-
-/*
- *	Common Functions
- *	------------
- */
-
-#include "common.h"
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -1009,7 +1018,7 @@ int fb_builder_createsourcefiles(
 /*
 *	Backend of the code generator
 */
-int fb_builder_backend(void) {
+int fb_builder_backend(const char* libname) {
 	/*
 	*	local variables
 	*/
@@ -1039,20 +1048,31 @@ int main(int argc, char **argv) {
 	/*
 	*	local variables
 	*/
-	int     i;
-	int	exit_status = EXIT_FAILURE;
-	char    *penv;
-	char    *ph;
-	char    *ifbsEnvVar = IFBS_HOME_ENVPATH;
-	char    *acpltEnvVar = ACPLT_HOME_ENVPATH;
-	char	userLibPath[512];
+	int     	i;
+	int			exit_status = EXIT_FAILURE;
+	char    	*penv = getenv(ACPLT_HOME_ENVPATH);
+	char    	*ph;
+
+	char        libPath[512] = "";
+	char        devModelPath[512] = "";
+	char        devBinPath[512] = "";
+	char        sysModelPath[512] = "";
+	char        sysBinPath[512] = "";
+	int			new = 0;
+
+	/*
+	*    exGlobal Variables
+	*/
+	char        	*devLibs[MAX_INCLUDED_FILES + 1];
+	int         	numDevLibs = 0;
+	char        	*sysLibs[MAX_INCLUDED_FILES + 1];
+	int         	numSysLibs = 0;
+	char        	*libname=NULL;
 	
 	/* Aux variables for creation of openlib.c*/
 	FILE			*fp;
 	int	addOpenLib = 0;
 	
-	int	acplt = 1; /* acplt or ifbspro server */
-
 	/*
 	*	initialization
 	*/
@@ -1112,34 +1132,12 @@ HELP:
 		goto HELP;
 	}
 
-    	/* Enviroment */
-    	/*if ((penv=getenv(pEnvVar)) == NULL) {
-	    fprintf(stderr,"No environment variable >%s<", pEnvVar);
-	    return 1;
-	}*/
-	if(getenv(acpltEnvVar) != NULL && getenv(ifbsEnvVar) == NULL){
-		//fprintf(stdout,"ACPLT server detected\n");
-		penv = getenv(acpltEnvVar);
-		acplt = 1;
-	}else if(getenv(ifbsEnvVar) != NULL && getenv(acpltEnvVar) == NULL){
-		fprintf(stdout,"IFBS server detected\n");
-		penv = getenv(ifbsEnvVar);
-		acplt = 0;
-	}else if(getenv(ifbsEnvVar) == NULL && getenv(acpltEnvVar) == NULL){
-		fprintf(stderr,"Neither %s nor %s are set. No runtime server detected.\n", acpltEnvVar, ifbsEnvVar);
+    /* Enviroment */
+	//locate library now
+	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &new)){
 		return 1;
-	}else{
-		//fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
-		penv = getenv(acpltEnvVar);
-		acplt = 1;
 	}
-
-	/* Difference between OV and IFBS */
-	if(acplt == 1){
-		sprintf(userLibPath, "%s/user", penv);	
-	}else{
-		sprintf(userLibPath, "%s/server/user", penv);
-	}
+ 
 	
 	/*
 	*  Set include paths
@@ -1147,11 +1145,12 @@ HELP:
 	//includepath_ptr = 0;
 	//fb_builder_setincludepaths(penv, libname);
 	//we reuse a function of makmak
-	fb_makmak_searbaselibs(userLibPath, libname, NULL);
+	makmak_searchbaselibs(libname, devModelPath, sysModelPath, devLibs, &numDevLibs, sysLibs, &numSysLibs);	
+
 	//copy the output of searbaselibs
-	includepath_ptr = anzAddLibs;
-	for(i=0; i<anzAddLibs; i++) {
-	    sprintf(outputpath, "%s/%s/model/", userLibPath, libs[i]);
+	includepath_ptr = numDevLibs + numSysLibs;
+	for(i=0; i<numDevLibs; i++) {
+	    sprintf(outputpath, "%s%s/model/", devModelPath, devLibs[i]);
 	    compatiblePath(outputpath);
 	    /* Hinzufuegen */
 	    ph = (char*)malloc(strlen(outputpath) + 1);
@@ -1162,14 +1161,30 @@ HELP:
 	    strcpy(ph, outputpath);
 	    includepath[i] = ph;
 	}
-	//add root model library
-	if(acplt == 1){
-		sprintf(outputpath, "%s/model", penv);	
+
+	for(i=0; i<numSysLibs; i++) {
+	    sprintf(outputpath, "%s%s/model/", sysModelPath, sysLibs[i]);
+	    compatiblePath(outputpath);
+	    /* Hinzufuegen */
+	    ph = (char*)malloc(strlen(outputpath) + 1);
+	    if(!ph) {
+		fprintf(stderr, "Out of memory\n");
+		exit(1);
+	    }
+	    strcpy(ph, outputpath);
+	    includepath[numDevLibs+i] = ph;
+	}
+
+	if(new == 1){
+		//add ov model library
+		sprintf(outputpath, "%sov/model/", sysModelPath);
 	}else{
-		sprintf(outputpath, "%s/server/base/model", penv);
+		//add root model library
+		sprintf(outputpath, "%s/model/", penv);
 	}
 	compatiblePath(outputpath);
-	/* Hinzufuegen */
+
+	/* add to the include list */
 	ph = (char*)malloc(strlen(outputpath) + 1);
 	if(!ph) {
 		fprintf(stderr, "Out of memory\n");
@@ -1181,7 +1196,7 @@ HELP:
 	/*
 	*	Input file 
 	*/
-	sprintf(outputpath, "%s/%s/model/%s.ovm", userLibPath, libname, libname);
+	sprintf(outputpath, "%s/model/%s.ovm", libPath, libname);
 	compatiblePath(outputpath);
 
 	//Sten: hack to make error outputs work	
@@ -1199,7 +1214,7 @@ HELP:
 	/*
 	*	Create output path
 	*/
-	sprintf(outputpath, "%s/%s/source/sourcetemplates", userLibPath, libname);
+	sprintf(outputpath, "%s/source/sourcetemplates", libPath);
 	compatiblePath(outputpath);
 
 	/* Check if outputpath */
@@ -1276,7 +1291,7 @@ HELP:
 			/*
 			*	Create output
 			*/
-			exit_status = fb_builder_backend();
+			exit_status = fb_builder_backend(libname);
 		}
 	}
 	/*

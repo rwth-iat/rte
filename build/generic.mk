@@ -510,7 +510,7 @@ LIBINFO_RES  = $(basename $(LIBINFO_EXE))$(_RES)
 #	new ACPLT/OV acplt_builder
 #	---------------
 
-ACPLT_BUILDER_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_builder.c
+ACPLT_BUILDER_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_builder.c common.c
 ACPLT_BUILDER_OBJ  = $(foreach source, $(ACPLT_BUILDER_SRC), $(basename $(notdir $(source)))$(_OBJ))
 ACPLT_BUILDER_EXE  = acplt_builder$(_EXE)
 ACPLT_BUILDER_RES  = $(basename $(ACPLT_BUILDER_EXE))$(_RES)
@@ -518,13 +518,13 @@ ACPLT_BUILDER_RES  = $(basename $(ACPLT_BUILDER_EXE))$(_RES)
 #	new ACPLT/OV acplt_makmak
 #	---------------
 
-ACPLT_MAKMAK_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_makmak.c
+ACPLT_MAKMAK_SRC := $(OV_SOURCE_ACPLT_MAKMAK_BUILDER_DIR)acplt_makmak.c common.c
 ACPLT_MAKMAK_OBJ  = $(foreach source, $(ACPLT_MAKMAK_SRC), $(basename $(notdir $(source)))$(_OBJ))
 ACPLT_MAKMAK_EXE  = acplt_makmak$(_EXE)
 ACPLT_MAKMAK_RES  = $(basename $(ACPLT_MAKMAK_EXE))$(_RES)
 
 #	Targets and their sources
-#	-------------------------
+#	------------------------- 	
 
 TARGETS = \
 	$(OV_CODEGEN_EXE) \

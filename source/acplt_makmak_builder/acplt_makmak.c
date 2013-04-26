@@ -8,7 +8,9 @@
  *   Historie                                                                  *
  *   --------                                                                  *
  *   2007-04-08 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
- *   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	       *
+ *   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	           *
+ *   2013-04-24 Sten Gruener: Adoption to the new directory strucure           *
+ *                            deep refactoring                                 *
  *                                                                             *
  *   Beschreibung                                                              *
  *   ------------                                                              *
@@ -32,24 +34,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#ifdef OV_SYSTEM_NT
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
-#else
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
- #endif
-
-
-/*
- *	Globale Variablen
- *	-----------------
- */
-char        *libs[MAX_INCLUDED_FILES + 1];
-int         anzAddLibs = 0;
-char        *libname=NULL;
-char 	    cCurrentPath[FILENAME_MAX];
 
 /*
  *	Common Functions
@@ -89,19 +73,29 @@ char* getUpperLibName(char* str) {
  */
 int main(int argc, char **argv) {
 	/*
+	 *	exGlobal variables
+	 *	-----------------
+	 */
+	char        *devLibs[MAX_INCLUDED_FILES + 1];
+	int         numDevLibs = 0;
+	char        *sysLibs[MAX_INCLUDED_FILES + 1];
+	int         numSysLibs = 0;
+	char        *libname=NULL;
+
+	/*
 	 *	local variables
 	 */
 	FILE        *fd;
-	char        *ifbsEnvVar = IFBS_HOME_ENVPATH;
-	char        *acpltEnvVar = ACPLT_HOME_ENVPATH;
-	char        *penv;
 	char        help[512];
-	char        userLibPath[512];
-	char        libPath[512];
+	char        libPath[512] = "";
+	char        devModelPath[512] = "";
+	char        devBinPath[512] = "";
+	char        sysModelPath[512] = "";
+	char        sysBinPath[512] = "";
+	int			new = 0;
 	int 	    i;
 	int 	    addOpenLib = 0;
-	int	    force = 0;
-	int	    acplt = 1; /* acplt or ifbspro server */
+	int	    	force = 0;
 
 #if OV_SYSTEM_NT
 	//char        *ph;
@@ -180,70 +174,22 @@ int main(int argc, char **argv) {
 		goto HELP;
 	}
 
-
-	/* Enviroment */
-	//if ((penv=getenv(ifbsEnvVar)) == NULL) {
-	//	fprintf(stderr,"No environment variable >%s<\n", pEnvVar);
-	//	return 1;
-	//}
-	if(getenv(acpltEnvVar) != NULL && getenv(ifbsEnvVar) == NULL){
-		//fprintf(stdout,"ACPLT server detected\n");
-		penv = getenv(acpltEnvVar);
-		acplt = 1;
-	}else if(getenv(ifbsEnvVar) != NULL && getenv(acpltEnvVar) == NULL){
-		fprintf(stdout,"IFBS server detected\n");
-		penv = getenv(ifbsEnvVar);
-		acplt = 0;
-	}else if(getenv(ifbsEnvVar) == NULL && getenv(acpltEnvVar) == NULL){
-		fprintf(stderr,"Neither %s nor %s are set. No runtime server detected.\n", acpltEnvVar, ifbsEnvVar);
+	//locate library
+	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &new)){
 		return 1;
-	}else{
-		//fprintf(stdout,"ACPLT and IFBS servers detected. ACPLT server selected.\n");
-		penv = getenv(acpltEnvVar);
-		acplt = 1;
 	}
 
-	if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath))){
+	/*
+	 *	one more sanity check
+	 */
+	sprintf(help, "%s/source/%s.c", libPath, libname);
+	compatiblePath(help);
+	if(1 == fileExists(help)){
+		fprintf(stderr, "Error: %s.c in the /source/ dir will collide with generated file, please rename.\n", libname);
 		return 1;
-        }
-
-	cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
-
-	/* printf("The current working directory is %s", cCurrentPath); */
-
-	if(acplt == 1){
-		sprintf(userLibPath, "%s/user", penv);	
-	}else{
-		sprintf(userLibPath, "%s/server/user", penv);
 	}
 
-	sprintf(help, "%s/../../model/%s.ovm", cCurrentPath, libname);
-	compatiblePath(help);
-	if(stat(help, &st) != 0){
-			/* ovm does not exist */
-			/* Difference between OV and IFBS */
-			sprintf(libPath, "%s/%s", userLibPath, libname);
-	}else{
-			sprintf(libPath, "%s/../..", cCurrentPath);
-	}
-
-
-
-	/* Check if lib dir is present */
-	sprintf(help, "%s", libPath);
-	compatiblePath(help);
-	if(stat(help, &st) != 0){
-			fprintf(stderr,"Directory %s does not exist\n", help);
-			return 1;
-	}
-
-	/* Check if model dir is present */
-	sprintf(help, "%s/model", libPath);
-	compatiblePath(help);
-	if(stat(help, &st) != 0){
-			fprintf(stderr,"Model directory %s does not exist\n", help);
-			return 1;
-	}
+	//library found for sure - create some more infrastructure
 
 	/* Check if build dir is present */
 	sprintf(help, "%s/build", libPath);
@@ -261,9 +207,17 @@ int main(int argc, char **argv) {
 	}
 
 	/*
-	 *   Search base libraries
+	 *   resolve dependencies
 	 */
-	fb_makmak_searbaselibs(userLibPath, libname, libPath);
+	makmak_searchbaselibs(libname, devModelPath, sysModelPath, devLibs, &numDevLibs, sysLibs, &numSysLibs);
+
+	fprintf(stderr, "All model inclusions resolved:\n");
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(stderr,"%s in %s\n"  , devLibs[i], devModelPath);
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(stderr,"%s in %s\n"  , sysLibs[i], sysModelPath);
+	}
 
 	/* ---------------------------- Generating files -------------------------  */
 	/* generic.mk */
@@ -274,7 +228,7 @@ int main(int argc, char **argv) {
 
 	fd = fopen(help, "w");
 	if(!fd) {
-		fprintf(stderr, "Unable to open file '%s' for writing.\n", help);
+		fprintf(stderr, "Error: Unable to open file '%s' for writing.\n", help);
 		return 1;
 	}
 
@@ -282,7 +236,7 @@ int main(int argc, char **argv) {
 	fprintf(fd, "#*\n");
 	fprintf(fd, "#*   FILE\n");
 	fprintf(fd, "#*   ----\n");
-	fprintf(fd, "#*   generic.mk - Makefile fuer die Anwender-Bibliothek (generischer Teil)\n");
+	fprintf(fd, "#*   generic.mk - Makefile for user libs (generic part)\n");
 	fprintf(fd, "#******************************************************************************\n");
 	fprintf(fd, "#*\n");
 	fprintf(fd, "#*   This file is generated by the 'acplt_makmak' command\n");
@@ -297,27 +251,44 @@ int main(int argc, char **argv) {
 	fprintf(fd,"SOURCE_DIR        = ../../source/\n");
 	fprintf(fd,"INCLUDE_DIR       = ../../include/\n");
 
+if(new == 0){
+	/** older structure **/
 	//server/user - dir
 	fprintf(fd,"USER_DIR          = ../../../\n");
 	fprintf(fd,"USERLIB_DIR       = $(USER_DIR)libs\n");
-
 	//server - dir
 	fprintf(fd,"ROOT_DIR          = ../../../../\n");
-	/* Difference between OV and IFBS */
-	if(acplt == 1){
-		fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
-	}else{
-		fprintf(fd,"BASE_DIR          = $(ROOT_DIR)base/\n");
-	}
+	fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
 	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)include/\n");
 	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)lib/\n");
 	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)model/\n");
 	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)bin/\n");
+}else{
+	/** newer structure **/
+	//server - dir
+	fprintf(fd,"ROOT_DIR          = ../../../../\n");
+	fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
+	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)/system/sysdevbase/include/\n");
+	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)/system/sysdevbase/lib/\n");
+	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)/system/sysdevbase/ov/model/\n");
+	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)/system/sysbin/\n");
+
+	//server/user - dir
+	fprintf(fd,"USER_DIR          = ../../../\n");
+	fprintf(fd,"USERLIB_DIR       = $(ROOT_DIR)/system/addonlibs/\n");
+	fprintf(fd,"SYS_DIR           = $(BASE_DIR)/system/sysdevbase/\n");
+	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)/system/sysbin/\n");
+}
 
 	/* Basis-Bibliotheken? */
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd,"%s_MODEL_DIR           = $(USER_DIR)%s/model/\n"  , getUpperLibName(libs[i]), libs[i]);
-		fprintf(fd,"%s_INCLUDE_DIR         = $(USER_DIR)%s/include/\n", getUpperLibName(libs[i]), libs[i]);
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd,"%s_MODEL_DIR           = $(USER_DIR)%s/model/\n"  , getUpperLibName(devLibs[i]), devLibs[i]);
+		fprintf(fd,"%s_INCLUDE_DIR         = $(USER_DIR)%s/include/\n", getUpperLibName(devLibs[i]), devLibs[i]);
+	}
+	/* System-Bibliotheken? */
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"%s_MODEL_DIR           = $(SYS_DIR)%s/model/\n"  , getUpperLibName(sysLibs[i]), sysLibs[i]);
+		fprintf(fd,"%s_INCLUDE_DIR         = $(SYS_DIR)%s/include/\n", getUpperLibName(sysLibs[i]), sysLibs[i]);
 	}
 	fprintf(fd,"#   Rules\n");
 	fprintf(fd,"#   -----\n\n");
@@ -331,27 +302,39 @@ int main(int argc, char **argv) {
 	fprintf(fd,"ifeq ($(COMPILER), MSVC)\n");
 
 	fprintf(fd,"INCLUDES  = /I$(BASE_INC_DIR) /I$(BASE_MODEL_DIR) \\\n");
-	for(i=0; i<anzAddLibs; i++) {
+	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t\t\t/I$(%s_MODEL_DIR) /I$(%s_INCLUDE_DIR) \\\n",
-				getUpperLibName(libs[i]), getUpperLibName(libs[i]) );
+				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]));
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"\t\t\t/I$(%s_MODEL_DIR) /I$(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(sysLibs[i]), getUpperLibName(sysLibs[i]));
 	}
 	fprintf(fd,"\t\t\t/I$(MODEL_DIR) /I$(INCLUDE_DIR)\n");
 
 	fprintf(fd,"else\n");
 
 	fprintf(fd,"INCLUDES  = -I$(BASE_INC_DIR) -I$(BASE_MODEL_DIR)\\\n");
-	for(i=0; i<anzAddLibs; i++) {
+	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t\t\t-I$(%s_MODEL_DIR) -I$(%s_INCLUDE_DIR) \\\n",
-				getUpperLibName(libs[i]), getUpperLibName(libs[i]) );
+				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]) );
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"\t\t\t-I$(%s_MODEL_DIR) -I$(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(sysLibs[i]), getUpperLibName(sysLibs[i]) );
 	}
 	fprintf(fd,"\t\t\t-I$(MODEL_DIR) -I$(INCLUDE_DIR)\n");
 
 	fprintf(fd,"endif\n\n");
 
 	fprintf(fd,"VPATH     = $(MODEL_DIR) $(SOURCE_DIR) $(INCLUDE_DIR) \\\n");
-	for(i=0; i<anzAddLibs; i++) {
+	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd,"\t\t\t$(%s_MODEL_DIR) $(%s_INCLUDE_DIR) \\\n",
-				getUpperLibName(libs[i]), getUpperLibName(libs[i]) );
+				getUpperLibName(devLibs[i]), getUpperLibName(devLibs[i]) );
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"\t\t\t$(%s_MODEL_DIR) $(%s_INCLUDE_DIR) \\\n",
+				getUpperLibName(sysLibs[i]), getUpperLibName(sysLibs[i]) );
 	}
 	fprintf(fd,"\t\t\t$(BASE_INC_DIR) $(BASE_MODEL_DIR)\n\n");
 
@@ -385,11 +368,12 @@ int main(int argc, char **argv) {
 
 	fprintf(fd,"HEADERS = \\\n");
 	fprintf(fd,"\tov.h \\\n");
-	if(acplt != 1){
-		fprintf(fd,"\tfb.h \\\n");
+
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", devLibs[i]);
 	}
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd,"\t%s.h \\\n", libs[i]);
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", sysLibs[i]);
 	}
 	fprintf(fd,"\t%s.h \n\n", libname);
 
@@ -409,13 +393,13 @@ int main(int argc, char **argv) {
 	/* Added by Sten on 21.06.11 */
 	fprintf(fd,"SOURCES = \\\n");
 	fprintf(fd,"\tov.h \\\n");
-	if(acplt != 1){
-		fprintf(fd,"\tfb.h \\\n");
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", devLibs[i]);
 	}
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd,"\t%s.h \\\n", libs[i]);
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd,"\t%s.h \\\n", sysLibs[i]);
 	}
-	fprintf(fd,"	$(USERLIB_SRC)\n\n");
+	fprintf(fd,"\t$(USERLIB_SRC)\n\n");
 	/* End add */
 
 	fclose(fd);
@@ -559,23 +543,31 @@ int main(int argc, char **argv) {
 	fprintf(fd,"# ---------\n\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-	if(anzAddLibs > 0) {
+	if(numDevLibs > 0) {
 		fprintf(fd,"ADD_LIBS =");
-		for(i=0; i<anzAddLibs; i++) {
-			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
-			/* link directly against dll */
-			fprintf(fd," $(USER_DIR)libs/%s$(_DLL)", libs[i]);
+		for(i=0; i<numDevLibs; i++) {
+			/* link directly using dll */
+			fprintf(fd," $(USERLIB_DIR)/%s$(_DLL)", devLibs[i]);
+		}
+		for(i=0; i<numDevLibs; i++) {
+			/* link directly using dll */
+			fprintf(fd," $(SYSLIB_DIR)/%s$(_DLL)", sysLibs[i]);
 		}
 		fprintf(fd,"\n");
 	}
 #else
 	fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
-	if(anzAddLibs > 0) {
+	if(numDevLibs > 0) {
 		fprintf(fd,"ADD_LIBS_SWITCHES =");
-		for(i=0; i<anzAddLibs; i++) {
+		for(i=0; i<numDevLibs; i++) {
 			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
 			/* link against .a */
-			fprintf(fd," %s$(_DLL)", libs[i]);
+			fprintf(fd," %s$(_DLL)", devLibs[i]);
+		}
+		for(i=0; i<numSysLibs; i++) {
+			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
+			/* link against .a */
+			fprintf(fd," %s$(_DLL)", sysLibs[i]);
 		}
 		fprintf(fd,"\n");
 	}
@@ -654,15 +646,21 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   -----\n");
 	fprintf(fd,"$(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile\n");
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
 	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
 
 	fprintf(fd,"%%.c %%.h: %%.ovm Makefile\n");
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
 	fprintf(fd," -f $< -l $(notdir $(basename $<))\n\n");
 
@@ -687,10 +685,13 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 #else
 	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-	if(anzAddLibs > 0) {
+	if(numDevLibs > 0) {
 		//ugly method of copying dependencies, but it is the only one to work :(
-		for(i=0; i<anzAddLibs; i++) {
-			fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", libs[i], libs[i]);
+		for(i=0; i<numDevLibs; i++) {
+			fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", devLibs[i], devLibs[i]);
+		}
+		for(i=0; i<numSysLibs; i++) {
+			fprintf(fd,"\tcp $(SYSLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", sysLibs[i], sysLibs[i]);
 		}
 	}
 	fprintf(fd, "\t$(LD) -o $@ $^ $(ADD_LIBS_SWITCHES) $(LD_FLAGS)\n");
@@ -721,372 +722,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 
 
 /* ----------------------- Start of depricated makefiles ----------------------- */
-
-#if OV_SYSTEM_NT
-	/* Add by Sten on 21.06.11 */
-	/* Makefile fuer Borland (depricated) */
-	sprintf(help, "%s/build/%s/borland.mk", libPath, builddir);
-	compatiblePath(help);
-
-	//fprintf(stdout, "Creating file '%s' ...\n", help);
-
-	fd = fopen(help, "w");
-	if(!fd) {
-		fprintf(stderr, "unable to open file '%s' for writing.\n", help);
-		return 1;
-	}
-
-	fprintf(fd, "#******************************************************************************\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#*   FILE\n");
-	fprintf(fd, "#*   ----\n");
-	fprintf(fd, "#*   borland.mk - Makefile fuer die Anwender-Bibliothek\n");
-	fprintf(fd, "#******************************************************************************\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#*   This file is generated by the 'fb_makmak' command\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#******************************************************************************\n");
-
-	fprintf(fd,"\n");
-	fprintf(fd,"#   Plattform\n");
-	fprintf(fd,"#   ---------\n\n");
-	fprintf(fd,"SYSTEM = %s\n", buildsys);
-	fprintf(fd,"SYSDIR = %s\n\n", builddir);
-	fprintf(fd,"COMPILER = BORLAND\n\n");
-	fprintf(fd,"#	Filename conventions\n");
-	fprintf(fd,"#	--------------------\n");
-	fprintf(fd,"_C   = .c\n");
-	fprintf(fd,"_OBJ = .obj\n");
-	fprintf(fd,"_LIB = .lib\n");
-	fprintf(fd,"_DLL = .dll\n");
-	fprintf(fd,"_EXE = .exe\n");
-	fprintf(fd,"_RES = .res\n\n");
-	fprintf(fd,"#	Include generic part\n");
-	fprintf(fd,"#	--------------------\n");
-
-	fprintf(fd,"include ../generic.mk\n\n");
-
-
-
-	fprintf(fd,"# Libraries\n");
-	fprintf(fd,"# ---------\n");
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-	if(acplt != 1){
-		fprintf(fd,"FBLIBS = $(BASE_LIB_DIR)fb$(_LIB)\n");
-	}
-
-	if(anzAddLibs > 0) {
-		fprintf(fd,"ADD_LIBS =");
-		for(i=0; i<anzAddLibs; i++) {
-			fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)"  , libs[i], builddir, libs[i]);
-		}
-		fprintf(fd,"\n");
-	}
-	fprintf(fd,"\n");
-
-
-	/* Targets */
-	fprintf(fd,"all: $(TARGETS)\n");
-
-	fprintf(fd,"\t@tdstrp32 $(USERLIB_DLL)\n");
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n");
-
-	fprintf(fd,"\n");
-
-	fprintf(fd,"debug: $(TARGETS)\n");
-
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n\n");
-
-	fprintf(fd,"\n");
-
-
-	/* Compiler-Optionen */
-	fprintf(fd,"#	Compiler\n");
-	fprintf(fd,"#	--------\n\n");
-
-	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n");
-
-	fprintf(fd,"CC              = bcc32\n");
-	fprintf(fd,"CC_FLAGS        = -w -v -pc -wsig- -a8 $(EXTRA_CC_FLAGS)\n");
-	fprintf(fd,"CC_DEFINES      = $(DEFINES) -DFD_SETSIZE=128 -DOV_COMPILE_LIBRARY_$(LIBRARY)\n");
-	fprintf(fd,"CC_INCLUDES     = $(INCLUDES) -I.\n");
-	fprintf(fd,"COMPILE_C		= $(CC) $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) -c\n");
-	fprintf(fd,"LINK            = $(CC) $(CC_FLAGS)\n");
-	fprintf(fd,"MKIMPDEF        = $(BIN_DIR)mkimpdef$(_EXE)\n");
-	fprintf(fd,"MKEXPDEF        = $(BIN_DIR)mkexpdef$(_EXE)\n");
-	fprintf(fd,"MKDLLDEF        = $(BIN_DIR)mkdlldef$(_EXE)\n");
-	fprintf(fd,"IMPLIB          = implib\n");
-	fprintf(fd,"IMPDEF          = impdef\n");
-	fprintf(fd,"LD              = $(CC) $(CC_FLAGS) -tWDE\n");
-	fprintf(fd,"AR              = tlib /P64\n");
-	fprintf(fd,"RC              = brc32\n");
-
-	fprintf(fd,"\n");
-	fprintf(fd,"#   Rules\n");
-	fprintf(fd,"#   -----\n");
-
-	fprintf(fd,"$(_C)$(_OBJ):\n");
-	fprintf(fd,"\t$(COMPILE_C) -o$@ $<\n\n");
-
-	fprintf(fd,".ovm$(_C):\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		/* BUG FIXED BY STEN on Jun 10*/
-		/*	fprintf(fd," -I $(%s_MODEL_DIR)", libs[i]); */
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
-
-	}
-	fprintf(fd," -f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");
-
-	fprintf(fd,".ovm.h:\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		/* BUG FIXED BY STEN on Jun 10*/
-		/*	   fprintf(fd," -I $(%s_MODEL_DIR)", libs[i]); */
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[i]));
-	}
-
-	fprintf(fd," -f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");    
-
-
-	fprintf(fd,"ov.h : $(BASE_MODEL_DIR)ov.ovm\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $<\n\n");
-
-	if(acplt != 1){
-		fprintf(fd,"fb.h : $(BASE_MODEL_DIR)fb.ovm\n");
-		fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)\n\n");
-	}
-
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd,"%s.h : $(%s_MODEL_DIR)%s.ovm\n", libs[i],
-				getUpperLibName(libs[i]), libs[i]);
-		fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)");
-
-		for(j=0; j<anzAddLibs; j++) {
-			fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[j]) );
-		}
-		fprintf(fd,"\n\n");
-	}
-
-	fprintf(fd,"%s.h : $(MODEL_DIR)%s.ovm\n", libname, libname);
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)");
-	for(j=0; j<anzAddLibs; j++) {
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[j]) );
-	}
-	fprintf(fd,"\n\n");
-
-
-	//fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_DLL)\n\n");
-
-	//if(acplt == 1){
-	//	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
-	//} else {
-	//	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
-	//}
-
-	if(acplt == 1){
-		fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
-	} else {
-		fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
-	}
-
-	if(acplt == 1){
-		fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS)\n");	
-	} else {
-		fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS)\n");
-	}
-
-	fprintf(fd,"\t-@del $(basename $@).def\n");
-	fprintf(fd,"\t$(LD) -e$@ $(filter-out $(_RES), $^)\n");
-	fprintf(fd,"\t$(IMPDEF) $(basename $@)_tmp.def $@\n");
-	fprintf(fd,"\t$(MKIMPDEF) $(basename $@)_tmp.def $(basename $@).def\n");
-	fprintf(fd,"\t$(IMPLIB) $(basename $@)$(_LIB) $(basename $@).def\n");
-	fprintf(fd,"\t$(MKEXPDEF) $(basename $@)_tmp.def $(basename $@).def\n");
-	fprintf(fd,"\t$(LD) -e$@ $(filter-out $(_RES), $^)\n");
-	fprintf(fd,"\t$(MKDLLDEF) $(basename $@)_tmp.def $(basename $@).def\n");
-	fprintf(fd,"\t@del $(basename $@)_tmp.def\n\n");
-
-
-
-	fprintf(fd,"#	Aufraeumen\n");
-	fprintf(fd,"#	----------\n\n");
-
-	fprintf(fd,"clean:\n");
-	fprintf(fd,"\t-@del *$(_C) *.h *.x *.bak *.map *$(_LIB) *$(_DLL) *$(_OBJ) *$(_RES) respfile\n");
-	fclose(fd);
-
-	/* End add by Sten */
-
-
-	/* Makefile fuer MSVC (depricated) */
-	sprintf(help, "%s/build/%s/msvc.mk", libPath, builddir);
-	compatiblePath(help);
-
-	//fprintf(stdout, "Creating file '%s' ...\n", help);
-
-	fd = fopen(help, "w");
-	if(!fd) {
-		fprintf(stderr, "unable to open file '%s' for writing.\n", help);
-		return 1;
-	}
-
-	fprintf(fd, "#******************************************************************************\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#*   FILE\n");
-	fprintf(fd, "#*   ----\n");
-	fprintf(fd, "#*   msvc.mk - Makefile fuer die Anwender-Bibliothek\n");
-	fprintf(fd, "#******************************************************************************\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#*   This file is generated by the 'fb_makmak' command\n");
-	fprintf(fd, "#*\n");
-	fprintf(fd, "#******************************************************************************\n");
-
-	fprintf(fd,"\n");
-	fprintf(fd,"#   Plattform\n");
-	fprintf(fd,"#   ---------\n\n");
-	fprintf(fd,"SYSTEM = %s\n", buildsys);
-	fprintf(fd,"SYSDIR = %s\n\n", builddir);
-
-	fprintf(fd,"COMPILER = MSVC\n\n");
-
-	fprintf(fd,"#	Filename conventions\n");
-	fprintf(fd,"#	--------------------\n");
-
-	fprintf(fd,"_C   = .c\n");
-	fprintf(fd,"_OBJ = .obj\n");
-	fprintf(fd,"_LIB = .lib\n");
-	fprintf(fd,"_DLL = .dll\n");
-	fprintf(fd,"_EXE = .exe\n");
-	fprintf(fd,"_RES = .res\n\n");
-
-	fprintf(fd,"#	Include generic part\n");
-	fprintf(fd,"#	--------------------\n");
-
-	fprintf(fd,"include ../generic.mk\n\n");
-
-	fprintf(fd,"# Libraries\n");
-	fprintf(fd,"# ---------\n");
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-	fprintf(fd,"ADD_LIBS += $(foreach lib, $(EXTRA_LIBS),$(lib))\n\n");
-	if(acplt != 1){
-		fprintf(fd,"FBLIBS = $(BASE_LIB_DIR)fb_msvc$(_LIB)\n");
-	}
-
-	if(anzAddLibs > 0) {
-		fprintf(fd,"ADD_LIBS =");
-		for(i=0; i<anzAddLibs; i++) {
-			fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)"  , libs[i], builddir, libs[i]);
-		}
-		fprintf(fd,"\n");
-	}
-	fprintf(fd,"\n");
-
-	fprintf(fd,"all: $(TARGETS)\n\n");
-	fprintf(fd,"debug: $(TARGETS)\n\n");
-
-	fprintf(fd,"#	Compiler\n");
-	fprintf(fd,"#	--------\n\n");
-
-	fprintf(fd,"OV_CODEGEN_EXE = $(BIN_DIR)ov_codegen$(_EXE)\n");
-
-	fprintf(fd,"CC              = cl\n");
-
-	fprintf(fd, "ifeq ($(MAKECMDGOALS), debug)\n");
-	fprintf(fd, "CC_FLAGS        = /Zi /MTd /c $(EXTRA_CC_FLAGS)\n");
-	fprintf(fd, "else\n");
-	fprintf(fd, "CC_FLAGS        = /W3 /c\n");
-	fprintf(fd, "endif\n");
-
-	fprintf(fd,"CC_DEFINES      = $(DEFINES) /DOV_COMPILE_LIBRARY_$(LIBRARY)\n");
-	fprintf(fd,"CC_INCLUDES     = $(INCLUDES) /I.\n");
-	fprintf(fd,"COMPILE_C		= $(CC) $(CC_FLAGS) /TC $(CC_DEFINES) $(CC_INCLUDES) -c\n");
-	fprintf(fd,"LD              = link /DLL\n");
-
-	fprintf(fd,"\n");
-	fprintf(fd,"#   Rules\n");
-	fprintf(fd,"#   -----\n");
-
-	fprintf(fd,"$(_C)$(_OBJ):\n");
-	fprintf(fd,"\t$(COMPILE_C) -o$@ $<\n\n");
-
-	fprintf(fd,".ovm$(_C):\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		/* STEN: potential bug, since getUpperLibName is unused. I will not touch depricated msvc Makefiles*/
-		fprintf(fd," -I $(%s_MODEL_DIR)", libs[i]);
-	}
-	fprintf(fd," -f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");    
-
-	fprintf(fd,".ovm.h:\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
-	for(i=0; i<anzAddLibs; i++) {
-		/* STEN: potential bug, since getUpperLibName is unused. I will not touch depricated msvc Makefiles*/
-		fprintf(fd," -I $(%s_MODEL_DIR)", libs[i]);
-	}
-	fprintf(fd," -f $(subst /,\\\\, $<) -l $(notdir $(basename $<))\n\n");    
-
-
-	fprintf(fd,"ov.h : $(BASE_MODEL_DIR)ov.ovm\n");
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $<\n\n");
-
-	if(acplt != 1){
-		fprintf(fd,"fb.h : $(BASE_MODEL_DIR)fb.ovm\n");
-		fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)\n\n");
-	}
-
-	for(i=0; i<anzAddLibs; i++) {
-		fprintf(fd,"%s.h : $(%s_MODEL_DIR)%s.ovm\n", libs[i],
-				getUpperLibName(libs[i]), libs[i]);
-		fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)");
-
-		for(j=0; j<anzAddLibs; j++) {
-			fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[j]) );
-		}
-		fprintf(fd,"\n\n");
-	}
-
-	fprintf(fd,"%s.h : $(MODEL_DIR)%s.ovm\n", libname, libname);
-	fprintf(fd,"\t$(OV_CODEGEN_EXE) -f $< -I $(BASE_MODEL_DIR)");
-	for(j=0; j<anzAddLibs; j++) {
-		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(libs[j]) );
-	}
-	fprintf(fd,"\n\n");
-
-
-	fprintf(fd,"$(USERLIB_LIB) : $(USERLIB_OBJ)\n\n");
-
-	fprintf(fd,"$(USERLIB_DLL) : $(USERLIB_OBJ)\n");
-
-	if(acplt == 1){
-		fprintf(fd,"\t$(LD) $(USERLIB_OBJ) $(ADD_LIBS) $(OVLIBS) $(LINK_FLAGS) /OUT:$@\n");
-	}else{
-		fprintf(fd,"\t$(LD) $(USERLIB_OBJ) $(ADD_LIBS) $(FBLIBS) $(OVLIBS) $(LINK_FLAGS) /OUT:$@\n");
-	}
-	fprintf(fd,"\tcmd /c copy $(USERLIB_DLL) $(subst /,\\\\, $(USERLIB_DIR))\n\n");
-
-
-#if OV_SYSTEM_NT
-#else
-	fprintf(fd,"#   Dependencies\n");
-	fprintf(fd,"#   ------------\n\n");
-
-	fprintf(fd,".depend:\n");
-	fprintf(fd,"\ttouch $@\n\n");
-
-	fprintf(fd,"depend : $(SOURCES)\n");
-	fprintf(fd,"\t$(COMPILE_C) -MM $(USERLIB_SRC) > .depend\n\n");
-#endif
-
-
-	fprintf(fd,"#	Aufraeumen\n");
-	fprintf(fd,"#	----------\n\n");
-
-	fprintf(fd,"clean:\n");
-	fprintf(fd,"\t-@del *$(_C) *.h *.x *.bak *.map *$(_LIB) *$(_DLL) *$(_OBJ) *$(_RES) respfile\n");
-
-	fclose(fd);
-
-#endif
+/* deprications removed on 25.04.13 - check repository for the code! */
 
 
 	return 0;
