@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<!-- nt profile -->
 		<cconfiguration id="cdt.managedbuild.config.gnu.so.debug.65526704">
@@ -99,7 +101,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.so.debug.7330705." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.so.debug.7330705" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.so.debug">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.so.debug.7330705" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.so.debug"/>
-							<builder autoBuildTarget="debug" buildPath="${ProjDirPath}/build/linux/" command="make" enableAutoBuild="false" id="cdt.managedbuild.target.gnu.builder.so.debug.7330705" incrementalBuildTarget="debug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="cdt.managedbuild.target.gnu.builder.so.debug">
+							<builder arguments="" autoBuildTarget="debug" buildPath="${ProjDirPath}/build/linux/" command="make" enableAutoBuild="false" id="cdt.managedbuild.target.gnu.builder.so.debug.7330705" incrementalBuildTarget="debug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="cdt.managedbuild.target.gnu.builder.so.debug">
 								<outputEntries>
 									<entry flags="VALUE_WORKSPACE_PATH" kind="outputPath" name="/build/linux"/>
 								</outputEntries>
