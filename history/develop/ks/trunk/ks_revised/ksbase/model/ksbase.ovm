@@ -8,7 +8,7 @@
 LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT = "Lehrstuhl fï¿½r Prozessleittechnik, RWTH Aachen University";
 	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
 	
 	////////////////// Scheduling / Tasking components
@@ -268,7 +268,7 @@ LIBRARY ksbase
  			createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
  			deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
 			encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
-			TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+			TicketGetaccess	:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
  		END_OPERATIONS;
  	END_CLASS; 	
  	
