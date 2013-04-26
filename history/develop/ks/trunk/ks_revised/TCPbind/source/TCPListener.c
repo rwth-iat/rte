@@ -41,9 +41,17 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <netdb.h>
+/*	defines if not defined in netdb.h	*/
+#ifndef NI_MAXHOST
+#define NI_MAXHOST 1025
+#endif
+#ifndef NI_MAXSERV
+#define NI_MAXSERV 32
+#endif
 /* for select */
 #include <sys/select.h>
 #else
@@ -204,7 +212,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_flags = AI_PASSIVE;
 
-		sprintf(portbuf, "%u", TCPbind_TCPListener_port_get(thisLi));
+		sprintf(portbuf, "%lu", TCPbind_TCPListener_port_get(thisLi));
 
 		if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 		{
@@ -318,7 +326,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				do {
 					pNewChannel = NULL;
 					namecounter++;
-					sprintf(ChannelNameBuffer, "TCPChannel%u", namecounter);
+					sprintf(ChannelNameBuffer, "TCPChannel%lu", namecounter);
 					pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
 				} while (pNewChannel);
 
