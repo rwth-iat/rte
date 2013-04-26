@@ -429,14 +429,10 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Events[ObjectPath] = new Object();
-			this.ResourceList.Events[ObjectPath].useCount = 1;
 			this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime = cyctime;
-			HMI.hmi_log_trace("cshmi._interpreteTimeEvent: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object was asked this session, so reuse the config to save communication requests
 			cyctime = this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime;
-			this.ResourceList.Events[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._interpreteTimeEvent: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Events[ObjectPath].useCount+")");
 		}
 		
 		//call us again for cyclic interpretation of the Actions
@@ -882,14 +878,10 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
-			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._getValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			this.ResourceList.Actions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._getValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var iterationObject = VisualObject;
@@ -1496,16 +1488,12 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
-			this.ResourceList.Actions[ObjectPath].useCount = 1;
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
-			HMI.hmi_log_trace("cshmi._setValue: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			this.ResourceList.Actions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._setValue: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		var SetVarCbfnc = function(Client, req){
@@ -2080,7 +2068,6 @@ cshmi.prototype = {
 				responseArray = HMI.KSClient.splitKsResponse(response);
 				
 				this.ResourceList.baseKsPath[currentPath] = responseArray;
-				//HMI.hmi_log_trace("cshmi._BaseKsPath: remembering config of "+currentPath+" ");
 			}else{
 				responseArray = this.ResourceList.baseKsPath[currentPath];
 			}
@@ -2179,13 +2166,9 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond = anyCond;
-			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._interpreteIfThenElse: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond;
-			this.ResourceList.Actions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._interpreteIfThenElse: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
 		
@@ -2575,13 +2558,9 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType = ChildrenType;
-			this.ResourceList.Actions[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: remembering config of "+ObjectPath+" ");
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
-			this.ResourceList.Actions[ObjectPath].useCount++;
-			//HMI.hmi_log_trace("cshmi._interpreteChildrenIterator: using remembered config of "+ObjectPath+" (#"+this.ResourceList.Actions[ObjectPath].useCount+")");
 		}
 		
 		//this will be increased in a successful instantiateTemplate
@@ -3396,7 +3375,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
@@ -3432,8 +3410,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
@@ -3451,7 +3427,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
-			this.ResourceList.Elements[PathOfTemplateDefinition].useCount++;
 		}else{
 			requestListTemplate[PathOfTemplateDefinition] = new Object();
 			requestListTemplate[PathOfTemplateDefinition]["width"] = null;
@@ -3466,8 +3441,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[PathOfTemplateDefinition] = new Object();
 			this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters = requestListTemplate;
-			this.ResourceList.Elements[PathOfTemplateDefinition].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildFromTemplate: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -3763,7 +3736,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
@@ -3821,8 +3793,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildBlackbox: remembering config of "+ObjectPath+" ");
 		}
 		
 		if (VisualParentObject !== null){
@@ -4061,7 +4031,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
@@ -4087,8 +4056,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgGroup: remembering config of "+ObjectPath+" ");
 		}
 		
 		if (VisualParentObject !== null){
@@ -4143,7 +4110,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
@@ -4170,8 +4136,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgLine: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4213,7 +4177,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
@@ -4237,8 +4200,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgPolyline: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4277,7 +4238,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
@@ -4301,8 +4261,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgPolygon: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4341,7 +4299,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
@@ -4365,8 +4322,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgPath: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4448,7 +4403,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
@@ -4480,8 +4434,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgText: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4533,7 +4485,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
@@ -4559,8 +4510,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgCircle: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4598,7 +4547,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
@@ -4625,8 +4573,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgEllipse: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4670,7 +4616,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
@@ -4697,8 +4642,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children
@@ -4735,7 +4678,6 @@ cshmi.prototype = {
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
-			this.ResourceList.Elements[ObjectPath].useCount++;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
@@ -4761,8 +4703,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
 			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
-			this.ResourceList.Elements[ObjectPath].useCount = 1;
-			HMI.hmi_log_trace("cshmi._buildSvgRect: remembering config of "+ObjectPath+" ");
 		}
 		
 		//search a predefined children

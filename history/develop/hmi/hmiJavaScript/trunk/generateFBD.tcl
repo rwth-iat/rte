@@ -1,6 +1,7 @@
 puts "== Begin processing js files ==" 
 #cd "../../staticfiles"
 
+set fbdfilename "StaticDisplayComponent.fbd"
 set baseovpath "/communication/httpservers/httpserver/staticfiles/hmi"
 set contentname "content"
 set mimetypename "mimetype"
@@ -103,7 +104,7 @@ proc processDir {ovpath} {
 		if { $dirname == "tclsh.exe"} {
 			puts "skipping false positive directory: $dirname"
 			continue
-		} elseif { $dirname == ".settings" || $dirname == ".svn" || $dirname == "bugList" || $dirname == "exportKSX" || $dirname == "requirementTests" || $dirname == "bak"} {
+		} elseif { $dirname == ".settings" || $dirname == ".svn" || $dirname == "bugList" || $dirname == "exportKSX" || $dirname == "requirementTests" || $dirname == "bak" || $dirname == ".externalToolBuilders"} {
 			puts "skipping directory: $dirname"
 			continue
 		}
@@ -122,7 +123,7 @@ proc processDir {ovpath} {
 }
 
 puts -nonewline "Building FBD header..."
-set out [open "StaticDisplayComponent.fbd" w]
+set out [open $fbdfilename w]
 puts $out "/******************************************************************************************"
 puts $out "These are all static files if the display component of csHMI"
 puts $out "which have to be loaded into an OV server."
@@ -138,11 +139,23 @@ puts "done"
 printDomain $baseovpath
 processDir $baseovpath
 
-puts $out ""
-puts $out " LIBRARY"
-puts $out "    /acplt/$webserverlib"
-puts $out " END_LIBRARY;"
+#fb_dbcommands is (2013-04-26, svn 7534) not able to handle a full library path
+#puts $out ""
+#puts $out " LIBRARY"
+#puts $out "    /acplt/$webserverlib"
+#puts $out " END_LIBRARY;"
 
 close $out
+puts ""
+puts "File $fbdfilename written."
+
+if {$::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
+	set targetname "$::env(FBDmovetarget)/$fbdfilename"
+	if {[file exists $targetname] == 1} {
+		file delete $targetname
+	}
+	file copy $fbdfilename $targetname
+	puts "Moved to $::env(FBDmovetarget)/$fbdfilename"
+}
 
 puts "== End processing files =="
