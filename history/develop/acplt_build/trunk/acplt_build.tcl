@@ -596,7 +596,8 @@ proc separate {} {
  global addon_libs
  global libsuffix
  global	exesuffix
-global flag
+ global flag
+ global os
  if { [file exists $releasedir/system] } then {
 	file delete -force $releasedir/system/
 }
@@ -723,11 +724,17 @@ file copy $releasedir/system/systools/systools/build_database.tcl $releasedir/sy
 file copy $releasedir/system/systools/systools/start_server.tcl $releasedir/system/systools/start_server.tcl
 #file copy $releasedir/system/systools/systools/fb_dbcommands.exe $releasedir/system/sysbin/fb_dbcommands.exe
 file delete -force $releasedir/system/systools/systools/
-
+if { $os == "nt" } then {
 file copy $releasedir/system/systools/base_serverstarttools/build_database.bat $releasedir/servers/MANAGER/build_database.bat
 #file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
 file copy $releasedir/system/systools/base_serverstarttools/start_server.bat $releasedir/servers/MANAGER/start_server.bat
-file copy $releasedir/system/systools/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf
+file copy $releasedir/system/systools/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
+} else {
+file copy $releasedir/system/systools/base_serverstarttools/build_database.sh $releasedir/servers/MANAGER/build_database.sh
+#file copy $releasedir/system/systools/base_serverstarttools/db.ovd $releasedir/servers/MANAGER/db.ovd
+file copy $releasedir/system/systools/base_serverstarttools/start_server.sh $releasedir/servers/MANAGER/start_server.sh
+file copy $releasedir/system/systools/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
+}
 file delete -force $releasedir/system/systools/base_serverstarttools/
 
 cd $releasedir
