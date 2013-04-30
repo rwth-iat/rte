@@ -654,10 +654,7 @@ file mkdir $releasedir/system/sysdevbase/
 	cd $builddir/user
 
 	file copy $releasedir/bin/  $releasedir/system/sysbin/
-if { [file exists $releasedir/include] } then {
-	file copy $releasedir/include $releasedir/system/sysdevbase/include
-	file delete -force $releasedir/include
-}
+
 
  #move system libs
  foreach x $included_libs {
@@ -670,6 +667,15 @@ if { [file exists $releasedir/include] } then {
 	}
 	}
 	
+	if { [file exists $releasedir/model] } then {
+	file mkdir $releasedir/system/sysdevbase/ov/
+	file copy $releasedir/model/  $releasedir/system/sysdevbase/ov/model
+	file delete -force $releasedir/model
+}
+	if { [file exists $releasedir/include] } then {
+	file copy $releasedir/include $releasedir/system/sysdevbase/ov/include
+	file delete -force $releasedir/include
+}
 #move folders in the new structure
      
 	#file copy $releasedir/user/libs  $releasedir/system/bin
@@ -690,14 +696,10 @@ if { [file exists $releasedir/bin] } then {
 }
 
 if { [file exists $releasedir/lib] } then {
-	file copy $releasedir/lib $releasedir/system/sysdevbase/lib
+	file copy $releasedir/lib $releasedir/system/sysdevbase/ov/lib
 	file delete -force $releasedir/lib
 }
-if { [file exists $releasedir/model] } then {
-	file mkdir $releasedir/system/sysdevbase/ov/
-	file copy $releasedir/model/  $releasedir/system/sysdevbase/ov/model
-	file delete -force $releasedir/model
-}
+
 if { [file exists $releasedir/database] } then {
 	file delete -force $releasedir/database
 }
