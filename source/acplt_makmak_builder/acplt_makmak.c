@@ -268,8 +268,8 @@ if(new == 0){
 	//server - dir
 	fprintf(fd,"ROOT_DIR          = ../../../../\n");
 	fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
-	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)/system/sysdevbase/include/\n");
-	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)/system/sysdevbase/lib/\n");
+	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)/system/sysdevbase/ov/include/\n");
+	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)/system/sysdevbase/ov/lib/\n");
 	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)/system/sysdevbase/ov/model/\n");
 	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)/system/sysbin/\n");
 
@@ -543,7 +543,7 @@ if(new == 0){
 	fprintf(fd,"# ---------\n\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
-	if(numDevLibs > 0) {
+	if(numDevLibs+numSysLibs > 0) {
 		fprintf(fd,"ADD_LIBS =");
 		for(i=0; i<numDevLibs; i++) {
 			/* link directly using dll */
@@ -557,7 +557,7 @@ if(new == 0){
 	}
 #else
 	fprintf(fd,"# Swithces for additional libraries needed for dynamic linkage in Linux\n");
-	if(numDevLibs > 0) {
+	if(numDevLibs+numDevLibs > 0) {
 		fprintf(fd,"ADD_LIBS_SWITCHES =");
 		for(i=0; i<numDevLibs; i++) {
 			/* fprintf(fd," $(USER_DIR)%s/build/%s/%s$(_LIB)", libs[i], builddir, libs[i]); */
@@ -685,7 +685,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd, "\t$(LD) -o $@ $^ $(LD_FLAGS)\n");
 #else
 	fprintf(fd, "$(USERLIB_DLL) : $(USERLIB_OBJ) $(ADD_LIBS)\n");
-	if(numDevLibs > 0) {
+	if(numDevLibs+numSysLibs > 0) {
 		//ugly method of copying dependencies, but it is the only one to work :(
 		for(i=0; i<numDevLibs; i++) {
 			fprintf(fd,"\tcp $(USERLIB_DIR)/%s$(_DLL) %s$(_DLL)\n", devLibs[i], devLibs[i]);
