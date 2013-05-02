@@ -623,7 +623,9 @@ proc separate {} {
 		file delete -force $releasedir/system/addonlibs/${x}$libsuffix
 	}
 	}
-
+if { [file exists $releasedir/system/sysbin/tmanager.exe] } then {
+		file delete -force $releasedir/system/sysbin/tmanager.exe 
+	}
 	cd $releasedir
 }
 
@@ -639,10 +641,8 @@ proc create_systools_and_servers {} {
 	if { [file exists $releasedir/servers/ov_server.conf.example] } then {
 		file delete $releasedir/servers/ov_server.conf.example
 	}
+	
 
-	#if { [file exists $builddir/base/ov/source/runtimeserver/ov_server.conf] } then {
-		#file copy $builddir/base/ov/source/runtimeserver/ov_server.conf  $releasedir/servers/ov_server.conf.example
-	#}
 
 	#including sys tools
 	cd $releasedir/system
@@ -791,7 +791,8 @@ if {$release == 1} {
 if {$release == 1} {
 # Create runtime release
     print_msg "== CREATING RUNTIME RELEASE =="
-    create_release
+    create_dirs
+	create_release
     foreach x $included_libs {
         release_lib $x all
     }
@@ -828,10 +829,10 @@ if {$release == 1} {
 	
 	
 	
-	#if { [file exists $releasedir/system/bin/tclsh.exe] } then {
-	#file copy  $releasedir/system/bin/tclsh.exe $releasedir/system/tclsh.exe
-	#file delete $releasedir/system/bin/tclsh.exe
-#}
+	if { [file exists $releasedir/system/sysbin/tclsh.exe] } then {
+	file copy  $releasedir/system/sysbin/tclsh.exe $releasedir/system/tclsh.exe
+	file delete -force $releasedir/system/sysbin/tclsh.exe
+}
 set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 
 	foreach x $stripfiles {
@@ -839,8 +840,8 @@ set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 	  # execute  "strip --strip-debug" $x
 	  execute  "strip" "-g" "-S" "-d" $x
     }
-	#file copy  $releasedir/system/tclsh.exe $releasedir/system/bin/tclsh.exe 
-	#	file delete $releasedir/system/tclsh.exe
+	file copy  $releasedir/system/tclsh.exe $releasedir/system/sysbin/tclsh.exe 
+		file delete -force $releasedir/system/tclsh.exe
 
 
 		print_msg "Compressing"
