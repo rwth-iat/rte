@@ -762,7 +762,6 @@ if {$release == 1} {
 }
 
 create_release
-
 create_systools_and_servers
 
 foreach x $included_libs {
@@ -791,64 +790,62 @@ if {$release == 1} {
 if {$release == 1} {
 # Create runtime release
     print_msg "== CREATING RUNTIME RELEASE =="
+    set date [clock format [clock seconds] -format "%Y%m%d"]
+    set name "acplt-server-runtime-$date"
+
     create_dirs
 	create_release
+	create_systools_and_servers
     foreach x $included_libs {
         release_lib $x all
     }
-    set date [clock format [clock seconds] -format "%Y%m%d"]
-    set name "acplt-server-runtime-$date"
     separate
+    foreach x $addon_libs {
+        release_lib $x all
+    }
 	if { [file exists $releasedir/dev/] } then {
-	file delete -force $releasedir/dev/
-}
-    #cd $releasedir/system/user
-	#foreach x $included_libs {
-    #    file delete -force $x
-    #}
+		file delete -force $releasedir/dev/
+	}
 
     cd $releasedir/system/sysbin
-    file delete -force acplt_makmak
-    file delete -force acplt_makmak.exe
-    file delete -force acplt_builder
-    file delete -force acplt_builder.exe
-    file delete -force ov_builder
-    file delete -force ov_builder.exe
-    file delete -force ov_codegen
-    file delete -force ov_codegen.exe
-    file delete -force ov_makmak
-    file delete -force ov_makmak.exe
-    cd $releasedir/system
-    file delete -force sysdevbase
-	file mkdir  sysdevbase
+    file delete -force acplt_makmak$exesuffix
+    file delete -force acplt_builder$exesuffix
+    file delete -force ov_builder$exesuffix
+    file delete -force ov_codegen$exesuffix
+    file delete -force ov_makmak$exesuffix
+    file delete -force $releasedir/system/sysdevbase
     #file delete -force lib
 	#cd $releasedir/system/ov
 	#file delete -force model
 	cd $basedir
 		
 	
-	
-	
+	#temporaly move tclsh.exe so it is not stripped
 	if { [file exists $releasedir/system/sysbin/tclsh.exe] } then {
-	file copy  $releasedir/system/sysbin/tclsh.exe $releasedir/system/tclsh.exe
-	file delete -force $releasedir/system/sysbin/tclsh.exe
-}
-set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
+		file copy  $releasedir/system/sysbin/tclsh.exe $releasedir/system/tclsh.exe
+		file delete -force $releasedir/system/sysbin/tclsh.exe
+	}
+
+	set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 
 	foreach x $stripfiles {
        
 	  # execute  "strip --strip-debug" $x
 	  execute  "strip" "-g" "-S" "-d" $x
     }
-	file copy  $releasedir/system/tclsh.exe $releasedir/system/sysbin/tclsh.exe 
+	
+	#restore tclsh.exe so it is not stripped
+	if { [file exists $releasedir/system/tclsh.exe] } then {
+		file copy  $releasedir/system/tclsh.exe $releasedir/system/sysbin/tclsh.exe 
 		file delete -force $releasedir/system/tclsh.exe
+	}
 
 
-		print_msg "Compressing"
+	print_msg "Compressing"
     if { $os == "linux" } then {
     	execute "zip" "-r" "$name-linux" "./acplt"
     } else {
-	execute "7z" "a" "$name-win.zip" "./acplt"
+		execute "7z" "a" "$name-win.zip" "./acplt"
     }
 	print_msg "== RUNTIME RELEASE CREATED =="
 # end
