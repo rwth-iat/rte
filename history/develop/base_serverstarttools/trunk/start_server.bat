@@ -7,6 +7,6 @@ rem
 rem ********************************************************************
 rem
 
-cmd /c ..\..\system\systools\tclsh ..\..\system\systools\start_server.tcl
+cmd /c ..\..\system\sysbin\tclsh ..\..\system\systools\start_server.tcl
 
 exit
