@@ -120,16 +120,21 @@ set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 set pid [pid $ACPLT_PROCESS]
 puts "server ${SERVERNAME} is running with $pid"
 
+proc sleep {time} {
+    after $time set end 1
+    vwait end
+}
+  
 proc sigint {pid} {
 	global tcl_platform
 	global THISACPLTSYSTEM
 	if {$tcl_platform(os) == "Linux"} then { 
-		catch {exec kill -s SIGINT $pid &}
+		catch {exec kill -s SIGINT $pid}
 	} elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
-		catch {exec "${THISACPLTSYSTEM}/system/systools/SendSignal.exe" "$pid" &}
+		catch {exec "${THISACPLTSYSTEM}/system/systools/SendSignal.exe" "$pid"}
 	}
-	after 1000
-	exit 1
+	puts "sleeping for 10 seconds"
+	sleep 10000
 }
 
 # ********************************************************************************
