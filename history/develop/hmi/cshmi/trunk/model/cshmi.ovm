@@ -502,8 +502,6 @@ LIBRARY cshmi
 			translationMapping[] : STRING
 			COMMENT = "OPEN:OFFEN and other things, each in one row";
 		END_VARIABLES;
-		PARTS
-		END_PARTS;
 	END_CLASS;
 
 	CLASS IfThenElse : CLASS cshmi/Action
@@ -760,6 +758,17 @@ LIBRARY cshmi
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS downloadApplication : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "Model turbo";
+		VARIABLES
+			asJSON	: STRING
+			HAS_GET_ACCESSOR
+			IS_DERIVED
+			COMMENT = "get the application as JSON";
+		END_VARIABLES;
 	END_CLASS;
 
 END_LIBRARY;

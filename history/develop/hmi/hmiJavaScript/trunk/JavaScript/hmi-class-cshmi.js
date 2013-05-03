@@ -146,6 +146,30 @@ cshmi.prototype = {
 	 * @return nothing
 	 */
 	instanciateCshmi: function(Host, Server, ObjectPath) {
+		//fill cache if possible
+		var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
+		if (response !== null && response.indexOf("KS_ERR") === -1){
+			var responseJSON = JSON.parse(decodeURI(response.slice(2,-2)))
+			if(responseJSON.Elements){
+				this.ResourceList.Elements = responseJSON.Elements;
+			}
+			if(responseJSON.Actions){
+				this.ResourceList.Actions = responseJSON.Actions;
+			}
+			if(responseJSON.Conditions){
+				this.ResourceList.Conditions = responseJSON.Conditions;
+			}
+			if(responseJSON.Events){
+				this.ResourceList.Events = responseJSON.Events;
+			}
+			if(responseJSON.baseKsPath){
+				this.ResourceList.baseKsPath = responseJSON.baseKsPath;
+			}
+			if(responseJSON.ChildList){
+				this.ResourceList.ChildList = responseJSON.ChildList;
+			}
+		}
+		
 		//we are in the init stage, so the DOM Tree is not populated
 		this.initStage = true;
 		
@@ -602,7 +626,7 @@ cshmi.prototype = {
 			requestList[ObjectPath] = new Object();
 			//we have registered the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		return true;
 	},
@@ -1680,7 +1704,7 @@ cshmi.prototype = {
 				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
 					//the object is asked this session, so reuse the config to save communication requests
-					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].ElementParameters;
+					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
 					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
 				}else{
 					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
@@ -1722,7 +1746,7 @@ cshmi.prototype = {
 				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
 					//the object is asked this session, so reuse the config to save communication requests
-					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].ElementParameters;
+					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
 					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
 				}else{
 					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
@@ -2259,7 +2283,7 @@ cshmi.prototype = {
 		
 		var requestList = new Object();
 		if (this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Conditions[ObjectPath].ConditionParameters;
+			requestList[ObjectPath] = this.ResourceList.Conditions[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ignoreError"] = null;
@@ -2274,7 +2298,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].ConditionParameters = requestList[ObjectPath];
+			this.ResourceList.Conditions[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		var ignoreError = requestList[ObjectPath]["ignoreError"];
@@ -2708,7 +2732,7 @@ cshmi.prototype = {
 			//This caching is model config specific, not instance specific
 			if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
 				//the object is asked this session, so reuse the config to save communication requests
-				requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].ActionParameters;
+				requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 			}else{
 				requestList[ObjectPath] = new Object();
 				requestList[ObjectPath]["offset"] = null;
@@ -2721,7 +2745,7 @@ cshmi.prototype = {
 				
 				//we have asked the object successful, so remember the result
 				this.ResourceList.Actions[ObjectPath] = new Object();
-				this.ResourceList.Actions[ObjectPath].ActionParameters = requestList[ObjectPath];
+				this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 			}
 			
 			//get Values (via getValue-parts)
@@ -3374,7 +3398,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
@@ -3409,7 +3433,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		var TemplateLocation = "/TechUnits/cshmi/Templates/";
@@ -3426,7 +3450,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestListTemplate = this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters;
+			requestListTemplate[PathOfTemplateDefinition] = this.ResourceList.Elements[PathOfTemplateDefinition].Parameters;
 		}else{
 			requestListTemplate[PathOfTemplateDefinition] = new Object();
 			requestListTemplate[PathOfTemplateDefinition]["width"] = null;
@@ -3440,7 +3464,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[PathOfTemplateDefinition] = new Object();
-			this.ResourceList.Elements[PathOfTemplateDefinition].TemplateParameters = requestListTemplate;
+			this.ResourceList.Elements[PathOfTemplateDefinition].Parameters = requestListTemplate[PathOfTemplateDefinition];
 		}
 		
 		//search a predefined children
@@ -3735,7 +3759,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
@@ -3792,7 +3816,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		if (VisualParentObject !== null){
@@ -3946,16 +3970,16 @@ cshmi.prototype = {
 		}
 		
 		cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters = new Object();
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["x"] = x;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["y"] = y;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["rotate"] = rotate;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["hideable"] = hideable;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["TemplateDefinition"] = PathOfTemplateDefinition;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBReference"] = FBReference;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBVariableReference"] = FBVariableReference;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["ConfigValues"] = ConfigValues;
-			HMI.cshmi.ResourceList.Elements["tempPath"].ElementParameters["FBReference"] = FBReference;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters = new Object();
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["x"] = x;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["y"] = y;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["rotate"] = rotate;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["hideable"] = hideable;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["TemplateDefinition"] = PathOfTemplateDefinition;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
+			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
 			VisualObject.appendChild(HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false));
 		};
 		
@@ -4030,7 +4054,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
@@ -4055,7 +4079,7 @@ cshmi.prototype = {
 			}
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		if (VisualParentObject !== null){
@@ -4109,7 +4133,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
@@ -4135,7 +4159,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4176,7 +4200,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
@@ -4199,7 +4223,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4237,7 +4261,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
@@ -4260,7 +4284,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4298,7 +4322,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
@@ -4321,7 +4345,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4402,7 +4426,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
@@ -4433,7 +4457,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4484,7 +4508,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
@@ -4509,7 +4533,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4546,7 +4570,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
@@ -4572,7 +4596,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4615,7 +4639,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
@@ -4641,7 +4665,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
@@ -4677,7 +4701,7 @@ cshmi.prototype = {
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].ElementParameters;
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
@@ -4702,7 +4726,7 @@ cshmi.prototype = {
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].ElementParameters = requestList[ObjectPath];
+			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		//search a predefined children
