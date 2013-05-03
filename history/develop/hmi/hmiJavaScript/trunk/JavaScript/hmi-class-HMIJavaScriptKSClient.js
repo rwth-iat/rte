@@ -1012,7 +1012,6 @@ HMIJavaScriptKSClient.prototype = {
 				//selecting the option does not trigger the EventListener
 				//it is allways the second/last <option>...
 				HMI.PossServers.selectedIndex = 1;
-				HMI.PossServers.disabled = false;
 				HMI.showSheets(HMI.getHostname(), HMI.PossServers.options[1].value);
 			}else{
 				HMI.PossServers.options[0] = new Option('- select server -', '');
@@ -1520,10 +1519,8 @@ HMIJavaScriptKSClient.prototype = {
 			//prepare main js-object to remember config of getValue OV-Object
 			cachingTarget.ResourceList.ChildList[ObjectPath] = new Object();
 			cachingTarget.ResourceList.ChildList[ObjectPath].ChildListParameters = responseArray;
-			cachingTarget.ResourceList.ChildList[ObjectPath].useCount = 1;
 		}else{
 			responseArray = cachingTarget.ResourceList.ChildList[ObjectPath].ChildListParameters;
-			cachingTarget.ResourceList.ChildList[ObjectPath].useCount++;
 		}
 		return responseArray;
 	},

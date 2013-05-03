@@ -1079,6 +1079,9 @@ HMI.prototype = {
 				HMI.showSheet(Host, Server, SheetList[0]);
 			}
 			HMI.PossSheets.disabled = false;
+			if(HMI.PossServers.length > 1){
+				HMI.PossServers.disabled = false;
+			}
 		}
 		SheetList = null;
 		
