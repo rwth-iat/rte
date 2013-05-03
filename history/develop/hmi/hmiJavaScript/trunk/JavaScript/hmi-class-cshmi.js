@@ -149,7 +149,12 @@ cshmi.prototype = {
 		//fill cache if possible
 		var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
 		if (response !== null && response.indexOf("KS_ERR") === -1){
-			var responseJSON = JSON.parse(decodeURI(response.slice(2,-2)))
+			try {
+				var responseJSON = JSON.parse(decodeURI(response.slice(2,-2)));
+			} catch (e) {
+				//something went wrong, ignore the cache 8-/
+				responseJSON = {};
+			}
 			if(responseJSON.Elements){
 				this.ResourceList.Elements = responseJSON.Elements;
 			}

@@ -24,17 +24,6 @@
 #include "cshmilib.h"
 
 /**
- * afz%22
- * Gka%7B
- * Gkz%7D
- * Eka%5B
- * Ekz%5D
- * Rka(
- * Rkz)
- * plus+
- */
-
-/**
  * returns a list of ov_containment
  * embedment/OV_PART is known to the visualisation system
  * @param pObj
@@ -114,6 +103,7 @@ OV_BOOL cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, OV
 OV_BOOL cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_cshmi_Template pTemplate = NULL;
+	OV_INSTPTR_cshmi_InstantiateTemplate pInstantiateTemplate = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
 	OV_INSTPTR_cshmi_TemplateDefinition pTemplateDefinition = NULL;
 	OV_INSTPTR_cshmi_Rectangle pRectangle = NULL;
@@ -223,6 +213,65 @@ OV_BOOL cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(strResult, ",");
 	}
 	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_InstantiateTemplate, pObj){
+		elementInstantiated = TRUE;
+		pInstantiateTemplate = Ov_StaticPtrCast(cshmi_InstantiateTemplate, pObj);
+		ov_string_append(strResult, "%22");
+		ov_memstack_lock();
+		ov_string_append(strResult, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(strResult, "%22:%7B");
+		ov_string_append(strResult, "%22Parameters%22:%7B");
+		ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, (pInstantiateTemplate->v_visible==TRUE?"TRUE":"FALSE"));
+		ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pInstantiateTemplate->v_stroke==NULL?"":pInstantiateTemplate->v_stroke);
+		ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pInstantiateTemplate->v_fill==NULL?"":pInstantiateTemplate->v_fill);
+		ov_string_print(strResult, "%s%%22opacity%%22:%%22%f%%22,", *strResult, pInstantiateTemplate->v_opacity);
+		ov_string_print(strResult, "%s%%22rotate%%22:%%22%i%%22,", *strResult, pInstantiateTemplate->v_rotate);
+		ov_string_print(strResult, "%s%%22TemplateDefinition%%22:%%22%s%%22,", *strResult, pInstantiateTemplate->v_TemplateDefinition==NULL?"":pInstantiateTemplate->v_TemplateDefinition);
+		ov_string_print(strResult, "%s%%22x%%22:%%22%f%%22,", *strResult, pInstantiateTemplate->v_x);
+		ov_string_print(strResult, "%s%%22y%%22:%%22%f%%22,", *strResult, pInstantiateTemplate->v_y);
+		ov_string_print(strResult, "%s%%22xOffset%%22:%%22%f%%22,", *strResult, pInstantiateTemplate->v_xOffset);
+		ov_string_print(strResult, "%s%%22yOffset%%22:%%22%f%%22,", *strResult, pInstantiateTemplate->v_yOffset);
+
+		ov_string_print(strResult, "%s%%22FBReference%%22:%%22%s%%22,", *strResult, pInstantiateTemplate->v_FBReference.veclen!=1?"":pInstantiateTemplate->v_FBReference.value[0]);
+
+		if(pInstantiateTemplate->v_FBVariableReference.veclen == 0){
+			ov_string_setvalue(&temp, "%22%22");
+		}else if(pInstantiateTemplate->v_FBVariableReference.veclen == 1){
+			ov_string_print(&temp, "%%22%s%%22", pInstantiateTemplate->v_FBVariableReference.value[0]);
+		}else{
+			ov_string_print(&temp, "%%22%s", pInstantiateTemplate->v_FBVariableReference.value[0]);
+			for(i = 1; i < pInstantiateTemplate->v_FBVariableReference.veclen;i++){
+				ov_string_print(&temp, "%s %s", temp, pInstantiateTemplate->v_FBVariableReference.value[i]);
+			}
+			ov_string_append(&temp, "%22");
+		}
+		ov_string_print(strResult, "%s%%22FBVariableReference%%22:%s,", *strResult, temp);
+
+		if(pTemplate->v_ConfigValues.veclen == 0){
+			ov_string_setvalue(&temp, "%22%22");
+		}else if(pTemplate->v_ConfigValues.veclen == 1){
+			ov_string_print(&temp, "%%22%s%%22", pTemplate->v_ConfigValues.value[0]);
+		}else{
+			ov_string_print(&temp, "%%22%s", pTemplate->v_ConfigValues.value[0]);
+			for(i = 1; i < pTemplate->v_ConfigValues.veclen;i++){
+				ov_string_print(&temp, "%s %s", temp, pTemplate->v_ConfigValues.value[i]);
+			}
+			ov_string_append(&temp, "%22");
+		}
+		ov_string_print(strResult, "%s%%22ConfigValues%%22:%s,", *strResult, temp);
+
+		ov_string_print(strResult, "%s%%22hideable%%22:%%22%s%%22", *strResult, (pInstantiateTemplate->v_hideable==TRUE?"TRUE":"FALSE"));
+		ov_string_append(strResult, "%7D");
+		ov_string_append(strResult, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(strResult, ",");
+		}
+	};
+	if(elementInstantiated == TRUE){
+		ov_string_append(strResult, ",");
+	}
+	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Rectangle, pObj){
 		elementInstantiated = TRUE;
 		pRectangle = Ov_StaticPtrCast(cshmi_Rectangle, pObj);
@@ -303,6 +352,102 @@ OV_BOOL cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	return OV_ERR_OK;
 }
 
+/**
+ *
+ * @param strResult
+ * @return
+ */
+OV_BOOL cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
+	OV_INSTPTR_ov_object pObj = NULL;
+	OV_INSTPTR_cshmi_SetValue pSetValue = NULL;
+	OV_INSTPTR_cshmi_GetValue pGetValue = NULL;
+	OV_INSTPTR_cshmi_ChildrenIterator pChildrenIterator = NULL;
+	OV_INSTPTR_cshmi_IfThenElse pIfThenElse = NULL;
+
+	OV_STRING ParameterName = NULL;
+	OV_STRING ParameterValue = NULL;
+	OV_BOOL elementInstantiated = FALSE;
+
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetValue, pObj){
+		elementInstantiated = TRUE;
+		pSetValue = Ov_StaticPtrCast(cshmi_SetValue, pObj);
+		ov_string_append(strResult, "%22");
+		ov_memstack_lock();
+		ov_string_append(strResult, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(strResult, "%22:%7B");
+
+		if(ov_string_compare(pSetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "ksVar");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_ksVar);
+		}else if(ov_string_compare(pSetValue->v_elemVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "elemVar");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_elemVar);
+		}else if(ov_string_compare(pSetValue->v_globalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "globalVar");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_globalVar);
+		}else if(ov_string_compare(pSetValue->v_persistentGlobalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "persistentGlobalVar");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_persistentGlobalVar);
+		}else if(ov_string_compare(pSetValue->v_TemplateFBReferenceVariable, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBReferenceVariable");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_TemplateFBReferenceVariable);
+		}else if(ov_string_compare(pSetValue->v_TemplateFBVariableReferenceName, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBVariableReferenceName");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_TemplateFBVariableReferenceName);
+		}else if(ov_string_compare(pSetValue->v_TemplateConfigValues, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateConfigValues");
+			ov_string_setvalue(&ParameterValue, pSetValue->v_TemplateConfigValues);
+		}
+		ov_string_print(strResult, "%s%%22ParameterName%%22:%%22%s%%22,", *strResult, ParameterName);
+		ov_string_print(strResult, "%s%%22ParameterValue%%22:%%22%s%%22", *strResult, ParameterValue);
+		ov_string_append(strResult, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(strResult, ",");
+		}
+	}
+	if(elementInstantiated == TRUE){
+		ov_string_append(strResult, ",");
+	}
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_ChildrenIterator, pObj){
+		elementInstantiated = TRUE;
+		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
+		ov_string_append(strResult, "%22");
+		ov_memstack_lock();
+		ov_string_append(strResult, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(strResult, "%22:%7B");
+		ov_string_print(strResult, "%s%%22ChildrenIteratorParameterChildrenType%%22:%%22%s%%22", *strResult, pChildrenIterator->v_ChildrenType);
+		ov_string_append(strResult, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(strResult, ",");
+		}
+	}
+	if(elementInstantiated == TRUE){
+		ov_string_append(strResult, ",");
+	}
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_IfThenElse, pObj){
+		elementInstantiated = TRUE;
+		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
+		ov_string_append(strResult, "%22");
+		ov_memstack_lock();
+		ov_string_append(strResult, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(strResult, "%22:%7B");
+		ov_string_print(strResult, "%s%%22IfThenElseParameterAnycond%%22:%%22%s%%22", *strResult, (pIfThenElse->v_anycond==TRUE?"TRUE":"FALSE"));
+		ov_string_append(strResult, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(strResult, ",");
+		}
+	}
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
     OV_INSTPTR_cshmi_downloadApplication          pThis
 ) {
@@ -318,6 +463,22 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	//open JSON Element
 	ov_string_setvalue(&strResult, "%7B");
 
+	/**
+	 * Umsetzungstabelle für decodeURI
+	 * " %22
+	 * { %7B
+	 * } %7D
+	 * [ %5B
+	 * ] %5D
+	 * ( (
+	 * ) )
+	 * + +
+	 */
+
+	//todo
+	//some static baseKsPath settings
+	ov_string_append(&strResult, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:[],%22/TechUnits/cshmi/Templates%22:[]%7D,");
+
 	//Elements is a list of configured elements
 	ov_string_append(&strResult, "%22Elements%22:%7B");
 	cshmi_downloadApplication_buildElementList(&strResult);
@@ -326,9 +487,13 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	//ChildList is a list of ov_containment
 	ov_string_append(&strResult, "%22ChildList%22:%7B");
 	cshmi_downloadApplication_buildChildList(pObj, &strResult, TRUE);
-	ov_string_append(&strResult, "%7D");
+	ov_string_append(&strResult, "%7D,");
 
 	//Actions is a list of actions, set/get stores the result only
+	ov_string_append(&strResult, "%22Actions%22:%7B");
+	cshmi_downloadApplication_buildActionList(&strResult);
+	ov_string_append(&strResult, "%7D");
+
 	//Conditions saves all conditions
 
 	//close JSON Element
