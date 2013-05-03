@@ -51,6 +51,7 @@
 #
 # ***********************************************************************************
 namespace path {::tcl::mathop ::tcl::mathfunc}
+
 #
 # ***********************************************************************************
 #  Ermitteln des Verzeichnisses "THISSERVER"
@@ -107,10 +108,30 @@ return
 #
 
 puts "starting server      ${SERVERNAME}"
+# crashes otherwise, if there is a space in the path
+if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
+	set THISACPLTSYSTEM [file attributes $THISACPLTSYSTEM -shortname]
+	set THISSERVER [file attributes $THISSERVER -shortname]
+}
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
 set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
-puts "server ${SERVERNAME} is running"
+# pid of the process
+set pid [pid $ACPLT_PROCESS]
+puts "server ${SERVERNAME} is running with $pid"
+
+proc sigint {pid} {
+	global tcl_platform
+	global THISACPLTSYSTEM
+	if {$tcl_platform(os) == "Linux"} then { 
+		catch {exec kill -s SIGINT $pid &}
+	} elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
+		catch {exec "${THISACPLTSYSTEM}/system/systools/SendSignal.exe" "$pid" &}
+	}
+	after 1000
+	exit 1
+}
+
 # ********************************************************************************
 # ********************************************************************************
 # ********************************************************************************
@@ -129,6 +150,9 @@ gets stdin in1
 # Nachladen von Templates
 #
 # ********************************************************************************
+if {[eq ${in1} x] == 1} {
+	sigint $pid
+}
 if {[eq ${in1} t] == 1} {
 #
 #  Einlesen der vorhandenen Templateordner
