@@ -16,15 +16,9 @@
 /*
 *	Constants
 */
-
+OV_DLLVARIMPORT OV_BOOL ov_server_run;
 /*	set this to 0 to remove the help output (reduces size for small systems)	*/
 #define OV_SERVER_HELP 1
-
-/*
-*	Global variables: the ACPLT/KS server for ACPLT/OV and the logger object
-*/
-
-static OV_BOOL ov_ksserver_stripped_run_server=TRUE;
 
 
 /*	----------------------------------------------------------------------	*/
@@ -149,14 +143,14 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_delete(void) {
 OV_DLLFNCEXPORT void ov_ksserver_stripped_start(void) {
    //ov_logfile_info("ov_ksserver_stripped_start");
    ov_vendortree_setstartuptime(NULL);
-   ov_ksserver_stripped_run_server=TRUE;
+   ov_server_run=TRUE;
 }
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
     OV_TIME_SPAN  *delay;
     
 //ov_logfile_info("ov_ksserver_stripped_run");
-	while(ov_ksserver_stripped_run_server==TRUE) {
+	while(ov_server_run==TRUE) {
 		 delay = ov_scheduler_schedulenextevent();
 		 if( delay->secs > 1 ) {
             delay->secs = 0;
@@ -183,12 +177,12 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_stop(void) {
    //ov_logfile_info("ov_ksserver_stripped_stop");
-   ov_ksserver_stripped_run_server=FALSE;
+	ov_server_run=FALSE;
 }
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
    ov_logfile_info("Received signal. Shutting down server...");
-   ov_ksserver_stripped_run_server=FALSE;
+   ov_server_run=FALSE;
 }
 /*
 *	End of file

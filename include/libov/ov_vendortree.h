@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	26
+#define	OV_NUM_VENDOROBJECTS	31
 
 /*
 *	Number of configuration bits
@@ -251,11 +251,18 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getname(
 );
 
 /*
-*	Get libks version
+*	Get ks version
 */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibksversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getksversion(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
+);
+
+/*
+*	Set ks version
+*/
+OV_DLLFNCEXPORT void ov_vendortree_setksversion(
+		OV_STRING	version
 );
 
 /*
@@ -266,13 +273,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovversion(
 	const OV_TICKET	*pticket
 );
 
-/*
-*	Get libovks version
-*/
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovksversion(
-	OV_ANY			*pvarcurrprops,
-	const OV_TICKET	*pticket
-);
 
 /*
 *	Get list of libraries in the database
@@ -442,6 +442,99 @@ OV_DLLFNCEXPORT OV_STRING ov_vendortree_getcmdlineoption_value(OV_STRING option)
  */
 
 OV_DLLFNCEXPORT OV_INT ov_vendortree_getport();
+
+/*
+ * Get the running flag
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverrun(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ *	Set the running flag
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverrun(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get ks_maxItemsPerRequest
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxItems(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ *	Set ks_maxItemsPerRequest
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxItems(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get ks_maxstringlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ *	Set ks_maxstringlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxStringLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get ks_maxvectorlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ *	Set ks_maxvectorlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxVectorLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get ov_scheduler_allowedjitter
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getAllowedJitter(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ *	Set ov_scheduler_allowedjitter
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setAllowedJitter(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get ov_scheduler_numexceeds
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getNumExceeds(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Increment numexceeds
+ */
+OV_DLLFNCEXPORT void ov_vendortree_incrementNumExceeds();
 
 #ifdef __cplusplus
 }	/* extern "C" */
