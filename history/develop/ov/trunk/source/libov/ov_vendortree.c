@@ -55,17 +55,28 @@ static OV_STRING	semantic_flag[32] = {
 		NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 static OV_STRING	cmdlineoptions = NULL;
+static OV_STRING	ksVersion = NULL;
+static OV_STRING	emptyStr = "";
+static OV_UINT		ks_maxItemsPerRequest = 1024;
+static OV_UINT		ks_maxStingLength = 8192;
+static OV_UINT		ks_maxVectorLength = 1024;
+static OV_UINT		ov_scheduler_allowedJitter = 250;
+static OV_UINT		ov_scheduler_numberOfExceeds = 0;
 
 OV_DLLVAREXPORT OV_BOOL ov_activitylock;
 OV_DLLVAREXPORT OV_BOOL ov_backup;
 OV_DLLVAREXPORT OV_BOOL ov_explain;
 OV_DLLVAREXPORT OV_STRING db_backup_filename;
+OV_DLLVAREXPORT OV_BOOL ov_server_run = TRUE;
+
 /*
  *	Global variables
  */
 OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
-		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
+		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
 		{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
+		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
+		{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
 		{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag, NULL },
 		{ "database_free",			"Byte",	ov_vendortree_getdatabasefree, NULL },
 		{ "database_name",			NULL,	ov_vendortree_getdatabasename, NULL },
@@ -73,22 +84,25 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "database_started",		NULL,	ov_vendortree_getdatabasestarted, NULL },
 		{ "database_used",			"Byte",	ov_vendortree_getdatabaseused, NULL },
 		{ "name", 					NULL,	ov_vendortree_getname, NULL },
-		{ "libks_version",			NULL,	ov_vendortree_getlibksversion, NULL },
+		{ "ks_version",				NULL,	ov_vendortree_getksversion, ov_vendortree_setksversion },
 		{ "libov_version",			NULL,	ov_vendortree_getlibovversion, NULL },
-		{ "libovks_version",		NULL,	ov_vendortree_getlibovksversion, NULL },
-		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
 		{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags, NULL },
 		{ "server_description",		NULL,	ov_vendortree_getserverdescription, NULL },
 		{ "server_name",			NULL,	ov_vendortree_getservername, NULL },
 		{ "server_time",			"UTC",	ov_vendortree_getservertime, NULL },
 		{ "server_version",			NULL,	ov_vendortree_getserverversion, NULL },
+		{ "server_configuration",	NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
+		{ "server_run",				NULL,	ov_vendortree_getserverrun, ov_vendortree_setserverrun },
+		{ "server_password",		NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
 		{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
-		{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
-		{ "server_configuration",			NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 		{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
 		{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
-		{ "server_password",			NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
 		{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset },
+		{ "ks_maxitemsperrequest",	NULL,	ov_vendortree_getKsMaxItems, ov_vendortree_setKsMaxItems },
+		{ "ks_maxstringlength",		NULL,	ov_vendortree_getKsMaxStringLength, ov_vendortree_setKsMaxStringLength },
+		{ "ks_maxvectorlength",		NULL,	ov_vendortree_getKsMaxVectorLength, ov_vendortree_setKsMaxVectorLength },
+		{ "ov_scheduler_allowedjitter",	"usecs",	ov_vendortree_getAllowedJitter, ov_vendortree_setAllowedJitter },
+		{ "ov_scheduler_numexceeds",	NULL,	ov_vendortree_getNumExceeds, NULL },
 		{ "cmdline_options",		NULL,	ov_vendortree_getcmdlineoptions, NULL }
 };
 
@@ -616,16 +630,41 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getname(
 /*	----------------------------------------------------------------------	*/
 
 /*
- *	Get libks version
+ *	Get ks version
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibksversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getksversion(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_STRING;
-	pvarcurrprops->value.valueunion.val_string = KS_VERSION_STRING;
+	if(ksVersion)
+		pvarcurrprops->value.valueunion.val_string = ksVersion;
+	else
+		pvarcurrprops->value.valueunion.val_string = emptyStr;
+
 	return OV_ERR_OK;
 }
+
+/*	----------------------------------------------------------------------	*/
+
+/*
+ *	Set ks version
+ */
+OV_DLLFNCEXPORT void ov_vendortree_setksversion(
+		OV_STRING	version
+) {
+	if(ksVersion) {
+		ov_free(ksVersion);
+		ksVersion = NULL;
+	}
+	if(version) {
+		ksVersion = (OV_STRING)ov_malloc(strlen(version)+1);
+		if(ksVersion) {
+			strcpy(ksVersion, version);
+		}
+	}
+}
+
 
 /*	----------------------------------------------------------------------	*/
 
@@ -643,19 +682,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovversion(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
- *	Get libovks version
- */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getlibovksversion(
-		OV_ANY			*pvarcurrprops,
-		const OV_TICKET	*pticket
-) {
-	pvarcurrprops->value.vartype = OV_VT_STRING;
-	pvarcurrprops->value.valueunion.val_string = OV_VER_LIBOVKS;
-	return OV_ERR_OK;
-}
-
-/*	----------------------------------------------------------------------	*/
 
 /*
  *	Get list of libraries in the database
@@ -1200,6 +1226,177 @@ OV_DLLFNCEXPORT OV_INT ov_vendortree_getport()
 	}
 
 }
+/*-----------------------------------------------------------------*/
+/*
+ * Get the running flag
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverrun(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_BOOL;
+	pvarcurrprops->value.valueunion.val_bool = ov_server_run;
+	return OV_ERR_OK;
+}
+
+/*
+ *	Set the running flag
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setserverrun(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_BOOL) {
+		ov_server_run = pvarcurrprops->value.valueunion.val_bool;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get ks_maxItemsPerRequest
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxItems(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ks_maxItemsPerRequest;
+	return OV_ERR_OK;
+}
+
+/*
+ *	Set ks_maxItemsPerRequest
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxItems(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		ks_maxItemsPerRequest = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get ks_maxstringlength
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ks_maxStingLength;
+	return OV_ERR_OK;
+}
+
+/*
+ *	Set ks_maxstringlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxStringLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		ks_maxStingLength = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+/*-----------------------------------------------------------------*/
+/*
+ * Get ks_maxvectorlength
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ks_maxVectorLength;
+	return OV_ERR_OK;
+}
+
+/*
+ *	Set ks_maxvectorlength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxVectorLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		ks_maxVectorLength = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get ov_scheduler_allowedjitter
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getAllowedJitter(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ov_scheduler_allowedJitter;
+	return OV_ERR_OK;
+}
+
+/*
+ *	Set ov_scheduler_allowedjitter
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setAllowedJitter(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		if(pvarcurrprops->value.valueunion.val_uint > ov_scheduler_allowedJitter)
+			ov_scheduler_numberOfExceeds = 0;	/*	if the allowed jitter is raised, the exceed counter is reset	*/
+		ov_scheduler_allowedJitter = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get ov_scheduler_numexceeds
+ */
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getNumExceeds(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ov_scheduler_numberOfExceeds;
+	return OV_ERR_OK;
+}
+
+/*
+ * Increment numexceeds
+ */
+
+OV_DLLFNCEXPORT void ov_vendortree_incrementNumExceeds() {
+	ov_scheduler_numberOfExceeds++;
+	return;
+}
+
 
 /*
  *	End of file
