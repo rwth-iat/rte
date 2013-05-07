@@ -467,6 +467,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxItems(
 		const OV_TICKET	*pticket
 );
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxItems();
+
 /*
  *	Set ks_maxItemsPerRequest
  */
@@ -482,6 +484,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxStringLength();
 
 /*
  *	Set ks_maxstringlength
@@ -499,6 +503,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
 		const OV_TICKET	*pticket
 );
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxVectorLength();
+
 /*
  *	Set ks_maxvectorlength
  */
@@ -515,6 +521,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getAllowedJitter(
 		const OV_TICKET	*pticket
 );
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerAllowedJitter();
+
 /*
  *	Set ov_scheduler_allowedjitter
  */
@@ -530,6 +538,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getNumExceeds(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerNumExceeds();
 
 /*
  * Increment numexceeds

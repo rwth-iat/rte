@@ -1270,6 +1270,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxItems(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxItems() {
+	return ks_maxItemsPerRequest;
+}
+
 /*
  *	Set ks_maxItemsPerRequest
  */
@@ -1297,6 +1301,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ks_maxStingLength;
 	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxStringLength() {
+	return ks_maxStingLength;
 }
 
 /*
@@ -1327,6 +1335,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxVectorLength() {
+	return ks_maxVectorLength;
+}
+
 /*
  *	Set ks_maxvectorlength
  */
@@ -1354,6 +1366,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getAllowedJitter(
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_scheduler_allowedJitter;
 	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerAllowedJitter() {
+	return ov_scheduler_allowedJitter;
 }
 
 /*
@@ -1386,6 +1402,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getNumExceeds(
 	pvarcurrprops->value.vartype = OV_VT_UINT;
 	pvarcurrprops->value.valueunion.val_uint = ov_scheduler_numberOfExceeds;
 	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_schedulerNumExceeds()
+{
+	return ov_scheduler_numberOfExceeds;
 }
 
 /*
