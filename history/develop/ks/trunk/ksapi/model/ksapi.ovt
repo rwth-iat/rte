@@ -1,7 +1,7 @@
 #ifndef _KSAPI_OVT
 #define _KSAPI_OVT
 
-#include "libovks/ov_ksclient.h"
+#include "ov_ksserver_xdr_stripped.h"
 
 /*************************************************************************/
 typedef void (* OV_FNCPTR_KSAPI_FNC_RET)(
