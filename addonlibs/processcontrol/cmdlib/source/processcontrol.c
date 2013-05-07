@@ -94,6 +94,7 @@
 
 #include "cmdlib.h"
 #include "cmd.h"
+#include "libov/ov_macros.h"
 
 /***********************************************************************
 	setAccessor der order-Variable

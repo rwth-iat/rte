@@ -85,6 +85,7 @@
 #include "cmdlib.h"
 #include "cmd.h"
 #include "libov/ov_logfile.h"
+#include "libov/ov_macros.h"
 
 /***********************************************************************
 	send_command

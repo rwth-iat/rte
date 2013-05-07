@@ -75,16 +75,7 @@
 #ifndef _COM_LIB_H
 #define _COM_LIB_H
 
-/***********************************************************************
-	Includes
-***********************************************************************/
 
-#include "fb.h"
-#include "fb_namedef.h"
-#include "libov/ov_ov.h"
-#include "libov/ov_path.h"
-#include "libov/ov_macros.h"
-#include "libovks/ov_ksclient.h"
 
 
 /***********************************************************************
@@ -235,120 +226,5 @@ KS_ERR_BADTYPE        20 (int)
 #define COM_TEXT_BADRESULT					"Bad Result"
 #define COM_TEXT_NEWSTATUS					"New Status"
 
-/***********************************************************************
-	Struktur zum Lesen einer Variable
-***********************************************************************/
-
-	/*********************************
-		instlist
-	*********************************/
-	typedef struct instlist
-	{
-		OV_STRING			instname;
-		OV_STRING			inststatusname;
-		struct instlist	*pnext;
-	} t_instlist;
-
-	/*********************************
-		readelem
-	*********************************/
-	typedef struct readelem
-	{
-		OV_STRING			remoteinst;
-		t_instlist			*localinst;
-		struct readelem	*pnext;
-	} t_readelem;
-
-     
-/***********************************************************************
-	Struktur zum Schreiben einer Variable
-***********************************************************************/
-
-	/*********************************
-		writeelem
-	*********************************/
-	
-	typedef struct writeelem {
-		OV_STRING				localinstname;
-		OV_STRING				localinststatusname;
-		OV_STRING				remoteinst;
-		OV_INT					datatype;
-		OV_ANY					varvalue;
-		struct writeelem		*pnext;
-	} t_writeelem;
-
-
-/***********************************************************************
-	Funktionsdefinitionen
-***********************************************************************/
-
-//	Der Modul sendet ein Kommando von einer Quellinstanz (pinst) an eine 
-//	Zielinstanz (zinstanz). Vor der Versendung wird die Belegung der Einheit 
-//	und des Kommandoeinganges überprüft.
-//
-
-	/*********************************
-		comget_value
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comget_value(
-		OV_INSTPTR_fb_functionblock	pinst,
-		OV_STRING							localclient,	//	Pfad zum lokalen Klienten
-		OV_STRING							remotevar,		//	Pfad zur remote Variable
-		OV_STRING							localvar,		//	Name der lokalen Zielvariable (Wert)
-		OV_STRING							statusvar		//	Name der lokalen Zielvariable (Errcode)
-	);
-	
-	/*********************************
-		comset_value
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comset_value(
-		OV_INSTPTR_fb_functionblock	pinst,
-		OV_STRING							localclient,	//	Pfad zum lokalen Klienten
-		OV_STRING							remotevar,		//	Pfad zur remote Variable
-		OV_VAR_VALUE						localvar,		//	Neue Wert der Remote Variable
-		OV_STRING							statusvar		//	Name der lokalen Zielvariable (Errcode)
-	);
-	
-	/*********************************
-		comset_valuepv
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comset_valuepv(
-		OV_INSTPTR_fb_functionblock	pinst,
-		OV_STRING							localclient,	//	Pfad zum lokalen Klienten
-		OV_STRING							remotevar,		//	Pfad zur remote Variable
-		OV_ANY								localvar,		//	Neue Wert der Remote Variable
-		OV_STRING							statusvar		//	Name der lokalen Zielvariable (Errcode)
-	);
-	
-	/*********************************
-		varvalue_init
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comlib_varvalue_init(
-		OV_ANY			*varvalue2,
-		const OV_ANY	varvalue1
-	);
-
-	/*********************************
-		varvalue_free
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comlib_varvalue_free(
-		OV_ANY			*varvalue
-	);
-	
-	/*********************************
-		varvalue_setvalue
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comlib_varvalue_setvalue(
-		OV_ANY			*varvalue2,
-		const OV_ANY	varvalue1
-	);
-	
-	/*********************************
-		varvalue_compare
-	*********************************/
-	OV_RESULT OV_DLLFNCEXPORT comlib_varvalue_compare(
-		const OV_ANY	varvalue2,
-		const OV_ANY	varvalue1
-	);
 	
 #endif

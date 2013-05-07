@@ -72,7 +72,6 @@
 
 #include "fb.h"
 #include "fb_namedef.h"
-#include "com.h"
 #include "libov/ov_path.h"
 #include "libov/ov_malloc.h"
 #include "cmd_macros.h"

@@ -69,6 +69,8 @@
 
 #include "cmdlib.h"
 #include "cmd.h"
+#include "com.h"
+#include "libov/ov_macros.h"
 
 /***********************************************************************
 	get Accessor ResultLocalTxt
