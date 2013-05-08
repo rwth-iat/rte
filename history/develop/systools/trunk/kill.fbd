@@ -1,0 +1,13 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2013-05-08 09:19:20
+* 
+* HOST   : LOCALHOST:7509
+* SERVER : MANAGER
+************************************************************/
+
+ LIBRARY
+   shutdown
+ END_LIBRARY;
+
+ 
