@@ -122,25 +122,13 @@ set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 # pid of the process
 set pid [pid $ACPLT_PROCESS]
-puts "server ${SERVERNAME} is running with $pid"
+puts "server ${SERVERNAME} is running with PID $pid"
 
 proc sleep {time} {
     after $time set end 1
     vwait end
 }
   
-proc sigint {pid} {
-	global tcl_platform
-	global THISACPLTSYSTEM
-	if {$tcl_platform(os) == "Linux"} then { 
-		catch {exec kill -s SIGINT $pid}
-	} elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
-		catch {exec "${THISACPLTSYSTEM}/system/systools/SendSignal.exe" "$pid"}
-	}
-	puts "sleeping for 10 seconds"
-	sleep 10000
-}
-
 # ********************************************************************************
 # ********************************************************************************
 # ********************************************************************************
@@ -151,7 +139,7 @@ proc sigint {pid} {
 set k 0
 while {$k<1} {
 puts "-----------------------------------------------------"
-puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template"
+puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template , quit = shutdown server"
 gets stdin in1
 # ********************************************************************************
 # ********************************************************************************
@@ -159,8 +147,25 @@ gets stdin in1
 # Nachladen von Templates
 #
 # ********************************************************************************
-if {[eq ${in1} x] == 1} {
-	sigint $pid
+if {[eq ${in1} "quit"] == 1} {
+	set LOADFILE "$THISACPLTSYSTEM/system/systools/kill.fbd"
+ 	set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
+	puts "Initated shutdown, waiting for server to unmap the database..."
+    set PRX [open "|$COMMAND1" "RDWR"]
+	
+	set tries 0
+	while {1==1} {
+		set in [open ${LOGFILE} r]
+		set line 0
+		set tries [+ $tries 1]
+		while {[gets $in line] != -1} {
+			if {[regexp "(.*)Database unmapped(.*)" $line] || $tries > 50} then {
+				exit
+			}
+		}
+		after 500 
+	}
+	close $in
 }
 if {[eq ${in1} t] == 1} {
 #
