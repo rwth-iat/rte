@@ -20,8 +20,6 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-//fixme alle strings auf null!!!
-
 #include "cshmi.h"
 #include "cshmilib.h"
 
@@ -92,6 +90,7 @@ OV_BOOL cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV_S
 		cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pChildrenIterator->p_forEachChild), strResult, FALSE);
 	}
 
+	ov_string_setvalue(&strChildList, NULL);
 	return OV_ERR_OK;
 }
 
@@ -386,6 +385,21 @@ OV_BOOL cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	ov_string_print(strResult, "%s%s%s%s%s%s%s%s", *strResult, strGroup, strTemplateDefinition, strTemplate, strInstantiateTemplate, strRectangle, strCircle, strText);
 
 	ov_string_setvalue(&temp, NULL);
+
+	ov_string_setvalue(&strCircle, NULL);
+	ov_string_setvalue(&strGroup, NULL);
+	ov_string_setvalue(&strInstantiateTemplate, NULL);
+	ov_string_setvalue(&strIterateCircle, NULL);
+	ov_string_setvalue(&strIterateGroup, NULL);
+	ov_string_setvalue(&strIterateInstantiateTemplate, NULL);
+	ov_string_setvalue(&strIterateRectangle, NULL);
+	ov_string_setvalue(&strIterateTemplate, NULL);
+	ov_string_setvalue(&strIterateTemplateDefinition, NULL);
+	ov_string_setvalue(&strIterateText, NULL);
+	ov_string_setvalue(&strRectangle, NULL);
+	ov_string_setvalue(&strTemplate, NULL);
+	ov_string_setvalue(&strTemplateDefinition, NULL);
+	ov_string_setvalue(&strText, NULL);
 	return OV_ERR_OK;
 }
 
@@ -474,12 +488,6 @@ OV_BOOL cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_GetValue, pObj){
 		elementInstantiated = TRUE;
 		pGetValue = Ov_StaticPtrCast(cshmi_GetValue, pObj);
-		ov_string_setvalue(&strIterateGetValue, "%22");
-		ov_memstack_lock();
-		ov_string_append(&strIterateGetValue, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
-		ov_memstack_unlock();
-		ov_string_append(&strIterateGetValue, "%22:%7B");
-
 		if(ov_string_compare(pGetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
 			ov_string_setvalue(&ParameterName, "ksVar");
 			ov_string_setvalue(&ParameterValue, pGetValue->v_ksVar);
@@ -534,12 +542,20 @@ OV_BOOL cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 						}
 					}
 					break;
-				default:
-					//fixme diese iteration des GetValue sollte übersprungen werden, da value falsch ist.
+				case OV_VT_VOID:
 					ov_string_setvalue(&ParameterValue, NULL);
 					break;
+				default:
+					//The format of the value is not supported, so skip this precaching of the element
+					continue;
 			}
 		}
+		ov_string_setvalue(&strIterateGetValue, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateGetValue, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateGetValue, "%22:%7B");
+
 		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
 			ov_string_print(&strIterateGetValue, "%s%%22ParameterName%%22:%%22%s%%22,", strIterateGetValue, ParameterName);
 		}else{
@@ -598,6 +614,16 @@ OV_BOOL cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	}
 
 	ov_string_print(strResult, "%s%s%s%s%s", *strResult, strSetValue, strGetValue, strChildrenIterator, strIfThenElse);
+
+	ov_string_print(&strChildrenIterator, NULL);
+	ov_string_print(&strGetValue, NULL);
+	ov_string_print(&strIfThenElse, NULL);
+	ov_string_print(&strSetValue, NULL);
+	ov_string_print(&strIterateChildrenIterator, NULL);
+	ov_string_print(&strIterateGetValue, NULL);
+	ov_string_print(&strIterateIfThenElse, NULL);
+	ov_string_print(&strIterateSetValue, NULL);
+
 	return OV_ERR_OK;
 }
 
@@ -661,6 +687,11 @@ OV_BOOL cshmi_downloadApplication_buildConditionList(OV_STRING*strResult){
 	}
 
 	ov_string_print(strResult, "%s%s%s", *strResult, strCompare, strCompareIteratedChild);
+	ov_string_setvalue(&strCompare, NULL);
+	ov_string_setvalue(&strCompareIteratedChild, NULL);
+	ov_string_setvalue(&strIterateCompare, NULL);
+	ov_string_setvalue(&strIterateCompareIteratedChild, NULL);
+
 	return OV_ERR_OK;
 }
 
@@ -713,7 +744,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_time_gettime(&lasttime);
 
 	//Elements is a list of configured elements
-	ov_string_append(&strElements, "%22Elements%22:%7B");
+	ov_string_setvalue(&strElements, "%22Elements%22:%7B");
 	cshmi_downloadApplication_buildElementList(&strElements);
 	ov_string_append(&strElements, "%7D,");
 
@@ -723,7 +754,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_time_gettime(&lasttime);
 
 	//Actions is a list of actions, set/get stores the result only
-	ov_string_append(&strActions, "%22Actions%22:%7B");
+	ov_string_setvalue(&strActions, "%22Actions%22:%7B");
 	cshmi_downloadApplication_buildActionList(&strActions);
 	ov_string_append(&strActions, "%7D,");
 
@@ -733,7 +764,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_time_gettime(&lasttime);
 
 	//Conditions saves all conditions
-	ov_string_append(&strConditions, "%22Conditions%22:%7B");
+	ov_string_setvalue(&strConditions, "%22Conditions%22:%7B");
 	cshmi_downloadApplication_buildConditionList(&strConditions);
 	ov_string_append(&strConditions, "%7D,");
 
@@ -743,7 +774,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_time_gettime(&lasttime);
 
 	//ChildList is a list of ov_containment
-	ov_string_append(&strChildList, "%22ChildList%22:%7B");
+	ov_string_setvalue(&strChildList, "%22ChildList%22:%7B");
 	cshmi_downloadApplication_buildChildList(pObj, &strChildList, TRUE);
 	ov_string_append(&strChildList, "%7D");
 
@@ -752,20 +783,16 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_logfile_debug("Childlist: %s", ov_time_timespantoascii(&diff));
 	ov_time_gettime(&lasttime);
 
-//	//concat all parts to one string
-//	ov_string_append(&strResult, strElements);
-//	ov_string_append(&strResult, strActions);
-//	ov_string_append(&strResult, strConditions);
-//	ov_string_append(&strResult, strChildList);
-//	//close JSON Element
-//	ov_string_append(&strResult, "%7D");
-
 	//concat and close JSON Element
 	ov_string_print(&strResult, "%s%s%s%s%%7D", strResult, strElements, strActions, strConditions, strChildList);
 
 	returnString = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strResult));
 	strcpy(returnString, strResult);
 	ov_string_setvalue(&strResult, NULL);
+	ov_string_setvalue(&strActions, NULL);
+	ov_string_setvalue(&strChildList, NULL);
+	ov_string_setvalue(&strConditions, NULL);
+	ov_string_setvalue(&strElements, NULL);
 	return returnString;
 
 }
