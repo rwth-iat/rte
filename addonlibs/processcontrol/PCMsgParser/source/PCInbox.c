@@ -124,7 +124,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 		OV_TIME						*pltc
 ) {
 	OV_INSTPTR_PCMsgParser_PCInbox this = Ov_StaticPtrCast(PCMsgParser_PCInbox, pfb);
-	OV_INSTPTR_ServiceProvider_Message pMsg = NULL;
+	OV_INSTPTR_MessageSys_Message pMsg = NULL;
 	OV_INSTPTR_ov_object	pMsgObj = NULL;
 	OV_INSTPTR_ov_object	pNextMsgObj = NULL;
 	OV_INSTPTR_ov_domain	pParentDomain = NULL;
@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	pMsgObj = Ov_GetFirstChild(ov_containment, this);
 	while(pMsgObj)
 	{
-		if(Ov_CanCastTo(ServiceProvider_Message, pMsgObj))
+		if(Ov_CanCastTo(MessageSys_Message, pMsgObj))
 			waitingMsgs++;
 
 		pMsgObj = Ov_GetNextChild(ov_containment, pMsgObj);
@@ -175,7 +175,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			if(this->v_fiFoQueue)
 			{	/*	starting with the oldest --> delete the newer ones	*/
 				pNextMsgObj = Ov_GetPreviousChild(ov_containment, pMsgObj);
-				if(Ov_CanCastTo(ServiceProvider_Message, pMsgObj))
+				if(Ov_CanCastTo(MessageSys_Message, pMsgObj))
 				{
 					Ov_DeleteObject(pMsgObj);
 					pMsgObj = pNextMsgObj;
@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			else
 			{	/*	starting with the newest --> delete the older ones	*/
 				pNextMsgObj = Ov_GetNextChild(ov_containment, pMsgObj);
-				if(Ov_CanCastTo(ServiceProvider_Message, pMsgObj))
+				if(Ov_CanCastTo(MessageSys_Message, pMsgObj))
 				{
 					Ov_DeleteObject(pMsgObj);
 					pMsgObj = pNextMsgObj;
@@ -202,7 +202,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	if(waitingMsgs)
 	{	/*	there are messages waiting for processing	*/
 		/*	get the Message to process (sort out other objects	*/
-		while(pMsgObj && (!Ov_CanCastTo(ServiceProvider_Message, pMsgObj)))
+		while(pMsgObj && (!Ov_CanCastTo(MessageSys_Message, pMsgObj)))
 		{
 			if(this->v_fiFoQueue)
 				pMsgObj = Ov_GetPreviousChild(ov_containment, pMsgObj);
@@ -212,7 +212,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 		}
 		if(pMsgObj)
 		{
-			pMsg = Ov_StaticPtrCast(ServiceProvider_Message, pMsgObj);
+			pMsg = Ov_StaticPtrCast(MessageSys_Message, pMsgObj);
 			/*	from here on we surely know
 			 * 1. pMsg is of type Message or derived
 			 * 2. pMsg is the message to work with basing on the queue type	*/
@@ -221,10 +221,10 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 
 			/*	get the necessary information from the message	*/
 			/*	get commander from senderservice	*/
-			commander = ServiceProvider_Message_senderService_get(pMsg);
+			commander = MessageSys_Message_senderComponent_get(pMsg);
 
 			/*	get Operation	*/
-			result = PCMsgParser_getElementData(ServiceProvider_Message_msgBody_get(pMsg), "Operation", &command);
+			result = PCMsgParser_getElementData(MessageSys_Message_msgBody_get(pMsg), "Operation", &command);
 			if(Ov_Fail(result))
 			{
 				if(result != OV_ERR_HEAPOUTOFMEMORY)
@@ -246,7 +246,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			PCMsgParser_rStrip(command);
 
 			/*	get Value	*/
-			result = PCMsgParser_getElementData(ServiceProvider_Message_msgBody_get(pMsg), "Value", &value);
+			result = PCMsgParser_getElementData(MessageSys_Message_msgBody_get(pMsg), "KVP", &value);
 			if(Ov_Fail(result))
 			{
 				if(result != OV_ERR_HEAPOUTOFMEMORY)
