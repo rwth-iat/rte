@@ -1,0 +1,15 @@
+#ifndef MessageSys_OVT_INCLUDED
+#define MessageSys_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+typedef void (* OV_FNCPTR_MSGSYS_RET_FNC)(
+		OV_INSTPTR_ov_object 			pobj,
+		OV_INSTPTR_ov_object 			message,
+		OV_STRING 				errorstring,
+		OV_INT	 				errorcode
+);
+
+
+#endif

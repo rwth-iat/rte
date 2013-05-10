@@ -1,0 +1,78 @@
+#include "ov.ovm"
+#include "ksapi.ovm"
+#include "ksapitcp.ovm"
+
+LIBRARY MessageSys
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+CLASS MsgDelivery : CLASS ksserv/ComTask
+	IS_INSTANTIABLE;
+	VARIABLES
+		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar called by ksapi";
+		regComponentPath	:	STRING
+			COMMENT	=	"Path to the Domain where the registered Services are located"
+			INITIALVALUE	=	"/communication/ServiceProvider/SystemServices";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
+		startup		:	C_FUNCTION <OV_FNC_STARTUP>;
+		retMethod : C_FUNCTION <KSAPI_FNC_RET>;
+		sendMessage : C_FUNCTION <SENDMESSAGE_FNC>;
+		findService : C_FUNCTION <MSGSYS_FINDSERVICE_FNC>;
+	END_OPERATIONS;
+END_CLASS;
+	
+	
+CLASS Message : CLASS ov/object
+	IS_INSTANTIABLE;
+	VARIABLES
+		senderAddress : STRING HAS_ACCESSORS COMMENT = "Address of sender machine" INITIALVALUE="127.0.0.1";
+		receiverAddress : STRING HAS_ACCESSORS COMMENT = "Address of receiver machine" INITIALVALUE="127.0.0.1";
+		senderName : STRING HAS_ACCESSORS COMMENT = "Servername of sender" INITIALVALUE="";
+		receiverName : STRING HAS_ACCESSORS COMMENT = "Servername of receiver" INITIALVALUE="";
+		senderComponent : STRING HAS_ACCESSORS COMMENT = "Name of sender-component" INITIALVALUE="";
+		receiverComponent : STRING HAS_ACCESSORS COMMENT = "Name of receiver-component" INITIALVALUE="";
+		msgStatus : INT HAS_ACCESSORS COMMENT="0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERSERVICEERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE" INITIALVALUE=0 ;
+		msgID : UINT HAS_ACCESSORS INITIALVALUE=0;
+		msgBody : STRING HAS_ACCESSORS;
+		msgSTRING : STRING HAS_ACCESSORS;
+		sendString : STRING FLAGS =	"n";
+		//this could be used by services to "subscripe" to a specific message for delivery. 
+		//MsgComponent will call the pointer if message is sent 
+		returnmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_RET_FNC>	FLAGS =	"n"	COMMENT	=	"Pointer to returnMethod";
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		serializeMessage : C_FUNCTION <SERIALIZEMESSAGE_FNC>;
+		deserializeMessage : C_FUNCTION <DESERIALIZEMESSAGE_FNC>;
+		getSenderAddress : C_FUNCTION <GETSENDERADDRESS_FNC>;
+		getSenderName : C_FUNCTION <GETSENDERNAME_FNC>;
+		getSenderComponent : C_FUNCTION <GETSENDERSERVICE_FNC>;
+		getReceiverAddress : C_FUNCTION <GETRECEIVERADDRESS_FNC>;
+		getReceiverName : C_FUNCTION <GETRECEIVERNAME_FNC>;
+		getReceiverComponent : C_FUNCTION <GETRECEIVERSERVICE_FNC>;
+		getMsgStatus : C_FUNCTION <GETMSGSTATUS_FNC>;
+		getMsgID : C_FUNCTION <GETMSGID_FNC>;
+		getMsgType : C_FUNCTION <GETMSGTYPE_FNC>;
+		getMsgData : C_FUNCTION <GETMSGDATA_FNC>;
+	END_OPERATIONS;
+END_CLASS;
+	
+	/**
+	 * MessageSys Associations
+	 */
+ASSOCIATION MsgDelivery2CurrentMessage : ONE_TO_ONE
+ 	PARENT parMsgDelivery : CLASS MessageSys/MsgDelivery;
+  	CHILD chCurrentMessage : CLASS MessageSys/Message;
+END_ASSOCIATION;
+
+ASSOCIATION MsgDelivery2Message : ONE_TO_MANY
+    PARENT parMsgDelivery2 : CLASS MessageSys/MsgDelivery;
+ 	CHILD chMessage : CLASS MessageSys/Message;
+END_ASSOCIATION;
+	
+END_LIBRARY;
