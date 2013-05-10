@@ -150,11 +150,13 @@ cshmi.prototype = {
 		var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
 		if (response !== null && response.indexOf("KS_ERR") === -1){
 			try {
-				var responseJSON = JSON.parse(decodeURI(response.slice(2,-2)));
+				var plainJSON = decodeURI(response.slice(2,-2));
+				var responseJSON = JSON.parse(plainJSON);
 			} catch (e) {
 				//something went wrong, ignore the cache 8-/
 				responseJSON = {};
 			}
+			plainJSON = null;
 			if(responseJSON.Elements){
 				this.ResourceList.Elements = responseJSON.Elements;
 			}
@@ -173,6 +175,7 @@ cshmi.prototype = {
 			if(responseJSON.ChildList){
 				this.ResourceList.ChildList = responseJSON.ChildList;
 			}
+			responseJSON = null;
 		}
 		
 		//we are in the init stage, so the DOM Tree is not populated
