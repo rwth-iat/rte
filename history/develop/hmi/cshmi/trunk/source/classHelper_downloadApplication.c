@@ -38,6 +38,7 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 
 	//local string to make ov_string functions fast
 	OV_STRING strChildList = NULL;
+	OV_RESULT result = OV_ERR_OK;
 
 	if(!Ov_CanCastTo(ov_domain, pObj)){
 		return OV_ERR_OK;
@@ -69,28 +70,45 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 	ov_string_append(&strChildList, "]%7D");
 
 	//one single append to the huge string
-	ov_string_append(strResult, strChildList);
+	result = ov_string_append(strResult, strChildList);
+	ov_string_setvalue(&strChildList, NULL);
+	if(Ov_Fail(result)){
+		return result;
+	}
 
 	//interesting ov_containment childrens are domains or cshmi objects
 	if(		Ov_CanCastTo(cshmi_Object, pObj)
 			|| Ov_GetParent(ov_instantiation, pObj)==pclass_ov_domain
 			){
 		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChildObj){
-			cshmi_downloadApplication_buildChildList(pChildObj, strResult, FALSE);
+			result = cshmi_downloadApplication_buildChildList(pChildObj, strResult, FALSE);
+			if(Ov_Fail(result)){
+				return result;
+			}
 		}
 	}
 	//some ov_embedment childrens
 	if(Ov_CanCastTo(cshmi_IfThenElse, pObj)){
 		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
-		cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_if), strResult, FALSE);
-		cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_then), strResult, FALSE);
-		cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_else), strResult, FALSE);
+		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_if), strResult, FALSE);
+		if(Ov_Fail(result)){
+			return result;
+		}
+		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_then), strResult, FALSE);
+		if(Ov_Fail(result)){
+			return result;
+		}
+		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_else), strResult, FALSE);
+		if(Ov_Fail(result)){
+			return result;
+		}
 	}else if(Ov_CanCastTo(cshmi_ChildrenIterator, pObj)){
 		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
-		cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pChildrenIterator->p_forEachChild), strResult, FALSE);
+		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pChildrenIterator->p_forEachChild), strResult, FALSE);
+		if(Ov_Fail(result)){
+			return result;
+		}
 	}
-
-	ov_string_setvalue(&strChildList, NULL);
 	return OV_ERR_OK;
 }
 
@@ -108,6 +126,11 @@ OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, 
 	ov_string_print(strResult, "%s%%22rotate%%22:%%22%i%%22,", *strResult, pElement->v_rotate);
 	return OV_ERR_OK;
 }
+/**
+ *	builds the graphical elements into the cache
+ * @param strResult
+ * @return
+ */
 OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_cshmi_Template pTemplate = NULL;
@@ -117,7 +140,14 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_INSTPTR_cshmi_Rectangle pRectangle = NULL;
 	OV_INSTPTR_cshmi_Circle pCircle = NULL;
 	OV_INSTPTR_cshmi_Text pText = NULL;
+	OV_INSTPTR_cshmi_Line pLine = NULL;
+	OV_INSTPTR_cshmi_Polyline pPolyline = NULL;
+	OV_INSTPTR_cshmi_Polygon pPolygon = NULL;
+	OV_INSTPTR_cshmi_Path pPath = NULL;
+	OV_INSTPTR_cshmi_Ellipse pEllipse = NULL;
 
+	//be carefull to adjust the ov_string_print at the end of the function
+	OV_STRING ResultListVec[12] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	OV_STRING strGroup = " ";
 	OV_STRING strTemplateDefinition = " ";
 	OV_STRING strTemplate = " ";
@@ -125,6 +155,13 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_STRING strRectangle = " ";
 	OV_STRING strCircle = " ";
 	OV_STRING strText = " ";
+	OV_STRING strLine = " ";
+	OV_STRING strPolyline = " ";
+	OV_STRING strPolygon = " ";
+	OV_STRING strPath = " ";
+	OV_STRING strEllipse = " ";
+	//Note: we do not precache blackbox or image! To risky with the encoding of the Strings.
+
 	OV_STRING strIterateGroup = NULL;
 	OV_STRING strIterateTemplateDefinition = NULL;
 	OV_STRING strIterateTemplate = NULL;
@@ -132,13 +169,20 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_STRING strIterateRectangle = NULL;
 	OV_STRING strIterateCircle = NULL;
 	OV_STRING strIterateText = NULL;
+	OV_STRING strIterateLine = NULL;
+	OV_STRING strIteratePolyline = NULL;
+	OV_STRING strIteratePolygon = NULL;
+	OV_STRING strIteratePath = NULL;
+	OV_STRING strIterateEllipse = NULL;
+
+	OV_UINT ResultListUsedLength = 0;
+	OV_STRING ResultFormat = NULL;
 
 	OV_STRING temp = NULL;
 	OV_UINT i = 0;
 	OV_BOOL elementInstantiated = FALSE;
 	OV_BOOL elementIsfirst = TRUE;
-	OV_STRING_VEC ResultListVec = {0, NULL};
-	OV_STRING ResultFormat = NULL;
+	OV_RESULT result = OV_ERR_OK;
 
 	ov_string_setvalue(&ResultFormat, "%s");
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Group, pObj){
@@ -164,9 +208,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strGroup, strIterateGroup);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strGroup;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strGroup;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -195,9 +239,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strTemplateDefinition, strIterateTemplateDefinition);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strTemplateDefinition;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strTemplateDefinition;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -258,9 +302,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strTemplate, strIterateTemplate);
 	};
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strTemplate;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strTemplate;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -289,7 +333,7 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_print(&strIterateInstantiateTemplate, "%s%%22y%%22:%%22%f%%22,", strIterateInstantiateTemplate, pInstantiateTemplate->v_y);
 		ov_string_print(&strIterateInstantiateTemplate, "%s%%22xOffset%%22:%%22%f%%22,", strIterateInstantiateTemplate, pInstantiateTemplate->v_xOffset);
 		ov_string_print(&strIterateInstantiateTemplate, "%s%%22yOffset%%22:%%22%f%%22,", strIterateInstantiateTemplate, pInstantiateTemplate->v_yOffset);
-		ov_string_print(&strIterateInstantiateTemplate, "%s%%22maxTemplatesPerDirection%%22:%%22%f%%22,", strIterateInstantiateTemplate, pInstantiateTemplate->v_maxTemplatesPerDirection);
+		ov_string_print(&strIterateInstantiateTemplate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterateInstantiateTemplate, ov_string_compare(pInstantiateTemplate->v_maxTemplatesPerDirection, "")==OV_STRCMP_EQUAL?"":pInstantiateTemplate->v_maxTemplatesPerDirection);
 		ov_string_print(&strIterateInstantiateTemplate, "%s%%22FBReference%%22:%%22%s%%22,", strIterateInstantiateTemplate, (pInstantiateTemplate->v_FBReference.veclen!=1||ov_string_compare(pInstantiateTemplate->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pInstantiateTemplate->v_FBReference.value[0]);
 
 		if(pInstantiateTemplate->v_FBVariableReference.veclen == 0){
@@ -327,9 +371,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strInstantiateTemplate, strIterateInstantiateTemplate);
 	};
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strInstantiateTemplate;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strInstantiateTemplate;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -362,9 +406,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strRectangle, strIterateRectangle);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strRectangle;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strRectangle;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -396,9 +440,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strCircle, strIterateCircle);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strCircle;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strCircle;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -436,9 +480,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strText, strIterateText);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strText;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strText;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -447,16 +491,174 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		elementIsfirst = FALSE;
 	}
 
-	//concat the result, manual for performance reasons (append is not cheap)
-	ov_string_print(strResult, ResultFormat, *strResult, ResultListVec.value[0], ResultListVec.value[1], ResultListVec.value[2], ResultListVec.value[3], ResultListVec.value[4], ResultListVec.value[5], ResultListVec.value[6]);
-	for(i = 0;i<ResultListVec.veclen;i++){
-		//kill the pointer, so Ov_SetDynamicVectorLength will not free the string content
-		ResultListVec.value[i] = NULL;
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Line, pObj){
+		elementInstantiated = TRUE;
+		pLine = Ov_StaticPtrCast(cshmi_Line, pObj);
+		ov_string_setvalue(&strIterateLine, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateLine, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateLine, "%22:%7B");
+		ov_string_append(&strIterateLine, "%22Parameters%22:%7B");
+		cshmi_downloadApplication_buildBaseElementString(&strIterateLine, Ov_PtrUpCast(cshmi_Element, pLine));
+		ov_string_print(&strIterateLine, "%s%%22x1%%22:%%22%f%%22,", strIterateLine, pLine->v_x1);
+		ov_string_print(&strIterateLine, "%s%%22y1%%22:%%22%f%%22,", strIterateLine, pLine->v_y1);
+		ov_string_print(&strIterateLine, "%s%%22x2%%22:%%22%f%%22,", strIterateLine, pLine->v_x2);
+		ov_string_print(&strIterateLine, "%s%%22y2%%22:%%22%f%%22", strIterateLine, pLine->v_y2);
+		ov_string_append(&strIterateLine, "%7D");
+		ov_string_append(&strIterateLine, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateLine, ",");
+		}
+		ov_string_append(&strLine, strIterateLine);
 	}
-	ov_string_setvalue(&ResultFormat, NULL);
-	//free the memory used for the vector
-	Ov_SetDynamicVectorLength(&ResultListVec, 0, STRING);
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strLine;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
 
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polyline, pObj){
+		elementInstantiated = TRUE;
+		pPolyline = Ov_StaticPtrCast(cshmi_Polyline, pObj);
+		ov_string_setvalue(&strIteratePolyline, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIteratePolyline, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIteratePolyline, "%22:%7B");
+		ov_string_append(&strIteratePolyline, "%22Parameters%22:%7B");
+		cshmi_downloadApplication_buildBaseElementString(&strIteratePolyline, Ov_PtrUpCast(cshmi_Element, pPolyline));
+		ov_string_print(&strIteratePolyline, "%s%%22points%%22:%%22%s%%22,", strIteratePolyline, pPolyline->v_points==NULL?"":pPolyline->v_points);
+		ov_string_print(&strIteratePolyline, "%s%%22strokeWidth%%22:%%22%f%%22", strIteratePolyline, pPolyline->v_strokeWidth);
+		ov_string_append(&strIteratePolyline, "%7D");
+		ov_string_append(&strIteratePolyline, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIteratePolyline, ",");
+		}
+		ov_string_append(&strPolyline, strIteratePolyline);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strPolyline;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polygon, pObj){
+		elementInstantiated = TRUE;
+		pPolygon = Ov_StaticPtrCast(cshmi_Polygon, pObj);
+		ov_string_setvalue(&strIteratePolygon, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIteratePolygon, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIteratePolygon, "%22:%7B");
+		ov_string_append(&strIteratePolygon, "%22Parameters%22:%7B");
+		cshmi_downloadApplication_buildBaseElementString(&strIteratePolygon, Ov_PtrUpCast(cshmi_Element, pPolygon));
+		ov_string_print(&strIteratePolygon, "%s%%22points%%22:%%22%s%%22,", strIteratePolygon, pPolygon->v_points==NULL?"":pPolygon->v_points);
+		ov_string_print(&strIteratePolygon, "%s%%22strokeWidth%%22:%%22%f%%22", strIteratePolygon, pPolygon->v_strokeWidth);
+		ov_string_append(&strIteratePolygon, "%7D");
+		ov_string_append(&strIteratePolygon, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIteratePolygon, ",");
+		}
+		ov_string_append(&strPolygon, strIteratePolygon);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strPolygon;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Path, pObj){
+		elementInstantiated = TRUE;
+		pPath = Ov_StaticPtrCast(cshmi_Path, pObj);
+		ov_string_setvalue(&strIteratePath, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIteratePath, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIteratePath, "%22:%7B");
+		ov_string_append(&strIteratePath, "%22Parameters%22:%7B");
+		cshmi_downloadApplication_buildBaseElementString(&strIteratePath, Ov_PtrUpCast(cshmi_Element, pPath));
+		ov_string_print(&strIteratePath, "%s%%22d%%22:%%22%s%%22,", strIteratePath, pPath->v_d==NULL?"":pPath->v_d);
+		ov_string_print(&strIterateRectangle, "%s%%22strokeWidth%%22:%%22%f%%22", strIteratePath, pPath->v_strokeWidth);
+		ov_string_append(&strIteratePath, "%7D");
+		ov_string_append(&strIteratePath, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIteratePath, ",");
+		}
+		ov_string_append(&strPath, strIteratePath);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strPath;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Ellipse, pObj){
+		elementInstantiated = TRUE;
+		pEllipse = Ov_StaticPtrCast(cshmi_Ellipse, pObj);
+		ov_string_setvalue(&strIterateEllipse, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateEllipse, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateEllipse, "%22:%7B");
+		ov_string_append(&strIterateEllipse, "%22Parameters%22:%7B");
+		cshmi_downloadApplication_buildBaseElementString(&strIterateEllipse, Ov_PtrUpCast(cshmi_Element, pEllipse));
+		ov_string_print(&strIterateEllipse, "%s%%22cx%%22:%%22%f%%22,", strIterateEllipse, pEllipse->v_cx);
+		ov_string_print(&strIterateEllipse, "%s%%22cy%%22:%%22%f%%22,", strIterateEllipse, pEllipse->v_cy);
+		ov_string_print(&strIterateEllipse, "%s%%22rx%%22:%%22%f%%22,", strIterateEllipse, pEllipse->v_rx);
+		ov_string_print(&strIterateEllipse, "%s%%22ry%%22:%%22%f%%22,", strIterateEllipse, pEllipse->v_ry);
+		ov_string_print(&strIterateEllipse, "%s%%22strokeWidth%%22:%%22%f%%22", strIterateEllipse, pEllipse->v_strokeWidth);
+		ov_string_append(&strIterateEllipse, "%7D");
+		ov_string_append(&strIterateEllipse, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateEllipse, ",");
+		}
+		ov_string_append(&strEllipse, strIterateEllipse);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strEllipse;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	//concat the result, in one batch for performance reasons (append is not cheap)
+	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10], ResultListVec[11]);
+	ov_string_setvalue(&ResultFormat, NULL);
 
 	ov_string_setvalue(&temp, NULL);
 
@@ -467,6 +669,12 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	ov_string_setvalue(&strTemplate, NULL);
 	ov_string_setvalue(&strTemplateDefinition, NULL);
 	ov_string_setvalue(&strText, NULL);
+	ov_string_setvalue(&strLine, NULL);
+	ov_string_setvalue(&strPolyline, NULL);
+	ov_string_setvalue(&strPolygon, NULL);
+	ov_string_setvalue(&strPath, NULL);
+	ov_string_setvalue(&strEllipse, NULL);
+
 	ov_string_setvalue(&strIterateCircle, NULL);
 	ov_string_setvalue(&strIterateGroup, NULL);
 	ov_string_setvalue(&strIterateInstantiateTemplate, NULL);
@@ -474,39 +682,68 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	ov_string_setvalue(&strIterateTemplate, NULL);
 	ov_string_setvalue(&strIterateTemplateDefinition, NULL);
 	ov_string_setvalue(&strIterateText, NULL);
-	return OV_ERR_OK;
+	ov_string_setvalue(&strIterateLine, NULL);
+	ov_string_setvalue(&strIteratePolyline, NULL);
+	ov_string_setvalue(&strIteratePolygon, NULL);
+	ov_string_setvalue(&strIteratePath, NULL);
+	ov_string_setvalue(&strIterateEllipse, NULL);
+	return result;
 }
 
 /**
- *
+ *	builds the interactive elements (events/actions/conditions)
  * @param strResult
  * @return
  */
 OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_cshmi_SetValue pSetValue = NULL;
+	OV_INSTPTR_cshmi_SetConcatValue pSetConcatValue = NULL;
+	OV_INSTPTR_cshmi_SetMathValue pSetMathValue = NULL;
 	OV_INSTPTR_cshmi_GetValue pGetValue = NULL;
 	OV_INSTPTR_cshmi_ChildrenIterator pChildrenIterator = NULL;
 	OV_INSTPTR_cshmi_IfThenElse pIfThenElse = NULL;
+	OV_INSTPTR_cshmi_Compare pCompare = NULL;
+	OV_INSTPTR_cshmi_CompareIteratedChild pCompareIteratedChild = NULL;
 
+	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
+	OV_INSTPTR_cshmi_RoutePolyline pRoutePolyline = NULL;
+
+	OV_STRING ResultListVec[10];
 	OV_STRING strSetValue = " ";
+	OV_STRING strSetConcatValue = " ";
+	OV_STRING strSetMathValue = " ";
 	OV_STRING strGetValue = " ";
 	OV_STRING strChildrenIterator = " ";
 	OV_STRING strIfThenElse = " ";
+	OV_STRING strCompare = " ";
+	OV_STRING strCompareIteratedChild = " ";
+	OV_STRING strTimeEvent = " ";
+	OV_STRING strRoutePolyline = " ";
+
 	OV_STRING strIterateSetValue = NULL;
+	OV_STRING strIterateSetConcatValue = NULL;
+	OV_STRING strIterateSetMathValue = NULL;
 	OV_STRING strIterateGetValue = NULL;
 	OV_STRING strIterateChildrenIterator = NULL;
 	OV_STRING strIterateIfThenElse = NULL;
+	OV_STRING strIterateCompare = NULL;
+	OV_STRING strIterateCompareIteratedChild = NULL;
+	OV_STRING strIterateTimeEvent = NULL;
+	OV_STRING strIterateRoutePolyline = NULL;
+	OV_UINT ResultListUsedLength = 0;
 
 	OV_STRING ParameterName = NULL;
 	OV_STRING ParameterValue = NULL;
 	OV_BOOL elementInstantiated = FALSE;
 	OV_BOOL elementIsfirst = TRUE;
 	OV_UINT i = 0;
-	OV_STRING_VEC ResultListVec = {0, NULL};
 	OV_STRING ResultFormat = NULL;
+	OV_RESULT result = OV_ERR_OK;
 
 	ov_string_setvalue(&ResultFormat, "%s");
+
+	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetValue, pObj){
 		elementInstantiated = TRUE;
 		pSetValue = Ov_StaticPtrCast(cshmi_SetValue, pObj);
@@ -515,6 +752,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		ov_string_append(&strIterateSetValue, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
 		ov_memstack_unlock();
 		ov_string_append(&strIterateSetValue, "%22:%7B");
+		ov_string_print(&strIterateSetValue, "%s%%22translationSource%%22:%%22%s%%22,", strIterateSetValue, ov_string_compare(pSetValue->v_translationSource, "")==OV_STRCMP_EQUAL?"":pSetValue->v_translationSource);
 
 		if(ov_string_compare(pSetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
 			ov_string_setvalue(&ParameterName, "ksVar");
@@ -559,9 +797,137 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		ov_string_append(&strSetValue, strIterateSetValue);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strSetValue;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strSetValue;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetConcatValue, pObj){
+		elementInstantiated = TRUE;
+		pSetConcatValue = Ov_StaticPtrCast(cshmi_SetConcatValue, pObj);
+		ov_string_setvalue(&strIterateSetConcatValue, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateSetConcatValue, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateSetConcatValue, "%22:%7B");
+
+		if(ov_string_compare(pSetConcatValue->v_ksVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "ksVar");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_ksVar);
+		}else if(ov_string_compare(pSetConcatValue->v_elemVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "elemVar");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_elemVar);
+		}else if(ov_string_compare(pSetConcatValue->v_globalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "globalVar");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_globalVar);
+		}else if(ov_string_compare(pSetConcatValue->v_persistentGlobalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "persistentGlobalVar");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_persistentGlobalVar);
+		}else if(ov_string_compare(pSetConcatValue->v_TemplateFBReferenceVariable, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBReferenceVariable");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_TemplateFBReferenceVariable);
+		}else if(ov_string_compare(pSetConcatValue->v_TemplateFBVariableReferenceName, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBVariableReferenceName");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_TemplateFBVariableReferenceName);
+		}else if(ov_string_compare(pSetConcatValue->v_TemplateConfigValues, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateConfigValues");
+			ov_string_setvalue(&ParameterValue, pSetConcatValue->v_TemplateConfigValues);
+		}else{
+			ov_string_setvalue(&ParameterName, NULL);
+			ov_string_setvalue(&ParameterValue, NULL);
+		}
+		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
+			ov_string_print(&strIterateSetConcatValue, "%s%%22ParameterName%%22:%%22%s%%22,", strIterateSetConcatValue, ParameterName);
+		}else{
+			ov_string_print(&strIterateSetConcatValue, "%s%%22ParameterName%%22:%%22%%22,", strIterateSetConcatValue);
+		}
+		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
+			ov_string_print(&strIterateSetConcatValue, "%s%%22ParameterValue%%22:%%22%s%%22", strIterateSetConcatValue, ParameterValue);
+		}else{
+			ov_string_print(&strIterateSetConcatValue, "%s%%22ParameterValue%%22:%%22%%22", strIterateSetConcatValue);
+		}
+		ov_string_append(&strIterateSetConcatValue, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateSetConcatValue, ",");
+		}
+		ov_string_append(&strSetConcatValue, strIterateSetConcatValue);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strSetConcatValue;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetMathValue, pObj){
+		elementInstantiated = TRUE;
+		pSetMathValue = Ov_StaticPtrCast(cshmi_SetMathValue, pObj);
+		ov_string_setvalue(&strIterateSetMathValue, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateSetMathValue, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateSetMathValue, "%22:%7B");
+
+		if(ov_string_compare(pSetMathValue->v_ksVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "ksVar");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_ksVar);
+		}else if(ov_string_compare(pSetMathValue->v_elemVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "elemVar");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_elemVar);
+		}else if(ov_string_compare(pSetMathValue->v_globalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "globalVar");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_globalVar);
+		}else if(ov_string_compare(pSetMathValue->v_persistentGlobalVar, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "persistentGlobalVar");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_persistentGlobalVar);
+		}else if(ov_string_compare(pSetMathValue->v_TemplateFBReferenceVariable, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBReferenceVariable");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_TemplateFBReferenceVariable);
+		}else if(ov_string_compare(pSetMathValue->v_TemplateFBVariableReferenceName, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateFBVariableReferenceName");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_TemplateFBVariableReferenceName);
+		}else if(ov_string_compare(pSetMathValue->v_TemplateConfigValues, "") != OV_STRCMP_EQUAL){
+			ov_string_setvalue(&ParameterName, "TemplateConfigValues");
+			ov_string_setvalue(&ParameterValue, pSetMathValue->v_TemplateConfigValues);
+		}else{
+			ov_string_setvalue(&ParameterName, NULL);
+			ov_string_setvalue(&ParameterValue, NULL);
+		}
+		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
+			ov_string_print(&strIterateSetMathValue, "%s%%22ParameterName%%22:%%22%s%%22,", strIterateSetMathValue, ParameterName);
+		}else{
+			ov_string_print(&strIterateSetMathValue, "%s%%22ParameterName%%22:%%22%%22,", strIterateSetMathValue);
+		}
+		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
+			ov_string_print(&strIterateSetMathValue, "%s%%22ParameterValue%%22:%%22%s%%22", strIterateSetMathValue, ParameterValue);
+		}else{
+			ov_string_print(&strIterateSetMathValue, "%s%%22ParameterValue%%22:%%22%%22", strIterateSetMathValue);
+		}
+		ov_string_append(&strIterateSetMathValue, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateSetMathValue, ",");
+		}
+		ov_string_append(&strSetMathValue, strIterateSetMathValue);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strSetMathValue;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -659,9 +1025,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		ov_string_append(&strGetValue, strIterateGetValue);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strGetValue;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strGetValue;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -687,9 +1053,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		ov_string_append(&strChildrenIterator, strIterateChildrenIterator);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strChildrenIterator;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strChildrenIterator;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -715,9 +1081,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		ov_string_append(&strIfThenElse, strIterateIfThenElse);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strIfThenElse;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strIfThenElse;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -726,47 +1092,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		elementIsfirst = FALSE;
 	}
 
-	//concat the result, manual for performance reasons (append is not cheap)
-	ov_string_print(strResult, ResultFormat, *strResult, ResultListVec.value[0], ResultListVec.value[1], ResultListVec.value[2], ResultListVec.value[3]);
-	for(i = 0;i<ResultListVec.veclen;i++){
-		//kill the pointer, so Ov_SetDynamicVectorLength will not free the string content
-		ResultListVec.value[i] = NULL;
-	}
-	ov_string_setvalue(&ResultFormat, NULL);
-	//free the memory used for the vector
-	Ov_SetDynamicVectorLength(&ResultListVec, 0, STRING);
-
-	ov_string_print(&strChildrenIterator, NULL);
-	ov_string_print(&strGetValue, NULL);
-	ov_string_print(&strIfThenElse, NULL);
-	ov_string_print(&strSetValue, NULL);
-	ov_string_print(&strIterateChildrenIterator, NULL);
-	ov_string_print(&strIterateGetValue, NULL);
-	ov_string_print(&strIterateIfThenElse, NULL);
-	ov_string_print(&strIterateSetValue, NULL);
-
-	return OV_ERR_OK;
-}
-
-
-OV_RESULT cshmi_downloadApplication_buildConditionList(OV_STRING*strResult){
-	OV_INSTPTR_ov_object pObj = NULL;
-	OV_INSTPTR_cshmi_Compare pCompare = NULL;
-	OV_INSTPTR_cshmi_CompareIteratedChild pCompareIteratedChild = NULL;
-
-	OV_STRING strCompare = " ";
-	OV_STRING strCompareIteratedChild = " ";
-	OV_STRING strIterateCompare = NULL;
-	OV_STRING strIterateCompareIteratedChild = NULL;
-
-	OV_STRING_VEC ResultListVec = {0, NULL};
-	OV_STRING ResultFormat = NULL;
-
-	OV_BOOL elementInstantiated = FALSE;
-	OV_BOOL elementIsfirst = TRUE;
-	OV_UINT i = 0;
-
-	ov_string_setvalue(&ResultFormat, "%s");
+	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Compare, pObj){
 		elementInstantiated = TRUE;
 		pCompare = Ov_StaticPtrCast(cshmi_Compare, pObj);
@@ -787,9 +1113,9 @@ OV_RESULT cshmi_downloadApplication_buildConditionList(OV_STRING*strResult){
 		ov_string_append(&strCompare, strIterateCompare);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strCompare;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strCompare;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -821,9 +1147,70 @@ OV_RESULT cshmi_downloadApplication_buildConditionList(OV_STRING*strResult){
 		ov_string_append(&strCompareIteratedChild, strIterateCompareIteratedChild);
 	}
 	if(elementInstantiated == TRUE){
-		Ov_SetDynamicVectorLength(&ResultListVec, ResultListVec.veclen+1, STRING);
 		//remembering the pointer to the string! No information is moved!
-		ResultListVec.value[ResultListVec.veclen-1] = strCompareIteratedChild;
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strCompareIteratedChild;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TimeEvent, pObj){
+		elementInstantiated = TRUE;
+		pTimeEvent = Ov_StaticPtrCast(cshmi_TimeEvent, pObj);
+		ov_string_setvalue(&strIterateTimeEvent, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateTimeEvent, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateTimeEvent, "%22:%7B");
+		ov_string_append(&strIterateTimeEvent, "%22Parameters%22:%7B");
+		ov_string_print(&strIterateTimeEvent, "%s%%22cyctime%%22:%%22%f%%22", strIterateTimeEvent, pTimeEvent->v_cyctime);
+		ov_string_append(&strIterateTimeEvent, "%7D");
+		ov_string_append(&strIterateTimeEvent, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateTimeEvent, ",");
+		}
+		ov_string_append(&strTimeEvent, strIterateTimeEvent);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strTimeEvent;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_RoutePolyline, pObj){
+		elementInstantiated = TRUE;
+		pRoutePolyline = Ov_StaticPtrCast(cshmi_RoutePolyline, pObj);
+		ov_string_setvalue(&strIterateRoutePolyline, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterateRoutePolyline, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterateRoutePolyline, "%22:%7B");
+		ov_string_append(&strIterateRoutePolyline, "%22Parameters%22:%7B");
+		ov_string_print(&strIterateRoutePolyline, "%s%%22gridWidth%%22:%%22%f%%22,", strIterateRoutePolyline, pRoutePolyline->v_gridWidth);
+		ov_string_print(&strIterateRoutePolyline, "%s%%22offset%%22:%%22%f%%22", strIterateRoutePolyline, pRoutePolyline->v_offset);
+		ov_string_append(&strIterateRoutePolyline, "%7D");
+		ov_string_append(&strIterateRoutePolyline, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterateRoutePolyline, ",");
+		}
+		ov_string_append(&strRoutePolyline, strIterateRoutePolyline);
+	}
+	if(elementInstantiated == TRUE){
+		//remembering the pointer to the string! No information is moved!
+		ResultListUsedLength++;
+		ResultListVec[ResultListUsedLength-1] = strRoutePolyline;
 		if(elementIsfirst == TRUE){
 			ov_string_append(&ResultFormat, "%s");
 		}else{
@@ -833,22 +1220,31 @@ OV_RESULT cshmi_downloadApplication_buildConditionList(OV_STRING*strResult){
 	}
 
 	//concat the result, manual for performance reasons (append is not cheap)
-	ov_string_print(strResult, ResultFormat, *strResult, ResultListVec.value[0], ResultListVec.value[1]);
-	for(i = 0;i<ResultListVec.veclen;i++){
-		//kill the pointer, so Ov_SetDynamicVectorLength will not free the string content
-		ResultListVec.value[i] = NULL;
-	}
+	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9]);
 	ov_string_setvalue(&ResultFormat, NULL);
-	//free the memory used for the vector
-	Ov_SetDynamicVectorLength(&ResultListVec, 0, STRING);
 
-	//free the memory used for the strings
+	ov_string_setvalue(&strChildrenIterator, NULL);
+	ov_string_setvalue(&strGetValue, NULL);
+	ov_string_setvalue(&strIfThenElse, NULL);
+	ov_string_setvalue(&strSetValue, NULL);
+	ov_string_setvalue(&strSetConcatValue, NULL);
+	ov_string_setvalue(&strSetMathValue, NULL);
 	ov_string_setvalue(&strCompare, NULL);
 	ov_string_setvalue(&strCompareIteratedChild, NULL);
+	ov_string_setvalue(&strTimeEvent, NULL);
+	ov_string_setvalue(&strRoutePolyline, NULL);
+	ov_string_setvalue(&strIterateChildrenIterator, NULL);
+	ov_string_setvalue(&strIterateGetValue, NULL);
+	ov_string_setvalue(&strIterateIfThenElse, NULL);
+	ov_string_setvalue(&strIterateSetValue, NULL);
+	ov_string_setvalue(&strIterateSetConcatValue, NULL);
+	ov_string_setvalue(&strIterateSetMathValue, NULL);
 	ov_string_setvalue(&strIterateCompare, NULL);
 	ov_string_setvalue(&strIterateCompareIteratedChild, NULL);
+	ov_string_setvalue(&strIterateTimeEvent, NULL);
+	ov_string_setvalue(&strIterateRoutePolyline, NULL);
 
-	return OV_ERR_OK;
+	return result;
 }
 
 OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
@@ -859,15 +1255,11 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_STRING strResult = NULL;
 	OV_STRING strElements = NULL;
 	OV_STRING strActions = NULL;
-	OV_STRING strConditions = NULL;
 	OV_STRING strChildList = NULL;
+
 	OV_STRING strBaseKsPath = NULL;
 
-	OV_TIME lasttime;
-	OV_TIME thistime;
-	OV_TIME_SPAN diff;
 	OV_RESULT result = OV_ERR_OK;
-	//fixme check every result
 
 	pObj = ov_path_getobjectpointer("/TechUnits/cshmi", 2);
 	if(pObj == NULL || !Ov_CanCastTo(ov_domain, pObj)){
@@ -897,89 +1289,73 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	//some static baseKsPath settings
 	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:[],%22/TechUnits/cshmi/Templates%22:[]%7D,");
 
-	ov_time_gettime(&lasttime);
-
 	//Elements is a list of configured elements
 	ov_string_setvalue(&strElements, "%22Elements%22:%7B");
 	result = cshmi_downloadApplication_buildElementList(&strElements);
-	ov_string_append(&strElements, "%7D,");
-
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Elements: %s", ov_time_timespantoascii(&diff));
-	ov_time_gettime(&lasttime);
-
 	if(Ov_Fail(result)){
 		ov_logfile_debug("%d:%s Error building Elementlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+		ov_string_setvalue(&strBaseKsPath, NULL);
+		ov_string_setvalue(&strElements, NULL);
+		return (OV_STRING) 0;
+	}else{
+		ov_string_append(&strElements, "%7D,");
 	}
 
-	//Actions is a list of actions, set/get stores the result only
+	//Actions is a list of events/actions/conditions, set/get stores the result only
 	ov_string_setvalue(&strActions, "%22Actions%22:%7B");
 	result = cshmi_downloadApplication_buildActionList(&strActions);
-	ov_string_append(&strActions, "%7D,");
-
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Actions: %s", ov_time_timespantoascii(&diff));
-	ov_time_gettime(&lasttime);
 
 	if(Ov_Fail(result)){
 		ov_logfile_debug("%d:%s Error building Actionlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
-	}
-
-	//todo merge conditions with actions
-	//Conditions saves all conditions
-	ov_string_setvalue(&strConditions, "%22Conditions%22:%7B");
-	result = cshmi_downloadApplication_buildConditionList(&strConditions);
-	ov_string_append(&strConditions, "%7D,");
-
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Conditions: %s", ov_time_timespantoascii(&diff));
-	ov_time_gettime(&lasttime);
-
-	if(Ov_Fail(result)){
-		ov_logfile_debug("%d:%s Error building Conditionlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+		ov_string_setvalue(&strBaseKsPath, NULL);
+		ov_string_setvalue(&strElements, NULL);
+		ov_string_setvalue(&strActions, NULL);
+		return (OV_STRING) 0;
+	}else{
+		ov_string_append(&strActions, "%7D,");
 	}
 
 	//ChildList is a list of ov_containment
 	ov_string_setvalue(&strChildList, "%22ChildList%22:%7B");
 	result = cshmi_downloadApplication_buildChildList(pObj, &strChildList, TRUE);
-	ov_string_append(&strChildList, "%7D");
 
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Childlist: %s", ov_time_timespantoascii(&diff));
-	ov_time_gettime(&lasttime);
-
-	//todo 2mbyte mb scheint für den testcase zu klein. also vergrößern
+	//todo 2mbyte mb scheint für den engineering testcase zu klein. also vergrößern
 	//ändern in memstack, also heap
 	if(Ov_Fail(result)){
 		ov_logfile_debug("%d:%s Error building Childlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+		ov_string_setvalue(&strBaseKsPath, NULL);
+		ov_string_setvalue(&strElements, NULL);
+		ov_string_setvalue(&strActions, NULL);
+		ov_string_setvalue(&strChildList, NULL);
+		return (OV_STRING) 0;
+	}else{
+		ov_string_append(&strChildList, "%7D");
 	}
 
 	//open JSON Element, concat Strings and close JSON Element
-	result = ov_string_print(&strResult, "%%7B%s%s%s%s%s%%7D", strBaseKsPath, strElements, strActions, strConditions, strChildList);
-
+	result = ov_string_print(&strResult, "%%7B%s%s%s%s%%7D", strBaseKsPath, strElements, strActions, strChildList);
 
 	if(Ov_Fail(result)){
 		ov_logfile_debug("%d:%s Error concatting result: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
-	}else{
-		returnString = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strResult));
-		strcpy(returnString, strResult);
-		ov_string_setvalue(&strResult, NULL);
 		ov_string_setvalue(&strBaseKsPath, NULL);
 		ov_string_setvalue(&strActions, NULL);
 		ov_string_setvalue(&strChildList, NULL);
-		ov_string_setvalue(&strConditions, NULL);
 		ov_string_setvalue(&strElements, NULL);
-		return returnString;
+		ov_string_setvalue(&strResult, NULL);
+		return (OV_STRING) 0;
+	}
+	returnString = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strResult));
+	if (returnString){
+		strcpy(returnString, strResult);
 	}
 	ov_string_setvalue(&strResult, NULL);
 	ov_string_setvalue(&strBaseKsPath, NULL);
 	ov_string_setvalue(&strActions, NULL);
 	ov_string_setvalue(&strChildList, NULL);
-	ov_string_setvalue(&strConditions, NULL);
 	ov_string_setvalue(&strElements, NULL);
-	return (OV_STRING) 0;
+	if (returnString){
+		return returnString;
+	}else{
+		return (OV_STRING) 0;
+	}
 }

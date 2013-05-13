@@ -73,8 +73,6 @@ function cshmi() {
 	
 	this.ResourceList.Elements = Object();
 	this.ResourceList.Actions = Object();
-	this.ResourceList.Conditions = Object();
-	this.ResourceList.Events = Object();
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
 	this.ResourceList.ChildrenIterator = Object();
@@ -148,11 +146,12 @@ cshmi.prototype = {
 	instanciateCshmi: function(Host, Server, ObjectPath) {
 		//fill cache if possible
 		var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
-		if (response !== null && response.indexOf("KS_ERR") === -1){
+		if (JSON && JSON.parse && response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
 			try {
 				var plainJSON = decodeURI(response.slice(2,-2));
 				var responseJSON = JSON.parse(plainJSON);
 			} catch (e) {
+				HMI.hmi_log_info("Parsing Cache was not successful. Skipping.");
 				//something went wrong, ignore the cache 8-/
 				responseJSON = {};
 			}
@@ -162,12 +161,6 @@ cshmi.prototype = {
 			}
 			if(responseJSON.Actions){
 				this.ResourceList.Actions = responseJSON.Actions;
-			}
-			if(responseJSON.Conditions){
-				this.ResourceList.Conditions = responseJSON.Conditions;
-			}
-			if(responseJSON.Events){
-				this.ResourceList.Events = responseJSON.Events;
 			}
 			if(responseJSON.baseKsPath){
 				this.ResourceList.baseKsPath = responseJSON.baseKsPath;
@@ -442,10 +435,9 @@ cshmi.prototype = {
 			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
-		var cyctime;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Events && this.ResourceList.Events[ObjectPath] !== undefined)){
-			var requestList = new Object();
+		var requestList = new Object();
+		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["cyctime"] = null;
 			
@@ -454,18 +446,15 @@ cshmi.prototype = {
 				return null;
 			}
 			
-			cyctime = requestList[ObjectPath]["cyctime"];
-			
-			//feeding garbage collector early
-			requestList = null;
-			
 			//we have asked the object successful, so remember the result
-			this.ResourceList.Events[ObjectPath] = new Object();
-			this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime = cyctime;
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
+
 		}else{
 			//the object was asked this session, so reuse the config to save communication requests
-			cyctime = this.ResourceList.Events[ObjectPath].TimeEventParameterCyctime;
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
+		var cyctime = requestList[ObjectPath]["cyctime"];
 		
 		//call us again for cyclic interpretation of the Actions
 		//only if we are in the initialisation or normal stage
@@ -628,13 +617,6 @@ cshmi.prototype = {
 			VisualObject.addEventListener("MSPointerDown", VisualObject._moveStartDragThunk, false);
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
-		}
-		
-		if (this.ResourceList.Event && this.ResourceList.Event[ObjectPath] !== undefined){
-			requestList[ObjectPath] = new Object();
-			//we have registered the object successful, so remember the result
-			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		return true;
 	},
@@ -2290,8 +2272,8 @@ cshmi.prototype = {
 		}
 		
 		var requestList = new Object();
-		if (this.ResourceList.Conditions && this.ResourceList.Conditions[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Conditions[ObjectPath].Parameters;
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ignoreError"] = null;
@@ -2305,8 +2287,8 @@ cshmi.prototype = {
 			}
 			
 			//we have asked the object successful, so remember the result
-			this.ResourceList.Conditions[ObjectPath] = new Object();
-			this.ResourceList.Conditions[ObjectPath].Parameters = requestList[ObjectPath];
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
 		var ignoreError = requestList[ObjectPath]["ignoreError"];
