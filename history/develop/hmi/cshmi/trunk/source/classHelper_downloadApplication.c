@@ -1135,10 +1135,23 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	return result;
 }
 
+
+/**
+ * Tools:
+ * http://meyerweb.com/eric/tools/dencoder/
+ * http://jsonviewer.stack.hu/
+ * http://jsonlint.com/
+ */
+
+/**
+ *
+ */
 OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
     OV_INSTPTR_cshmi_downloadApplication          pThis
 ) {
-	OV_INSTPTR_ov_object pObj = NULL;
+	OV_INSTPTR_ov_object pTUcshmi = NULL;
+	OV_INSTPTR_cshmi_Group pGroup = NULL;
+	OV_INSTPTR_ov_object pGroupParent = NULL;
 	OV_STRING returnString;
 	OV_STRING strResult = NULL;
 	OV_STRING strElements = NULL;
@@ -1146,13 +1159,8 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_STRING strChildList = NULL;
 
 	OV_STRING strBaseKsPath = NULL;
-
 	OV_RESULT result = OV_ERR_OK;
 
-	pObj = ov_path_getobjectpointer("/TechUnits/cshmi", 2);
-	if(pObj == NULL || !Ov_CanCastTo(ov_domain, pObj)){
-		return (OV_STRING) 0;
-	}
 
 	/**
 	 * Umsetzungstabelle für decodeURI
@@ -1166,12 +1174,10 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	 * + +
 	 */
 
-	/**
-	 * Tools:
-	 * http://meyerweb.com/eric/tools/dencoder/
-	 * http://jsonviewer.stack.hu/
-	 * http://jsonlint.com/
-	 */
+	pTUcshmi = ov_path_getobjectpointer("/TechUnits/cshmi", 2);
+	if(pTUcshmi == NULL || !Ov_CanCastTo(ov_domain, pTUcshmi)){
+		return (OV_STRING) 0;
+	}
 
 	//todo
 	//some static baseKsPath settings
@@ -1205,7 +1211,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 	//ChildList is a list of ov_containment
 	ov_string_setvalue(&strChildList, "%22ChildList%22:%7B");
-	result = cshmi_downloadApplication_buildChildList(pObj, &strChildList, TRUE);
+	result = cshmi_downloadApplication_buildChildList(pTUcshmi, &strChildList, TRUE);
 
 	//todo 2mbyte mb scheint für den engineering testcase zu klein. also vergrößern
 	//ändern in memstack, also heap
@@ -1217,6 +1223,21 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		ov_string_setvalue(&strChildList, NULL);
 		return (OV_STRING) 0;
 	}else{
+		//check for other groups outside of /TechUnits/cshmi
+		Ov_ForEachChildEx(ov_instantiation, pclass_cshmi_Group, pGroup, cshmi_Group){
+			pGroupParent = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pGroup));
+			if(!Ov_CanCastTo(cshmi_Object, pGroupParent) && pGroupParent != pTUcshmi){
+				result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, pGroup), &strChildList, FALSE);
+				if(Ov_Fail(result)){
+					ov_logfile_debug("%d:%s Error building Childlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+					ov_string_setvalue(&strBaseKsPath, NULL);
+					ov_string_setvalue(&strElements, NULL);
+					ov_string_setvalue(&strActions, NULL);
+					ov_string_setvalue(&strChildList, NULL);
+					return (OV_STRING) 0;
+				}
+			}
+		}
 		ov_string_append(&strChildList, "%7D");
 	}
 
