@@ -1,0 +1,201 @@
+#include "ksbase.ovm"
+
+LIBRARY	ksapi
+
+	VERSION		=	"0.2";
+	AUTHOR		=	"Lars Evertz";
+	COPYRIGHT	=	"Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT		=	"KS 3rd: ksapi, client-side communication API";
+	
+	CLASS	KSApiCommon					:	CLASS	ov/domain
+		COMMENT	=	"baseclass for KSApi objects";
+		VARIABLES
+			/* Input *************************************************/
+			serverHost	:	STRING	
+				COMMENT			=	"Host (or IP Address or whatever type of address) of target machine."
+				INITIALVALUE	=	"";
+			serverName	:	STRING
+				COMMENT			=	"KS-Name of the target ks-server. (This may not be necessarry for all types of communication.)"
+				INITIALVALUE	=	"";	
+			path		:	STRING
+				COMMENT			=	"Target Path"
+				INITIALVALUE	=	"";
+			status		:	INT
+				COMMENT			= "status of KS obj"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	createObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to create an object";
+		VARIABLES
+			/* Input *************************************************/
+			librarypath			:	STRING
+				COMMENT			=	"path of the object type"
+				INITIALVALUE	=	"";
+			position			:	INT
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			element				:	STRING
+				COMMENT			=	"element postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_CREATEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	deleteObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to delete an object";
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_DELETEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	variableOperation	:	CLASS	ksapi/KSApiCommon
+		COMMENT	=	"Baseclass for Set/GetVar. Used as anchor for associations between get/setVar objects and Variables.";
+		VARIABLES
+			varValue			:	ANY
+				COMMENT			=	"Variable which will be received from the client";
+		END_VARIABLES;
+	END_CLASS;	
+
+
+	CLASS	getVar				:	CLASS	ksapi/variableOperation
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get a variable";
+		OPERATIONS
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_GETVAR>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_GETVAR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	setVar				:	CLASS	ksapi/variableOperation
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to set a Variable";
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_SETVAR>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_SETVAR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	getEPidentifiers	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"get Identifiers of contained objects via getEP";
+		VARIABLES
+			/* Output *************************************************/
+			identifierList[]	:	STRING
+				COMMENT			=	"A list containing the names of the elements inside the Object named in path";
+			namemask			:	STRING
+				COMMENT			=	"A regular expression to filter the Objects, * takes everything"
+				INITIALVALUE	=	"*";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_EP_GETID>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_EP_GETID>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	Variable				:	CLASS	ov/object
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, representing a variable (to be put in the containment of a get/setVar to get/set more than one variable on the same server)";
+		VARIABLES
+			path		:	STRING
+				COMMENT			=	"Target Path"
+				INITIALVALUE	=	"";
+			varValue				:	ANY
+				COMMENT			=	"The Variable value";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	renameObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to rename an object";
+		VARIABLES
+			/* Input *************************************************/
+			newpath				:	STRING
+				COMMENT			=	"new path of the object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_RENAMEOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;		
+	
+	CLASS	linkObject			:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to link an object";
+		VARIABLES
+			/* Input *************************************************/
+			linkedpath			:	STRING
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+			position			:	INT
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			element				:	STRING
+				COMMENT			=	"place postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_LINKOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_LINKOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	unlinkObject			:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to unlink an object";
+		VARIABLES
+			/* Input *************************************************/
+			linkedpath			:	STRING
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_UNLINKOBJECT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	ASSOCIATION operationToVariable	: ONE_TO_MANY
+		PARENT parVarOperation	:	CLASS ksapi/variableOperation;
+		CHILD  chVariable 		:	CLASS ksapi/Variable;
+	END_ASSOCIATION;
+END_LIBRARY;
