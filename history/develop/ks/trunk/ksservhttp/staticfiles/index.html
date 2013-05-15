@@ -14,6 +14,7 @@
 	<body>
 		<h1>The Webserver is running!</h1>
 		<p>Powered by ACPLT/OV. This server has some static files as a <a href="sse.html">demo</a> and supports KS commands. This page is only a quick reference.</p>
+		<span id="idServices"></span>
 		<h1>Supported KS commands</h1>
 		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
 		It is possible to select KSX with the 
@@ -52,5 +53,21 @@
 		example: <code>/unlink?path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
 		example: <code>/unlink?path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
 		
+		<script type="text/javascript" >
+		if( window.addEventListener ) {
+			window.addEventListener('load',function(){checkServices();},false);
+		}
+		var checkServices = function(){
+			var ServicesNode = document.getElementById("idServices");
+			if(ServicesNode && !!window.XMLHttpRequest){
+				var req = new XMLHttpRequest();
+				req.open("HEAD", "/hmi/", false);
+				req.send(null);
+				if(req.status == 200){
+					ServicesNode.innerHTML = "<h1>Human-Machine Interface</h1><p>A <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+				}
+			}
+		};
+		</script>
 	</body>
 </html>
