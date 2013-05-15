@@ -113,6 +113,73 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 }
 
 /**
+ * call ov_memstack_allow arround this!
+ * @param strIn
+ * @return
+ */
+OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
+	OV_STRING	pcIn;
+	OV_STRING	pcOut = 0;
+	OV_STRING	strOut;
+
+	//ov_path_percentsize is not the correct function, but results in a bigger size in some cases, never in a smaller
+	strOut = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strIn)+1);
+
+	pcIn = strIn;
+	pcOut = strOut;
+	while(*pcIn) {
+		if(*pcIn == '\n'){
+			*pcOut = ' ';
+		}else if(*pcIn == '\r'){
+			*pcOut = ' ';
+		}else if(*pcIn == '%'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '2';
+			pcOut++;
+			*pcOut = '5';
+		}else if(*pcIn == '"'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '2';
+			pcOut++;
+			*pcOut = '2';
+		}else if(*pcIn == '{'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '7';
+			pcOut++;
+			*pcOut = 'B';
+		}else if(*pcIn == '}'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '7';
+			pcOut++;
+			*pcOut = 'D';
+		}else if(*pcIn == '['){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '5';
+			pcOut++;
+			*pcOut = 'B';
+		}else if(*pcIn == ']'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '5';
+			pcOut++;
+			*pcOut = 'D';
+		}else{
+			*pcOut = *pcIn;
+		}
+		pcIn++;
+		pcOut++;
+	}
+	*pcOut = '\0';		/*append terminating '\0'*/
+	return strOut;
+}
+
+
+/**
  * prints the basic types to the string (visible, stroke, fill, opacity, rotate)
  * @param strResult
  * @param pElement
@@ -256,11 +323,17 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		if(pTemplate->v_ConfigValues.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
 		}else if(pTemplate->v_ConfigValues.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pTemplate->v_ConfigValues.value[0]);
+			ov_memstack_lock();
+			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[0]));
+			ov_memstack_unlock();
 		}else{
-			ov_string_print(&temp, "%%22%s", pTemplate->v_ConfigValues.value[0]);
+			ov_memstack_lock();
+			ov_string_print(&temp, "%%22%s", cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[0]));
+			ov_memstack_unlock();
 			for(i = 1; i < pTemplate->v_ConfigValues.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pTemplate->v_ConfigValues.value[i]);
+				ov_memstack_lock();
+				ov_string_print(&temp, "%s %s", temp, cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[i]));
+				ov_memstack_unlock();
 			}
 			ov_string_append(&temp, "%22");
 		}
@@ -432,7 +505,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pText));
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pText->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pText->v_y);
-		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, pText->v_content==NULL?"":pText->v_content);
+		ov_memstack_lock();
+		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, (pText->v_content==NULL?"":cshmi_downloadApplication_prepareURIencode(pText->v_content)));
+		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22fontSize%%22:%%22%s%%22,", strIterate, pText->v_fontSize==NULL?"":pText->v_fontSize);
 		ov_string_print(&strIterate, "%s%%22fontStyle%%22:%%22%s%%22,", strIterate, pText->v_fontStyle==NULL?"":pText->v_fontStyle);
 		ov_string_print(&strIterate, "%s%%22fontWeight%%22:%%22%s%%22,", strIterate, pText->v_fontWeight==NULL?"":pText->v_fontWeight);
@@ -501,7 +576,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strIterate, "%22:%7B");
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolyline));
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, pPolyline->v_points==NULL?"":pPolyline->v_points);
+		ov_memstack_lock();
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolyline->v_points==NULL?"":cshmi_downloadApplication_prepareURIencode(pPolyline->v_points)));
+		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolyline->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 		ov_string_append(&strIterate, "%7D");
@@ -532,7 +609,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strIterate, "%22:%7B");
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolygon));
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, pPolygon->v_points==NULL?"":pPolygon->v_points);
+		ov_memstack_lock();
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolygon->v_points==NULL?"":cshmi_downloadApplication_prepareURIencode(pPolygon->v_points)));
+		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolygon->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 		ov_string_append(&strIterate, "%7D");
@@ -563,7 +642,9 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_append(&strIterate, "%22:%7B");
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPath));
-		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, pPath->v_d==NULL?"":pPath->v_d);
+		ov_memstack_lock();
+		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, (pPath->v_d==NULL?"":cshmi_downloadApplication_prepareURIencode(pPath->v_d)));
+		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPath->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 		ov_string_append(&strIterate, "%7D");
