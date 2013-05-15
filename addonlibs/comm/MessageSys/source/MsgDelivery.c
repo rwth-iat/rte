@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 	OV_STRING tmpPath = NULL;
 	unsigned usedWithMessage = 0;
 
-	msg = Ov_GetFirstChild(MessageSys_MsgDelivery2CurrentMessage, this);
+	msg = Ov_GetChild(MessageSys_MsgDelivery2CurrentMessage, this);
 	if(msg){ //Currently we are processing a message, lets see how far we are...
 		if(msg->v_msgStatus == MSGDONE){
 			Ov_Unlink(MessageSys_MsgDelivery2CurrentMessage, this, msg);

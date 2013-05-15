@@ -77,6 +77,7 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 		return result;
 	}
 
+	ov_memstack_unlock();
 	return OV_ERR_OK;
 }
 /*
