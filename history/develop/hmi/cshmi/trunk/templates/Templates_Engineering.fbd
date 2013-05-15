@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2013-05-13 10:35:22
+* Erstellt: 2013-05-15 16:15:06
 * 
 * HOST   : DEV
 * SERVER : ov_hmidemo7
@@ -6985,25 +6985,7 @@
     VARIABLE_VALUES
       width : INPUT SINGLE = 60.000000;
       height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "width is 82, height 26
-
-
-
-
-
-optional configValues:
-
-
-
-
-
-buttoncontent
-
-
-
-
-
-buttontitle";
+      comment : INPUT STRING = "width is 82, height 26; optional configValues: buttoncontent, buttontitle";
       zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -7139,25 +7121,7 @@ buttontitle";
     VARIABLE_VALUES
       width : INPUT SINGLE = 60.000000;
       height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "width is 82, height 26
-
-
-
-
-
-optional configValues:
-
-
-
-
-
-buttoncontent
-
-
-
-
-
-buttontitle";
+      comment : INPUT STRING = "width is 82, height 26; optional configValues: buttoncontent, buttontitle";
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -7293,25 +7257,7 @@ buttontitle";
     VARIABLE_VALUES
       width : INPUT SINGLE = 30.000000;
       height : INPUT SINGLE = 20.000000;
-      comment : INPUT STRING = "width is 40, height 26
-
-
-
-
-
-optional configValues:
-
-
-
-
-
-buttoncontent
-
-
-
-
-
-buttontitle";
+      comment : INPUT STRING = "width is 40, height 26; optional configValues: buttoncontent, buttontitle";
       zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;

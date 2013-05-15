@@ -79,6 +79,9 @@ OV_RESULT ov_library_setglobalvars_cshmi_new(void) {
 		pCsDomain = NULL;
 	OV_INSTPTR_ov_domain
 		pTemplateDomain = NULL;
+	OV_INSTPTR_cshmi_downloadApplication
+		pTurbo = NULL;
+
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -103,6 +106,9 @@ OV_RESULT ov_library_setglobalvars_cshmi_new(void) {
 			return result;
 		}
 	}
+	//optional instanciate an downloadApplication aka turbo object, do not abort on fail
+	Ov_CreateObject(cshmi_downloadApplication, pTurbo, pCsDomain, "turbo");
+
 	pTemplateDomain = Ov_SearchChildEx(ov_containment, pCsDomain, "Templates", ov_domain);
 	if(pTemplateDomain == NULL){
 		result = Ov_CreateObject(ov_domain, pTemplateDomain, pCsDomain, "Templates");

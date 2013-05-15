@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-04-09 16:29:42
+  Erstellt : 2013-05-15 16:02:06
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -28,7 +28,7 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 5.000000;
         y : INPUT  SINGLE = 5.000000;
-        width : INPUT  SINGLE = 1670.000000;
+        width : INPUT  SINGLE = 1665.000000;
         height : INPUT  SINGLE = 75.000000;
         strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
@@ -990,6 +990,26 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicPumpUnit/bubFrame/Betriebszeit :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/OperationTimeWindow";
+        x : INPUT  SINGLE = 100.000000;
+        y : INPUT  SINGLE = 400.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/archiveTest"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/coolingWaterCircuit :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
@@ -1106,8 +1126,6 @@
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M660,170 L650,170
-
-
 M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -2188,8 +2206,8 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 1350.000000;
-        y : INPUT  SINGLE = 80.000000;
+        x : INPUT  SINGLE = 1400.000000;
+        y : INPUT  SINGLE = 50.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU30/GCU030"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
@@ -2204,6 +2222,620 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 200.000000;
+        y : INPUT  SINGLE = 20.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2PLine :
+    CLASS /Libraries/cshmi/Line;
+    VARIABLE_VALUES
+        x1 : INPUT  SINGLE = 70.000000;
+        y1 : INPUT  SINGLE = 220.000000;
+        x2 : INPUT  SINGLE = 1220.000000;
+        y2 : INPUT  SINGLE = 220.000000;
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "#808000";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2TLine :
+    CLASS /Libraries/cshmi/Line;
+    VARIABLE_VALUES
+        x1 : INPUT  SINGLE = 70.000000;
+        y1 : INPUT  SINGLE = 240.000000;
+        x2 : INPUT  SINGLE = 1220.000000;
+        y2 : INPUT  SINGLE = 240.000000;
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "blue";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1 :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/PolylineKlemmungT2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "196,240 196,130 240,130 240,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "blue";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/PolylineKlemmungP2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "180,220 180,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "#808000";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/Y074 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
+        x : INPUT  SINGLE = 143.000000;
+        y : INPUT  SINGLE = 170.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/Y074_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 250.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/cylinderKontakt :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
+        x : INPUT  SINGLE = 170.000000;
+        y : INPUT  SINGLE = 80.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/caption :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 61.000000;
+        content : INPUT  STRING = "1";
+        fontSize : INPUT  STRING = "24px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/ArrowLoesen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 290.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"ArrowName:Lösen"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 130.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"ArrowName:Klemmen" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2 :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 420.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/PolylineKlemmungT2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "196,240 196,130 240,130 240,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "blue";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/PolylineKlemmungP2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "180,220 180,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "#808000";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/Y076 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
+        x : INPUT  SINGLE = 143.000000;
+        y : INPUT  SINGLE = 170.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/Y076_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 250.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/cylinderKontakt :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
+        x : INPUT  SINGLE = 170.000000;
+        y : INPUT  SINGLE = 80.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/caption :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 61.000000;
+        content : INPUT  STRING = "2";
+        fontSize : INPUT  STRING = "24px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/ArrowLoesen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 290.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"ArrowName:L?"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 130.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"ArrowName:Klemmen" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3 :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 840.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/PolylineKlemmungT2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "196,240 196,130 240,130 240,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "blue";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/PolylineKlemmungP2 :
+    CLASS /Libraries/cshmi/Polyline;
+    VARIABLE_VALUES
+        points : INPUT  STRING = "180,220 180,100";
+        strokeWidth : INPUT  SINGLE = 3.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "#808000";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/Y078 :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
+        x : INPUT  SINGLE = 143.000000;
+        y : INPUT  SINGLE = 170.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/Y078_FP :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 250.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/cylinderKontakt :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
+        x : INPUT  SINGLE = 170.000000;
+        y : INPUT  SINGLE = 80.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/caption :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 61.000000;
+        content : INPUT  STRING = "3";
+        fontSize : INPUT  STRING = "24px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/ArrowLoesen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 290.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"ArrowName:Lösen"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 130.000000;
+        y : INPUT  SINGLE = 60.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"ArrowName:Klemmen" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2TArrow :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
+        x : INPUT  SINGLE = 40.000000;
+        y : INPUT  SINGLE = 250.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[2] : INPUT  STRING = {"title:T2" , "rotate:180"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2PArrow :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
+        x : INPUT  SINGLE = 35.000000;
+        y : INPUT  SINGLE = 213.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"title:P2"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Caption_Kontaktbackenklemmung :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 630.000000;
+        y : INPUT  SINGLE = 5.000000;
+        content : INPUT  STRING = "Kontaktbackenklemmung";
+        fontSize : INPUT  STRING = "36px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "hanging";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
@@ -2213,7 +2845,7 @@ M1000,250 v40 h-100";
         height : INPUT  SINGLE = 100.000000;
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2227,7 +2859,7 @@ M1000,250 v40 h-100";
         y2 : INPUT  SINGLE = 660.000000;
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2274,7 +2906,7 @@ M1000,250 v40 h-100";
         points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2301,10 +2933,10 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/PolylineElektrodeP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "250,660 250,490 200,490 200,460 266, 460 266,650";
+        points : INPUT  STRING = "250,660 250,490 200,490";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2316,7 +2948,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/PolylineElektrodeT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "266, 650 266,680";
+        points : INPUT  STRING = "266, 650 266,680 266,430 200,430";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2332,7 +2964,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 183.000000;
+        x : INPUT  SINGLE = 213.000000;
         y : INPUT  SINGLE = 620.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2352,8 +2984,8 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 270.000000;
-        y : INPUT  SINGLE = 530.000000;
+        x : INPUT  SINGLE = 250.000000;
+        y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
@@ -2392,7 +3024,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 100.000000;
+        x : INPUT  SINGLE = 50.000000;
         y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y067/Y067"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2505,15 +3137,15 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/P057 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/ArrowLoesen :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 40.000000;
-        y : INPUT  SINGLE = 510.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU21/P057/PV"};
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 400.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Lösen" , "GrpControl:True" , "rotate:270"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -2521,6 +3153,26 @@ M1000,250 v40 h-100";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 11;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode1/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 520.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Klemmen" , "GrpControl:True" , "rotate:90"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2545,7 +3197,7 @@ M1000,250 v40 h-100";
         points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2572,10 +3224,10 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/PolylineElektrodeP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "250,660 250,490 200,490 200,460 266, 460 266,650";
+        points : INPUT  STRING = "250,660 250,490 200,490";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2587,7 +3239,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/PolylineElektrodeT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "266, 650 266,680";
+        points : INPUT  STRING = "266, 650 266,680 266,430 200,430";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2603,7 +3255,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 183.000000;
+        x : INPUT  SINGLE = 213.000000;
         y : INPUT  SINGLE = 620.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y068/Y068"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2623,8 +3275,8 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 270.000000;
-        y : INPUT  SINGLE = 530.000000;
+        x : INPUT  SINGLE = 250.000000;
+        y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y068/Y068"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
@@ -2663,7 +3315,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 100.000000;
+        x : INPUT  SINGLE = 50.000000;
         y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y070/Y070"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2776,15 +3428,15 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/P058 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/ArrowLoesen :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 40.000000;
-        y : INPUT  SINGLE = 510.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU22/P058/PV"};
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 400.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Lösen" , "GrpControl:True" , "rotate:270"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -2792,6 +3444,26 @@ M1000,250 v40 h-100";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 11;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode2/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 520.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Klemmen" , "GrpControl:True" , "rotate:90"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 12;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -2816,7 +3488,7 @@ M1000,250 v40 h-100";
         points : INPUT  STRING = "150,660 150,600";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2843,10 +3515,10 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/PolylineElektrodeP1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "250,660 250,490 200,490 200,460 266, 460 266,650";
+        points : INPUT  STRING = "250,660 250,490 200,490";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
+        stroke : INPUT  STRING = "#808000";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
@@ -2858,7 +3530,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/PolylineElektrodeT1 :
     CLASS /Libraries/cshmi/Polyline;
     VARIABLE_VALUES
-        points : INPUT  STRING = "266, 650 266,680";
+        points : INPUT  STRING = "266, 650 266,680 266,430 200,430";
         strokeWidth : INPUT  SINGLE = 3.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "blue";
@@ -2874,7 +3546,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 183.000000;
+        x : INPUT  SINGLE = 213.000000;
         y : INPUT  SINGLE = 620.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y071/Y071"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -2894,8 +3566,8 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 270.000000;
-        y : INPUT  SINGLE = 530.000000;
+        x : INPUT  SINGLE = 250.000000;
+        y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y071/Y071"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
@@ -2934,7 +3606,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 100.000000;
+        x : INPUT  SINGLE = 50.000000;
         y : INPUT  SINGLE = 690.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y073/Y073"};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -3047,15 +3719,15 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/P059 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/ArrowLoesen :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 40.000000;
-        y : INPUT  SINGLE = 510.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/Communication/P30/IC10/PU10/PS20/TU23/P059/PV"};
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 400.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Lösen" , "GrpControl:True" , "rotate:270"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3067,11 +3739,31 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/Elektrode3/ArrowKlemmen :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/HydraulicArrow";
+        x : INPUT  SINGLE = 140.000000;
+        y : INPUT  SINGLE = 520.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y065/Y065"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[3] : INPUT  STRING = {"ArrowName:Klemmen" , "GrpControl:True" , "rotate:90"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 12;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Elektrodenreg/1PArrow :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/arrow";
-        x : INPUT  SINGLE = 40.000000;
+        x : INPUT  SINGLE = 35.000000;
         y : INPUT  SINGLE = 653.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -3113,620 +3805,6 @@ M1000,250 v40 h-100";
         x : INPUT  SINGLE = 630.000000;
         y : INPUT  SINGLE = 350.000000;
         content : INPUT  STRING = "Elektrodenregulierzylinder";
-        fontSize : INPUT  STRING = "36px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "bold";
-        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 200.000000;
-        y : INPUT  SINGLE = 20.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2PLine :
-    CLASS /Libraries/cshmi/Line;
-    VARIABLE_VALUES
-        x1 : INPUT  SINGLE = 70.000000;
-        y1 : INPUT  SINGLE = 220.000000;
-        x2 : INPUT  SINGLE = 1220.000000;
-        y2 : INPUT  SINGLE = 220.000000;
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2TLine :
-    CLASS /Libraries/cshmi/Line;
-    VARIABLE_VALUES
-        x1 : INPUT  SINGLE = 70.000000;
-        y1 : INPUT  SINGLE = 240.000000;
-        x2 : INPUT  SINGLE = 1220.000000;
-        y2 : INPUT  SINGLE = 240.000000;
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "blue";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1 :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/PolylineKlemmungT2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "196,200 196,240";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "blue";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/PolylineKlemmungP2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "180,220 180,100 240,100 240,130 196,130 196,200";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/Y074 :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 113.000000;
-        y : INPUT  SINGLE = 170.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/Y074_FP :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 150.000000;
-        y : INPUT  SINGLE = 250.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Y074"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/cylinderKontakt :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
-        x : INPUT  SINGLE = 170.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/caption :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 210.000000;
-        y : INPUT  SINGLE = 61.000000;
-        content : INPUT  STRING = "1";
-        fontSize : INPUT  STRING = "24px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
-        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/SignalClose :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 100.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Close"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme1/SignalOpen :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU21/Y074/Open"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2 :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 420.000000;
-        y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/PolylineKlemmungT2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "196,200 196,240";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "blue";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/PolylineKlemmungP2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "180,220 180,100 240,100 240,130 196,130 196,200";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/Y076 :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 113.000000;
-        y : INPUT  SINGLE = 170.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/Y076_FP :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 150.000000;
-        y : INPUT  SINGLE = 250.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Y076"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/cylinderKontakt :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
-        x : INPUT  SINGLE = 170.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/caption :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 210.000000;
-        y : INPUT  SINGLE = 61.000000;
-        content : INPUT  STRING = "2";
-        fontSize : INPUT  STRING = "24px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
-        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/SignalClose :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 100.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Close"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme2/SignalOpen :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU22/Y076/Open"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3 :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 840.000000;
-        y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/PolylineKlemmungT2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "196,200 196,240";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "blue";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/PolylineKlemmungP2 :
-    CLASS /Libraries/cshmi/Polyline;
-    VARIABLE_VALUES
-        points : INPUT  STRING = "180,220 180,100 240,100 240,130 196,130 196,200";
-        strokeWidth : INPUT  SINGLE = 3.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "#555555";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/Y078 :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValve";
-        x : INPUT  SINGLE = 113.000000;
-        y : INPUT  SINGLE = 170.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/Y078_FP :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/FaceplatePCUGeneric";
-        x : INPUT  SINGLE = 150.000000;
-        y : INPUT  SINGLE = 250.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Y078"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"fixedFaceplatePosition:TRUE"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/cylinderKontakt :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/cylinder";
-        x : INPUT  SINGLE = 170.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[0] : INPUT  STRING = {};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/caption :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 210.000000;
-        y : INPUT  SINGLE = 61.000000;
-        content : INPUT  STRING = "3";
-        fontSize : INPUT  STRING = "24px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "normal";
-        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "middle";
-        trimToLength : INPUT  INT = 0;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/SignalClose :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 100.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Close"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:geklemmt"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Kontaktklemme3/SignalOpen :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/Sensor";
-        x : INPUT  SINGLE = 30.000000;
-        y : INPUT  SINGLE = 80.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU10/PS20/TU23/Y078/Open"};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"SignalName:gelöst"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2TArrow :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
-        x : INPUT  SINGLE = 40.000000;
-        y : INPUT  SINGLE = 250.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"title:T2" , "rotate:180"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/2PArrow :
-    CLASS /Libraries/cshmi/Template;
-    VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "ELBO/arrow";
-        x : INPUT  SINGLE = 40.000000;
-        y : INPUT  SINGLE = 213.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"title:P2"};
-        hideable : INPUT  BOOL = FALSE;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/hydraulicElectrode/bubFrame/Kontacktbackenklemmung/Caption_Kontaktbackenklemmung :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 630.000000;
-        y : INPUT  SINGLE = 30.000000;
-        content : INPUT  STRING = "Kontaktbackenklemmung";
         fontSize : INPUT  STRING = "36px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
@@ -7923,14 +8001,14 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/electrode/bubFrame/InfoText :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 350.000000;
+        x : INPUT  SINGLE = 650.000000;
         y : INPUT  SINGLE = 25.000000;
         content : INPUT  STRING = "Elektrodenposition";
         fontSize : INPUT  STRING = "36px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
         fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
+        horAlignment : INPUT  STRING = "start";
         verAlignment : INPUT  STRING = "hanging";
         trimToLength : INPUT  INT = 0;
         visible : INPUT  BOOL = TRUE;
@@ -7975,6 +8053,103 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/electrode/bubFrame/ElektrodeGroup/GraphScale :
+    CLASS /Libraries/cshmi/Image;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        SVGcontent : INPUT  STRING = "
+<line x1='-5' y1='20' x2='600' y2='20' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1;'/>
+
+<line x1='-5' y1='40' x2='600' y2='40' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='60' x2='600' y2='60' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='80' x2='600' y2='80' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-10' y1='100' x2='600' y2='100'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='120' x2='600' y2='120' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='140' x2='600' y2='140' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='160' x2='600' y2='160' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='180' x2='600' y2='180' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-10' y1='200' x2='600' y2='200'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='220' x2='600' y2='220' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='240' x2='600' y2='240' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='260' x2='600' y2='260' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='280' x2='600' y2='280' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-10' y1='300' x2='600' y2='300'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='320' x2='600' y2='320' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='340' x2='600' y2='340' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='360' x2='600' y2='360' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='380' x2='600' y2='380' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-10' y1='400' x2='600' y2='400'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='420' x2='600' y2='420' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='440' x2='600' y2='440' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='460' x2='600' y2='460' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<line x1='-5' y1='480' x2='600' y2='480' shape-rendering='crispEdges'
+   style='stroke:black;stroke-width:1'/>
+
+<text x='-45' y='105' style='fill:black;'>1000
+     <tspan x='-40' y='205'>750</tspan>
+     <tspan x='-40' y='305'>500</tspan>
+     <tspan x='-40' y='405'>250</tspan>
+   </text>
+";
+        Bitmapcontent : INPUT  STRING = "";
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "";
+        fill : INPUT  STRING = "";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/electrode/bubFrame/ElektrodeGroup/ElektrodeVis1 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
@@ -7990,7 +8165,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8010,7 +8185,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 2;
+        zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8030,7 +8205,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
+        zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8050,7 +8225,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 5;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8073,7 +8248,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8093,7 +8268,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8116,7 +8291,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
+        zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8136,7 +8311,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 8;
+        zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8159,7 +8334,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 9;
+        zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8174,7 +8349,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 10;
+        zindex : INPUT  UINT = 11;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -8417,7 +8592,7 @@ M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgrey";
+        fill : INPUT  STRING = "grey";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
@@ -8513,7 +8688,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 22.000000;
-        y : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 60.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:EIN" , "PFCommand:MV_ON" , "PFValue:0"};
@@ -8533,7 +8708,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 114.000000;
-        y : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 60.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:AUS" , "PFCommand:MV_OFF" , "PFValue:0"};
@@ -8553,7 +8728,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 206.000000;
-        y : INPUT  SINGLE = 210.000000;
+        y : INPUT  SINGLE = 60.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:START" , "PFCommand:START" , "PFValue:0"};
@@ -8592,7 +8767,7 @@ M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgray";
+        fill : INPUT  STRING = "grey";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
@@ -8662,8 +8837,8 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 280.000000;
-        height : INPUT  SINGLE = 53.000000;
+        width : INPUT  SINGLE = 190.000000;
+        height : INPUT  SINGLE = 50.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8679,7 +8854,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
-        y : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 15.000000;
         content : INPUT  STRING = "Betriebsart:";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
@@ -8702,7 +8877,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 125.000000;
-        y : INPUT  SINGLE = 20.000000;
+        y : INPUT  SINGLE = 15.000000;
         content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
@@ -8768,7 +8943,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
-        y : INPUT  SINGLE = 40.000000;
+        y : INPUT  SINGLE = 35.000000;
         content : INPUT  STRING = "Regelgröße:";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
@@ -8791,7 +8966,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 125.000000;
-        y : INPUT  SINGLE = 40.000000;
+        y : INPUT  SINGLE = 35.000000;
         content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "medium";
         fontStyle : INPUT  STRING = "normal";
@@ -8853,12 +9028,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
-        x : INPUT  SINGLE = 198.000000;
-        y : INPUT  SINGLE = 0.000000;
+        x : INPUT  SINGLE = 200.000000;
+        y : INPUT  SINGLE = 12.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[1] : INPUT  STRING = {"buttoncontent:Auswahl"};
@@ -8873,13 +9048,13 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 128.000000;
-        y : INPUT  SINGLE = -400.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
+        y : INPUT  SINGLE = -162.000000;
+        width : INPUT  SINGLE = 1.000000;
+        height : INPUT  SINGLE = 1.000000;
         hideable : INPUT  BOOL = TRUE;
         visible : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -8887,17 +9062,17 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/baserect :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/baserect :
     CLASS /Libraries/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 220.000000;
-        height : INPUT  SINGLE = 220.000000;
+        height : INPUT  SINGLE = 260.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgrey";
+        fill : INPUT  STRING = "grey";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
@@ -8905,11 +9080,11 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/GroupLabel :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/LabelBetriebsart :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 110.000000;
-        y : INPUT  SINGLE = 30.000000;
+        y : INPUT  SINGLE = 20.000000;
         content : INPUT  STRING = "Betriebsart";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
@@ -8928,12 +9103,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/CommandGLBO3AC :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandGLBO3AC :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 75.000000;
+        y : INPUT  SINGLE = 30.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBO3AC" , "PFCommand:GLBO3AC" , "PFValue:0"};
@@ -8948,12 +9123,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/CommandGLBODC :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandGLBODC :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 105.000000;
+        y : INPUT  SINGLE = 56.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBODC" , "PFCommand:GLBODC" , "PFValue:0"};
@@ -8968,12 +9143,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/CommandKLBO1 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandKLBO1 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 135.000000;
+        y : INPUT  SINGLE = 82.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO1" , "PFCommand:KLBO1" , "PFValue:0"};
@@ -8988,12 +9163,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/BetriebsartMenu/BetriebsartPanel/CommandKLBO2 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandKLBO2 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 165.000000;
+        y : INPUT  SINGLE = 108.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO2" , "PFCommand:KLBO2" , "PFValue:0"};
@@ -9008,19 +9183,22 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu :
-    CLASS /Libraries/cshmi/Template;
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/LabelRegelgroesse :
+    CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
-        x : INPUT  SINGLE = 198.000000;
-        y : INPUT  SINGLE = 26.000000;
-        FBReference[0] : INPUT  STRING = {};
-        FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Auswahl"};
-        hideable : INPUT  BOOL = FALSE;
+        x : INPUT  SINGLE = 110.000000;
+        y : INPUT  SINGLE = 150.000000;
+        content : INPUT  STRING = "Regelgr?;
+        fontSize : INPUT  STRING = "20px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "bold";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "hanging";
+        trimToLength : INPUT  INT = 0;
         visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "none";
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 6;
@@ -9028,67 +9206,12 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel :
-    CLASS /Libraries/cshmi/Group;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 128.000000;
-        y : INPUT  SINGLE = -200.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
-        hideable : INPUT  BOOL = TRUE;
-        visible : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel/baserect :
-    CLASS /Libraries/cshmi/Rectangle;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 0.000000;
-        y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 220.000000;
-        height : INPUT  SINGLE = 220.000000;
-        strokeWidth : INPUT  SINGLE = 1.000000;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgrey";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel/GroupLabel :
-    CLASS /Libraries/cshmi/Text;
-    VARIABLE_VALUES
-        x : INPUT  SINGLE = 110.000000;
-        y : INPUT  SINGLE = 30.000000;
-        content : INPUT  STRING = "Regelgröße";
-        fontSize : INPUT  STRING = "20px";
-        fontStyle : INPUT  STRING = "normal";
-        fontWeight : INPUT  STRING = "bold";
-        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
-        horAlignment : INPUT  STRING = "middle";
-        verAlignment : INPUT  STRING = "auto";
-        trimToLength : INPUT  INT = 0;
-        visible : INPUT  BOOL = TRUE;
-        stroke : INPUT  STRING = "none";
-        fill : INPUT  STRING = "black";
-        opacity : INPUT  SINGLE = 1.000000;
-        rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 1;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel/CommandStrom :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandStrom :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 75.000000;
+        y : INPUT  SINGLE = 170.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Strom" , "PFCommand:I" , "PFValue:0"};
@@ -9098,17 +9221,17 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 2;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel/CommandSpannung :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandSpannung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 105.000000;
+        y : INPUT  SINGLE = 196.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Spannung" , "PFCommand:U" , "PFValue:0"};
@@ -9118,17 +9241,17 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 3;
+        zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/RegelgroesseMenu/RegelgrPanel/CommandLeistung :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/CommandLeistung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 135.000000;
+        y : INPUT  SINGLE = 222.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
         ConfigValues[3] : INPUT  STRING = {"buttoncontent:Leistung" , "PFCommand:P" , "PFValue:0"};
@@ -9138,7 +9261,57 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 4;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 11;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/onload/SetCursorDefault :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "cursor";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartGroup/AuswahlMenu/AuswahlPanel/onload/SetCursorDefault.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "default";
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9162,12 +9335,12 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 280.000000;
+        width : INPUT  SINGLE = 190.000000;
         height : INPUT  SINGLE = 26.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgray";
+        fill : INPUT  STRING = "lightgrey";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
@@ -9377,7 +9550,7 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
-        x : INPUT  SINGLE = 198.000000;
+        x : INPUT  SINGLE = 200.000000;
         y : INPUT  SINGLE = 0.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
@@ -9397,9 +9570,9 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 128.000000;
-        y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 100.000000;
-        height : INPUT  SINGLE = 100.000000;
+        y : INPUT  SINGLE = 70.000000;
+        width : INPUT  SINGLE = 1.000000;
+        height : INPUT  SINGLE = 1.000000;
         hideable : INPUT  BOOL = TRUE;
         visible : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -9417,7 +9590,7 @@ M1000,250 v40 h-100";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
-        fill : INPUT  STRING = "lightgrey";
+        fill : INPUT  STRING = "grey";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 0;
@@ -9451,12 +9624,12 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/CommandMore :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
-        x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 75.000000;
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButtonSchmal";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 62.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:MEHR" , "PFCommand:INC_SP" , "PFValue:1"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:+" , "PFCommand:INC_SP" , "PFValue:1"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9473,10 +9646,10 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
         x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 105.000000;
+        y : INPUT  SINGLE = 180.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:SetzeWert" , "PFCommand:SET_SP" , "PFValue:"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:SetValue" , "PFCommand:SET_SP" , "PFValue:"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9491,12 +9664,12 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/CommandLess :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
-        x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 135.000000;
+        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButtonSchmal";
+        x : INPUT  SINGLE = 150.000000;
+        y : INPUT  SINGLE = 62.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:WENIGER" , "PFCommand:DEC_SP" , "PFValue:1"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:-" , "PFCommand:DEC_SP" , "PFValue:1"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9504,6 +9677,204 @@ M1000,250 v40 h-100";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/ValueWindow :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 75.000000;
+        y : INPUT  SINGLE = 65.000000;
+        width : INPUT  SINGLE = 40.000000;
+        height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "white";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 110.000000;
+        y : INPUT  SINGLE = 75.000000;
+        content : INPUT  STRING = "";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "end";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 1;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/onload/SetValue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/onload/SetValue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SP";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertUnit :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 120.000000;
+        y : INPUT  SINGLE = 75.000000;
+        content : INPUT  STRING = "";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertUnit/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertUnit/onload/SetValue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertUnit/onload/SetValue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SPUnit";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload/SetCursorDefault :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "cursor";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload/SetCursorDefault.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "default";
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9686,17 +10057,9 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M-100,100 h200
-
-
 M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
-
-
 M500,100 H600 V850
-
-
 M600,400 H700 V850
-
-
 M700,400 H800 V850";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9860,8 +10223,6 @@ M700,400 H800 V850";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M10,300 H85 V225
-
-
 M0,750 l30,30 v30 h55 V700";
         strokeWidth : INPUT  SINGLE = 1.100000;
         visible : INPUT  BOOL = TRUE;
@@ -10080,17 +10441,9 @@ M0,750 l30,30 v30 h55 V700";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M600,270
-
-
 v-30
-
-
 m0,30
-
-
 m-15,0 h30
-
-
 m-15,0 l-15,-30 h30 l-15,30";
         strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
