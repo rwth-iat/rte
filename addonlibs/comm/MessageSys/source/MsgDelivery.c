@@ -244,7 +244,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_retrieveMessage_set(
 	{
 		ov_logfile_error("MessageDelivery/retrieveMessage: Couldn't find Service! - Cant deliver Message - Fatal Error"); //,sobj->v_inboxPath
 		ov_memstack_unlock();
-		return OV_ERR_GENERIC;
+		return OV_ERR_OK;	/*	we could not find the service, but we don't care :-) (the specs...)	*/
 	}
 	result = MessageSys_createAnonymousMessage(inboxdomain, "Message", (OV_INSTPTR_ov_object*)(&message));
 	if(Ov_Fail(result)){
