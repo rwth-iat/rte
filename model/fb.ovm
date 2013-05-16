@@ -44,11 +44,8 @@
 ******************************************************************************/
 
 #include "ov.ovm"
-/*	to use the current ks-system include model file of ksbase instead of ksserv	
-*/
 
-/*	this is to get the build script work. it bases on the "old" ks2nd	*/
-#include "ksserv.ovm"
+#include "ksbase.ovm"
 
 
 LIBRARY fb
