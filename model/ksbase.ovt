@@ -1,0 +1,40 @@
+#ifndef ksbase_OVT_INCLUDED
+#define ksbase_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+
+/**
+ *	KS_DATAPACKET	
+ *	This structure is used for transmitted data.
+ *	Reading of data is always ok (it does not matter if read via readPT or data).
+ *	Writing data can be critical depending on the usage. Mostly one should append data to the structure (via the ksbase_KSDATAPACKET_append function) since the PACKET may contain data which is not yet send.
+ *	Hence, one should use the writePT for write operations.
+ *	When ClientHandlers or DataHandlers get DATAPACKETs from a Channel some rules apply which are written in the comments of the HandleData and HandleRequest functions in ksbase.ovm.
+ */
+ 
+ typedef struct
+ {
+ 	OV_UINT length;
+ 	OV_BYTE* data;
+ 	OV_BYTE* readPT;
+ 	OV_BYTE* writePT;
+ } KS_DATAPACKET;
+ 
+ 
+ /**
+  *	KSBASE_CALLBACKSTRUCT
+  *	This structure contains information for callbacks. Mainly this is a function pointer to the callback function and a pointer 
+  *	to the instance that requested to be called back. 
+  *	The callback function itself takes the latter pointer and a pointer to the calling instance a parameters
+  */
+  
+  typedef struct
+  {
+  	OV_INSTPTR_ov_domain instanceCalled;
+  	void (*callbackFunction)(const OV_INSTPTR_ov_domain instanceCalled, const OV_INSTPTR_ov_domain instanceCalling);
+  } KSBASE_CALLBACKSTRUCT;	  
+ 
+#endif //ksbase_OVT_INCLUDED
+ 	

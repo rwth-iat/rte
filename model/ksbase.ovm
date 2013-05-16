@@ -1,0 +1,458 @@
+#include "ov.ovm"
+
+/**
+ * Some Classes now have the Flag "v". This means volatile. 
+ * This flag will be used in a clean-up function of the ov_runtimeserver to determine if an object needs to be deleted before the server starts up. 
+ */
+
+LIBRARY ksbase
+	VERSION   = "V0.1 (15-01-2013)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
+	
+	////////////////// Scheduling / Tasking components
+
+	CLASS RootComTask : CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "root communication task - cycling all connected tasks. ";
+		VARIABLES
+			cycsecs	: INT HAS_ACCESSORS  
+				COMMENT	=	"seconds for scheduler registration. Please note that we do not calculate the amount of time spent - root task just pauses for this time intervall. If communications need too long there will be a jitter in other timings."
+				INITIALVALUE	=	0;
+			cycusecs: INT HAS_ACCESSORS  
+				COMMENT	=	"usecs for scheduler registration"
+				INITIALVALUE	=	1000;
+		END_VARIABLES;
+		OPERATIONS
+			constructor	: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup     : C_FUNCTION <OV_FNC_STARTUP>; //registers execute at ov_scheduler 
+			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;//deregisters execute at ov_scheduler
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS ComTask : CLASS ov/domain
+		COMMENT = "communication task baseclass - get called typemethod every $cycInterval by root task. Functionality is implemented by derived classes";
+		VARIABLES
+			actimode: INT HAS_ACCESSORS 
+				COMMENT	=	"0=inactive, 1=active"
+				INITIALVALUE	=	1;
+			cycIntervalCount	: INT HAS_GET_ACCESSOR
+				COMMENT	=	"current wait cycles until next execution"
+				INITIALVALUE	=	5;
+			cycInterval		: INT HAS_ACCESSORS 
+				COMMENT	=	"execution intervall of cycles of RootTasks"
+				INITIALVALUE	=	5;
+			NextExecTime	:	TIME 
+				COMMENT	=	"time of next execution (if cycInterval !=0)";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>; //creates assoc to roottask
+			destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;  //deletes assoc to roottask
+			calcExec    : C_FUNCTION <KSBASE_FNC_CALCEXEC>;       //provides bool if typemethod need to be called. decreases cyc
+								      //would be nice to do this check locally by overloading typemethod, by....
+			typemethod  : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;     //gets called by roottask and should be implemented 
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
+		END_OPERATIONS;
+	END_CLASS;
+
+
+
+///////////////////// Accessing currently calling client components
+/* 
+ * Hopefully some of these information is applicable to all clients
+ * this is an interface class, which is inherited e.g. by xdrClientlientHandler and httpClientHandler
+ * user applications could cast to this class and access information for 
+ * determining the currently calling client
+*/ 
+
+	CLASS ClientHandler : CLASS ksbase/ComTask
+		FLAGS	=	"v";
+		COMMENT = "General clienthandler";
+	 	VARIABLES
+			sourceAdr : 	STRING HAS_GET_ACCESSOR 
+				COMMENT	=	"Source adr of client (e.g. IP)";
+			ovticket : 	STRING HAS_GET_ACCESSOR
+				COMMENT	=	"Ticket - ONLY set during call from client - thus invisible!";
+			receivedCalls : INT HAS_GET_ACCESSOR
+				COMMENT	=	"Number of received calls from this client"; 
+		END_VARIABLES;
+		OPERATIONS
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			/**
+			 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+			 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+			 *		1. If the input data could be processed or if it is invalid it should be freed.
+			 *		2. The Writeptr of the received data may not be altered.
+			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+			 *		4. The readptr of the answer data may not be altered.
+			 */
+			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS DataHandler : CLASS ksbase/ComTask
+		COMMENT = "DataHandler used for callbacks";
+	 	OPERATIONS
+			/**
+			 *	The HandleData function is called by a Channel after some data has arrived for this DataHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+			 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+			 *		1. If the input data could be processed or if it is invalid it should be freed.
+			 *		2. The Writeptr of the received data may not be altered.
+			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+			 *		4. The readptr of the answer data may not be altered.
+			 */
+			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;	
+		END_OPERATIONS;
+	END_CLASS;
+
+/**
+ *	Representative for a server. These objects are used by the manager to save the data for all servers on the specific machine and there is always 
+ *		one of these objects in the /communications-domain. The latter object stores the data for this server itself. Here the different ks-protocol-libraries 
+ *		store their ports and protocol identifiers	
+*/
+
+	CLASS	ServerRep			:	CLASS	ksbase/ComTask //ov/domain
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		COMMENT	=	"object to store serverdata";
+		VARIABLES
+			/* server data *************************************************/
+			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"name of server"
+				INITIALVALUE	=	"";	
+			version						:	UINT	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"Version of the ks protocol"
+				INITIALVALUE	=	2;
+			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"list of protocols a server can handle. Double entries are allowed if they are on different ports.";	
+			port []						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"list of addresses / ports corresponding to the protocols. List has to be of same length as protocols[]. Could be for example a tcp port or COM1";
+			timetolive				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time in which server has to do callback"
+				INITIALVALUE	=	0;
+			expirationtime			:	TIME		HAS_ACCESSORS						FLAGS	=	"i"
+				COMMENT			=	"time at which server has to do callback";
+			/* internals ***************************************************/
+			regtime					:	TIME	HAS_ACCESSORS							FLAGS =	"i"
+				COMMENT			=	"time the server registered at the manager";
+			state						:	INT		HAS_ACCESSORS						FLAGS =	"i"
+				COMMENT			=	"state of the server; 0: offline; 1: online; 2: inactive"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod 		: 	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+/**
+ * Manager Class. Contains operations to handle servers.
+ */
+
+	CLASS	Manager				:	CLASS ov/domain
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		COMMENT	=	"Manager. Provides operations for handling servers (register, unregister, getserverdata).";
+		OPERATIONS
+			shutdown		:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			register		:	C_FUNCTION <KSBASE_FNC_REGISTER>;
+			unregister		:	C_FUNCTION <KSBASE_FNC_UNREGISTER>;
+			getserverdata	:	C_FUNCTION <KSBASE_FNC_GETSERVERDATA>;
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS	
+		END_OPERATIONS;
+	END_CLASS;	
+
+
+/**
+ *	Baseclass for protocol-identificators. Each library supporting a specific protocol needs to derive one identificator from this in oder to determine the protocol used with a channel.
+ */
+ 
+	CLASS	ProtocolIdentificator				:	CLASS ov/domain
+		COMMENT	=	"Baseclass for Protocol-Identificators. Provides an identify operation. This operation scans a chunk of bytes if the data contained matches a specific protocol.";
+		OPERATIONS
+			/**
+			*	Function to identify the protocol. Gets a pointer to the Channel which received the data. Has to check in inData structure to determine if the protocol fits.
+			*/
+			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
+			/**
+			*	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
+			*	and Link it to the Channel calling it with AssocChannelClientHandler.
+			*/
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+			getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;		//just to make all variables visible on KS		
+		END_OPERATIONS;
+	END_CLASS;	
+
+/**
+ *Baseclass for channels.
+ */
+ 
+ 
+	 CLASS	Channel					:	CLASS	ksbase/ComTask
+		COMMENT	=	"Abstract Interface class, which should be realized by transport libraries";
+		VARIABLES
+			ConnectionState	:	UINT
+				COMMENT	=	"State of the Connection: 0 - closed; 1 - opening; 2 - open; 4 - closing; 8 - sending; 16 - receiving; 32 - awaiting response; 128 - indicates error; 255 generic error"
+				INITIALVALUE	=	0;
+			address	:	STRING	
+				COMMENT	=	"Address to communicate with"
+				INITIALVALUE	=	"";
+			outData	:	C_TYPE	<KS_DATAPACKET>	
+				COMMENT	=	"data to be sent";
+			inData	:	C_TYPE	<KS_DATAPACKET>	
+				COMMENT	=	"data received";
+			ClientHandlerAssociated	:	UINT
+				COMMENT	=	"Indicates whether there is a ClientHandler assicated with this Channel. 0 - No ClientHandler needed (Acting on the Client side itself); 1 - ClientHandler associated; 2 - ClientHandler not associated; 252 - No fitting ClientHandler available"
+				INITIALVALUE	=	0;
+			isLocal	:	BOOL
+				COMMENT	=	"TRUE: this Channel holds a local connection (Important for manager commands)"
+				INITIALVALUE	=	FALSE;
+			usesStreamProtocol	:	BOOL
+				COMMENT	=	"Set this to TRUE when the Channel uses a stream-oriented Protocol (e.g. TCP). Set to FALSE when using a packet-oriented Protocol (e.g. UDP)"
+				INITIALVALUE	=	TRUE;
+			LastReceiveTime	:	TIME
+				COMMENT	=	"Time of last receive";
+			ConnectionTimeOut	:	UINT
+				COMMENT	=	"Time (in seconds) to hold the connection after a receive operations."
+				INITIALVALUE	=	60;
+			UnusedDataTimeOut	:	UINT
+				COMMENT	=	"Time (in seconds) to keep unused data in outData. (Partialpackages or so that cannot be processed)"
+				INITIALVALUE	=	300;
+			END_VARIABLES;	
+		OPERATIONS
+			//real sending of data
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			/*	open a connection	*/
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			/*	open a local connection (needed for communication with manager)	*/
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			/*	close the connection	*/
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
+			//initialize inData and outData
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+			//free heap memory of inData and outData
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+/**
+ *	Baseclass for ticketauthenticators
+ *	TicketAuthenticators have to be singletons!!!
+ *	The constructor of the baseclass tests if there is already an object of the same type. If so, it returns OV_ERR_ALLREADYEXISTS. For each Protocol and each tickettype only one
+ *		authenticator may exist. There has to be a static global pointer to the object to make the ticket-functions find neccessary data.
+ */
+ 
+ 	CLASS	TicketAuthenticator		:	CLASS	ov/domain
+ 		COMMENT	=	"Abstract baseclass for ticketauthenticators. For each ks-protocol different authenticators have to be implemented. An authenticator for tickets of simple type is mandatory (ks-specification). TicketAuthenticators have to be singletons!!";
+ 		VARIABLES
+ 			TicketType	:	C_TYPE	<OV_TICKET_TYPE>
+ 				COMMENT	=	"TicketType this authenticator can handle";
+ 			ticket	:	C_TYPE <OV_TICKET>
+ 				COMMENT	=	"Ticket this object works with.";
+ 			access	:	C_TYPE <OV_ACCESS>
+ 				COMMENT	=	"Acces rights of the last tested ticket";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+ 			/*
+ 			*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 			*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 			*/
+ 			createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 			deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+			encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+			TicketGetaccess	:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+ 		END_OPERATIONS;
+ 	END_CLASS; 	
+ 	
+ 	CLASS	NoneTicketAuthenticator	:	CLASS	ksbase/TicketAuthenticator
+ 		IS_INSTANTIABLE;
+ 		COMMENT	=	"Authenticator for None-Tickets. It does nothing to a Message. The ticket-routines are basically empty. This Class is just used to be able to set the access rights for none tickets";
+ 		VARIABLES
+ 			ACRead	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant ReadAccess to none-tickets";
+ 			ACWrite	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant WriteAccess to none-tickets";
+ 			ACInstantiate	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant InstantiateAccess to none-tickets";
+ 			ACDelete	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant DeleteAccess to none-tickets";
+ 			ACRename	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant RenameAccess to none-tickets";
+ 			ACLink	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant LinkAccess to none-tickets";
+ 			ACUnlink	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED
+ 				COMMENT	=	"grant UnlinkAccess to none-tickets";			
+ 			NoneTicketAccess	:	C_TYPE <OV_ACCESS>
+ 				COMMENT	=	"Acces for NoneTickets";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 			/*
+ 			*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 			*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 			*/
+ 			createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 			deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+			encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+			TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+ 		END_OPERATIONS;
+ 	END_CLASS;
+ /**
+ *	Baseclass for client functionality
+ *	This class provides the operation prototypes for requesting KS services as well as for processing the answers.
+ *	The functionality of these routines is protocol denpendant and hence has to be implemented in the protocol specific libraries.
+ *	The routine to interact with a client is the following: Request a service via the respective request-function. Give the request function a pointer to a callback function 
+ *		if you want to be called back as soon as the client's state changes to complete.
+ *	When the client's state changes to request complete (no error bit set) call the respective process routine with locked memstack. 
+ *	Different states while requesting a service are handled by the client. The request and process routines must be programmed in a non-blocking manner. They must not
+ *	need a technological timespan to return (no waits allowed, see non-blocking requirement). 
+ *	The serverPort Variable specifies a communication port of a ks-server on the target machine. It is a technological representative for the serverName (which is a ks-Name)
+ *		and not necessarrily used by all types of protocols. 
+ */
+ 
+	CLASS	ClientBase	:	CLASS	ksbase/DataHandler
+		COMMENT	=	"Abstract baseclass for clients. ks-protocol libraries can derive classes from this one for generating client messages (getEP, getVar etc.).";
+		VARIABLES
+			serverHost	:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT	=	"Hostname (or IP Address or whatever type of address) of target machine. Setting a new Hostname will reset serverPort and close connection."
+				INITIALVALUE	=	"";
+			serverName	:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT	=	"KS-Name of the target ks-server. Setting a new serverName will reset serverPort."
+				INITIALVALUE	=	"";
+			serverPort	:	STRING
+				COMMENT	=	"Port (or IANA-Servicename or whatever string to specify the communication port) to the target ks-server on the target machine"
+				INITIALVALUE	=	"";
+			state	:	UINT
+				COMMENT	=	"State of Client: 0 initial; 1 waiting for connection; 2 waiting for answer; 4 waiting for answer completion; 8 processing completed; 128 error; everything > 128: subclass specific"
+				INITIALVALUE = 0;
+			runningKSservice	:	UINT
+				COMMENT	=	"Number of the KS service currently requested / processed by this client. 0 means none"
+				INITIALVALUE = 0;
+			callback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
+				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
+			holdConnection	:	BOOL
+				COMMENT	=	"If TRUE the corresponding channel will not be requested to close the connection after a request completed. Used for cyclic transfers"
+				INITIALVALUE	=	FALSE;
+		END_VARIABLES;	
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+			requestGetServer	:	C_FUNCTION	<KSBASE_FNC_REQGETSRV>;
+			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
+			requestGetPP		:	C_FUNCTION	<KSBASE_FNC_REQGETPP>;
+			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
+			requestGetEP		:	C_FUNCTION	<KSBASE_FNC_REQGETEP>;
+			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
+			requestGetVar		:	C_FUNCTION	<KSBASE_FNC_REQGETVAR>;
+			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
+			requestSetVar		:	C_FUNCTION	<KSBASE_FNC_REQSETVAR>;
+			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
+			requestGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_REQGETCANONPATH>;
+			processGetCanonicalPath			:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
+			requestCreateObject			:	C_FUNCTION	<KSBASE_FNC_REQCREATEOBJ>;
+			processCreateObject				:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
+			requestDeleteObject			:	C_FUNCTION	<KSBASE_FNC_REQDELOBJ>;
+			processDeleteObject				:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
+			requestRenameObject			:	C_FUNCTION	<KSBASE_FNC_REQRENAMEOBJ>;
+			processRenameObject				:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
+			requestLink			:	C_FUNCTION	<KSBASE_FNC_REQLINK>;
+			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
+			requestUnLink		:	C_FUNCTION	<KSBASE_FNC_REQUNLINK>;
+			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS ClientTicketGenerator	:	CLASS	ov/domain
+		COMMENT	=	"Abstract baseclass for TicketGenerators. for each ks-protocol different TicketGenerators have to be implemented. Their task is to set the ticket part in a call message";
+		VARIABLES
+ 			TicketType	:	C_TYPE	<OV_TICKET_TYPE>
+ 				COMMENT	=	"TicketType this generator can generates";
+ 		END_VARIABLES;
+ 		OPERATIONS
+ 			encodeTicket	:	C_FUNCTION	<KSBASE_FNC_ENCODETICKET>;
+			decodeReply		:	C_FUNCTION	<KSBASE_FNC_DECODEREPLY>;
+ 		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS NoneTicketGenerator	:	CLASS ksbase/ClientTicketGenerator
+		IS_INSTANTIABLE;
+		COMMENT	=	"TicketGenerator for None-Tickets. Basically this one does nothing";
+		OPERATIONS
+			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
+		END_OPERATIONS;
+	END_CLASS;
+ 
+///////////////Assocs
+
+/* 
+ * This is the Association, which connects the RootComTask to the real ComTasks
+ */
+	ASSOCIATION AssocComTaskList : ONE_TO_MANY
+		PARENT RootComTask : CLASS ksbase/RootComTask;
+		CHILD  comtaskchild  : CLASS ksbase/ComTask;
+	END_ASSOCIATION;
+	
+/* 
+ * This is the Association, which connects the a ClientHandler to a Channel
+ */
+	ASSOCIATION AssocChannelClientHandler : ONE_TO_ONE
+		PARENT Channel : CLASS ksbase/Channel;
+		CHILD  ClientHandler  : CLASS ksbase/ClientHandler;
+	END_ASSOCIATION;
+	
+/* 
+ * This is the Association, which connects a DataHandler to a Channel (used for callbacks)
+ */
+	ASSOCIATION AssocChannelDataHandler : ONE_TO_ONE
+		PARENT Channel : CLASS ksbase/Channel;
+		CHILD  DataHandler  : CLASS ksbase/DataHandler;
+	END_ASSOCIATION;
+	
+/* 
+ * This Association points to the Channel that is currently running its typemethod
+ */
+	ASSOCIATION AssocCurrentChannel : ONE_TO_ONE
+		PARENT ChannelParent : CLASS ksbase/RootComTask;
+		CHILD  CurrentChannel  : CLASS ksbase/Channel;
+	END_ASSOCIATION;
+	
+/* 
+ * This Association connects a client with a ticket generator
+ */
+	ASSOCIATION AssocClientToTicketGenerator : ONE_TO_ONE
+		PARENT PClient : CLASS ksbase/ClientBase;
+		CHILD  CTicketGenerator  : CLASS ksbase/ClientTicketGenerator;
+	END_ASSOCIATION;
+	
+END_LIBRARY;
