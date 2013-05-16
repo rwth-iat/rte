@@ -8,7 +8,7 @@
 LIBRARY ksbase
 	VERSION   = "V0.1 (15-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl fï¿½r Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
 	COMMENT   = "Generic communication library. Offers tasking and basic management functions. It is independent of protocols and transport bindings.";
 	
 	////////////////// Scheduling / Tasking components
@@ -326,7 +326,7 @@ LIBRARY ksbase
  *	The functionality of these routines is protocol denpendant and hence has to be implemented in the protocol specific libraries.
  *	The routine to interact with a client is the following: Request a service via the respective request-function. Give the request function a pointer to a callback function 
  *		if you want to be called back as soon as the client's state changes to complete.
- *	When the client's state changes to request complete (no error bit set) call the respective process routine. 
+ *	When the client's state changes to request complete (no error bit set) call the respective process routine with locked memstack. 
  *	Different states while requesting a service are handled by the client. The request and process routines must be programmed in a non-blocking manner. They must not
  *	need a technological timespan to return (no waits allowed, see non-blocking requirement). 
  *	The serverPort Variable specifies a communication port of a ks-server on the target machine. It is a technological representative for the serverName (which is a ks-Name)

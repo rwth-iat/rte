@@ -182,7 +182,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETPP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_OBJ_PROJECTED_PROPS* items_val
+	OV_OBJ_PROJECTED_PROPS** items_val
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETEP(
@@ -201,7 +201,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETEP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_OBJ_ENGINEERED_PROPS* items_val
+	OV_OBJ_ENGINEERED_PROPS** items_val
 );
 
 
@@ -219,7 +219,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_GETVAR_ITEM* items_val
+	OV_GETVAR_ITEM** items_val
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQSETVAR(
@@ -236,7 +236,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCSETVAR(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 );
 			
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQGETCANONPATH(
@@ -254,7 +254,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCGECANONPATH(
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
-	OV_STRING* items_canonicalPaths
+	OV_STRING** items_canonicalPaths
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQCREATEOBJ(
@@ -271,7 +271,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCCREATEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_CREATEOBJECTITEM_RES* items_val
+	OV_CREATEOBJECTITEM_RES** items_val
 );
 
 
@@ -289,7 +289,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCDELOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQRENAMEOBJ(
@@ -306,7 +306,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCRENAMEOBJ(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQLINK(
@@ -323,7 +323,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_REQUNLINK(
@@ -340,7 +340,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_PROCUNLINK(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 );
 
 #endif

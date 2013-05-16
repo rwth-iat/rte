@@ -190,7 +190,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetPP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_OBJ_PROJECTED_PROPS* items_val
+	OV_OBJ_PROJECTED_PROPS** items_val
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -213,7 +213,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetEP(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_OBJ_ENGINEERED_PROPS* items_val
+	OV_OBJ_ENGINEERED_PROPS** items_val
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -234,7 +234,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_len,
-	OV_GETVAR_ITEM* items_val
+	OV_GETVAR_ITEM** items_val
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -255,7 +255,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processSetVar(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -277,7 +277,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processGetCanonicalPath(
 	OV_RESULT* result,
 	OV_UINT* items_length,
 	OV_RESULT* items_results,
-	OV_STRING* items_canonicalPaths
+	OV_STRING** items_canonicalPaths
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -298,7 +298,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processCreateObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_CREATEOBJECTITEM_RES* items_val
+	OV_CREATEOBJECTITEM_RES** items_val
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -319,7 +319,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processDeleteObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -340,7 +340,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processRenameObject(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 ){
 	return OV_ERR_NOTIMPLEMENTED;
 }
@@ -361,7 +361,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processLink(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }
@@ -382,7 +382,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_processUnLink(
 	const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 	OV_RESULT* result,
 	OV_UINT* items_length,
-	OV_RESULT* items_results
+	OV_RESULT** items_results
 ) {
     return OV_ERR_NOTIMPLEMENTED;
 }

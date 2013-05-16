@@ -175,7 +175,7 @@ void ksbase_RootComTask_execute(
 		//lets see if something is todo...
 		firstChild = Ov_GetFirstChild(ksbase_AssocComTaskList, rcTask);
 		childTask = firstChild;
-		while(childTask) {
+		while(childTask) {//TODO modify this loop not to iterate over ALL children before return if the time for the next ov_scheduler task is reached
 			if(ksbase_ComTask_calcExec(childTask)) {//if TRUE, its time to execute this object
 				//go via the methodtable to call the "real" implementation of the typemethod
 				//KS_logfile_debug(("RootComTask: %s was executed", childTask->v_identifier));
@@ -226,7 +226,7 @@ void ksbase_RootComTask_execute(
         // Not work on LINUX: select(0,  0,0,0,  &delay);
 #else
         if( (time_left.secs == 0) && (time_left.usecs == 0) ) {
-            /* Windows does not sleep iff 0 is param, but linux usleep drops timslot of thread */
+            /* Windows does not sleep if 0 is param, but linux usleep drops timslot of thread */
             time_left.usecs = 1000;
         }
     	Sleep(time_left.secs * 1000 + time_left.usecs / 1000);
