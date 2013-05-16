@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<!-- nt profile -->
 		<cconfiguration id="cdt.managedbuild.config.gnu.so.debug.58217498">
@@ -42,9 +40,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/ks&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libovks&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/plt&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/rpc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.58217498" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
@@ -154,13 +150,16 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="fb.null.1493869122" name="fb"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/fb"/>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.61499652;cdt.managedbuild.config.gnu.so.debug.61499652.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.61499652;cdt.managedbuild.tool.gnu.c.compiler.input.61499652">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.58217498;cdt.managedbuild.config.gnu.so.debug.58217498.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.58217498;cdt.managedbuild.tool.gnu.c.compiler.input.58217498">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.58217498;cdt.managedbuild.config.gnu.so.debug.58217498.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.58217498;cdt.managedbuild.tool.gnu.c.compiler.input.58217498">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.61499652;cdt.managedbuild.config.gnu.so.debug.61499652.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.61499652;cdt.managedbuild.tool.gnu.c.compiler.input.61499652">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
