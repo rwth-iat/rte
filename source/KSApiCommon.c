@@ -23,6 +23,7 @@
 
 #include "ksapi.h"
 #include "libov/ov_macros.h"
+#include "ksapi_commonFuncs.h"
 
 
 OV_DLLFNCEXPORT void ksapi_KSApiCommon_startup(
@@ -38,7 +39,7 @@ OV_DLLFNCEXPORT void ksapi_KSApiCommon_startup(
 
     /* do what */
     pinst->v_result = OV_ERR_OK;
-    pinst->v_status = 0;
+    pinst->v_status = KSAPI_COMMON_INITIAL;
 
     return;
 }
@@ -66,7 +67,7 @@ OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_Reset_set(OV_INSTPTR_ksapi_KSApiComm
 
 	if(value && (!pobj->v_Reset))
 	{
-		pobj->v_status = 0;
+		pobj->v_status = KSAPI_COMMON_INITIAL;
 		pobj->v_result = OV_ERR_OK;
 		Ov_ForEachChildEx(ov_containment, pobj, pClient, ksbase_ClientBase)
 		{	/*	find the object in the containment which is derived from ClientBase	*/
