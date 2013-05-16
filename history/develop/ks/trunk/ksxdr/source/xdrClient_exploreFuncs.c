@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetPP(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_len,
-		OV_OBJ_PROJECTED_PROPS* items_val
+		OV_OBJ_PROJECTED_PROPS** items_val
 ) {
 	/*
 	 *   local variables
@@ -176,7 +176,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetPP(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_val, sizeof(OV_OBJ_PROJECTED_PROPS), items_len,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_OBJ_PROJECTED_PROPS), items_len,
 				(xdr_readfncptr) &xdr_read_OV_OBJ_PROJECTED_PROPS);
 	else
 		return OV_ERR_OK;
@@ -325,7 +325,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetEP(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_len,
-		OV_OBJ_ENGINEERED_PROPS* items_val
+		OV_OBJ_ENGINEERED_PROPS** items_val
 ) {
 	/*
 	 *   local variables
@@ -337,7 +337,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetEP(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_val, sizeof(OV_OBJ_ENGINEERED_PROPS), items_len,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_OBJ_ENGINEERED_PROPS), items_len,
 				(xdr_readfncptr) &xdr_read_OV_OBJ_ENGINEERED_PROPS);
 	else
 		return OV_ERR_OK;
@@ -471,7 +471,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetCanonicalPath(
 		OV_RESULT* result,
 		OV_UINT* items_length,
 		OV_RESULT* items_results,
-		OV_STRING* items_canonicalPaths
+		OV_STRING** items_canonicalPaths
 ) {
 	/*
 	 *   local variables
@@ -492,15 +492,15 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetCanonicalPath(
 		items_results = ov_memstack_alloc(*items_length * sizeof(OV_RESULT));
 		if(!items_results)
 			return OV_ERR_HEAPOUTOFMEMORY;
-		items_canonicalPaths = ov_memstack_alloc(*items_length * sizeof(OV_STRING));
-		if(!items_canonicalPaths)
+		*items_canonicalPaths = ov_memstack_alloc(*items_length * sizeof(OV_STRING));
+		if(!(*items_canonicalPaths))
 			return OV_ERR_HEAPOUTOFMEMORY;
 		for(i=0; i<*items_length; i++)
 		{
 			fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), &(items_results[i]));
 			if(Ov_Fail(fncresult))
 				return fncresult;
-			fncresult = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(&(thisCl->v_dataReceived), &(items_canonicalPaths[i]));
+			fncresult = KS_DATAPACKET_read_xdr_string_tomemstack_wolength(&(thisCl->v_dataReceived), (items_canonicalPaths[i]));
 			if(Ov_Fail(fncresult))
 				return fncresult;
 		}
