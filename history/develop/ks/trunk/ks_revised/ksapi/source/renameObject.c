@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT void ksapi_renameObject_shutdown(
 }
 
 OV_DLLFNCEXPORT void ksapi_renameObject_submit(
-    OV_INSTPTR_ksapi_renameObject          pobj
+	OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
     return;
 }

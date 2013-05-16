@@ -21,12 +21,26 @@ LIBRARY	ksapi
 				COMMENT			=	"Target Path"
 				INITIALVALUE	=	"";
 			status		:	INT
-				COMMENT			= "status of KS obj"
+				COMMENT			= "status of KS obj: 0: initial; 1: request sent, waiting for answer; 2: completed; 128: internal error, see result for error code; 64: request failed, see result for error code"
 				INITIALVALUE	=	0;
+			result		:	UINT
+				COMMENT	=	"Result of last Operation in KS_ERR Codes"
+				INITIALVALUE	=	0;
+			holdConnection	:	BOOL
+				COMMENT			=	"Tell client not to close the connection after each request"
+				INITIALVALUE	=	FALSE;
+			Reset		:	BOOL	HAS_SET_ACCESSOR
+				COMMENT	=	"Rising edge triggers reset of Client object and sets status and result to 0"
+				INITIALVALUE	= FALSE;
+			Submit		:	BOOL	HAS_SET_ACCESSOR
+				COMMENT	=	"Rising edge triggers submit function"
+				INITIALVALUE	= FALSE;	
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -48,7 +62,7 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			// sending functions:
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_CREATEOBJECT>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -59,7 +73,7 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			// sending functions:
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_DELETEOBJECT>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -69,7 +83,15 @@ LIBRARY	ksapi
 		VARIABLES
 			varValue			:	ANY
 				COMMENT			=	"Variable which will be received from the client";
+			varRes				:	UINT
+				COMMENT			=	"Result of Operation on this variable"
+				INITIALVALUE	=	0;
 		END_VARIABLES;
+		OPERATIONS
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		END_OPERATIONS;
 	END_CLASS;	
 
 
@@ -81,7 +103,7 @@ LIBRARY	ksapi
 			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_GETVAR>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_GETVAR>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -95,7 +117,7 @@ LIBRARY	ksapi
 			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_SETVAR>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_SETVAR>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -115,13 +137,14 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_EP_GETID>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_EP_GETID>;
 		END_OPERATIONS;
 	END_CLASS;
 
 	CLASS	Variable				:	CLASS	ov/object
 		IS_INSTANTIABLE;
+		IS_FINAL;
 		COMMENT	=	"ov_object, representing a variable (to be put in the containment of a get/setVar to get/set more than one variable on the same server)";
 		VARIABLES
 			path		:	STRING
@@ -129,10 +152,18 @@ LIBRARY	ksapi
 				INITIALVALUE	=	"";
 			varValue				:	ANY
 				COMMENT			=	"The Variable value";
+			varRes		:	UINT
+				COMMENT			=	"Result of ks-operation"
+				INITIALVALUE	=	0;
+			order		:	UINT
+				COMMENT			=	"Place of variable in package"
+				INITIALVALUE	=	0;
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -149,7 +180,7 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_RENAMEOBJECT>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT>;
 		END_OPERATIONS;
 	END_CLASS;		
@@ -172,7 +203,7 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_LINKOBJECT>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_LINKOBJECT>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -189,7 +220,7 @@ LIBRARY	ksapi
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
-			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT_UNLINKOBJECT>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT>;
 		END_OPERATIONS;
 	END_CLASS;

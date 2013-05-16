@@ -1,10 +1,10 @@
 #ifndef _KSAPI_OVF
 #define _KSAPI_OVF
 
-
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_CREATEOBJECT(
-		OV_INSTPTR_ksapi_createObject	 			pobj
+typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj
 );
+
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
 		OV_INSTPTR_ksapi_createObject	 		pobj,
@@ -16,10 +16,6 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT(
 		OV_STRING									place
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_DELETEOBJECT(
-		OV_INSTPTR_ksapi_deleteObject	 		pobj
-);
-
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
 		OV_INSTPTR_ksapi_deleteObject	 		pobj,
@@ -28,9 +24,6 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT(
 		OV_STRING 									path
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_GETVAR(
-		OV_INSTPTR_ksapi_getVar			 			pobj
-);
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_GETVAR(
 		OV_INSTPTR_ksapi_getVar			 			pobj,
@@ -47,15 +40,7 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_SETVAR(
 		OV_ANY	 									setVar
 );
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_SETVAR(
-		OV_INSTPTR_ksapi_setVar	 			pobj
-);
-
 //definitions for getEPidentifiers
-
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_EP_GETID(
-		OV_INSTPTR_ksapi_getEPidentifiers	pobj
-);
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
 		OV_INSTPTR_ksapi_getEPidentifiers	pobj,
@@ -66,9 +51,6 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
 );
 
 
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_RENAMEOBJECT(
-		OV_INSTPTR_ksapi_renameObject	 		pobj
-);
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
 		OV_INSTPTR_ksapi_renameObject	 		pobj,
@@ -76,10 +58,6 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
 		OV_STRING 									serverName,
 		OV_STRING 									path,
 		OV_STRING 									newpath
-);
-
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_LINKOBJECT(
-		OV_INSTPTR_ksapi_linkObject			pobj
 );
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
@@ -90,10 +68,6 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_LINKOBJECT(
 		OV_STRING 									elementpath,
 		OV_INT										position,
 		OV_STRING									place
-);
-
-typedef OV_DLLFNCEXPORT void KSAPI_FNC_SUBMIT_UNLINKOBJECT(
-		OV_INSTPTR_ksapi_unlinkObject			pobj
 );
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT(

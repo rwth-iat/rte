@@ -38,6 +38,7 @@ OV_DLLFNCEXPORT void ksapi_Variable_startup(
 
     /* do what */
 
+    pinst->v_varRes = OV_ERR_OK;
 
     return;
 }
@@ -48,7 +49,6 @@ OV_DLLFNCEXPORT void ksapi_Variable_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_Variable pinst = Ov_StaticPtrCast(ksapi_Variable, pobj);
 
     /* do what */
 
@@ -58,3 +58,71 @@ OV_DLLFNCEXPORT void ksapi_Variable_shutdown(
     return;
 }
 
+OV_DLLFNCEXPORT OV_RESULT ksapi_Variable_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_ksapi_Variable pinst = Ov_StaticPtrCast(ksapi_Variable, pobj);
+    OV_RESULT result;
+    OV_ANY value;
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+    	return result;
+
+    /* do what */
+
+    value.value.vartype = OV_VT_VOID;
+    value.value.valueunion.val_double = 0.0;
+    result = ov_variable_setanyvalue(&(pinst->v_varValue), &value);
+
+    return result;
+}
+
+OV_DLLFNCEXPORT void ksapi_Variable_destructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_ksapi_Variable pinst = Ov_StaticPtrCast(ksapi_Variable, pobj);
+    OV_ANY value;
+
+    value.value.vartype = OV_VT_VOID;
+    value.value.valueunion.val_double = 0.0;
+    ov_variable_setanyvalue(&(pinst->v_varValue), &value);
+
+    ov_object_destructor(pobj);
+
+   return;
+}
+
+OV_DLLFNCEXPORT OV_ACCESS ksapi_Variable_getaccess(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+) {
+	/*
+	*	local variables
+	*/
+
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			  if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+				  return OV_AC_NONE;
+			  else
+				  return OV_AC_READWRITE;
+			}
+			break;
+		default:
+			break;
+	}
+
+	return ov_object_getaccess(pobj, pelem, pticket);
+}

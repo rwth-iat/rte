@@ -37,7 +37,8 @@ OV_DLLFNCEXPORT void ksapi_KSApiCommon_startup(
     ov_object_startup(pobj);
 
     /* do what */
-
+    pinst->v_result = OV_ERR_OK;
+    pinst->v_status = 0;
 
     return;
 }
@@ -48,7 +49,6 @@ OV_DLLFNCEXPORT void ksapi_KSApiCommon_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_KSApiCommon pinst = Ov_StaticPtrCast(ksapi_KSApiCommon, pobj);
 
     /* do what */
 
@@ -56,5 +56,85 @@ OV_DLLFNCEXPORT void ksapi_KSApiCommon_shutdown(
     ov_object_shutdown(pobj);
 
     return;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_Reset_set(OV_INSTPTR_ksapi_KSApiCommon pobj, OV_BOOL value)
+{
+	OV_INSTPTR_ksbase_ClientBase pClient = NULL;
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_RESULT result = OV_ERR_OK;
+
+	if(value && (!pobj->v_Reset))
+	{
+		pobj->v_status = 0;
+		pobj->v_result = OV_ERR_OK;
+		Ov_ForEachChildEx(ov_containment, pobj, pClient, ksbase_ClientBase)
+		{	/*	find the object in the containment which is derived from ClientBase	*/
+			break;
+		}
+
+		if(pClient)
+		{
+			Ov_GetVTablePtr(ksbase_ClientBase, pVtblClient, pClient);
+			if(pVtblClient)
+			{
+				result = pVtblClient->m_reset(pClient);
+			}
+		}
+	}
+
+	pobj->v_Reset = value;
+	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_Submit_set(OV_INSTPTR_ksapi_KSApiCommon pobj, OV_BOOL value)
+{
+	OV_VTBLPTR_ksapi_KSApiCommon pVtblthis = NULL;
+
+	if(value && (!pobj->v_Submit))
+	{
+		Ov_GetVTablePtr(ksapi_KSApiCommon, pVtblthis, pobj);
+		if(!pVtblthis)
+			return OV_ERR_BADOBJTYPE;
+
+		pVtblthis->m_submit(pobj);
+	}
+
+	pobj->v_Submit = value;
+	return OV_ERR_OK;;
+}
+
+OV_DLLFNCEXPORT void ksapi_KSApiCommon_submit(
+	OV_INSTPTR_ksapi_KSApiCommon          pobj
+) {
+	return;
+}
+
+OV_DLLFNCEXPORT OV_ACCESS ksapi_KSApiCommon_getaccess(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+) {
+	/*
+	*	local variables
+	*/
+
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			  if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+				  return OV_AC_NONE;
+			  else
+				  return OV_AC_READWRITE;
+			}
+			break;
+		default:
+			break;
+	}
+
+	return ov_object_getaccess(pobj, pelem, pticket);
 }
 

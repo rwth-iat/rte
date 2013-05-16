@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_shutdown(
 }
 
 OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
-    OV_INSTPTR_ksapi_getEPidentifiers          pobj
+    OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
     return;
 }

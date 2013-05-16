@@ -43,7 +43,7 @@ OV_DLLFNCEXPORT void ksapi_createObject_startup(
 }
 
 OV_DLLFNCEXPORT void ksapi_createObject_submit(
-    OV_INSTPTR_ksapi_createObject          pobj
+		OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
     return;
 }

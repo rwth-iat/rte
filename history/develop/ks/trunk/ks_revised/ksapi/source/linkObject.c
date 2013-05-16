@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT void ksapi_linkObject_shutdown(
 }
 
 OV_DLLFNCEXPORT void ksapi_linkObject_submit(
-    OV_INSTPTR_ksapi_linkObject          pobj
+	OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
     return;
 }

@@ -43,7 +43,7 @@ OV_DLLFNCEXPORT void ksapi_deleteObject_startup(
 }
 
 OV_DLLFNCEXPORT void ksapi_deleteObject_submit(
-    OV_INSTPTR_ksapi_deleteObject          pobj
+		OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
     return;
 }

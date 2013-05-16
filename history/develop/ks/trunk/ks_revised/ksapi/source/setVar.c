@@ -23,6 +23,11 @@
 
 #include "ksapi.h"
 #include "libov/ov_macros.h"
+#include "ksapi_commonFuncs.h"
+#include "ks_logfile.h"
+
+
+void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
 
 
 OV_DLLFNCEXPORT OV_RESULT ksapi_setVar_constructor(
@@ -31,16 +36,14 @@ OV_DLLFNCEXPORT OV_RESULT ksapi_setVar_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_setVar pinst = Ov_StaticPtrCast(ksapi_setVar, pobj);
-    OV_RESULT    result;
+     OV_RESULT    result;
 
     /* do what the base class does first */
-    result = ov_object_constructor(pobj);
+    result = ksapi_variableOperation_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
     /* do what */
-
 
     return OV_ERR_OK;
 }
@@ -51,12 +54,8 @@ OV_DLLFNCEXPORT void ksapi_setVar_destructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_setVar pinst = Ov_StaticPtrCast(ksapi_setVar, pobj);
-
-    /* do what */
-
     /* destroy object */
-    ov_object_destructor(pobj);
+    ksapi_variableOperation_destructor(pobj);
 
     return;
 }
@@ -67,13 +66,11 @@ OV_DLLFNCEXPORT void ksapi_setVar_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_setVar pinst = Ov_StaticPtrCast(ksapi_setVar, pobj);
 
     /* do what the base class does first */
-    ksapi_KSApiCommon_startup(pobj);
+    ksapi_variableOperation_startup(pobj);
 
     /* do what */
-
 
     return;
 }
@@ -84,7 +81,6 @@ OV_DLLFNCEXPORT void ksapi_setVar_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_setVar pinst = Ov_StaticPtrCast(ksapi_setVar, pobj);
 
     /* do what */
 
@@ -95,9 +91,136 @@ OV_DLLFNCEXPORT void ksapi_setVar_shutdown(
 }
 
 OV_DLLFNCEXPORT void ksapi_setVar_submit(
-    OV_INSTPTR_ksapi_setVar          pobj
+	OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
-    return;
+    OV_INSTPTR_ksapi_setVar	pthis = Ov_StaticPtrCast(ksapi_setVar, pobj);
+	OV_INSTPTR_ksbase_ClientBase pClient = NULL;
+    OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+    OV_INSTPTR_ksapi_Variable pCurrVar = NULL;
+    OV_RESULT result;
+    OV_SETVAR_ITEM* items = NULL;
+    OV_UINT numberOfItems = 1;
+
+    if(!pobj->v_serverHost)
+    {
+    	KS_logfile_error(("%s: no serverHost set. aborting", pobj->v_identifier));
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pthis->v_result = OV_ERR_BADPARAM;
+    	return;
+    }
+
+    result = ksapi_getClientPointers(pobj, &pClient, &pVtblClient);
+    if(Ov_Fail(result))
+    {
+    	KS_logfile_error(("%s: submit: no Client found. Cannot submit", pobj->v_identifier));
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pthis->v_result = result;
+    	return;
+    }
+
+    result = ksbase_ClientBase_serverHost_set(pClient, pobj->v_serverHost);
+    if(Ov_Fail(result))
+    {
+    	KS_logfile_error(("%s: submit: could not set serverHost at Client", pobj->v_identifier));
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pthis->v_result = result;
+    	return;
+    }
+
+    pClient->v_holdConnection = pthis->v_holdConnection;
+
+    if(pobj->v_serverName)
+    {
+    	result = ksbase_ClientBase_serverName_set(pClient, pobj->v_serverName);
+    	if(Ov_Fail(result))
+    	{
+    		KS_logfile_error(("%s: submit: could not set serverName at Client", pobj->v_identifier));
+    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    		pthis->v_result = result;
+    		return;
+    	}
+    }
+    items = Ov_HeapMalloc(numberOfItems * sizeof(OV_SETVAR_ITEM));
+    if(!items)
+    {
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
+    	return;
+    }
+    if(pthis->v_path)
+    {
+    	items[0].path_and_name = pthis->v_path;	/*	see comment below	*/
+    	items[0].var_current_props = pthis->v_varValue;
+    }
+    else
+    {
+    	KS_logfile_error(("%s: submit: own Variable has empty path", pobj->v_identifier));
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pthis->v_result = result;
+    	Ov_HeapFree(items);
+    	return;
+    }
+    /*	iterate over variable objects in containment and linked ones and add them to the package	*/
+    Ov_ForEachChildEx(ov_containment, pthis, pCurrVar, ksapi_Variable)
+    {
+    	numberOfItems++;
+    	items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
+    	if(!items)
+    	{
+    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
+    		return;
+    	}
+    	if(pCurrVar->v_path)
+    	{
+			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+			items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
+			pCurrVar->v_order = numberOfItems;
+    	}
+    	else
+    	{
+    		KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    		pthis->v_result = result;
+    		Ov_HeapFree(items);
+    		return;
+    	}
+    }
+
+    Ov_ForEachChild(ksapi_operationToVariable, pthis, pCurrVar)
+    {
+    	numberOfItems++;
+    	items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
+    	if(!items)
+    	{
+    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
+    		return;
+    	}
+    	if(pCurrVar->v_path)
+    	{
+    		items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+    		items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
+    		pCurrVar->v_order = numberOfItems;
+    	}
+    	else
+    	{
+    		KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    		pthis->v_result = result;
+    		Ov_HeapFree(items);
+    		return;
+    	}
+    }
+
+
+    /*	do the actual submit	*/
+    pVtblClient->m_requestSetVar(pClient, NULL, numberOfItems, items, (OV_INSTPTR_ov_domain) pthis,
+    			&ksapi_setVar_callback);
+
+    Ov_HeapFree(items);
+
+	return;
 }
 
 OV_DLLFNCEXPORT void ksapi_setVar_setandsubmit(
@@ -107,6 +230,120 @@ OV_DLLFNCEXPORT void ksapi_setVar_setandsubmit(
 	OV_STRING 									path,
 	OV_ANY	 									setVar
 ) {
-    return;
+    OV_RESULT result;
+
+    result = ov_string_setvalue(&(pobj->v_serverHost), serverHost);
+    if(Ov_Fail(result))
+    {
+    	pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pobj->v_result = result;
+    	return;
+    }
+
+    result = ov_string_setvalue(&(pobj->v_serverName), serverName);
+    if(Ov_Fail(result))
+    {
+    	pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pobj->v_result = result;
+    	return;
+    }
+    result = ov_string_setvalue(&(pobj->v_path), path);
+    if(Ov_Fail(result))
+    {
+    	pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pobj->v_result = result;
+    	return;
+    }
+    result = Ov_SetAnyValue(&(pobj->v_varValue), &setVar);
+    if(Ov_Fail(result))
+    {
+    	pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+    	pobj->v_result = result;
+    	return;
+    }
+
+    ksapi_setVar_submit(Ov_StaticPtrCast(ksapi_KSApiCommon,pobj));
+	return;
 }
 
+
+void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
+{
+	OV_INSTPTR_ksapi_setVar thisSV = Ov_StaticPtrCast(ksapi_setVar, this);
+	OV_INSTPTR_ksbase_ClientBase pClient = Ov_StaticPtrCast(ksbase_ClientBase, that);
+	OV_INSTPTR_ksapi_Variable pCurrVar = NULL;
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_UINT itemsLength;
+	OV_RESULT* itemsResults = NULL;
+	OV_RESULT result;
+
+	if(!this || !that)
+	{
+		KS_logfile_error(("callback issued with NULL pointers. aborting."));
+		return;
+	}
+
+	Ov_GetVTablePtr(ksbase_ClientBase, pVtblClient, pClient);
+
+	if(!pVtblClient)
+	{
+		KS_logfile_error(("%s callback: could not determine Vtable of Client %s. aborting",
+				this->v_identifier, that->v_identifier));
+		thisSV->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisSV->v_result = OV_ERR_BADOBJTYPE;
+		return;
+	}
+	ov_memstack_lock();
+	result = pVtblClient->m_processSetVar(pClient, NULL, (OV_RESULT*) &(thisSV->v_result), &itemsLength, &itemsResults);
+	if(Ov_Fail(result))
+	{
+		thisSV->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisSV->v_result = result;
+		ov_memstack_unlock();
+		return;
+	}
+
+	if(Ov_Fail(thisSV->v_result))
+	{
+		thisSV->v_status = KSAPI_COMMON_EXTERNALERROR;
+		ov_memstack_unlock();
+		return;
+	}
+
+	thisSV->v_varRes = itemsResults[0];
+
+	/*	iterate over variable objects in containment and linked ones and fill in the results	*/
+	Ov_ForEachChildEx(ov_containment, thisSV, pCurrVar, ksapi_Variable)
+	{
+		if(pCurrVar->v_order)
+		{
+			if(pCurrVar->v_order <= itemsLength)
+			{
+				pCurrVar->v_varRes = itemsResults[pCurrVar->v_order-1];
+			}
+			else
+			{
+				pCurrVar->v_varRes = OV_ERR_BADPLACEMENT;
+			}
+		}
+	}
+
+	Ov_ForEachChild(ksapi_operationToVariable, thisSV, pCurrVar)
+	{
+		if(pCurrVar->v_order)
+		{
+			if(pCurrVar->v_order <= itemsLength)
+
+			{
+				pCurrVar->v_varRes = itemsResults[pCurrVar->v_order-1];
+			}
+			else
+			{
+				pCurrVar->v_varRes = OV_ERR_BADPLACEMENT;
+			}
+		}
+	}
+
+	ov_memstack_unlock();
+	return;
+}
