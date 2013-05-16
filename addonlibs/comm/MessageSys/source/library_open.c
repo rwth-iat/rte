@@ -29,7 +29,6 @@
 #include "libov/ov_time.h"
 #include "libov/ov_result.h"
 #include "libov/ov_library.h"
-#include "ksapitcp.h"
 
 #ifdef ov_library_open_MessageSys
 #undef ov_library_open_MessageSys
@@ -42,7 +41,6 @@
 OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_ov_domain domain = NULL;
-	OV_INSTPTR_ksapitcp_TCPChannel			tcpChannel = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery				MsgSysDelivery  = NULL;
 	/*
 	 *    set the global variables of the original version
@@ -67,15 +65,6 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	if(Ov_OK(result))
 		MsgSysDelivery->v_cycInterval = 1;
 
-	//channel
-	domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(SENDINGINSTANCE, 2);
-	result = Ov_CreateObject(ksapitcp_TCPChannel, tcpChannel, domain, "channel");
-	if(Ov_Fail(result) && (result != OV_ERR_ALREADYEXISTS)){
-		ov_memstack_lock();
-		ov_logfile_error("messageSys: Fatal: Couldn't create Object 'channel' Reason: %s", ov_result_getresulttext(result));
-		ov_memstack_unlock();
-		return result;
-	}
 
 	ov_memstack_unlock();
 	return OV_ERR_OK;

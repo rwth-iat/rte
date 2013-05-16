@@ -1,18 +1,9 @@
 #ifndef MessageSys_OVF_INCLUDED
 #define MessageSys_OVF_INCLUDED
 
-//MSGSYS Functions start here
-typedef OV_DLLFNCEXPORT void MSGSYS_RET_FNC(
-		OV_INSTPTR_ov_object 					pobj,
-		OV_INSTPTR_ov_object				message,
-		OV_STRING 									errorstring,
-		OV_INT	 									errorcode
-);
-
 typedef OV_DLLFNCEXPORT OV_BOOL SENDMESSAGE_FNC(
 	OV_INSTPTR_MessageSys_MsgDelivery	component,
-	OV_INSTPTR_MessageSys_Message	message,
-	OV_FNCPTR_MSGSYS_RET_FNC				pfnc
+	OV_INSTPTR_MessageSys_Message	message
 	);
 	
 typedef OV_DLLFNCEXPORT void SERIALIZEMESSAGE_FNC(

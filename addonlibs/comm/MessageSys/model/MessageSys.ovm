@@ -1,6 +1,5 @@
 #include "ov.ovm"
 #include "ksapi.ovm"
-#include "ksapitcp.ovm"
 
 LIBRARY MessageSys
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -8,7 +7,7 @@ LIBRARY MessageSys
 	COPYRIGHT = "";
 	COMMENT   = "";
 	
-CLASS MsgDelivery : CLASS ksserv/ComTask
+CLASS MsgDelivery : CLASS ksbase/ComTask
 	IS_INSTANTIABLE;
 	VARIABLES
 		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar called by ksapi";
@@ -18,9 +17,8 @@ CLASS MsgDelivery : CLASS ksserv/ComTask
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-		typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
+		typemethod : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
 		startup		:	C_FUNCTION <OV_FNC_STARTUP>;
-		retMethod : C_FUNCTION <KSAPI_FNC_RET>;
 		sendMessage : C_FUNCTION <SENDMESSAGE_FNC>;
 		findService : C_FUNCTION <MSGSYS_FINDSERVICE_FNC>;
 	END_OPERATIONS;
@@ -41,9 +39,6 @@ CLASS Message : CLASS ov/object
 		msgBody : STRING HAS_ACCESSORS;
 		msgSTRING : STRING HAS_ACCESSORS;
 		sendString : STRING FLAGS =	"n";
-		//this could be used by services to "subscripe" to a specific message for delivery. 
-		//MsgComponent will call the pointer if message is sent 
-		returnmethodptr	:	C_TYPE <OV_FNCPTR_MSGSYS_RET_FNC>	FLAGS =	"n"	COMMENT	=	"Pointer to returnMethod";
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;

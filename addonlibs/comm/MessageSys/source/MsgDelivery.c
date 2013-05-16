@@ -10,6 +10,7 @@
 #include "libov/ov_time.h"
 #include "libov/ov_result.h"
 #include "MessageSys_helpers.h"
+#include "ksapi_commonFuncs.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_constructor(
@@ -19,35 +20,32 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_constructor(
 	 *   local variables
 	 */
 	OV_INSTPTR_MessageSys_MsgDelivery this = Ov_StaticPtrCast(MessageSys_MsgDelivery, pobj);
-	OV_RESULT result = result = ksserv_ComTask_constructor(pobj);
-	OV_INSTPTR_ksapi_setString setstring =  NULL;
-	OV_VTBLPTR_ksapi_setString setstringVtable = NULL;
+	OV_RESULT result;
+	OV_INSTPTR_ksapi_setVar setVar =  NULL;
+	OV_VTBLPTR_ksapi_setVar setVarVtable = NULL;
 	OV_VTBLPTR_MessageSys_MsgDelivery thisVtable = NULL;
 
 	//OV_INSTPTR_ov_domain 			domain = NULL;
 
 	/* do what the base class does first */
-	if(Ov_Fail(result))return result;
+	result = ksbase_ComTask_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
 
 	this->v_actimode = TRUE;
 	this->v_cycInterval = 1;
 
 	/* do what */
 
-	//initialize setString
-	if(setstring){
-		ksapi_KSCommon_deregisterMethod((OV_INSTPTR_ksapi_KSCommon)setstring);
-	}
 
-	if (Ov_Fail(Ov_CreateObject(ksapi_setString,setstring,this, "sendingInstance"))){
+	if (Ov_Fail(Ov_CreateObject(ksapi_setVar,setVar,this, "sendingInstance"))){
 		ov_logfile_error("MessageDelivery/constructor: Error while creating the setString/sendingInstance!");
 		return OV_ERR_GENERIC;
 	}
 
 	//set up return method -- TODO Check: Why is this required? Startup is NOT enough!!!
-	Ov_GetVTablePtr(ksapi_setString, setstringVtable, setstring);
+	Ov_GetVTablePtr(ksapi_setVar, setVarVtable, setVar);
 	Ov_GetVTablePtr(MessageSys_MsgDelivery, thisVtable, this);
-	setstringVtable->m_registerMethod((OV_INSTPTR_ksapi_KSCommon)setstring,thisVtable->m_retMethod);
 
 	return OV_ERR_OK;
 }
@@ -58,17 +56,16 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_startup(
 
 ) {
 
-	OV_INSTPTR_ksapi_setString setstring =  NULL;
-	OV_VTBLPTR_ksapi_setString setstringVtable = NULL;
+	OV_INSTPTR_ksapi_setVar setVar =  NULL;
+	OV_VTBLPTR_ksapi_setVar setVarVtable = NULL;
 	OV_VTBLPTR_MessageSys_MsgDelivery thisVtable = NULL;
 	OV_INSTPTR_MessageSys_MsgDelivery this = Ov_StaticPtrCast(MessageSys_MsgDelivery, pobj);
 	OV_STRING tmpPath = NULL;
 
 	ov_string_print(&tmpPath, "%s",SENDINGINSTANCE);
-	setstring = (OV_INSTPTR_ksapi_setString)ov_path_getobjectpointer(tmpPath,2);
-	Ov_GetVTablePtr(ksapi_setString, setstringVtable, setstring);
+	setVar = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(tmpPath,2);
+	Ov_GetVTablePtr(ksapi_setVar, setVarVtable, setVar);
 	Ov_GetVTablePtr(MessageSys_MsgDelivery, thisVtable, this);
-	setstringVtable->m_registerMethod((OV_INSTPTR_ksapi_KSCommon)setstring,thisVtable->m_retMethod);
 
 	ov_string_setvalue(&tmpPath, NULL);
 
@@ -76,22 +73,35 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_startup(
 }
 
 OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
-		 OV_INSTPTR_ksserv_ComTask       pfb
+		 OV_INSTPTR_ksbase_ComTask       pfb
 ) {
 	/*
 	 *   local variables
 	 */
 	OV_INSTPTR_MessageSys_MsgDelivery this = Ov_StaticPtrCast(MessageSys_MsgDelivery, pfb);
-	OV_INSTPTR_ksapi_setString sendingInstance = NULL;
+	OV_INSTPTR_ksapi_setVar sendingInstance = NULL;
 	OV_INSTPTR_MessageSys_Message msg = NULL;
-	OV_STRING value = NULL;
+	OV_ANY value;
 	OV_STRING receiverAddress = NULL;
 	OV_STRING receiverName = NULL;
-	OV_STRING tmpPath = NULL;
 	unsigned usedWithMessage = 0;
 
 	msg = Ov_GetChild(MessageSys_MsgDelivery2CurrentMessage, this);
 	if(msg){ //Currently we are processing a message, lets see how far we are...
+		if((msg->v_msgStatus != MSGDONE) && (msg->v_msgStatus != MSGRECEIVERSERVICEERROR)
+				&& (msg->v_msgStatus != MSGFATALERROR))
+		{	/*	still sending / waiting for answer of ks-system	*/
+
+			sendingInstance = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(SENDINGINSTANCE,2);
+			if(sendingInstance->v_status == KSAPI_COMMON_REQUESTCOMPLETED)
+				msg->v_msgStatus = MSGDONE;
+			else if(sendingInstance->v_status == KSAPI_COMMON_INTERNALERROR)
+				msg->v_msgStatus = MSGFATALERROR;
+			else if(sendingInstance->v_status ==KSAPI_COMMON_EXTERNALERROR)
+				msg->v_msgStatus = MSGRECEIVERSERVICEERROR;
+
+		}
+
 		if(msg->v_msgStatus == MSGDONE){
 			Ov_Unlink(MessageSys_MsgDelivery2CurrentMessage, this, msg);
 			Ov_Unlink(MessageSys_MsgDelivery2Message, this, msg);
@@ -112,14 +122,11 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 			/*if(!Ov_OK(Ov_Link(MessageSys_MsgDelivery2Message, this, msg))){
 				ov_logfile_error("ServiceProvider: sendMessage: Couldn't link MessageObject with MessageQueue");
 			}*/
-		} //else not yet ready
-		//Collecting Garbage
-		ov_string_setvalue(&tmpPath,NULL);
-		ov_string_setvalue(&receiverAddress,NULL);
-		ov_string_setvalue(&receiverName,NULL);
-		ov_string_setvalue(&value,NULL);
+		}
 		return;
 	} else { // we are NOT currently handling a message - lets see if sth is needs to be done!
+		value.value.vartype = OV_VT_STRING;	/*	initialize value	*/
+		value.value.valueunion.val_string = NULL;
 		msg = Ov_GetFirstChild(MessageSys_MsgDelivery2Message, this);
 		if(msg){ // todo - do we need a loop here for ignoring sent messages?
 			//or are they deleted from the assertion?
@@ -140,15 +147,10 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				MessageSys_MsgDelivery_retrieveMessage_set(this, msg->v_sendString); //todo we might need to check return value for determining success?
 				//ov_logfile_debug("USED MEMORY AFTER RETRIEVEMSG == %u", ov_database_getused());
 				msg->v_msgStatus = MSGDONE; //this assumes that locally all messages are delivered
-				//Collecting Garbage
-				ov_string_setvalue(&tmpPath,NULL);
-				ov_string_setvalue(&receiverAddress,NULL);
-				ov_string_setvalue(&receiverName,NULL);
-				ov_string_setvalue(&value,NULL);
 				//ov_logfile_debug("USED MEMORY AFTER MSGCOMPTYPEMETHOD == %u", ov_database_getused());
 				return;
 			} else { //send "normal"-remotly
-				ov_string_setvalue(&value,msg->v_sendString);
+				ov_string_setvalue(&(value.value.valueunion.val_string),msg->v_sendString);
 				ov_string_setvalue(&receiverAddress,MessageSys_Message_receiverAddress_get(msg));
 				ov_string_setvalue(&receiverName,MessageSys_Message_receiverName_get(msg));
 			}
@@ -158,21 +160,19 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				ov_logfile_error("MessageDelivery/typeMethod: Couldn't link MessageObject with CurrentMessage");
 
 				//Collecting Garbage
-				ov_string_setvalue(&tmpPath,NULL);
 				ov_string_setvalue(&receiverAddress,NULL);
 				ov_string_setvalue(&receiverName,NULL);
-				ov_string_setvalue(&value,NULL);
+				ov_variable_setanyvalue(&value, NULL);
 				//ov_logfile_debug("USED MEMORY AFTER MSGCOMPTYPEMETHOD == %u", ov_database_getused());
 				return;
 			}
 
 			////ov_logfile_debug("MessageDelivery/typeMethod: Calling ksapi/setandsubmit");
-			ov_string_print(&tmpPath, "%s", SENDINGINSTANCE);
-			sendingInstance = (OV_INSTPTR_ksapi_setString)ov_path_getobjectpointer(tmpPath,2);
+			sendingInstance = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(SENDINGINSTANCE,2);
 			if(sendingInstance)
 			{
 				//ov_logfile_debug("USED MEMORY BEFORE KSAPI == %u", ov_database_getused());
-				ksapi_setString_setandsubmit(sendingInstance,receiverAddress,receiverName,"/communication/MessageSys.retrieveMessage",value);
+				ksapi_setVar_setandsubmit(sendingInstance,receiverAddress,receiverName,"/communication/MessageSys.retrieveMessage", value);
 				//ov_logfile_debug("USED MEMORY AFTER KSAPI == %u", ov_database_getused());
 			}
 			else
@@ -180,54 +180,14 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				ov_logfile_error("MessageDelivery/typeMethod: Couldn't find sendingInstance, no further sending will proceed");
 			}
 		}
+		ov_string_setvalue(&receiverAddress,NULL);
+		ov_variable_setanyvalue(&value, NULL);
+		ov_string_setvalue(&receiverName,NULL);
 	}
 
-	//Collecting Garbage
-	ov_string_setvalue(&tmpPath,NULL);
-	ov_string_setvalue(&receiverAddress,NULL);
-	ov_string_setvalue(&receiverName,NULL);
-	ov_string_setvalue(&value,NULL);
+
 
 	//ov_logfile_debug("USED MEMORY AFTER MSGCOMPTYPEMETHOD == %u", ov_database_getused());
-	return;
-}
-
-OV_DLLFNCEXPORT void MessageSys_MsgDelivery_retMethod(
-		OV_INSTPTR_ov_object	pobj,
-		OV_STRING	errorstring,
-		OV_INT	errorcode
-) {
-	OV_INSTPTR_MessageSys_MsgDelivery component = NULL;
-	OV_INSTPTR_MessageSys_Message msg = NULL;
-	OV_INSTPTR_ov_object sobj = NULL;
-	OV_STRING service = NULL;
-	OV_STRING tmpPath = NULL;
-
-	ov_string_print(&tmpPath, "%s",MSGDELIVERY);
-	component = (OV_INSTPTR_MessageSys_MsgDelivery)ov_path_getobjectpointer(tmpPath, 2);
-	if(component){
-		msg = (OV_INSTPTR_MessageSys_Message)Ov_GetFirstChild(MessageSys_MsgDelivery2CurrentMessage,component);
-		ov_memstack_lock();
-		service = MessageSys_Message_getSenderComponent(msg->v_sendString);
-		//new findService function called here
-		if(Ov_Fail(MessageSys_MsgDelivery_findService(&sobj, service))){
-			//Ignore this for now for that the message will be sent by the client, there is no need to check this here.
-			//ov_logfile_error("MessageDelivery/retMethod: Couldn't find the ServiceRegistryEntry - %s!",service);
-		} else {
-			if(msg->v_returnmethodptr){
-				msg->v_returnmethodptr(pobj,(OV_INSTPTR_ov_object)msg,errorstring,errorcode);
-			}
-		}
-		ov_memstack_unlock();
-	}
-
-	if(errorcode == 1)msg->v_msgStatus = MSGDONE;
-	else if(errorcode == 8)msg->v_msgStatus = MSGRECEIVERSERVICEERROR;
-	else msg->v_msgStatus = MSGFATALERROR;
-
-	//Ov_DeleteObject(msg); //uncommenting this frees memory faster
-	//Collecting Garbage
-	ov_string_setvalue(&tmpPath, NULL);
 	return;
 }
 
@@ -303,19 +263,9 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_retrieveMessage_set(
 
 OV_DLLFNCEXPORT OV_BOOL MessageSys_MsgDelivery_sendMessage(
 		OV_INSTPTR_MessageSys_MsgDelivery         component,
-		OV_INSTPTR_MessageSys_Message          message,
-		OV_FNCPTR_MSGSYS_RET_FNC	pfnc
+		OV_INSTPTR_MessageSys_Message          message
 ) {
 	if(message->v_msgStatus == MSGREADYFORSENDING){
-
-		if (message && pfnc){
-			message->v_returnmethodptr = pfnc;
-		}
-
-		else {
-			// DK: Commented out the most useless error message I have seen so far. Simply too unique to deserve deletion.
-			//ov_logfile_error("MessageDelivery/sendMessage: register returnMethod failed(this could be normal, so IGNORE this); missing object or function pointer");
-		}
 
 		if(!Ov_OK(Ov_Link(MessageSys_MsgDelivery2Message, component, message))){
 			ov_logfile_error("MessageDelivery/sendMessage: Couldn't link MessageObject with MessageQueue");
