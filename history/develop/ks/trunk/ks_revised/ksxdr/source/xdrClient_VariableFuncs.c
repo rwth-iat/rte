@@ -41,7 +41,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetVar(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	KS_DATAPACKET tempDataPacket;
-	OV_UINT tempXID;
 
 
 	if((thisCl->v_state != KSBASE_CLST_COMPLETED) && (thisCl->v_state != KSBASE_CLST_INITIAL))
@@ -76,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetVar(
 	do{	/*	using a do...while(0) to run this block once and be able to use break-directives to jump out when an error occurs	*/
 
 		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_GETVAR, pChannel->v_usesStreamProtocol, &(tempDataPacket), &tempXID, &msgindex);
+		result = ksxdr_generateClientMessageHeader(KS_GETVAR, pChannel->v_usesStreamProtocol, &(tempDataPacket), &(thisCl->v_tempXID), &msgindex);
 		if(Ov_Fail(result))
 			break;
 
@@ -86,7 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetVar(
 			break;
 
 		/*	path array	*/
-		result =  KS_DATAPACKET_write_xdr_array(&(tempDataPacket), (void**)paths, sizeof(OV_STRING), (OV_UINT*) &items_length, (xdr_writefncptr) &(KS_DATAPACKET_write_xdr_string));
+		result =  KS_DATAPACKET_write_xdr_array(&(tempDataPacket), (void**)&paths, sizeof(OV_STRING), (OV_UINT*) &items_length, (xdr_writefncptr) &(KS_DATAPACKET_write_xdr_string));
 		if(Ov_Fail(result))
 			break;
 
@@ -146,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetVar(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_len,
-		OV_GETVAR_ITEM* items_val
+		OV_GETVAR_ITEM** items_val
 ) {
 	/*
 	 *   local variables
@@ -158,7 +157,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetVar(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_val, sizeof(OV_GETVAR_ITEM), items_len, (xdr_readfncptr) &xdr_read_OV_GETVAR_ITEM);
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_GETVAR_ITEM), items_len, (xdr_readfncptr) &xdr_read_OV_GETVAR_ITEM);
 	else
 		return OV_ERR_OK;
 }
@@ -184,7 +183,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestSetVar(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	KS_DATAPACKET tempDataPacket;
-	OV_UINT tempXID;
 
 
 	if((thisCl->v_state != KSBASE_CLST_COMPLETED) && (thisCl->v_state != KSBASE_CLST_INITIAL))
@@ -219,7 +217,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestSetVar(
 	do{	/*	using a do...while(0) to run this block once and be able to use break-directives to jump out when an error occurs	*/
 
 		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_SETVAR, pChannel->v_usesStreamProtocol, &(tempDataPacket), &tempXID, &msgindex);
+		result = ksxdr_generateClientMessageHeader(KS_SETVAR, pChannel->v_usesStreamProtocol, &(tempDataPacket), &(thisCl->v_tempXID), &msgindex);
 		if(Ov_Fail(result))
 			break;
 
@@ -250,7 +248,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestSetVar(
 	{
 		/*	port is known --> copy message to channel and send	*/
 		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-		pChannel->v_outData = tempDataPacket;
+		pChannel->v_outData = tempDataPacket;	/*	channel will free it after sending	*/
 		thisCl->v_sentXID = thisCl->v_tempXID;
 		result = initiateConnection(thisCl, pChannel, pVtblChannel, FALSE, thisCl->v_serverHost, thisCl->v_serverPort);
 		if(Ov_Fail(result))
@@ -267,7 +265,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestSetVar(
 	{
 		/*	port is not known --> copy message to temporary location, save callbackfunction and sendxid	*/
 		ksbase_free_KSDATAPACKET(&(thisCl->v_dataToSend));
-		thisCl->v_dataToSend = tempDataPacket;
+		thisCl->v_dataToSend = tempDataPacket;	/*	will be freed after sending	*/
 		thisCl->v_tempCallback = thisCl->v_callback;
 		result = ksxdr_xdrClient_requestGetServer(Ov_StaticPtrCast(ksbase_ClientBase, thisCl), NULL, thisCl->v_serverName, 2, NULL, NULL);
 		if(Ov_Fail(result))
@@ -290,7 +288,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processSetVar(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_RESULT* items_results
+		OV_RESULT** items_results
 ) {
 	/*
 	 *   local variables
@@ -302,7 +300,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processSetVar(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_results, sizeof(OV_RESULT), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 			(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
 	else
 		return OV_ERR_OK;

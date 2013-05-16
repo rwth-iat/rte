@@ -149,7 +149,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processCreateObject(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_CREATEOBJECTITEM_RES* items_val
+		OV_CREATEOBJECTITEM_RES** items_val
 ) {
 	/*
 	 *   local variables
@@ -161,7 +161,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processCreateObject(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_val, sizeof(OV_CREATEOBJECTITEM_RES), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_CREATEOBJECTITEM_RES), items_length,
 				(xdr_readfncptr) &xdr_read_OV_CREATEOBJECTITEM_RES);
 	else
 		return OV_ERR_OK;
@@ -293,7 +293,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processDeleteObject(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_RESULT* items_results
+		OV_RESULT** items_results
 ) {
 	/*
 	 *   local variables
@@ -305,7 +305,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processDeleteObject(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_results, sizeof(OV_RESULT), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
 	else
 		return OV_ERR_OK;
@@ -437,7 +437,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRenameObject(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_RESULT* items_results
+		OV_RESULT** items_results
 ) {
 	/*
 	 *   local variables
@@ -449,7 +449,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRenameObject(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_results, sizeof(OV_RESULT), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
 	else
 		return OV_ERR_OK;
@@ -581,7 +581,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processLink(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_RESULT* items_results
+		OV_RESULT** items_results
 ) {
 	/*
 	 *   local variables
@@ -593,7 +593,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processLink(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_results, sizeof(OV_RESULT), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
 	else
 		return OV_ERR_OK;
@@ -725,7 +725,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnLink(
 		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result,
 		OV_UINT* items_length,
-		OV_RESULT* items_results
+		OV_RESULT** items_results
 ) {
 	/*
 	 *   local variables
@@ -737,7 +737,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnLink(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) &items_results, sizeof(OV_RESULT), items_length,
+		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
 	else
 		return OV_ERR_OK;

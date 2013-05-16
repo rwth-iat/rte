@@ -156,8 +156,9 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 		}
 		return;
 
-	case (KSBASE_CLST_COMPLETED | XDRCL_WAITINGFORPORT):	/*	set the serverPort variable, open new connection and send previously generated message	*/
-	{
+	case (KSBASE_CLST_COMPLETED | XDRCL_WAITINGFORPORT):
+	{/*	set the serverPort variable, open new connection and send previously generated message
+	 	 this status is only reached, if we asked the manager for the port	*/
 		OV_RESULT	getSrvRes;
 		OV_STRING	servername = NULL;
 		OV_UINT		serverVersion;
@@ -216,15 +217,27 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 		if((pChannel->v_ConnectionState == KSBASE_CONNSTATE_CLOSED))
 		{
 			initiateConnection(thisCl, pChannel, pVtblChannel, FALSE, thisCl->v_serverHost, thisCl->v_serverPort);
+			thisCl->v_state = (KSBASE_CLST_COMPLETED | KSBASE_CLST_AWAITINGCONNECTION);
 			return;
 		}
-		if((pChannel->v_ConnectionState == KSBASE_CONNSTATE_OPEN))
+		return;
+	}
+
+	case (KSBASE_CLST_COMPLETED | KSBASE_CLST_AWAITINGCONNECTION):
+		/*	reopening connection after getserver
+		 	 this status is only reached, if we asked the manager for the port	*/
+		result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+		if(Ov_Fail(result))
+		{
+			KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
+			return;
+		}
+		if(pChannel->v_ConnectionState == KSBASE_CONNSTATE_OPEN)
 		{
 			/*	channel is fine --> hand over request xdr to channel and send it, set sentXID and callbackfunction	*/
-
 			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-			pChannel->v_outData = thisCl->v_dataToSend;
-			thisCl->v_dataToSend.data = NULL;
+			pChannel->v_outData = thisCl->v_dataToSend;	/*	will be freed by channel after sending	*/
+			thisCl->v_dataToSend.data = NULL;	/*	reset dataToSend	*/
 			thisCl->v_dataToSend.length = 0;
 			thisCl->v_dataToSend.readPT = NULL;
 			thisCl->v_dataToSend.writePT = NULL;
@@ -233,8 +246,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 			pVtblChannel->m_SendData(pChannel);
 			thisCl->v_state = KSBASE_CLST_AWAITINGANSWER;
 		}
-		return;
-	}
+	break;
 	case KSBASE_CLST_ERROR:
 		thisCl->v_actimode = 0;
 		return;
@@ -315,7 +327,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_HandleData(
 	/*
 	 * we need to differentiate if we're doing a regualr request here or if we're getting the port (GETSERVER) for another ks-service
 	 */
-		if((!(*thisCl->v_serverPort)) && ((thisCl->v_sentProcID != KS_GETSERVER) && (thisCl->v_sentProcID != KS_REGISTER) && (thisCl->v_sentProcID != KS_UNREGISTER)))
+		if(((!thisCl->v_serverPort) || !(*thisCl->v_serverPort)) && ((thisCl->v_sentProcID != KS_GETSERVER) && (thisCl->v_sentProcID != KS_REGISTER) && (thisCl->v_sentProcID != KS_UNREGISTER)))
 		{	/*	port unknown and not working on getserver, register or unregister --> we're getting a port for another ks-service --> set state to COMPLETED | WAITINGFORPORT	*/
 			thisCl->v_state = KSBASE_CLST_COMPLETED | XDRCL_WAITINGFORPORT;
 		}

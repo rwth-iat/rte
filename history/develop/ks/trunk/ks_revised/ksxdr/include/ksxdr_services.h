@@ -60,3 +60,6 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMessage);
 
 void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin);
+
+/*	callbackfunction for processing the getserver at the beginning of a ks-service call	*/
+void GetServerCallback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);

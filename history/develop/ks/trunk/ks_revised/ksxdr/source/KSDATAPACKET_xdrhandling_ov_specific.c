@@ -125,7 +125,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* dat
 	if(Ov_Fail(result))
 		return result;
 
-	switch(value->vartype) {
+	switch(value->vartype & OV_VT_KSMASK) {
 		case OV_VT_BOOL:
 			return KS_DATAPACKET_read_xdr_OV_BOOL(datapacket, &value->valueunion.val_bool);
 		case OV_VT_INT:
@@ -187,15 +187,16 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* dat
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_VAR_VALUE(KS_DATAPACKET* datapacket, OV_VAR_VALUE* value)
 {
 	OV_RESULT result;
+	OV_VAR_TYPE temptype = (value->vartype & OV_VT_KSMASK);
 
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	result = KS_DATAPACKET_write_xdr_OV_VAR_TYPE(datapacket, &value->vartype);
+	result = KS_DATAPACKET_write_xdr_OV_VAR_TYPE(datapacket, &temptype);
 	if(Ov_Fail(result))
 		return result;
 
-	switch(value->vartype) {
+	switch(value->vartype & temptype) {
 	case OV_VT_BOOL:
 		return KS_DATAPACKET_write_xdr_OV_BOOL(datapacket, &value->valueunion.val_bool);
 	case OV_VT_INT:

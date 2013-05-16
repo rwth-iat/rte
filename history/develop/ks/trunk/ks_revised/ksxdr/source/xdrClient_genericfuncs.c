@@ -461,3 +461,13 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 	return OV_ERR_OK;
 }
 
+void GetServerCallback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
+{
+	//OV_INSTPTR_ksxdr_xdrClient callingCl = Ov_StaticPtrCast(ksxdr_xdrClient, this);
+	//OV_INSTPTR_ksxdr_xdrClient callbackOwner = Ov_StaticPtrCast(ksxdr_xdrClient, that);
+
+	//OV_RESULT result;
+
+
+}
+
