@@ -175,7 +175,7 @@ if {[eq ${in1} t] == 1} {
 set i 1
 set out ""
 
-set content1 [glob -tails -nocomplain -directory ${TEMPLATEDIR} "*"]
+set content1 [glob -types d -tails -nocomplain -directory ${TEMPLATEDIR} "*"]
 
 foreach item $content1 {
 	   append out "$i  "
@@ -201,7 +201,7 @@ puts "number not allowed"
 continue}
 # Name des gewählten Templateordners bestimmen
 set DIRNAME [lindex $content1 ${DIRNUMBER}-1]
-set content2 [glob -tails -nocomplain -directory ${TEMPLATEDIR}/$DIRNAME "*.fbd"]
+set content2 [glob -types f -tails -nocomplain -directory ${TEMPLATEDIR}/$DIRNAME "*.fbd"]
 # content2 enthält alle Files mit Endung .fbd
 foreach item $content2 {
 	   set out "-  "
