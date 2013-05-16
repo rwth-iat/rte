@@ -1,13 +1,6 @@
 #ifndef _KSAPI_OVT
 #define _KSAPI_OVT
 
-#include "ov_ksserver_xdr_stripped.h"
 
-/*************************************************************************/
-typedef void (* OV_FNCPTR_KSAPI_FNC_RET)(
-		OV_INSTPTR_ov_object 		pobj,
-		OV_STRING 						errorstring,
-		OV_INT	 						errorcode
-);
 
 #endif //_KSAPI_OVT
