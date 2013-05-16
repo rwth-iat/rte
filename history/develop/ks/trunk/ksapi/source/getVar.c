@@ -25,6 +25,7 @@
 #include "libov/ov_macros.h"
 #include "ksapi_commonFuncs.h"
 #include "ks_logfile.h"
+#include "ksbase_helper.h"
 
 
 void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
@@ -206,6 +207,10 @@ OV_DLLFNCEXPORT void ksapi_getVar_submit(
 	/*	do the actual submit	*/
 	pVtblClient->m_requestGetVar(pClient, NULL, numberOfItems, varPaths, (OV_INSTPTR_ov_domain) pthis,
 			&ksapi_getVar_callback);
+	if(!(pClient->v_state & KSBASE_CLST_ERROR))
+		pthis->v_status = KSAPI_COMMON_WAITINGFORANSWER;
+	else
+		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
 
 	Ov_HeapFree(varPaths);
 
@@ -290,6 +295,8 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 		ov_memstack_unlock();
 		return;
 	}
+
+	thisGV->v_status = KSAPI_COMMON_REQUESTCOMPLETED;
 
 	thisGV->v_varRes = itemsVals[0].result;
 	if(Ov_OK(thisGV->v_varRes))

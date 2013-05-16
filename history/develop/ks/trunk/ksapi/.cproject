@@ -37,13 +37,13 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/fb/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../model/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/model/&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.26284511" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__NT__=1"/>

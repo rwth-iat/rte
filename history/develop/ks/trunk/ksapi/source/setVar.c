@@ -25,6 +25,7 @@
 #include "libov/ov_macros.h"
 #include "ksapi_commonFuncs.h"
 #include "ks_logfile.h"
+#include "ksbase_helper.h"
 
 
 void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
@@ -218,6 +219,11 @@ OV_DLLFNCEXPORT void ksapi_setVar_submit(
     pVtblClient->m_requestSetVar(pClient, NULL, numberOfItems, items, (OV_INSTPTR_ov_domain) pthis,
     			&ksapi_setVar_callback);
 
+    if(!(pClient->v_state & KSBASE_CLST_ERROR))
+    	pthis->v_status = KSAPI_COMMON_WAITINGFORANSWER;
+    else
+    	pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+
     Ov_HeapFree(items);
 
 	return;
@@ -311,7 +317,7 @@ void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 	}
 
 	thisSV->v_varRes = itemsResults[0];
-
+	thisSV->v_status = KSAPI_COMMON_REQUESTCOMPLETED;
 	/*	iterate over variable objects in containment and linked ones and fill in the results	*/
 	Ov_ForEachChildEx(ov_containment, thisSV, pCurrVar, ksapi_Variable)
 	{
