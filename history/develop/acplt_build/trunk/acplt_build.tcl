@@ -663,8 +663,8 @@ proc create_systools_and_servers {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {develop/ks/trunk/ksserv develop/fb develop/ks/trunk/ksservtcp develop/ks/trunk/ksservhttp develop/ks/trunk/ksapi develop/ks/trunk/ksapitcp develop/shutdown archive/vdivde3696 develop/ACPLTlab003lindyn}
-set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib develop/ks/trunk/fbcomlib}
+set included_libs {develop/ks/trunk/ks_legacy/ksserv develop/ks/trunk/ks_legacy/ksservtcp develop/ks/trunk/ks_legacy/ksservhttp develop/ks/trunk/ksbase develop/ks/trunk/ksxdr develop/ks/trunk/TCPbind develop/ks/trunk/ksapi develop/fb develop/shutdown}
+set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib}
 set notrunklist {ks}
 #iec61131stdfb IOdriverlib fbcomlib
 if {$release != 1} {
