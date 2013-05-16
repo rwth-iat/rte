@@ -124,8 +124,6 @@ LIBRARY fb
 			iexreq      : BOOL      FLAGS = "hp"              COMMENT = "internal execution request";
 			eexreq      : BOOL      FLAGS = "hn"              COMMENT = "external execution request";
 			maxcalctime : TIME_SPAN FLAGS = "hp" UNIT = "sec" COMMENT = "maximum calculation time";
-			Xpos        : INT       FLAGS = "hp"              COMMENT = "X-position";
-			Ypos        : INT       FLAGS = "hp"              COMMENT = "Y-position";
 			methcount   : UINT      FLAGS = "hn"              COMMENT = "method counter";
 		END_VARIABLES;
 		OPERATIONS
