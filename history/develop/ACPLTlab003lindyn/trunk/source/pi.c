@@ -168,10 +168,10 @@ void OV_DLLFNCEXPORT ACPLTlab003lindyn_pi_typemethod(
 		port->v_YI = port->v_YI + (port->v_YP * port->v_KI * port->v_DT);
 		/* limitation in case of YP+YI limit violation */
 	    if (port->v_YI + port->v_YP > port->v_YMAX)
-	    	{port->v_LIMV = 21; port->v_YI = port->v_YMAX - port->v_YP;
+	    	{port->v_LIMV = 21; port->v_YI = port->v_YI - (port->v_YP * port->v_KI * port->v_DT);
 	    	port->v_Y = port->v_YMAX; goto finish;}
 	    if (port->v_YI + port->v_YP < port->v_YMIN)
-	    	{port->v_LIMV = 22; port->v_YI = port->v_YMIN - port->v_YP;
+	    	{port->v_LIMV = 22; port->v_YI = port->v_YI + (port->v_YP * port->v_KI * port->v_DT);
 	    	port->v_Y = port->v_YMIN; goto finish;}
 	port->v_Y = port->v_YP + port->v_YI;
 	}
