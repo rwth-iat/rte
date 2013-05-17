@@ -221,15 +221,18 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			return;
 		}
 
-		for (walk = res; walk != NULL; walk = walk->ai_next) {
+		for (walk = res; walk != NULL; walk = walk->ai_next)
+		{
 			fd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-			if (fd == -1) {
+			if (fd == -1)
+			{
 				continue;
 			}
 
-			if (walk->ai_family == AF_INET6) {
-
-				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
+			if (walk->ai_family == AF_INET6)
+			{
+				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
+				{
 					continue;
 				}
 			}
@@ -239,11 +242,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				continue;
 			}
 
-			if (bind(fd, walk->ai_addr, walk->ai_addrlen)) {
+			if (bind(fd, walk->ai_addr, walk->ai_addrlen))
+			{
 				continue;
 			}
 
-			if (listen(fd, 5) == -1) {
+			if (listen(fd, 5) == -1)
+			{
 				continue;
 			}
 
@@ -251,6 +256,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if(getsockname(fd, sa, &sas))
 			{
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
+				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
@@ -258,6 +264,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 			{
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
+				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
@@ -269,6 +276,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if(n>=NFDS)
 				break;
 		}
+
 		freeaddrinfo(res);
 		if(thisLi->v_port == -1)
 		{
@@ -287,10 +295,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		sockfds[0] = thisLi->v_socket[0];
 		sockfds[1] = thisLi->v_socket[1];
+		KS_logfile_debug(("%s: are: %lu, %lu", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 		highest = 0;
 		FD_ZERO(&fds);
 		for (i = 0; i < 2; i++) {
-			if(sockfds[i] != -1)
+			if(sockfds[i] > -1)
 			{
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
@@ -302,8 +311,20 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		ret = select(highest+1, &fds, NULL, NULL, &waitd);
 		if(ret)
 			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
+#if OV_SYSTEM_NT
+		if(ret == SOCKET_ERROR)
+		{
+			errno = WSAGetLastError();
+#else
+		if(ret == -1)
+		{
+#endif
+			KS_logfile_error(("%s: select returned error %d", this->v_identifier, errno));
+			KS_logfile_print_sysMsg();
 
-		if(ret)	//if there is activity on the socket(s)
+		}
+
+		if(ret>0)	//if there is activity on the socket(s)
 		{
 			for (i = 0; i < 2; i++) {
 				if ((sockfds[i] != -1) && (!FD_ISSET(sockfds[i], &fds)))
@@ -314,6 +335,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
 				{
 					KS_logfile_error(("%s: getnameinfo for newly connected client failed", this->v_identifier));
+					KS_logfile_print_sysMsg();
 				}
 
 				KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));

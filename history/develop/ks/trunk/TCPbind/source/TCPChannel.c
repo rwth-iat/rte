@@ -643,7 +643,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_CloseConnection(
 	if(thisTCPCh->v_socket >= 0)
 	{
 		TCPbind_TCPChannel_socket_set(thisTCPCh, -1);
-		KS_logfile_debug(("TCPChannel %s socket %d closed", this->v_identifier, this->v_socket));
+		KS_logfile_debug(("TCPChannel %s socket %d closed", thisTCPCh->v_identifier, thisTCPCh->v_socket));
 	}
 	return;
 }
