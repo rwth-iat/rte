@@ -182,7 +182,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	char portbuf [12];
 	int fd = 0, n = 0;
 #define NFDS 2
-	int sockfds[NFDS];
+	int sockfds[NFDS]={-1,-1};
 	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
 	socklen_t sas = sizeof(sa_stor);
@@ -208,7 +208,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	if(!thisLi->v_SocketState)	//no socket open
 	{
 
-		if(ov_vendortree_getcmdlineoption_value("TCPbind_USEIPv6"))
+		if(!ov_vendortree_getcmdlineoption_value("TCPbind_NO_IPv6"))
 		{
 			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = PF_UNSPEC;
@@ -402,7 +402,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		if(ret>0)	//if there is activity on the socket(s)
 		{
-			for (i = 0; i < 2; i++) {
+			for (i = 0; (i < 2) && (i<ret); i++) {
 				if ((sockfds[i] != -1) && (!FD_ISSET(sockfds[i], &fds)))
 					continue;
 
