@@ -107,8 +107,9 @@ OV_RESULT ov_library_setglobalvars_kshttpd_new(void) {
 
 		/*	create protocol identificator for kshttpd	*/
 	pIdentificator = Ov_StaticPtrCast(kshttpd_httpIdentificator, Ov_SearchChild(ov_containment, pDomkshttpd, "Identificator"));
-	if(pIdentificator)
+	if(pIdentificator){
 		Ov_DeleteObject(pIdentificator);
+	}
 	pIdentificator = NULL;
 
 	result = Ov_CreateObject(kshttpd_httpIdentificator, pIdentificator, pDomkshttpd, "Identificator");
@@ -188,7 +189,7 @@ OV_RESULT ov_library_setglobalvars_kshttpd_new(void) {
 	 * 		create "sessions" container
 	 */
 	httpSessions = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttpd, "sessions"));
-	if(!httpStaticfiles) {
+	if(!httpSessions) {
 		result = Ov_CreateObject(ov_domain, httpSessions, pDomkshttpd, "sessions");
 		if(Ov_Fail(result))
 		{

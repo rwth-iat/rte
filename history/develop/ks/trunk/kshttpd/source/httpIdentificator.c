@@ -3,6 +3,7 @@
 #endif
 
 #include "kshttpd.h"
+#include "config.h"
 #include "libov/ov_macros.h"
 
 /**
@@ -45,16 +46,43 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
-	OV_INSTPTR_kshttpd_httpclienthandler
-		pClient = NULL;
-	OV_RESULT fr = OV_ERR_OK;
+    /*
+    *   local variables
+    */
+	OV_INSTPTR_kshttpd_httpclienthandler pClientHandler = NULL;
+	OV_UINT namecounter = 0;
+	char CHNameBuffer[29]; //"httpClientHandler + length MAXINT + '\0'
+	OV_RESULT result;
 
-	fr = Ov_CreateObject(kshttpd_httpclienthandler, pClient, &pdb->root, "test");
-	if(Ov_Fail(fr)){
-		return fr;
+	//get first free "httpClientHandler"-name
+	do {
+		pClientHandler = NULL;
+		namecounter++;
+		sprintf(CHNameBuffer, "httpClientHandler%lu", namecounter);
+		pClientHandler	= (OV_INSTPTR_kshttpd_httpclienthandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
+	} while (pClientHandler);
+
+	result = Ov_CreateObject(kshttpd_httpclienthandler, pClientHandler, this, CHNameBuffer);
+	if(Ov_OK(result))
+	{
+		KS_logfile_debug(("%s: ClientHandler created: %s", this->v_identifier, pClientHandler->v_identifier));
+		result = Ov_Link(ksbase_AssocChannelClientHandler, pchannel, pClientHandler);
+		if(Ov_Fail(result))
+		{
+			KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pClientHandler->v_identifier, pchannel->v_identifier));
+			return result;
+		}
+		else
+			return OV_ERR_OK;
 	}
-	//todo
-	//fr = Ov_Link(ksbase_AssocChannelClientHandler, pchannel, pClient);
-	return fr;
+	else
+	{
+		ov_memstack_lock();
+		KS_logfile_error(("%s: could not create ClientHandler: %s", this->v_identifier, ov_result_getresulttext(result)));
+		ov_memstack_unlock();
+		return result;
+	}
+
+
 }
 
