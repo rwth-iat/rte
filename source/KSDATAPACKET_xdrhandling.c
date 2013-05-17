@@ -299,7 +299,9 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_string(KS_DATAPACKET* datapack
 	temp = ov_memstack_alloc(xdradd + 4);		/*	reserve space for length (4bytes) and string	*/
 	if(!temp)
 		return OV_ERR_HEAPOUTOFMEMORY;
-		/*	copy in length	*/
+	/*	initialize	*/
+	memset(temp, 0, xdradd+4);
+	/*	copy in length	*/
 	for(i=0; i<4; i++)
 		temp[3-i] = ((char*)&length)[i];
 	/*	copy in data	*/
@@ -431,6 +433,8 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque(KS_DATAPACKET* datapack
 	temp = ov_memstack_alloc(xdradd + 4);	/*	reserver space for length (4bytes) and data	*/
 	if(!temp)
 		return OV_ERR_HEAPOUTOFMEMORY;
+	/*	initialize	*/
+	memset(temp, 0, xdradd+4);
 	for(i=0; i<4; i++)
 		temp[3-i] = ((char*)&length)[i];
 	memcpy((temp+4), value, length);
@@ -489,6 +493,8 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque_fixedlength(KS_DATAPACK
 		temp = ov_memstack_alloc(xdradd);	/*	reserve more space for alignment	*/
 		if(!temp)
 			return OV_ERR_HEAPOUTOFMEMORY;
+		/*	initialize	*/
+		memset(temp, 0, xdradd);
 		if(value)
 			memcpy(temp, value, length);
 		else
