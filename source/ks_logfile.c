@@ -18,7 +18,7 @@
 #include <string.h>
 #endif
 
-#if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR
+#if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR || LOG_KS_COMPILE
 static char			msg[1024];
 #if OV_SYSTEM_NT
 DLLFNCEXPORT void ks_logfile_print_sysMsg() {
