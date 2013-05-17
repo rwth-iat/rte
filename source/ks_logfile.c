@@ -11,9 +11,52 @@
 #include <time.h>
 #include <stdio.h>
 
+#if OV_SYSTEM_NT
+#include <windows.h>
+#else
+#include <errno.h>
+#include <string.h>
+#endif
+
 #if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR
 static char			msg[1024];
+#if OV_SYSTEM_NT
+DLLFNCEXPORT void ks_logfile_print_sysMsg() {
+    DWORD       eNum;
+    TCHAR       sysMsg[256];
+    TCHAR*      p;
+
+    // INIT
+    sysMsg[0] = 0;
+
+    eNum = GetLastError( );
+    FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+         NULL, eNum,
+         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
+         sysMsg, 255, NULL );
+
+    // Trim the end of the line and terminate it with a null
+    p = sysMsg;
+    while( ( *p > 31 ) || ( *p == 9 ) ) {
+        ++p;
+    }
+    do {
+        *p-- = 0;
+    } while( ( p >= sysMsg ) && ( ( *p == '.' ) || ( *p < 33 ) ) );
+
+    // Display the message
+    ks_logfile_error("\tfailed with error %lu (%s)",
+         (unsigned long)eNum, sysMsg);
+}
 #endif
+#else
+DLLFNCEXPORT void ks_logfile_print_sysMsg() {
+
+    ks_logfile_error("\tfailed with error %lu (%s)",
+         errno, strerror(errno));
+}
+#endif
+
 
 /**
   * Print info to logfile

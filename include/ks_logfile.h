@@ -94,6 +94,12 @@
 #define KS_logfile_error(_x_) ;
 #endif
 
+#if LOG_KS || LOG_KS_ERROR
+#define KS_logfile_print_sysMsg() ks_logfile_print_sysMsg()
+#else
+#define KS_logfile_print_sysMsg() ;
+#endif
+
 /**
 *	Print info to logfile
 */
@@ -125,3 +131,6 @@ DLLFNCEXPORT void ks_logfile_error(
 	const char*	format,
 	...
 );
+
+DLLFNCEXPORT void ks_logfile_print_sysMsg();
+
