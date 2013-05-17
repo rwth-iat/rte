@@ -57,7 +57,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 		ov_string_setvalue(&temp, NULL);\
 		return
 
-OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
+OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd){
 	OV_STRING random_number=NULL;
 	md5_hash_return hash;
 	OV_RESULT res;
@@ -159,7 +159,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STR
 				md5_string(&hash, temp);
 				ov_string_setvalue(&ha1, hash);
 				//HA2
-				ov_string_print(&temp, "%s:%s", request_type, cmd);
+				ov_string_print(&temp, "%s:%s", request_method, cmd);
 				md5_string(&hash, temp);
 				ov_string_setvalue(&ha2, hash);
 				//compute own response

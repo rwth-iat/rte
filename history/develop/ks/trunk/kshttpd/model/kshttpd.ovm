@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -39,7 +39,7 @@
 #include "ksbase.ovm"
 
 LIBRARY kshttpd
-	VERSION   = "V0.5 (06-Mar-2013)";
+	VERSION   = "V1.0 (17-May-2013)";
 	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
