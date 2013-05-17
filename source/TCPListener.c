@@ -224,7 +224,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		for (walk = res; walk != NULL; walk = walk->ai_next)
 		{
 			fd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+#if OV_SYSTEM_NT
+			if((fd==-1) || (fd==INVALID_SOCKET));
+#else
 			if (fd == -1)
+#endif
 			{
 				continue;
 			}
@@ -295,14 +299,20 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		sockfds[0] = thisLi->v_socket[0];
 		sockfds[1] = thisLi->v_socket[1];
-		KS_logfile_debug(("%s: are: %lu, %lu", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
+		KS_logfile_debug(("%s: sockets are: %lu, %lu", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 		highest = 0;
 		FD_ZERO(&fds);
 		for (i = 0; i < 2; i++) {
+#if OV_SYSTEM_NT
+			if((sockfds[i] > -1) && (sockfds[i] != INVALID_SOCKET))
+#else
 			if(sockfds[i] > -1)
+#endif
 			{
+
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
+
 			}
 		}
 
