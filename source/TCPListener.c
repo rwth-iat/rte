@@ -190,7 +190,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	fd_set fds;
-	struct sockaddr_in client_addr;
 	int highest;
 	int i;
 	struct timeval waitd;
@@ -209,7 +208,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	if(!thisLi->v_SocketState)	//no socket open
 	{
 
-		if(ov_vendortree_getcmdlineoption_value("TCPbind_USEIPV6"))
+		if(ov_vendortree_getcmdlineoption_value("TCPbind_USEIPv6"))
 		{
 			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = PF_UNSPEC;
@@ -301,13 +300,21 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		}
 		else
 		{
-			//bind
-			memset(&client_addr, 0, sizeof(client_addr));
-			client_addr.sin_family = AF_INET;
-			client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-			client_addr.sin_port = htons(TCPbind_TCPListener_port_get(thisLi));
-			//open socket
-			fd = socket(PF_INET, SOCK_STREAM, 0);
+			memset(&hints, 0, sizeof(struct addrinfo));
+			hints.ai_family = AF_INET;
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_flags = AI_PASSIVE;
+
+			sprintf(portbuf, "%lu", TCPbind_TCPListener_port_get(thisLi));
+
+			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
+			{
+				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			}
+
+			fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 #if OV_SYSTEM_NT
 			if((fd==-1) || (fd==INVALID_SOCKET))
 			{
@@ -321,21 +328,25 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
-			if(getsockname(fd, sa, &sas))
+
+			if (bind(fd, res->ai_addr, res->ai_addrlen))
 			{
-				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
-				KS_logfile_print_sysMsg();
+#if OV_SYSTEM_NT
+				errno = WSAGetLastError();
+#endif
+				KS_logfile_error(("%s: failed to bind to socket: %d", thisLi->v_identifier, errno));
+				ks_logfile_print_sysMsg();
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			}
+			if (listen(fd, 5) == -1)
+			{
+				KS_logfile_error(("%s: failed to start listening on socket: %d", thisLi->v_identifier, errno));
+				ks_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
-			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
-			{
-				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
-				KS_logfile_print_sysMsg();
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
-			}
 			if(thisLi->v_port == -1)
 			{
 				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
@@ -344,6 +355,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			thisLi->v_socket[1] = -1;
 			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
 		}
+			KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 	}
 		/**
 		 * Socket is open now
@@ -354,7 +366,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		sockfds[0] = thisLi->v_socket[0];
 		sockfds[1] = thisLi->v_socket[1];
-		KS_logfile_debug(("%s: sockets are: %lu and %lu", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 		highest = 0;
 		FD_ZERO(&fds);
 		for (i = 0; i < 2; i++) {

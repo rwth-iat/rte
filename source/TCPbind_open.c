@@ -25,7 +25,7 @@
 #include "libov/ov_vendortree.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_macros.h"
-
+#include "TCPbind_config.h"
 
 #ifdef ov_library_open_TCPbind
 #undef ov_library_open_TCPbind
@@ -126,7 +126,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 
 		if(port <0)	//no port number set --> check if we can connect to 7509
 		{
-			KS_logfile_debug(("TCPbind library open: no port specified. trying to connect to localhost:7509 to check for a manager"));
+			KS_logfile_warning(("TCPbind library open: no port specified. trying to connect to localhost:7509 to check for a manager"));
 			if(Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, ptestchannel, pTCPbindDom, "porttest")))
 			{
 				if(Ov_Fail(TCPbind_TCPChannel_OpenConnection(Ov_StaticPtrCast(ksbase_Channel, ptestchannel), "localhost", "7509")))
@@ -163,6 +163,12 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		pListener->v_ChannelNeedsClientHandler = TRUE;
 		//run typemethod once to create socket
 		TCPbind_TCPListener_typemethod(Ov_StaticPtrCast(ksbase_ComTask, pListener));
+		if(pListener->v_SocketState == TCPbind_CONNSTATE_COULDNOTOPEN)
+		{
+			ov_logfile_error("TCPbind library open: Listener could not open socket");
+			ov_memstack_unlock();
+			return result;
+		}
 		//read out port and print it
 		ov_logfile_info("TCPbind library open: listening on port %d", pListener->v_port);
 
