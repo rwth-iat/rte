@@ -36,65 +36,111 @@
 *
 ***********************************************************************/
 
-#include "ov.ovm"
-#include "ksserv.ovm"
+#include "ksbase.ovm"
 
-LIBRARY ksservhttp
-	VERSION   = "V0.2 (23-Feb-2012)";
+LIBRARY kshttpd
+	VERSION   = "V0.5 (06-Mar-2013)";
 	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
-	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT	= "Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
 	
 	/**
-		Documentation of httpserver.
-		@note Javadoc syntax is allowed here.
-		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
-	*/
-	CLASS httpserver : CLASS ksserv/ComTask
+	 *	Checks whether received data is conforming to the http protocol
+	 *	Criteria are: first byte equals the allowed HTTP methods
+	 */
+	CLASS httpIdentificator : CLASS ksbase/ProtocolIdentificator
 		IS_INSTANTIABLE;
-		COMMENT = "class for handling the listening port";
+		COMMENT = "class for identifing http communication";
 		VARIABLES
-			cycsecs	:	INT
-				INITIALVALUE = 0;
-			cycusecs	:	INT
-				INITIALVALUE = 1;
-			port : INT HAS_ACCESSORS
-				INITIALVALUE = 8080;
-			listensocket : INT HAS_ACCESSORS;
-			status	:	INT
-				COMMENT	=	"0:OK"
-				INITIALVALUE	=	1;
-			deleted	:	BOOL
-				INITIALVALUE = FALSE;
+			AllowedMethods[]	:	STRING
+			INITIALVALUE = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
 		END_VARIABLES;
-	
 		OPERATIONS
-			startup : C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
-			typemethod : C_FUNCTION <FNC_TYPEMETHOD>;
+			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
 		END_OPERATIONS;
 	END_CLASS;
-	
+
 	/**
 		handles on TCP Connection to a http client
 	*/
-	CLASS httpclienthandler : CLASS ksserv/Client
-		IS_INSTANTIABLE;
-		COMMENT = "class for handling the connection to a client";
-		VARIABLES
-			receivesocket : INT HAS_ACCESSORS INITIALVALUE=-1;	
-			deleted	:	BOOL INITIALVALUE = FALSE;
-			requestbuffer : STRING;
-			stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
-			streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
-			streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
-		END_VARIABLES;
+	CLASS httpclienthandler : CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for HTTP-ks clients. Processes HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	VARIABLES
+		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
+		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
+		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
+	END_VARIABLES;
+	OPERATIONS
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
 	
-		OPERATIONS
-			startup : C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
-			typemethod : C_FUNCTION <FNC_TYPEMETHOD>; 
-		END_OPERATIONS;
+	CLASS httpSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	IS_INSTANTIABLE;
+	COMMENT	=	"Authenticator for simple tickets transportes via ks-http";
+	OPERATIONS
+		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/*
+ 		*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 		*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 		*/
+ 		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	
+	CLASS httpManagerCom	:	CLASS ksbase/ComTask
+	IS_INSTANTIABLE;
+	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shortcut is used.";
+	VARIABLES
+		ManagerPort	:	STRING
+			COMMENT	=	"Port part of Manager address"
+			INITIALVALUE = "7509";
+		OwnPort		:	STRING
+			COMMENT	=	"Port this server listens on"
+			INITIALVALUE	=	"";
+		UseShortCut	:	BOOL
+			COMMENT	=	"use the ov-shortcut (do not create a channel)"
+			INITIALVALUE = FALSE;
+		RegisterState	:	UINT
+			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
+			INITIALVALUE = 0;
+		ErrCode		:	INT
+			COMMENT	=	"Error Code returned by register command"
+			INITIALVALUE = 0;
+		msgAccepted	:	INT
+			COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+			INITIALVALUE = 0;
+		msgStatus	:	INT
+			COMMENT	=	"0 = message could be processed; otherwise: errorcode"
+			INITIALVALUE = 0;
+		httpErrCode	:	INT
+			COMMENT	=	"reasons for denial"
+			INITIALVALUE = 0;
+		Tries		:	UINT
+			COMMENT	=	"Tries before successfull register. 5 is maximum"
+			INITIALVALUE = 0;
+	END_VARIABLES;	
+	OPERATIONS
+		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
+	END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS authenticatedsession : CLASS ov/object

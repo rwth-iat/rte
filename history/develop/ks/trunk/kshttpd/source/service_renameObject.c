@@ -38,7 +38,7 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_ksservhttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
+static OV_ACCESS ov_kshttpd_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_RENAMEABLE;
 }
 
@@ -47,7 +47,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblRenameObj = {
 	NULL,
 	NULL,
 	NULL,
-	ov_ksservhttp_ticket_defaultticket_getaccess
+	ov_kshttpd_ticket_defaultticket_getaccess
 };
 
 #define EXEC_RENAMEOBJECT_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\

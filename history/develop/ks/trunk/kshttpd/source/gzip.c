@@ -5,12 +5,12 @@
  *      Author: george
  */
 
-#ifndef KSSERVHTTP_DISABLE_GZIP
+#ifndef KSHTTPD_DISABLE_GZIP
 
 #include "libov/ov_string.h"
 #include "libov/ov_database.h"
 
-#include "ksserv_logfile.h"
+#include "ks_logfile.h"
 #include "zlib.h"
 
 /**
@@ -52,7 +52,7 @@ OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length){
 
 	*output = ov_database_malloc(dlen);
 	if (*output == NULL){
-		ksserv_logfile_error("Out of memory");
+		ks_logfile_error("Out of memory");
 		return OV_ERR_GENERIC;
 	}
 

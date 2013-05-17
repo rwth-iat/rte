@@ -1,5 +1,5 @@
-#ifndef OV_COMPILE_LIBRARY_ksservhttp
-#define OV_COMPILE_LIBRARY_ksservhttp
+#ifndef OV_COMPILE_LIBRARY_kshttpd
+#define OV_COMPILE_LIBRARY_kshttpd
 #endif
 
 #include "config.h"
@@ -57,7 +57,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 		ov_string_setvalue(&temp, NULL);\
 		return
 
-OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
+OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_type, OV_STRING cmd){
 	OV_STRING random_number=NULL;
 	md5_hash_return hash;
 	OV_RESULT res;
@@ -81,7 +81,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 	OV_STRING  temp = NULL;
 
 
-	OV_INSTPTR_ksservhttp_authenticatedsession psession = NULL;
+	OV_INSTPTR_kshttpd_authenticatedsession psession = NULL;
 	int cnr = 0;
 	char sessionname[256];
 	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this)));
@@ -101,7 +101,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 		}
 		//locate session
 		cnr = 0; //misuse of a temp var
-		Ov_ForEachChildEx(ov_containment, psessions, psession, ksservhttp_authenticatedsession){
+		Ov_ForEachChildEx(ov_containment, psessions, psession, kshttpd_authenticatedsession){
 			if(ov_string_compare(nonce, psession->v_nonce) == OV_STRCMP_EQUAL){
 				cnr = 1;
 				break;
@@ -184,13 +184,13 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 		psession = NULL;
 		cnr++;
 		sprintf(sessionname, "session%i", cnr);
-		psession = (OV_INSTPTR_ksservhttp_authenticatedsession) Ov_SearchChild(ov_containment, psessions, sessionname);
+		psession = (OV_INSTPTR_kshttpd_authenticatedsession) Ov_SearchChild(ov_containment, psessions, sessionname);
 	} while (psession);
 
 	//create a new session
-	if (Ov_OK(Ov_CreateObject(ksservhttp_authenticatedsession, psession, psessions, sessionname))) {
+	if (Ov_OK(Ov_CreateObject(kshttpd_authenticatedsession, psession, psessions, sessionname))) {
 		ov_string_setvalue(&(psession->v_lasttcpclient), this->v_identifier);
-		//srand has been called by the time of ksservhttp object creation
+		//srand has been called by the time of kshttpd object creation
 		ov_string_print(&random_number, "%i", rand()*rand()*rand());
 		md5_string(&hash, random_number);
 		//set nounce
@@ -201,7 +201,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_ksservhttp_httpclienthandler this, OV_
 														opaque=\"\",\
 														nonce=\"%s\"\r\n", REALM, psession->v_nonce);
 	} else {
-		ksserv_logfile_error("Creating of auth session failed");
+		ks_logfile_error("Creating of auth session failed");
 	}
 	AUTHORIZE_RETURN OV_ERR_BADAUTH; //401
 

@@ -3,7 +3,7 @@
 	<name>ksservhttp</name>
 	<comment></comment>
 	<projects>
-		<project>ksserv</project>
+		<project>ksbase</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

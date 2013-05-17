@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -36,14 +36,14 @@
 *
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_ksservhttp
-#define OV_COMPILE_LIBRARY_ksservhttp
+#ifndef OV_COMPILE_LIBRARY_kshttpd
+#define OV_COMPILE_LIBRARY_kshttpd
 #endif
 
-#include "ksservhttp.h"
+#include "kshttpd.h"
 
-#ifdef ov_library_open_ksservhttp
-#undef ov_library_open_ksservhttp
+#ifdef ov_library_open_kshttpd
+#undef ov_library_open_kshttpd
 #endif
 
 
@@ -53,113 +53,170 @@
 * This function will be called, when the library is loaded.
 * It could generate components and initializes the startup procedure
 */
-OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
+OV_RESULT ov_library_setglobalvars_kshttpd_new(void) {
 	OV_RESULT result;
-
-	OV_INSTPTR_ov_domain			phttpservers  = NULL;
-	OV_INSTPTR_ov_domain			pcommunication  = NULL;
-	OV_INSTPTR_ksservhttp_httpserver	phttpserver  = NULL;
-	OV_INSTPTR_ov_domain			pstaticfiles = NULL;
-	OV_INSTPTR_ov_domain			psessions = NULL;
+	OV_INSTPTR_ov_domain pcommunication = NULL;
+	OV_INSTPTR_ov_domain pDomkshttpd = NULL;
+	OV_INSTPTR_ov_domain pDomTicketAuths = NULL;
+	OV_INSTPTR_kshttpd_httpIdentificator pIdentificator = NULL;
+	OV_INSTPTR_kshttpd_httpSimpleTicketAuthenticator pSimpleAuthenticator = NULL;
+	OV_INSTPTR_kshttpd_httpManagerCom httpMngCom = NULL;
+	OV_INSTPTR_ov_domain httpStaticfiles = NULL;
+	OV_INSTPTR_ov_domain httpSessions = NULL;
 
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
 	 *    and create some objects
 	 */
-	result = ov_library_setglobalvars_ksservhttp();
+	result = ov_library_setglobalvars_kshttpd();
+	if(Ov_Fail(result))
+		return result;
 
-	if(Ov_OK(result))
+	KS_logfile_debug(("entering kshttpd_open"));
+
+	//get the communication domain for putting in the kshttpd-objects
+	pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
+	if(!pcommunication) {
+		result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
+		if(Ov_Fail(result)) {
+			ov_logfile_error("Fatal: Could not create Object 'communication'");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication))
 	{
-		/*
-		*       create communication container
-		*/
-		//communication container should be provided by ksserv
-		pcommunication = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, &pdb->root, "communication");
-		if(!pcommunication)
-		{
-			result = Ov_CreateObject(ov_domain, pcommunication, &pdb->root, "communication");
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'communication': %s", ov_result_getresulttext(result));
-				return result;
-			}
-		}
+		ov_logfile_error("Fatal: communication object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
 
-		/*
-		*       create httpservers container
-		*/
-		phttpservers = Ov_SearchChildEx(ov_containment, pcommunication, "httpservers", ov_domain);
-		if(!phttpservers)
-		{
-			result = Ov_CreateObject(ov_domain, phttpservers, pcommunication, "httpservers");
-
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'httpservers': %s", ov_result_getresulttext(result));
-				return result;
-			}
-		}
-
-		/*
-		*       create "httpserver" object
-		*/
-	   phttpserver = Ov_SearchChildEx(ov_containment, phttpservers, "httpserver", ksservhttp_httpserver);
-	   if(!phttpserver)
-	   {
-    	   result = Ov_CreateObject(ksservhttp_httpserver, phttpserver, phttpservers, "httpserver");
-    	   if(Ov_Fail(result))
-    	   {
-				ov_logfile_error("Fatal: Could not create Object 'httpserver': %s", ov_result_getresulttext(result));
-			   return result;
-		   }
-    	   phttpserver->v_cycInterval = 0;
-		}
-
-	   /*
-	    * 		create "staticfiles" container
-	    */
-		pstaticfiles = Ov_SearchChildEx(ov_containment, phttpserver, "staticfiles", ov_domain);
-		if(!phttpservers)
-		{
-			result = Ov_CreateObject(ov_domain, pstaticfiles, phttpserver, "staticfiles");
-
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'staticfiles': %s", ov_result_getresulttext(result));
-				return result;
-			}
-		}
-
-		/*
-		 * 		create "sessions" container
-		 */
-		psessions = Ov_SearchChildEx(ov_containment, phttpserver, "sessions", ov_domain);
-		if(!psessions)
-		{
-			result = Ov_CreateObject(ov_domain, psessions, phttpserver, "sessions");
-
-			if(Ov_Fail(result))
-			{
-				ov_logfile_error("Fatal: Could not create Object 'staticfiles': %s", ov_result_getresulttext(result));
-				return result;
-			}
-		}
-
-		/*
-		 * calling a generated wrapper function to create all the static files from /staticfiles dir
-		 * this function is generated in prebuild.tcl
-		 */
-		result = include_localfiles(pstaticfiles);
+	pDomkshttpd = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pcommunication, "kshttpd"));
+	if(!pDomkshttpd) {
+		result = Ov_CreateObject(ov_domain, pDomkshttpd, pcommunication, "kshttpd");
 		if(Ov_Fail(result))
 		{
+			ov_logfile_error("Fatal: could not create kshttpd domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomkshttpd))
+	{
+		ov_logfile_error("Fatal: kshttpd object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+		/*	create protocol identificator for kshttpd	*/
+	pIdentificator = Ov_StaticPtrCast(kshttpd_httpIdentificator, Ov_SearchChild(ov_containment, pDomkshttpd, "Identificator"));
+	if(pIdentificator)
+		Ov_DeleteObject(pIdentificator);
+	pIdentificator = NULL;
+
+	result = Ov_CreateObject(kshttpd_httpIdentificator, pIdentificator, pDomkshttpd, "Identificator");
+	if(Ov_Fail(result))
+	{
+		ov_logfile_error("Fatal: could not create Identificator object");
+		return result;
+	}
+
+	/*	create ticket authenticators for kshttpd	*/
+	pDomTicketAuths = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttpd, "TicketAuthenticators"));
+	if(!pDomTicketAuths) {
+		result = Ov_CreateObject(ov_domain, pDomTicketAuths, pDomkshttpd, "TicketAuthenticators");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create TicketAuthenticators domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pDomTicketAuths))
+	{
+		ov_logfile_error("Fatal: TicketAuthenticators object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	pSimpleAuthenticator = Ov_StaticPtrCast(kshttpd_httpSimpleTicketAuthenticator, Ov_SearchChild(ov_containment, pDomTicketAuths, "httpSimpleTicket"));
+	if(pSimpleAuthenticator)
+		Ov_DeleteObject(pSimpleAuthenticator);
+	pSimpleAuthenticator = NULL;
+
+	result = Ov_CreateObject(kshttpd_httpSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "httpSimpleTicket");
+	if(Ov_Fail(result))
+	{
+		ov_logfile_error("Fatal: could not create SimpleTicketAuthenticator object");
+		return result;
+	}
+
+	KS_logfile_debug(("kshttpd_open: creating ManagerCom"));
+	/*	create httpManagerCom object to register Server at the Manager (if wanted)	*/
+	httpMngCom = Ov_SearchChildEx(ov_containment, pDomkshttpd, "ManagerCom", kshttpd_httpManagerCom);
+	if(!httpMngCom)
+	{
+		result = Ov_CreateObject(kshttpd_httpManagerCom, httpMngCom, pDomkshttpd, "ManagerCom");
+		if(Ov_Fail(result))
+		{
+			KS_logfile_error(("kshttpd_open: ManagerCom could not be created"));
 			return result;
 		}
 
-
+		/*	if we are manager, we don't need a channel	*/
+		if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager))
+			httpMngCom->v_UseShortCut = TRUE;
 	}
 
-	return result;
+
+   /*
+	* 		create "staticfiles" container
+	*/
+	/*	create ticket authenticators for kshttpd	*/
+	httpStaticfiles = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttpd, "staticfiles"));
+	if(!httpStaticfiles) {
+		result = Ov_CreateObject(ov_domain, httpStaticfiles, pDomkshttpd, "staticfiles");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create staticfiles domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) httpStaticfiles))
+	{
+		ov_logfile_error("Fatal: staticfiles object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+
+	/*
+	 * 		create "sessions" container
+	 */
+	httpSessions = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttpd, "sessions"));
+	if(!httpStaticfiles) {
+		result = Ov_CreateObject(ov_domain, httpSessions, pDomkshttpd, "sessions");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create sessions domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) httpSessions))
+	{
+		ov_logfile_error("Fatal: sessions object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+
+	/*
+	 * calling a generated wrapper function to create all the static files from /staticfiles dir
+	 * this function is generated in prebuild.tcl
+	 */
+	result = include_localfiles(httpStaticfiles);
+	if(Ov_Fail(result))
+	{
+		return result;
+	}
+
+
+	KS_logfile_debug(("leaving kshttpd_open"));
+	return OV_ERR_OK;
+
 }
 
 /*
@@ -167,9 +224,9 @@ OV_RESULT ov_library_setglobalvars_ksservhttp_new(void) {
 *       previous one, which additionally creates instances.
 * 	This is called by the OV system upon library load.
 */
-OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_ksservhttp(void) {
+OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_kshttpd(void) {
 	/* local variables */
-	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_ksservhttp_new;
+	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_kshttpd_new;
 	/*
 	*       replace the 'setglobalvars' function created by the code generator
 	*       with a new one.
@@ -179,15 +236,15 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_ksservhttp(void) {
 	OV_RESULT fr = OV_ERR_OK;
 	//this is executed at database start, too
 
-	fr = Ov_CreateObject(ov_library, pNewOvLib, &pdb->acplt, "ksserv");
+	fr = Ov_CreateObject(ov_library, pNewOvLib, &pdb->acplt, "ksbase");
 	if (fr != OV_ERR_ALREADYEXISTS && Ov_Fail(fr))
 	{
-		ov_logfile_error("ksservhttp needs the library %s which is not available (%s).",
-				"ksserv",
+		ov_logfile_error("kshttpd needs the library %s which is not available (%s).",
+				"ksbase",
 				ov_result_getresulttext(fr));
 	}
 
-	OV_LIBRARY_DEF_ksservhttp_new = ov_library_open_ksservhttp_old();
-	OV_LIBRARY_DEF_ksservhttp_new->setglobalvarsfnc = ov_library_setglobalvars_ksservhttp_new;
-	return OV_LIBRARY_DEF_ksservhttp_new;
+	OV_LIBRARY_DEF_kshttpd_new = ov_library_open_kshttpd_old();
+	OV_LIBRARY_DEF_kshttpd_new->setglobalvarsfnc = ov_library_setglobalvars_kshttpd_new;
+	return OV_LIBRARY_DEF_kshttpd_new;
 }

@@ -7,10 +7,10 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
-DATABASECREATEKEYS = -w ksservhttp
+DATABASECREATEKEYS = -w kshttpd
 MAKMAKOPTIONS = -o
 #gzip disabled because libz has to be precompiled
-EXTRA_CC_FLAGS = -DKSSERVHTTP_DISABLE_GZIP
+EXTRA_CC_FLAGS = -DKSHTTPD_DISABLE_GZIP
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC
@@ -21,7 +21,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
-	acplt_makmak -l ksservhttp $(MAKMAKOPTIONS)
-	tclsh $(PREBUILD) ksservhttp $(MAKMAKOPTIONS)
+	acplt_makmak -l kshttpd $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) kshttpd $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	tclsh $(POSTBUILD) ksservhttp
+	tclsh $(POSTBUILD) kshttpd

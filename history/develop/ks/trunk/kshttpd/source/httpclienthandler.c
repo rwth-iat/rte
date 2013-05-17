@@ -36,19 +36,19 @@
  *
  ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_ksservhttp
-#define OV_COMPILE_LIBRARY_ksservhttp
+#ifndef OV_COMPILE_LIBRARY_kshttpd
+#define OV_COMPILE_LIBRARY_kshttpd
 #endif
 
 
 #include <time.h>
 
 #include "config.h"
-#include "ksservhttp.h"
-#include "ksserv.h"
-#ifndef KSSERVHTTP_DISABLE_GZIP
+#include "kshttpd.h"
+#ifndef KSHTTPD_DISABLE_GZIP
 	#include "gzip.h"
 #endif
+#include "ksbase_helper.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -72,120 +72,47 @@
 #define BUFFER_CHUNK_SIZE 2048
 
 /*** TEMP ***/
-OV_DLLFNCEXPORT OV_BOOL ksservhttp_httpclienthandler_stream_get(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_BOOL kshttpd_httpclienthandler_stream_get(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj
 ) {
 	return pobj->v_stream;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_stream_set(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_stream_set(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
 		const OV_BOOL  value
 ) {
 	pobj->v_stream = value;
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING ksservhttp_httpclienthandler_streamrequestheader_get(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_STRING kshttpd_httpclienthandler_streamrequestheader_get(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj
 ) {
 	return pobj->v_streamrequestheader;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_streamrequestheader_set(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_streamrequestheader_set(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
 		const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_streamrequestheader,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING ksservhttp_httpclienthandler_streambuffer_get(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_STRING kshttpd_httpclienthandler_streambuffer_get(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj
 ) {
 	return pobj->v_streambuffer;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_streambuffer_set(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_streambuffer_set(
+		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
 		const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_streambuffer,value);
 }
 /** TEMP **/
 
-
-/**
- * Returns the socket on which the object is receiving.
- */
-OV_DLLFNCEXPORT OV_INT ksservhttp_httpclienthandler_receivesocket_get(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj
-) {
-	return pobj->v_receivesocket;
-}
-
-/**
- * Sets the socket on which the object is receiving.
- */
-OV_DLLFNCEXPORT OV_RESULT ksservhttp_httpclienthandler_receivesocket_set(
-		OV_INSTPTR_ksservhttp_httpclienthandler          pobj,
-		const OV_INT           value
-) {
-	struct sockaddr_in m_addr;
-#if OV_SYSTEM_NT
-	int len;
-#else
-	socklen_t len;
-#endif
-	pobj->v_receivesocket = value;
-
-	len = sizeof m_addr;
-	if (getpeername(value, (struct sockaddr*)&m_addr, &len) == -1) {
-		ksserv_logfile_error("Error while determining source IP of tcpclient -- getpeername() failed");
-		return OV_ERR_OK;
-	}
-	ov_string_print(&pobj->v_sourceAdr, "%s:%d", inet_ntoa(m_addr.sin_addr), (int) ntohs(m_addr.sin_port));
-	ksserv_logfile_debug("httpclienthandler/receivesocket/set: new TCPSocket %d from %s", value, pobj->v_sourceAdr);
-	return OV_ERR_OK;
-}
-
-/**
- * This method is called on startup.
- */
-OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_startup(
-		OV_INSTPTR_ov_object 	pobj
-) {
-	//ksserv_logfile_info("httpclienthandler/startup ###########");
-	ov_object_startup(pobj);
-	return;
-}
-
-/**
- * Procedure called on object shutdown.
- * It closes open socket.
- */
-OV_DLLFNCEXPORT void ksservhttp_httpclienthandler_shutdown(
-		OV_INSTPTR_ov_object 	pobj
-) {
-	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, pobj);
-
-	int receivesocket;
-	if(!this->v_deleted) {// v_deleted cares that socket closing happens just once, not twice while DeleteObj
-		ksserv_logfile_error("httpclienthandler/shutdown socket %i", this->v_receivesocket);
-		receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
-		if(receivesocket < 0) {
-			ksserv_logfile_error("httpclienthandler/shutdown: instance %s has socket<0 - cant shutdown!?!", pobj->v_identifier);
-			return;
-		}
-		//ksserv_logfile_debug("httpclienthandler/shutdown: %s closes socket %d", pobj->v_identifier, receivesocket);
-		CLOSE_SOCKET(receivesocket);
-		this->v_deleted = TRUE;
-		Ov_DeleteObject(this); //calls shutdown again. Since it is deleted->TRUE, no recursion
-		//ov_object_shutdown(pobj);
-		return;
-	}
-	ov_object_shutdown(pobj);
-	return;
-}
 
 /**
  * Builds header for http communication from OV_RESULT
@@ -282,112 +209,17 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 	}
 }
 
-/*
- * The function sends length chars starting from the given pointer
- *
- */
-OV_RESULT send_tcp(int socket, char* pointer, int length){
-	int sentBytes=0;
-	int sentChunkSize = 0;
-	fd_set write_flags;
-	struct timeval waitd;
-	int err;
-
-	do
-	{
-		// Zero the flags ready for using
-		FD_ZERO(&write_flags);
-		FD_SET(socket, &write_flags); // get write flags
-		waitd.tv_sec = 0;     // Set Timeout
-		waitd.tv_usec = 1000;    //  1 millisecond
-		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0, &waitd);
-
-		if(err < 0)
-		{
-			perror("httpclienthandler: error waiting for sending answer:");
-			break;
-		}
-
-		if((length - sentBytes) > 4096)
-		{
-			sentChunkSize = send(socket, pointer, 4096, MSG_NOSIGNAL);
-			if (sentChunkSize == -1)
-			{
-				ksserv_logfile_error("send() failed");
-				ksserv_logfile_debug("send failed");
-				return OV_ERR_GENERIC;
-			}
-		}
-		else
-		{
-			sentChunkSize = send(socket, pointer, (length - sentBytes), MSG_NOSIGNAL);
-			if (sentChunkSize == -1)
-			{
-				ksserv_logfile_error("send() failed");
-				ksserv_logfile_debug("send failed");
-				return OV_ERR_GENERIC;
-			}
-		}
-		sentBytes += sentChunkSize;
-		pointer += sentChunkSize;
-		ksserv_logfile_debug("httpclienthandler: answer sent, sentChunkSize: %d sentBytes: %d", sentChunkSize, sentBytes);
-		//move pointer to next chunk
-
-
-	}while(sentBytes < length);
-	return OV_ERR_OK;
-}
-
 /**
- * function to output the size of the database - needed for debug
+ * This function handles requests received over a channel. It reads data as an http-stream and triggers the appropriate OV-functions
  */
-void checkdb(OV_STRING msg){
-	OV_ANY		Variable;
-	OV_INSTPTR_ov_object pObj=ov_path_getobjectpointer("/vendor",2);
-	pObj = Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), "database_free");
-	ov_vendortree_getvar(pObj, &Variable, NULL);
-	ov_logfile_debug("-->> %s: %i", msg, Variable.value.valueunion.val_int);
-}
 
-/**
- * Time profiling
- */
-void start(struct timeval* start){
-	gettimeofday(start, NULL);
-}
-void stop(struct timeval* start, OV_STRING comment){
-	struct timeval end;
-	long mtime, seconds, useconds;
-	gettimeofday(&end, NULL);
-	seconds  = end.tv_sec  - start->tv_sec;
-	useconds = end.tv_usec - start->tv_usec;
-	mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
-	ksserv_logfile_debug("%s: Elapsed time: %ld milliseconds\n", comment, mtime);
-}
-
-
-/**
- * Procedure periodically called by ComTask // ov_scheduler. *
- * It takes over the sending/receiving of data to/from the
- * connected client.
- *  * If the connection is closed by the client this object
- * deletes itself.
- */
-void ksservhttp_httpclienthandler_typemethod(
-		//COmTask OV_INSTPTR_ov_object		pfb
-		OV_INSTPTR_ksserv_ComTask	cTask
+OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
+	OV_INSTPTR_ksbase_ClientHandler baseObj,
+	KS_DATAPACKET* dataReceived,
+	KS_DATAPACKET* answer
 ) {
-
-	OV_INSTPTR_ksservhttp_httpclienthandler this = Ov_StaticPtrCast(ksservhttp_httpclienthandler, cTask);
-
-	int bytes = -1; //-1 means nothing received
-	int receivesocket = ksservhttp_httpclienthandler_receivesocket_get(this);
-
-	char *buffer = 0;
-	int recvBytes = 0;
-	int buffer_size = 0; //factor of buffer size * BUFFER_CHUNK_SIZE
-	char *buffer_location = 0; //pointer into the buffer
-
+	OV_INSTPTR_ksbase_Channel pChannel = NULL;
+	OV_INSTPTR_kshttpd_httpclienthandler this = Ov_StaticPtrCast(kshttpd_httpclienthandler, baseObj);
 	//http stuff
 	OV_STRING *http_request;
 	OV_STRING header, body, cmd, http_request_type, http_request_header;
@@ -411,46 +243,9 @@ void ksservhttp_httpclienthandler_typemethod(
 	OV_INT gzip_compressed_body_length = 0;
 
 	OV_INSTPTR_ov_object temp;
-	OV_INSTPTR_ksservhttp_staticfile staticfile;
-	//ksserv_logfile_debug("httpclienthandler typemethod called ");
-	if (receivesocket < 0) { // check if the socket might be OK.
-		ksserv_logfile_error("%s/typemethod: no receive socket set (receivesocket==-1), thus deleting myself",cTask->v_identifier);
-		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
-		return;
-	}
+	OV_INSTPTR_kshttpd_staticfile staticfile;
 
-	do {//read HTTP request from socket in chunks until nothing more appears
-		buffer_size++;
-		buffer = (char*)realloc(buffer, BUFFER_CHUNK_SIZE*buffer_size);
-		if(buffer == 0) {
-			ksserv_logfile_error("httpclienthandler/typemethod: recv error, no memory for buffer");
-			return;
-		}
-		buffer_location = buffer + BUFFER_CHUNK_SIZE * (buffer_size - 1);
-		memset(buffer_location, 0, BUFFER_CHUNK_SIZE);
-		recvBytes = recv(receivesocket, buffer_location, BUFFER_CHUNK_SIZE,0);
-		if(recvBytes != -1 && bytes == -1) bytes = 0; //1st iteration and we have sth (prevents from missing 1 byte)
-		if(recvBytes != -1) bytes += recvBytes;//if soth was received, calc overall size of received bytes
-		//if(recvBytes > 0) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd chunk no %d recv %d bytes, pBuffStart %p, pBuffInside %p",buffer_size, recvBytes, buffer, buffer_location);
-	} while(recvBytes == BUFFER_CHUNK_SIZE); // stop if less than maximum bytes was read by recv
-	//if(bytes != -1) ksserv_logfile_error("httpclienthandler/typemethod: ks cmd w/ size %d received ",bytes);
-
-
-#if OV_SYSTEM_NT
-	errno = WSAGetLastError();
-#endif
-	if(bytes == -1 && (errno != EAGAIN && errno != EWOULDBLOCK) ) {//ERROR during read - shutdown!
-		ksserv_logfile_error("httpclienthandler/typemethod: recv error %i, shutdown httpclienthandler", errno);
-		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
-		//else: bytes = -1 && errno == EAGAIN || EWOULDBLOCK
-	} else if(this->v_stream == FALSE && bytes == 0) {//normal shutdown by client
-		ksserv_logfile_debug("httpclienthandler/typemethod: read 0 bytes - shutdown - %s", ((OV_INSTPTR_ksserv_Client)this)->v_sourceAdr);
-		ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
-		//} else if (bytes == -1) {  // no current KS command this turn
-	} else if(this->v_stream == TRUE || (this->v_stream == FALSE && bytes > 0)) {
-		//this is the important part - something was read on tht tcp buffer
-
-		ksserv_Client_setThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //set this as current one
+	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 		cmd = NULL; //the get request without arguments
 		body = NULL; //reply *WITHOUT HEADER*
@@ -462,35 +257,38 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//MAIN ROUTINE OF THE WEB SERVER
 
+
 		//NOTE: this works only for GET and HEAD, for post one needs to evaluate content-length
-		//START handling buffer: appending the read chunk to the buffer that is saved between the cycles
-		if(bytes > 0){
-			if(ov_string_getlength(this->v_requestbuffer) + ov_string_getlength(buffer) <= MAX_HTTP_REQUEST_SIZE){
-				ov_string_append(&(this->v_requestbuffer),buffer);
-			}else{
-				result = OV_ERR_BADVALUE; //414
-				keep_alive = FALSE; //close connection
-				//append double line break and let server process the input
-				ov_string_append(&(this->v_requestbuffer),"\r\n\r\n");
-			}
+		if(dataReceived->length > MAX_HTTP_REQUEST_SIZE){
+			result = OV_ERR_BADVALUE; //414
+			keep_alive = FALSE; //close connection
+			//append double line break and let server process the input
+
+			//fixme scheint falsch zu sein :-)
+			ksbase_KSDATAPACKET_append(answer, "\r\n\r\n", 9);
 		}
 
 		//if no stream mode, wait for the end of the header
 		if(this->v_stream == FALSE){
 			//if no double line break detected yet - wait till next cycle
-			if(!strstr(this->v_requestbuffer, "\r\n\r\n")){
-				free(buffer);
-				return;
+
+			//fixme
+			if(!strstr(dataReceived->data, "\r\n\r\n")){
+				//fixme
+				return OV_ERR_OK;
 			}
 		}
-		ksserv_logfile_error("httpclienthandler/typemethod: got http command w/ %d bytes",bytes);
+		ks_logfile_error("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length);
 
 		//END handling buffer
+
 
 		if(this->v_stream == FALSE){
 			//this->v_requestbuffer contains the raw request
 			//split header and footer of the http request
-			http_request = ov_string_split(this->v_requestbuffer, "\r\n\r\n", &len);
+
+			//fixme
+			http_request = ov_string_split(dataReceived->data, "\r\n\r\n", &len);
 			//len is always > 0
 			ov_string_setvalue(&http_request_header, http_request[0]);
 			//last line of the header will not contain \r\n
@@ -503,10 +301,11 @@ void ksservhttp_httpclienthandler_typemethod(
 		}
 
 		//empty the buffers
-		ov_string_setvalue(&(this->v_requestbuffer),"");
+		//fixme, ok?
+		ksbase_KSDATAPACKET_set(dataReceived, NULL, 0);
 
 		//debug - output header
-		ksserv_logfile_error("%s", http_request_header);
+		ks_logfile_error("%s", http_request_header);
 
 		//http_request_header is the request header
 		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
@@ -671,8 +470,8 @@ void ksservhttp_httpclienthandler_typemethod(
 			ov_string_setvalue(&filepath, NULL);
 			filename = NULL;
 
-			if(temp != NULL && Ov_CanCastTo(ksservhttp_staticfile, temp)){
-				staticfile = Ov_StaticPtrCast(ksservhttp_staticfile, temp);
+			if(temp != NULL && Ov_CanCastTo(kshttpd_staticfile, temp)){
+				staticfile = Ov_StaticPtrCast(kshttpd_staticfile, temp);
 				ov_string_setvalue(&content_type, staticfile->v_mimetype);
 				ov_string_setvalue(&encoding, staticfile->v_encoding);
 				result = OV_ERR_OK;
@@ -702,7 +501,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		map_result_to_http(&result, &http_version, &header, &body, response_format);
 
 		//Append common data to header:
-		ov_string_print(&header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_ksservhttp.version, __TIME__, __DATE__);
+		ov_string_print(&header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_kshttpd.version, __TIME__, __DATE__);
 		//no-cache
 		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 			if(ov_string_compare(http_version, "1.0") == OV_STRCMP_EQUAL){
@@ -729,7 +528,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			bodylength = (int)ov_string_getlength(body);
 		}
 
-#ifndef KSSERVHTTP_DISABLE_GZIP
+#ifndef KSHTTPD_DISABLE_GZIP
 		// check if the body length corresponds for compression
 		if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
 													  (ov_string_compare(content_type, "text/plain") == OV_STRCMP_EQUAL
@@ -755,7 +554,7 @@ void ksservhttp_httpclienthandler_typemethod(
 			//append content length
 			if(gzip_applicable){
 				ov_string_print(&header, "%sContent-Length: %i\r\n", header, gzip_compressed_body_length);
-				ksserv_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(header))/((float)ov_string_getlength(header)-24+bodylength));
+				ks_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(header))/((float)ov_string_getlength(header)-24+bodylength));
 			}else{
 				ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
 			}
@@ -772,8 +571,11 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//send header only if not in stream mode
 		if(this->v_stream == FALSE){
-			ksserv_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(header));
-			send_tcp(receivesocket, header, (int)ov_string_getlength(header));
+			ks_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(header));
+			//fixme, was hier?
+			ksbase_KSDATAPACKET_append(answer, header, ov_string_getlength(header));
+			ksbase_Channel_SendData(pChannel);
+			//send_tcp(receivesocket, header, (int)ov_string_getlength(header));
 		}
 
 		//are we starting a stream?
@@ -786,12 +588,18 @@ void ksservhttp_httpclienthandler_typemethod(
 		//in case of a HEAD request there is no need to send the body
 
 		if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL && body!=NULL){
-			ksserv_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
+			ks_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
 
 			if(gzip_applicable){
-				result = send_tcp(receivesocket, gzip_compressed_body, gzip_compressed_body_length);
+				//fixme
+				ksbase_KSDATAPACKET_append(answer, gzip_compressed_body, gzip_compressed_body_length);
+				ksbase_Channel_SendData(pChannel);
+//				result = send_tcp(receivesocket, gzip_compressed_body, gzip_compressed_body_length);
 			}else{
-				result = send_tcp(receivesocket, body, bodylength);
+				//fixme
+				ksbase_KSDATAPACKET_append(answer, body, bodylength);
+				ksbase_Channel_SendData(pChannel);
+//				result = send_tcp(receivesocket, body, bodylength);
 			}
 
 		}
@@ -800,7 +608,7 @@ void ksservhttp_httpclienthandler_typemethod(
 		ov_string_setvalue(&encoding, NULL);
 		ov_string_setvalue(&content_type, NULL);
 
-#ifndef KSSERVHTTP_DISABLE_GZIP
+#ifndef KSHTTPD_DISABLE_GZIP
 		ov_database_free(gzip_compressed_body);
 #endif
 
@@ -815,14 +623,11 @@ void ksservhttp_httpclienthandler_typemethod(
 
 		//shutdown tcp connection if no keep_alive was set
 		if (keep_alive != TRUE || Ov_Fail(result)) {
-			ksservhttp_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+			//fixme was hier?
+			ksbase_Channel_CloseConnection(pChannel);
+//			kshttpd_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+
 		}
-
-		ksserv_Client_unsetThisAsCurrent((OV_INSTPTR_ksserv_Client)this); //unset this as current one
-	}
-	//free up the buffer
-	free(buffer);
-
-	return;
+	return OV_ERR_OK;
 }
 
