@@ -3,6 +3,7 @@
 	<name>ksxdr</name>
 	<comment></comment>
 	<projects>
+		<project>ksbase</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
