@@ -402,7 +402,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 		if(ret>0)	//if there is activity on the socket(s)
 		{
-			for (i = 0; (i < 2) && (i<ret); i++) {
+			for (i = 0; (i < 2); i++) {
 				if ((sockfds[i] != -1) && (!FD_ISSET(sockfds[i], &fds)))
 					continue;
 
