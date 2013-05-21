@@ -214,420 +214,400 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
  */
 
 OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
-	OV_INSTPTR_ksbase_ClientHandler baseObj,
+	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
-	OV_INSTPTR_ksbase_Channel pChannel = NULL;
-	OV_INSTPTR_kshttpd_httpclienthandler this = Ov_StaticPtrCast(kshttpd_httpclienthandler, baseObj);
-	//http stuff
-	OV_STRING *http_request;
-	OV_STRING header, body, cmd, http_request_type, http_request_header;
-	int bodylength = 0; //length of the return body
-	OV_RESULT result = OV_ERR_OK;
-	OV_UINT response_format = RESPONSE_FORMAT_NONE;
-	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
-	OV_BOOL gzip_accepted = FALSE; //default on enconding
-	OV_BOOL gzip_applicable = FALSE;
-	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
-	OV_STRING http_version;
-	OV_UINT len;
-	OV_STRING_VEC match = {0,NULL};
-	OV_STRING content_type="text/plain", encoding="Windows-1252";
+	OV_INSTPTR_kshttpd_httpclienthandler this = Ov_StaticPtrCast(kshttpd_httpclienthandler, baseClientHandler);
+	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
-	//vector of the variables, even elements are variable names, odds are values
+	OV_STRING request_method = NULL; //GET, HEAD, etc.
+	OV_STRING request_header = NULL;
+	OV_STRING http_version = NULL; //HTTP version
+	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
+	OV_STRING reply_header = NULL; //header of the reply
+	OV_STRING reply_body = NULL; //reply *WITHOUT HEADER*
+	int bodylength = 0; //length of the return body
+
+	OV_STRING cmd = NULL; //the get request without arguments
+	OV_UINT response_format = RESPONSE_FORMAT_NONE;
+	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
+
+	OV_BOOL gzip_accepted = FALSE; //default on encoding
+	OV_BOOL gzip_applicable = FALSE;
+
+	OV_UINT len;
+	OV_RESULT result = OV_ERR_OK;
+	OV_STRING_VEC match = {0,NULL};
+	OV_STRING reply_contenttype="text/plain", reply_encoding="Windows-1252";
+
+	//vector of the variables, odd elements are variable names, even are values
 	OV_STRING_VEC args = {0,NULL};
 
 	//gzip compression business
 	OV_STRING gzip_compressed_body = NULL;
 	OV_INT gzip_compressed_body_length = 0;
 
-	OV_INSTPTR_ov_object temp;
-	OV_INSTPTR_kshttpd_staticfile staticfile;
+	OV_STRING* http_request_array = NULL;
 
-	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
-
-		cmd = NULL; //the get request without arguments
-		body = NULL; //reply *WITHOUT HEADER*
-		header = NULL; //header of the reply
-		http_version = NULL; //HTTP version
-		http_request = NULL;
-		http_request_header = NULL;
-		http_request_type = NULL; //GET, HEAD, etc.
-
-		//MAIN ROUTINE OF THE WEB SERVER
+	OV_INSTPTR_kshttpd_staticfile pStaticfile;
 
 
-		//NOTE: this works only for GET and HEAD, for post one needs to evaluate content-length
-		if(dataReceived->length > MAX_HTTP_REQUEST_SIZE){
-			result = OV_ERR_BADVALUE; //414
-			keep_alive = FALSE; //close connection
-			//append double line break and let server process the input
+	//TODO NOTE: this works only for GET and HEAD, for POST one needs to evaluate content-length
+	if(dataReceived->length > MAX_HTTP_REQUEST_SIZE){
+		result = OV_ERR_BADVALUE; //414
+		keep_alive = FALSE; //close connection
+		//append double line break and let server process the input
+		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)"\r\n\r\n", 9);
+	}
 
-			//fixme scheint falsch zu sein :-)
-			ksbase_KSDATAPACKET_append(answer, "\r\n\r\n", 9);
+	//if no stream mode, wait for the end of the header
+	if(this->v_stream == FALSE){
+		//if no double line break detected yet - wait till next cycle
+		if(!strstr((OV_STRING)dataReceived->data, "\r\n\r\n")){
+			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
+											Yes, this could block the ClientHandler for a longer time.	*/
 		}
-
-		//if no stream mode, wait for the end of the header
-		if(this->v_stream == FALSE){
-			//if no double line break detected yet - wait till next cycle
-
-			//fixme
-			if(!strstr(dataReceived->data, "\r\n\r\n")){
-				//fixme
-				return OV_ERR_OK;
-			}
-		}
-		ks_logfile_error("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length);
-
-		//END handling buffer
+	}
+	ks_logfile_debug("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length);
+	//END handling buffer
 
 
-		if(this->v_stream == FALSE){
-			//this->v_requestbuffer contains the raw request
-			//split header and footer of the http request
+	if(this->v_stream == FALSE){
+		//this->v_requestbuffer contains the raw request
+		//split header and footer of the http request
 
-			//fixme
-			http_request = ov_string_split(dataReceived->data, "\r\n\r\n", &len);
-			//len is always > 0
-			ov_string_setvalue(&http_request_header, http_request[0]);
-			//last line of the header will not contain \r\n
-			ov_string_append(&http_request_header,"\r\n");
-			//in future: ov_string_setvalue(&http_request_body, http_request[1]);
+		http_request_array = ov_string_split((OV_STRING)dataReceived->data, "\r\n\r\n", &len);
+		//len is always > 0
 
-			ov_string_freelist(http_request);
-		}else{
-			ov_string_setvalue(&http_request_header, this->v_streamrequestheader);
-		}
-
-		//empty the buffers
-		//fixme, ok?
-		ksbase_KSDATAPACKET_set(dataReceived, NULL, 0);
-
-		//debug - output header
-		ks_logfile_error("%s", http_request_header);
-
-		//http_request_header is the request header
+		ov_string_setvalue(&request_header, http_request_array[0]);
+		//last line of the header will not contain \r\n
+		ov_string_append(&request_header,"\r\n");
+		//TODO for POST: ov_string_setvalue(&http_request_body, http_request[1]);
 		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
-		//parse request header into get command and arguments request
-		if(!Ov_Fail(result)){
-			result = parse_http_header(http_request_header, &cmd, &args, &http_version, &http_request_type, &gzip_accepted, &keep_alive, &response_format);
+		ov_string_freelist(http_request_array);
+	}else{
+		ov_string_setvalue(&request_header, this->v_streamrequestheader);
+	}
+
+	//empty the buffers
+	ksbase_KSDATAPACKET_set(dataReceived, NULL, 0);
+
+	//debug - output header
+	ks_logfile_debug("%s", request_header);
+
+	//parse request header into get command and arguments request
+	if(!Ov_Fail(result)){
+		result = parse_http_header(request_header, &cmd, &args, &http_version, &request_method, &gzip_accepted, &keep_alive, &response_format);
+	}
+
+	//allow javascript connection from any source (CORS)
+	ov_string_setvalue(&reply_header, "Access-Control-Allow-Origin:*\r\n");
+
+	if(!Ov_Fail(result)){
+		result = OV_ERR_NOTIMPLEMENTED;
+		//check which kind of request is coming in
+		if(	ov_string_compare(request_method, "GET") == OV_STRCMP_EQUAL ||
+				ov_string_compare(request_method, "HEAD") == OV_STRCMP_EQUAL){
+			result = OV_ERR_OK;
+		}else if(ov_string_compare(request_method, "PUSH") == OV_STRCMP_EQUAL){
+			result = OV_ERR_OK;
+		}else if(ov_string_compare(request_method, "OPTIONS") == OV_STRCMP_EQUAL){
+			//used for Cross-Origin Resource Sharing (CORS)
+			//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
+
+			//hmi uses this headers, which is no problem for us
+			ov_string_append(&reply_header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
+			result = OV_ERR_OK;
+			//only an 200 is required, so abort request handling
+			request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
 		}
+	}
 
-		//allow javascript connection from any source
-		ov_string_setvalue(&header, "Access-Control-Allow-Origin:*\r\n");
-
-		if(!Ov_Fail(result)){
+	if(RESPONSE_FORMAT_KSX == response_format){
+		ov_string_setvalue(&reply_contenttype, "text/xml");
+	}else if(RESPONSE_FORMAT_JSON == response_format){
+		//fixme wieder an
+		//ov_string_setvalue(&content_type, "application/json");
+	}
+	//BEGIN command routine
+	if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
+		if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
+			//http GET
+			printresponseheader(&reply_body, response_format, "getserver");
+			result = exec_getserver(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "getserver");
+			request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
+		}else if(ov_string_compare(cmd, "/register") == OV_STRCMP_EQUAL){
 			result = OV_ERR_NOTIMPLEMENTED;
-			//check which kind of request is coming in
-			if(	ov_string_compare(http_request_type, "GET") == OV_STRCMP_EQUAL ||
-					ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
-				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "PUSH") == OV_STRCMP_EQUAL){
-				result = OV_ERR_OK;
-			}else if(ov_string_compare(http_request_type, "OPTIONS") == OV_STRCMP_EQUAL){
-				//used for Cross-Origin Resource Sharing (CORS)
-				//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
-
-				//hmi uses this headers, which is no problem for us
-				ov_string_append(&header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
-				result = OV_ERR_OK;
-				//only an 200 is required
-				request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
-			}
-		}
-
-		if(RESPONSE_FORMAT_KSX == response_format){
-			ov_string_setvalue(&content_type, "text/xml");
-		}else if(RESPONSE_FORMAT_JSON == response_format){
-			//fixme wieder an
-			//ov_string_setvalue(&content_type, "application/json");
-		}
-		//BEGIN command routine
-		if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
-			if(ov_string_compare(cmd, "/getServer") == OV_STRCMP_EQUAL){
-				//http GET
-				printresponseheader(&body, response_format, "getserver");
-				result = exec_getserver(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "getserver");
-				request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
-			}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
-				//http GET
-				//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
-				//it is caused by the second dot in the filename
-				printresponseheader(&body, response_format, "getvar");
-				result = exec_getvar(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "getvar");
-				//stream required?
-				find_arguments(&args, "stream", &match);
-				if(match.veclen>0){
+		}else if(ov_string_compare(cmd, "/unregister") == OV_STRCMP_EQUAL){
+			result = OV_ERR_NOTIMPLEMENTED;
+		}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
+			//http GET
+			//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
+			//it is caused by the second dot in the filename
+			printresponseheader(&reply_body, response_format, "getvar");
+			result = exec_getvar(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "getvar");
+			//stream required?
+			find_arguments(&args, "stream", &match);
+			if(match.veclen>0){
+				//yes
+				ov_string_setvalue(&reply_contenttype, "text/event-stream");
+				//first time?
+				if(!this->v_stream){
+					//backup the header
+					ov_string_setvalue(&this->v_streamrequestheader, request_header);
+				}
+				//is cache updated?
+				if(ov_string_compare(reply_body, this->v_streambuffer) != OV_STRCMP_EQUAL){
+					//ov_logfile_debug("upd %s %s", body, this->v_streambuffer);
 					//yes
-					ov_string_setvalue(&content_type, "text/event-stream");
-					//first time?
-					if(!this->v_stream){
-						//backup the header
-						ov_string_setvalue(&this->v_streamrequestheader, http_request_header);
-					}
-					//is cache updated?
-					if(ov_string_compare(body, this->v_streambuffer) != OV_STRCMP_EQUAL){
-						//ov_logfile_debug("upd %s %s", body, this->v_streambuffer);
-						//yes
-						ov_string_setvalue(&this->v_streambuffer, body);
-						ov_string_print(&body, "data: %s\r\n\r\n", this->v_streambuffer);
-					}else{
-						//no - set body to null
-						ov_string_setvalue(&body, NULL);
-					}
-					request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
+					ov_string_setvalue(&this->v_streambuffer, reply_body);
+					ov_string_print(&reply_body, "data: %s\r\n\r\n", this->v_streambuffer);
 				}else{
-					//no
-					request_handled_by = REQUEST_HANDLED_BY_GETVAR;
+					//no - set body to null
+					ov_string_setvalue(&reply_body, NULL);
 				}
-			}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
-				//http PUT, used in OData or PROPPATCH, used in WebDAV
-				printresponseheader(&body, response_format, "setvar");
-				result = exec_setvar(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "setvar");
-				request_handled_by = REQUEST_HANDLED_BY_SETVAR;
-			}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
-				//http PROPFIND, used in WebDAV
-				printresponseheader(&body, response_format, "getep");
-				result = exec_getep(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "getep");
-				request_handled_by = REQUEST_HANDLED_BY_GETEP;
-			}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
-				//http PUT, used in WebDAV
-				printresponseheader(&body, response_format, "createobject");
-				result = exec_createObject(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "createobject");
-				request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
-			}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
-				//http DELETE, used in WebDAV
-				printresponseheader(&body, response_format, "deleteobject");
-				result = exec_deleteObject(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "deleteobject");
-				request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
-			}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
-				//http MOVE, used in WebDAV
-				printresponseheader(&body, response_format, "renameobject");
-				result = exec_renameObject(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "renameobject");
-				request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
-			}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
-				//http LINK
-				printresponseheader(&body, response_format, "link");
-				result = exec_link(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "link");
-				request_handled_by = REQUEST_HANDLED_BY_LINK;
-			}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
-				//http UNLINK
-				printresponseheader(&body, response_format, "unlink");
-				result = exec_unlink(&args, &body, response_format);
-				printresponsefooter(&body, response_format, "unlink");
-				request_handled_by = REQUEST_HANDLED_BY_UNLINK;
-			}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
-				result = authorize(1, this, http_request_header, &header, http_request_type, cmd);
-				if(!Ov_Fail(result)){
-					ov_string_append(&body, "Secret area");
-					result = OV_ERR_OK;
-				}
-				request_handled_by = REQUEST_HANDLED_BY_AUTH;
-			}
-		}
-		//END command routine
-
-		//raw request header not needed any longer
-		ov_string_setvalue(&http_request_header, NULL);
-		Ov_SetDynamicVectorLength(&args,0,STRING);
-		Ov_SetDynamicVectorLength(&match,0,STRING);
-
-		//BEGIN static file routine
-		//no command matched yet... Is it a static file?
-		if(!Ov_Fail(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
-			OV_STRING filename = NULL;
-			OV_STRING filepath = NULL;
-			OV_STRING basepath = NULL;
-			//assume index.html as a root file
-			if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
-				filename = "index.html";
-			}else if(cmd[ov_string_getlength(cmd)-1] == '/'){
-				ov_string_append(&cmd, "index.html");
-				//remove leading /
-				filename = cmd + 1;
+				request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
 			}else{
-				//remove leading /
-				filename = cmd + 1;
+				//no
+				request_handled_by = REQUEST_HANDLED_BY_GETVAR;
 			}
-			ov_memstack_lock();
-			//basepath is something like /communication/httpservers/httpserver
-			basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
-			//a dot in a filename is represented via a percent notation in an identifier, so we need
-			//to change the parameter. A directory should be possible, so we need to skip / in conversion
-			ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
-			ov_memstack_unlock();
-			temp = ov_path_getobjectpointer(filepath, 2);
-			ov_string_setvalue(&filepath, NULL);
-			filename = NULL;
-
-			if(temp != NULL && Ov_CanCastTo(kshttpd_staticfile, temp)){
-				staticfile = Ov_StaticPtrCast(kshttpd_staticfile, temp);
-				ov_string_setvalue(&content_type, staticfile->v_mimetype);
-				ov_string_setvalue(&encoding, staticfile->v_encoding);
+		}else if(ov_string_compare(cmd, "/setVar") == OV_STRCMP_EQUAL){
+			//http PUT, used in OData or PROPPATCH, used in WebDAV
+			printresponseheader(&reply_body, response_format, "setvar");
+			result = exec_setvar(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "setvar");
+			request_handled_by = REQUEST_HANDLED_BY_SETVAR;
+		}else if(ov_string_compare(cmd, "/getEP") == OV_STRCMP_EQUAL){
+			//http PROPFIND, used in WebDAV
+			printresponseheader(&reply_body, response_format, "getep");
+			result = exec_getep(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "getep");
+			request_handled_by = REQUEST_HANDLED_BY_GETEP;
+		}else if(ov_string_compare(cmd, "/createObject") == OV_STRCMP_EQUAL){
+			//http PUT, used in WebDAV
+			printresponseheader(&reply_body, response_format, "createobject");
+			result = exec_createObject(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "createobject");
+			request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
+		}else if(ov_string_compare(cmd, "/deleteObject") == OV_STRCMP_EQUAL){
+			//http DELETE, used in WebDAV
+			printresponseheader(&reply_body, response_format, "deleteobject");
+			result = exec_deleteObject(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "deleteobject");
+			request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
+		}else if(ov_string_compare(cmd, "/renameObject") == OV_STRCMP_EQUAL){
+			//http MOVE, used in WebDAV
+			printresponseheader(&reply_body, response_format, "renameobject");
+			result = exec_renameObject(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "renameobject");
+			request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
+		}else if(ov_string_compare(cmd, "/link") == OV_STRCMP_EQUAL){
+			//http LINK
+			printresponseheader(&reply_body, response_format, "link");
+			result = exec_link(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "link");
+			request_handled_by = REQUEST_HANDLED_BY_LINK;
+		}else if(ov_string_compare(cmd, "/unlink") == OV_STRCMP_EQUAL){
+			//http UNLINK
+			printresponseheader(&reply_body, response_format, "unlink");
+			result = exec_unlink(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "unlink");
+			request_handled_by = REQUEST_HANDLED_BY_UNLINK;
+		}else if(ov_string_compare(cmd, "/auth") == OV_STRCMP_EQUAL){
+			result = authorize(1, this, request_header, &reply_header, request_method, cmd);
+			if(!Ov_Fail(result)){
+				ov_string_append(&reply_body, "Secret area");
 				result = OV_ERR_OK;
-				//body is NULL here
-				body = staticfile->v_content;
-				request_handled_by = REQUEST_HANDLED_BY_STATICFILE;
 			}
+			request_handled_by = REQUEST_HANDLED_BY_AUTH;
 		}
-		//END static file routine
+	}
+	//END command routine
 
-		//no method has found a hit
-		if (request_handled_by == REQUEST_HANDLED_BY_NONE){
-			ov_string_append(&body, "Resource not found");
-			result = OV_ERR_BADPATH; //404
-		}
+	//raw request header not needed any longer
+	ov_string_setvalue(&request_header, NULL);
+	Ov_SetDynamicVectorLength(&args,0,STRING);
+	Ov_SetDynamicVectorLength(&match,0,STRING);
 
-		//BEGIN forming and sending the answer
-
-		//adding encoding and content-type to the header
-		if (ov_string_compare(encoding, "") == OV_STRCMP_EQUAL){
-				ov_string_print(&header, "%sContent-Type: %s\r\n", header, content_type);
-			}else{
-				ov_string_print(&header, "%sContent-Type: %s; charset=%s\r\n", header, content_type, encoding);
-		}
-
-		//now we have to format the raw http answer
-		map_result_to_http(&result, &http_version, &header, &body, response_format);
-
-		//Append common data to header:
-		ov_string_print(&header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", header, OV_LIBRARY_DEF_kshttpd.version, __TIME__, __DATE__);
-		//no-cache
-		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
-			if(ov_string_compare(http_version, "1.0") == OV_STRCMP_EQUAL){
-				//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
-				ov_string_print(&header, "%sPragma: no-cache\r\n", header);
-			}else{
-				//todo mal testen ob hier ein caching im cshmi hilft
-				//Cache-Control: max-age=2
-				ov_string_print(&header, "%sExpires: 0\r\n", header);
-			}
-		}
-		//HTTP1.1 says, we MUST send a Date: header if we have a clock. Do we have one? :)
-
-		//handle keep_alives
-		if (keep_alive == TRUE) {
-			ov_string_print(&header, "%sConnection: keep-alive\r\n", header);
+	//BEGIN static file routine
+	//no command matched yet... Is it a static file?
+	if(!Ov_Fail(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
+		OV_STRING filename = NULL;
+		OV_STRING filepath = NULL;
+		OV_STRING basepath = NULL;
+		//assume index.html as a root file
+		if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
+			filename = "index.html";
+		}else if(cmd[ov_string_getlength(cmd)-1] == '/'){
+			ov_string_append(&cmd, "index.html");
+			//remove leading /
+			filename = cmd + 1;
 		}else{
-			ov_string_print(&header, "%sConnection: close\r\n", header);
+			//remove leading /
+			filename = cmd + 1;
 		}
-		//in case of a HEAD request there is no need to send the body
-		if(ov_string_compare(http_request_type, "HEAD") == OV_STRCMP_EQUAL){
-			bodylength = 0;
+		ov_memstack_lock();
+		//basepath is something like /communication/httpservers/httpserver
+		basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
+		//a dot in a filename is represented via a percent notation in an identifier, so we need
+		//to change the parameter. A directory should be possible, so we need to skip / in conversion
+		ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
+		ov_memstack_unlock();
+		pStaticfile = Ov_DynamicPtrCast(kshttpd_staticfile, ov_path_getobjectpointer(filepath, 2));
+		ov_string_setvalue(&filepath, NULL);
+		filename = NULL;
+
+		if(pStaticfile != NULL){
+			ov_string_setvalue(&reply_contenttype, pStaticfile->v_mimetype);
+			ov_string_setvalue(&reply_encoding, pStaticfile->v_encoding);
+			result = OV_ERR_OK;
+			//reply_body is NULL right now
+			reply_body = pStaticfile->v_content;
+			request_handled_by = REQUEST_HANDLED_BY_STATICFILE;
+		}
+	}
+	//END static file routine
+
+	//no method has found a hit
+	if (request_handled_by == REQUEST_HANDLED_BY_NONE){
+		ov_string_append(&reply_body, "Resource not found");
+		result = OV_ERR_BADPATH; //404
+	}
+
+	//BEGIN forming and sending the answer
+
+	//adding encoding and content-type to the header
+	if (ov_string_compare(reply_encoding, "") == OV_STRCMP_EQUAL){
+			ov_string_print(&reply_header, "%sContent-Type: %s\r\n", reply_header, reply_contenttype);
 		}else{
-			bodylength = (int)ov_string_getlength(body);
+			ov_string_print(&reply_header, "%sContent-Type: %s; charset=%s\r\n", reply_header, reply_contenttype, reply_encoding);
+	}
+
+	//now we have to format the raw http answer
+	map_result_to_http(&result, &http_version, &reply_header, &reply_body, response_format);
+
+	//Append common data to header:
+	ov_string_print(&reply_header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", reply_header, OV_LIBRARY_DEF_kshttpd.version, __TIME__, __DATE__);
+	//no-cache
+	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
+		if(ov_string_compare(http_version, "1.0") == OV_STRCMP_EQUAL){
+			//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
+			ov_string_print(&reply_header, "%sPragma: no-cache\r\n", reply_header);
+		}else{
+			ov_string_print(&reply_header, "%sExpires: 0\r\n", reply_header);
 		}
+	}
+	//HTTP1.1 says, we MUST send a Date: header if we have a clock. Do we have one? :)
+
+	//handle keep_alives
+	if (keep_alive == TRUE) {
+		ov_string_print(&reply_header, "%sConnection: keep-alive\r\n", reply_header);
+	}else{
+		ov_string_print(&reply_header, "%sConnection: close\r\n", reply_header);
+	}
+	//in case of a HEAD request there is no need to send the body
+	if(ov_string_compare(request_method, "HEAD") == OV_STRCMP_EQUAL){
+		bodylength = 0;
+	}else{
+		bodylength = (int)ov_string_getlength(reply_body);
+	}
 
 #ifndef KSHTTPD_DISABLE_GZIP
-		// check if the body length corresponds for compression
-		if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
-													  (ov_string_compare(content_type, "text/plain") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "text/html") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "text/xml") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "text/javascript") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "text/css") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "application/xml") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "application/xhtml+xml") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "application/javascript") == OV_STRCMP_EQUAL
-													|| ov_string_compare(content_type, "application/x-javascript") == OV_STRCMP_EQUAL))
-		{
-			gzip_applicable = TRUE;
+	// check if the body length corresponds for compression
+	if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
+												  (ov_string_compare(reply_contenttype, "text/plain") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "text/html") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "text/xml") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "text/javascript") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "text/css") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "application/xml") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "application/xhtml+xml") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "application/javascript") == OV_STRCMP_EQUAL
+												|| ov_string_compare(reply_contenttype, "application/x-javascript") == OV_STRCMP_EQUAL))
+	{
+		gzip_applicable = TRUE;
+	}
+
+	if(gzip_applicable){
+		// The body is compressed by using gzip function in gzip.h
+		gzip(reply_body, &gzip_compressed_body, &gzip_compressed_body_length);
+	}
+#endif
+
+	if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
+		//append content length
+		if(gzip_applicable){
+			ov_string_print(&reply_header, "%sContent-Length: %i\r\n", reply_header, gzip_compressed_body_length);
+			ks_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(reply_header))/((float)ov_string_getlength(reply_header)-24+bodylength));
+		}else{
+			ov_string_print(&reply_header, "%sContent-Length: %i\r\n", reply_header, bodylength);
 		}
+	}
+
+	//handle gzip encoding by attaching a line to the header if accepted
+	if(gzip_applicable)
+	{
+		ov_string_append(&reply_header, "Content-Encoding: gzip\r\n");
+	}
+
+	// and finalize the header
+	ov_string_append(&reply_header, "\r\n");
+
+	//send header only if not in stream mode
+	if(this->v_stream == FALSE){
+		ks_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(reply_header));
+		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)reply_header, ov_string_getlength(reply_header));
+		//todo this does not send the request
+	}
+
+	//are we starting a stream?
+	if(this->v_stream == FALSE && request_handled_by == REQUEST_HANDLED_BY_GETVARSTREAM){
+		this->v_stream = TRUE;
+		//speed the processing time down to 5ms
+		this->v_cycInterval = 5;
+	}
+
+	//in case of a HEAD request there is no need to send the body
+	if(ov_string_compare(request_method, "HEAD") != OV_STRCMP_EQUAL && reply_body != NULL){
+		ks_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(reply_body));
 
 		if(gzip_applicable){
-			// The body is compressed by using gzip function in gzip.h
-			gzip(body, &gzip_compressed_body, &gzip_compressed_body_length);
+			//todo this does not send the request
+			ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)gzip_compressed_body, gzip_compressed_body_length);
+		}else{
+			//todo this does not send the request
+			ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)reply_body, bodylength);
 		}
-#endif
+	}
 
-		if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
-			//append content length
-			if(gzip_applicable){
-				ov_string_print(&header, "%sContent-Length: %i\r\n", header, gzip_compressed_body_length);
-				ks_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(header))/((float)ov_string_getlength(header)-24+bodylength));
-			}else{
-				ov_string_print(&header, "%sContent-Length: %i\r\n", header, bodylength);
-			}
-		}
-
-		//handle gzip encoding by attaching a line to the header if accepted
-		if(gzip_applicable)
-		{
-			ov_string_append(&header, "Content-Encoding: gzip\r\n");
-		}
-
-		// and finalize the header
-		ov_string_append(&header, "\r\n");
-
-		//send header only if not in stream mode
-		if(this->v_stream == FALSE){
-			ks_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(header));
-			//fixme, was hier?
-			ksbase_KSDATAPACKET_append(answer, header, ov_string_getlength(header));
-			ksbase_Channel_SendData(pChannel);
-			//send_tcp(receivesocket, header, (int)ov_string_getlength(header));
-		}
-
-		//are we starting a stream?
-		if(this->v_stream == FALSE && request_handled_by == REQUEST_HANDLED_BY_GETVARSTREAM){
-			this->v_stream = TRUE;
-			//speed the processing time down to 5ms
-			this->v_cycInterval = 5;
-		}
-
-		//in case of a HEAD request there is no need to send the body
-
-		if(ov_string_compare(http_request_type, "HEAD") != OV_STRCMP_EQUAL && body!=NULL){
-			ks_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(body));
-
-			if(gzip_applicable){
-				//fixme
-				ksbase_KSDATAPACKET_append(answer, gzip_compressed_body, gzip_compressed_body_length);
-				ksbase_Channel_SendData(pChannel);
-//				result = send_tcp(receivesocket, gzip_compressed_body, gzip_compressed_body_length);
-			}else{
-				//fixme
-				ksbase_KSDATAPACKET_append(answer, body, bodylength);
-				ksbase_Channel_SendData(pChannel);
-//				result = send_tcp(receivesocket, body, bodylength);
-			}
-
-		}
-
-		//free resources
-		ov_string_setvalue(&encoding, NULL);
-		ov_string_setvalue(&content_type, NULL);
+	//free resources
 
 #ifndef KSHTTPD_DISABLE_GZIP
-		ov_database_free(gzip_compressed_body);
+	ov_database_free(gzip_compressed_body);
 #endif
 
-		ov_string_setvalue(&cmd, NULL);
-		ov_string_setvalue(&http_version, NULL);
-		ov_string_setvalue(&http_request_type, NULL);
-		ov_string_setvalue(&header, NULL);
-		//if a static file is returned body is pointing inside of the database
-		if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
-			ov_string_setvalue(&body, NULL);
-		}
+	ov_string_setvalue(&request_method, NULL);
+	//request_header is freed already
+	ov_string_setvalue(&http_version, NULL);
+	ov_string_setvalue(&reply_header, NULL);
+	//if a static file is returned body is pointing inside the database
+	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
+		ov_string_setvalue(&reply_body, NULL);
+	}
 
-		//shutdown tcp connection if no keep_alive was set
-		if (keep_alive != TRUE || Ov_Fail(result)) {
-			//fixme was hier?
-			ksbase_Channel_CloseConnection(pChannel);
-//			kshttpd_httpclienthandler_shutdown((OV_INSTPTR_ov_object)cTask);
+	ov_string_setvalue(&reply_encoding, NULL);
+	ov_string_setvalue(&reply_contenttype, NULL);
 
-		}
+	ov_string_setvalue(&cmd, NULL);
+
+	//shutdown tcp connection if no keep_alive was set
+	if (keep_alive != TRUE || Ov_Fail(result)) {
+		ksbase_Channel_CloseConnection(pChannel);
+	}
 	return OV_ERR_OK;
 }
 

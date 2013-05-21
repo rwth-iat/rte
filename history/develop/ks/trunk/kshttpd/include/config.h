@@ -49,8 +49,11 @@
 #include "ks_logfile.h"
 #include "ov_ksserver_backend.h"
 
-//macros for static file inclusion
+/*
+ * KS_HTTP identifier
+ */
 
+#define KSHTTP_IDENTIFIER		"KSHTTP"
 
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
@@ -103,15 +106,6 @@
 #define RECHECK_MD5 15   //recalculate md5 checksums ov the authenticaton every nth access
 						 //low levels will produce more cpu load since md5 will be calculated more often
 
-//tcpconnection status
-#define STATUS_TCPCON_OK          0
-#define STATUS_TCPCON_SOCKOPENFAILED 1
-#define STATUS_TCPCON_SOCKNONBLOCKFAILED 2
-#define STATUS_TCPCON_SOCKBINDFAILED 3
-#define STATUS_TCPCON_SOCKLISTENFAILED 4
-#define STATUS_TCPCON_SOCKACCEPTFAILED 5
-#define STATUS_TCPCON_SOCKNONBLOCKCLIENTFAILED 6
-
 //maximal saved HTTP REQUEST (full request header size)
 #define MAX_HTTP_REQUEST_SIZE 8192
 
@@ -137,20 +131,6 @@
 #define HTTP_501_BODY 	"error 501: service not implemented\r\n"
 #define HTTP_503_HEADER "503 Service Unavailable\r\n"
 #define HTTP_503_BODY 	"error 503: service not available\r\n"
-
-
-#if PLT_SYSTEM_NT
- #define CLOSE_SOCKET closesocket
- #define IOCTL_SOCKET ioctlsocket
- #define MSG_NOSIGNAL 0
-#else
- #define CLOSE_SOCKET close
- #define IOCTL_SOCKET ioctl
-#endif
-
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
