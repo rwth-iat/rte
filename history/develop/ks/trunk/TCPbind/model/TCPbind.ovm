@@ -38,7 +38,7 @@ LIBRARY TCPbind
 	
 	/**
 	*	The TCPListener is only used on the server-side.
-	*	it listens on a given TCP port. On incoming conenctions it creates a new socket. Then it creates a ne TCPChannel using the just created socket so handle the incoming data.
+	*	it listens on a given TCP port. On incoming conenctions it creates a new socket. Then it creates a new TCPChannel using the just created socket so handle the incoming data.
 	*	 
 	*/
 	CLASS TCPListener : CLASS ksbase/ComTask

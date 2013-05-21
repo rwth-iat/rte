@@ -430,7 +430,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			pChannel->v_ConnectionTimeOut = 2;
 			dataReceived->readPT = BeginOfMessage; 	/*	reset the read pointer to the place where the message began (to be read again next time)	*/
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
-											Yes, this could block the ClientHanlder for a longer time.	*/
+											Yes, this could block the ClientHandler for a longer time.	*/
 		}
 		else
 		{

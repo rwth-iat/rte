@@ -808,7 +808,7 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/**
 	 * @param {String} HostAndServername Host and Servername concat with a slash
-	 * @return {String} TKS Handle of the requested Server or null
+	 * @return {String} TKS Handle or "Server:port" for kshttpof the requested Server or null
 	 * @todo add timeout für unused deleteCommunicationPoint
 	 */
 	getCommunicationPoint: function(HostAndServername) {
@@ -856,7 +856,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param {String} HostAndServername Host and Servername concat with a slash
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @return {String} TKS Handle of the requested Server or null
+	 * @return {String} TKS Handle or "Server:port" for kshttpof the requested Server or null
 	 */
 	_findCommunicationPoint: function(HostAndServer, cbfnc, async) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._findCommunicationPoint - Start on "+HostAndServer);
@@ -887,13 +887,10 @@ HMIJavaScriptKSClient.prototype = {
 		if ("kshttp" === HMI.HMI_Constants.ServerType){
 			if(Serverport !== ""){
 				return Host+":"+Serverport;
-			}else if(Server === "MANAGER" && ManagerPortGiven === true){
-				//manager port is known if set
-				return Host+":"+ManagerPort;
 			}else if(Server === "MANAGER"){
-				//manager is always on port 7509 with ksservhttp
-				//fixme diesen teil loeschen und ManagerPortGiven === true oben raus
-				return Host+":8080";
+				//manager port is known if set
+				//or on port 7509 with kshttp
+				return Host+":"+ManagerPort;
 			}else{
 				urlparameter = "http://"+Host+":"+ManagerPort+"/getServer?servername="+Server;
 				responseFormat = "text/plain";
@@ -920,11 +917,13 @@ HMIJavaScriptKSClient.prototype = {
 				urlparameter = HMI.KSGateway_Path+"?obj=tks-server&args="+Host+"/"+Server;
 			}else if("php" === HMI.HMI_Constants.ServerType){
 				urlparameter = HMI.KSGateway_Path+"?cmd=tks-server&args="+Host+"/"+Server;
+			}else{
+				return ReturnText;
 			}
 			ReturnText = this._sendRequest(this, method, false, urlparameter, null, responseFormat);
 		}else if("kshttp" === HMI.HMI_Constants.ServerType){
 			//prefix hostname if kshttp
-			ReturnText = Host+":"+ReturnText;
+			ReturnText = Host+":"+parseInt(ReturnText, 10);
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._findCommunicationPoint - End");
 		return ReturnText;
