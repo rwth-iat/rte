@@ -157,7 +157,7 @@ OV_DLLFNCEXPORT void ov_ksserver_createobject(
 
 		for(identifier=objpath+strlen(objpath)-1; identifier>objpath; identifier--) {
 			if(*identifier == '/') {
-				*identifier = 0;
+				*identifier = 0;	//fake a null character for termination the objpath string by replacing the / char
 				identifier++;
 				break;
 			}
