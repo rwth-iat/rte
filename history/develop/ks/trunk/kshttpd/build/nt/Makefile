@@ -7,9 +7,11 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
-#DATABASECREATEKEYS = -w ksbase -w kshttpd
+DATABASECREATEKEYS = 
+#-w ksbase -w kshttpd
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS = 
+EXTRA_CC_FLAGS =
+EXTRA_CC_FLAGS = -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 
 #EXTRA_CC_FLAGS = -DKSSERVHTTP_DISABLE_GZIP
 EXTRA_LIBS = 
 LD_FLAGS = ../../lib/nt/libz.a -lwsock32

@@ -146,7 +146,6 @@ OV_UINT extract_response_format(OV_STRING_VEC* args);
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
-OV_RESULT split_response_parts(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format);

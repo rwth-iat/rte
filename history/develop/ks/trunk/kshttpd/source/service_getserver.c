@@ -39,7 +39,9 @@
 #include "config.h"
 
 #define EXEC_GETSERVER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
-		ov_string_setvalue(&temp, NULL);\
+		ov_string_setvalue(&servername, NULL);\
+		Ov_SetDynamicVectorLength(&protocols, 0, STRING);\
+		Ov_SetDynamicVectorLength(&ports, 0, STRING);\
 		return
 
 /**
@@ -54,17 +56,121 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	/*
 	*	parameter and result objects
 	*/
+	OV_STRING servername = NULL;
+	OV_UINT serverversion;
+	OV_INSTPTR_ksbase_Manager pManager = NULL;
+	OV_STRING_VEC protocols = {0, NULL};
+	OV_STRING_VEC ports = {0, NULL};
+	OV_UINT	regTTl;
+	OV_TIME ExpTime;
+	OV_INT registeredVersion;
+	OV_UINT i = 0;
+	OV_UINT http_port;
+	OV_TIME ttemp;
+
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
-	OV_STRING temp = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "servername", &match);
 	if(match.veclen<1){
-		fr = OV_ERR_BADPARAM;
+		fr = KS_ERR_TARGETGENERIC;
 		print_result_array(message, response_format, &fr, 1, ": Variable servername not found");
 		EXEC_GETSERVER_RETURN fr; //400
 	}
-	EXEC_GETSERVER_RETURN OV_ERR_NOTIMPLEMENTED;
+	if(ov_string_getlength(match.value[0]) > KS_NAME_MAXLEN){
+		fr = KS_ERR_TARGETGENERIC;
+		print_result_array(message, response_format, &fr, 1, ": requested servername too long");
+		EXEC_GETSERVER_RETURN fr; //400
+	}
+	//todo allow multiple getservers?
+	ov_string_setvalue(&servername, match.value[0]);
+
+	Ov_SetDynamicVectorLength(&match,0,STRING);
+	find_arguments(args, "serverversion", &match);
+	if(match.veclen<1){
+		serverversion = 2;
+	}else{
+		serverversion = atoi(match.value[0]);
+	}
+
+	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
+	if(!pManager)
+	{
+		fr = KS_ERR_NOMANAGER;
+		print_result_array(message, response_format, &fr, 1, ": received Manager command but no Manager here");
+		EXEC_GETSERVER_RETURN fr; //400
+	}
+
+	/*
+	 * check if there is a server of the given name and version of the kshttp protocol (or the whole server if it is the only supported protocol)
+	 */
+	KS_logfile_debug(("kshttp_getserver: getserver: getting server data."));
+	fr = ksbase_Manager_getserverdata(servername, serverversion, &protocols, &ports, &regTTl, &ExpTime, &registeredVersion);
+	if(Ov_OK(fr))
+	{	//server exists, check if ks protocol is supported
+		KS_logfile_debug(("kshttp_getserver: getserver: server exists."));
+		for(i=0; i<protocols.veclen; i++){
+//fixme register http is not implemented right now. So lie here with a break :-)
+			break;
+			if(ov_string_compare(protocols.value[i], KSHTTP_IDENTIFIER) == OV_STRCMP_EQUAL){
+				break;
+			}
+		}
+
+		if(i<protocols.veclen)
+		{	/*	kshttp supported	*/
+			KS_logfile_debug(("kshttp_getserver: getserver: kshttp supported."));
+			http_port = atoi(ports.value[i]);
+		}
+		else
+		{	/*	kshttp not supported	*/
+			//ksbase is happy, but we are not
+			fr = KS_ERR_SERVERUNKNOWN;
+			KS_logfile_debug(("kshttp_getserver: getserver: kshttp not supported."));
+			print_result_array(message, response_format, &fr, 1, ": Server unknown (kshttp not supported)");
+			EXEC_GETSERVER_RETURN fr; //400
+		}
+	}
+	else
+	{
+		if(fr == KS_ERR_SERVERUNKNOWN)
+		{
+			print_result_array(message, response_format, &fr, 1, ": Server unknown");
+			EXEC_GETSERVER_RETURN fr; //400
+		}
+		else
+		{/*	not all values set...how can this happen?	*/
+			print_result_array(message, response_format, &fr, 1, ": weird: getserverdata returned unknown error. i don't know how this can happen");
+			EXEC_GETSERVER_RETURN KS_ERR_TARGETGENERIC; //400
+		}
+	}
+	ov_time_gettime(&ttemp);
+	if(ov_time_compare(&ttemp, &ExpTime) == OV_TIMECMP_BEFORE){
+		fr = KS_ERR_SERVERUNKNOWN;
+		KS_logfile_debug(("kshttp_getserver: getserver: server TTL exceed."));
+		print_result_array(message, response_format, &fr, 1, ": Server unknown (server TTL exceed)");
+		EXEC_GETSERVER_RETURN fr; //400
+	}
+
+	begin_response_part(message, response_format, "port");
+	if(*message == NULL){
+		//could be the case at format=plain
+		ov_string_print(message, "%u", http_port);
+	}else{
+		ov_string_print(message, "%s%u", *message, http_port);
+	}
+	finalize_response_part(message, response_format, "port");
+	/* needed?
+	begin_response_part(&temp, response_format, "servername");
+	ov_string_append(&temp, servername);
+	finalize_response_part(&temp, response_format, "servername");
+	begin_response_part(&temp, response_format, "serverversion");
+	ov_string_print(&temp, "%s%u", temp, registeredVersion);
+	finalize_response_part(&temp, response_format, "serverversion");
+	*/
+
+	/*	fixme living-state needed?	*/
+	EXEC_GETSERVER_RETURN OV_ERR_OK;
 }

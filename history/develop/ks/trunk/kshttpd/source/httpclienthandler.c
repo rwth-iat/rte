@@ -200,6 +200,12 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 			ov_string_print(body, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
 		}
 		break;
+	case KS_ERR_NOMANAGER:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_409_HEADER, tmp_header);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_NOMANAGER: %s%s", HTTP_409_BODY, tmp_body);
+		}
+		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 		if(response_format != RESPONSE_FORMAT_KSX){

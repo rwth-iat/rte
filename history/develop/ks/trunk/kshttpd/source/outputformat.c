@@ -72,29 +72,6 @@ OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRI
 }
 
 /**
- * unused
- * @param output pointer to the string to manipulate
- * @param format UINT for the type of response
- * @param entry_type string for naming the following content (xml node name in KSX)
- * @return return code always ov_err_ok
- */
-OV_RESULT split_response_parts(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(response_format==RESPONSE_FORMAT_TCL){
-		ov_string_append(output, "} {");
-	}else if(response_format==RESPONSE_FORMAT_KSX){
-		if(*output == NULL){
-			//should not happen
-			ov_string_print(output, "</%s>\n<%s>", entry_type, entry_type);
-		}else{
-			ov_string_print(output, "%s</%s>\n<%s>", *output, entry_type, entry_type);
-		}
-	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		ov_string_append(output, ";");
-	}
-	return OV_ERR_OK;
-}
-
-/**
  * appends opening of element to output string
  * @param output pointer to the string to manipulate
  * @param format UINT for the type of response
@@ -103,7 +80,11 @@ OV_RESULT split_response_parts(OV_STRING* output, OV_UINT response_format, OV_ST
  */
 OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_TCL){
-		ov_string_append(output, "{");
+		if(*output == NULL){
+			ov_string_setvalue(output, "{");
+		}else{
+			ov_string_append(output, "{");
+		}
 	}else if(response_format==RESPONSE_FORMAT_KSX){
 		if(*output == NULL){
 			ov_string_print(output, "<%s>", entry_type);
@@ -117,7 +98,7 @@ OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STR
 			ov_string_print(output, "%s{\"%s\": ", *output, entry_type);
 		}
 	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		ov_string_append(output, "");
+		//do nothing
 	}
 	return OV_ERR_OK;
 }
@@ -130,13 +111,26 @@ OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STR
  */
 OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
 	if(response_format==RESPONSE_FORMAT_TCL){
-		ov_string_append(output, " ");
+		if(*output == NULL){
+			ov_string_setvalue(output, " ");
+		}else{
+			ov_string_append(output, " ");
+		}
 	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		ov_string_append(output, " ");
+		if(*output == NULL){
+			ov_string_setvalue(output, " ");
+		}else{
+			ov_string_append(output, " ");
+		}
+
 	}else if(response_format==RESPONSE_FORMAT_KSX){
 		//none
 	}else if(response_format==RESPONSE_FORMAT_JSON){
-		ov_string_append(output, ", ");
+		if(*output == NULL){
+			ov_string_setvalue(output, ", ");
+		}else{
+			ov_string_append(output, ", ");
+		}
 	}
 	return OV_ERR_OK;
 }
@@ -150,23 +144,29 @@ OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
  */
 OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_TCL){
-		ov_string_append(output, "}");
+		if(*output == NULL){
+			ov_string_setvalue(output, "}");
+		}else{
+			ov_string_append(output, "}");
+		}
 	}else if(response_format==RESPONSE_FORMAT_KSX){
 		if(*output == NULL){
-			//should not happen
 			ov_string_print(output, "</%s>\n", entry_type);
 		}else{
 			ov_string_print(output, "%s</%s>\n", *output, entry_type);
 		}
 	}else if(response_format==RESPONSE_FORMAT_JSON){
 		if(*output == NULL){
-			//should not happen
 			ov_string_print(output, "}\n");
 		}else{
 			ov_string_print(output, "%s}\n", *output);
 		}
 	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		ov_string_append(output, ";");
+		if(*output == NULL){
+			ov_string_setvalue(output, ";");
+		}else{
+			ov_string_append(output, ";");
+		}
 	}
 	return OV_ERR_OK;
 }

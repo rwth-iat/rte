@@ -73,7 +73,16 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpIdentificator_createClientHandler (
 			return result;
 		}
 		else
+		{
+			result = ov_string_setvalue(&(pClientHandler->v_sourceAdr), pchannel->v_address);
+			if(Ov_Fail(result))
+			{
+				ov_memstack_lock();
+				KS_logfile_error(("%s: could not set ClientHandler %s's sourceAdr. reason: %s", this->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
+				ov_memstack_unlock();
+			}
 			return OV_ERR_OK;
+		}
 	}
 	else
 	{
