@@ -17,9 +17,10 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 	{
 		while(i<length)
 		{
-			if(!((name[i] >= 65 && name[i] <= 90)	//A-Z
-					|| (name[i] >= 97 && name[i] <= 122)	//a-z
-					|| name[i] == 95))		//'_'
+			if(!((name[i] >= 65 && name[i] <= 90)			/*	A-Z	*/
+					|| (name[i] >= 97 && name[i] <= 122)	/*	a-z	*/
+					|| name[i] == 95)						/*	'_'	*/
+					|| (name[i] >= 48 && name[i] <= 57))	/*	0-9	*/
 					return FALSE;
 			i++;
 		}
