@@ -65,7 +65,7 @@ LIBRARY ksxdr
 	
 	CLASS xdrManagerCom	:	CLASS ksbase/ComTask
 	IS_INSTANTIABLE;
-	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shorcut is used.";
+	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shortcut is used.";
 	VARIABLES
 		ManagerPort	:	STRING
 			COMMENT	=	"Port part of Manager address"
