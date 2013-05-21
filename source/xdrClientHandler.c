@@ -515,6 +515,10 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			ksxdr_prepend_length(answer, beginAnswer);
 		return OV_ERR_OK;		/*	this function worked properly, the error is encoded in the reply message	*/
 	}
+	/***************************************************************************************************************************************************************************
+	 * the rpc-part of the message is valid --> we received a service-request --> increment receivedcalls
+	 **************************************************************************************************************************************************************************/
+		this->v_receivedCalls++;
 
 	/***************************************************************************************************************************************************************************
 	 * handle ticket indicator; offset now should be 36 (since the auth blocks should be 8 bytes each (opaque data length 0))
