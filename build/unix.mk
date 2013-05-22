@@ -139,11 +139,9 @@ depend : $(SOURCES)
 $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
-	strip --strip-debug $(OV_LIBOV_LIB)
 
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB)
 	$(LD) -o $@ $^
-	strip --strip-debug $(OV_LIBOV_DLL)
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
@@ -152,11 +150,9 @@ ov.c ov.h : $(OV_CODEGEN_EXE)
 $(OV_LIBOVKS_LIB) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ)
 	$(AR) rv $@ $?
 	$(RANLIB) $@
-	strip --strip-debug $(OV_LIBOVKS_LIB)
 
 $(OV_LIBOVKS_DLL) : $(KS_LIBOVKS_OBJ) $(OV_LIBOVKS_OBJ) $(ACPLTKS_LIBS)
 	$(LD) -o $@ $^ $(CXX_LIBS)
-	strip --strip-debug $(OV_LIBOVKS_DLL)
 
 ov_ksserver$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksserver.c
 	$(CXX_COMPILE) -o $@ $<
