@@ -209,7 +209,6 @@ OV_DLLFNCEXPORT void ksapi_getVar_submit(
 		}
 	}
 
-
 	/*	do the actual submit	*/
 	pVtblClient->m_requestGetVar(pClient, NULL, numberOfItems, varPaths, (OV_INSTPTR_ov_domain) pthis,
 			&ksapi_getVar_callback);
@@ -323,11 +322,11 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 		{
 			if(pCurrVar->v_order <= itemsLength)
 			{
-				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
-				pCurrVar->v_varRes = itemsVals[pCurrVar->v_order-1].result;
+				pCurrVar->v_varRes = itemsVals[(pCurrVar->v_order-1)].result;
 				if(Ov_OK(pCurrVar->v_varRes))
 				{
-					result = Ov_SetAnyValue(&(pCurrVar->v_varValue), &(itemsVals[pCurrVar->v_order-1].var_current_props));
+					result = Ov_SetAnyValue(&(pCurrVar->v_varValue), &(itemsVals[(pCurrVar->v_order)-1].var_current_props));
+					pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
 					if(Ov_Fail(result))
 					{
 						thisGV->v_status = KSAPI_COMMON_INTERNALERROR;
@@ -336,6 +335,7 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 						return;
 					}
 				}
+				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
 
 			}
 			else
@@ -351,11 +351,11 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 		{
 			if(pCurrVar->v_order <= itemsLength)
 			{
-				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
-				pCurrVar->v_varRes = itemsVals[pCurrVar->v_order-1].result;
+				pCurrVar->v_varRes = itemsVals[(pCurrVar->v_order)-1].result;
 				if(Ov_OK(pCurrVar->v_varRes))
 				{
-					result = Ov_SetAnyValue(&(pCurrVar->v_varValue), &(itemsVals[pCurrVar->v_order-1].var_current_props));
+					result = Ov_SetAnyValue(&(pCurrVar->v_varValue), &(itemsVals[(pCurrVar->v_order)-1].var_current_props));
+					pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
 					if(Ov_Fail(result))
 					{
 						thisGV->v_status = KSAPI_COMMON_INTERNALERROR;
@@ -364,6 +364,8 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 						return;
 					}
 				}
+				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
+
 			}
 			else
 			{
