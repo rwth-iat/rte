@@ -172,19 +172,22 @@ OV_DLLFNCEXPORT void ksapi_setVar_submit(
     		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
     		return;
     	}
-    	if(pCurrVar->v_path)
-    	{
-			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
-			items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
-			pCurrVar->v_order = numberOfItems;
-    	}
-    	else
-    	{
-    		KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
-    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-    		pthis->v_result = result;
-    		Ov_HeapFree(items);
-    		return;
+    	if(!pCurrVar->v_order)
+    	{/*	variable not processed yet	*/
+    		if(pCurrVar->v_path)
+    		{
+    			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+    			items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
+    			pCurrVar->v_order = numberOfItems;
+    		}
+    		else
+    		{
+    			KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+    			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    			pthis->v_result = result;
+    			Ov_HeapFree(items);
+    			return;
+    		}
     	}
     }
 
@@ -198,19 +201,22 @@ OV_DLLFNCEXPORT void ksapi_setVar_submit(
     		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
     		return;
     	}
-    	if(pCurrVar->v_path)
-    	{
-    		items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
-    		items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
-    		pCurrVar->v_order = numberOfItems;
-    	}
-    	else
-    	{
-    		KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
-    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-    		pthis->v_result = result;
-    		Ov_HeapFree(items);
-    		return;
+    	if(!pCurrVar->v_order)
+    	{	/*	variable not processed yet	*/
+    		if(pCurrVar->v_path)
+    		{
+    			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+    			items[numberOfItems-1].var_current_props = pCurrVar->v_varValue; /*	we do not need to copy either	*/
+    			pCurrVar->v_order = numberOfItems;
+    		}
+    		else
+    		{
+    			KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+    			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    			pthis->v_result = result;
+    			Ov_HeapFree(items);
+    			return;
+    		}
     	}
     }
 
@@ -326,6 +332,7 @@ void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 			if(pCurrVar->v_order <= itemsLength)
 			{
 				pCurrVar->v_varRes = itemsResults[pCurrVar->v_order-1];
+				pCurrVar->v_order = 0;	/*	reset order	*/
 			}
 			else
 			{
@@ -342,6 +349,7 @@ void ksapi_setVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 
 			{
 				pCurrVar->v_varRes = itemsResults[pCurrVar->v_order-1];
+				pCurrVar->v_order = 0;	/*	reset order	*/
 			}
 			else
 			{
