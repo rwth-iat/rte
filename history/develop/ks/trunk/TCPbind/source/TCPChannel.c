@@ -362,7 +362,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						}
 						break;
 					}
+#if !OV_SYSTEM_NT
 					else if (err == -1)
+#else
+					else if (err == SOCKET_ERROR)
+#endif
 					{
 						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
 						CLOSE_SOCKET(socket);
