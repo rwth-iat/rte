@@ -163,18 +163,21 @@ OV_DLLFNCEXPORT void ksapi_getVar_submit(
 			pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
 			return;
 		}
-		if(pCurrVar->v_path)
-		{
-			varPaths[numberOfItems-1] = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
-			pCurrVar->v_order = numberOfItems;
-		}
-		else
-		{
-			KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
-			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-			pthis->v_result = result;
-			Ov_HeapFree(varPaths);
-			return;
+		if(!pCurrVar->v_order)
+		{	/*	variable not processed yet	*/
+			if(pCurrVar->v_path)
+			{
+				varPaths[numberOfItems-1] = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+				pCurrVar->v_order = numberOfItems;
+			}
+			else
+			{
+				KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+				pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+				pthis->v_result = result;
+				Ov_HeapFree(varPaths);
+				return;
+			}
 		}
 	}
 
@@ -188,18 +191,21 @@ OV_DLLFNCEXPORT void ksapi_getVar_submit(
 			pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
 			return;
 		}
-		if(pCurrVar->v_path)
-		{
-			varPaths[numberOfItems-1] = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
-			pCurrVar->v_order = numberOfItems;
-		}
-		else
-		{
-			KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
-			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-			pthis->v_result = result;
-			Ov_HeapFree(varPaths);
-			return;
+		if(!pCurrVar->v_order)
+		{	/*	variable not processed yet	*/
+			if(pCurrVar->v_path)
+			{
+				varPaths[numberOfItems-1] = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
+				pCurrVar->v_order = numberOfItems;
+			}
+			else
+			{
+				KS_logfile_error(("%s: submit: Variable %s has empty path", pobj->v_identifier, pCurrVar->v_identifier));
+				pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+				pthis->v_result = result;
+				Ov_HeapFree(varPaths);
+				return;
+			}
 		}
 	}
 
@@ -317,6 +323,7 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 		{
 			if(pCurrVar->v_order <= itemsLength)
 			{
+				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
 				pCurrVar->v_varRes = itemsVals[pCurrVar->v_order-1].result;
 				if(Ov_OK(pCurrVar->v_varRes))
 				{
@@ -344,6 +351,7 @@ void ksapi_getVar_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_
 		{
 			if(pCurrVar->v_order <= itemsLength)
 			{
+				pCurrVar->v_order = 0;	/*	reset order to be processed again next time	*/
 				pCurrVar->v_varRes = itemsVals[pCurrVar->v_order-1].result;
 				if(Ov_OK(pCurrVar->v_varRes))
 				{
