@@ -251,7 +251,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 	OV_UINT len;
 	OV_RESULT result = OV_ERR_OK;
 	OV_STRING_VEC match = {0,NULL};
-	OV_STRING reply_contenttype="text/plain", reply_encoding="Windows-1252";
+	OV_STRING reply_contenttype = NULL;
+	OV_STRING reply_encoding = NULL;
 
 	//vector of the variables, odd elements are variable names, even are values
 	OV_STRING_VEC args = {0,NULL};
@@ -264,6 +265,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 
 	OV_INSTPTR_kshttpd_staticfile pStaticfile;
 
+	ov_string_setvalue(&reply_contenttype, "text/plain");
+	ov_string_setvalue(&reply_encoding, "Windows-1252");
 
 	//TODO NOTE: this works only for GET and HEAD, for POST one needs to evaluate content-length
 	if(dataReceived->length > MAX_HTTP_REQUEST_SIZE){
@@ -453,7 +456,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		OV_STRING basepath = NULL;
 		//assume index.html as a root file
 		if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
-			filename = "index.html";
+			ov_string_setvalue(&filename, "index.html");
 		}else if(cmd[ov_string_getlength(cmd)-1] == '/'){
 			ov_string_append(&cmd, "index.html");
 			//remove leading /
@@ -471,7 +474,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		ov_memstack_unlock();
 		pStaticfile = Ov_DynamicPtrCast(kshttpd_staticfile, ov_path_getobjectpointer(filepath, 2));
 		ov_string_setvalue(&filepath, NULL);
-		filename = NULL;
+		ov_string_setvalue(&filename, NULL);
 
 		if(pStaticfile != NULL){
 			ov_string_setvalue(&reply_contenttype, pStaticfile->v_mimetype);
