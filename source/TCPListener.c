@@ -230,11 +230,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 #if OV_SYSTEM_NT
 				if((fd==-1) || (fd==INVALID_SOCKET))
 #else
-					if (fd == -1)
+				if (fd == -1)
 #endif
-					{
-						continue;
-					}
+				{
+					continue;
+				}
 
 				if (walk->ai_family == AF_INET6)
 				{
@@ -370,9 +370,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		FD_ZERO(&fds);
 		for (i = 0; i < 2; i++) {
 #if OV_SYSTEM_NT
-			if((sockfds[i] > -1) && (sockfds[i] != INVALID_SOCKET))
+			if((sockfds[i] != -1) && (sockfds[i] != INVALID_SOCKET))
 #else
-			if(sockfds[i] > -1)
+			if(sockfds[i] != -1)
 #endif
 			{
 

@@ -346,6 +346,20 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
+						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+								&& !thisCh->v_inData.length)
+						{
+							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+							Ov_DeleteObject(thisCh);
+
+						}
+						else
+						{
+							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+							thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+						}
 						break;
 					}
 					else if (err == -1)
@@ -485,6 +499,23 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		if(thisCh->v_outData.length)
 			TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
+	}
+	else
+	{/*	no socket open	*/
+		/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+		if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+				&& !thisCh->v_inData.length)
+		{
+			KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+			Ov_DeleteObject(thisCh);
+
+		}
+		else
+		{
+			KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+			thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+			Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+		}
 	}
 	/*******************************************************************************************************************************************************
 	 *	check timeouts
