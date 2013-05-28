@@ -414,6 +414,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 					break;
 
 				default:
+					ov_string_setvalue(&LoopEntryTypeString, NULL);
 					ov_string_print(&LoopEntryValue, "unknown value, VarType: %#X", Variable.value.vartype);
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
@@ -423,7 +424,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 			seperate_response_parts(&LoopEntryList, response_format);
 		}
 		begin_response_part(&LoopEntryList, response_format, "currprops");
-		if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON){
+		if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON)){
 			//get additional data if we serve ksx
 			begin_response_part(&LoopEntryList, response_format, "value");
 			begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
