@@ -1,0 +1,168 @@
+/*
+*	Copyright (C) 2013
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*
+***********************************************************************/
+
+#include "ksbase.ovm"
+
+LIBRARY kshttp
+	VERSION   = "V1.0 (17-May-2013)";
+	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
+	COPYRIGHT	= "Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
+	
+	/**
+	 *	Checks whether received data is conforming to the http protocol
+	 *	Criteria are: first byte equals the allowed HTTP methods
+	 */
+	CLASS httpIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing http communication";
+		VARIABLES
+			AllowedMethods[]	:	STRING
+			INITIALVALUE = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
+		END_VARIABLES;
+		OPERATIONS
+			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	/**
+		handles on TCP Connection to a http client
+	*/
+	CLASS httpclienthandler : CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for HTTP-ks clients. Processes HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	VARIABLES
+		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
+		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
+		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
+	END_VARIABLES;
+	OPERATIONS
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS httpSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	IS_INSTANTIABLE;
+	COMMENT	=	"Authenticator for simple tickets transportes via ks-http";
+	OPERATIONS
+		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/*
+ 		*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 		*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 		*/
+ 		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	
+	CLASS httpManagerCom	:	CLASS ksbase/ComTask
+	IS_INSTANTIABLE;
+	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shortcut is used.";
+	VARIABLES
+		ManagerPort	:	STRING
+			COMMENT	=	"Port part of Manager address"
+			INITIALVALUE = "7509";
+		OwnPort		:	STRING
+			COMMENT	=	"Port this server listens on"
+			INITIALVALUE	=	"";
+		UseShortCut	:	BOOL
+			COMMENT	=	"use the ov-shortcut (do not create a channel)"
+			INITIALVALUE = FALSE;
+		RegisterState	:	UINT
+			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
+			INITIALVALUE = 0;
+		ErrCode		:	INT
+			COMMENT	=	"Error Code returned by register command"
+			INITIALVALUE = 0;
+		msgAccepted	:	INT
+			COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+			INITIALVALUE = 0;
+		msgStatus	:	INT
+			COMMENT	=	"0 = message could be processed; otherwise: errorcode"
+			INITIALVALUE = 0;
+		httpErrCode	:	INT
+			COMMENT	=	"reasons for denial"
+			INITIALVALUE = 0;
+		Tries		:	UINT
+			COMMENT	=	"Tries before successfull register. 5 is maximum"
+			INITIALVALUE = 0;
+	END_VARIABLES;	
+	OPERATIONS
+		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
+	END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS authenticatedsession : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "class holding security authenticated sessions";
+		VARIABLES
+			nonce : STRING; //connection nounce for http authorization
+			securitylevel : INT INITIALVALUE=0; //highest level of security that has been verified on this connection
+			lastactivity : TIME HAS_ACCESSORS;
+			uncheckedaccess : INT INITIALVALUE=0; //number of times the password has not been verified
+			lasttcpclient : STRING HAS_ACCESSORS INITIALVALUE=""; //last connected name of the tcp session
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS staticfile : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "class for providing static content, file with name n.html is accessible under localhost:8080/n.html and shows the content of the content field. Mimetype and encoding have generic HTTP meaning.";
+		VARIABLES
+			content : STRING HAS_ACCESSORS INITIALVALUE="";
+			mimetype : STRING HAS_ACCESSORS INITIALVALUE="text/html";
+			encoding : STRING HAS_ACCESSORS INITIALVALUE="";
+		END_VARIABLES;	
+	END_CLASS;
+	
+END_LIBRARY;
