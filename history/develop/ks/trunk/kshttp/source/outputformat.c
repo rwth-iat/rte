@@ -35,9 +35,9 @@ OV_UINT extract_response_format(OV_STRING_VEC* args){
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
 		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
-		begin_response_part(output, response_format, entry_type);
+		return begin_response_part(output, response_format, entry_type);
 	}else if(response_format==RESPONSE_FORMAT_JSON){
-		begin_response_part(output, response_format, entry_type);
+		return begin_response_part(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
 }
@@ -50,6 +50,9 @@ OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STR
  * @return return code always ov_err_ok
  */
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
+		return OV_ERR_GENERIC;
+	}
 	if(response_format==RESPONSE_FORMAT_KSX){
 		finalize_response_part(output, response_format, entry_type);
 		finalize_response_part(output, response_format, "result");
@@ -79,6 +82,9 @@ OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRI
  * @return return code always ov_err_ok
  */
 OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
+		return OV_ERR_GENERIC;
+	}
 	if(response_format==RESPONSE_FORMAT_TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "{");
@@ -143,6 +149,9 @@ OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
  * @return return code always ov_err_ok
  */
 OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
+		return OV_ERR_GENERIC;
+	}
 	if(response_format==RESPONSE_FORMAT_TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "}");
