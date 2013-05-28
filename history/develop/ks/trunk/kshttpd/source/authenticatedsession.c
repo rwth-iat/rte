@@ -16,37 +16,37 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_kshttpd
-#define OV_COMPILE_LIBRARY_kshttpd
+#ifndef OV_COMPILE_LIBRARY_kshttp
+#define OV_COMPILE_LIBRARY_kshttp
 #endif
 
 
-#include "kshttpd.h"
+#include "kshttp.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_TIME* kshttpd_authenticatedsession_lastactivity_get(
-    OV_INSTPTR_kshttpd_authenticatedsession          pobj
+OV_DLLFNCEXPORT OV_TIME* kshttp_authenticatedsession_lastactivity_get(
+    OV_INSTPTR_kshttp_authenticatedsession          pobj
 ) {
     return &pobj->v_lastactivity;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_authenticatedsession_lastactivity_set(
-    OV_INSTPTR_kshttpd_authenticatedsession          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_authenticatedsession_lastactivity_set(
+    OV_INSTPTR_kshttp_authenticatedsession          pobj,
     const OV_TIME*  value
 ) {
     pobj->v_lastactivity = *value;
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_authenticatedsession_lasttcpclient_get(
-    OV_INSTPTR_kshttpd_authenticatedsession          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_authenticatedsession_lasttcpclient_get(
+    OV_INSTPTR_kshttp_authenticatedsession          pobj
 ) {
     return pobj->v_lasttcpclient;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_authenticatedsession_lasttcpclient_set(
-    OV_INSTPTR_kshttpd_authenticatedsession          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_authenticatedsession_lasttcpclient_set(
+    OV_INSTPTR_kshttp_authenticatedsession          pobj,
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_lasttcpclient,value);

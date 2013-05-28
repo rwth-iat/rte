@@ -38,7 +38,7 @@
 
 #include "ksbase.ovm"
 
-LIBRARY kshttpd
+LIBRARY kshttp
 	VERSION   = "V1.0 (17-May-2013)";
 	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";

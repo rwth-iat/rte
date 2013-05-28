@@ -38,47 +38,47 @@
 
 
 
-#ifndef OV_COMPILE_LIBRARY_kshttpd
-#define OV_COMPILE_LIBRARY_kshttpd
+#ifndef OV_COMPILE_LIBRARY_kshttp
+#define OV_COMPILE_LIBRARY_kshttp
 #endif
 
 #include "config.h"
 
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_staticfile_mimetype_get(
-	OV_INSTPTR_kshttpd_staticfile          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_staticfile_mimetype_get(
+	OV_INSTPTR_kshttp_staticfile          pobj
 ) {
 	return pobj->v_mimetype;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_staticfile_mimetype_set(
-	OV_INSTPTR_kshttpd_staticfile          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_staticfile_mimetype_set(
+	OV_INSTPTR_kshttp_staticfile          pobj,
 	const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_mimetype,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_staticfile_content_get(
-	OV_INSTPTR_kshttpd_staticfile          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_staticfile_content_get(
+	OV_INSTPTR_kshttp_staticfile          pobj
 ) {
 	return pobj->v_content;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_staticfile_content_set(
-	OV_INSTPTR_kshttpd_staticfile          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_staticfile_content_set(
+	OV_INSTPTR_kshttp_staticfile          pobj,
 	const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_content,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_staticfile_encoding_get(
-	OV_INSTPTR_kshttpd_staticfile          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_staticfile_encoding_get(
+	OV_INSTPTR_kshttp_staticfile          pobj
 ) {
 	return pobj->v_encoding;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_staticfile_encoding_set(
-	OV_INSTPTR_kshttpd_staticfile          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_staticfile_encoding_set(
+	OV_INSTPTR_kshttp_staticfile          pobj,
 	const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_encoding,value);

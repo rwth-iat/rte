@@ -39,7 +39,7 @@
 #include "config.h"
 
 
-static OV_ACCESS ov_kshttpd_ticket_defaultticket_getaccess(const OV_TICKET *a) {
+static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READWRITE;
 }
 
@@ -48,7 +48,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblSetvar = {
 	NULL,
 	NULL,
 	NULL,
-	ov_kshttpd_ticket_defaultticket_getaccess
+	ov_kshttp_ticket_defaultticket_getaccess
 };
 
 

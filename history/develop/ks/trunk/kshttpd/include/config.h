@@ -45,7 +45,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_time.h"
 
-#include "kshttpd.h"
+#include "kshttp.h"
 #include "ks_logfile.h"
 #include "ov_ksserver_backend.h"
 
@@ -140,7 +140,7 @@ OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STR
 OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
-OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
+OV_RESULT authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
 OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
 OV_UINT extract_response_format(OV_STRING_VEC* args);
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);

@@ -36,16 +36,16 @@
  *
  ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_kshttpd
-#define OV_COMPILE_LIBRARY_kshttpd
+#ifndef OV_COMPILE_LIBRARY_kshttp
+#define OV_COMPILE_LIBRARY_kshttp
 #endif
 
 
 #include <time.h>
 
 #include "config.h"
-#include "kshttpd.h"
-#ifndef KSHTTPD_DISABLE_GZIP
+#include "kshttp.h"
+#ifndef KSHTTP_DISABLE_GZIP
 	#include "gzip.h"
 #endif
 #include "ksbase_helper.h"
@@ -72,41 +72,41 @@
 #define BUFFER_CHUNK_SIZE 2048
 
 /*** TEMP ***/
-OV_DLLFNCEXPORT OV_BOOL kshttpd_httpclienthandler_stream_get(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_BOOL kshttp_httpclienthandler_stream_get(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj
 ) {
 	return pobj->v_stream;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_stream_set(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_stream_set(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj,
 		const OV_BOOL  value
 ) {
 	pobj->v_stream = value;
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_httpclienthandler_streamrequestheader_get(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_httpclienthandler_streamrequestheader_get(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj
 ) {
 	return pobj->v_streamrequestheader;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_streamrequestheader_set(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streamrequestheader_set(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj,
 		const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_streamrequestheader,value);
 }
 
-OV_DLLFNCEXPORT OV_STRING kshttpd_httpclienthandler_streambuffer_get(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj
+OV_DLLFNCEXPORT OV_STRING kshttp_httpclienthandler_streambuffer_get(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj
 ) {
 	return pobj->v_streambuffer;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_streambuffer_set(
-		OV_INSTPTR_kshttpd_httpclienthandler          pobj,
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streambuffer_set(
+		OV_INSTPTR_kshttp_httpclienthandler          pobj,
 		const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pobj->v_streambuffer,value);
@@ -225,12 +225,12 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
  * This function handles requests received over a channel. It reads data as an http-stream and triggers the appropriate OV-functions
  */
 
-OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
-	OV_INSTPTR_kshttpd_httpclienthandler this = Ov_StaticPtrCast(kshttpd_httpclienthandler, baseClientHandler);
+	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 	OV_STRING request_method = NULL; //GET, HEAD, etc.
@@ -263,7 +263,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 
 	OV_STRING* http_request_array = NULL;
 
-	OV_INSTPTR_kshttpd_staticfile pStaticfile;
+	OV_INSTPTR_kshttp_staticfile pStaticfile;
 
 	ov_string_setvalue(&reply_contenttype, "text/plain");
 	ov_string_setvalue(&reply_encoding, "Windows-1252");
@@ -472,7 +472,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		//to change the parameter. A directory should be possible, so we need to skip / in conversion
 		ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
 		ov_memstack_unlock();
-		pStaticfile = Ov_DynamicPtrCast(kshttpd_staticfile, ov_path_getobjectpointer(filepath, 2));
+		pStaticfile = Ov_DynamicPtrCast(kshttp_staticfile, ov_path_getobjectpointer(filepath, 2));
 		ov_string_setvalue(&filepath, NULL);
 		filename = NULL;	//usage is save here, as we had no memory in the database
 
@@ -506,7 +506,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 	map_result_to_http(&result, &http_version, &reply_header, &reply_body, response_format);
 
 	//Append common data to header:
-	ov_string_print(&reply_header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", reply_header, OV_LIBRARY_DEF_kshttpd.version, __TIME__, __DATE__);
+	ov_string_print(&reply_header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", reply_header, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
 	//no-cache
 	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 		if(ov_string_compare(http_version, "1.0") == OV_STRCMP_EQUAL){
@@ -531,7 +531,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		bodylength = (int)ov_string_getlength(reply_body);
 	}
 
-#ifndef KSHTTPD_DISABLE_GZIP
+#ifndef KSHTTP_DISABLE_GZIP
 	// check if the body length corresponds for compression
 	if (bodylength >= MINIMAL_LENGTH_FOR_GZIP && gzip_accepted == TRUE &&
 												  (ov_string_compare(reply_contenttype, "text/plain") == OV_STRCMP_EQUAL
@@ -601,7 +601,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 
 	//free resources
 
-#ifndef KSHTTPD_DISABLE_GZIP
+#ifndef KSHTTP_DISABLE_GZIP
 	ov_database_free(gzip_compressed_body);
 #endif
 

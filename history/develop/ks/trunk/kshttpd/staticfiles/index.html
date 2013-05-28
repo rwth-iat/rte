@@ -156,6 +156,7 @@
 				req.send();
 			}catch(err){
 				PlaygroundOutput.innerHTML = "transmit error: "+err;
+				PlaygroundOutput.style.borderColor = "red";
 			}
 		};
 		var calculateUrl = function(){
@@ -183,13 +184,14 @@
 		var RequestStatehandler = function(evt){
 			var req = evt.target;
 			if( req.readyState == 4 ){
+				PlaygroundOutput.innerHTML = req.responseText;
+				if(PlaygroundOutput.rows === 2){
+					PlaygroundOutput.rows = 10;
+				}
 				if(req.status == 200){
-					PlaygroundOutput.innerHTML = req.responseText;
-					if(PlaygroundOutput.rows === 2){
-						PlaygroundOutput.rows = 10;
-					}
+					PlaygroundOutput.style.borderColor = "#8080FF";
 				}else{
-					PlaygroundOutput.innerHTML = "transmit error";
+					PlaygroundOutput.style.borderColor = "red";
 				}
 			}
 		}

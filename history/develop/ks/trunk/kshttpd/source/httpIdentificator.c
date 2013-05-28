@@ -1,20 +1,20 @@
-#ifndef OV_COMPILE_LIBRARY_kshttpd
-#define OV_COMPILE_LIBRARY_kshttpd
+#ifndef OV_COMPILE_LIBRARY_kshttp
+#define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "kshttpd.h"
+#include "kshttp.h"
 #include "config.h"
 #include "libov/ov_macros.h"
 
 /**
  * in order to detect a http request, we check if a white list of HTTP methods are provided
  */
-OV_DLLFNCEXPORT OV_BOOL kshttpd_httpIdentificator_identify (
+OV_DLLFNCEXPORT OV_BOOL kshttp_httpIdentificator_identify (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
-	OV_INSTPTR_kshttpd_httpIdentificator
-		pObj = Ov_StaticPtrCast(kshttpd_httpIdentificator, this);
+	OV_INSTPTR_kshttp_httpIdentificator
+		pObj = Ov_StaticPtrCast(kshttp_httpIdentificator, this);
 	OV_UINT i = 0;
 	OV_UINT length = 0;
 
@@ -42,14 +42,14 @@ OV_DLLFNCEXPORT OV_BOOL kshttpd_httpIdentificator_identify (
 *	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
 *	and Link it to the Channel calling it with AssocChannelClientHandler.
 */
-OV_DLLFNCEXPORT OV_RESULT kshttpd_httpIdentificator_createClientHandler (
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
     /*
     *   local variables
     */
-	OV_INSTPTR_kshttpd_httpclienthandler pClientHandler = NULL;
+	OV_INSTPTR_kshttp_httpclienthandler pClientHandler = NULL;
 	OV_UINT namecounter = 0;
 	char CHNameBuffer[29]; //"httpClientHandler + length MAXINT + '\0'
 	OV_RESULT result;
@@ -59,10 +59,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpIdentificator_createClientHandler (
 		pClientHandler = NULL;
 		namecounter++;
 		sprintf(CHNameBuffer, "httpClientHandler%lu", namecounter);
-		pClientHandler	= (OV_INSTPTR_kshttpd_httpclienthandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
+		pClientHandler	= (OV_INSTPTR_kshttp_httpclienthandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 
-	result = Ov_CreateObject(kshttpd_httpclienthandler, pClientHandler, this, CHNameBuffer);
+	result = Ov_CreateObject(kshttp_httpclienthandler, pClientHandler, this, CHNameBuffer);
 	if(Ov_OK(result))
 	{
 		KS_logfile_debug(("%s: ClientHandler created: %s", this->v_identifier, pClientHandler->v_identifier));

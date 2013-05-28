@@ -5,7 +5,7 @@
  *      Author: george
  */
 
-#ifndef KSHTTPD_DISABLE_GZIP
+#ifndef KSHTTP_DISABLE_GZIP
 
 #include "libov/ov_string.h"
 #include "libov/ov_database.h"

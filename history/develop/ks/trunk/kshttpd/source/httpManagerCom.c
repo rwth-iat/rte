@@ -16,22 +16,22 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_kshttpd
-#define OV_COMPILE_LIBRARY_kshttpd
+#ifndef OV_COMPILE_LIBRARY_kshttp
+#define OV_COMPILE_LIBRARY_kshttp
 #endif
 
 
-#include "kshttpd.h"
+#include "kshttp.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT void kshttpd_httpManagerCom_startup(
+OV_DLLFNCEXPORT void kshttp_httpManagerCom_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttpd_httpManagerCom pinst = Ov_StaticPtrCast(kshttpd_httpManagerCom, pobj);
+    OV_INSTPTR_kshttp_httpManagerCom pinst = Ov_StaticPtrCast(kshttp_httpManagerCom, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
@@ -42,13 +42,13 @@ OV_DLLFNCEXPORT void kshttpd_httpManagerCom_startup(
     return;
 }
 
-OV_DLLFNCEXPORT void kshttpd_httpManagerCom_shutdown(
+OV_DLLFNCEXPORT void kshttp_httpManagerCom_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttpd_httpManagerCom pinst = Ov_StaticPtrCast(kshttpd_httpManagerCom, pobj);
+    OV_INSTPTR_kshttp_httpManagerCom pinst = Ov_StaticPtrCast(kshttp_httpManagerCom, pobj);
 
     /* do what */
 
@@ -58,7 +58,7 @@ OV_DLLFNCEXPORT void kshttpd_httpManagerCom_shutdown(
     return;
 }
 
-OV_DLLFNCEXPORT void kshttpd_httpManagerCom_typemethod (
+OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
     /*    

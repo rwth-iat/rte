@@ -39,15 +39,15 @@
 #include "config.h"
 
 /*
-static OV_TICKET *ov_kshttpd_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
-static void ov_kshttpd_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
+static OV_TICKET *ov_kshttp_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
+static void ov_kshttp_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
 	return;
 }
-static OV_BOOL ov_kshttpd_ticket_defaultticket_encodereply(XDR *y, OV_TICKET *x) {
+static OV_BOOL ov_kshttp_ticket_defaultticket_encodereply(XDR *y, OV_TICKET *x) {
 	return TRUE;
 }
 */
-static OV_ACCESS ov_kshttpd_ticket_defaultticket_getaccess(const OV_TICKET *a) {
+static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READ;
 }
 
@@ -56,10 +56,10 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblVar = {
 	NULL,
 	NULL,
 	NULL,
-	ov_kshttpd_ticket_defaultticket_getaccess
+	ov_kshttp_ticket_defaultticket_getaccess
 };
 /*
-static OV_TICKET *ov_kshttpd_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
+static OV_TICKET *ov_kshttp_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
 	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_SIMPLE };
 	return &ticket;
 	//test auf serverpasswort und zugriff

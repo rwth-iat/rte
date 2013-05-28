@@ -112,7 +112,7 @@ OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, OV_UINT response_f
 	return OV_ERR_OK;
 }
 
-static OV_ACCESS ov_kshttpd_ticket_defaultticket_getaccess(const OV_TICKET *a) {
+static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READ;
 }
 //we need ony a getaccess for the getEP service
@@ -120,7 +120,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
 	NULL,
 	NULL,
 	NULL,
-	ov_kshttpd_ticket_defaultticket_getaccess
+	ov_kshttp_ticket_defaultticket_getaccess
 };
 
 #define EXEC_GETEP_RETURN \
