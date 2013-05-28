@@ -456,7 +456,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		OV_STRING basepath = NULL;
 		//assume index.html as a root file
 		if(ov_string_compare("/", cmd) == OV_STRCMP_EQUAL){
-			ov_string_setvalue(&filename, "index.html");
+			filename = "index.html"; //memory given from the compiler
 		}else if(cmd[ov_string_getlength(cmd)-1] == '/'){
 			ov_string_append(&cmd, "index.html");
 			//remove leading /
@@ -474,7 +474,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		ov_memstack_unlock();
 		pStaticfile = Ov_DynamicPtrCast(kshttpd_staticfile, ov_path_getobjectpointer(filepath, 2));
 		ov_string_setvalue(&filepath, NULL);
-		ov_string_setvalue(&filename, NULL);
+		filename = NULL;	//usage is save here, as we had no memory in the database
 
 		if(pStaticfile != NULL){
 			ov_string_setvalue(&reply_contenttype, pStaticfile->v_mimetype);
