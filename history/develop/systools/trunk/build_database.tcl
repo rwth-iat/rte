@@ -62,11 +62,15 @@ puts "ACPLT systemdomain: ${THISACPLTSYSTEM}"
 #  Setzen der Prozess-Umgebungsvariablen 
 #
 set env(ACPLT_HOME) ${THISACPLTSYSTEM}
-set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs"
+set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;$env(PATH)"
 #
 #  Setzen des LD_LIBRATY_PATH fuer linux
 #
-set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs"
+if {$tcl_platform(os) == "Linux"} then { 
+  set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;$env(LD_LIBRARY_PATH)"
+} 
+
+
 #
 #  Bestimmung des Servernamens 
 #

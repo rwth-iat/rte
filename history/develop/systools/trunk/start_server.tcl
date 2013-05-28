@@ -89,7 +89,7 @@ set env(PATH) ${BINPATH}
 #
 #  Setzen des LD_LIBRATY_PATH fuer linux
 #
-set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs"
+set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;$env(LD_LIBRARY_PATH)"
 #
 #  Bestimmung des Servernamens 
 #
