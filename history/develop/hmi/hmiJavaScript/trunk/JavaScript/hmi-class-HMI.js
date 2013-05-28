@@ -155,32 +155,32 @@ HMI.prototype = {
 		
 		var ErrorDetail = "";
 		if (typeof Click != "function"){
-			ErrorDetail += "hmi-class-gesture-click.js not loaded.\n";
+			ErrorDetail += "hmi-class-gesture-click.js not loaded. ";
 		}
 		if (typeof DoubleClick != "function"){
-			ErrorDetail += "hmi-class-gesture-doubleclick.js not loaded.\n";
+			ErrorDetail += "hmi-class-gesture-doubleclick.js not loaded. ";
 		}
 		if (typeof Dragger != "function"){
-			ErrorDetail += "hmi-class-gesture-move.js not loaded.\n";
+			ErrorDetail += "hmi-class-gesture-move.js not loaded. ";
 		}
 		if (typeof RightClick != "function"){
-			ErrorDetail += "hmi-class-gesture-rightclick.js not loaded.\n";
+			ErrorDetail += "hmi-class-gesture-rightclick.js not loaded. ";
 		}
 		if (typeof TextInput != "function"){
-			ErrorDetail += "hmi-class-gesture-textinput.js not loaded.\n";
+			ErrorDetail += "hmi-class-gesture-textinput.js not loaded. ";
 		}
 		if (typeof HMIDOMParser != "function"){
-			ErrorDetail += "hmi-class-HMIDOMParser.js not loaded.\n";
+			ErrorDetail += "hmi-class-HMIDOMParser.js not loaded. ";
 		}
 		if (typeof deleteChilds != "function"){
-			ErrorDetail += "hmi-generic.js not loaded.\n";
+			ErrorDetail += "hmi-generic.js not loaded. ";
 		}
 		if (typeof HMIJavaScriptKSClient != "function"){
-			ErrorDetail += "hmi-class-HMIJavaScriptKSClient.js not loaded.\n";
+			ErrorDetail += "hmi-class-HMIJavaScriptKSClient.js not loaded. ";
 		}
 		
 		if (typeof cshmi != "function"){
-			ErrorDetail += "hmi-class-cshmi.js not loaded.\n";
+			ErrorDetail += "hmi-class-cshmi.js not loaded. ";
 		}
 		
 		if(ErrorDetail === ""){
@@ -190,15 +190,15 @@ HMI.prototype = {
 			if ((this.ButShowServers = document.getElementById('idShowServers'))){
 				addEventSimple(HMI.ButShowServers,'click',function(){HMI.showServers();});
 			}else{
-				ErrorDetail += "HTML Button with the ID: idShowServers not found.\n";
+				ErrorDetail += "HTML Button with the ID: idShowServers not found. ";
 			}
 			//Object of ErrorOutput
 			if (!(this.ErrorOutput = document.getElementById('idErrorOutput'))){
-				ErrorDetail += "HTML Tag with the ID: idErrorOutput not found.\n";
+				ErrorDetail += "HTML Tag with the ID: idErrorOutput not found. ";
 			}
 			//Object of Server-Selectbox
 			if (!(this.PossServers = document.getElementById('idServers'))){
-				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+				ErrorDetail += "HTML Select with the ID: idShowServers not found. ";
 			}else{
 				addEventSimple(HMI.PossServers, "change", 
 					function () {
@@ -210,7 +210,7 @@ HMI.prototype = {
 			}
 			//Object of Sheet-Selectbox
 			if (!(this.PossSheets = document.getElementById('idSheets'))){
-				ErrorDetail += "HTML Select with the ID: idShowServers not found.\n";
+				ErrorDetail += "HTML Select with the ID: idShowServers not found. ";
 			}else{
 				addEventSimple(HMI.PossSheets, "change", 
 					function () {
@@ -222,7 +222,7 @@ HMI.prototype = {
 			}
 			//Element of SVG insertion (div for firefox, container for IE < v9)
 			if (!(this.Playground = document.getElementById('idPlayground'))){
-				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found.\n";
+				ErrorDetail += "HTML Container-Element with the ID: idPlayground not found. ";
 			}else{
 				//prevent right click in supported Browsers (no Opera < 10.5, no IE6-8)
 				addEventSimple(HMI.Playground, "contextmenu", function (evt) {if (evt.preventDefault) evt.preventDefault();});
@@ -231,7 +231,7 @@ HMI.prototype = {
 			if ((this.InputRefreshTime = document.getElementById('idRefreshTime'))){
 				addEventSimple(HMI.InputRefreshTime,'change',function(){HMI.ChangeRefreshTime();});
 			}else{
-				ErrorDetail += "HTML Input with the ID: idRefreshTime not found.\n";
+				ErrorDetail += "HTML Input with the ID: idRefreshTime not found. ";
 			}
 			//Object of Server-Hostname
 			if ((this.InputHost = document.getElementById('idHost'))){
@@ -242,27 +242,27 @@ HMI.prototype = {
 						}
 					});
 			}else{
-				ErrorDetail += "HTML Input with the ID: idHost not found.\n";
+				ErrorDetail += "HTML Input with the ID: idHost not found. ";
 			}
 			//Object of the Deep Link
 			if (!(document.getElementById('idBookmark'))){
-				ErrorDetail += "HTML Input with the ID: idBookmark not found.\n";
+				ErrorDetail += "HTML Input with the ID: idBookmark not found. ";
 			}
 			//Object of the hideable header
 			if (!(this.HideableHeader = document.getElementById('idHideableHeader'))){
-				ErrorDetail += "HTML Div with the ID: idHideableHeader not found.\n";
+				ErrorDetail += "HTML Div with the ID: idHideableHeader not found. ";
 			}
 			
 			//init the plain HTML website with events
 			if (document.getElementById('idHeaderRow')){
 				addEventSimple(document.getElementById('idHeaderRow'),'click',function(){HMI.hideHeader(null);});
 			}else{
-				ErrorDetail += "HTML object with the ID: idHeaderRow not found.\n";
+				ErrorDetail += "HTML object with the ID: idHeaderRow not found. ";
 			}
 			if (document.getElementById('idKeepHeader')){
 				addEventSimple(document.getElementById('idKeepHeader'),'click',function(){HMI.updateKeepHeader();});
 			}else{
-				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found.\n";
+				ErrorDetail += "HTML Checkbox with the ID: idKeepHeader not found. ";
 			}
 			
 			//html5 Session history management
@@ -281,7 +281,7 @@ HMI.prototype = {
 			if (document.getElementById("idThrobbler") !== null){
 				document.getElementById("idThrobbler").style.display = "none";
 			}
-			window.alert ("Error initialising HMI Website:\n"+ErrorDetail);
+			window.alert ("Error initialising HMI Website: "+ErrorDetail);
 			return false;
 		}
 		
@@ -496,7 +496,7 @@ HMI.prototype = {
 		//publish this date on website
 		if ("undefined" != typeof HMIdate){
 			HMI.HMI_Constants.HMIdate = HMIdate;
-			var dateTextNode = document.createTextNode("Version: 2.5 ("+HMI.HMI_Constants.HMIdate.substr(0, 10).replace(/\//g, "-")+")");
+			var dateTextNode = document.createTextNode("Version: 2.5 ("+HMI.HMI_Constants.HMIdate.substr(0, 10)+")");
 			
 			var DateOutput;
 			if ((DateOutput = document.getElementById("idDateOutput"))){
@@ -1637,7 +1637,7 @@ HMI.prototype = {
 		}
 		
 		if (isNaN(absolutex) || isNaN(absolutey)){
-			this.hmi_log_warning("SVG-ERROR - parentNode of\n"+Element.id+"\n is no hmi-component (has no absolutex or absolutey). The move-Gesture will not work on child elements!");
+			this.hmi_log_warning("SVG-ERROR - parentNode of "+Element.id+"  is no hmi-component (has no absolutex or absolutey). The move-Gesture will not work on child elements!");
 			Element.setAttribute("absolutex", 0);
 			Element.setAttribute("absolutey", 0);
 		}else{

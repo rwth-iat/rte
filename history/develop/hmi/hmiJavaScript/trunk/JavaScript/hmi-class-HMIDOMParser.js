@@ -101,7 +101,7 @@ HMIDOMParser.prototype = {
 			//not supported by Webkit https://bugs.webkit.org/show_bug.cgi?id=13057
 			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml" && GraphicElement.documentElement.tagName == "parsererror"){
 				//opera/firefox has a highlighting of the error here:
-				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String: \n'+GraphicElement.documentElement.lastChild.textContent);
+				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String: '+GraphicElement.documentElement.lastChild.textContent);
 				//opera/firefox has a readable description here:
 				HMI.hmi_log_onwebsite('Could not parse XML: '+GraphicElement.documentElement.firstChild.textContent);
 				return null;

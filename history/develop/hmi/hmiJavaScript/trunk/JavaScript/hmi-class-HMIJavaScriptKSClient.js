@@ -1217,7 +1217,7 @@ HMIJavaScriptKSClient.prototype = {
 			//FireFox 3 sends in a POST a content-encoding header killing the TCL Webserver
 			//http://wiki.tcl.tk/2085 entry "nb Dec 18, 2008"
 			//patch accepted but commented out in our
-			// TCL-HTTPD\tcllib-1.6\modules\ncgi\ncgi.tcl
+			// TCL-HTTPD/tcllib-1.6/modules/ncgi/ncgi.tcl
 			
 			//only send POST to non tcl servers!
 			
