@@ -898,13 +898,15 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	/*	append service specific data (if service succeeded)	*/
 	if(ksErrCode == KS_ERR_OK)
 		if(serviceAnswer.length)
+		{
 			if(Ov_Fail(ksbase_KSDATAPACKET_append(answer, serviceAnswer.data, serviceAnswer.length)))
 			{
 				ksbase_free_KSDATAPACKET(&serviceAnswer);
 				ksbase_free_KSDATAPACKET(answer);
 				return OV_ERR_HEAPOUTOFMEMORY;
 			}
-
+			ksbase_free_KSDATAPACKET(&serviceAnswer);
+		}
 	if(pChannel->v_usesStreamProtocol == TRUE)
 		ksxdr_prepend_length(answer, beginAnswer);
 
