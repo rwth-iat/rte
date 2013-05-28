@@ -201,7 +201,7 @@ OV_RESULT authorize(int level, OV_INSTPTR_kshttpd_httpclienthandler this, OV_STR
 														opaque=\"\",\
 														nonce=\"%s\"\r\n", REALM, psession->v_nonce);
 	} else {
-		ks_logfile_error("Creating of auth session failed");
+		KS_logfile_error(("Creating of auth session failed"));
 	}
 	AUTHORIZE_RETURN OV_ERR_BADAUTH; //401
 

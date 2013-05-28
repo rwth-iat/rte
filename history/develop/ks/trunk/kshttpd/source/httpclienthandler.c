@@ -284,7 +284,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 											Yes, this could block the ClientHandler for a longer time.	*/
 		}
 	}
-	ks_logfile_debug("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length);
+	KS_logfile_debug(("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length));
 	//END handling buffer
 
 
@@ -310,7 +310,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 	ksbase_KSDATAPACKET_set(dataReceived, NULL, 0);
 
 	//debug - output header
-	ks_logfile_debug("%s", request_header);
+	KS_logfile_debug(("%s", request_header));
 
 	//parse request header into get command and arguments request
 	if(!Ov_Fail(result)){
@@ -557,7 +557,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 		//append content length
 		if(gzip_applicable){
 			ov_string_print(&reply_header, "%sContent-Length: %i\r\n", reply_header, gzip_compressed_body_length);
-			ks_logfile_debug("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(reply_header))/((float)ov_string_getlength(reply_header)-24+bodylength));
+			KS_logfile_debug(("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(reply_header))/((float)ov_string_getlength(reply_header)-24+bodylength)));
 		}else{
 			ov_string_print(&reply_header, "%sContent-Length: %i\r\n", reply_header, bodylength);
 		}
@@ -574,7 +574,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 
 	//send header only if not in stream mode
 	if(this->v_stream == FALSE){
-		ks_logfile_debug("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(reply_header));
+		KS_logfile_debug(("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(reply_header)));
 		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)reply_header, ov_string_getlength(reply_header));
 		//todo this does not send the request
 	}
@@ -588,7 +588,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpd_httpclienthandler_HandleRequest(
 
 	//in case of a HEAD request there is no need to send the body
 	if(ov_string_compare(request_method, "HEAD") != OV_STRCMP_EQUAL && reply_body != NULL){
-		ks_logfile_debug("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(reply_body));
+		KS_logfile_debug(("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(reply_body)));
 
 		if(gzip_applicable){
 			//todo this does not send the request

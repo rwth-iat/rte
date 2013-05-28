@@ -52,7 +52,7 @@ OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length){
 
 	*output = ov_database_malloc(dlen);
 	if (*output == NULL){
-		ks_logfile_error("Out of memory");
+		KS_logfile_error(("Out of memory"));
 		return OV_ERR_GENERIC;
 	}
 
