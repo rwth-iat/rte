@@ -154,9 +154,12 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		//issue send command
 		KS_logfile_debug(("%s SendData: have to send %d bytes", thisCh->v_identifier, sendlength));
 		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
+#if !OV_SYSTEM_NT
 		if (sentChunkSize == -1)
 		{
-#if OV_SYSTE_NT
+#else
+		if (sentChunkSize == SOCKET_ERROR)
+		{
 			errno = WSAGetLastError();
 #endif
 
