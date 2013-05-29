@@ -154,8 +154,19 @@ void ksbase_RootComTask_execute(
 	OV_TIME_SPAN time_left, ts;
 #if !OV_SYSTEM_NT
 		struct timespec s;
+#else
+		HANDLE hTimer = NULL;
+		LARGE_INTEGER liDueTime;
+		 // Create an unnamed waitable timer.
+		hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
+		if (NULL == hTimer)
+		{
+			ov_logfile_error("CreateWaitableTimer failed (%d)\n", GetLastError());
+			return;
+		}
 #endif
-		rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
+
+	rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
 
 	//get time_span until next event
 	time_left = *(ov_scheduler_getnexteventtime());
@@ -219,17 +230,25 @@ void ksbase_RootComTask_execute(
 
 		//	KS_logfile_debug(("sleepin %d usecs", time_left.usecs));
 #if !OV_SYSTEM_NT
-		//usleep(time_left.secs * 1000000 + time_left.usecs);
 		s.tv_sec = time_left.secs;
 		s.tv_nsec = time_left.usecs*1000;
 	    nanosleep(&s, NULL);
-        // Not work on LINUX: select(0,  0,0,0,  &delay);
 #else
-        if( (time_left.secs == 0) && (time_left.usecs == 0) ) {
-            /* Windows does not sleep if 0 is param, but linux usleep drops timslot of thread */
-            time_left.usecs = 1000;
-        }
-    	Sleep(time_left.secs * 1000 + time_left.usecs / 1000);
+	    if( (time_left.secs == 0) && (time_left.usecs == 0) ) {
+	    	/* Windows does not sleep if 0 is param, but linux usleep drops timslot of thread */
+	    	time_left.usecs = 1;
+	    }
+	    liDueTime.QuadPart = -(time_left.secs*10000000 + time_left.usecs*10);
+
+	    // Set a timer to wait
+	    if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0))
+	    {
+	        ov_logfile_error("SetWaitableTimer failed (%d)\n", GetLastError());
+	        return;
+	    }
+
+	    // Wait for the timer.
+	    WaitForSingleObject(hTimer, INFINITE);
 #endif
 		}
 
