@@ -49,6 +49,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     pinst->v_cycInterval = 5000; /*	cycle every 5 seconds at first	*/
     pinst->v_actimode = 1;
     pinst->v_Tries = 0;
+    pinst->v_OwnPort = 0;
 
     return;
 }
