@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-05-15 16:02:06
+  Erstellt : 2013-05-29 16:08:40
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -9621,15 +9621,15 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/CommandMore :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/IncreaseButton :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButtonSchmal";
-        x : INPUT  SINGLE = 25.000000;
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonSchmalv1";
+        x : INPUT  SINGLE = 150.000000;
         y : INPUT  SINGLE = 62.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:+" , "PFCommand:INC_SP" , "PFValue:1"};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:+"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9641,15 +9641,75 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/CommandSet :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/IncreaseButton/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/IncreaseButton/click/Set_More :
+    CLASS /Libraries/cshmi/SetMathValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/IncreaseButton/click/Set_More/addConfig :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/IncreaseButton/click/Set_More/addINC_SP :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  SINGLE = 1.000000;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/DecreaseButton :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButton";
-        x : INPUT  SINGLE = 60.000000;
-        y : INPUT  SINGLE = 180.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonSchmalv1";
+        x : INPUT  SINGLE = 25.000000;
+        y : INPUT  SINGLE = 62.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:SetValue" , "PFCommand:SET_SP" , "PFValue:"};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:-"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9661,21 +9721,257 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/CommandLess :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/DecreaseButton/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/DecreaseButton/click/Set_Less :
+    CLASS /Libraries/cshmi/SetMathValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/DecreaseButton/click/Set_Less/addConfig :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/DecreaseButton/click/Set_Less/subINC_SP :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  SINGLE = 1.000000;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/RefreshButton :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
-        TemplateDefinition : INPUT  STRING = "Processcontrol/PCUCommandButtonSchmal";
-        x : INPUT  SINGLE = 150.000000;
-        y : INPUT  SINGLE = 62.000000;
-        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
+        x : INPUT  SINGLE = 70.000000;
+        y : INPUT  SINGLE = 100.000000;
+        FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:-" , "PFCommand:DEC_SP" , "PFValue:1"};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Reset"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
         fill : INPUT  STRING = "none";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/RefreshButton/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/RefreshButton/click/Set_Value :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/RefreshButton/click/Set_Value.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SP";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
+        x : INPUT  SINGLE = 70.000000;
+        y : INPUT  SINGLE = 180.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Wert setzen"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "order";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue/semicolon1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "SET_SP";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue/semicolon2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = ";";
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/Set_IndexValue/click/setOrderWithValue/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -9694,7 +9990,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "white";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 5;
+        zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9717,7 +10013,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 6;
+        zindex : INPUT  UINT = 7;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9764,6 +10060,91 @@ M1000,250 v40 h-100";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/CyclicUpdate :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 1.500000;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/CyclicUpdate/Set_FromCondigValue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/CyclicUpdate/Set_FromCondigValue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/doubleclick :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/doubleclick/Set_ManualInput :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertValue/doubleclick/Set_ManualInput.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Bitte Wert eingeben:TemplateConfigValues:IndexValue";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/SollwertUnit :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
@@ -9782,7 +10163,7 @@ M1000,250 v40 h-100";
         fill : INPUT  STRING = "black";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
-        zindex : INPUT  UINT = 7;
+        zindex : INPUT  UINT = 8;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9832,7 +10213,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/click :
     CLASS /Libraries/cshmi/OperatorEvent;
     VARIABLE_VALUES
-        zindex : INPUT  UINT = 8;
+        zindex : INPUT  UINT = 9;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9840,7 +10221,7 @@ M1000,250 v40 h-100";
  INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload :
     CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-        zindex : INPUT  UINT = 9;
+        zindex : INPUT  UINT = 10;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -9874,6 +10255,40 @@ M1000,250 v40 h-100";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  STRING = "default";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload/Save_IndexValue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "IndexValue";
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/StromrichterPanel/BetriebsartSollwertGroup/SollwertMenu/VorgabePanel/onload/Save_IndexValue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "TechUnits/P30/IC10/PU90/PS20/Stromrichter.SP";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -10057,9 +10472,29 @@ M1000,250 v40 h-100";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M-100,100 h200
+
+
+
+
+
 M0,100 V850 H150 V100 H250 V850 H400 V100 H500 V850
+
+
+
+
+
 M500,100 H600 V850
+
+
+
+
+
 M600,400 H700 V850
+
+
+
+
+
 M700,400 H800 V850";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -10223,6 +10658,11 @@ M700,400 H800 V850";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M10,300 H85 V225
+
+
+
+
+
 M0,750 l30,30 v30 h55 V700";
         strokeWidth : INPUT  SINGLE = 1.100000;
         visible : INPUT  BOOL = TRUE;
@@ -10441,9 +10881,29 @@ M0,750 l30,30 v30 h55 V700";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M600,270
+
+
+
+
+
 v-30
+
+
+
+
+
 m0,30
+
+
+
+
+
 m-15,0 h30
+
+
+
+
+
 m-15,0 l-15,-30 h30 l-15,30";
         strokeWidth : INPUT  SINGLE = 1.500000;
         visible : INPUT  BOOL = TRUE;
@@ -10831,10 +11291,10 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = -100.000000;
+        x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -10845,7 +11305,222 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/00_00Heading :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
+        x : INPUT  SINGLE = 400.000000;
+        y : INPUT  SINGLE = 150.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Login"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.if/PW_Correct :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.if/PW_Correct.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Bitte Passwort eingeben";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.if/PW_Correct.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "cshmi";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.then/Set_VisibleTrue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "OM_Login";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.then/Set_VisibleTrue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect.if/PW_Incorrect :
+    CLASS /Libraries/cshmi/Confirm;
+    VARIABLE_VALUES
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/LoginButton/click/If_Passwort.else/PW_Incorrect.if/PW_Incorrect.question :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "Ungültiges Passwort";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = -100.000000;
+        y : INPUT  SINGLE = 50.000000;
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/00_00Heading :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 560.000000;
@@ -10868,7 +11543,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_01Leistungsversorgung :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_01Leistungsversorgung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10888,7 +11563,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_02Moeller :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_02Moeller :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10908,7 +11583,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_03Schlackenreinigung :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_03Schlackenreinigung :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10928,7 +11603,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_04Schlackenprozess :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_04Schlackenprozess :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10948,7 +11623,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_05SchlPr_mit_Lichtbogen :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_05SchlPr_mit_Lichtbogen :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10968,7 +11643,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/01_06EAF_Prozess :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/01_06EAF_Prozess :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -10988,7 +11663,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_01AC_Betrieb :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_01AC_Betrieb :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11008,7 +11683,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_02SiMn :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_02SiMn :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11028,7 +11703,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_03Cu_Schlacke :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_03Cu_Schlacke :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11048,7 +11723,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_04Schrott_Recycling :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_04Schrott_Recycling :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11068,7 +11743,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_05FeNi :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_05FeNi :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11088,7 +11763,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/02_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/02_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11108,7 +11783,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_01 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_01 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11128,7 +11803,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_02FeMn :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_02FeMn :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11148,7 +11823,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11168,7 +11843,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_04FeNi :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_04FeNi :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11188,7 +11863,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_05 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_05 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11208,7 +11883,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/03_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/03_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11228,7 +11903,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_01 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_01 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11248,7 +11923,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_02FeCr :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_02FeCr :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11268,7 +11943,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11288,7 +11963,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11308,7 +11983,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_05 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_05 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11328,7 +12003,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/04_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/04_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11348,7 +12023,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_01 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_01 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11368,7 +12043,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_02Si_Metall :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_02Si_Metall :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell_clickable";
@@ -11388,7 +12063,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11408,7 +12083,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11428,7 +12103,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_05 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_05 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11448,7 +12123,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/05_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/05_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11468,7 +12143,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
@@ -11482,7 +12157,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_01DC_Betrieb :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_01DC_Betrieb :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11502,7 +12177,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11522,7 +12197,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11542,7 +12217,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11562,7 +12237,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_05FeCr :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_05FeCr :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11582,7 +12257,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/01_06Schrottschmelze :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/01_06Schrottschmelze :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11602,7 +12277,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_01eineElektrode :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_01eineElektrode :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11622,7 +12297,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11642,7 +12317,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11662,7 +12337,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11682,7 +12357,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_05TiO2 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_05TiO2 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11702,7 +12377,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/02_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/02_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11722,7 +12397,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_01 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_01 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11742,7 +12417,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11762,7 +12437,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11782,7 +12457,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11802,7 +12477,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_05Ni :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_05Ni :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11822,7 +12497,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/03_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/03_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11842,7 +12517,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_01DC_Betrieb :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_01DC_Betrieb :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11862,7 +12537,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11882,7 +12557,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11902,7 +12577,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11922,7 +12597,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_05FeCr :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_05FeCr :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11942,7 +12617,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/05_06Schrottschmelze :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/05_06Schrottschmelze :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11962,7 +12637,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_01zweiElektroden :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_01zweiElektroden :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -11982,7 +12657,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12002,7 +12677,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12022,7 +12697,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12042,7 +12717,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_05TiO2 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_05TiO2 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12062,7 +12737,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/06_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/06_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12082,7 +12757,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_01 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_01 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12102,7 +12777,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_02 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_02 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12122,7 +12797,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_03 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_03 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12142,7 +12817,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_04 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_04 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12162,7 +12837,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_05Ni :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_05Ni :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12182,7 +12857,7 @@ m-15,0 l-15,-30 h30 l-15,30";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Chart/SecChart/07_06 :
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/SecChart/07_06 :
     CLASS /Libraries/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMCell";
@@ -12198,6 +12873,302 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 35;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 32;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "OM_Login";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.then/Set_VisibleTrue :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.then/Set_VisibleTrue.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "OM_Login";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.then/Set_False :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/globalvarchanged/If_OM_Login.else/If_False.then/Set_False.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/LogoutButton :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
+        x : INPUT  SINGLE = 130.000000;
+        y : INPUT  SINGLE = -30.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[1] : INPUT  STRING = {"buttoncontent:Logout"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 33;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/LogoutButton/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/LogoutButton/click/Set_VisibleFalse :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "OM_Login";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/operationMode/bubFrame/Login/Chart/LogoutButton/click/Set_VisibleFalse.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -12356,6 +13327,22 @@ m-15,0 l-15,-30 h30 l-15,30";
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
+
+ LIBRARY
+    cshmi
+ END_LIBRARY;
+
+ LIBRARY
+    cshmi
+ END_LIBRARY;
+
+ LIBRARY
+    cshmi
+ END_LIBRARY;
+
+ LIBRARY
+    cshmi
+ END_LIBRARY;
 
  LIBRARY
     cshmi
