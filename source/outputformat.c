@@ -34,7 +34,7 @@ OV_UINT extract_response_format(OV_STRING_VEC* args){
  */
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
-		ov_string_setvalue(output, "<result xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
+		ov_string_setvalue(output, "<response xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
 		return begin_response_part(output, response_format, entry_type);
 	}else if(response_format==RESPONSE_FORMAT_JSON){
 		return begin_response_part(output, response_format, entry_type);
@@ -55,9 +55,9 @@ OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STR
 	}
 	if(response_format==RESPONSE_FORMAT_KSX){
 		finalize_response_part(output, response_format, entry_type);
-		finalize_response_part(output, response_format, "result");
+		finalize_response_part(output, response_format, "response");
 	}else if(response_format==RESPONSE_FORMAT_JSON){
-		finalize_response_part(output, response_format, "result");
+		finalize_response_part(output, response_format, "response");
 	}
 	return OV_ERR_OK;
 }

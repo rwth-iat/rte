@@ -22,10 +22,10 @@
 		<h1>The Webserver is running!</h1>
 		<p>Powered by ACPLT/OV. This server has some static files as a <a href="sse.html">demo</a> and supports KS commands. This page is only a quick reference.</p>
 		<span id="idServices"></span>
-		<div id="idCommandPlayground" style="display:none;">
+		<form id="idCommandPlayground" style="display:none;" action="">
 			<h1>Command playground</h1>
 			<div>
-				<input type="button" id="idSubmitbutton" value="send request">
+				<input type="submit" id="idSubmitbutton" value="send request">
 				<select id="idServicelist">
 					<option value="none">select type of request</option>
 					<option value="getEP">getEP</option>
@@ -48,9 +48,9 @@
 					</select>
 				</span>
 			</div>
-			<input readonly id="idUrldisplay" value="Command will be displayed here">
+			<input id="idUrldisplay" value="" placeholder="enter a request right here or use the boxes above">
 			<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
-		</div>
+		</form>
 		<h1>Supported KS commands</h1>
 		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
 		It is possible to select KSX with the 
@@ -146,10 +146,9 @@
 			}
 			calculateUrl();
 		};
-		Submitbutton.onclick = function(evt){
-			var urlstring = calculateUrl();
+		Submitbutton.onclick = document.getElementsByTagName("form")[0].onsubmit = function(evt){
 			var req = new XMLHttpRequest();
-			req.open("GET", urlstring, true);
+			req.open("GET", Urldisplay.value, true);
 			req.timeout = 10000;
 			req.onreadystatechange = RequestStatehandler;
 			try{
@@ -158,6 +157,7 @@
 				PlaygroundOutput.innerHTML = "transmit error: "+err;
 				PlaygroundOutput.style.borderColor = "red";
 			}
+			return false;
 		};
 		var calculateUrl = function(){
 			var urlstring = "/"+Servicelist.options[Servicelist.options.selectedIndex].value+"?format=ksx";
@@ -165,8 +165,8 @@
 				//nothing selected
 				return;
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
-				urlstring += "&path="+PathInput.value;
 				urlstring += "&requestType="+GetepRequestTypeSelect.options[GetepRequestTypeSelect.options.selectedIndex].value;
+				urlstring += "&path="+PathInput.value;
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getVar"){
 				urlstring += "&path="+PathInput.value;
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
@@ -185,9 +185,22 @@
 			var req = evt.target;
 			if( req.readyState == 4 ){
 				PlaygroundOutput.innerHTML = req.responseText;
-				if(PlaygroundOutput.rows === 2){
-					PlaygroundOutput.rows = 10;
+				//adjust height to the line count
+				var ResponseArray = req.responseText.split(String.fromCharCode(10));
+				var maxlength = 0;
+				for (var i = 0;i<ResponseArray.length;i++){
+					if(ResponseArray[i].length > maxlength){
+						maxlength = ResponseArray[i].length;
+					}
 				}
+				if(maxlength > 30){
+					PlaygroundOutput.cols = maxlength;
+					PlaygroundOutput.style.width = "99%";
+				}
+				if(ResponseArray.length > 3){
+					PlaygroundOutput.rows = ResponseArray.length;
+				}
+				
 				if(req.status == 200){
 					PlaygroundOutput.style.borderColor = "#8080FF";
 				}else{
@@ -195,6 +208,8 @@
 				}
 			}
 		}
+		//init url
+		calculateUrl();
 		</script>
 	</body>
 </html>
