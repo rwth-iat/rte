@@ -123,7 +123,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 
 		//Check if socket is ok
 		if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
-			KS_logfile_error(("%s/SendData: no socket set, nothing sent",this->v_identifier));
+			KS_logfile_info(("%s/SendData: no socket set, nothing sent",this->v_identifier));
 			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 			return OV_ERR_GENERIC;
 		}
@@ -638,7 +638,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	freeaddrinfo(res);
 	if (sockfd == -1)
 	{
-		KS_logfile_error(("%s: could not establish connection", this->v_identifier));
+		KS_logfile_info(("%s: could not establish connection", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}

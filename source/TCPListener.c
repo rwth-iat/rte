@@ -343,6 +343,22 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			{
 				KS_logfile_error(("%s: failed to start listening on socket: %d", thisLi->v_identifier, errno));
 				ks_logfile_print_sysMsg();
+				printf("Listener->port:\t%lu\ngetaddinfo-port:\t%d", thisLi->v_port, atoi(sbuf));
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			}
+			if(getsockname(fd, sa, &sas))
+			{
+				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
+				KS_logfile_print_sysMsg();
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			}
+
+			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
+			{
+				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
+				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
@@ -351,6 +367,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			{
 				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
 			}
+
 			thisLi->v_socket[0] = fd;
 			thisLi->v_socket[1] = -1;
 			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
