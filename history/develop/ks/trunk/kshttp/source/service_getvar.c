@@ -144,6 +144,29 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 
 	ov_ksserver_getvar(2, &ticket, &params, &result);
 
+
+/*
+<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
+	<getvar>
+		<failure>17</failure>
+		<var>
+			<value>
+				<single>421</single>
+			</value>
+			<timestamp>2013/05/28 14:13:46.351000</timestamp>
+			<state>unknown</state>
+		</var>
+		<failure>17</failure>
+		<var>
+			<value>
+				<single>421</single>
+			</value>
+			<timestamp>2013/05/28 14:13:46.351000</timestamp>
+			<state>unknown</state>
+		</var>
+	</getvar>
+</response>
+*/
 	/**
 	 * Parse result from KS function
 	 */
@@ -221,7 +244,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 						ov_string_setvalue(&LoopEntryValue, "");
 					}else{
-						//fixme escaping
+						//fixme escaping, no cdata but &amp;
 						ov_string_print(&LoopEntryValue, "%s", Variable.value.valueunion.val_string);
 					}
 					break;
@@ -423,7 +446,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 		if(j>0){
 			seperate_response_parts(&LoopEntryList, response_format);
 		}
-		begin_response_part(&LoopEntryList, response_format, "currprops");
+		begin_response_part(&LoopEntryList, response_format, "var");
 		if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON)){
 			//get additional data if we serve ksx
 			begin_response_part(&LoopEntryList, response_format, "value");
@@ -464,7 +487,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 		}else{
 			ov_string_append(&LoopEntryList, LoopEntryValue);
 		}
-		finalize_response_part(&LoopEntryList, response_format, "currprops");
+		finalize_response_part(&LoopEntryList, response_format, "var");
 	}//end for entry
 
 	ov_string_append(message, LoopEntryList);

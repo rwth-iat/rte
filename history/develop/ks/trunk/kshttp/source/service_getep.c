@@ -171,6 +171,8 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	params.name_mask = NULL;
 
 	ov_string_setvalue(&params.path, match.value[0]);
+
+	//todo hinzufügen und dokumentieren
 	ov_string_setvalue(&params.name_mask, "*");
 	params.scope_flags = KS_EPF_DEFAULT;
 
@@ -283,9 +285,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				break;
 			case OP_CREATIONTIME:
 				//fixme ksx wants 2002-02-02T02:02:02.123
-				getEP_begin_RequestOutputPart(&temp, response_format, "creationTimestamp");
+				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
 				ov_string_append(&temp, ov_time_timetoascii(&(one_result->creation_time)));
-				getEP_finalize_RequestOutputPart(&temp, response_format, "creationTimestamp");
+				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
 				break;
 			case OP_CLASS:
 				if(one_result->objtype & KS_OT_DOMAIN) {
