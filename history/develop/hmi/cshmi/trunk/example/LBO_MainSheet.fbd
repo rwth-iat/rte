@@ -9188,7 +9188,7 @@ M1000,250 v40 h-100";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 110.000000;
         y : INPUT  SINGLE = 150.000000;
-        content : INPUT  STRING = "Regelgr?;
+        content : INPUT  STRING = "Regelgroesse";
         fontSize : INPUT  STRING = "20px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "bold";
