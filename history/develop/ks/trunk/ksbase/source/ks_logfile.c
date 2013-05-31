@@ -18,8 +18,15 @@
 #include <string.h>
 #endif
 
+#if LOG_KS_TO_OV
+#include "libov/ov_logfile.h"
+#endif
+
 #if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR || LOG_KS_COMPILE
 static char			msg[1024];
+#if LOG_KS_TO_OV
+	static char msg2[1044];
+#endif
 #if OV_SYSTEM_NT
 DLLFNCEXPORT void ks_logfile_print_sysMsg() {
     DWORD       eNum;
@@ -79,7 +86,12 @@ DLLFNCEXPORT void ks_logfile_info(
 #else
 	vsprintf(msg, format, args);
 #endif
-	fprintf(stdout, "[KS-Info] %s | %s\n", str, msg);
+
+#if LOG_KS_TO_OV
+	snprintf(msg2, sizeof(msg2), "[KS] %s | %s", str, msg);
+	ov_logfile_print(OV_MT_INFO, msg2);
+#else
+	fprintf(stdout,"[KS-Info] %s | %s\n", str, msg);
 #if OV_SYSTEM_NT
 /*
  *	added to handle output for eclipse consoles on windows
@@ -87,6 +99,7 @@ DLLFNCEXPORT void ks_logfile_info(
  *	we need to see whether this has performance issues
 */
 	fflush(stdout);
+#endif
 #endif
 	va_end(args);
 #endif
@@ -114,7 +127,11 @@ DLLFNCEXPORT void ks_logfile_debug(
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	fprintf(stdout, "[KS-Debug] %s | %s\n", str, msg);
+#if LOG_KS_TO_OV
+	snprintf(msg2, sizeof(msg2), "[KS] %s | %s", str, msg);
+	ov_logfile_print(OV_MT_DEBUG, msg2);
+#else
+	fprintf(stdout,"[KS-Debug] %s | %s\n", str, msg);
 #if OV_SYSTEM_NT
 /*
  *	added to handle output for eclipse consoles on windows
@@ -122,6 +139,7 @@ DLLFNCEXPORT void ks_logfile_debug(
  *	we need to see whether this has performance issues
 */
 	fflush(stdout);
+#endif
 #endif
 	va_end(args);
 #endif
@@ -148,7 +166,11 @@ DLLFNCEXPORT void ks_logfile_warning(
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	fprintf(stdout, "[KS-Warning] %s | %s\n", str, msg);
+#if LOG_KS_TO_OV
+	snprintf(msg2, sizeof(msg2), "[KS] %s | %s", str, msg);
+	ov_logfile_print(OV_MT_WARNING, msg2);
+#else
+	fprintf(stdout,"[KS-Warning] %s | %s\n", str, msg);
 #if OV_SYSTEM_NT
 /*
  *	added to handle output for eclipse consoles on windows
@@ -156,6 +178,7 @@ DLLFNCEXPORT void ks_logfile_warning(
  *	we need to see whether this has performance issues
 */
 	fflush(stdout);
+#endif
 #endif
 	va_end(args);
 #endif
@@ -182,7 +205,11 @@ DLLFNCEXPORT void ks_logfile_error(
 	now = time(NULL);
 	ptr = localtime(&now);
 	strftime(str ,100 , "%H:%M.%S",ptr);
-	fprintf(stdout, "[KS-Error] %s | %s\n", str, msg);
+#if LOG_KS_TO_OV
+	snprintf(msg2, sizeof(msg2), "[KS] %s | %s", str, msg);
+	ov_logfile_print(OV_MT_ERROR, msg2);
+#else
+	fprintf(stdout,"[KS-Error] %s | %s\n", str, msg);
 #if OV_SYSTEM_NT
 /*
  *	added to handle output for eclipse consoles on windows
@@ -190,6 +217,7 @@ DLLFNCEXPORT void ks_logfile_error(
  *	we need to see whether this has performance issues
 */
 	fflush(stdout);
+#endif
 #endif
 	va_end(args);
 #endif
