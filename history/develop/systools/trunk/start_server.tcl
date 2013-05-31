@@ -155,13 +155,16 @@ gets stdin in1
 #
 # ********************************************************************************
 if {[eq ${in1} "quit"] == 1} {
+if {$tcl_platform(os) == "Linux"} then {
+		set COMMAND1 "kill $pid" 
+	} else {
 	set LOADFILE "$THISACPLTSYSTEM/system/systools/kill.fbd"
  	set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
 	puts "Initated shutdown, waiting for server to unmap the database..."
     set PRX [open "|$COMMAND1" "RDWR"]
-	
+	}
 	set tries 0
-	while {1==1} {
+	while {$tries<60} {
 		set in [open ${LOGFILE} r]
 		set line 0
 		set tries [+ $tries 1]
