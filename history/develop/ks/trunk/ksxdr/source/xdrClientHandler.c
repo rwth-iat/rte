@@ -177,6 +177,8 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 	OV_UINT length;
 	OV_UINT header;
 
+	KS_logfile_debug(("checking for complete request: dataREceived:\n\tdata\t%p\n\tlength\t%lu\n\tdata-end\t%p\nread-pt\t%p\n\twrite-pt\t%p\nBeginofMessage\t%p\n\n", dataReceived->data, dataReceived->length, dataReceived->data+dataReceived->length, dataReceived->readPT, dataReceived->writePT, BeginOfMessage));
+
 	tempread = dataReceived->readPT;	/*	store the original read pointer to reset is at the end of the function	*/
 
 
@@ -203,7 +205,7 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 	}
 	else	/*	this is not the last fragment --> iterate over buffer	*/
 	{
-		if((dataReceived->length - (dataReceived->readPT - dataReceived->data)) >= length)		/*	check if there are more than length bytes behind the read pointer	*/
+		if((dataReceived->length - (dataReceived->readPT - dataReceived->data)) > length)		/*	check if there are more than length bytes behind the read pointer	*/
 		{
 			dataReceived->readPT += length;
 
@@ -220,7 +222,7 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 		}
 		else
 		{
-			KS_logfile_debug(("checking for complete request: buffer ends before end of current fragment --> message not complete"));
+			KS_logfile_debug(("checking for complete request: buffer ends before or at end of current fragment --> message not complete"));
 			dataReceived->readPT = tempread;
 			return FALSE;
 		}
@@ -424,6 +426,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ov_memstack_lock();
 				KS_logfile_error(("%s: HandleRequest: error checking if message is complete: %s", this->v_identifier, ov_result_getresulttext(result)));
 				ov_memstack_unlock();
+				KS_logfile_error(("dataapckets content: \nlength:\t%lu\ndata-begin:\t%p\ndata-end:\t%p\nread-pt:\t%p\nwrite-pt:\t%p\n\n", dataReceived->length, dataReceived->data, dataReceived->data+dataReceived->length, dataReceived->readPT, dataReceived->writePT));
 				return result;
 			}
 			KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
