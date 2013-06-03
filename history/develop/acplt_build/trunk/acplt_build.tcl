@@ -301,6 +301,7 @@ proc build_acplt {} {
     global os
     global make
     global basedir
+
     if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
     build libml make -C $builddir/libml -f $makefile
     if { $os == "nt" } then { 
@@ -663,8 +664,8 @@ proc create_systools_and_servers {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {develop/ks/trunk/ks_legacy/ksserv develop/ks/trunk/ks_legacy/ksservtcp develop/ks/trunk/ks_legacy/ksservhttp develop/ks/trunk/ksbase develop/ks/trunk/ksxdr develop/ks/trunk/TCPbind develop/ks/trunk/ksapi develop/fb develop/shutdown}
-set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib}
+set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
+set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
 set notrunklist {ks}
 #iec61131stdfb IOdriverlib fbcomlib
 if {$release != 1} {
