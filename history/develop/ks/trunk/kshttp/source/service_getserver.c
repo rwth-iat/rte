@@ -66,7 +66,6 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	OV_INT registeredVersion;
 	OV_UINT i = 0;
 	OV_UINT http_port;
-	OV_TIME ttemp;
 
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
@@ -146,13 +145,7 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 			EXEC_GETSERVER_RETURN KS_ERR_TARGETGENERIC; //400
 		}
 	}
-	ov_time_gettime(&ttemp);
-	if(ov_time_compare(&ttemp, &ExpTime) == OV_TIMECMP_BEFORE){
-		fr = KS_ERR_SERVERUNKNOWN;
-		KS_logfile_debug(("kshttp_getserver: getserver: server TTL exceed."));
-		print_result_array(message, response_format, &fr, 1, ": Server unknown (server TTL exceed)");
-		EXEC_GETSERVER_RETURN fr; //400
-	}
+
 
 	begin_response_part(message, response_format, "port");
 	if(*message == NULL){

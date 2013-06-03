@@ -126,10 +126,10 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 	ov_time_gettime(&ttemp);
 	if(ov_time_compare(&ttemp, &ExpTime) == OV_TIMECMP_BEFORE)
 	{
-		i=1;	/*	temporary used for server state	*/
+		i=1;	/*	temporary used for server state: 1 means server is alive*/
 	}
 	else
-		i=2;
+		i=2;	/*	server state 2: means probably dead	*/
 
 	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &i);
 
