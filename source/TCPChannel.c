@@ -323,18 +323,17 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
 				}
+
+				//if this is the first chunk of data in the packet, initialize the read pointer
+				if(!thisCh->v_inData.readPT)
+					thisCh->v_inData.readPT = tempdata;
 				else
 				{
-					//if this is the first chunk of data in the packet, initialize the read pointer
-					if(!thisCh->v_inData.readPT)
-						thisCh->v_inData.readPT = tempdata;
-					else
-					{
-						/*	get the readPT index and set readPT to this index in the newly allocated memory	*/
-						thisCh->v_inData.readPT = tempdata + (thisCh->v_inData.readPT - thisCh->v_inData.data);
-					}
-					thisCh->v_inData.data = tempdata;
+					/*	get the readPT index and set readPT to this index in the newly allocated memory	*/
+					thisCh->v_inData.readPT = tempdata + (thisCh->v_inData.readPT - thisCh->v_inData.data);
 				}
+				thisCh->v_inData.data = tempdata;
+
 
 				if(!thisCh->v_inData.writePT)
 					thisCh->v_inData.writePT = thisCh->v_inData.data;
