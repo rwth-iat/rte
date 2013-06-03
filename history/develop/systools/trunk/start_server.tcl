@@ -125,7 +125,7 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksserv -w fb -w ksservtcp -w ksservhttp -l ${LOGFILE}"
+set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksbase -w fb -w TCPbind -w ksxdr -w ksvhttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 # pid of the process
 set pid [pid $ACPLT_PROCESS]
@@ -160,9 +160,10 @@ if {$tcl_platform(os) == "Linux"} then {
 	} else {
 	set LOADFILE "$THISACPLTSYSTEM/system/systools/kill.fbd"
  	set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
+	}
 	puts "Initated shutdown, waiting for server to unmap the database..."
     set PRX [open "|$COMMAND1" "RDWR"]
-	}
+	
 	set tries 0
 	while {$tries<60} {
 		set in [open ${LOGFILE} r]
