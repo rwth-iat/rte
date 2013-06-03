@@ -441,7 +441,7 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref or 'fullqualifiedparentname', 'absolutepathname' and 'absoluteparentpathname' does not include host and Server";
+			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref or 'fullqualifiedparentname', 'absolutepathname' and 'absoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
 			TemplateFBVariableReferenceName : STRING
 			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING

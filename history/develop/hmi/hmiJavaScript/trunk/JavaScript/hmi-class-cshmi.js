@@ -1161,18 +1161,29 @@ cshmi.prototype = {
 			var FBRef = this._getFBReference(VisualObject);
 			if (FBRef === ""){
 				return false;
-			}else if (ParameterValue === "fullqualifiedname"){
-				return FBRef;
+			}else if (ParameterValue === "CSHMIHostServer"){
+				// is //dev:7509/server1
+				var PathArray = FBRef.split("/");
+				if(PathArray.length < 2){
+					return "";
+				}
+				return "//"+PathArray[0]+"/"+PathArray[1];
 			}else if (ParameterValue === "fullqualifiedparentname"){
+				// is //dev:7509/server1/TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return PathArray.join("/");
-			}else if (ParameterValue === "absolutepathname"){
-				return HMI.KSClient._splitKSPath(FBRef)[1];
+			}else if (ParameterValue === "fullqualifiedname"){
+				// is //dev:7509/server1/TechUnits/add
+				return FBRef;
 			}else if (ParameterValue === "absoluteparentpathname"){
+				// is /TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return HMI.KSClient._splitKSPath(PathArray.join("/"))[1];
+			}else if (ParameterValue === "absolutepathname"){
+				// is /TechUnits/add
+				return HMI.KSClient._splitKSPath(FBRef)[1];
 			}else if (ParameterValue === "identifier"){
 				//if the identifier is requested calculate this to avoid network request
 				var Objectname = FBRef.split("/");
