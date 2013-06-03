@@ -583,7 +583,7 @@ if(new == 0){
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
-	fprintf(fd,"CC_FLAGS	= -g -std=c99 -m32 -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd,"CC_FLAGS	= -g -std=c99 -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 #else	

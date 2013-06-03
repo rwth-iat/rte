@@ -26,6 +26,7 @@
 *	13-Apr-1999 Dirk Meyer   <dirk@plt.rwth-aachen.de>: File created.
 *	07-Jun-2001 J.Nagelmann  <nagelmann@ltsoft.de>: Changes for Sun Solaris.
 *	30-Apr-2008 A.Neugebauer <neugebauer@ltsoft.de>: Changes for libml.
+*   02-Jun-2013 Sten Gruener <s.gruener@plt.rwth-aachen.de>: Notes on valgrind.
 */
 
 #define OV_COMPILE_LIBOV
@@ -1134,6 +1135,11 @@ OV_DLLFNCEXPORT void ov_database_shutdown(void) {
 OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 ) {
+#ifdef OV_VALGRIND
+    if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+		return malloc(size);
+	}
+#endif
 	if(pdb) {
 	    return ml_malloc(size);
 	}
@@ -1149,6 +1155,20 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 ) {
+#ifdef OV_VALGRIND
+	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL){
+		if(!((unsigned int long)ptr >= (unsigned int long)pdb->baseaddr && (unsigned int long)ptr <= (unsigned int long)pdb->baseaddr+(unsigned int long)pdb->size)){
+			printf("realloc missed database, install a breakpoint here\n");
+		}
+	}
+    if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+		if(ptr != 0 && pdb && ptr >= pdb->baseaddr && ptr <= pdb->baseaddr+pdb->size){
+			return ml_realloc(ptr, size);
+		}else{
+			return realloc(ptr, size);
+		}
+	}
+#endif
 	if(pdb) {
 	    return ml_realloc(ptr, size);
 	}
@@ -1163,6 +1183,20 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 OV_DLLFNCEXPORT void ov_database_free(
 	OV_POINTER	ptr
 ) {
+#ifdef OV_VALGRIND
+	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL){
+		if(!((unsigned int long)ptr >= (unsigned int long)pdb->baseaddr && (unsigned int long)ptr <= (unsigned int long)pdb->baseaddr+(unsigned int long)pdb->size)){
+			printf("free missed database, install a breakpoint here\n");
+		}
+	}
+    if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+		if(ptr != 0 && pdb && ptr >= pdb->baseaddr && ptr <= pdb->baseaddr+pdb->size){
+			return ml_free(ptr);
+		}else{
+			return free(ptr);
+		}
+	}
+#endif
 	if(pdb) {
 		ml_free(ptr);
 	}
