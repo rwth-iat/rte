@@ -1091,7 +1091,6 @@ ERRORMSG:
 
 			ov_ksserver_stripped_stop();
 			ov_logfile_info("Server stopped.");
-			if(helper)free(helper);
 			if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
 				ov_ksserver_stripped_delete();
 				goto MAPBACKUP;
