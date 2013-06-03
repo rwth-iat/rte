@@ -22,7 +22,8 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 	OV_INSTPTR_ksbase_Manager pManager = NULL;
 	char portstr [8];
 
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(dataReceived, &servername, KS_NAME_MAXLEN))
+	ov_memstack_lock();
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &servername, KS_NAME_MAXLEN))
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverversion))
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverport))
 			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverttl)))
@@ -32,6 +33,7 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 		*ksErrCode = KS_ERR_TARGETGENERIC;
 		if(servername)
 			ov_free(servername);
+		ov_memstack_unlock();
 		return OV_ERR_OK;
 	}
 	else
@@ -44,6 +46,7 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 			if(servername)
 				ov_free(servername);
 			KS_logfile_info(("ksxdr_register: received Manager command but no Manager here. Sending answer."));
+			ov_memstack_unlock();
 			return OV_ERR_OK;
 		}
 
@@ -57,5 +60,6 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 	}
 	/*	create Answer	*/
 	/*	this service only sends back the error code (after completion KS_ERR_OK)	*/
+	ov_memstack_unlock();
 	return OV_ERR_OK;
 }
