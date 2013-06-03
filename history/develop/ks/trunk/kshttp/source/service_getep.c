@@ -284,10 +284,20 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				getEP_finalize_RequestOutputPart(&temp, response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
-				//fixme ksx wants 2002-02-02T02:02:02.123
+				//fixme ksx wants 2002-02-02T02:02:02.123, tcl not
+				if(response_format == RESPONSE_FORMAT_TCL){
+					if(temp == NULL){
+						ov_string_setvalue(&temp, "{");
+					}else{
+						ov_string_append(&temp, "{");
+					}
+				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
 				ov_string_append(&temp, ov_time_timetoascii(&(one_result->creation_time)));
 				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
+				if(response_format == RESPONSE_FORMAT_TCL){
+					ov_string_append(&temp, "}");
+				}
 				break;
 			case OP_CLASS:
 				if(one_result->objtype & KS_OT_DOMAIN) {
@@ -450,11 +460,28 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				}
 				break;
 			case OP_COMMENT:
+				if(response_format == RESPONSE_FORMAT_TCL){
+					if(temp == NULL){
+						ov_string_setvalue(&temp, "{");
+					}else{
+						ov_string_append(&temp, "{");
+					}
+				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "comment");
 				ov_string_append(&temp, one_result->comment);
 				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
+				if(response_format == RESPONSE_FORMAT_TCL){
+					ov_string_append(&temp, "}");
+				}
 				break;
 			case OP_ACCESS:
+				if(response_format == RESPONSE_FORMAT_TCL){
+					if(temp == NULL){
+						ov_string_setvalue(&temp, "{");
+					}else{
+						ov_string_append(&temp, "{");
+					}
+				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "access");
 				EntryFound = FALSE;
 				if(one_result->access & KS_AC_NONE){
@@ -518,6 +545,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					EntryFound = TRUE;
 				}
 				getEP_finalize_RequestOutputPart(&temp, response_format, "access");
+				if(response_format == RESPONSE_FORMAT_TCL){
+					ov_string_append(&temp, "}");
+				}
 				break;
 			case OP_SEMANTIC:
 				getEP_begin_RequestOutputPart(&temp, response_format, "semantics");
