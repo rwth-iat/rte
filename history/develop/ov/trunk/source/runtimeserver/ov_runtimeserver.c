@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
 static void ov_server_usage(void)
 {	
 #if OV_SERVER_HELP
-		fprintf(stderr, "Usage: ov_server (-f DATABASE -s SERVERNAME):(-c CONFIGFILE) [arguments]\n"
+		fprintf(stderr, "Usage: ov_runtimeserver (-f DATABASE -s SERVERNAME):(-c CONFIGFILE) [arguments]\n"
 				"\n"
             	"Database file and servername must be set. This can be done either with\n"
             	"\tthe -f and -s options or inside a config file (-c option)\n"
@@ -1091,6 +1091,7 @@ ERRORMSG:
 
 			ov_ksserver_stripped_stop();
 			ov_logfile_info("Server stopped.");
+			if(helper)free(helper);
 			if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
 				ov_ksserver_stripped_delete();
 				goto MAPBACKUP;

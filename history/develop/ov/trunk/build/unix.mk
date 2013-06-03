@@ -24,8 +24,21 @@
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 #	09-Jul-2001 Ansgar M�nnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
+#   02-Jun-2013 Sten Gruener <s.gruener@plt.rwth-aachen.de>: Notes on valgrind.
 
-
+#===Notes on valgrind===#
+# In case you want to use valgrind to search for memleaks, do the following:
+# 1) recompile libov with -DOV_VALGRIND
+# 2) start ov_server in valgrind's environment: 
+#    $valgrind --leak-check=yes ov_runtimeserver [params]
+# 3) while running, create an OV domain /acplt/malloc, starting from this moment all new ov_database_malloc/
+#    ov_database_realloc/ov_database_free calls will be replaced through plain malloc/realloc/free
+#    calls and hence logged in valgrind
+# 4) load suspect libraries and let them operate in the RAM
+# 5) terminate server with ctrl-c and inspect valgrind's output
+#
+# In case of segfaults, try to run suspect libraries without creating /acplt/malloc and watch for
+# database miss output in the console. You may work on stack memory with ov_database_* functions
 
 #	Filename conventions
 #	--------------------
@@ -39,7 +52,7 @@ _EXE =
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	=
-OV_PLATFORM_DEFINES			= -DOV_DEBUG
+OV_PLATFORM_DEFINES			= -DOV_DEBUG #-DOV_VALGRIND
 
 #	Compiler
 #	--------
@@ -50,7 +63,8 @@ FLEX			= flex
 BISON			= bison
 
 CC			= gcc
-CC_FLAGS		= -g -Wall -O2 -shared -std=c99 -fno-strict-aliasing
+#!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
+CC_FLAGS		= -g -Wall -O0 -shared -std=c99 -fno-strict-aliasing
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)

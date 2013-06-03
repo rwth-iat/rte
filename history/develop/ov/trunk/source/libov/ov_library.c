@@ -26,6 +26,7 @@
 *	02-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 *	09-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 *	07-Jun-2001 J.Nagelmann <nagelmann@ltsoft.de>: Changes for Sun Solaris.
+*   02-Jun-2013 Sten Gruener <s.gruener@plt.rwth-aachen.de>: Notes on valgrind.
 */
 
 #define OV_COMPILE_LIBOV
@@ -64,9 +65,14 @@
 */
 #if OV_DYNAMIC_LIBRARIES
 #if OV_SYSTEM_UNIX
-#define Ov_Library_CloseDLL(handle)	dlclose(handle)
+	#ifdef OV_VALGRIND
+		//do not unload shared objects in valgrind mode to keep symbols for trace
+		#define Ov_Library_CloseDLL(handle)	
+	#else
+		#define Ov_Library_CloseDLL(handle)	dlclose(handle)
+	#endif
 #elif OV_SYSTEM_NT
-#define Ov_Library_CloseDLL(handle)	FreeLibrary(handle)
+	#define Ov_Library_CloseDLL(handle)	FreeLibrary(handle)
 #endif
 #endif
 
