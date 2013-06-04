@@ -231,7 +231,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
-	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
+	//OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 	OV_STRING request_method = NULL; //GET, HEAD, etc.
 	OV_STRING request_header = NULL;
@@ -355,8 +355,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			printresponsefooter(&reply_body, response_format, "getserver");
 			request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
 		}else if(ov_string_compare(cmd, "/register") == OV_STRCMP_EQUAL){
+			//name, port, ksversion
 			result = OV_ERR_NOTIMPLEMENTED;
 		}else if(ov_string_compare(cmd, "/unregister") == OV_STRCMP_EQUAL){
+			//name, port, ksversion
 			result = OV_ERR_NOTIMPLEMENTED;
 		}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
@@ -621,7 +623,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//shutdown tcp connection if no keep_alive was set
 	if (keep_alive != TRUE || Ov_Fail(result)) {
-		ksbase_Channel_CloseConnection(pChannel);
+		//todo close connection via vtbl? we could rely on the client, too.
+		//ksbase_Channel->vtbl->m_CloseConnection(pChannel);
 	}
 	return OV_ERR_OK;
 }
