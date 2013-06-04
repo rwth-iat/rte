@@ -109,6 +109,11 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
 	{
 		ksbase_free_KSDATAPACKET(packet);
 	}
+	if(addlength == 0){
+		return OV_ERR_OK;
+	}
+	if(!data)
+		return OV_ERR_BADPARAM;
 
 	packet->data = ov_malloc(addlength);
 	if(!packet->data)
@@ -119,6 +124,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 	packet->length = addlength;
+	memcpy(packet->data, data, addlength);
 	packet->readPT = packet->data;
 	packet->writePT = packet->data + addlength;
 

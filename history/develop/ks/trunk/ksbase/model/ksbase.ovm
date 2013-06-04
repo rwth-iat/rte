@@ -89,7 +89,7 @@ LIBRARY ksbase
 			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
 			 *		4. The readptr of the answer data may not be altered.
 			 */
-			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST> IS_ABSTRACT;	
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -226,13 +226,13 @@ LIBRARY ksbase
 			END_VARIABLES;	
 		OPERATIONS
 			//real sending of data
-			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA> IS_ABSTRACT;
 			/*	open a connection	*/
-			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN> IS_ABSTRACT;
 			/*	open a local connection (needed for communication with manager)	*/
-			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL> IS_ABSTRACT;
 			/*	close the connection	*/
-			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN> IS_ABSTRACT;
 			//initialize inData and outData
 			startup	:	C_FUNCTION	<OV_FNC_STARTUP>;
 			//free heap memory of inData and outData

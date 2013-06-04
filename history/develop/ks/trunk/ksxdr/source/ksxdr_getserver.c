@@ -18,8 +18,8 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 	OV_STRING servername = NULL;
 	OV_UINT serverversion;
 	OV_INSTPTR_ksbase_Manager pManager = NULL;
-	OV_STRING_VEC protocols;
-	OV_STRING_VEC ports;
+	OV_STRING_VEC protocols = {0, NULL};
+	OV_STRING_VEC ports = {0, NULL};
 	OV_UINT	regTTl;
 	OV_TIME ExpTime;
 	OV_INT registeredVersion;
@@ -52,14 +52,8 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 			return OV_ERR_OK;
 		}
 
-
-		protocols.veclen = 0;
-		ports.veclen = 0;
-		protocols.value = NULL;
-		ports.value = NULL;
-
 		/*
-		 * check if there is a server of the given name and version to unregister the ksxdr protocol (or the whole server if it is the only supported protocol)
+		 * check if there is a server of the given name and version of the ksxdr protocol (or the whole server if it is the only supported protocol)
 		 */
 		KS_logfile_debug(("ksxdr_getserver: getserver: getting server data."));
 		result = ksbase_Manager_getserverdata(servername, serverversion, &protocols, &ports, &regTTl, &ExpTime, &registeredVersion);
@@ -103,7 +97,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 			}
 			else
 			{/*	not all values set...how can this happen?	*/
-
+				ov_free(servername);
 				*msgState = XDR_MSGST_SYSTEM_ERR;
 				*ksErrCode = KS_ERR_TARGETGENERIC;
 				KS_logfile_error(("ksxdr_getserver: getserver server: weird: getserverdata returned unknown error. i don't know how this can happen."));
@@ -133,6 +127,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 
 	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &i);
 
+	ov_free(servername);
 	return OV_ERR_OK;
 
 }
