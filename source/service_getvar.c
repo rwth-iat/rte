@@ -178,11 +178,28 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 		EXEC_GETVAR_RETURN result.result;
 	}
 	for (j=0; j< result.items_len;j++){
+		if(j>0){
+			seperate_response_parts(&LoopEntryList, response_format);
+		}
 		one_result = *(result.items_val + j);
 		fr = one_result.result;
 		if(Ov_Fail(fr)){
 			lasterror = fr;
-			print_result_array(message, response_format, &fr, 1, "");
+			begin_response_part(&LoopEntryList, response_format, "failure");
+			if(response_format == RESPONSE_FORMAT_KSX){
+				if(LoopEntryList == NULL){
+					ov_string_print(&LoopEntryList, "%i", fr);
+				}else{
+					ov_string_print(&LoopEntryList, "%s%i", LoopEntryList, fr);
+				}
+			}else{
+				if(LoopEntryList == NULL){
+					ov_string_print(&LoopEntryList, "KS_ERR: %s", ov_result_getresulttext(fr));
+				}else{
+					ov_string_print(&LoopEntryList, "%sKS_ERR: %s", LoopEntryList, ov_result_getresulttext(fr));
+				}
+			}
+			finalize_response_part(&LoopEntryList, response_format, "failure");
 		}else{
 			Variable = one_result.var_current_props;
 
@@ -271,7 +288,8 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 
 				case OV_VT_STRUCT:
 				case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				ov_string_setvalue(&LoopEntryTypeString, "struct");
+					//fixme struct base64
+					ov_string_setvalue(&LoopEntryTypeString, "struct");
 					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					break;
 
@@ -437,57 +455,53 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 					break;
 
 				default:
-					ov_string_setvalue(&LoopEntryTypeString, NULL);
 					ov_string_print(&LoopEntryValue, "unknown value, VarType: %#X", Variable.value.vartype);
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 			}//end switch vartype
-		}//end if ov_fail
-		if(j>0){
-			seperate_response_parts(&LoopEntryList, response_format);
-		}
-		begin_response_part(&LoopEntryList, response_format, "var");
-		if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON)){
-			//get additional data if we serve ksx
-			begin_response_part(&LoopEntryList, response_format, "value");
-			begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
-			ov_string_append(&LoopEntryList, LoopEntryValue);
-			if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
-				//why a string has a length attribute??? thank harry for that mess
-				ov_string_print(&LoopEntryTypeString, "stringvec");
-			}
-			finalize_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
-			finalize_response_part(&LoopEntryList, response_format, "value");
+			begin_response_part(&LoopEntryList, response_format, "var");
+			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON)){
+				//get additional data if we serve ksx
+				begin_response_part(&LoopEntryList, response_format, "value");
+				begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
+				ov_string_append(&LoopEntryList, LoopEntryValue);
+				if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
+					//why a string has a length attribute??? thank harry for that mess
+					ov_string_print(&LoopEntryTypeString, "stringvec");
+				}
+				finalize_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
+				finalize_response_part(&LoopEntryList, response_format, "value");
 
-			begin_response_part(&LoopEntryList, response_format, "timestamp");
-			//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
-			ov_string_append(&LoopEntryList, ov_time_timetoascii(&(Variable.time)));
-			finalize_response_part(&LoopEntryList, response_format, "timestamp");
-			begin_response_part(&LoopEntryList, response_format, "state");
-			switch (Variable.state) {
-				case OV_ST_NOTSUPPORTED:
-					ov_string_append(&LoopEntryList, "notsupported");
-					break;
-				case OV_ST_UNKNOWN:
-					ov_string_append(&LoopEntryList, "unknown");
-					break;
-				case OV_ST_BAD:
-					ov_string_append(&LoopEntryList, "bad");
-					break;
-				case OV_ST_QUESTIONABLE:
-					ov_string_append(&LoopEntryList, "questionable");
-					break;
-				case OV_ST_GOOD:
-					ov_string_append(&LoopEntryList, "good");
-					break;
-				default:
-					break;
+				begin_response_part(&LoopEntryList, response_format, "timestamp");
+				//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
+				ov_string_append(&LoopEntryList, ov_time_timetoascii(&(Variable.time)));
+				finalize_response_part(&LoopEntryList, response_format, "timestamp");
+				begin_response_part(&LoopEntryList, response_format, "state");
+				switch (Variable.state) {
+					case OV_ST_NOTSUPPORTED:
+						ov_string_append(&LoopEntryList, "notsupported");
+						break;
+					case OV_ST_UNKNOWN:
+						ov_string_append(&LoopEntryList, "unknown");
+						break;
+					case OV_ST_BAD:
+						ov_string_append(&LoopEntryList, "bad");
+						break;
+					case OV_ST_QUESTIONABLE:
+						ov_string_append(&LoopEntryList, "questionable");
+						break;
+					case OV_ST_GOOD:
+						ov_string_append(&LoopEntryList, "good");
+						break;
+					default:
+						break;
+				}
+				finalize_response_part(&LoopEntryList, response_format, "state");
+			}else{
+				ov_string_append(&LoopEntryList, LoopEntryValue);
 			}
-			finalize_response_part(&LoopEntryList, response_format, "state");
-		}else{
-			ov_string_append(&LoopEntryList, LoopEntryValue);
-		}
-		finalize_response_part(&LoopEntryList, response_format, "var");
+			finalize_response_part(&LoopEntryList, response_format, "var");
+		}//end if ov_fail
 	}//end for entry
 
 	ov_string_append(message, LoopEntryList);
