@@ -9,4 +9,4 @@ rem
 
 cmd /c ..\..\system\sysbin\tclsh ..\..\system\systools\start_server.tcl
 
-exit
+pause
