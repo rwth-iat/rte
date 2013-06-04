@@ -184,7 +184,11 @@
 		var RequestStatehandler = function(evt){
 			var req = evt.target;
 			if( req.readyState == 4 ){
-				PlaygroundOutput.innerHTML = req.responseText;
+				if(req.status == 0){
+					PlaygroundOutput.innerHTML = "The request failed.";
+				}else{
+					PlaygroundOutput.innerHTML = req.responseText;
+				}
 				//adjust height to the line count
 				var ResponseArray = req.responseText.split(String.fromCharCode(10));
 				var maxlength = 0;
@@ -200,7 +204,6 @@
 				if(ResponseArray.length > 3){
 					PlaygroundOutput.rows = ResponseArray.length;
 				}
-				
 				if(req.status == 200){
 					PlaygroundOutput.style.borderColor = "#8080FF";
 				}else{

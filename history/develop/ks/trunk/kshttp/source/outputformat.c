@@ -251,5 +251,8 @@ or
 		finalize_response_part(&strResult, response_format, "success");
 	}
 	ov_string_append(output, strResult);
+	ov_string_setvalue(&strFailuredetail, NULL);
+	ov_string_setvalue(&strResult);
+
 	return fr;
 }
