@@ -83,39 +83,3 @@ OV_DLLFNCEXPORT void ksbase_Channel_shutdown(
 	}
     return;
 }
-
-
-OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_SendData(
-	OV_INSTPTR_ksbase_Channel this
-) {
-
-	KS_logfile_warning(("This channel has no SendData function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_OpenLocalConn(
-	OV_INSTPTR_ksbase_Channel this,
-	OV_STRING port
-) {
-
-	KS_logfile_warning(("This channel has no OpenLocalConn function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT ksbase_Channel_OpenConnection(
-	OV_INSTPTR_ksbase_Channel this,
-	OV_STRING host,
-	OV_STRING port
-) {
-
-	KS_logfile_warning(("This channel has no OpenConnection function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT void ksbase_Channel_CloseConnection(
-	OV_INSTPTR_ksbase_Channel this
-) {
-
-	KS_logfile_warning(("This channel has no Closeconnection function, but it should. Nothing Send. Identifier: %s", this->v_identifier));
-	return;
-}
