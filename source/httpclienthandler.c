@@ -307,7 +307,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 
 	//empty the buffers
-	ksbase_KSDATAPACKET_set(dataReceived, NULL, 0);
+	ksbase_free_KSDATAPACKET(dataReceived);
 
 	//debug - output header
 	KS_logfile_debug(("%s", request_header));

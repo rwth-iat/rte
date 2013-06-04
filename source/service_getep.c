@@ -128,7 +128,10 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
 		ov_string_setvalue(&message, NULL);\
 		Ov_SetDynamicVectorLength(&requestOutput,0,UINT);\
 		ov_string_setvalue(&temp, NULL);\
+		ov_string_setvalue(&params.path, NULL);\
+		ov_string_setvalue(&params.name_mask, NULL);\
 		return
+
 OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
 	OV_STRING_VEC match = {0,NULL};
 
@@ -150,25 +153,23 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	unsigned char flagiterator = 'a';
 	int i = 0;
 
+	//initialize ov_string
+	params.path = NULL;
+	params.name_mask = NULL;
+
 	//path=/TechUnits
 	//requestType=OT_DOMAIN|OT_VARIABLE|... (siehe tcl-tks doku)
 	//requestOutput or requestOutput[i] with OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME and OP_CLASS
-
 	/**
 	 * Build Parameter for KS function
 	 */
 	//process path
-	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "path", &match);
 	if(match.veclen!=1){
 		fr = OV_ERR_BADPARAM;
 		print_result_array(re, response_format, &fr, 1, ": Path not found or multiple path given");
 		EXEC_GETEP_RETURN fr; //400
 	}
-
-	//initialize ov_string
-	params.path = NULL;
-	params.name_mask = NULL;
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
