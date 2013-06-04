@@ -127,9 +127,32 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
 set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
+set tries 0
+
+#Prüfen ob server hochgfährt
+while {$tries<2000} {
+		set in [open ${LOGFILE} r]
+		set line 0
+		set tries [+ $tries 1]
+		while {[gets $in line] != -1} {
+			
+			if {[regexp "(.*)Server started(.*)" $line] } then {
+				puts $tries
+				# pid of the process
+				set pid [pid $ACPLT_PROCESS]
+				puts "server ${SERVERNAME} is running with PID $pid"
+				set tries 2000
+			}
+		}
+		after 10 
+	}
+	
+
+	close $in 
+
+
 # pid of the process
-set pid [pid $ACPLT_PROCESS]
-puts "server ${SERVERNAME} is running with PID $pid"
+
 
 proc sleep {time} {
     after $time set end 1
@@ -143,11 +166,26 @@ proc sleep {time} {
 #
 #  Eingabeschleife
 #
+set in1 1;
 set k 0
 while {$k<1} {
+
+# Prüfung ob server läuft
+fconfigure stdin -blocking 0
+if { [catch {file rename ${LOGFILE} ${LOGFILE}.test}] } {
+	#puts "running"
+} else {
+	file rename ${LOGFILE}.test ${LOGFILE}
+	puts "Server was terminated"
+	break
+}
+if { $in1 > -1 } then {
 puts "-----------------------------------------------------"
 puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template , quit = shutdown server"
+}
+after 1000
 gets stdin in1
+fconfigure stdin -blocking 1
 # ********************************************************************************
 # ********************************************************************************
 #
