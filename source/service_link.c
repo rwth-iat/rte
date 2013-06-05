@@ -96,6 +96,7 @@ OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT respo
 		EXEC_LINK_RETURN fr; //400
 	}
 
+
 	ov_memstack_lock();
 	addrp = (OV_LINK_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_LINK_ITEM));
 	if(!addrp) {
@@ -112,7 +113,9 @@ OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT respo
 		addrp->element_path = elementmatch.value[i];
 		//todo PMH implementieren
 		addrp->place.hint = KS_PMH_DEFAULT;
-
+		addrp->place.place_path = NULL;
+		addrp->opposite_place.hint = KS_PMH_DEFAULT;
+		addrp->opposite_place.place_path = NULL;
 		//add one size of a pointer
 		addrp ++;
 	}
