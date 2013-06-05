@@ -491,7 +491,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//no method has found a hit
 	if (request_handled_by == REQUEST_HANDLED_BY_NONE){
-		ov_string_append(&reply_body, "Resource not found");
+		ov_string_append(&reply_body, "ks command not supported or static file not found");
 		result = OV_ERR_BADPATH; //404
 	}
 
