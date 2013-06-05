@@ -14,7 +14,15 @@
 				border: 1px solid #8080FF;
 				color: #000080;
 				width:500px;
+			}
+			#idPlaygroundOutput{
 				display:block;
+			}
+			input{
+				transition: background-color 0.5s;
+			}
+			#idOutputformatSelect{
+				width:90px;
 			}
 		</style>
 	</head>
@@ -25,15 +33,27 @@
 		<form id="idCommandPlayground" style="display:none;" action="">
 			<h1>Command playground</h1>
 			<div>
-				<input type="submit" id="idSubmitbutton" value="send request">
+				<span id="idSpanOutputformat">
+					output format: 
+					<select id="idOutputformatSelect">
+						<option value="ksx">KSX 2.1r</option>
+						<option value="tcl">KSTCL (human readable errors)</option>
+						<option value="plain">text plain (no structure)</option>
+					</select>
+				</span>
 				<select id="idServicelist">
 					<option value="none">select type of request</option>
 					<option value="getEP">getEP</option>
 					<option value="getVar">getVar</option>
 					<option value="setVar">setVar</option>
+					<option value="createObject">createObject</option>
+					<option value="deleteObject">deleteObject</option>
+					<option value="renameObject">renameObject</option>
+					<option value="link">link</option>
+					<option value="unlink">unlink</option>
 				</select>
 				path: 
-				<input id="idPathInput" value="/TechUnits" placeholder="full path to the object/variable" style="width:200px;">
+				<input id="idPathInput" value="" placeholder="full path to the object/variable" style="width:200px;">
 				<span id="idSecondtextSpan" style="display:none;">
 					<span id="idSecondtextLabel">new value: </span>
 					<input id="idSecondtextInput" placeholder="new value to set" style="width:200px;">
@@ -49,6 +69,7 @@
 				</span>
 			</div>
 			<input id="idUrldisplay" value="" placeholder="enter a request right here or use the boxes above">
+			<input type="submit" id="idSubmitbutton" value="send request">
 			<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
 		</form>
 		<h1>Supported KS commands</h1>
@@ -82,8 +103,8 @@
 		example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
 		<h2>linkObject</h2>
 		<p>Links two pairs of objects with an OV association.</p>
-		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
-		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
+		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
 		<h2>unlinkObject</h2>
 		<p>Unlinks two pairs of objects with an OV association.</p>
 		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
@@ -91,6 +112,7 @@
 		
 		<script type="text/javascript" >
 		var CommandPlayground = document.getElementById("idCommandPlayground");
+		var OutputformatSelect = document.getElementById("idOutputformatSelect");
 		var Servicelist = document.getElementById("idServicelist");
 		var Submitbutton = document.getElementById("idSubmitbutton");
 		var PathInput = document.getElementById("idPathInput");
@@ -102,9 +124,6 @@
 		var Urldisplay = document.getElementById("idUrldisplay");
 		var PlaygroundOutput = document.getElementById("idPlaygroundOutput");
 		
-		if( window.addEventListener ) {
-			window.addEventListener('load',function(){prepareWebpage();},false);
-		}
 		var prepareWebpage = function(){
 			//show playground
 			if (-1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
@@ -121,7 +140,7 @@
 					try{
 						req.send(null);
 						if(req.status == 200){
-							ServicesNode.innerHTML = "<h1>Human-Machine Interface</h1><p>A <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+							ServicesNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
 						}
 					}catch(e){
 						//do nothing
@@ -129,15 +148,51 @@
 				}
 			}
 		};
+		window.onload = prepareWebpage;
 		Servicelist.onchange = function(evt){
 			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
 				SecondtextSpan.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
+				PathInput.value = "/TechUnits";
 				SecondtextSpan.style.display = "none";
 				SpanGetepRequestType.style.display = "inline";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
+				PathInput.value = "/TechUnits/add1.IN1";
+				SecondtextInput.value = "42";
 				SecondtextLabel.innerHTML = "new value: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getVar"){
+				PathInput.value = "/TechUnits/add1.IN1";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextInput.value = "/Libraries/iec61131stdfb/add";
+				SecondtextLabel.innerHTML = "factory/class: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "deleteObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "renameObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextInput.value = "/TechUnits/add2";
+				SecondtextLabel.innerHTML = "new name: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "link"){
+				PathInput.value = "/TechUnits/add1.taskparent";
+				SecondtextInput.value = "/Tasks/UrTask";
+				SecondtextLabel.innerHTML = "link partner: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
+				PathInput.value = "/TechUnits/add1.taskparent";
+				SecondtextInput.value = "/Tasks/UrTask";
+				SecondtextLabel.innerHTML = "link partner: ";
 				SecondtextSpan.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else{
@@ -160,7 +215,7 @@
 			return false;
 		};
 		var calculateUrl = function(){
-			var urlstring = "/"+Servicelist.options[Servicelist.options.selectedIndex].value+"?format=ksx";
+			var urlstring = "/"+Servicelist.options[Servicelist.options.selectedIndex].value+"?format="+OutputformatSelect.options[OutputformatSelect.options.selectedIndex].value;
 			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
 				//nothing selected
 				return;
@@ -172,20 +227,39 @@
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
 				urlstring += "&path="+PathInput.value;
 				urlstring += "&newvalue="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
+				urlstring += "&factory="+SecondtextInput.value;
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "deleteObject"){
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "renameObject"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&newname="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "link"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&element="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&element="+SecondtextInput.value;
 			}else{
 				return;
 			}
 			Urldisplay.value = urlstring;
 			return urlstring;
 		}
+		OutputformatSelect.onchange = calculateUrl;
 		PathInput.onkeyup = PathInput.onchange = calculateUrl;
 		SecondtextInput.onkeyup = SecondtextInput.onchange = calculateUrl;
 		GetepRequestTypeSelect.onchange = calculateUrl;
 		var RequestStatehandler = function(evt){
-			var req = evt.target;
+			if (!evt){
+				var req = this;
+			}else{
+				req = evt.target;
+			}
 			if( req.readyState == 4 ){
 				if(req.status == 0){
-					PlaygroundOutput.innerHTML = "The request failed.";
+					PlaygroundOutput.innerHTML = "The request failed. Timout?";
 				}else{
 					PlaygroundOutput.innerHTML = req.responseText;
 				}
@@ -206,9 +280,17 @@
 				}
 				if(req.status == 200){
 					PlaygroundOutput.style.borderColor = "#8080FF";
+					Submitbutton.style.backgroundColor = "limegreen";
+					Submitbutton.value = "response received";
 				}else{
 					PlaygroundOutput.style.borderColor = "red";
+					Submitbutton.style.backgroundColor = "red";
+					Submitbutton.value = "error received";
 				}
+				var timeoutID = window.setTimeout(function(){
+					Submitbutton.value = "send request";
+					Submitbutton.style.backgroundColor = "";
+				},1500);
 			}
 		}
 		//init url
