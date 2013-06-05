@@ -1810,9 +1810,20 @@ cshmi.prototype = {
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			return false;
 		}else if (ParameterName === "TemplateConfigValues"){
+			//todo document setting ConfigValue
+			
 			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					break;
+				}
+				for (var item in TemplateObject.FBVariableReference){
+					if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
+						var targetFound = true;
+						break;
+					}
+				};
+				if(targetFound === true){
 					break;
 				}
 			//loop upwards to find the Template object
