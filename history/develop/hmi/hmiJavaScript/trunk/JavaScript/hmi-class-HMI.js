@@ -357,6 +357,7 @@ HMI.prototype = {
 					this.hmi_log_trace("HMI.prototype.init - detected TCL Gateway");
 				}else if (ResponseServerString &&  -1 !== ResponseServerString.indexOf('ACPLT/OV HTTP Server')){
 					HMI.HMI_Constants.ServerType = "kshttp";
+					HMI.InputHost.placeholder = "hostname to contact";
 					this.hmi_log_trace("HMI.prototype.init - detected kshttp server");
 				}else if (ResponseServerString &&  -1 !== ResponseServerString.indexOf('PHP')){
 					HMI.HMI_Constants.ServerType = "php";

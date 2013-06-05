@@ -2,11 +2,11 @@ puts "== Begin processing js files =="
 #cd "../../staticfiles"
 
 set fbdfilename "StaticDisplayComponent.fbd"
-set baseovpath "/communication/httpservers/httpserver/staticfiles/hmi"
+set baseovpath "/communication/kshttp/staticfiles/hmi"
 set contentname "content"
 set mimetypename "mimetype"
 set encodingname "encoding"
-set webserverlib "ksservhttp"
+set webserverlib "kshttp"
 set staticfileclass "/acplt/$webserverlib/staticfile"
 
 proc stripLineComments {inputString {commentChars ";#"}} {
