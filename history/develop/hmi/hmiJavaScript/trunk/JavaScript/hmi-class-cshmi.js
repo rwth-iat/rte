@@ -84,7 +84,7 @@ function cshmi() {
 	this.ResourceList.EventInfos.startYMouse = null;
 	this.ResourceList.EventInfos.startXObj = null;
 	this.ResourceList.EventInfos.startYObj = null;
-	this.ResourceList.newRebuildObjectId = null;
+	this.ResourceList.newRebuildObject = Object();
 	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
@@ -145,30 +145,32 @@ cshmi.prototype = {
 	 */
 	instanciateCshmi: function(Host, Server, ObjectPath) {
 		//fill cache if possible
-		var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
-		if (JSON && JSON.parse && response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
-			try {
-				var plainJSON = decodeURI(response.slice(2,-2));
-				var responseJSON = JSON.parse(plainJSON);
-			} catch (e) {
-				HMI.hmi_log_info("Parsing Cache was not successful. Skipping.");
-				//something went wrong, ignore the cache 8-/
-				responseJSON = {};
+		if (JSON && JSON.parse){
+			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
+			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
+				try {
+					var plainJSON = decodeURI(response.slice(2,-2));
+					var responseJSON = JSON.parse(plainJSON);
+				} catch (e) {
+					HMI.hmi_log_info("Parsing Cache was not successful. Skipping.");
+					//something went wrong, ignore the cache 8-/
+					responseJSON = {};
+				}
+				plainJSON = null;
+				if(responseJSON.Elements){
+					this.ResourceList.Elements = responseJSON.Elements;
+				}
+				if(responseJSON.Actions){
+					this.ResourceList.Actions = responseJSON.Actions;
+				}
+				if(responseJSON.baseKsPath){
+					this.ResourceList.baseKsPath = responseJSON.baseKsPath;
+				}
+				if(responseJSON.ChildList){
+					this.ResourceList.ChildList = responseJSON.ChildList;
+				}
+				responseJSON = null;
 			}
-			plainJSON = null;
-			if(responseJSON.Elements){
-				this.ResourceList.Elements = responseJSON.Elements;
-			}
-			if(responseJSON.Actions){
-				this.ResourceList.Actions = responseJSON.Actions;
-			}
-			if(responseJSON.baseKsPath){
-				this.ResourceList.baseKsPath = responseJSON.baseKsPath;
-			}
-			if(responseJSON.ChildList){
-				this.ResourceList.ChildList = responseJSON.ChildList;
-			}
-			responseJSON = null;
 		}
 		
 		//we are in the init stage, so the DOM Tree is not populated
@@ -3290,10 +3292,12 @@ cshmi.prototype = {
 		var ObjectType = VisualObject.getAttribute("data-ObjectType");
 		if(VisualObject.FBReference && VisualObject.FBReference["default"] !== undefined && VisualObject.FBReference["default"] !== ""){
 			//save a (perhaps changed) FBref for later rebuilding of the template
-			this.ResourceList.newRebuildObjectId = VisualObject.id;
+			this.ResourceList.newRebuildObject.id = VisualObject.id;
+			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
+			this.ResourceList.newRebuildObject.y = VisualObject.getAttribute("y");
 		}
 		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
-		this.ResourceList.newRebuildObjectId = null;
+		this.ResourceList.newRebuildObject = Object();
 		
 		//find references to the old VisualObject in cshmiOriginalOrderList of the VisualParentObject and change to new
 		if(VisualParentObject !== null && VisualParentObject.cshmiOriginalOrderList !== undefined){
@@ -3376,6 +3380,9 @@ cshmi.prototype = {
 			if (VisualObject.getAttribute("display") === "none"){
 				HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
 			}
+			
+			//remember the ObjectType on every object (needed for reloading via action)
+			VisualObject.setAttribute("data-ObjectType", "/cshmi/Template");
 			
 			VisualParentObject.appendChild(VisualObject);
 			//calculate all offset parameter to be able to display visual feedback
@@ -3527,13 +3534,16 @@ cshmi.prototype = {
 			if (FBReferenceList[i] !== ""){
 				//save the info to the default position 
 				
-				if(this.ResourceList.newRebuildObjectId !== null){
+				if(this.ResourceList.newRebuildObject.id !== undefined){
 					//we should use a preconfigured FBref, instead of the configured one...
-					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObjectId;
-					VisualObject.id = this.ResourceList.newRebuildObjectId;
+					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObject.id;
+					VisualObject.id = this.ResourceList.newRebuildObject.id;
+					VisualObject.setAttribute("x", this.ResourceList.newRebuildObject.x);
+					VisualObject.setAttribute("y", this.ResourceList.newRebuildObject.y);
 					
+					var wasRebuildObject = true;
 					//.. but only once/here
-					this.ResourceList.newRebuildObjectId = null;
+					this.ResourceList.newRebuildObject = Object();
 					break;
 				}
 				
@@ -3672,7 +3682,11 @@ cshmi.prototype = {
 		var xTemplate = requestList[ObjectPath]["x"];
 		var yTemplate = requestList[ObjectPath]["y"];
 		
-		if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+		if(wasRebuildObject === true){
+			//xy is set already, prevent resetting to wrong value
+			delete requestList[ObjectPath]["x"];
+			delete requestList[ObjectPath]["y"];
+		}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined){
 			//the offsetCount must be global for all InstantiateTemplate below an iterator
 			var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
 			//the next InstantiateTemplate should go to an other position
@@ -3703,7 +3717,7 @@ cshmi.prototype = {
 		//////////////////////////////////////////////////////////////////////////
 		//adjust visual appearance
 		
-		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
+		//setting the basic Element Variables like .x .y .visible .stroke .fill .opacity .rotate
 		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
 		if (requestList[ObjectPath]["rotate"] && requestList[ObjectPath]["rotate"] !== "0"){
 			//rotate is not specified with a svg-Element, so encapsule in a G-Element
@@ -4873,7 +4887,7 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * sets svg attributes from an Array
+	 * sets svg attributes from an Array (visible, x, y, rotate, width, height, stroke, strokeWidth, fill, opacity possible)
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {Array} configArray array with a list of thing to set
 	 * @return {Boolean} true
