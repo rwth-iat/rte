@@ -91,7 +91,7 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_BitOffset_set(OV_INSTPTR_kbuslib_Clamp p
 {
 	OV_INSTPTR_ov_object potherClamp;
 	
-	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj) || Ov_CanCastTo(kbuslib_DigitalIN, pobj))
+	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj))
 	{
 		if(value <= 7)
 		{	
