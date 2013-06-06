@@ -64,24 +64,6 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_ByteAddress_set(OV_INSTPTR_kbuslib_Clamp
 		}
 	}
 	
-	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj) && value != pobj->v_ByteAddress && !(pobj->v_ByteAddress))	/*	the first set is always allowed	*/
-	{
-		Ov_ForEachChild(ov_instantiation, pclass_kbuslib_DigitalOUT, potherClamp)
-		{
-			if(Ov_GetParent(ov_containment, pobj) == Ov_GetParent(ov_containment, potherClamp)
-				&& Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_ByteAddress == value
-				&& Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_BitOffset == pobj->v_BitOffset)
-			{
-				ov_logfile_error("%s: this digital OUT is already served by %s", pobj->v_identifier, 
-					Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_identifier);
-				pobj->v_Error = FALSE;
-				pobj->v_ErrorCode = KBUS_ERROR_OUTPUT_EXISTS;
-				ov_string_setvalue(&pobj->v_ErrorString, KBUS_ERRORSTR_OUTPUT_EXISTS);
-				return(OV_ERR_BADPARAM);
-			}
-		}
-	}
-	
 	pobj->v_ByteAddress = value;
 	return(OV_ERR_OK);
 }
@@ -91,28 +73,10 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_BitOffset_set(OV_INSTPTR_kbuslib_Clamp p
 {
 	OV_INSTPTR_ov_object potherClamp;
 	
-	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj))
+	if((Ov_CanCastTo(kbuslib_DigitalOUT, pobj)) || (Ov_CanCastTo(kbuslib_DigitalIN, pobj)))
 	{
 		if(value <= 7)
-		{	
-			if((Ov_CanCastTo(kbuslib_DigitalOUT, pobj)) && (value != pobj->v_BitOffset) && !(pobj->v_BitOffset))	/*	the first set is always allowed	*/
-			{
-				Ov_ForEachChild(ov_instantiation, pclass_kbuslib_DigitalOUT, potherClamp)
-				{
-					if(Ov_GetParent(ov_containment, pobj) == Ov_GetParent(ov_containment, potherClamp)
-						&& Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_ByteAddress == pobj->v_ByteAddress
-						&& Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_BitOffset == value)
-					{
-						ov_logfile_error("%s: this digital OUT is already served by %s", pobj->v_identifier, 
-							Ov_StaticPtrCast(kbuslib_Clamp, potherClamp)->v_identifier);
-						pobj->v_Error = FALSE;
-						pobj->v_ErrorCode = KBUS_ERROR_OUTPUT_EXISTS;
-						ov_string_setvalue(&pobj->v_ErrorString, KBUS_ERRORSTR_OUTPUT_EXISTS);
-						return(OV_ERR_BADPARAM);
-					}
-				}
-			}
-			
+		{
 			pobj->v_BitOffset = value;
 			return(OV_ERR_OK);	
 			
