@@ -123,7 +123,7 @@ LIBRARY kbuslib
 			ByteWidth	:	UINT	HAS_SET_ACCESSOR
 				FLAGS = "i"
 				COMMENT = "Set only for specialized Clamps. Otherwise determined automatic."
-				INITIALVALUE = 1;
+				INITIALVALUE = 0;
 			Enabled	:	BOOL
 				FLAGS = "i"
 				COMMENT = "Clamp enabled"
