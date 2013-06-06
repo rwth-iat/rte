@@ -64,7 +64,7 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_ByteAddress_set(OV_INSTPTR_kbuslib_Clamp
 		}
 	}
 	
-	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj) && value != pobj->v_ByteAddress)
+	if(Ov_CanCastTo(kbuslib_DigitalOUT, pobj) && value != pobj->v_ByteAddress && !(pobj->v_ByteAddress))	/*	the first set is always allowed	*/
 	{
 		Ov_ForEachChild(ov_instantiation, pclass_kbuslib_DigitalOUT, potherClamp)
 		{
@@ -95,7 +95,7 @@ OV_DLLFNCEXPORT OV_RESULT kbuslib_Clamp_BitOffset_set(OV_INSTPTR_kbuslib_Clamp p
 	{
 		if(value <= 7)
 		{	
-			if((Ov_CanCastTo(kbuslib_DigitalOUT, pobj)) && (value != pobj->v_BitOffset))
+			if((Ov_CanCastTo(kbuslib_DigitalOUT, pobj)) && (value != pobj->v_BitOffset) && !(pobj->v_BitOffset))	/*	the first set is always allowed	*/
 			{
 				Ov_ForEachChild(ov_instantiation, pclass_kbuslib_DigitalOUT, potherClamp)
 				{
