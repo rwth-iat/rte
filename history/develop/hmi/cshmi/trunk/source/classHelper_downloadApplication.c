@@ -200,7 +200,7 @@ OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, 
  */
 OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
-	OV_INSTPTR_cshmi_Template pTemplate = NULL;
+	OV_INSTPTR_cshmi_Template pUseTemplate = NULL;
 	OV_INSTPTR_cshmi_InstantiateTemplate pInstantiateTemplate = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
 	OV_INSTPTR_cshmi_TemplateDefinition pTemplateDefinition = NULL;
@@ -293,53 +293,53 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Template, pObj){
 		elementInstantiated = TRUE;
-		pTemplate = Ov_StaticPtrCast(cshmi_Template, pObj);
+		pUseTemplate = Ov_StaticPtrCast(cshmi_Template, pObj);
 		ov_string_setvalue(&strIterate, "%22");
 		ov_memstack_lock();
 		ov_string_append(&strIterate, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
 		ov_memstack_unlock();
 		ov_string_append(&strIterate, "%22:%7B");
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pTemplate));
-		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, ov_string_compare(pTemplate->v_TemplateDefinition, "")==OV_STRCMP_EQUAL?"":pTemplate->v_TemplateDefinition);
-		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pTemplate->v_x);
-		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pTemplate->v_y);
+		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pUseTemplate));
+		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, ov_string_compare(pUseTemplate->v_TemplateDefinition, "")==OV_STRCMP_EQUAL?"":pUseTemplate->v_TemplateDefinition);
+		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pUseTemplate->v_x);
+		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pUseTemplate->v_y);
 
-		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pTemplate->v_FBReference.veclen!=1||ov_string_compare(pTemplate->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pTemplate->v_FBReference.value[0]);
+		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pUseTemplate->v_FBReference.veclen!=1||ov_string_compare(pUseTemplate->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pUseTemplate->v_FBReference.value[0]);
 
-		if(pTemplate->v_FBVariableReference.veclen == 0){
+		if(pUseTemplate->v_FBVariableReference.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
-		}else if(pTemplate->v_FBVariableReference.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pTemplate->v_FBVariableReference.value[0]);
+		}else if(pUseTemplate->v_FBVariableReference.veclen == 1){
+			ov_string_print(&temp, "%%22%s%%22", pUseTemplate->v_FBVariableReference.value[0]);
 		}else{
-			ov_string_print(&temp, "%%22%s", pTemplate->v_FBVariableReference.value[0]);
-			for(i = 1; i < pTemplate->v_FBVariableReference.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pTemplate->v_FBVariableReference.value[i]);
+			ov_string_print(&temp, "%%22%s", pUseTemplate->v_FBVariableReference.value[0]);
+			for(i = 1; i < pUseTemplate->v_FBVariableReference.veclen;i++){
+				ov_string_print(&temp, "%s %s", temp, pUseTemplate->v_FBVariableReference.value[i]);
 			}
 			ov_string_append(&temp, "%22");
 		}
 		ov_string_print(&strIterate, "%s%%22FBVariableReference%%22:%s,", strIterate, temp);
 
-		if(pTemplate->v_ConfigValues.veclen == 0){
+		if(pUseTemplate->v_ConfigValues.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
-		}else if(pTemplate->v_ConfigValues.veclen == 1){
+		}else if(pUseTemplate->v_ConfigValues.veclen == 1){
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[0]));
+			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pUseTemplate->v_ConfigValues.value[0]));
 			ov_memstack_unlock();
 		}else{
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s", cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[0]));
+			ov_string_print(&temp, "%%22%s", cshmi_downloadApplication_prepareURIencode(pUseTemplate->v_ConfigValues.value[0]));
 			ov_memstack_unlock();
-			for(i = 1; i < pTemplate->v_ConfigValues.veclen;i++){
+			for(i = 1; i < pUseTemplate->v_ConfigValues.veclen;i++){
 				ov_memstack_lock();
-				ov_string_print(&temp, "%s %s", temp, cshmi_downloadApplication_prepareURIencode(pTemplate->v_ConfigValues.value[i]));
+				ov_string_print(&temp, "%s %s", temp, cshmi_downloadApplication_prepareURIencode(pUseTemplate->v_ConfigValues.value[i]));
 				ov_memstack_unlock();
 			}
 			ov_string_append(&temp, "%22");
 		}
 		ov_string_print(&strIterate, "%s%%22ConfigValues%%22:%s,", strIterate, temp);
 
-		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22", strIterate, (pTemplate->v_hideable==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22", strIterate, (pUseTemplate->v_hideable==TRUE?"TRUE":"FALSE"));
 		ov_string_append(&strIterate, "%7D");
 		ov_string_append(&strIterate, "%7D");
 		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
@@ -393,14 +393,14 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		}
 		ov_string_print(&strIterate, "%s%%22FBVariableReference%%22:%s,", strIterate, temp);
 
-		if(pTemplate->v_ConfigValues.veclen == 0){
+		if(pInstantiateTemplate->v_ConfigValues.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
-		}else if(pTemplate->v_ConfigValues.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pTemplate->v_ConfigValues.value[0]);
+		}else if(pInstantiateTemplate->v_ConfigValues.veclen == 1){
+			ov_string_print(&temp, "%%22%s%%22", pInstantiateTemplate->v_ConfigValues.value[0]);
 		}else{
-			ov_string_print(&temp, "%%22%s", pTemplate->v_ConfigValues.value[0]);
-			for(i = 1; i < pTemplate->v_ConfigValues.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pTemplate->v_ConfigValues.value[i]);
+			ov_string_print(&temp, "%%22%s", pInstantiateTemplate->v_ConfigValues.value[0]);
+			for(i = 1; i < pInstantiateTemplate->v_ConfigValues.veclen;i++){
+				ov_string_print(&temp, "%s %s", temp, pInstantiateTemplate->v_ConfigValues.value[i]);
 			}
 			ov_string_append(&temp, "%22");
 		}
