@@ -343,7 +343,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	if(RESPONSE_FORMAT_KSX == response_format){
 		ov_string_setvalue(&reply_contenttype, "text/xml");
 	}else if(RESPONSE_FORMAT_JSON == response_format){
-		//fixme wieder an
+		//todo wieder an
 		//ov_string_setvalue(&content_type, "application/json");
 	}
 	//BEGIN command routine
@@ -369,7 +369,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			printresponsefooter(&reply_body, response_format, "getvar");
 			//stream required?
 			find_arguments(&args, "stream", &match);
-			if(match.veclen>0){
+			if(FALSE && match.veclen>0){
+				//disabled, because we are not called cyclic
+
 				//yes
 				ov_string_setvalue(&reply_contenttype, "text/event-stream");
 				//first time?
@@ -593,10 +595,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		KS_logfile_debug(("httpclienthandler: sending body: %d bytes", (int)ov_string_getlength(reply_body)));
 
 		if(gzip_applicable){
-			//todo this does not send the request
+			//this does not send the request
 			ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)gzip_compressed_body, gzip_compressed_body_length);
 		}else{
-			//todo this does not send the request
+			//this does not send the request
 			ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)reply_body, bodylength);
 		}
 	}
@@ -623,8 +625,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//shutdown tcp connection if no keep_alive was set
 	if (keep_alive != TRUE || Ov_Fail(result)) {
-		//todo close connection via vtbl? we could rely on the client, too.
-		//ksbase_Channel->vtbl->m_CloseConnection(pChannel);
+		//todo pChannel needs a flag closeAfterSend
 	}
 	return OV_ERR_OK;
 }

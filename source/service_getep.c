@@ -173,9 +173,28 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
-	//todo hinzufügen und dokumentieren
-	ov_string_setvalue(&params.name_mask, "*");
-	params.scope_flags = KS_EPF_DEFAULT;
+	//todo dokumentieren
+	find_arguments(args, "nameMask", &match);
+	if(match.veclen > 0){
+		ov_string_setvalue(&params.name_mask, match.value[0]);
+	}else{
+		ov_string_setvalue(&params.name_mask, "*");
+	}
+	find_arguments(args, "scopeFlags", &match);
+	if(match.veclen == 1){
+		if(ov_string_compare(match.value[0], "parts") == OV_STRCMP_EQUAL){
+			params.scope_flags = KS_EPF_PARTS;
+		}else if(ov_string_compare(match.value[0], "children") == OV_STRCMP_EQUAL){
+			params.scope_flags = KS_EPF_CHILDREN;
+		}else if(ov_string_compare(match.value[0], "flatten") == OV_STRCMP_EQUAL){
+			//was never implemented in libovks :-)
+			params.scope_flags = KS_EPF_FLATTEN;
+		}else{
+			params.scope_flags = KS_EPF_DEFAULT;
+		}
+	}else{
+		params.scope_flags = KS_EPF_DEFAULT;
+	}
 
 	find_arguments(args, "requestType", &match);
 	if(match.veclen == 1){
