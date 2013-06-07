@@ -1,13 +1,14 @@
 puts "== Begin processing js files ==" 
 #cd "../../staticfiles"
 
-set fbdfilename "StaticDisplayComponent.fbd"
-set baseovpath "/communication/kshttp/staticfiles/hmi"
 set contentname "content"
 set mimetypename "mimetype"
 set encodingname "encoding"
 set webserverlib "kshttp"
-set staticfileclass "/acplt/$webserverlib/staticfile"
+set staticfileclassname "staticfile"
+set baseovpath "/communication/${webserverlib}/staticfiles/hmi"
+set staticfileclass "/acplt/${webserverlib}/${staticfileclassname}"
+set fbdfilename "StaticDisplayComponent.fbd"
 
 proc stripLineComments {inputString {commentChars ";#"}} {
 	# Switch the RE engine into line-respecting mode instead of the default whole-string mode
@@ -27,7 +28,7 @@ proc printDomain {ovpath} {
 
 proc processDir {ovpath} {
 	global out
-	global contentname mimetypename encodingname staticfileclass
+	global contentname mimetypename encodingname webserverlib staticfileclass
 	
 	set filelist [glob -nocomplain -types {f} *]
 	foreach filename $filelist {
@@ -39,7 +40,7 @@ proc processDir {ovpath} {
 		
 		#default value
 		set mimetype "text/html"
-		if { $filename == "generateFBD.tcl" } {
+		if { $extension == ".tcl" } {
 			puts "skipping myself"
 			continue
 		} elseif { $filename == ".project" || $filename == ".settings" || $filename == ".svn"} {
@@ -66,9 +67,9 @@ proc processDir {ovpath} {
 		set percentfilename [string map {"." "%2E"} $filename]
 		set percentfilename [string map {"-" "%2D"} $percentfilename]
 		puts $out " INSTANCE  $ovpath/$percentfilename :"
-		puts $out "    CLASS $staticfileclass;"
+		puts $out "    CLASS ${staticfileclass};"
 		puts $out "    VARIABLE_VALUES"
-		puts -nonewline $out "        $contentname : INPUT  STRING = \""
+		puts -nonewline $out "        ${contentname} : INPUT  STRING = \""
 		
 		# line-by-line, read the original file
 		while {[gets $in line] != -1} {
@@ -90,8 +91,8 @@ proc processDir {ovpath} {
 		}
 		close $in
 		puts $out "\";"
-		puts $out "        $mimetypename : INPUT  STRING = \"$mimetype\";"
-		puts $out "        $encodingname : INPUT  STRING = \"\";"
+		puts $out "        ${mimetypename} : INPUT  STRING = \"$mimetype\";"
+		puts $out "        ${encodingname} : INPUT  STRING = \"\";"
 		puts $out "    END_VARIABLE_VALUES;"
 		puts $out " END_INSTANCE;"
 		puts $out ""
@@ -123,11 +124,11 @@ proc processDir {ovpath} {
 }
 
 puts -nonewline "Building FBD header..."
-set out [open $fbdfilename w]
+set out [open ${fbdfilename} w]
 puts $out "/******************************************************************************************"
 puts $out "These are all static files if the display component of csHMI"
 puts $out "which have to be loaded into an OV server."
-puts $out "The webserver library $webserverlib will be loaded automatically."
+puts $out "The webserver library ${webserverlib} will be loaded automatically."
 puts $out ""
 puts -nonewline $out "generated with the skript generateFBD.tcl: "
 puts $out [clock format [clock seconds] -format {%Y-%m-%d %H:%M:%S}]
@@ -139,10 +140,10 @@ puts "done"
 printDomain $baseovpath
 processDir $baseovpath
 
-#fb_dbcommands is (2013-04-26, svn 7534) not able to handle a full library path
+#fb_dbcommands is (2013-04-26, svn 7534) not able to handle a full library path, only LTsoft has a patched source of dbcommands
 #puts $out ""
 #puts $out " LIBRARY"
-#puts $out "    /acplt/$webserverlib"
+#puts $out "    /acplt/${webserverlib}"
 #puts $out " END_LIBRARY;"
 
 close $out
@@ -158,4 +159,4 @@ if {$::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
 	puts "Moved to $::env(FBDmovetarget)/$fbdfilename"
 }
 
-puts "== End processing files =="
+puts "== End processing static files =="

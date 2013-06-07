@@ -269,8 +269,15 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				case OV_VT_TIME:
 				case OV_VT_TIME_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "time");
-					//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
-					ov_string_print(&LoopEntryValue, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time));
+					//timetoascii has timeformat 2002/05/30 09:30:10.123456
+					//should be timeformat       2002-05-30T09:30:10.1
+					//id in String               0123456789012345678901
+					ov_string_setvalue(&LoopEntryValue, ov_time_timetoascii(&Variable.value.valueunion.val_time));
+					//manipulate string to correct format, timetoascii garantees the correct length of the string
+					LoopEntryValue[4]  = '/';
+					LoopEntryValue[7]  = '/';
+					LoopEntryValue[10] = 'T';
+					LoopEntryValue[21] = '\0';
 					break;
 
 				case OV_VT_TIME_SPAN:
@@ -417,8 +424,15 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
 						begin_response_part(&LoopEntryValue, response_format, "time");
-						//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
-						ov_string_print(&singleVecEntry, "%s", ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
+						//timetoascii has timeformat 2002/05/30 09:30:10.123456
+						//should be timeformat       2002-05-30T09:30:10.1
+						//id in String               0123456789012345678901
+						ov_string_setvalue(&singleVecEntry, ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
+						//manipulate string to correct format, timetoascii garantees the correct length of the string
+						singleVecEntry[4]  = '/';
+						singleVecEntry[7]  = '/';
+						singleVecEntry[10] = 'T';
+						singleVecEntry[21] = '\0';
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "time");
