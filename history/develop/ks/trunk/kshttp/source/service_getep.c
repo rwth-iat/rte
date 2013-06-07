@@ -144,6 +144,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	OV_STRING message = NULL;
 	OV_UINT_VEC requestOutput = {0,NULL};
 	OV_STRING temp = NULL;
+	OV_STRING TimeTemp = NULL;
 	OV_BOOL EntryFound = FALSE;
 	OV_BOOL anyRequested = FALSE;
 	OV_UINT requestOutputDefaultDomain[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
@@ -313,7 +314,23 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
-				ov_string_append(&temp, ov_time_timetoascii(&(one_result->creation_time)));
+				//timetoascii has timeformat 2002/05/30 09:30:10.123456
+				//TCL needs                  2002-05-30 09:30:10.123
+				//XML needs                  2002-05-30T09:30:10.1
+				//id in String               012345678901234567890123
+				ov_string_setvalue(&TimeTemp, ov_time_timetoascii(&(one_result->creation_time)));
+				//manipulate string to correct format, timetoascii garantees the correct length of the string
+				TimeTemp[4] = '-';
+				TimeTemp[7] = '-';
+				if(response_format == RESPONSE_FORMAT_KSX){
+					TimeTemp[10] = 'T';
+					TimeTemp[21] = '\0';
+				}else{
+					TimeTemp[23] = '\0';
+				}
+				ov_string_append(&temp, TimeTemp);
+				ov_string_setvalue(&TimeTemp, NULL);
+
 				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
 				if(response_format == RESPONSE_FORMAT_TCL){
 					ov_string_append(&temp, "}");
