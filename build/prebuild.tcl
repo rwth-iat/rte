@@ -51,15 +51,13 @@ proc processDir {dirname} {
 			continue
 		}
 		
-		set percentfilename [string map {"." "%2E"} $filename]
-		set percentfilename [string map {"-" "%2D"} $percentfilename]
-		puts $out "	pindexhtml = Ov_SearchChildEx(ov_containment, pdom, \"$percentfilename\", ${webserverlib}_${staticfileclassname});"
+		puts $out "	pindexhtml = Ov_SearchChildEx(ov_containment, pdom, \"$filename\", ${webserverlib}_${staticfileclassname});"
 		puts $out "	if(!pindexhtml)"
 		puts $out "	\{"
-		puts $out "		result = Ov_CreateObject(${webserverlib}_${staticfileclassname}, pindexhtml, pdom, \"$percentfilename\");"
+		puts $out "		result = Ov_CreateObject(${webserverlib}_${staticfileclassname}, pindexhtml, pdom, \"$filename\");"
 		puts $out "		if(Ov_Fail(result))"
 		puts $out "		\{"
-		puts $out "			ov_logfile_error(\"Fatal: Could not create Object '$percentfilename': %s\", ov_result_getresulttext(result));"
+		puts $out "			ov_logfile_error(\"Fatal: Could not create Object '$filename': %s\", ov_result_getresulttext(result));"
 		puts $out "			return result;"
 		puts $out "		\}"
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_content), \"\\"
@@ -100,20 +98,16 @@ proc processDir {dirname} {
 			continue
 		}
 		cd $dirname;
-		set percentdirname [string map {"." "%2E"} $dirname]
-		set percentdirname [string map {"-" "%2D"} $percentdirname]
-
-		
 		puts "Processing directory: $dirname"
 		puts $out "	"
 		puts $out "	/*************************************** directory $dirname */"
-		puts $out "	pnewdom = Ov_SearchChildEx(ov_containment, pdom, \"$percentdirname\", ov_domain);"
+		puts $out "	pnewdom = Ov_SearchChildEx(ov_containment, pdom, \"$dirname\", ov_domain);"
 		puts $out "	if(!pnewdom)"
 		puts $out "	\{"
-		puts $out "		result = Ov_CreateObject(ov_domain, pnewdom, pdom, \"$percentdirname\");"
+		puts $out "		result = Ov_CreateObject(ov_domain, pnewdom, pdom, \"$dirname\");"
 		puts $out "		if(Ov_Fail(result))"
 		puts $out "		\{"
-		puts $out "			ov_logfile_error(\"Fatal: Could not create Domain '$percentdirname': %s\", ov_result_getresulttext(result));"
+		puts $out "			ov_logfile_error(\"Fatal: Could not create Domain '$dirname': %s\", ov_result_getresulttext(result));"
 		puts $out "			return result;"
 		puts $out "		\}"
 		puts $out "	\}"
