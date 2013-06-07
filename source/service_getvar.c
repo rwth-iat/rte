@@ -270,20 +270,25 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				case OV_VT_TIME_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "time");
 					//timetoascii has timeformat 2002/05/30 09:30:10.123456
-					//should be timeformat       2002-05-30T09:30:10.1
-					//id in String               0123456789012345678901
+					//TCL needs                  2002-05-30 09:30:10.123
+					//XML needs                  2002-05-30T09:30:10.1
+					//id in String               012345678901234567890123
 					ov_string_setvalue(&LoopEntryValue, ov_time_timetoascii(&Variable.value.valueunion.val_time));
 					//manipulate string to correct format, timetoascii garantees the correct length of the string
-					LoopEntryValue[4]  = '/';
-					LoopEntryValue[7]  = '/';
-					LoopEntryValue[10] = 'T';
-					LoopEntryValue[21] = '\0';
+					LoopEntryValue[4] = '-';
+					LoopEntryValue[7] = '-';
+					if(response_format == RESPONSE_FORMAT_KSX){
+						LoopEntryValue[10] = 'T';
+						LoopEntryValue[21] = '\0';
+					}else{
+						LoopEntryValue[23] = '\0';
+					}
 					break;
 
 				case OV_VT_TIME_SPAN:
 				case OV_VT_TIME_SPAN_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "timespan");
-					//todo wrong timeformat, should be something like P5Y2M10DT15H
+					//todo wrong timeformat, should be something like P5Y2M10DT15H Period: 5Years, 2 Month, 10 Days, T delimiter, 15 hours
 					ov_string_print(&LoopEntryValue, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
 					break;
 
@@ -424,15 +429,16 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
 						begin_response_part(&LoopEntryValue, response_format, "time");
-						//timetoascii has timeformat 2002/05/30 09:30:10.123456
-						//should be timeformat       2002-05-30T09:30:10.1
-						//id in String               0123456789012345678901
 						ov_string_setvalue(&singleVecEntry, ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
 						//manipulate string to correct format, timetoascii garantees the correct length of the string
-						singleVecEntry[4]  = '/';
-						singleVecEntry[7]  = '/';
-						singleVecEntry[10] = 'T';
-						singleVecEntry[21] = '\0';
+						singleVecEntry[4]  = '-';
+						singleVecEntry[7]  = '-';
+						if(response_format == RESPONSE_FORMAT_KSX){
+							singleVecEntry[10] = 'T';
+							singleVecEntry[21] = '\0';
+						}else{
+							singleVecEntry[23] = '\0';
+						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "time");
@@ -480,15 +486,26 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
 				ov_string_append(&LoopEntryList, LoopEntryValue);
 				if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
-					//why a string has a length attribute??? thank harry for that mess
+					//fixme done in ks2.1r? why a string has a length attribute??? thank harry for that mess
 					ov_string_print(&LoopEntryTypeString, "stringvec");
 				}
 				finalize_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
 				finalize_response_part(&LoopEntryList, response_format, "value");
 
 				begin_response_part(&LoopEntryList, response_format, "timestamp");
-				//todo wrong timeformat, should be something like 2002-05-30T09:30:10.5
-				ov_string_append(&LoopEntryList, ov_time_timetoascii(&(Variable.time)));
+				ov_string_setvalue(&singleVecEntry, ov_time_timetoascii(&Variable.time));
+				//manipulate string to correct format, timetoascii garantees the correct length of the string
+				singleVecEntry[4]  = '-';
+				singleVecEntry[7]  = '-';
+				if(response_format == RESPONSE_FORMAT_KSX){
+					singleVecEntry[10] = 'T';
+					singleVecEntry[21] = '\0';
+				}else{
+					singleVecEntry[23] = '\0';
+				}
+				ov_string_append(&LoopEntryList, singleVecEntry);
+				ov_string_setvalue(&singleVecEntry, NULL);
+
 				finalize_response_part(&LoopEntryList, response_format, "timestamp");
 				begin_response_part(&LoopEntryList, response_format, "state");
 				switch (Variable.state) {
