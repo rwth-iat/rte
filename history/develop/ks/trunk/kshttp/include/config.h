@@ -161,3 +161,6 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+
+OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT response_format);
+OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format);
