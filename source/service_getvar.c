@@ -269,27 +269,13 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				case OV_VT_TIME:
 				case OV_VT_TIME_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "time");
-					//timetoascii has timeformat 2002/05/30 09:30:10.123456
-					//TCL needs                  2002-05-30 09:30:10.123
-					//XML needs                  2002-05-30T09:30:10.1
-					//id in String               012345678901234567890123
-					ov_string_setvalue(&LoopEntryValue, ov_time_timetoascii(&Variable.value.valueunion.val_time));
-					//manipulate string to correct format, timetoascii garantees the correct length of the string
-					LoopEntryValue[4] = '-';
-					LoopEntryValue[7] = '-';
-					if(response_format == RESPONSE_FORMAT_KSX){
-						LoopEntryValue[10] = 'T';
-						LoopEntryValue[21] = '\0';
-					}else{
-						LoopEntryValue[23] = '\0';
-					}
+					kshttp_timetoascii(&LoopEntryValue, &Variable.value.valueunion.val_time, response_format);
 					break;
 
 				case OV_VT_TIME_SPAN:
 				case OV_VT_TIME_SPAN_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "timespan");
-					//todo wrong timeformat, should be something like P5Y2M10DT15H Period: 5Years, 2 Month, 10 Days, T delimiter, 15 hours
-					ov_string_print(&LoopEntryValue, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span));
+					kshttp_timespantoascii(&LoopEntryValue, &Variable.value.valueunion.val_time_span, response_format);
 					break;
 
 				case OV_VT_STATE:
@@ -335,7 +321,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 							ov_string_setvalue(&singleVecEntry, "FALSE");
 						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "bool");
 					}
 					break;
@@ -350,7 +335,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						begin_response_part(&LoopEntryValue, response_format, "int");
 						ov_string_print(&singleVecEntry, "%i", Variable.value.valueunion.val_int_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "int");
 					}
 					break;
@@ -365,7 +349,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						begin_response_part(&LoopEntryValue, response_format, "uint");
 						ov_string_print(&singleVecEntry, "%u", Variable.value.valueunion.val_uint_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "uint");
 					}
 					break;
@@ -380,7 +363,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						begin_response_part(&LoopEntryValue, response_format, "single");
 						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_single_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "single");
 					}
 					break;
@@ -395,7 +377,6 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						begin_response_part(&LoopEntryValue, response_format, "double");
 						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_double_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "double");
 					}
 					break;
@@ -413,10 +394,8 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						}else{
 							ov_string_print(&singleVecEntry, "%s", Variable.value.valueunion.val_string_vec.value[i]);
 							ov_string_append(&LoopEntryValue, singleVecEntry);
-							ov_string_setvalue(&singleVecEntry, NULL);
 						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "string");
 					}
 					break;
@@ -429,18 +408,8 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
 						begin_response_part(&LoopEntryValue, response_format, "time");
-						ov_string_setvalue(&singleVecEntry, ov_time_timetoascii(&Variable.value.valueunion.val_time_vec.value[i]));
-						//manipulate string to correct format, timetoascii garantees the correct length of the string
-						singleVecEntry[4]  = '-';
-						singleVecEntry[7]  = '-';
-						if(response_format == RESPONSE_FORMAT_KSX){
-							singleVecEntry[10] = 'T';
-							singleVecEntry[21] = '\0';
-						}else{
-							singleVecEntry[23] = '\0';
-						}
+						kshttp_timetoascii(&singleVecEntry, &Variable.value.valueunion.val_time_vec.value[i], response_format);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "time");
 					}
 					break;
@@ -453,9 +422,8 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 							seperate_response_parts(&LoopEntryValue, response_format);
 						}
 						begin_response_part(&LoopEntryValue, response_format, "timespan");
-						ov_string_print(&singleVecEntry, "%s", ov_time_timespantoascii(&Variable.value.valueunion.val_time_span_vec.value[i]));
+						kshttp_timespantoascii(&singleVecEntry, &Variable.value.valueunion.val_time_span_vec.value[i], response_format);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						ov_string_setvalue(&singleVecEntry, NULL);
 						finalize_response_part(&LoopEntryValue, response_format, "timespan");
 					}
 					break;
@@ -486,25 +454,15 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 				begin_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
 				ov_string_append(&LoopEntryList, LoopEntryValue);
 				if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
-					//fixme done in ks2.1r? why a string has a length attribute??? thank harry for that mess
+					//fixme why a string has a length attribute??? thank harry for that mess
 					ov_string_print(&LoopEntryTypeString, "stringvec");
 				}
 				finalize_response_part(&LoopEntryList, response_format, LoopEntryTypeString);
 				finalize_response_part(&LoopEntryList, response_format, "value");
 
 				begin_response_part(&LoopEntryList, response_format, "timestamp");
-				ov_string_setvalue(&singleVecEntry, ov_time_timetoascii(&Variable.time));
-				//manipulate string to correct format, timetoascii garantees the correct length of the string
-				singleVecEntry[4]  = '-';
-				singleVecEntry[7]  = '-';
-				if(response_format == RESPONSE_FORMAT_KSX){
-					singleVecEntry[10] = 'T';
-					singleVecEntry[21] = '\0';
-				}else{
-					singleVecEntry[23] = '\0';
-				}
+				kshttp_timetoascii(&singleVecEntry, &Variable.time, response_format);
 				ov_string_append(&LoopEntryList, singleVecEntry);
-				ov_string_setvalue(&singleVecEntry, NULL);
 
 				finalize_response_part(&LoopEntryList, response_format, "timestamp");
 				begin_response_part(&LoopEntryList, response_format, "state");

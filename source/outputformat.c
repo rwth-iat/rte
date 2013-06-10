@@ -1,5 +1,18 @@
 #include "config.h"
 
+
+#if OV_SYSTEM_MC164
+#include "mc164/time.h"
+#else
+//struct tm, but not time_t on unix
+#include <time.h>
+#endif
+
+#if OV_SYSTEM_UNIX
+//time_t
+#include <sys/time.h>
+#endif
+
 /*
  * returns the format of the output
  * constants are in the config.h file
@@ -255,4 +268,114 @@ or
 	ov_string_setvalue(&strResult, NULL);
 
 	return fr;
+}
+
+/**
+ * Convert a timestring into an XML, TCL or plaintext timestring
+*/
+OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT response_format){
+	//timetoascii has timeformat 2002/05/30 09:30:10.123456
+	//TCL needs                  2002-05-30 09:30:10.123
+	//XML needs                  2002-05-30T09:30:10.1
+	//id in String               012345678901234567890123
+
+	ov_string_setvalue(timestring, ov_time_timetoascii(time));
+
+	//manipulate string to correct format, timetoascii garantees the correct length of the string
+	(*timestring)[4] = '-';
+	(*timestring)[7] = '-';
+	if(response_format == RESPONSE_FORMAT_KSX){
+		(*timestring)[10] = 'T';
+		(*timestring)[21] = '\0';
+	}else{
+		(*timestring)[23] = '\0';
+	}
+	return OV_ERR_OK;
+}
+
+/**
+ * Convert a timespan into an XML, TCL or plaintext timestring
+ * XML P5Y2M10DT15H Period: 5Years, 2 Month, 10 Days, T delimiter, 15 hours
+ */
+OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format){
+	/*
+	*	local variables
+	*/
+	struct tm		*ptm;
+	time_t			secs = ptime->secs;
+	OV_BOOL haveSec = FALSE;
+	OV_BOOL haveMin = FALSE;
+	OV_BOOL haveHour = FALSE;
+	OV_BOOL haveDay = FALSE;
+	OV_BOOL haveMon = FALSE;
+	OV_BOOL haveYear = FALSE;
+
+
+	if(response_format == RESPONSE_FORMAT_TCL){
+		ov_string_print(timestring, "%i.%06i", ptime->secs, ptime->usecs);
+		return OV_ERR_OK;
+	}
+	//XML format requested
+	if(secs < 0){
+		//will be checked at the end
+		secs = -secs;
+	}
+	ptm = gmtime(&secs);
+	if(ptime->usecs != 0){
+		ov_string_print(timestring, "%i.%06iS", ptm->tm_sec, ptime->usecs);
+		haveSec = TRUE;
+	}else if(ptm->tm_sec != 0){
+		ov_string_print(timestring, "%iS", ptm->tm_sec, ptime->usecs);
+		haveSec = TRUE;
+	}
+	if(ptm->tm_min != 0 || haveSec == TRUE){
+		if(*timestring == NULL){
+			ov_string_print(timestring, "%iM", ptm->tm_min);
+		}else{
+			ov_string_print(timestring, "%iM%s", ptm->tm_min, *timestring);
+		}
+		haveMin = TRUE;
+	}
+	if(ptm->tm_hour != 0 || haveMin == TRUE){
+		if(*timestring == NULL){
+			ov_string_print(timestring, "T%iH", ptm->tm_hour);
+		}else{
+			ov_string_print(timestring, "T%iH%s", ptm->tm_hour, *timestring);
+		}
+		haveHour = TRUE;
+	}
+	if(ptm->tm_mday-1 != 0 || haveHour == TRUE){
+		if(*timestring == NULL){
+			ov_string_print(timestring, "%iD", ptm->tm_mday-1);
+		}else{
+			ov_string_print(timestring, "%iD%s", ptm->tm_mday-1, *timestring);
+		}
+		haveDay = TRUE;
+	}
+	if(ptm->tm_mon != 0 || haveDay == TRUE){
+		if(*timestring == NULL){
+			ov_string_print(timestring, "%iM", ptm->tm_mon);
+		}else{
+			ov_string_print(timestring, "%iM%s", ptm->tm_mon, *timestring);
+		}
+		haveMon = TRUE;
+	}
+	if(ptm->tm_year-70 != 0 || haveMon == TRUE){
+		if(*timestring == NULL){
+			ov_string_print(timestring, "%iY", ptm->tm_year-70);
+		}else{
+			ov_string_print(timestring, "%iY%s", ptm->tm_year-70, *timestring);
+		}
+		haveYear = TRUE;
+	}
+	if(haveYear == FALSE){
+		//at least one number and its designator must be present
+		ov_string_setvalue(timestring, "0S");
+	}
+	if(ptime-secs < 0){
+		ov_string_print(timestring, "-P%s", *timestring);
+	}else{
+		ov_string_print(timestring, "P%s", *timestring);
+	}
+	return OV_ERR_OK;
 }

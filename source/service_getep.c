@@ -305,7 +305,6 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				getEP_finalize_RequestOutputPart(&temp, response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
-				//fixme ksx wants 2002-02-02T02:02:02.123, tcl not
 				if(response_format == RESPONSE_FORMAT_TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
@@ -314,20 +313,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
-				//timetoascii has timeformat 2002/05/30 09:30:10.123456
-				//TCL needs                  2002-05-30 09:30:10.123
-				//XML needs                  2002-05-30T09:30:10.1
-				//id in String               012345678901234567890123
-				ov_string_setvalue(&TimeTemp, ov_time_timetoascii(&(one_result->creation_time)));
-				//manipulate string to correct format, timetoascii garantees the correct length of the string
-				TimeTemp[4] = '-';
-				TimeTemp[7] = '-';
-				if(response_format == RESPONSE_FORMAT_KSX){
-					TimeTemp[10] = 'T';
-					TimeTemp[21] = '\0';
-				}else{
-					TimeTemp[23] = '\0';
-				}
+				kshttp_timetoascii(&TimeTemp, &(one_result->creation_time), response_format);
 				ov_string_append(&temp, TimeTemp);
 				ov_string_setvalue(&TimeTemp, NULL);
 
