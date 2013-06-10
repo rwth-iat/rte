@@ -52,16 +52,16 @@ OV_RESULT PCMsgParser_findElementBegin(char const* xml, const OV_STRING elemName
 		return OV_ERR_BADPARAM;
 
 	*pStart = strstr(xml, elemName);
-	if(!pStart)
+	if(!(*pStart))
 		return OV_ERR_BADVALUE;
 
-	while(pStart && (**(pStart-1) != '<'))
+	while(*pStart && (**(pStart-1) != '<'))
 	{/*	go over the string and check if this is an element name	*/
 		(*pStart)++;
 		*pStart = strstr(*pStart, elemName);
 	}
 
-	if(!pStart)
+	if(!(*pStart))
 		return OV_ERR_BADVALUE;
 
 	pStart--;
@@ -415,6 +415,9 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 
+			/*	DEBUG	*/
+			ov_logfile_info("%s %d: message head ckecked", this->v_identifier, __LINE__);
+
 			/*	now MsgBody points to the bdy-tag in the message	*/
 			/*	get the necessary information from the message	*/
 
@@ -517,7 +520,8 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				ov_memstack_unlock();
 				return;
 			}
-
+			/*	DEBUG	*/
+			ov_logfile_info("%s %d: check sd", this->v_identifier, __LINE__);
 
 			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "sd", &startPtr)))
 			{
@@ -611,7 +615,8 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			}
 
 			/*	concatenate to order and set it	*/
-
+			/*	DEBUG	*/
+			ov_logfile_info("%s %d: setting order", this->v_identifier, __LINE__);
 			order = ov_memstack_alloc(strlen(commander)+strlen(command)+strlen(value)+3);	/*	commander;command;value\0	*/
 			if(!order)
 			{
