@@ -131,17 +131,20 @@ set tries 0
 
 #Prüfen ob server hochgfährt
 while {$tries<2000} {
-		set in [open ${LOGFILE} r]
-		set line 0
-		set tries [+ $tries 1]
-		while {[gets $in line] != -1} {
+		if {
+			[file exists ${LOGFILE}] == 1 } {
+			set in [open ${LOGFILE} r]
+			set line 0
+			set tries [+ $tries 1]
+			while {[gets $in line] != -1} {
 			
-			if {[regexp "(.*)Server started(.*)" $line] } then {
-				puts $tries
-				# pid of the process
-				set pid [pid $ACPLT_PROCESS]
-				puts "server ${SERVERNAME} is running with PID $pid"
-				set tries 2000
+				if {[regexp "(.*)Server started(.*)" $line] } then {
+					puts $tries
+					# pid of the process
+					set pid [pid $ACPLT_PROCESS]
+					puts "server ${SERVERNAME} is running with PID $pid"
+					set tries 2000
+				}
 			}
 		}
 		after 10 
