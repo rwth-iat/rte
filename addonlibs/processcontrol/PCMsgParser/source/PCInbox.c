@@ -46,6 +46,28 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgParser_PCInbox_constructor(
     return OV_ERR_OK;
 }
 
+OV_RESULT PCMsgParser_findElementBegin(char const* xml, const OV_STRING elemName, OV_STRING* pStart)
+{
+	if(!xml || !elemName)
+		return OV_ERR_BADPARAM;
+
+	*pStart = strstr(xml, elemName);
+	if(!pStart)
+		return OV_ERR_BADVALUE;
+
+	while(pStart && (**(pStart-1) != '<'))
+	{/*	go over the string and check if this is an element name	*/
+		(*pStart)++;
+		*pStart = strstr(*pStart, elemName);
+	}
+
+	if(!pStart)
+		return OV_ERR_BADVALUE;
+
+	pStart--;
+	return OV_ERR_OK;
+}
+
 /*
  * return OV_ERR_BADVALUE if element is not found (or not valid)
  */
@@ -98,6 +120,123 @@ OV_RESULT PCMsgParser_getElementData(char const* xml, const OV_STRING elemName, 
 	return OV_ERR_OK;
 }
 
+OV_RESULT PCMsgParser_getAttributeData(char const* xml, const OV_STRING elemName, const OV_STRING attributeName, OV_STRING* pData)
+{
+	OV_UINT dataLength;
+	char const* beginElement = NULL;
+	char const* endPtr =  NULL;
+	char const* tempptr = NULL;
+	OV_UINT i;
+	OV_BOOL found = FALSE;
+	char const* valueEnd = NULL;
+
+	if(!xml || !elemName || !attributeName)
+		return OV_ERR_BADPARAM;
+
+	beginElement = strstr(xml, elemName);
+	if(!beginElement)
+		return OV_ERR_BADVALUE;
+
+	while(beginElement && (*(beginElement-1) != '<'))
+	{/*	go over the string and check if this is an element name	*/
+		beginElement++;
+		beginElement = strstr(beginElement, elemName);
+	}
+
+	/*	find to end of tag	*/
+	endPtr = strchr(beginElement, '>');
+	if(!endPtr)
+		return OV_ERR_BADVALUE;
+
+	tempptr = beginElement;
+	for(; tempptr < endPtr; tempptr++)
+	{
+		if(*tempptr == *attributeName)
+		{
+			for(i=0; (&(tempptr[i]) < endPtr) && (attributeName[i]); i++)
+			{
+				if(tempptr[i] == attributeName[i])
+					found = TRUE;
+				else
+				{
+					found = FALSE;
+					break;
+				}
+			}
+			if(found)
+				break;
+		}
+	}
+
+	if(!found)
+	{
+		pData = NULL;
+		return OV_ERR_OK;
+	}
+	else
+	{
+		if(tempptr[i] == '=')
+		{
+			/*	set to begin of data	*/
+			beginElement = &(tempptr[i+1]);
+			if(*beginElement == '"')
+			{
+				beginElement++;
+				tempptr = beginElement;
+				for(; valueEnd && (valueEnd < endPtr); tempptr = valueEnd)
+				{
+					valueEnd = strchr(beginElement, '"');
+					if(valueEnd && (*(valueEnd-1) == '\\'))
+					{
+						found = TRUE;
+						continue;
+					}
+					else
+					{
+						if(!valueEnd)
+							found = FALSE;
+						break;
+					}
+				}
+				if(found)
+				{
+					dataLength = endPtr - beginElement;
+					*pData = ov_memstack_alloc(dataLength+1);
+					if(!*pData)
+						return OV_ERR_HEAPOUTOFMEMORY;
+
+					strncpy(*pData, beginElement, dataLength);
+					(*pData)[dataLength] = '\0';
+					return OV_ERR_OK;
+				}
+				else
+					return OV_ERR_BADVALUE;
+			}
+			else
+			{
+				valueEnd = strchr(beginElement, ' ');
+				if(valueEnd)
+					dataLength = valueEnd - beginElement;
+				else
+					dataLength = endPtr - beginElement;
+				*pData = ov_memstack_alloc(dataLength+1);
+				if(!*pData)
+					return OV_ERR_HEAPOUTOFMEMORY;
+
+				strncpy(*pData, beginElement, dataLength);
+				(*pData)[dataLength] = '\0';
+				return OV_ERR_OK;
+			}
+		}
+		else
+		{
+			pData = NULL;
+			return OV_ERR_OK;
+		}
+	}
+
+}
+
 OV_STRING PCMsgParser_skipWhiteSpace(OV_STRING input)
 {
 	OV_STRING temp;
@@ -132,10 +271,13 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	OV_UINT waitingMsgs = 0;
 	OV_RESULT result;
 
+	OV_STRING MsgBody = NULL;
+	OV_STRING startPtr = NULL;
 	OV_STRING commander = NULL;
 	OV_STRING command = NULL;
 	OV_STRING value = NULL;
 	OV_STRING order = NULL;
+	OV_STRING pData = NULL;
 
 
 	/*	check if we are in the containment of a process control object	*/
@@ -217,53 +359,256 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			 * 1. pMsg is of type Message or derived
 			 * 2. pMsg is the message to work with basing on the queue type	*/
 
+			MsgBody = MessageSys_Message_msgBody_get(pMsg);
 			ov_memstack_lock();
+			/*	DEBUG: print MSG	*/
+			ov_logfile_debug("Msg-Body:\n\n%s\n\n", MsgBody);
 
-			/*	get the necessary information from the message	*/
-			/*	get commander from senderservice	*/
-			commander = MessageSys_Message_senderComponent_get(pMsg);
 
-			/*	get Operation	*/
-			result = PCMsgParser_getElementData(MessageSys_Message_msgBody_get(pMsg), "Operation", &command);
-			if(Ov_Fail(result))
+			/*	check Message	*/
+			/*	check for name	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(MsgBody, "msg", &startPtr)))
 			{
-				if(result != OV_ERR_HEAPOUTOFMEMORY)
-					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
-
+				ov_logfile_info("%s: no msg-tag --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
 				ov_memstack_unlock();
 				return;
 			}
-
-			if(!command)
+			/*	check for hdr	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "hdr", &startPtr)))
 			{
-				ov_logfile_info("%s: no Operation found in message -->deleting it", this->v_identifier);
+				ov_logfile_info("%s: no hdr-tag --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+			/*	check for rcvSysAdr	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "rcvSysAdr", &startPtr)))
+			{
+				ov_logfile_info("%s: no rcvSysAdr-tag --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+			/*	check for rcvLocAdr	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "rcvLocAdr", &startPtr)))
+			{
+				ov_logfile_info("%s: no rcvLocAdr-tag --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+			/*	check for msgId	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "msgId", &startPtr)))
+			{
+				ov_logfile_info("%s: no msgId --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+			/*	check for bdy	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "bdy", &MsgBody)))
+			{
+				ov_logfile_info("%s: no bdy --> deleting message", this->v_identifier);
 				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
 				ov_memstack_unlock();
 				return;
 			}
 
-			command = PCMsgParser_skipWhiteSpace(command);
-			PCMsgParser_rStrip(command);
+			/*	now MsgBody points to the bdy-tag in the message	*/
+			/*	get the necessary information from the message	*/
 
-			/*	get Value	*/
-			result = PCMsgParser_getElementData(MessageSys_Message_msgBody_get(pMsg), "KVP", &value);
-			if(Ov_Fail(result))
+			/*	get service	and Operation	*/
+			/*	check for first val element	*/
+			if(Ov_Fail(PCMsgParser_findElementBegin(MsgBody, "val", &startPtr)))
 			{
-				if(result != OV_ERR_HEAPOUTOFMEMORY)
-					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
-
+				ov_logfile_info("%s: no val --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
 				ov_memstack_unlock();
 				return;
 			}
 
-			if(!value)
+			if(Ov_OK(PCMsgParser_getAttributeData(startPtr, "val", "id", &pData)))
 			{
-				value = ov_memstack_alloc(2);
-				value = "0";
+				if(!pData)
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				if(ov_string_compare(pData, "svc") == OV_STRCMP_EQUAL)
+				{
+					if(Ov_OK(PCMsgParser_getElementData(startPtr, "val", &pData)))
+					{
+						if(!pData)
+						{
+							ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+							Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+							ov_memstack_unlock();
+							return;
+						}
+						if(ov_string_compare(pData, "ProcessControl") != OV_STRCMP_EQUAL)
+						{
+							ov_logfile_info("%s: unknown service requested --> deleting message", this->v_identifier);
+							Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+							ov_memstack_unlock();
+							return;
+						}
+					}
+				}
+				else
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+
+				/*	check for second val element	*/
+				startPtr++;
+				if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "val", &startPtr)))
+				{
+					ov_logfile_info("%s: no val --> deleting message", this->v_identifier);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				result = PCMsgParser_getAttributeData(startPtr, "val", "id", &pData);
+				if(Ov_Fail(result))
+				{
+					if(result != OV_ERR_HEAPOUTOFMEMORY)
+						Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				if(!pData)
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+
+				if(ov_string_compare(pData, "op") == OV_STRCMP_EQUAL)
+				{
+					result = PCMsgParser_getElementData(startPtr, "val", &command);
+					if(Ov_Fail(result))
+					{
+						if(result != OV_ERR_HEAPOUTOFMEMORY)
+							Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+
+						ov_memstack_unlock();
+						return;
+					}
+					if(!command)
+					{
+						ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+						Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+						ov_memstack_unlock();
+						return;
+					}
+				}
+			}
+			else
+			{
+				ov_logfile_info("%s: no val --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
 			}
 
-			value = PCMsgParser_skipWhiteSpace(value);
-			PCMsgParser_rStrip(value);
+
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "sd", &startPtr)))
+			{
+				ov_logfile_info("%s: no sd --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+
+			if(Ov_OK(PCMsgParser_getAttributeData(startPtr, "val", "id", &pData)))
+			{
+				if(!pData)
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				if(ov_string_compare(pData, "cmdr") == OV_STRCMP_EQUAL)
+				{
+					if(Ov_OK(PCMsgParser_getElementData(startPtr, "val", &commander)))
+					{
+						if(!commander)
+						{
+							ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+							Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+							ov_memstack_unlock();
+							return;
+						}
+					}
+				}
+				else
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+
+				/*	check for second val element	*/
+				startPtr++;
+				if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "val", &startPtr)))
+				{
+					ov_logfile_info("%s: no val --> deleting message", this->v_identifier);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				result = PCMsgParser_getAttributeData(startPtr, "val", "id", &pData);
+				if(Ov_Fail(result))
+				{
+					if(result != OV_ERR_HEAPOUTOFMEMORY)
+						Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+				if(!pData)
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
+
+				if(ov_string_compare(pData, "value") == OV_STRCMP_EQUAL)
+				{
+					result = PCMsgParser_getElementData(startPtr, "val", &value);
+					if(Ov_Fail(result))
+					{
+						if(result != OV_ERR_HEAPOUTOFMEMORY)
+							Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+
+						ov_memstack_unlock();
+						return;
+					}
+					if(!value)
+					{
+						ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+						Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+						ov_memstack_unlock();
+						return;
+					}
+				}
+			}
+			else
+			{
+				ov_logfile_info("%s: no val in sd --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
 
 			/*	concatenate to order and set it	*/
 
@@ -274,7 +619,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 			sprintf(order, "%s;%s;%s", commander, command, value);
-			//ov_logfile_debug("%s: order:\n\t%s", this->v_identifier, order);
+			ov_logfile_debug("order:\n\n\t%s\n\n", order);
 			cmdlib_processcontrol_order_set(pProcessControl, order);
 			/*	delete parsed message	*/
 			Ov_DeleteObject(pMsg);
