@@ -146,12 +146,13 @@ while {$tries<2000} {
 					set tries 2000
 				}
 			}
+			close $in 
 		}
 		after 10 
 	}
 	
 
-	close $in 
+	
 
 
 # pid of the process
