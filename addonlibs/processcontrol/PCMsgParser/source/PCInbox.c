@@ -364,7 +364,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			MsgBody = MessageSys_Message_msgBody_get(pMsg);
 			ov_memstack_lock();
 			/*	DEBUG: print MSG	*/
-			ov_logfile_debug("Msg-Body:\n\n%s\n\n", MsgBody);
+			/*	ov_logfile_debug("Msg-Body:\n\n%s\n\n", MsgBody);	*/
 
 
 			/*	check Message	*/
@@ -418,7 +418,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			}
 
 			/*	DEBUG	*/
-			ov_logfile_info("%s %d: message head checked", this->v_identifier, __LINE__);
+			/*	ov_logfile_info("%s %d: message head checked", this->v_identifier, __LINE__);	*/
 
 			/*	now MsgBody points to the bdy-tag in the message	*/
 			/*	get the necessary information from the message	*/
@@ -443,7 +443,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 					return;
 				}
 				/*	DEBUG	*/
-				ov_logfile_info("%s %d: first val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);
+/*				ov_logfile_info("%s %d: first val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);	*/
 
 				if(ov_string_compare(pData, "svc") == OV_STRCMP_EQUAL)
 				{
@@ -532,7 +532,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 			/*	DEBUG	*/
-			ov_logfile_info("%s %d: check sd", this->v_identifier, __LINE__);
+			/*	ov_logfile_info("%s %d: check sd", this->v_identifier, __LINE__);	*/
 
 			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "sd", &startPtr)))
 			{
@@ -609,7 +609,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				PCMsgParser_skipWhiteSpace(pData);
 				PCMsgParser_rStrip(pData);
 				/*	DEBUG	*/
-				ov_logfile_info("%s %d: last val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);
+				/*	ov_logfile_info("%s %d: last val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);	*/
 				if(ov_string_compare(pData, "value") == OV_STRCMP_EQUAL)
 				{
 					result = PCMsgParser_getElementData(startPtr, "val", &value);
@@ -653,7 +653,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 
 			/*	concatenate to order and set it	*/
 			/*	DEBUG	*/
-			ov_logfile_info("%s %d: setting order", this->v_identifier, __LINE__);
+			/*	ov_logfile_info("%s %d: setting order", this->v_identifier, __LINE__);	*/
 			order = ov_memstack_alloc(strlen(commander)+strlen(command)+strlen(value)+3);	/*	commander;command;value\0	*/
 			if(!order)
 			{
@@ -661,7 +661,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 			sprintf(order, "%s;%s;%s", commander, command, value);
-			ov_logfile_debug("order:\n\n\t%s\n\n", order);
+			/*	ov_logfile_debug("order:\n\n\t%s\n\n", order);	*/
 			cmdlib_processcontrol_order_set(pProcessControl, order);
 			/*	delete parsed message	*/
 			Ov_DeleteObject(pMsg);
