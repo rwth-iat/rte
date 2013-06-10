@@ -55,7 +55,7 @@ OV_RESULT PCMsgParser_findElementBegin(char const* xml, const OV_STRING elemName
 	if(!(*pStart))
 		return OV_ERR_BADVALUE;
 
-	while(*pStart && (**(pStart-1) != '<'))
+	while(*pStart && (*(*(pStart)-1) != '<'))
 	{/*	go over the string and check if this is an element name	*/
 		(*pStart)++;
 		*pStart = strstr(*pStart, elemName);
@@ -207,6 +207,8 @@ OV_RESULT PCMsgParser_getAttributeData(char const* xml, const OV_STRING elemName
 
 					strncpy(*pData, beginElement, dataLength);
 					(*pData)[dataLength] = '\0';
+					if((*pData)[dataLength-1] == '"')
+						(*pData)[dataLength-1] = '\0';
 					return OV_ERR_OK;
 				}
 				else
@@ -416,7 +418,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			}
 
 			/*	DEBUG	*/
-			ov_logfile_info("%s %d: message head ckecked", this->v_identifier, __LINE__);
+			ov_logfile_info("%s %d: message head checked", this->v_identifier, __LINE__);
 
 			/*	now MsgBody points to the bdy-tag in the message	*/
 			/*	get the necessary information from the message	*/
@@ -440,8 +442,13 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 					ov_memstack_unlock();
 					return;
 				}
+				/*	DEBUG	*/
+				ov_logfile_info("%s %d: first val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);
+
 				if(ov_string_compare(pData, "svc") == OV_STRCMP_EQUAL)
 				{
+					PCMsgParser_skipWhiteSpace(pData);
+					PCMsgParser_rStrip(pData);
 					if(Ov_OK(PCMsgParser_getElementData(startPtr, "val", &pData)))
 					{
 						if(!pData)
@@ -451,6 +458,8 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 							ov_memstack_unlock();
 							return;
 						}
+						PCMsgParser_skipWhiteSpace(pData);
+						PCMsgParser_rStrip(pData);
 						if(ov_string_compare(pData, "ProcessControl") != OV_STRCMP_EQUAL)
 						{
 							ov_logfile_info("%s: unknown service requested --> deleting message", this->v_identifier);
@@ -493,6 +502,8 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 					return;
 				}
 
+				PCMsgParser_skipWhiteSpace(pData);
+				PCMsgParser_rStrip(pData);
 				if(ov_string_compare(pData, "op") == OV_STRCMP_EQUAL)
 				{
 					result = PCMsgParser_getElementData(startPtr, "val", &command);
@@ -531,6 +542,14 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 
+			if(Ov_Fail(PCMsgParser_findElementBegin(startPtr, "val", &startPtr)))
+			{
+				ov_logfile_info("%s: no val in sd --> deleting message", this->v_identifier);
+				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+				ov_memstack_unlock();
+				return;
+			}
+
 			if(Ov_OK(PCMsgParser_getAttributeData(startPtr, "val", "id", &pData)))
 			{
 				if(!pData)
@@ -540,6 +559,8 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 					ov_memstack_unlock();
 					return;
 				}
+				PCMsgParser_skipWhiteSpace(pData);
+				PCMsgParser_rStrip(pData);
 				if(ov_string_compare(pData, "cmdr") == OV_STRCMP_EQUAL)
 				{
 					if(Ov_OK(PCMsgParser_getElementData(startPtr, "val", &commander)))
@@ -585,7 +606,10 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 					ov_memstack_unlock();
 					return;
 				}
-
+				PCMsgParser_skipWhiteSpace(pData);
+				PCMsgParser_rStrip(pData);
+				/*	DEBUG	*/
+				ov_logfile_info("%s %d: last val tag data:\n\t_%s_\n", this->v_identifier, __LINE__, pData);
 				if(ov_string_compare(pData, "value") == OV_STRCMP_EQUAL)
 				{
 					result = PCMsgParser_getElementData(startPtr, "val", &value);
@@ -605,6 +629,13 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 						return;
 					}
 				}
+				else
+				{
+					ov_logfile_info("%s %d: invalid Message --> deleting", this->v_identifier, __LINE__);
+					Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
+					ov_memstack_unlock();
+					return;
+				}
 			}
 			else
 			{
@@ -612,6 +643,12 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				Ov_DeleteObject(pMsg);	/*	Message is corrupted --> delete it	*/
 				ov_memstack_unlock();
 				return;
+			}
+
+			if(!value)
+			{
+				ov_logfile_info("invalid or no value in message --> setting to 0");
+				value = "0";
 			}
 
 			/*	concatenate to order and set it	*/
