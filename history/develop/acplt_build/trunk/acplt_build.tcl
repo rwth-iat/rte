@@ -9,18 +9,24 @@ set release 0
 set checkout 0 
 set libsuffix 0
 set exesuffix 0
+set bleedingedge 0
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
 		set checkout 1
-		break
+		
 	}
 	if {$arg == "release"} {
 		set release 1
 		set checkout 0
-		break
+		
+	}
+	if {$arg == "bleedingedge"} {
+		set bleedingedge 1
+	
 	}
 }
+
 
 
 set basedir [pwd]
@@ -141,7 +147,7 @@ proc execute {args} {
     if { [catch $cmd msg] } {
         puts stderr "error: $msg"
         puts stderr "Consult the file '$logfile'"
-        exit 1
+        #exit 1
     }
 }
 
@@ -479,48 +485,61 @@ proc release_lib {libname option} {
 
 
 proc release_lib_better {libname option} {
-    global releasedir
-    global os
-    global make
-    cd $releasedir/dev/
-    file delete -force $releasedir/dev/$libname/
-    checkout_lib $libname
-    cd $releasedir/user/$libname/build/$os/
-    if { $option == "all" } then {
-	    print_msg "Note: no debug symbols will be created"
-    }
-    build $libname $make $option
-    print_msg "Deploying $libname"
-    file delete -force $releasedir/user/$libname.build/
-    file copy -force $releasedir/user/$libname/ $releasedir/user/$libname.build/
-    file delete -force $releasedir/user/$libname/
-    file mkdir $releasedir/user/$libname/
-    file mkdir $releasedir/user/$libname/model/
-    copy_wildcard $releasedir/user/$libname.build/model/*.ov? $releasedir/user/$libname/model/
-    file mkdir $releasedir/user/$libname/include/
-    copy_wildcard $releasedir/user/$libname.build/include/*.h $releasedir/user/$libname/include/
-    #export libname.a file for compiling under windows
-    if { $os == "nt" } then {
-		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-		#}
-		if { [file exists $releasedir/user/$libname.build/build/nt/$libname.lib] } {
-		    file mkdir $releasedir/user/$libname/build/nt/
-			file copy -force $releasedir/user/$libname.build/build/nt/$libname.lib $releasedir/user/$libname/build/nt/
+	global releasedir
+	global os
+	global make
+	cd $releasedir/dev/
+	file delete -force $releasedir/dev/$libname/
+	checkout_better $libname
+	set temp [split $libname "/"]
+	set libnametemp [lindex $temp end]
+	#print_msg "$releasedir/dev/$libnametemp"
+	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"]
+if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
+	#print_msg "$libs"
+	foreach lib $libs {
+		set libname $lib
+		if { [file exists $releasedir/dev/user/$libname] } {
+			file copy -force $releasedir/dev/user/$libname $releasedir/dev/$libname
+			file delete -force $releasedir/dev/user/$libname
 		}
-    }
-    if { $os == "linux" } then {
+		cd $releasedir/dev/$libname/build/$os/
+		if { $option == "all" } then {
+			print_msg "Note: no debug symbols will be created"
+		}
+		build $libname $make $option
+		print_msg "Deploying $libname"
+		file delete -force $releasedir/dev/$libname.build/
+		file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
+		file delete -force $releasedir/dev/$libname/
+		file mkdir $releasedir/dev/$libname/
+		file mkdir $releasedir/dev/$libname/model/
+		copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
+		file mkdir $releasedir/dev/$libname/include/
+		copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
+		#export libname.a file for compiling under windows
+		if { $os == "nt" } then {
+				#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+				#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+			#}
+			if { [file exists $releasedir/dev/$libname.build/build/nt/$libname.lib] } then {
+				file mkdir $releasedir/dev/$libname/build/nt/
+				file copy -force $releasedir/dev/$libname.build/build/nt/$libname.lib $releasedir/dev/$libname/build/nt/
+			}
+		}
+	if { $os == "linux" } then {
 		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
 		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
 		#}
-		#if { [file exists $releasedir/user/$libname.build/build/linux/$libname.a] } {
-		#    file mkdir $releasedir/user/$libname/build/linux/
-		#	file copy -force $releasedir/user/$libname.build/build/linux/$libname.a $releasedir/user/$libname/build/linux/
-		#}
-    }
-    file delete -force $releasedir/user/$libname.build/
-}
+		if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
+			file mkdir $releasedir/dev/$libname/build/linux/
+			file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+			}
+		}
+	file delete -force $releasedir/dev/$libname.build/
 
+	}
+}	
 
 
 
@@ -664,9 +683,17 @@ proc create_systools_and_servers {} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
-set notrunklist {ks}
+if { $bleedingedge == 1 } then {
+	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
+	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
+	print_msg "if you take the new ones, you'll see what you get"
+} else {
+    print_msg "taking the safe way is a sign of weakness"
+	set addon_libs { common/user }
+	set included_libs {common/core}
+	}
+
+set notrunklist { ks common }
 #iec61131stdfb IOdriverlib fbcomlib
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
@@ -766,12 +793,12 @@ create_release
 create_systools_and_servers
 
 foreach x $included_libs {
-	release_lib $x debug
+	release_lib_better $x debug
 }
 #move included_libs to system
 separate
 foreach x $addon_libs {
-	release_lib $x debug
+	release_lib_better $x debug
 }
 
 if {$release == 1} {
