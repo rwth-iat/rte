@@ -390,12 +390,11 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						}
 						begin_response_part(&LoopEntryValue, response_format, "string");
 						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
-							ov_string_append(&LoopEntryValue, "");
+							//append an empty string
 						}else{
 							ov_string_print(&singleVecEntry, "%s", Variable.value.valueunion.val_string_vec.value[i]);
 							ov_string_append(&LoopEntryValue, singleVecEntry);
 						}
-						ov_string_append(&LoopEntryValue, singleVecEntry);
 						finalize_response_part(&LoopEntryValue, response_format, "string");
 					}
 					break;

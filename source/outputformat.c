@@ -310,6 +310,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_
 	OV_BOOL haveMon = FALSE;
 	OV_BOOL haveYear = FALSE;
 
+	//todo umbauen und nur Tage als max ausgeben
 
 	if(response_format == RESPONSE_FORMAT_TCL){
 		ov_string_print(timestring, "%i.%06i", ptime->secs, ptime->usecs);
