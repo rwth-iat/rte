@@ -2085,19 +2085,82 @@ cshmi.prototype = {
 	 * @param {String} PartialPath The path which should get potentially expanded via baseKsPath
 	 * @return {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
 	 * 
-	 * 
-	 * fixme: baseKsPath darf nicht ov_containment sondern instanziierungsbaum abgehen
-	 * sollte den vollen pfad zwischen speichern
 	 * sollte gef�llt werden von den containern, die sowieso abfragen machen
 	 */
 	_generateFullKsPath: function(VisualObject, ObjectPath, PartialPath){
 		var returnValue = "";
-		var ObjectPathArray = new Array();
 		if (PartialPath.charAt(0) !== "/"){
-			//if the path is not a full path, search for the baseKsPath
-			ObjectPathArray = ObjectPath.split("/");
+			//if the path is not a full path, search for the baseKsPath on the ObjectPath (perhaps in a TemplateDefinition?)
+			returnValue = this._iterateBaseKsPathUp(ObjectPath)+PartialPath;
+		}else{
+			returnValue = PartialPath;
 		}
 		
+		if (returnValue.indexOf("//localhost") === 0){
+			//localhost in the model should not be the http-gateway or browserhost
+			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+		}else if (! (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/")){
+			//we want to have a full path with host and server
+			
+			//default to the ModelHost
+			var serverName = "//" + HMI.KSClient.ResourceList.ModelHost + "/" + HMI.KSClient.ResourceList.ModelServer;
+			
+			//this Path has not host+server, so try to search for this via an parent Template
+			if(VisualObject.parentNode !== null){
+				//VisualObject is in DOM and configured
+				var TemplateObject = VisualObject;
+			}else if(VisualObject.VisualParentObject !== undefined){
+				//VisualObject is not in DOM and we are configuring it right now (it has per definition no FBRef till now)
+				TemplateObject = VisualObject.VisualParentObject;
+			}else{
+				//VisualObject is not in DOM and no Template. make the do-while abort quick
+				TemplateObject = VisualObject;
+			}
+			
+			do{
+				//test if we have reached a Template
+				if(TemplateObject.FBReference){
+					//check if the Template can resolve us the path via its BaseKsPath
+					baseKsPathTemplate = this._iterateBaseKsPathUp(TemplateObject.getAttribute("data-ModelSource"));
+					if(baseKsPathTemplate !== ""){
+						if(baseKsPathTemplate.charAt(0) === "/" && baseKsPathTemplate.charAt(1) === "/"){
+							//we got an result, which gave us a full path
+							return baseKsPathTemplate + returnValue;
+						}else if(baseKsPathTemplate.charAt(0) === "/"){
+							//we got an result, which gave us a full path without an servername, prefix ModelServer
+							return serverName + baseKsPathTemplate + returnValue;
+						}
+					}
+				}
+				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					//the name of a Template was requested
+					if (TemplateObject.FBReference["default"].indexOf("//") === 0){
+						var FBRef = TemplateObject.FBReference["default"];
+						
+						//find the 3rd "/"
+						var slashIndex = FBRef.indexOf("/", 2);
+						//find the 4th "/"
+						slashIndex = FBRef.indexOf("/", slashIndex+1);
+						//only keep the String before 4th "/"
+						
+						serverName = FBRef.slice(0, slashIndex);
+						break;
+					}
+				}
+			//loop upwards to find the Template object
+			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
+			
+			if(returnValue.charAt(0) === "/"){
+				returnValue = serverName + returnValue;
+			}else{
+				returnValue = serverName + "/" + returnValue;
+			}
+		}
+		return returnValue;
+	},
+	_iterateBaseKsPathUp: function(ObjectPath){
+		var returnValue = "";
+		ObjectPathArray = ObjectPath.split("/");
 		while(ObjectPathArray.length > 0){
 			var currentPath = ObjectPathArray.join("/");
 			var responseArray;
@@ -2128,52 +2191,6 @@ cshmi.prototype = {
 			}
 			ObjectPathArray.pop();
 		};
-		
-		//create the full path
-		returnValue = returnValue+PartialPath;
-		
-		if (returnValue.indexOf("//localhost") === 0){
-			//localhost in the model should not be the http-gateway
-			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-		}else if (! (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/")){
-			//we want to have a full path with host and server
-			
-			//default to the ModelHost
-			var serverName = "//" + HMI.KSClient.ResourceList.ModelHost + "/" + HMI.KSClient.ResourceList.ModelServer;
-			
-			//this Path has not host+server, so try to search for this via an parent Template
-			if(VisualObject.parentNode !== null){
-				//VisualObject is in DOM and configured
-				var TemplateObject = VisualObject;
-			}else if(VisualObject.VisualParentObject !== undefined){
-				//VisualObject is not in DOM and we are configuring it right now (it has per definition no FBRef till now)
-				TemplateObject = VisualObject.VisualParentObject;
-			}else{
-				//VisualObject is not in DOM and no Template. make the do-while abbort quick
-				TemplateObject = VisualObject;
-			}
-			
-			do{
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					//the name of a Template was requested
-					if (TemplateObject.FBReference["default"].indexOf("//") === 0){
-						var FBRef = TemplateObject.FBReference["default"];
-						
-						//find the 3rd "/"
-						var slashIndex = FBRef.indexOf("/", 2);
-						//find the 4th "/"
-						slashIndex = FBRef.indexOf("/", slashIndex+1);
-						//only keep the String before 4th "/"
-						
-						serverName = FBRef.slice(0, slashIndex);
-						break;
-					}
-				}
-			//loop upwards to find the Template object
-			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
-			
-			returnValue = serverName + returnValue;
-		}
 		return returnValue;
 	},
 	
