@@ -52,6 +52,10 @@ proc processDir {ovpath} {
 		} elseif { $extension == ".exe" } {
 			puts "skipping exe binary file"
 			continue
+		} elseif { $extension == ".xhtml" } {
+			set mimetype "application/xhtml+xml"
+		} elseif { $extension == ".xml" } {
+			set mimetype "text/xml"
 		} elseif { $extension == ".js" } {
 			set mimetype "text/javascript"
 		} elseif { $extension == ".css" } {

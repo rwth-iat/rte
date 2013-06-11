@@ -148,8 +148,15 @@ cshmi.prototype = {
 		if (JSON && JSON.parse){
 			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
 			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
+				if(response.charAt(1) == "{"){
+					//tcl wraps two braces
+					response = response.slice(2,-2);
+				}else{
+					//kshttp wraps one brace
+					response = response.slice(1,-1);
+				}
 				try {
-					var plainJSON = decodeURI(response.slice(2,-2));
+					var plainJSON = decodeURI(response);
 					var responseJSON = JSON.parse(plainJSON);
 				} catch (e) {
 					HMI.hmi_log_info("Parsing Cache was not successful. Skipping.");
