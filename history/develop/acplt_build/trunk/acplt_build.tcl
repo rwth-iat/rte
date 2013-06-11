@@ -493,15 +493,17 @@ proc release_lib_better {libname option} {
 	checkout_better $libname
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
+	set libnamepraefix [lindex $temp end-1]
+	print_msg "$libnamepraefix"
 	#print_msg "$releasedir/dev/$libnametemp"
 	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"]
 if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
 	#print_msg "$libs"
 	foreach lib $libs {
 		set libname $lib
-		if { [file exists $releasedir/dev/user/$libname] } {
-			file copy -force $releasedir/dev/user/$libname $releasedir/dev/$libname
-			file delete -force $releasedir/dev/user/$libname
+		if { [file exists $releasedir/dev/$libnametemp/$libname] } {
+			file copy -force $releasedir/dev/$libnametemp/$libname $releasedir/dev/$libname
+			file delete -force $releasedir/dev/$libnametemp/$libname
 		}
 		cd $releasedir/dev/$libname/build/$os/
 		if { $option == "all" } then {
@@ -537,8 +539,9 @@ if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
 			}
 		}
 	file delete -force $releasedir/dev/$libname.build/
-
+	
 	}
+	if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
 }	
 
 
@@ -632,8 +635,11 @@ proc separate {} {
  global flag
  global os
  
+ set libs [glob -types d -tails -nocomplain -directory $releasedir/dev "*"]
+ 
  #move system libs
- foreach x $included_libs {
+ 
+ foreach x $libs {
  set temp [split $x "/"]
 	set x [lindex $temp end]
 	if { [file exists $releasedir/dev/$x] } then {
