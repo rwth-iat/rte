@@ -102,6 +102,10 @@ OV_DLLFNCEXPORT void fbcomlib_getVar_typemethod(
 		if(pinst->v_sendRequested || pinst->v_doCyclic)
 		{	/*	send Requested or cyclic sending requested	*/
 
+			if(pinst->v_doCyclic)
+				pinst->p_apiGet.v_holdConnection = TRUE;
+			else
+				pinst->p_apiGet.v_holdConnection = FALSE;
 			pVtblGetVar->m_submit(Ov_StaticPtrCast(ksapi_KSApiCommon, &(pinst->p_apiGet)));
 			fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_WAITING);
 			pinst->v_requestSendTime = *pltc;

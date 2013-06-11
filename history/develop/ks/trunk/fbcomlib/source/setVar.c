@@ -113,6 +113,10 @@ OV_DLLFNCEXPORT void fbcomlib_setVar_typemethod(
     	}
     	if(pinst->v_sendRequested || pinst->v_doCyclic)
     	{	/*	send Requested or cyclic sending requested	*/
+    		if(pinst->v_doCyclic)
+    			pinst->p_apiGet.v_holdConnection = TRUE;
+    		else
+    			pinst->p_apiGet.v_holdConnection = FALSE;
     		result = Ov_SetAnyValue(&(pinst->p_apiSet.v_varValue), &(pinst->v_sendVar));
     		if(Ov_Fail(result))
     		{
