@@ -28,13 +28,13 @@
 
 static OV_UINT currID = 236492743;	/*	msdID will be incremented on every send	*/
 
-static const OV_STRING msgBody1 = "<msg><hdr><rcvSysAdr>";
-static const OV_STRING msgBody2 = "<rcvSysAdr/><rcvLocAdr>";
-static const OV_STRING msgBody3 = "</rcvLocAdr><msgId>";
-static const OV_STRING msgBody4 = "</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
-static const OV_STRING msgBody5 = "</val><sd><val id=\"cmdr\">";
-static const OV_STRING msgBody6 = "</val><val id=\"value\">";
-static const OV_STRING msgBody7 = "</val></sd></bdy></msg>";
+static const char msgBody1 [] = "<msg><hdr><rcvSysAdr>";
+static const char msgBody2 [] = "<rcvSysAdr/><rcvLocAdr>";
+static const char msgBody3 [] = "</rcvLocAdr><msgId>";
+static const char msgBody4 [] = "</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
+static const char msgBody5 [] = "</val><sd><val id=\"cmdr\">";
+static const char msgBody6 [] = "</val><val id=\"value\">";
+static const char msgBody7 [] = "</val></sd></bdy></msg>";
 
 OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     OV_INSTPTR_PCMsgCreator_msgCreator          pobj,
@@ -151,6 +151,11 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
 			+ sizeof(msgBody7));
     msgBody = ov_memstack_alloc(tempctr + 1);
 
+/*    ov_logfile_debug("lengths:\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu",
+    		sizeof(msgBody1), strlen(pobj->v_receiverHost), sizeof(msgBody2), strlen(pobj->v_receiverName), strlen(pobj->v_receiverInstance),
+    		sizeof(msgBody3), 12, sizeof(msgBody4), strlen(command), sizeof(msgBody5), strlen(commander), sizeof(msgBody6), strlen(cmdValue),
+    		sizeof(msgBody7));
+*/
     if(!msgBody)
     {
     	Ov_DeleteObject(pMsg);
@@ -165,6 +170,8 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     			msgBody5, commander,
     			msgBody6, cmdValue,
     			msgBody7);
+ /*   ov_logfile_debug("length: %lu\nmessageBody:\n%s\n", tempctr, msgBody);	*/
+
     result = MessageSys_Message_msgBody_set(pMsg, msgBody);
     if(Ov_Fail(result))
     {
