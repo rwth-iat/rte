@@ -164,6 +164,5 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	finalize_response_part(&temp, response_format, "serverversion");
 	*/
 
-	/*	fixme living-state needed?	*/
 	EXEC_GETSERVER_RETURN OV_ERR_OK;
 }
