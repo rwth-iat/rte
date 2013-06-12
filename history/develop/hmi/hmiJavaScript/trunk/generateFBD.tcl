@@ -40,6 +40,7 @@ proc processDir {ovpath} {
 		
 		#default value
 		set mimetype "text/html"
+		set encodingvalue "Windows-1252"
 		if { $extension == ".tcl" } {
 			puts "skipping myself"
 			continue
@@ -96,7 +97,7 @@ proc processDir {ovpath} {
 		close $in
 		puts $out "\";"
 		puts $out "        ${mimetypename} : INPUT  STRING = \"$mimetype\";"
-		puts $out "        ${encodingname} : INPUT  STRING = \"\";"
+		puts $out "        ${encodingname} : INPUT  STRING = \"$encodingvalue\";"
 		puts $out "    END_VARIABLE_VALUES;"
 		puts $out " END_INSTANCE;"
 		puts $out ""

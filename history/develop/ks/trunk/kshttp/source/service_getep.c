@@ -596,7 +596,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				}
 				break;
 			case OP_ASSOCIDENT:
-				// as a view at an connection: could be /acplt/fb/inputconnections
+				// as a view at an tasklist: could be /acplt/fb/tasklist
 				if(one_result->objtype & KS_OT_LINK) {
 					getEP_begin_RequestOutputPart(&temp, response_format, "associationIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier);
@@ -604,7 +604,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 				}
 				break;
 			case OP_ROLEIDENT:
-				// as a view at an connection: could be inputcon
+				// at a view at an tasklist on the LinkEngProps of the "taskparent": could be taskchild (not really needed on 1-m and m-1)
 				if(one_result->objtype & KS_OT_LINK) {
 					getEP_begin_RequestOutputPart(&temp, response_format, "oppositeRoleIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.opposite_role_identifier);
