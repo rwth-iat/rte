@@ -226,7 +226,7 @@
 				urlstring += "&path="+PathInput.value;
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
 				urlstring += "&path="+PathInput.value;
-				urlstring += "&newvalue="+SecondtextInput.value;
+				urlstring += "&newvalue="+encodeURIComponent(SecondtextInput.value);
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
 				urlstring += "&factory="+SecondtextInput.value;
 				urlstring += "&path="+PathInput.value;

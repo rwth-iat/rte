@@ -37,7 +37,36 @@
 ***********************************************************************/
 
 #include "config.h"
+#include <ctype.h>
+#include <math.h>
 
+/* Converts a hex character to its integer value */
+static char from_hex(char ch) {
+	return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
+}
+
+/* Returns a url-decoded version of str Public Domain code from http://www.geekhideout.com/urlcode.shtml*/
+/* IMPORTANT: be sure to ov_free() the returned string after use */
+static OV_STRING url_decode(OV_STRING str) {
+	OV_STRING pstr = str;
+	OV_STRING buf = ov_malloc(strlen(str) + 1);
+	OV_STRING pbuf = buf;
+	while (*pstr) {
+		if (*pstr == '%') {
+			if (pstr[1] && pstr[2]) {
+				*pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
+				pstr += 2;
+			}
+		} else if (*pstr == '+') {
+			*pbuf++ = ' ';
+		} else {
+			*pbuf++ = *pstr;
+		}
+		pstr++;
+	}
+	*pbuf = '\0';
+	return buf;
+}
 
 static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READWRITE;
@@ -96,8 +125,12 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	OV_UINT len = 0;
 	OV_STRING *pArgumentList = NULL;
 	OV_STRING Temp = NULL;
+	OV_STRING Temp2 = NULL;
+	OV_STRING *pTempList = NULL;
+	OV_UINT tempUint = 0;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_VAR_TYPE lastVarType = OV_VT_VOID;
+	OV_BOOL isNegative = FALSE;
 
 	static OV_TICKET ticket = { &defaultticketvtblSetvar,  OV_TT_NONE };
 
@@ -274,7 +307,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 				//we have a new object, so no memory is allocated and the setting to NULL is save
 				addrp->var_current_props.value.valueunion.val_string = NULL;
-				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, newvaluematch.value[i]);
+				Temp = url_decode(newvaluematch.value[i]);
+				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, Temp);
+				ov_free(Temp);
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting string value failed");
 					EXEC_SETVAR_RETURN fr;
@@ -287,6 +322,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 			case OV_VT_TIME:
 			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
+				//todo reimplement
 				fr = ov_time_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting time value failed");
@@ -294,17 +330,50 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				};
 				break;
 
-				/*	TODO	implement this
 			case OV_VT_TIME_SPAN:
 			case OV_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
-				//easy implementation by copying ov_time_asciitotime
-				fr = ov_time_asciitotime(&addrp->var_current_props.value.valueunion.val_time_span, newvaluematch.value[i]);
-				if (Ov_Fail(fr)){
+
+				//can be 0.000000 or P0.000000S
+				ov_string_setvalue(&Temp, newvaluematch.value[i]);
+				if(Temp[0] == 'P'){
+					//kill "S" at the end
+					Temp[ov_string_getlength(Temp)-1] = '\0';
+					//kill "P" at the beginning
+					ov_string_setvalue(&Temp2, Temp+1);
+					ov_string_setvalue(&Temp, Temp2);
+					ov_string_setvalue(&Temp2, NULL);
+				}else if(Temp[0] == '-' && Temp[1] == 'P'){
+					//kill "S" at the end
+					Temp[ov_string_getlength(Temp)-1] = '\0';
+					//kill "-P" at the beginning
+					ov_string_setvalue(&Temp2, Temp+2);
+					ov_string_setvalue(&Temp, Temp2);
+					ov_string_setvalue(&Temp2, NULL);
+					isNegative = TRUE;
+				}
+				pTempList = ov_string_split(Temp, ".", &len);
+				if(len == 0){
+					//todo failure details
 					ov_string_append(message, "Setting time span value failed");
-					EXEC_SETVAR_RETURN fr;
-				};
+					ov_string_freelist(pTempList);
+					EXEC_SETVAR_RETURN OV_ERR_BADPARAM;
+				}else{
+					if(isNegative == FALSE){
+						addrp->var_current_props.value.valueunion.val_time_span.secs = atoi(pTempList[0]);
+					}else{
+						addrp->var_current_props.value.valueunion.val_time_span.secs = -1 * atoi(pTempList[0]);
+					}
+					if(len > 1){
+						tempUint = atoi(pTempList[1]);
+						//usec for 12.42 is 420000, but we have 42, so multiply with the right number of 10
+						tempUint = tempUint* pow(10, (6 - ov_string_getlength(pTempList[1])));
+						addrp->var_current_props.value.valueunion.val_time_span.usecs = tempUint;
+					}
+				}
+				ov_string_freelist(pTempList);
 				break;
 
+			/*	TODO	implement this
 			case OV_VT_STATE:
 				ov_logfile_debug("%s:%d OV_VT_STATE", __FILE__, __LINE__);
 			break;
@@ -388,25 +457,38 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 			case OV_VT_STRING_VEC:
 			case OV_VT_STRING_PV_VEC:
-				//request could be "{hallo}%20{world}"
+				//request could be "{hello}%20{world}" todo doku!
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_string_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_string_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_string_vec, len, STRING);
 
-				for(i = 0; i < len; i++){
-					//killing the first character aka {
-					ov_string_setvalue(&Temp, pArgumentList[i]+1);
-					//kill the last character aka }, now we have two null bytes at the end
-					Temp[ov_string_getlength(Temp)-1] = '\0';
+				if(*pArgumentList[i] != '{' && len > 2){
+					//todo failure code
+					EXEC_SETVAR_RETURN OV_ERR_BADPARAM;
+				}
 
+				for(i = 0; i < len; i++){
 					//setting the content of the pointers to null
 					//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 					addrp->var_current_props.value.valueunion.val_string_vec.value[i] = NULL;
-					ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp);
+
+					if(*pArgumentList[i] != '{'){
+						Temp2 = url_decode(pArgumentList[i]);
+					}else{
+						//killing the first character aka {
+						ov_string_setvalue(&Temp, pArgumentList[i]+1);
+						//kill the last character aka }, now we have two null bytes at the end
+						Temp[ov_string_getlength(Temp)-1] = '\0';
+						Temp2 = url_decode(Temp);
+					}
+					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp2);
+					ov_free(Temp2);
 				}
 				ov_string_freelist(pArgumentList);
 				break;
 
-	/*
+	/*	TODO
 			case OV_VT_TIME_VEC:
 			case OV_VT_TIME_PV_VEC:
 

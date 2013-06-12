@@ -211,7 +211,7 @@ OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESU
 	OV_RESULT fr = OV_ERR_OK;
 	OV_RESULT lasterror = OV_ERR_OK;
 
-/*
+/*  "alt"
 <response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
 	<setvar>
 		<success/>
@@ -225,6 +225,30 @@ or
 			<failure>17</failure>
 			<success/>
 		</failuredetail>
+	</setvar>
+</response>
+*/
+
+
+/* "neu"
+<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
+	<setvar>
+		<success/>
+	</setvar>
+</response>
+or
+<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
+	<setvar>
+		<mixed>
+			<failure>17</failure>
+			<success/>
+		</mixed>
+	</setvar>
+</response>
+or
+<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
+	<setvar>
+		<failure>17</failure>
 	</setvar>
 </response>
 */
@@ -295,88 +319,32 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT respo
 
 /**
  * Convert a timespan into an XML, TCL or plaintext timestring
- * XML P5Y2M10DT15H Period: 5Years, 2 Month, 10 Days, T delimiter, 15 hours
+ * XML PT42S Period: T time delimiter, 42 Seconds
  */
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format){
 	/*
 	*	local variables
 	*/
-	struct tm		*ptm;
-	time_t			secs = ptime->secs;
-	OV_BOOL haveSec = FALSE;
-	OV_BOOL haveMin = FALSE;
-	OV_BOOL haveHour = FALSE;
-	OV_BOOL haveDay = FALSE;
-	OV_BOOL haveMon = FALSE;
-	OV_BOOL haveYear = FALSE;
+	OV_INT			secs = ptime->secs;
 
-	//todo umbauen und nur Tage als max ausgeben
-
-	if(response_format == RESPONSE_FORMAT_TCL){
+	if(response_format != RESPONSE_FORMAT_KSX){
 		ov_string_print(timestring, "%i.%06i", ptime->secs, ptime->usecs);
 		return OV_ERR_OK;
 	}
 	//XML format requested
-	if(secs < 0){
-		//will be checked at the end
-		secs = -secs;
-	}
-	ptm = gmtime(&secs);
-	if(ptime->usecs != 0){
-		ov_string_print(timestring, "%i.%06iS", ptm->tm_sec, ptime->usecs);
-		haveSec = TRUE;
-	}else if(ptm->tm_sec != 0){
-		ov_string_print(timestring, "%iS", ptm->tm_sec, ptime->usecs);
-		haveSec = TRUE;
-	}
-	if(ptm->tm_min != 0 || haveSec == TRUE){
-		if(*timestring == NULL){
-			ov_string_print(timestring, "%iM", ptm->tm_min);
-		}else{
-			ov_string_print(timestring, "%iM%s", ptm->tm_min, *timestring);
-		}
-		haveMin = TRUE;
-	}
-	if(ptm->tm_hour != 0 || haveMin == TRUE){
-		if(*timestring == NULL){
-			ov_string_print(timestring, "T%iH", ptm->tm_hour);
-		}else{
-			ov_string_print(timestring, "T%iH%s", ptm->tm_hour, *timestring);
-		}
-		haveHour = TRUE;
-	}
-	if(ptm->tm_mday-1 != 0 || haveHour == TRUE){
-		if(*timestring == NULL){
-			ov_string_print(timestring, "%iD", ptm->tm_mday-1);
-		}else{
-			ov_string_print(timestring, "%iD%s", ptm->tm_mday-1, *timestring);
-		}
-		haveDay = TRUE;
-	}
-	if(ptm->tm_mon != 0 || haveDay == TRUE){
-		if(*timestring == NULL){
-			ov_string_print(timestring, "%iM", ptm->tm_mon);
-		}else{
-			ov_string_print(timestring, "%iM%s", ptm->tm_mon, *timestring);
-		}
-		haveMon = TRUE;
-	}
-	if(ptm->tm_year-70 != 0 || haveMon == TRUE){
-		if(*timestring == NULL){
-			ov_string_print(timestring, "%iY", ptm->tm_year-70);
-		}else{
-			ov_string_print(timestring, "%iY%s", ptm->tm_year-70, *timestring);
-		}
-		haveYear = TRUE;
-	}
-	if(haveYear == FALSE){
-		//at least one number and its designator must be present
-		ov_string_setvalue(timestring, "0S");
-	}
 	if(ptime-secs < 0){
-		ov_string_print(timestring, "-P%s", *timestring);
+		//will be checked at the end
+		secs = -ptime->secs;
+	}
+	if(ptime->usecs != 0){
+		ov_string_print(timestring, "%i.%06iS", secs, ptime->usecs);
 	}else{
-		ov_string_print(timestring, "P%s", *timestring);
+		ov_string_print(timestring, "%iS", secs);
+	}
+	if(ptime->secs < 0){
+		ov_string_print(timestring, "-PT%s", *timestring);
+	}else{
+		ov_string_print(timestring, "PT%s", *timestring);
 	}
 	return OV_ERR_OK;
 }
