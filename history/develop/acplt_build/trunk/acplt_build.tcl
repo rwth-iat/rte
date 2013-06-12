@@ -10,6 +10,7 @@ set checkout 0
 set libsuffix 0
 set exesuffix 0
 set bleedingedge 0
+set notbuildedlibs 0
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -505,14 +506,14 @@ proc release_lib_better {libname option} {
 	
 	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] 
 	
-	print_msg "$libs"
+	#print_msg "$libs"
 	print_msg "$libnametemp"
 	#lib contains the list of the libs to build
 	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
 	#correct the paths... lifing libraries up fomr the "core"	dir
 	foreach lib $libs {
 		#set libname $lib
-		if { [file exists $releasedir/dev/$libnametemp/$lib] } {
+		if { [file exists $releasedir/dev/$libnametemp/$lib] && $lib != "ov" } {
 			
 			file copy -force $releasedir/dev/$libnametemp/$lib $releasedir/dev/$lib
 			file delete -force $releasedir/dev/$libnametemp/$lib
@@ -520,7 +521,7 @@ proc release_lib_better {libname option} {
 	}
 
 	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp 
-	print_msg "BÄÄÄHM"
+	#print_msg "BÄÄÄHM"
 	}
 	
 	set not_yet_build $libs
@@ -567,11 +568,12 @@ proc release_lib_better {libname option} {
 				}
 				file delete -force $releasedir/dev/$libname.build/
 			} else {
-				#print_msg "$libname may have unmet dependencies, retrying next iteration"
+				print_msg "$libname may have unmet dependencies, retrying next iteration"
 			}
 		}
 	}
 	if { [llength $not_yet_build] > 0 } {
+		append notbuildedlibs $not_yet_build
 		print_msg "Libraries $not_yet_build could not be built, giving up"
 	}
 	
@@ -908,11 +910,11 @@ if {$release == 1} {
 	create_release
 	create_systools_and_servers
     foreach x $included_libs {
-        release_lib $x all
+        release_lib_better $x all
     }
     separate
     foreach x $addon_libs {
-        release_lib $x all
+        release_lib_better $x all
     }
 	if { [file exists $releasedir/dev/] } then {
 		file delete -force $releasedir/dev/
