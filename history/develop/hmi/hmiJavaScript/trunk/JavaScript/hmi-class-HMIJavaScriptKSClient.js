@@ -331,21 +331,17 @@ HMIJavaScriptKSClient.prototype = {
 	//fixme return value "" in true wandeln
 	/**
 	 * usage example:
-	 *		this.setVar(null, '/TechUnits/HMIManager.Command ', "{1} {010} {/TechUnits/HMIManager} {SHOWSHEETS}", null);
+	 *		this.setVar('/TechUnits/HMIManager.Command ', ["1", "010", "/TechUnits/HMIManager", "SHOWSHEETS"], null);
 	 * 
 	 * @param path of the variable to set
-	 * @param {String} value to set (StringVec are {part1} {part2} {part3} coded
+	 * @param {String} value to set (StringVec are Arrays)
 	 * @param {String} type variable type to set, null if no change
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @param responseFormat Mime-Type of requested response
 	 * @return "" or null
 	 */
-	setVar: function(Handle, path, value, cbfnc, async) {
-		//wrapper function for old hmi gestures
-		return this.setVar_NG(path, value, null, cbfnc, async);
-	},
-	setVar_NG: function(path, value, type, cbfnc, async, responseFormat) {
+	setVar: function(path, value, type, cbfnc, async, responseFormat) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.setVar - Start: "+path);
 		if(!path || path.length === 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
@@ -366,6 +362,10 @@ HMIJavaScriptKSClient.prototype = {
 			responseFormat = "text/tcl";
 		}
 		if ("tcl" === HMI.HMI_Constants.ServerType){
+			if(Object.prototype.toString.call(value) === "[object Array]"){
+				value = "{"+value.join("}%20{")+"}";
+			}
+			
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -381,9 +381,24 @@ HMIJavaScriptKSClient.prototype = {
 			if(Handle === null){
 				return null;
 			}
+			if(Object.prototype.toString.call(value) === "[object Array]"){
+				var newvalue = "{";
+				for(var i=0;i < value.length;i++){
+					if(i!=0){
+						newvalue += "}%20{";
+					}
+					newvalue += encodeURIComponent(value[i]);
+				}
+				value = newvalue + "}";
+				newvalue = null;
+			}
 			
 			urlparameter = "http://"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
+			if(Object.prototype.toString.call(value) === "[object Array]"){
+				value = "{"+value.join("}%20{")+"}";
+			}
+			
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -1145,18 +1160,18 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var Command = null;
 		if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
-			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
-				'{010}%20' +
-				'{' + this.HMIMANAGER_PATH + '}%20' + 
-				'{SHOWCOMPONENTS}';
+			Command = [HMI.KSClient.getMessageID(),
+			           '010',
+			           this.HMIMANAGER_PATH,
+			           'SHOWCOMPONENTS'];
 		}else{
-			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
-				'{010}%20' +
-				'{' + this.HMIMANAGER_PATH + '}%20' + 
-				'{SHOWSHEETS}';
+			Command = [HMI.KSClient.getMessageID(),
+			           '010',
+			           this.HMIMANAGER_PATH,
+			           'SHOWSHEETS'];
 		}
-		this.setVar_NG("//"+Host+"/"+Server+this.HMIMANAGER_PATH
-				+ '.Command',
+		
+		this.setVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.Command',
 				Command,
 				null);
 		var Sheetstring = this.getVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.CommandReturn', "OP_VALUE", null);

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -183,15 +183,15 @@ DoubleClick.prototype = {
 			//detect the mouse position relative to the component
 			clickPosition = HMI.getClickPosition(evt, Component);
 			
-			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
-				'{010}%20' +
-				'{' + encodeURI(Component.id) + '}%20' + 
-				'{DOUBLECLICK}%20' +
-				'{' + clickPosition[0] + '}%20' +
-				'{' + clickPosition[1] + '}';
+			Command = [HMI.KSClient.getMessageID(),
+			           '010',
+			           encodeURI(Component.id),
+			           'DOUBLECLICK',
+			           clickPosition[0],
+			           clickPosition[1]];
 			clickPosition = null;
 			
-			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
+			HMI.KSClient.setVar(HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null, HMI.cbrefreshSheet);
 			Command = null;
 			
 			//mark changed Component

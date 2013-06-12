@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -287,14 +287,16 @@ TextInput.prototype = {
 		if (Component !== null)
 		{
 			var Command = null;
-			Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
-				'{010}%20' +
-				'{' + encodeURI(Component.id) + '}%20' + 
-				'{TEXTINPUT}%20' +
-				//urlencode the UTF8 String in ISO-8859-1 Format
-				//change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
-				'{' + escape(input).replace(/%u20AC/g, "%80") + '}';
-			HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
+			
+			Command = [HMI.KSClient.getMessageID(),
+			           '010',
+			           encodeURI(Component.id),
+			           'TEXTINPUT',
+			           //urlencode the UTF8 String in ISO-8859-1 Format
+			           //change the %u20AC of the &euro; Symbol to windows-1252 (accepted by all Browsers, not Adobe SVG)
+			           escape(input).replace(/%u20AC/g, "%80")];
+			
+			HMI.KSClient.setVar(HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null, HMI.cbrefreshSheet);
 			Command = null;
 			
 			//mark changed Component

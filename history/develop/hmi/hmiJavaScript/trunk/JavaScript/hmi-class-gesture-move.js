@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2013
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -493,16 +493,17 @@ Dragger.prototype = {
 				var xvalue = this._node.getAttribute("x");
 				var yvalue = this._node.getAttribute("y");
 				
-				var Command = '{' + HMI.KSClient.getMessageID() + '}%20' +
-					'{010}%20' +
-					'{' + encodeURI(this._node.id) + '}%20' +
-					'{MOVE}%20' +
-					'{' + encodeURI(this._ground._node.id) +  '}%20' +
-					'{' + xvalue + '}%20' +
-					'{' + yvalue + '}';
-				HMI.KSClient.setVar(null, HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, HMI.cbrefreshSheet);
+				Command = [HMI.KSClient.getMessageID(),
+				           '010',
+				           encodeURI(this._node.id),
+				           'MOVE',
+				           encodeURI(this._ground._node.id),
+				           xvalue,
+				           yvalue];
 				xvalue = null;
 				yvalue = null;
+				
+				HMI.KSClient.setVar(HMI.KSClient.HMIMANAGER_PATH + '.Command', Command, null, HMI.cbrefreshSheet);
 			};
 		} else if(!validMove){
 			HMI.hmi_log_trace("Dragger.prototype.stopDrag - move aborted");

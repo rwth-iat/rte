@@ -1548,7 +1548,7 @@ cshmi.prototype = {
 			var result;
 			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
 			
-			result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
+			result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
 			
 			if (result !== true){
 				return false;
@@ -1789,7 +1789,7 @@ cshmi.prototype = {
 				result = HMI.KSClient.renameObject(path, NewValue, null, SetVarCbfnc, true);
 			}else{
 				path = FBRef[0]+"."+ParameterValue;
-				result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
+				result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
 			}
 			if (result !== true){
 				return false;
@@ -1804,7 +1804,7 @@ cshmi.prototype = {
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var path = TemplateObject.FBVariableReference[ParameterValue];
-						result = HMI.KSClient.setVar_NG(path, NewValue, null, SetVarCbfnc, true);
+						result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
 						if (result !== true){
 							return false;
 						}
