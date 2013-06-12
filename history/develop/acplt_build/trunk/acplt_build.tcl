@@ -139,7 +139,10 @@ proc print_msg {msg} {
 }
 
 # Execute a command
+# return 0 if success
+# return 1 if fail
 proc execute {args} {
+	set args [join $args]
     global logfile
     #set cmd [concat {exec -ignorestderr} $args]
     set cmd [concat {exec } $args { >>& $logfile}]
@@ -148,7 +151,9 @@ proc execute {args} {
         puts stderr "error: $msg"
         puts stderr "Consult the file '$logfile'"
         #exit 1
+		return 1
     }
+	return 0
 }
 
 # Execute a command
@@ -262,7 +267,8 @@ proc checkout_acplt {} {
 # Build in a directory
 proc build {package args} {
     print_msg "Building $package"
-    eval [concat "execute" $args]
+	
+    return [execute $args]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
@@ -494,54 +500,123 @@ proc release_lib_better {libname option} {
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
 	set libnamepraefix [lindex $temp end-1]
-	print_msg "$libnamepraefix"
+	#print_msg "$libnamepraefix"
 	#print_msg "$releasedir/dev/$libnametemp"
-	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"]
-if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
-	#print_msg "$libs"
-	foreach lib $libs {
-		set libname $lib
-		if { [file exists $releasedir/dev/$libnametemp/$libname] } {
-			file copy -force $releasedir/dev/$libnametemp/$libname $releasedir/dev/$libname
-			file delete -force $releasedir/dev/$libnametemp/$libname
-		}
-		cd $releasedir/dev/$libname/build/$os/
-		if { $option == "all" } then {
-			print_msg "Note: no debug symbols will be created"
-		}
-		build $libname $make $option
-		print_msg "Deploying $libname"
-		file delete -force $releasedir/dev/$libname.build/
-		file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
-		file delete -force $releasedir/dev/$libname/
-		file mkdir $releasedir/dev/$libname/
-		file mkdir $releasedir/dev/$libname/model/
-		copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
-		file mkdir $releasedir/dev/$libname/include/
-		copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
-		#export libname.a file for compiling under windows
-		if { $os == "nt" } then {
-				#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-				#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-			#}
-			if { [file exists $releasedir/dev/$libname.build/build/nt/$libname.lib] } then {
-				file mkdir $releasedir/dev/$libname/build/nt/
-				file copy -force $releasedir/dev/$libname.build/build/nt/$libname.lib $releasedir/dev/$libname/build/nt/
-			}
-		}
-	if { $os == "linux" } then {
-		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-		#}
-		if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
-			file mkdir $releasedir/dev/$libname/build/linux/
-			file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
-			}
-		}
-	file delete -force $releasedir/dev/$libname.build/
 	
+	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] 
+	
+	print_msg "$libs"
+	print_msg "$libnametemp"
+	#lib contains the list of the libs to build
+	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
+	#correct the paths... lifing libraries up fomr the "core"	dir
+	foreach lib $libs {
+		#set libname $lib
+		if { [file exists $releasedir/dev/$libnametemp/$lib] } {
+			
+			file copy -force $releasedir/dev/$libnametemp/$lib $releasedir/dev/$lib
+			file delete -force $releasedir/dev/$libnametemp/$lib
+		}
 	}
-	if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
+
+	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp 
+	print_msg "BÄÄÄHM"
+	}
+	
+	set not_yet_build $libs
+	#the array should be used later, if someone will write dependency detection
+	#ov is built
+	set built {"ov"}
+	set index_ov [lsearch $not_yet_build "ov"]
+	set not_yet_build [lreplace $not_yet_build $index_ov $index_ov]
+	set break_in_next_iteration 0
+	while { [llength $not_yet_build]>0 && $break_in_next_iteration==0 } {
+		#break if no successful compile
+		set break_in_next_iteration 1 
+		foreach libname $not_yet_build {
+			cd $releasedir/dev/$libname/build/$os/
+			if { $option == "all" } then {
+				print_msg "Note: no debug symbols will be created"
+			}
+			set success [build $libname $make $option]
+			
+			if { $success == 0 } {
+				#iterate once more
+				set break_in_next_iteration 0 
+				#removing $libname from not_yet_build
+				set index [lsearch $not_yet_build $libname]
+				set not_yet_build [lreplace $not_yet_build $index $index]
+				#$libname is now built
+				lappend built $libname
+				
+				#deploying
+				print_msg "Deploying $libname"
+				file delete -force $releasedir/dev/$libname.build/
+				file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
+				file delete -force $releasedir/dev/$libname/
+				file mkdir $releasedir/dev/$libname/
+				file mkdir $releasedir/dev/$libname/model/
+				copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
+				file mkdir $releasedir/dev/$libname/include/
+				copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
+				if { $os == "linux" } then {
+					if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
+						file mkdir $releasedir/dev/$libname/build/linux/
+						file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+					}
+				}
+				file delete -force $releasedir/dev/$libname.build/
+			} else {
+				#print_msg "$libname may have unmet dependencies, retrying next iteration"
+			}
+		}
+	}
+	if { [llength $not_yet_build] > 0 } {
+		print_msg "Libraries $not_yet_build could not be built, giving up"
+	}
+	
+	#foreach lib $libs {
+	#	set libname $lib
+	#	if { [file exists $releasedir/dev/$libnametemp/$libname] } {
+	#		file copy -force $releasedir/dev/$libnametemp/$libname $releasedir/dev/$libname
+	#		file delete -force $releasedir/dev/$libnametemp/$libname
+	#	}
+	#	cd $releasedir/dev/$libname/build/$os/
+	#	if { $option == "all" } then {
+	#		print_msg "Note: no debug symbols will be created"
+	#	}
+	#	build $libname $make $option
+	#	print_msg "Deploying $libname"
+	#	file delete -force $releasedir/dev/$libname.build/
+	#	file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
+	#	file delete -force $releasedir/dev/$libname/
+	#	file mkdir $releasedir/dev/$libname/
+	#	file mkdir $releasedir/dev/$libname/model/
+	#	copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
+	#	file mkdir $releasedir/dev/$libname/include/
+	#	copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
+	#	#export libname.a file for compiling under windows
+	#	if { $os == "nt" } then {
+	#		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+	#		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+	#		#}
+	#		if { [file exists $releasedir/dev/$libname.build/build/nt/$libname.lib] } then {
+	#			file mkdir $releasedir/dev/$libname/build/nt/
+	#			file copy -force $releasedir/dev/$libname.build/build/nt/$libname.lib $releasedir/dev/$libname/build/nt/
+	#		}
+	#	}
+	#	if { $os == "linux" } then {
+	#		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
+	#		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
+	#		#}
+	#		if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
+	#			file mkdir $releasedir/dev/$libname/build/linux/
+	#			file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+	#		}
+	#	}
+	#	file delete -force $releasedir/dev/$libname.build/
+	#}
+	#if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
 }	
 
 
@@ -638,17 +713,19 @@ proc separate {} {
  set libs [glob -types d -tails -nocomplain -directory $releasedir/dev "*"]
  
  #move system libs
- 
+#print_msg "$libs" 
  foreach x $libs {
  set temp [split $x "/"]
 	set x [lindex $temp end]
 	if { [file exists $releasedir/dev/$x] } then {
 		file copy $releasedir/dev/$x  $releasedir/system/sysdevbase/$x 
 		file delete -force $releasedir/dev/$x 
+	}
+	if { [file exists $releasedir/system/addonlibs/${x}$libsuffix] } then {
 		file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/sysbin/${x}$libsuffix 
 		file delete -force $releasedir/system/addonlibs/${x}$libsuffix
 	}
-	}
+ }
 if { [file exists $releasedir/system/sysbin/tmanager.exe] } then {
 		file delete -force $releasedir/system/sysbin/tmanager.exe 
 	}
@@ -691,7 +768,7 @@ proc create_systools_and_servers {} {
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
+	set addon_libs {develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
 	print_msg "if you take the new ones, you'll see what you get"
 } else {
     print_msg "taking the safe way is a sign of weakness"
@@ -699,7 +776,7 @@ if { $bleedingedge == 1 } then {
 	set included_libs {common/core}
 	}
 
-set notrunklist { ks common }
+set notrunklist { ks common ServiceSystem }
 #iec61131stdfb IOdriverlib fbcomlib
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
