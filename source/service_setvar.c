@@ -38,7 +38,6 @@
 
 #include "config.h"
 #include <ctype.h>
-#include <math.h>
 
 /* Converts a hex character to its integer value */
 static char from_hex(char ch) {
@@ -46,10 +45,10 @@ static char from_hex(char ch) {
 }
 
 /* Returns a url-decoded version of str Public Domain code from http://www.geekhideout.com/urlcode.shtml*/
-/* IMPORTANT: be sure to ov_free() the returned string after use */
+/* IMPORTANT: be sure to ov_memstack_lock/unlock() arround */
 static OV_STRING url_decode(OV_STRING str) {
 	OV_STRING pstr = str;
-	OV_STRING buf = ov_malloc(strlen(str) + 1);
+	OV_STRING buf = ov_memstack_alloc(strlen(str) + 1);
 	OV_STRING pbuf = buf;
 	while (*pstr) {
 		if (*pstr == '%') {
@@ -127,7 +126,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	OV_STRING Temp = NULL;
 	OV_STRING Temp2 = NULL;
 	OV_STRING *pTempList = NULL;
-	OV_UINT tempUint = 0;
+	OV_UINT stringOffset = 0;
+	OV_DOUBLE tempDouble = 0;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_VAR_TYPE lastVarType = OV_VT_VOID;
 	OV_BOOL isNegative = FALSE;
@@ -307,9 +307,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 				//we have a new object, so no memory is allocated and the setting to NULL is save
 				addrp->var_current_props.value.valueunion.val_string = NULL;
-				Temp = url_decode(newvaluematch.value[i]);
-				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, Temp);
-				ov_free(Temp);
+				ov_memstack_lock();
+				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, url_decode(newvaluematch.value[i]));
+				ov_memstack_unlock();
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting string value failed");
 					EXEC_SETVAR_RETURN fr;
@@ -332,55 +332,32 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 			case OV_VT_TIME_SPAN:
 			case OV_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
-
-				//can be 0.000000 or P0.000000S
+				//can be 42.1241 or P42.123456S or -P23.42S
 				ov_string_setvalue(&Temp, newvaluematch.value[i]);
 				if(Temp[0] == 'P'){
-					//kill "S" at the end
-					Temp[ov_string_getlength(Temp)-1] = '\0';
-					//kill "P" at the beginning
-					ov_string_setvalue(&Temp2, Temp+1);
-					ov_string_setvalue(&Temp, Temp2);
-					ov_string_setvalue(&Temp2, NULL);
+					stringOffset = 1;
 				}else if(Temp[0] == '-' && Temp[1] == 'P'){
-					//kill "S" at the end
-					Temp[ov_string_getlength(Temp)-1] = '\0';
-					//kill "-P" at the beginning
-					ov_string_setvalue(&Temp2, Temp+2);
-					ov_string_setvalue(&Temp, Temp2);
-					ov_string_setvalue(&Temp2, NULL);
+					stringOffset = 2;
 					isNegative = TRUE;
 				}
-				pTempList = ov_string_split(Temp, ".", &len);
-				if(len == 0){
-					//todo failure details
-					ov_string_append(message, "Setting time span value failed");
-					ov_string_freelist(pTempList);
-					EXEC_SETVAR_RETURN OV_ERR_BADPARAM;
-				}else{
-					if(isNegative == FALSE){
-						addrp->var_current_props.value.valueunion.val_time_span.secs = atoi(pTempList[0]);
-					}else{
-						addrp->var_current_props.value.valueunion.val_time_span.secs = -1 * atoi(pTempList[0]);
-					}
-					if(len > 1){
-						tempUint = atoi(pTempList[1]);
-						//usec for 12.42 is 420000, but we have 42, so multiply with the right number of 10
-						tempUint = tempUint* pow(10, (6 - ov_string_getlength(pTempList[1])));
-						addrp->var_current_props.value.valueunion.val_time_span.usecs = tempUint;
-					}
+				tempDouble = atof(Temp+stringOffset);
+				if(isNegative == TRUE){
+					tempDouble = -tempDouble;
 				}
-				ov_string_freelist(pTempList);
+				Ov_DoubleToTimeSpan(tempDouble, addrp->var_current_props.value.valueunion.val_time_span);
 				break;
 
-			/*	TODO	implement this
+			case OV_VT_STRUCT:
+			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				//deprecated as KS2.0r
+				EXEC_SETVAR_RETURN OV_ERR_NOTIMPLEMENTED;
+			break;
+
+			/*	TODO	implement this?
 			case OV_VT_STATE:
 				ov_logfile_debug("%s:%d OV_VT_STATE", __FILE__, __LINE__);
 			break;
 
-			case OV_VT_STRUCT:
-				ov_logfile_debug("%s:%d OV_VT_STRUCT", __FILE__, __LINE__);
-			break;
 	*/
 			//****************** VEC: *******************
 			/* request could be "{1}%20{10}"
@@ -472,7 +449,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 					//setting the content of the pointers to null
 					//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 					addrp->var_current_props.value.valueunion.val_string_vec.value[i] = NULL;
-
+					ov_memstack_lock();
 					if(*pArgumentList[i] != '{'){
 						Temp2 = url_decode(pArgumentList[i]);
 					}else{
@@ -483,10 +460,16 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 						Temp2 = url_decode(Temp);
 					}
 					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp2);
-					ov_free(Temp2);
+					ov_memstack_unlock();
 				}
+				Temp2 = NULL; //had a memstack pointer only
 				ov_string_freelist(pArgumentList);
 				break;
+
+			case OV_VT_STRUCT_VEC:
+			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
+				//deprecated as KS2.0r
+				EXEC_SETVAR_RETURN OV_ERR_NOTIMPLEMENTED;
 
 	/*	TODO
 			case OV_VT_TIME_VEC:
@@ -497,9 +480,6 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 			case OV_VT_STATE_VEC:
 			case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-
-			case OV_VT_STRUCT_VEC:
-			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 	*/
 			default:
 	/*				ov_logfile_error("%s:%d - GestureReaction - target: %s, Userinput (%s), DataType %u not implemented.", __FILE__, __LINE__,
