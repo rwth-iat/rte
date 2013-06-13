@@ -348,3 +348,109 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_
 	}
 	return OV_ERR_OK;
 }
+
+/* escapes a String to make a valid XML/TCL String
+possible changes in XML:
+"	&quot;
+'	&apos;
+<	&lt;
+>	&gt;
+&	&amp;
+in TCL:
+" -> \"
+{ -> \{
+} -> \}
+
+ */
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT response_format){
+	OV_STRING heapString;
+	OV_STRING	pcIn;
+	OV_STRING	pcOut = 0;
+	OV_RESULT	fr = OV_ERR_OK;
+
+	if(response_format == RESPONSE_FORMAT_KSX){
+		//malloc worstcase stringlength which is &quot;
+		heapString = Ov_HeapMalloc(6*ov_string_getlength(*strIn));
+	}else if(response_format == RESPONSE_FORMAT_TCL){
+		//malloc worstcase stringlength which is \}
+		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn));
+	}
+
+	pcIn = *strIn;
+	pcOut = heapString;
+	while(*pcIn) {
+		if(*pcIn == '"'){
+			if(response_format == RESPONSE_FORMAT_TCL){
+				*pcOut = '\\';
+				pcOut++;
+				*pcOut = '"';
+			}else{
+				*pcOut = '&';
+				pcOut++;
+				*pcOut = 'q';
+				pcOut++;
+				*pcOut = 'u';
+				pcOut++;
+				*pcOut = 'o';
+				pcOut++;
+				*pcOut = 't';
+				pcOut++;
+				*pcOut = ';';
+			}
+		}else if(*pcIn == '\'' && response_format == RESPONSE_FORMAT_KSX){
+			*pcOut = '&';
+			pcOut++;
+			*pcOut = 'a';
+			pcOut++;
+			*pcOut = 'p';
+			pcOut++;
+			*pcOut = 'o';
+			pcOut++;
+			*pcOut = 's';
+			pcOut++;
+			*pcOut = ';';
+		}else if(*pcIn == '<' && response_format == RESPONSE_FORMAT_KSX){
+			*pcOut = '&';
+			pcOut++;
+			*pcOut = 'l';
+			pcOut++;
+			*pcOut = 't';
+			pcOut++;
+			*pcOut = ';';
+		}else if(*pcIn == '>' && response_format == RESPONSE_FORMAT_KSX){
+			*pcOut = '&';
+			pcOut++;
+			*pcOut = 'g';
+			pcOut++;
+			*pcOut = 't';
+			pcOut++;
+			*pcOut = ';';
+		}else if(*pcIn == '&' && response_format == RESPONSE_FORMAT_KSX){
+			*pcOut = '&';
+			pcOut++;
+			*pcOut = 'a';
+			pcOut++;
+			*pcOut = 'm';
+			pcOut++;
+			*pcOut = 'p';
+			pcOut++;
+			*pcOut = ';';
+		}else if(*pcIn == '{' && response_format == RESPONSE_FORMAT_TCL){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = '{';
+		}else if(*pcIn == '}' && response_format == RESPONSE_FORMAT_TCL){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = '}';
+		}else{
+			*pcOut = *pcIn;
+		}
+		pcIn++;
+		pcOut++;
+	}
+	*pcOut = '\0';		/*append terminating '\0'*/
+	fr = ov_string_setvalue(resultString, heapString);
+	Ov_HeapFree(heapString);
+	return fr;
+}
