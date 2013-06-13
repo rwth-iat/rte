@@ -580,7 +580,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	if(this->v_stream == FALSE){
 		KS_logfile_debug(("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(reply_header)));
 		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)reply_header, ov_string_getlength(reply_header));
-		//todo this does not send the request
+		//note this does not send the request
 	}
 
 	//are we starting a stream?

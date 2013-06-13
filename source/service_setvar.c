@@ -125,7 +125,6 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	OV_STRING *pArgumentList = NULL;
 	OV_STRING Temp = NULL;
 	OV_STRING Temp2 = NULL;
-	OV_STRING *pTempList = NULL;
 	OV_UINT stringOffset = 0;
 	OV_DOUBLE tempDouble = 0;
 	OV_RESULT fr = OV_ERR_OK;
@@ -155,7 +154,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	addrp = (OV_SETVAR_ITEM*)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_SETVAR_ITEM));
 	if(!addrp) {
 		ov_memstack_unlock();
-		EXEC_SETVAR_RETURN OV_ERR_TARGETGENERIC;
+		fr = OV_ERR_TARGETGENERIC;
+		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		EXEC_SETVAR_RETURN fr;
 	}
 
 	params.items_val = addrp;
@@ -172,7 +173,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 		*addrpGet = (OV_STRING)ov_memstack_alloc(pathmatch.veclen*sizeof(OV_STRING));
 		if(!*addrpGet) {
 			ov_memstack_unlock();
-			EXEC_SETVAR_RETURN OV_ERR_TARGETGENERIC;
+			fr = OV_ERR_TARGETGENERIC;
+			print_result_array(message, response_format, &fr, 1, ": memory problem");
+			EXEC_SETVAR_RETURN fr;
 		}
 		paramsGet.identifiers_val = addrpGet;
 		paramsGet.identifiers_len = pathmatch.veclen;
@@ -276,8 +279,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				}else if (CHECK_BOOLFALSE(newvaluematch.value[i])){
 					addrp->var_current_props.value.valueunion.val_bool = FALSE;
 				}else{
-					ov_string_append(message, "Input not detected as bool\n");
-					EXEC_SETVAR_RETURN OV_ERR_BADPARAM;
+					fr = OV_ERR_BADPARAM;
+					print_result_array(message, response_format, &fr, 1, ": Input not detected as bool");
+					EXEC_SETVAR_RETURN fr;
 				}
 				break;
 
@@ -350,7 +354,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_STRUCT:
 			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
-				EXEC_SETVAR_RETURN OV_ERR_NOTIMPLEMENTED;
+				fr = OV_ERR_NOTIMPLEMENTED;
+				print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				EXEC_SETVAR_RETURN fr;
 			break;
 
 			/*	TODO	implement this?
@@ -441,8 +447,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_string_vec, len, STRING);
 
 				if(*pArgumentList[i] != '{' && len > 2){
-					//todo failure code
-					EXEC_SETVAR_RETURN OV_ERR_BADPARAM;
+					fr = OV_ERR_BADPARAM;
+					print_result_array(message, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					EXEC_SETVAR_RETURN fr;
 				}
 
 				for(i = 0; i < len; i++){
@@ -469,7 +476,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_STRUCT_VEC:
 			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
-				EXEC_SETVAR_RETURN OV_ERR_NOTIMPLEMENTED;
+				fr = OV_ERR_NOTIMPLEMENTED;
+				print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				EXEC_SETVAR_RETURN fr;
 
 	/*	TODO
 			case OV_VT_TIME_VEC:
@@ -487,7 +496,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 					newvaluematch.value[i],
 					addrp->var_current_props.value.vartype);
 	*/
-				EXEC_SETVAR_RETURN OV_ERR_NOTIMPLEMENTED;
+				fr = OV_ERR_NOTIMPLEMENTED;
+				print_result_array(message, response_format, &fr, 1, ": Vartype not supported");
+				EXEC_SETVAR_RETURN fr;
 		}
 
 		//add one size of a pointer

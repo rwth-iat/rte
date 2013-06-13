@@ -129,7 +129,9 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 	*addrp = (OV_STRING)ov_memstack_alloc(match.veclen*sizeof(OV_STRING));
 	if(!*addrp) {
 		ov_memstack_unlock();
-		EXEC_GETVAR_RETURN OV_ERR_TARGETGENERIC; //400
+		fr = OV_ERR_TARGETGENERIC;
+		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		EXEC_GETVAR_RETURN fr;
 	}
 
 
