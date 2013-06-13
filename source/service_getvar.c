@@ -261,8 +261,7 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 						ov_string_setvalue(&LoopEntryValue, "");
 					}else{
-						//fixme escaping, no cdata but &amp;
-						ov_string_print(&LoopEntryValue, "%s", Variable.value.valueunion.val_string);
+						kshttp_escapeString(&LoopEntryValue, &Variable.value.valueunion.val_string, response_format);
 					}
 					break;
 
@@ -390,9 +389,10 @@ OV_RESULT exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 						}
 						begin_response_part(&LoopEntryValue, response_format, "string");
 						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
-							//append an empty string
+							//append an empty string and clear string
+							ov_string_setvalue(&singleVecEntry, "");
 						}else{
-							ov_string_print(&singleVecEntry, "%s", Variable.value.valueunion.val_string_vec.value[i]);
+							kshttp_escapeString(&singleVecEntry, &Variable.value.valueunion.val_string_vec.value[i], response_format);
 							ov_string_append(&LoopEntryValue, singleVecEntry);
 						}
 						finalize_response_part(&LoopEntryValue, response_format, "string");

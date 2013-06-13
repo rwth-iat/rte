@@ -164,3 +164,4 @@ OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT res
 
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format);
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT response_format);
