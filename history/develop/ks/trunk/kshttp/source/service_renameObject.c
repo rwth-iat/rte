@@ -98,7 +98,9 @@ OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	addrp = (OV_RENAMEOBJECT_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_RENAMEOBJECT_ITEM));
 	if(!addrp) {
 		ov_memstack_unlock();
-		EXEC_RENAMEOBJECT_RETURN OV_ERR_TARGETGENERIC;
+		fr = OV_ERR_TARGETGENERIC;
+		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		EXEC_RENAMEOBJECT_RETURN fr;
 	}
 
 	params.items_val = addrp;

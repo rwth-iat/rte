@@ -206,31 +206,12 @@ OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_
  */
 OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text){
 	OV_UINT i = 0;
-	OV_STRING strFailuredetail = NULL;
-	OV_STRING strResult = NULL;
+	OV_STRING temp = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 	OV_RESULT lasterror = OV_ERR_OK;
 
-/*  "alt"
-<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
-	<setvar>
-		<success/>
-	</setvar>
-</response>
-or
-<response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
-	<setvar>
-		<failure/>
-		<failuredetail>
-			<failure>17</failure>
-			<success/>
-		</failuredetail>
-	</setvar>
-</response>
-*/
 
-
-/* "neu"
+/*
 <response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">
 	<setvar>
 		<success/>
@@ -253,45 +234,49 @@ or
 </response>
 */
 
-	begin_response_part(&strFailuredetail, response_format, "failuredetail");
+	for (i=0; i< len;i++){
+		if(Ov_Fail(results[i])){
+			lasterror = results[i];
+		}
+	}
+
+	if(len > 1 && lasterror != OV_ERR_OK){
+		//wrap in "mixed" if multiple results were given
+		begin_response_part(&temp, response_format, "mixed");
+	}
 	for (i=0; i< len;i++){
 		if(Ov_Fail(results[i])){
 			fr = results[i];
-			lasterror = fr;
-			begin_response_part(&strFailuredetail, response_format, "failure");
+			begin_response_part(&temp, response_format, "failure");
 			if(response_format == RESPONSE_FORMAT_KSX){
-				if(strFailuredetail == NULL){
-					ov_string_print(&strFailuredetail, "%i", fr);
+				if(temp == NULL){
+					ov_string_print(&temp, "%i", fr);
 				}else{
-					ov_string_print(&strFailuredetail, "%s%i", strFailuredetail, fr);
+					ov_string_print(&temp, "%s%i", temp, fr);
 				}
 			}else{
-				if(strFailuredetail == NULL){
-					ov_string_print(&strFailuredetail, "%s%s", ov_result_getresulttext(fr), explain_text);
+				if(temp == NULL){
+					ov_string_print(&temp, "%s%s", ov_result_getresulttext(fr), explain_text);
 				}else{
-					ov_string_print(&strFailuredetail, "%s%s%s", strFailuredetail, ov_result_getresulttext(fr), explain_text);
+					ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
 				}
 			}
-			finalize_response_part(&strFailuredetail, response_format, "failure");
+			finalize_response_part(&temp, response_format, "failure");
 		}else{
-			begin_response_part(&strFailuredetail, response_format, "success");
-			finalize_response_part(&strFailuredetail, response_format, "success");
+			begin_response_part(&temp, response_format, "success");
+			finalize_response_part(&temp, response_format, "success");
+			if(len == 1 && lasterror == OV_ERR_OK){
+				//only one success
+				break;
+			}
 		}
 	}
-	finalize_response_part(&strFailuredetail, response_format, "failuredetail");
-	if(Ov_Fail(lasterror)){
-		begin_response_part(&strResult, response_format, "failure");
-		finalize_response_part(&strResult, response_format, "failure");
-		ov_string_append(&strResult, strFailuredetail);
-	}else{
-		begin_response_part(&strResult, response_format, "success");
-		finalize_response_part(&strResult, response_format, "success");
+	if(len > 1 && lasterror != OV_ERR_OK){
+		finalize_response_part(&temp, response_format, "mixed");
 	}
-	ov_string_append(output, strResult);
-	ov_string_setvalue(&strFailuredetail, NULL);
-	ov_string_setvalue(&strResult, NULL);
+	ov_string_append(output, temp);
 
-	return fr;
+	return lasterror;
 }
 
 /**

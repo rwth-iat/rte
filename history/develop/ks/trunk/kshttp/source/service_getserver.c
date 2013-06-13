@@ -40,12 +40,13 @@
 
 #define EXEC_GETSERVER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&servername, NULL);\
+		ov_string_setvalue(&http_port, NULL);\
 		Ov_SetDynamicVectorLength(&protocols, 0, STRING);\
 		Ov_SetDynamicVectorLength(&ports, 0, STRING);\
 		return
 
 /**
- * Syntax: /getServer???
+ * Syntax: /getServer?servername=hallowelt&serverversion=2
  *
  * extracts the command for the getserver and let do ks_server_getserver the job
  * @param args arguments of the http get request
@@ -65,7 +66,7 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	OV_TIME ExpTime;
 	OV_INT registeredVersion;
 	OV_UINT i = 0;
-	OV_UINT http_port;
+	OV_STRING http_port;
 
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
@@ -121,7 +122,8 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 		if(i<protocols.veclen)
 		{	/*	kshttp supported	*/
 			KS_logfile_debug(("kshttp_getserver: getserver: kshttp supported."));
-			http_port = atoi(ports.value[i]);
+			//fixme atoi und %u print?
+			ov_string_setvalue(&http_port, ports.value[i]);
 		}
 		else
 		{	/*	kshttp not supported	*/
@@ -150,11 +152,11 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	begin_response_part(message, response_format, "port");
 	if(*message == NULL){
 		//could be the case at format=plain
-		ov_string_print(message, "%u", http_port);
+		ov_string_setvalue(message, http_port);
 	}else{
-		ov_string_print(message, "%s%u", *message, http_port);
+		ov_string_append(message, http_port);
 	}
-	finalize_response_part(message, response_format, "port");
+	fr = finalize_response_part(message, response_format, "port");
 	/* needed?
 	begin_response_part(&temp, response_format, "servername");
 	ov_string_append(&temp, servername);
@@ -164,5 +166,5 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	finalize_response_part(&temp, response_format, "serverversion");
 	*/
 
-	EXEC_GETSERVER_RETURN OV_ERR_OK;
+	EXEC_GETSERVER_RETURN fr;
 }

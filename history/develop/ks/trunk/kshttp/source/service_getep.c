@@ -283,7 +283,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
 			ov_string_append(re, "internal memory problem");
-			EXEC_GETEP_RETURN OV_ERR_GENERIC; //404
+			fr = OV_ERR_GENERIC;
+			print_result_array(&message, response_format, &fr, 1, ": memory problem");
+			EXEC_GETEP_RETURN fr; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
