@@ -3008,15 +3008,17 @@ cshmi.prototype = {
 			OffsetSource += parseFloat(requestList[ObjectPath]["offset"]);
 			OffsetTarget += parseFloat(requestList[ObjectPath]["offset"]);
 			
-			//remember the result
-			VisualObject.ResourceList = new Object();
-			VisualObject.ResourceList.RoutePolyline = new Object();
-			VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint = SourceConnectionPoint;
-			VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection = SourceConnectionPointdirection;
-			VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint = TargetConnectionPoint;
-			VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection = TargetConnectionPointdirection;
-			VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
-			VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
+			if(this.initStage === false){
+				//remember the result
+				VisualObject.ResourceList = new Object();
+				VisualObject.ResourceList.RoutePolyline = new Object();
+				VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint = SourceConnectionPoint;
+				VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection = SourceConnectionPointdirection;
+				VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint = TargetConnectionPoint;
+				VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection = TargetConnectionPointdirection;
+				VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
+				VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
+			}
 		}
 		
 		if (SourceConnectionPoint === null){
@@ -3054,15 +3056,18 @@ cshmi.prototype = {
 			parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
-		if (	xStart !== VisualObject.ResourceList.RoutePolyline.xStart ||
+		if (	this.initStage === true ||
+				xStart !== VisualObject.ResourceList.RoutePolyline.xStart ||
 				yStart !== VisualObject.ResourceList.RoutePolyline.yStart ||
 				xEnd !== VisualObject.ResourceList.RoutePolyline.xEnd ||
 				yEnd !== VisualObject.ResourceList.RoutePolyline.yEnd) {
-			//cache new start- and endPoints
-			VisualObject.ResourceList.RoutePolyline.xStart = xStart;
-			VisualObject.ResourceList.RoutePolyline.yStart = yStart;
-			VisualObject.ResourceList.RoutePolyline.xEnd = xEnd;
-			VisualObject.ResourceList.RoutePolyline.yEnd = yEnd;
+			if(this.initStage === false){
+				//cache new start- and endPoints
+				VisualObject.ResourceList.RoutePolyline.xStart = xStart;
+				VisualObject.ResourceList.RoutePolyline.yStart = yStart;
+				VisualObject.ResourceList.RoutePolyline.xEnd = xEnd;
+				VisualObject.ResourceList.RoutePolyline.yEnd = yEnd;
+			}
 			
 			var points = "";
 			
@@ -3535,6 +3540,7 @@ cshmi.prototype = {
 		
 		//id should be the name of the parent plus our identifier
 		var NameList = PathOfTemplateDefinition.split("/");
+		//fixme should be the name of the template, not the definition
 		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
 		NameList = null;
 		
