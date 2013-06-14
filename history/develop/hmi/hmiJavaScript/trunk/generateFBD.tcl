@@ -40,7 +40,7 @@ proc processDir {ovpath} {
 		
 		#default value
 		set mimetype "text/html"
-		set encodingvalue "Windows-1252"
+		set encodingvalue "windows-1252"
 		if { $extension == ".tcl" } {
 			puts "skipping myself"
 			continue
@@ -161,7 +161,7 @@ if {$::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
 		file delete $targetname
 	}
 	file copy $fbdfilename $targetname
-	puts "Moved to $::env(FBDmovetarget)/$fbdfilename"
+	puts "Copied to $::env(FBDmovetarget)/$fbdfilename"
 }
 
 puts "== End processing static files =="
