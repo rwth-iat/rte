@@ -971,7 +971,9 @@ cshmi.prototype = {
 			//todo interprete elemVarPath
 			
 			//some elemVars are special, as they are different in OVM and SVG
-			if (ParameterValue === "content"){
+			if (ParameterValue === "strokeWidth"){
+				return VisualObject.getAttribute("stroke-width");
+			}else if (ParameterValue === "content"){
 				if (typeof VisualObject.textContent != "undefined"){
 					return VisualObject.textContent;
 				}else if (typeof VisualObject.innerText != "undefined"){
@@ -1204,7 +1206,12 @@ cshmi.prototype = {
 				//intentionally no value
 				return null;
 			}
-			var path = FBRef+"."+ParameterValue;
+			if(ParameterValue.charAt(0) !== "/"){
+				var path = FBRef+"."+ParameterValue;
+			}else{
+				//todo doku
+				path = FBRef+ParameterValue;
+			}
 			
 			if(callerObserver !== undefined && callerObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
@@ -1558,7 +1565,9 @@ cshmi.prototype = {
 			//todo interprete elemVarPath
 			
 			//some elemVars are special, as they are different in OVM and SVG
-			if (ParameterValue === "content"){
+			if (ParameterValue === "strokeWidth"){
+				VisualObject.setAttribute("stroke-width", NewValue);
+			}else if (ParameterValue === "content"){
 				this._setSvgText(VisualObject, NewValue, VisualObject.getAttribute("trimToLength"));
 			}else if (ParameterValue === "trimToLength"){
 				this._setSvgText(VisualObject, null, NewValue);
@@ -1788,7 +1797,12 @@ cshmi.prototype = {
 				path = FBRef[0];
 				result = HMI.KSClient.renameObject(path, NewValue, null, SetVarCbfnc, true);
 			}else{
-				path = FBRef[0]+"."+ParameterValue;
+				if(ParameterValue.charAt(0) !== "/"){
+					path = FBRef[0]+"."+ParameterValue;
+				}else{
+					path = FBRef[0]+ParameterValue;
+				}
+				
 				result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
 			}
 			if (result !== true){
