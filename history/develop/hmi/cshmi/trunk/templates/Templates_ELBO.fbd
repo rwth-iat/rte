@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-05-29 16:22:34
+  Erstellt : 2013-06-14 17:33:23
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -321,6 +321,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.then/setX30 :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -480,6 +481,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.then/setX00 :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -639,6 +641,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.then/setXminus30 :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -715,6 +718,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/title/onload/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -772,6 +776,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/line/onload/setRotation :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "rotate";
         elemVarPath : INPUT  STRING = "";
@@ -858,6 +863,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/line1/onload/dashedLine :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke-dasharray";
         elemVarPath : INPUT  STRING = "";
@@ -929,6 +935,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline/figure/onload/setWidth :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "width";
         elemVarPath : INPUT  STRING = "";
@@ -997,7 +1004,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -1006,7 +1013,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.if :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1014,7 +1021,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.then :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1022,7 +1029,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.else :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -1030,7 +1037,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.if/comp :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -1040,14 +1047,14 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.if/comp.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "elementvisible";
+        persistentGlobalVar : INPUT  STRING = "ActiveFrameSheetOne";
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
@@ -1058,7 +1065,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.if/comp.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1076,9 +1083,10 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.then/setvisible :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then/setvisible :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -1092,7 +1100,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.then/setvisible.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then/setvisible.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1110,9 +1118,89 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.else/setvisible :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SheetNumber";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "One";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then/setvisible :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -1126,7 +1214,235 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/if.else/setvisible.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then/setvisible.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "ActiveFrameSheetTwo";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "title";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then/setvisible :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then/setvisible.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SheetNumber";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "Two";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then/setvisible :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then/setvisible.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1207,6 +1523,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/titel/onload/setTitel :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1246,14 +1563,94 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/setActiveFrame :
-    CLASS /Libraries/cshmi/SetValue;
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
         globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "elementvisible";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SheetNumber";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "One";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then/setActiveFrame :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "ActiveFrameSheetOne";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
@@ -1262,7 +1659,121 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/setActiveFrame.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then/setActiveFrame.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "title";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SheetNumber";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "Two";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then/setActiveFrame :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "ActiveFrameSheetTwo";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then/setActiveFrame.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -1343,6 +1854,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/Text/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1385,6 +1897,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/onload/setCursorDefault :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "cursor";
         elemVarPath : INPUT  STRING = "";
@@ -1479,6 +1992,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/title/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1521,6 +2035,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/onload/setCursorDefaut :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "cursor";
         elemVarPath : INPUT  STRING = "";
@@ -1827,6 +2342,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.then/setX60 :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -1986,6 +2502,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.then/setX30 :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -2020,6 +2537,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.else/setX30_BasicState :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -2183,7 +2701,7 @@
     VARIABLE_VALUES
         x : INPUT  SINGLE = 80.000000;
         y : INPUT  SINGLE = 0.000000;
-        content : INPUT  STRING = "Elektrodendurchführung1";
+        content : INPUT  STRING = "ElektrodendurchfÃ¼hrung1";
         fontSize : INPUT  STRING = "17px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -2212,6 +2730,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionText/onload/setCaption :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2305,6 +2824,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMax :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -2339,6 +2859,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMin :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -2703,9 +3224,13 @@
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,0 L0,100
+
 M20,10 h5 v-5 v10 
+
 M-20,90 h-5 v-5 v10
+
 M-10,10 H10 
+
 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -2767,11 +3292,17 @@ m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,20 v20
+
 M-14,-14 L11,-17
+
 M-14,14 L11,17
+
 M-16,0
+
 A17,17 0 0 0 9,-14
+
 A17,17 0 0 0 9,14
+
 A17,17 0 0 0 -16,0";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -2841,6 +3372,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textPCUname/onload/setName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2917,6 +3449,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextAddress/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2982,6 +3515,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextName/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3047,6 +3581,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextOrt/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3237,6 +3772,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text1/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3302,6 +3838,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text2/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3367,6 +3904,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text3/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3413,11 +3951,17 @@ A17,17 0 0 0 -16,0";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,0
+
 v-30
+
 m0,30
+
 m-15,0 h30
+
 m-15,0 l-15,-30 h30 l-15,30
+
 m-8,-15 h-12
+
 m10,15 l-5,8";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -3470,6 +4014,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/Set_Background :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -3504,6 +4049,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetWidth :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "width";
         elemVarPath : INPUT  STRING = "";
@@ -3538,6 +4084,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetHeight :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "height";
         elemVarPath : INPUT  STRING = "";
@@ -3655,6 +4202,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Set_title :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3890,6 +4438,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/Set_Background :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -3924,6 +4473,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetWidth :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "width";
         elemVarPath : INPUT  STRING = "";
@@ -3958,6 +4508,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetHeight :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "height";
         elemVarPath : INPUT  STRING = "";
@@ -4075,6 +4626,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Set_title :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -4281,6 +4833,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/click/Set_activateOMW :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -4354,6 +4907,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_xPos :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "absolutex";
         elemVarPath : INPUT  STRING = "";
@@ -4388,6 +4942,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_yPos :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "absolutey";
         elemVarPath : INPUT  STRING = "";
@@ -4489,6 +5044,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Title/onload/Set_title :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -4610,6 +5166,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.then/Set_Visible :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -4644,6 +5201,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.else/Set_Visible_False :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -4712,6 +5270,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/onload/SetRotate :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "rotate";
         elemVarPath : INPUT  STRING = "";
@@ -4904,7 +5463,7 @@ m10,15 l-5,8";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "Lösen";
+        value : INPUT  STRING = "LÃ¶sen";
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
@@ -5038,6 +5597,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.then/setRed :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5072,6 +5632,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.else/SetGrey :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5231,6 +5792,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.then/setGreen :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5265,6 +5827,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.else/SetGrey :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5409,6 +5972,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.else/Set_Title :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -5503,6 +6067,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Identifier/onload/Set_Content :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -5642,6 +6207,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationValue/cyclicUpdate/Set_Value :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -5804,6 +6370,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationValue/cyclicUpdate/Set_Value :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -6047,6 +6614,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.then/Set_False :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -6081,6 +6649,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.else/Set_True :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -6188,7 +6757,7 @@ m10,15 l-5,8";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
-        width : INPUT  SINGLE = 400.000000;
+        width : INPUT  SINGLE = 380.000000;
         height : INPUT  SINGLE = 15.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -6201,16 +6770,15 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm :
-    CLASS /Libraries/cshmi/TimeEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged :
+    CLASS /Libraries/cshmi/ClientEvent;
     VARIABLE_VALUES
-        cyctime : INPUT  SINGLE = 3.000000;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
@@ -6219,7 +6787,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.if :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6227,7 +6795,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6235,7 +6803,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.else :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6243,7 +6811,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.if/comp :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -6253,7 +6821,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.if/comp.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6264,93 +6832,14 @@ m10,15 l-5,8";
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "SignalType";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "H";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "WarningHL";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6368,84 +6857,16 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_red :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "fill";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_red.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_grey :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "fill";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_grey.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "lightgrey";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True :
     CLASS /Libraries/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 1;
+        zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.if :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6453,7 +6874,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6461,7 +6882,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.else :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else :
     CLASS /Libraries/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
@@ -6469,7 +6890,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.if/comp :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp :
     CLASS /Libraries/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
@@ -6479,7 +6900,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.if/comp.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp.value1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6490,93 +6911,14 @@ m10,15 l-5,8";
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "SignalType";
+        TemplateConfigValues : INPUT  STRING = "QuitAlarmPulse";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "HH";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "AlarmHL";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp.value2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6594,9 +6936,10 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_red :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then/Set_fill :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6610,7 +6953,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_red.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then/Set_fill.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -6628,9 +6971,10 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_grey :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else/Set_AlarmPulse :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6644,156 +6988,16 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_grey.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else/Set_AlarmPulse.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "AlarmPulse";
         persistentGlobalVar : INPUT  STRING = "";
         OperatorInput : INPUT  STRING = "";
         TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "lightgrey";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 2;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "SignalType";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "L";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "WarningLL";
         TemplateFBVariableReferenceName : INPUT  STRING = "";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
@@ -6802,27 +7006,10 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_red :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else/Set_lightgrey :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6836,267 +7023,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_red.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_grey :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "fill";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_grey.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "lightgrey";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 3;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "SignalType";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "LL";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
-    VARIABLE_VALUES
-        anycond : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
-    VARIABLE_VALUES
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
-    VARIABLE_VALUES
-        comptype : INPUT  STRING = "==";
-        ignoreError : INPUT  BOOL = FALSE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "AlarmLL";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  UNKNOWN = ;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  BOOL = TRUE;
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_red :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "fill";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_red.value :
-    CLASS /Libraries/cshmi/GetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        OperatorInput : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        value : INPUT  STRING = "red";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_grey :
-    CLASS /Libraries/cshmi/SetValue;
-    VARIABLE_VALUES
-        ksVar : INPUT  STRING = "";
-        elemVar : INPUT  STRING = "fill";
-        elemVarPath : INPUT  STRING = "";
-        globalVar : INPUT  STRING = "";
-        persistentGlobalVar : INPUT  STRING = "";
-        TemplateFBReferenceVariable : INPUT  STRING = "";
-        TemplateFBVariableReferenceName : INPUT  STRING = "";
-        TemplateConfigValues : INPUT  STRING = "";
-        zindex : INPUT  UINT = 0;
-        baseKsPath : INPUT  STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_grey.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else/Set_lightgrey.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -7135,9 +7062,9 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SecondLine :
     CLASS /Libraries/cshmi/Line;
     VARIABLE_VALUES
-        x1 : INPUT  SINGLE = 370.000000;
+        x1 : INPUT  SINGLE = 350.000000;
         y1 : INPUT  SINGLE = 0.000000;
-        x2 : INPUT  SINGLE = 370.000000;
+        x2 : INPUT  SINGLE = 350.000000;
         y2 : INPUT  SINGLE = 15.000000;
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -7155,7 +7082,7 @@ m10,15 l-5,8";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 5.000000;
         y : INPUT  SINGLE = 8.000000;
-        content : INPUT  STRING = "10.10 T007A";
+        content : INPUT  STRING = "loading...";
         fontSize : INPUT  STRING = "12px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -7184,6 +7111,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/TagName/onload/Set_Content :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7220,7 +7148,7 @@ m10,15 l-5,8";
     VARIABLE_VALUES
         x : INPUT  SINGLE = 95.000000;
         y : INPUT  SINGLE = 8.000000;
-        content : INPUT  STRING = "10.10 T007A";
+        content : INPUT  STRING = "loading...";
         fontSize : INPUT  STRING = "12px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -7249,6 +7177,7 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Description/onload/Set_Content :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7283,9 +7212,9 @@ m10,15 l-5,8";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType :
     CLASS /Libraries/cshmi/Text;
     VARIABLE_VALUES
-        x : INPUT  SINGLE = 375.000000;
+        x : INPUT  SINGLE = 355.000000;
         y : INPUT  SINGLE = 8.000000;
-        content : INPUT  STRING = "10.10 T007A";
+        content : INPUT  STRING = "";
         fontSize : INPUT  STRING = "12px";
         fontStyle : INPUT  STRING = "normal";
         fontWeight : INPUT  STRING = "normal";
@@ -7311,9 +7240,89 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/Set_Content :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "XX";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else/Set_Content :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7327,7 +7336,7 @@ m10,15 l-5,8";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/Set_Content.value :
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else/Set_Content.value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -7586,6 +7595,1390 @@ m10,15 l-5,8";
         TemplateConfigValues : INPUT  STRING = "";
         value : INPUT  UNKNOWN = ;
         zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "Fixme";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "True";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then/Set_opacity :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "opacity";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then/Set_opacity.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  SINGLE = 0.500000;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit :
+    CLASS /Libraries/cshmi/Group;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 1.000000;
+        height : INPUT  SINGLE = 1.000000;
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rect :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 380.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 15.000000;
+        height : INPUT  SINGLE = 15.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/Text :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 387.000000;
+        y : INPUT  SINGLE = 8.000000;
+        content : INPUT  STRING = "Q";
+        fontSize : INPUT  STRING = "11px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "middle";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click/Set_Quit :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "QuitAlarmPulse";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click/Set_Quit.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick :
+    CLASS /Libraries/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick/ReQuit :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "QuitAlarmPulse";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick/ReQuit.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then/set_visible :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then/set_visible.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else/set_visible :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else/set_visible.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 3.000000;
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "H";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "WarningHL";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_Config_True :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_Config_True.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_Config_False :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_Config_False.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "HH";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "AlarmHL";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_Config_TRUE :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_Config_TRUE.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_Config_False :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_Config_False.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "L";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "WarningLL";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_Config_TRUE :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_Config_TRUE.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_Config_False :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_Config_False.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "LL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "AlarmLL";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_Config_TRUE :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_Config_TRUE.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_Config_False :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "isAlarm";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_Config_False.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell :
+    CLASS /Libraries/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+        width : INPUT  SINGLE = 100.000000;
+        height : INPUT  SINGLE = 100.000000;
+        comment : INPUT  STRING = "";
+        zindex : INPUT  UINT = 26;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell/FirstCell :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/AlarmCell";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[1] : INPUT  STRING = {"dummy:catchConfigValueWrite"};
+        ConfigValues[1] : INPUT  STRING = {"SignalType:H"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell/SecondCell :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "ELBO/AlarmCell";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[0] : INPUT  STRING = {};
+        FBVariableReference[1] : INPUT  STRING = {"dummy:catchConfigValueWrite"};
+        ConfigValues[2] : INPUT  STRING = {"SignalType:HH" , "DoubleOffset:TRUE"};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

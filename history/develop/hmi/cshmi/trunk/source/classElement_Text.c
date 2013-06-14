@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 		return ov_string_setvalue(&pobj->v_horAlignment,"start");
 	}else if (ov_string_compare(value, "center") == OV_STRCMP_EQUAL){
 		//fixing common typo
-		return ov_string_setvalue(&pobj->v_verAlignment,"middle");
+		return ov_string_setvalue(&pobj->v_horAlignment,"middle");
 	}else if (	ov_string_compare(value, "start") == OV_STRCMP_EQUAL
 			||	ov_string_compare(value, "middle") == OV_STRCMP_EQUAL
 			||	ov_string_compare(value, "end") == OV_STRCMP_EQUAL){

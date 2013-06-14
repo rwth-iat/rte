@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-05-15 16:02:38
+  Erstellt : 2013-06-14 17:33:36
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -98,6 +98,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/CaptionText/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -288,6 +289,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/SigAdaptCheckMin.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -447,6 +449,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/SigAdaptCheckMax.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -606,6 +609,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckHH.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -765,6 +769,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckMin.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -924,6 +929,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckMax.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1083,6 +1089,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckH.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1242,6 +1249,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckL.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1401,6 +1409,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/ValueText/onload/nameCheckLL.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1545,6 +1554,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplateSensorEntry/unitText/onload/initUnitText.then/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1639,6 +1649,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara1/Unit/onload/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1705,6 +1716,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara1/Value/cycUpdate/setValue :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1770,6 +1782,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara1/descriptionText/onload/setDescription :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1864,6 +1877,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara2/Unit/onload/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1930,6 +1944,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara2/Value/cycUpdate/setValue :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -1995,6 +2010,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/FaceplatePCUDisplayPara2/descriptionText/onload/setDescription :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2225,6 +2241,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setGreen :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -2259,6 +2276,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.then/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
@@ -2293,6 +2311,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setRed :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -2327,6 +2346,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectBackground/cyclUpdate/isDigital.then/isAlarm.else/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
@@ -2466,6 +2486,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/RectValue/onload/isDigital.then/hideRect :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -2689,6 +2710,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/unitText/onload/initUnitText.then/If_Celsius.then/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2723,6 +2745,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/unitText/onload/initUnitText.then/If_Celsius.else/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2867,6 +2890,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/HeaderSensorName/onload/NameGiven.then/setName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -2980,6 +3004,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/HeaderSensorName/onload/NameGiven.else/HasSignalNameOnObj.then/setNameFromObj :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3014,6 +3039,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/HeaderSensorName/onload/NameGiven.else/HasSignalNameOnObj.else/setIdentifier :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3158,6 +3184,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/SensorValue/onload/isDigital.then/hideRect :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "visible";
         elemVarPath : INPUT  STRING = "";
@@ -3280,6 +3307,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/SensorValue/cyclUpdate/detectAMPMC.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3314,6 +3342,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/internal/SensorVisualisation/SensorValue/cyclUpdate/detectAMPMC.else/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3657,6 +3686,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/ValueText/cyclUpdate/detectAMPMC.then/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3691,6 +3721,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/ValueText/cyclUpdate/detectAMPMC.else/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3835,6 +3866,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/SensorName/onload/NameGiven.then/setName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3948,6 +3980,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/SensorName/onload/NameGiven.else/HasSignalNameOnObj.then/setNameFromObj :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -3982,6 +4015,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/SensorName/onload/NameGiven.else/HasSignalNameOnObj.else/setIdentifier :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -4790,6 +4824,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplateSensorGeneric/unitText/onload/initUnitText.then/setUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -4861,6 +4896,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/rectBBreit/onload/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
@@ -4926,6 +4962,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonBreitv1/Text/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -4997,6 +5034,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/rectBSchmal/onload/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
@@ -5062,6 +5100,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ButtonSchmalv1/Text/onload/setContent :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -5156,6 +5195,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Vesselv1/Vesselname/onload/setName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -5255,6 +5295,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/onload/setRotate :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "rotate";
         elemVarPath : INPUT  STRING = "";
@@ -5298,6 +5339,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/cacheErrorState :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -5411,6 +5453,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.then/setStrokeWarning :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -5524,6 +5567,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -5558,6 +5602,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -5671,6 +5716,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/If_ConfigBlack.then/Fill_White :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5784,6 +5830,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/If_ConfigBlack.else/testOpened.then/setFillOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5818,6 +5865,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/figure/cyclicRequest/If_ConfigBlack.else/testOpened.else/setFillNotOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -5957,6 +6005,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/cyclicRequest/If_ConfigBlack.then/Fill_White :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6070,6 +6119,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/cyclicRequest/If_ConfigBlack.else/testOpened.then/setFillOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6104,6 +6154,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/circle/cyclicRequest/If_ConfigBlack.else/testOpened.else/setFillNotOpened :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6248,6 +6299,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Valve/identity/onload/If_FP_invisible.then/setID :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -6508,6 +6560,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setOperatingState.then/setFillColorOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6542,6 +6595,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/setOperatingState.else/setFillColorNoOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -6576,6 +6630,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/cacheErrorState :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -6689,6 +6744,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.then/setStrokeWarning :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -6802,6 +6858,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.then/setStrokeError :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -6836,6 +6893,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/circle/cyclicRequest/testErrorState.else/testErrorState.else/setStrokeNoOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "stroke";
         elemVarPath : INPUT  STRING = "";
@@ -6893,6 +6951,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/line/onload/setRotate :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "rotate";
         elemVarPath : INPUT  STRING = "";
@@ -6958,6 +7017,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Pump/identity/onload/PumpName :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7230,6 +7290,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/PCUName/onload/printIdentifier.then/printIdentity :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7264,6 +7325,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/PCUName/onload/printIdentifier.else/setIdentifier :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7330,6 +7392,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/FunctionMode/updateText/setText :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -7664,6 +7727,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnSTOP/onload/If_CmdLocked.then/Set_Opacity :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "opacity";
         elemVarPath : INPUT  STRING = "";
@@ -7719,6 +7783,7 @@
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21 
+
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -7760,6 +7825,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/TransparentRectErrorState/onload/setTitle :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "title";
         elemVarPath : INPUT  STRING = "";
@@ -7882,6 +7948,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/TransparentRectErrorState/cyclicRequest/setErrorStateFailure.then/setStrokeColorOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -7916,6 +7983,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/TransparentRectErrorState/cyclicRequest/setErrorStateFailure.else/setStrokeColorNoOp :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -8029,6 +8097,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/TransparentRectErrorState/cyclicRequest/setErrorStateWarning.then/setStrokeColor :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "fill";
         elemVarPath : INPUT  STRING = "";
@@ -8127,6 +8196,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/TemplErr/infoText/cyclText/updText :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -8426,6 +8496,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/OccupancyState/CycUpdate/testState.then/SetF :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -8539,6 +8610,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/OccupancyState/CycUpdate/testState.else/testOP.then/setH :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -8652,6 +8724,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/OccupancyState/CycUpdate/testState.else/testOP.else/testAuto.then/setA :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -8765,6 +8838,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/OccupancyState/CycUpdate/testState.else/testOP.else/testAuto.else/testLocal.then/setL :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -8800,6 +8874,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9102,7 +9177,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         y : INPUT  SINGLE = 57.000000;
         FBReference[0] : INPUT  STRING = {};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:alle möglichen Befehle"};
+        ConfigValues[2] : INPUT  STRING = {"buttoncontent:" , "buttontitle:alle mÃ¶glichen Befehle"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9118,6 +9193,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
+
 M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
@@ -9429,6 +9505,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -9463,6 +9540,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
         elemVarPath : INPUT  STRING = "";
@@ -9622,6 +9700,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
         elemVarPath : INPUT  STRING = "";
@@ -9656,6 +9735,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/repositionFaceplate.else/useXYPosFromFB.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
         elemVarPath : INPUT  STRING = "";
@@ -9973,6 +10053,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/onload/killMoveCursor.then/setCursor :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "cursor";
         elemVarPath : INPUT  STRING = "";
@@ -10094,6 +10175,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setX :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "absolutex";
         elemVarPath : INPUT  STRING = "";
@@ -10128,6 +10210,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/setY :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "absolutey";
         elemVarPath : INPUT  STRING = "";
@@ -10162,6 +10245,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBXpos :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -10196,6 +10280,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/aftermove/MoveFaceplate.then/FBYpos :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -10328,6 +10413,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/onload/If_CmdLocked.then/Set_Opacity :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "opacity";
         elemVarPath : INPUT  STRING = "";
@@ -10545,7 +10631,300 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "MessageSys";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "communication/MessageSys.retrieveMessage";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageSysHeader :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "127.0.0.1##cshmiProcessControl##Messagebox/message##null##receiverName##";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageTarget :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader2a :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "##1.0##-2908634004986442940##-1.0##<?xml version=\"1.0\" encoding=\"UTF-8\"?><msg><hdr><rcvSysAdr/><rcvLocAdr>";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageTarget2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader2b :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</rcvLocAdr><msgId>-2908634004986442940</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader3 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><sd><val id=\"cmdr\">";
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader4 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><val id=\"value\">";
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messagefinalize :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val></sd></bdy></msg>";
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10561,7 +10940,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10579,7 +10958,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10597,7 +10976,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10615,7 +10994,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10633,7 +11012,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10651,7 +11030,300 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "MessageSys";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "communication/MessageSys.retrieveMessage";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageSysHeader :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "127.0.0.1##cshmiProcessControl##Messagebox/message##null##receiverName##";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageTarget :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader2a :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "##1.0##-2908634004986442940##-1.0##<?xml version=\"1.0\" encoding=\"UTF-8\"?><msg><hdr><rcvSysAdr/><rcvLocAdr>";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageTarget2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader2b :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</rcvLocAdr><msgId>-2908634004986442940</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader3 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><sd><val id=\"cmdr\">";
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader4 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><val id=\"value\">";
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Please enter new SetPoint:0.5";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messagefinalize :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val></sd></bdy></msg>";
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10667,7 +11339,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10685,7 +11357,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10703,7 +11375,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10721,7 +11393,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10739,7 +11411,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButton/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -10858,6 +11530,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/onload/If_CmdLocked.then/Set_Opacity :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "opacity";
         elemVarPath : INPUT  STRING = "";
@@ -11075,7 +11748,300 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "MessageSys";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.if/checkMessageSystem.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "communication/MessageSys.retrieveMessage";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageSysHeader :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "127.0.0.1##cshmiProcessControl##Messagebox/message##null##receiverName##";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageTarget :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader2a :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "##1.0##-2908634004986442940##-1.0##<?xml version=\"1.0\" encoding=\"UTF-8\"?><msg><hdr><rcvSysAdr/><rcvLocAdr>";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/MessageTarget2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader2b :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</rcvLocAdr><msgId>-2908634004986442940</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader3 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><sd><val id=\"cmdr\">";
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messageheader4 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><val id=\"value\">";
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFValue";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.then/deliverViaMessageSystem/Messagefinalize :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val></sd></bdy></msg>";
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11091,7 +12057,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11109,7 +12075,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11127,7 +12093,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11145,7 +12111,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11163,7 +12129,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/setOrderWithValue/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.then/DeliverOrder.else/setOrderWithValue/Value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11181,7 +12147,300 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "MessageSys";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.if/checkMessageSystem.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem :
+    CLASS /Libraries/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "communication/MessageSys.retrieveMessage";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageSysHeader :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "127.0.0.1##cshmiProcessControl##Messagebox/message##null##receiverName##";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageTarget :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader2a :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "##1.0##-2908634004986442940##-1.0##<?xml version=\"1.0\" encoding=\"UTF-8\"?><msg><hdr><rcvSysAdr/><rcvLocAdr>";
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/MessageTarget2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "absolutepathname";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader2b :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</rcvLocAdr><msgId>-2908634004986442940</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Command :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PFCommand";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader3 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><sd><val id=\"cmdr\">";
+        zindex : INPUT  UINT = 6;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Commander :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "OP";
+        zindex : INPUT  UINT = 7;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messageheader4 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val><val id=\"value\">";
+        zindex : INPUT  UINT = 8;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "textinput:Please enter new SetPoint:0.5";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 9;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.then/deliverViaMessageSystem/Messagefinalize :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "</val></sd></bdy></msg>";
+        zindex : INPUT  UINT = 10;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue :
     CLASS /Libraries/cshmi/SetConcatValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11197,7 +12456,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Commander :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Commander :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11215,7 +12474,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/semicolon1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/semicolon1 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11233,7 +12492,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Command :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Command :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11251,7 +12510,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/semicolon2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/semicolon2 :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11269,7 +12528,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/setOrderWithOperatorinputValue/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/PCUCommandButtonSchmal/BtnCmd/click/If_CmdLocked.else/setOrder.else/DeliverOrder.else/setOrderWithOperatorinputValue/Value :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
@@ -11388,6 +12647,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensor/onload/checkAMPMC.then/savePhysicalUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -11593,6 +12853,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/Sensor/onload/checkAMPMC.else/checkDigital.else/savePhysicalUnit :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
         elemVarPath : INPUT  STRING = "";
@@ -11665,13 +12926,1136 @@ M37.8 14 L39.9 17.5 L37.8 21";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple :
+    CLASS /Libraries/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+        width : INPUT  SINGLE = 80.000000;
+        height : INPUT  SINGLE = 20.000000;
+        comment : INPUT  STRING = "SensorValueVar:fullpathToKSvar;SignalName:Var42;PhysicalUnit:xx";
+        zindex : INPUT  UINT = 12;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "SensorValueVar";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "TRUE";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL_FALSE :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL_FALSE.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "SensorValueVar";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.if/If_BOOL_FALSE.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "FALSE";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.then/Save_InputType_BOOL :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.then/Save_InputType_BOOL.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "BOOL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.else/Save_InputType :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/onload/CheckInputType.else/Save_InputType.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "SINGLE";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 80.000000;
+        height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "lightgrey";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 1.000000;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "BOOL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "SensorValueVar";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = TRUE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.then/Set_Red :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.then/Set_Red.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "red";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.else/Set_Green :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "fill";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectBackground/cyclic_Update/If_BOOL.then/If_Alarm.else/Set_Green.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "limegreen";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue :
+    CLASS /Libraries/cshmi/Rectangle;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 80.000000;
+        y : INPUT  SINGLE = 0.000000;
+        width : INPUT  SINGLE = 120.000000;
+        height : INPUT  SINGLE = 20.000000;
+        strokeWidth : INPUT  SINGLE = 1.000000;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "white";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 2;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "BOOL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.then/Hide_Value :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/RectValue/onload/If_BOOL.then/Hide_Value.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 160.000000;
+        y : INPUT  SINGLE = 11.000000;
+        content : INPUT  STRING = "";
+        fontSize : INPUT  STRING = "12px";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "!=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "BOOL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.then/Set_Unit :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/unitText/onload/If_InputType_SINGLE.then/Set_Unit.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "PhysicalUnit";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 5.000000;
+        y : INPUT  SINGLE = 10.000000;
+        content : INPUT  STRING = "Unknown";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "start";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 0;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 4;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "!=";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalName";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.then/Set_content_fromConfig :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.then/Set_content_fromConfig.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "SignalName";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.else/Set_content_fromObj :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/HeaderSensorName/onload/If_GivenSignalName.else/Set_content_fromObj.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "SignalName";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue :
+    CLASS /Libraries/cshmi/Text;
+    VARIABLE_VALUES
+        x : INPUT  SINGLE = 155.000000;
+        y : INPUT  SINGLE = 10.000000;
+        content : INPUT  STRING = "";
+        fontSize : INPUT  STRING = "medium";
+        fontStyle : INPUT  STRING = "normal";
+        fontWeight : INPUT  STRING = "normal";
+        fontFamily : INPUT  STRING = "'Times New Roman',Times,serif";
+        horAlignment : INPUT  STRING = "end";
+        verAlignment : INPUT  STRING = "middle";
+        trimToLength : INPUT  INT = 4;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "none";
+        fill : INPUT  STRING = "black";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 5;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload :
+    CLASS /Libraries/cshmi/ClientEvent;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE :
+    CLASS /Libraries/cshmi/IfThenElse;
+    VARIABLE_VALUES
+        anycond : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.if :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.then :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.else :
+    CLASS /Libraries/cshmi/csContainer;
+    VARIABLE_VALUES
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.if/comp :
+    CLASS /Libraries/cshmi/Compare;
+    VARIABLE_VALUES
+        comptype : INPUT  STRING = "==";
+        ignoreError : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.if/comp.value1 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "InputType";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.if/comp.value2 :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  STRING = "BOOL";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.then/Set_visible :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "visible";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/onload/If_InputType_SINGLE.then/Set_visible.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  BOOL = FALSE;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/cyclicUpdate :
+    CLASS /Libraries/cshmi/TimeEvent;
+    VARIABLE_VALUES
+        cyctime : INPUT  SINGLE = 1.000000;
+        zindex : INPUT  UINT = 1;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/cyclicUpdate/Set_content :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "content";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "";
+        TemplateConfigValues : INPUT  STRING = "";
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/SensorSimple/SensorValue/cyclicUpdate/Set_content.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+        ksVar : INPUT  STRING = "";
+        elemVar : INPUT  STRING = "";
+        elemVarPath : INPUT  STRING = "";
+        globalVar : INPUT  STRING = "";
+        persistentGlobalVar : INPUT  STRING = "";
+        OperatorInput : INPUT  STRING = "";
+        TemplateFBReferenceVariable : INPUT  STRING = "";
+        TemplateFBVariableReferenceName : INPUT  STRING = "SensorValueVar";
+        TemplateConfigValues : INPUT  STRING = "";
+        value : INPUT  UNKNOWN = ;
+        zindex : INPUT  UINT = 0;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/VesselCurrent :
     CLASS /Libraries/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 12;
+        zindex : INPUT  UINT = 13;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -11702,7 +14086,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         width : INPUT  SINGLE = 40.000000;
         height : INPUT  SINGLE = 20.000000;
         comment : INPUT  STRING = "xy position at center, so easy rotatable; width 50, height 25";
-        zindex : INPUT  UINT = 13;
+        zindex : INPUT  UINT = 14;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -11741,6 +14125,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ValveHand/identity/onload/setID :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "content";
         elemVarPath : INPUT  STRING = "";
@@ -11798,6 +14183,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/ValveHand/figure/onload/rotate :
     CLASS /Libraries/cshmi/SetValue;
     VARIABLE_VALUES
+        translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "rotate";
         elemVarPath : INPUT  STRING = "";
@@ -11835,7 +14221,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 14;
+        zindex : INPUT  UINT = 15;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -11896,7 +14282,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
         comment : INPUT  STRING = "";
-        zindex : INPUT  UINT = 15;
+        zindex : INPUT  UINT = 16;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
