@@ -481,7 +481,7 @@ if(new == 0){
 		sprintf(help, "\ttclsh $(PREBUILD) %s $(MAKMAKOPTIONS)\n", libname);
 		compatiblePath(help);
 		fprintf(fd, "%s", help);
-		fprintf(fd, "\t$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*\n");
+		fprintf(fd, "\t$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*\n");
 		sprintf(help, "\ttclsh $(POSTBUILD) %s\n", libname);
 		compatiblePath(help);
 		fprintf(fd, "%s", help);
