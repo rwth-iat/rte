@@ -4946,7 +4946,7 @@ cshmi.prototype = {
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
-			if (configArray["rotate"] && configArray["rotate"] !== "0"){
+			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.parentNode != null && VisualObject.parentNode.tagName !== "g"){
 				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			}
 		}else if (configArray["rotate"] && configArray["rotate"] !== "0"){
