@@ -56,24 +56,13 @@ OV_DLLFNCEXPORT void fbcomlib_pkgGetVariable_typemethod(
 	 *   local variables
 	 */
 	OV_INSTPTR_fbcomlib_pkgGetVariable pinst = Ov_StaticPtrCast(fbcomlib_pkgGetVariable, pfb);
-	OV_INSTPTR_fbcomlib_getVar	pGetVar = Ov_GetParent(fbcomlib_PkgVar, pinst);
+	OV_INSTPTR_fbcomlib_getVar	pGetVar = Ov_StaticPtrCast(fbcomlib_getVar, Ov_GetParent(fbcomlib_PkgVar, pinst));
 	OV_RESULT result;
 
 	if(pGetVar)
 	{	/*	we are connected to a parent getVar	*/
-		if((pGetVar->v_state == FBCOMLIB_STATE_OK) ||(pGetVar->v_state == FBCOMLIB_STATE_INIT))
-		{	/*	ready to start	*/
-			/*	ksapi-object found	*/
-			if(!pGetVar->v_doCyclic)
-			{	/*	single send requested	*/
-				result = ov_string_setvalue(&(pinst->p_apiVar.v_path), pinst->v_path);
-				if(Ov_Fail(result))
-				{
-					pGetVar->v_errorCode = result;
-					fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pGetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
-					return;
-				}
-			}
+		if((pGetVar->v_state == FBCOMLIB_STATE_OK) ||(pGetVar->v_state == FBCOMLIB_STATE_INIT)||(pGetVar->v_state == FBCOMLIB_STATE_WAITING))
+		{
 			if(pGetVar->p_apiGet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
 			{	/*	ksapi-request completed --> get answer	*/
 				pinst->v_varResult = pinst->p_apiVar.v_varRes;
@@ -81,11 +70,24 @@ OV_DLLFNCEXPORT void fbcomlib_pkgGetVariable_typemethod(
 					fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pGetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
 				return;
 			}
-			return;
+
+			if((pGetVar->v_state == FBCOMLIB_STATE_OK) ||(pGetVar->v_state == FBCOMLIB_STATE_INIT))
+			{	/*	ready to start	*/
+				/*	ksapi-object found	*/
+				if(!pGetVar->v_doCyclic)
+				{	/*	single send requested	*/
+					result = ov_string_setvalue(&(pinst->p_apiVar.v_path), pinst->v_path);
+					if(Ov_Fail(result))
+					{
+						pGetVar->v_errorCode = result;
+						fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pGetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
+						return;
+					}
+				}
+				return;
+			}
 		}
-
 	}
-
 	return;
 }
 

@@ -55,38 +55,37 @@ OV_DLLFNCEXPORT void fbcomlib_pkgSetVariable_typemethod(
     *   local variables
     */
     OV_INSTPTR_fbcomlib_pkgSetVariable pinst = Ov_StaticPtrCast(fbcomlib_pkgSetVariable, pfb);
-    OV_INSTPTR_fbcomlib_setVar	pSetVar = Ov_GetParent(fbcomlib_PkgVar, pinst);
+    OV_INSTPTR_fbcomlib_setVar	pSetVar = Ov_StaticPtrCast(fbcomlib_setVar, Ov_GetParent(fbcomlib_PkgVar, pinst));
     OV_RESULT result;
 
     if(pSetVar)
     {	/*	we are connected to a parent getVar	*/
-    	if((pSetVar->v_state == FBCOMLIB_STATE_OK) ||(pSetVar->v_state == FBCOMLIB_STATE_INIT))
-    	{	/*	ready to start	*/
-    		/*	ksapi-object found	*/
-    		if(!pSetVar->v_doCyclic)
-    		{	/*	single send requested	*/
-    			result = ov_string_setvalue(&(pinst->p_apiVar.v_path), pinst->v_path);
-    			if(Ov_Fail(result))
-    			{
-    				pSetVar->v_errorCode = result;
-    				fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pSetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
-    				return;
-    			}
-    		}
+    	if((pSetVar->v_state == FBCOMLIB_STATE_OK) ||(pSetVar->v_state == FBCOMLIB_STATE_INIT)||(pSetVar->v_state == FBCOMLIB_STATE_WAITING))
+    	{
     		/*	propagate value to ksapi object	*/
     		if(Ov_Fail(Ov_SetAnyValue(&(pinst->p_apiVar.v_varValue), &(pinst->v_value))))
     			fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pSetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
-    	}
-    	if(pSetVar->v_state == FBCOMLIB_STATE_OK)
-    	{
+    		/*	get result of ksapi request	*/
     		if(pSetVar->p_apiSet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
     		{	/*	ksapi-request completed --> get answer	*/
     			pinst->v_varResult = pinst->p_apiVar.v_varRes;
     			return;
     		}
-    		return;
-    	}
+    		if((pSetVar->v_state == FBCOMLIB_STATE_OK) ||(pSetVar->v_state == FBCOMLIB_STATE_INIT))
+    		{	/*	ready to start	*/
+    			if(!pSetVar->v_doCyclic)
+    			{	/*	single send requested	*/
+    				result = ov_string_setvalue(&(pinst->p_apiVar.v_path), pinst->v_path);
+    				if(Ov_Fail(result))
+    				{
+    					pSetVar->v_errorCode = result;
+    					fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pSetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
+    					return;
+    				}
+    			}
 
+    		}
+    	}
     }
     return;
 }

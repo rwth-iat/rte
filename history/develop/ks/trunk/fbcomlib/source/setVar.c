@@ -85,6 +85,35 @@ OV_DLLFNCEXPORT void fbcomlib_setVar_typemethod(
     OV_VTBLPTR_ksapi_setVar pVtblSetVar = (OV_VTBLPTR_ksapi_setVar) pclass_ksapi_setVar->v_pvtable;
     OV_RESULT result;
 
+    if(pinst->v_state == FBCOMLIB_STATE_WAITING)
+    {	/*	waiting: calculate timeouts and check ksapi-object for answer	*/
+
+    	if(pinst->p_apiSet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
+    	{	/*	ksapi-request completed --> get answer	*/
+    		pinst->v_varResult = pinst->p_apiSet.v_varRes;
+    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_OK);
+    	}
+    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_INTERNALERROR)
+    	{
+    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_KSAPI_ERROR);
+    		return;
+    	}
+    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_EXTERNALERROR)
+    	{
+    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_EXTERNAL_ERROR);
+    		return;
+    	}
+    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_WAITINGFORANSWER)
+    	{
+    		if(pltc->secs > (pinst->v_requestSendTime.secs + pinst->v_timeout))
+    		{
+    			fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_TIMEOUT);
+    			return;
+    		}
+    		return;
+    	}
+    }
+
     if((pinst->v_state == FBCOMLIB_STATE_OK) || (pinst->v_state == FBCOMLIB_STATE_INIT))
     {	/*	ready to start	*/
     	if(pinst->v_sendRequested)
@@ -134,37 +163,6 @@ OV_DLLFNCEXPORT void fbcomlib_setVar_typemethod(
     	}
     	return;
     }
-
-    if(pinst->v_state == FBCOMLIB_STATE_WAITING)
-    {	/*	waiting: calculate timeouts and check ksapi-object for answer	*/
-
-    	if(pinst->p_apiSet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
-    	{	/*	ksapi-request completed --> get answer	*/
-    		pinst->v_varResult = pinst->p_apiSet.v_varRes;
-    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_OK);
-    		return;
-    	}
-    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_INTERNALERROR)
-    	{
-    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_KSAPI_ERROR);
-    		return;
-    	}
-    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_EXTERNALERROR)
-    	{
-    		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_EXTERNAL_ERROR);
-    		return;
-    	}
-    	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_WAITINGFORANSWER)
-    	{
-    		if(pltc->secs > (pinst->v_requestSendTime.secs + pinst->v_timeout))
-    		{
-    			fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_TIMEOUT);
-    			return;
-    		}
-    	}
-
-    }
-
     return;
 }
 
