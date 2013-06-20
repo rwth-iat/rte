@@ -125,7 +125,7 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
+set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -o TCPbind_NO_IPv6 -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 set tries 0
 
