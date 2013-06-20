@@ -125,7 +125,7 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -o TCPbind_NO_IPv6 -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
+set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
 set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
 set tries 0
 
@@ -176,12 +176,21 @@ while {$k<1} {
 
 # Prüfung ob server läuft
 fconfigure stdin -blocking 0
-if { [catch {file rename ${LOGFILE} ${LOGFILE}.test}] } {
-	#puts "running"
-} else {
-	file rename ${LOGFILE}.test ${LOGFILE}
-	puts "Server was terminated"
-	break
+if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
+	if { [catch {file rename ${LOGFILE} ${LOGFILE}.test}] } {
+		#puts "running"
+	} else {
+		file rename ${LOGFILE}.test ${LOGFILE}
+		puts "Server was terminated"
+		break
+	}
+} else { 	
+	#probing if the process is still alive
+	set running [exec ps -A | grep $pid]
+	if { $running == "" || [regexp "(.*)defunct(.*)" $running]} {
+		puts "Server was terminated"
+		break
+	}
 }
 if { $in1 > -1 } then {
 puts "-----------------------------------------------------"
