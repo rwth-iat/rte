@@ -39,34 +39,6 @@
 #include "config.h"
 #include <ctype.h>
 
-/* Converts a hex character to its integer value */
-static char from_hex(char ch) {
-	return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
-}
-
-/* Returns a url-decoded version of str Public Domain code from http://www.geekhideout.com/urlcode.shtml*/
-/* IMPORTANT: be sure to ov_memstack_lock/unlock() arround */
-static OV_STRING url_decode(OV_STRING str) {
-	OV_STRING pstr = str;
-	OV_STRING buf = ov_memstack_alloc(strlen(str) + 1);
-	OV_STRING pbuf = buf;
-	while (*pstr) {
-		if (*pstr == '%') {
-			if (pstr[1] && pstr[2]) {
-				*pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
-				pstr += 2;
-			}
-		} else if (*pstr == '+') {
-			*pbuf++ = ' ';
-		} else {
-			*pbuf++ = *pstr;
-		}
-		pstr++;
-	}
-	*pbuf = '\0';
-	return buf;
-}
-
 static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READWRITE;
 }
@@ -311,9 +283,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 				//we have a new object, so no memory is allocated and the setting to NULL is save
 				addrp->var_current_props.value.valueunion.val_string = NULL;
-				ov_memstack_lock();
-				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, url_decode(newvaluematch.value[i]));
-				ov_memstack_unlock();
+				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting string value failed");
 					EXEC_SETVAR_RETURN fr;
@@ -458,13 +428,13 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 					addrp->var_current_props.value.valueunion.val_string_vec.value[i] = NULL;
 					ov_memstack_lock();
 					if(*pArgumentList[i] != '{'){
-						Temp2 = url_decode(pArgumentList[i]);
+						Temp2 = pArgumentList[i];
 					}else{
 						//killing the first character aka {
 						ov_string_setvalue(&Temp, pArgumentList[i]+1);
 						//kill the last character aka }, now we have two null bytes at the end
 						Temp[ov_string_getlength(Temp)-1] = '\0';
-						Temp2 = url_decode(Temp);
+						Temp2 = Temp;
 					}
 					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp2);
 					ov_memstack_unlock();
