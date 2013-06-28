@@ -770,7 +770,8 @@ proc create_systools_and_servers {} {
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-	set addon_libs {develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn}
+	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 }
+	
 	print_msg "if you take the new ones, you'll see what you get"
 } else {
     print_msg "taking the safe way is a sign of weakness"
@@ -779,7 +780,7 @@ if { $bleedingedge == 1 } then {
 	}
 
 set notrunklist { ks common ServiceSystem }
-#iec61131stdfb IOdriverlib fbcomlib
+#iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider develop/ACPLTlab003lindyn
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
