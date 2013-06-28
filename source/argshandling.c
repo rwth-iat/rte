@@ -37,6 +37,7 @@
 ***********************************************************************/
 
 #include "config.h"
+#include "urldecode.h"
 
 /**
  * This function will searches for matching varname(s) and returns a list of values
@@ -93,6 +94,7 @@ OV_RESULT parse_http_header(OV_STRING request_header, OV_STRING* cmd, OV_STRING_
 	OV_STRING* plist=NULL;
 	OV_STRING* pelement=NULL;
 	OV_STRING rawrequest=NULL;
+	OV_STRING temp=NULL;
 
 	OV_UINT i, len, len1;
 
@@ -137,7 +139,12 @@ OV_RESULT parse_http_header(OV_STRING request_header, OV_STRING* cmd, OV_STRING_
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	ov_string_setvalue(http_request_method, plist[0]);
-	ov_string_setvalue(&rawrequest, plist[1]);
+	//urldecode the whole request
+	ov_memstack_lock();
+	temp = url_decode(plist[1]);
+	ov_string_setvalue(&rawrequest, temp);
+	ov_memstack_unlock();
+	temp = NULL;
 	//does the client use HTTP 1.0?
 	if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
 		//if so, use 1.0, otherwise 1.1 is set
