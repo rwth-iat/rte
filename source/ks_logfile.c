@@ -27,8 +27,11 @@ static char			msg[1024];
 #if LOG_KS_TO_OV
 	static char msg2[1044];
 #endif
-#if OV_SYSTEM_NT
+#endif
+
 DLLFNCEXPORT void ks_logfile_print_sysMsg() {
+#if LOG_KS || LOG_KS_INFO || LOG_KS_DEBUG || LOG_KS_WARNING || LOG_KS_ERROR || LOG_KS_COMPILE
+#if OV_SYSTEM_NT
     DWORD       eNum;
     TCHAR       sysMsg[256];
     TCHAR*      p;
@@ -56,13 +59,11 @@ DLLFNCEXPORT void ks_logfile_print_sysMsg() {
          (unsigned long)eNum, sysMsg);
 }
 #else
-DLLFNCEXPORT void ks_logfile_print_sysMsg() {
-
     ks_logfile_error("\tfailed with error %lu (%s)",
          errno, strerror(errno));
+#endif
+#endif
 }
-#endif
-#endif
 
 /**
   * Print info to logfile
