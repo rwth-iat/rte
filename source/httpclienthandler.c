@@ -369,7 +369,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			printresponsefooter(&reply_body, response_format, "getvar");
 			//stream required?
 			find_arguments(&args, "stream", &match);
-			if(FALSE && match.veclen>0){
+			if(match.veclen>0){
+				result = OV_ERR_NOTIMPLEMENTED;
+				request_handled_by = REQUEST_HANDLED_BY_GETVAR;
+			}else if(FALSE){
 				//disabled, because we are not called cyclic
 
 				//yes
