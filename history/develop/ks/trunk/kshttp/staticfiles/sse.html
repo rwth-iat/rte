@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="Windows-1252">
+	<meta charset="windows-1252">
 	<title>Stats of database_free</title>
 	<script type="text/javascript" src="smoothie.js"></script>
 </head>
@@ -38,7 +38,7 @@
 					line1.append(time, lastData);
 				}
 			}, 1000);
-			if(typeof EventSource !== 'undefined'){
+			if(false && typeof EventSource !== 'undefined'){
 				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
 				source.onmessage = function(e) {
 					lastUpdate = new Date().getTime();

@@ -8,7 +8,7 @@ LIBRARY TCPbind
 	COMMENT   = "TCP binding for generic communications. Includes a TCPListener and a TCPChannel.";
 	
 	/**
-	*	TheTCPChannel is a Channel object for Communication over TCP networks.
+	*	The TCPChannel is a Channel object for Communication over TCP networks.
 	*	Working on the server-side it uses a socket which is opened by the TCPListener (see below) to receive and send data over.
 	*	It can open a socket to another server and then send and receive data. This is used when acting on the client-side. To open a socket the OpenConnection function is used. 
 	*	There is no processing of data implemented. Just plain receiving and sending. 
