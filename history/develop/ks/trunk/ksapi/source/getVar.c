@@ -93,45 +93,9 @@ OV_DLLFNCEXPORT void ksapi_getVar_submit(
 	OV_STRING* varPaths = NULL;
 	OV_UINT numberOfItems = 1;
 
-	if(!pobj->v_serverHost)
-	{
-		KS_logfile_error(("%s: no serverHost set. aborting", pobj->v_identifier));
-		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-		pthis->v_result = OV_ERR_BADPARAM;
-		return;
-	}
-
-	result = ksapi_getClientPointers(pobj, &pClient, &pVtblClient);
+	result = ksapi_KSApiCommon_prepareSubmit(pobj, &pClient, &pVtblClient);
 	if(Ov_Fail(result))
-	{
-		KS_logfile_error(("%s: submit: no Client found. Cannot submit", pobj->v_identifier));
-		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-		pthis->v_result = result;
 		return;
-	}
-
-	result = ksbase_ClientBase_serverHost_set(pClient, pobj->v_serverHost);
-	if(Ov_Fail(result))
-	{
-		KS_logfile_error(("%s: submit: could not set serverHost at Client", pobj->v_identifier));
-		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-		pthis->v_result = result;
-		return;
-	}
-
-	if(pobj->v_serverName)
-	{
-		result = ksbase_ClientBase_serverName_set(pClient, pobj->v_serverName);
-		if(Ov_Fail(result))
-		{
-			KS_logfile_error(("%s: submit: could not set serverName at Client", pobj->v_identifier));
-			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-			pthis->v_result = result;
-			return;
-		}
-	}
-
-	pClient->v_holdConnection = pthis->v_holdConnection;
 
 	varPaths = Ov_HeapMalloc(numberOfItems * sizeof(OV_STRING));
 	if(!varPaths)
@@ -230,28 +194,9 @@ OV_DLLFNCEXPORT void ksapi_getVar_setandsubmit(
 ) {
 	OV_RESULT result;
 
-	result = ov_string_setvalue(&(pobj->v_serverHost), serverHost);
+	result = ksapi_KSApiCommon_genSetForSubmit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj), serverHost, serverName, path);
 	if(Ov_Fail(result))
-	{
-		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
-		pobj->v_result = result;
 		return;
-	}
-
-	result = ov_string_setvalue(&(pobj->v_serverName), serverName);
-	if(Ov_Fail(result))
-	{
-		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
-		pobj->v_result = result;
-		return;
-	}
-	result = ov_string_setvalue(&(pobj->v_path), path);
-	if(Ov_Fail(result))
-	{
-		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
-		pobj->v_result = result;
-		return;
-	}
 
 	ksapi_getVar_submit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj));
 

@@ -24,6 +24,7 @@
 #include "ksapi.h"
 #include "libov/ov_macros.h"
 #include "ksapi_commonFuncs.h"
+#include "ks_logfile.h"
 
 
 OV_DLLFNCEXPORT void ksapi_KSApiCommon_startup(
@@ -111,13 +112,97 @@ OV_DLLFNCEXPORT void ksapi_KSApiCommon_submit(
 	return;
 }
 
+OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_prepareSubmit(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
+		OV_INSTPTR_ksbase_ClientBase*				pClient,
+		OV_VTBLPTR_ksbase_ClientBase*				pVtblClient
+)
+{
+	OV_RESULT result;
+
+	if(!pobj->v_serverHost)
+	{
+		KS_logfile_error(("%s: no serverHost set. aborting", pobj->v_identifier));
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = OV_ERR_BADPARAM;
+		return OV_ERR_BADPARAM;
+	}
+
+	result = ksapi_getClientPointers(pobj, pClient, pVtblClient);
+	if(Ov_Fail(result))
+	{
+		KS_logfile_error(("%s: submit: no Client found. Cannot submit", pobj->v_identifier));
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return result;
+	}
+
+	result = ksbase_ClientBase_serverHost_set(*pClient, pobj->v_serverHost);
+	if(Ov_Fail(result))
+	{
+		KS_logfile_error(("%s: submit: could not set serverHost at Client", pobj->v_identifier));
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return result;
+	}
+
+	if(pobj->v_serverName)
+	{
+		result = ksbase_ClientBase_serverName_set(*pClient, pobj->v_serverName);
+		if(Ov_Fail(result))
+		{
+			KS_logfile_error(("%s: submit: could not set serverName at Client", pobj->v_identifier));
+			pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+			pobj->v_result = result;
+			return result;
+		}
+	}
+
+	(*pClient)->v_holdConnection = pobj->v_holdConnection;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_genSetForSubmit(
+		OV_INSTPTR_ksapi_KSApiCommon	 			pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path
+){
+	OV_RESULT result;
+
+	result = ov_string_setvalue(&(pobj->v_serverHost), serverHost);
+	if(Ov_Fail(result))
+	{
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return result;
+	}
+
+	result = ov_string_setvalue(&(pobj->v_serverName), serverName);
+	if(Ov_Fail(result))
+	{
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return result;
+	}
+	result = ov_string_setvalue(&(pobj->v_path), path);
+	if(Ov_Fail(result))
+	{
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return result;
+	}
+
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_ACCESS ksapi_KSApiCommon_getaccess(
-	OV_INSTPTR_ov_object		pobj,
-	const OV_ELEMENT			*pelem,
-	const OV_TICKET				*pticket
+		OV_INSTPTR_ov_object		pobj,
+		const OV_ELEMENT			*pelem,
+		const OV_TICKET				*pticket
 ) {
 	/*
-	*	local variables
+	 *	local variables
 	*/
 
 	/*
