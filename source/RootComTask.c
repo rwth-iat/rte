@@ -23,6 +23,8 @@
 #if !OV_SYSTEM_NT
 #define _POSIX_C_SOURCE	 199309L
 #include <time.h>
+#else
+#include <windows.h>
 #endif
 
 #include "ksbase.h"
@@ -105,8 +107,17 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
     ov_object_startup(pobj);
 
     /* do what */
+#if OV_SYSTEM_NT
+    {
+    	TIMECAPS tc;
+    	timeGetDevCaps(&tc, sizeof(TIMECAPS));
+#if DBG_PRINT_WAIT_TIME
+    	ov_logfile_debug("maximum resolution is: %u", tc.wPeriodMin);
+#endif
+    	timeBeginPeriod(tc.wPeriodMin);
+    }
 
-
+#endif
     rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
 
     t.secs = rcTask->v_cycsecs;
@@ -131,7 +142,16 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_shutdown(
     /* do what */
     ov_scheduler_unregister((OV_INSTPTR_ov_object)pobj);
     KS_logfile_debug(("RootComTask UNregistered at ov_scheduler"));
-
+#if OV_SYSTEM_NT
+    {
+    	TIMECAPS tc;
+    	timeGetDevCaps(&tc, sizeof(TIMECAPS));
+#if DBG_PRINT_WAIT_TIME
+    	ov_logfile_debug("maximum resolution is: %u", tc.wPeriodMin);
+#endif
+    	timeEndPeriod(tc.wPeriodMin);
+    }
+#endif
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
@@ -155,6 +175,11 @@ void ksbase_RootComTask_execute(
 #if !OV_SYSTEM_NT
 		struct timespec s;
 #else
+#if DBG_PRINT_WAIT_TIME
+		OV_TIME waitStart;
+		OV_TIME waitEnd;
+		OV_TIME_SPAN waitTime;
+#endif
 		HANDLE hTimer = NULL;
 		LARGE_INTEGER liDueTime;
 		 // Create an unnamed waitable timer.
@@ -228,7 +253,11 @@ void ksbase_RootComTask_execute(
 		if((time_left.secs > 0) || ((time_left.secs == 0) && (time_left.usecs > 0)))
 		{
 
-		//	KS_logfile_debug(("sleepin %d usecs", time_left.usecs));
+#if DBG_PRINT_WAIT_TIME
+	    ov_time_gettime(&waitStart);
+	    ov_logfile_debug("%s line %u: sleeping %d usecs", __FILE__, __LINE__, time_left.usecs);
+#endif
+
 #if !OV_SYSTEM_NT
 		s.tv_sec = time_left.secs;
 		s.tv_nsec = time_left.usecs*1000;
@@ -238,17 +267,23 @@ void ksbase_RootComTask_execute(
 	    	/* Windows does not sleep if 0 is param, but linux usleep drops timslot of thread */
 	    	time_left.usecs = 1;
 	    }
-	    liDueTime.QuadPart = -(time_left.secs*10000000 + time_left.usecs*10);
 
-	    // Set a timer to wait
-	    if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0))
-	    {
-	        ov_logfile_error("SetWaitableTimer failed (%d)\n", GetLastError());
-	        return;
-	    }
+	   	liDueTime.QuadPart = -(time_left.secs*10000000 + time_left.usecs*10);
 
-	    // Wait for the timer.
-	    WaitForSingleObject(hTimer, INFINITE);
+	   	// Set a timer to wait
+	   	if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0))
+	   	{
+	   		ov_logfile_error("SetWaitableTimer failed (%d)\n", GetLastError());
+	   		return;
+	   	}
+
+	   	// Wait for the timer.
+	   	WaitForSingleObject(hTimer, INFINITE);
+#endif
+#if DBG_PRINT_WAIT_TIME
+	    ov_time_gettime(&waitEnd);
+	    ov_time_diff(&waitTime, &waitEnd, &waitStart);
+	    ov_logfile_debug("%s line %u: slept %u seconds and %u microseconds", __FILE__, __LINE__, waitTime.secs, waitTime.usecs);
 #endif
 		}
 
