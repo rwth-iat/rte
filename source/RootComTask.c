@@ -110,11 +110,15 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
 #if OV_SYSTEM_NT
     {
     	TIMECAPS tc;
+    	MMRESULT res;
     	timeGetDevCaps(&tc, sizeof(TIMECAPS));
-#if DBG_PRINT_WAIT_TIME
-    	ov_logfile_debug("maximum resolution is: %u", tc.wPeriodMin);
-#endif
-    	timeBeginPeriod(tc.wPeriodMin);
+    	ov_logfile_info("maximum timer resolution is: %ums", tc.wPeriodMin);
+    	res = timeBeginPeriod(tc.wPeriodMin);
+    	if(res != MMSYSERR_NOERROR)
+    	{
+    		KS_logfile_error(("timeBeginPeriod: "));
+    		KS_logfile_print_sysMsg();
+    	}
     }
 
 #endif
@@ -146,9 +150,6 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_shutdown(
     {
     	TIMECAPS tc;
     	timeGetDevCaps(&tc, sizeof(TIMECAPS));
-#if DBG_PRINT_WAIT_TIME
-    	ov_logfile_debug("maximum resolution is: %u", tc.wPeriodMin);
-#endif
     	timeEndPeriod(tc.wPeriodMin);
     }
 #endif
