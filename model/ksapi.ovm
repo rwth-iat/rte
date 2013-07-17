@@ -41,6 +41,8 @@ LIBRARY	ksapi
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
 			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+			prepareSubmit		:	C_FUNCTION <KSAPI_FNC_PREPSUBMIT>;
+			genSetForSubmit		:	C_FUNCTION <KSAPI_FNC_GENSETFSUBMIT>;
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -135,6 +137,7 @@ LIBRARY	ksapi
 				INITIALVALUE	=	"*";
 		END_VARIABLES;
 		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
