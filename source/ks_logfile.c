@@ -57,7 +57,7 @@ DLLFNCEXPORT void ks_logfile_print_sysMsg() {
     // Display the message
     ks_logfile_error("\tfailed with error %lu (%s)",
          (unsigned long)eNum, sysMsg);
-}
+
 #else
     ks_logfile_error("\tfailed with error %lu (%s)",
          errno, strerror(errno));
