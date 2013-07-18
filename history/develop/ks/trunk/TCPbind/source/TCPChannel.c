@@ -305,18 +305,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			FD_ZERO(&read_flags);
 			FD_SET(socket, &read_flags); // get read flags
 			waitd.tv_sec = 0;     // Set Timeout
-#if OV_SYSTEM_NT
-			if(!datareceived)
-				waitd.tv_usec = 0;    //  do not wait
-			else
-			{
-				ov_memstack_lock();																				/*	temporary solution for xp:	*/
-				waitd.tv_usec = atoi(ov_vendortree_getcmdlineoption_value("TCPbind_TradeRT4Speed")) * 1000;		/*	we wait for data here instead of returning.	*/
-				ov_memstack_unlock();																			/*	this will most likely break RT requirements	*/
-			}																									/*	but speed communication up	*/
-#else
+
 			waitd.tv_usec = 0;    //  do not wait
-#endif
 			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
 			if(err)
 				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
