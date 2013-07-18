@@ -25,6 +25,8 @@
 #include <time.h>
 #else
 #include <windows.h>
+static unsigned long majorVersion;
+static unsigned long minorVersion;
 #endif
 
 #include "ksbase.h"
@@ -111,6 +113,13 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
     {
     	TIMECAPS tc;
     	MMRESULT res;
+    	OSVERSIONINFO WinVersion;
+    	/*	determine version, as on XP we have to limit the sleep times	*/
+    	GetVersionEx(&WinVersion);
+    	majorVersion = WinVersion.dwMajorVersion;
+    	minorVersion = WinVersion.dwMinorVersion;
+
+    	/*	get maximum timer resolution and request windows to use it	*/
     	timeGetDevCaps(&tc, sizeof(TIMECAPS));
     	ov_logfile_info("maximum timer resolution is: %ums", tc.wPeriodMin);
     	res = timeBeginPeriod(tc.wPeriodMin);
@@ -257,6 +266,12 @@ void ksbase_RootComTask_execute(
 				if(sleepTime.usecs > (sleepLimit * 1000))
 					sleepTime.usecs = sleepLimit * 1000;
 			}
+			else if(majorVersion <= 5)
+			{
+				sleepTime.secs = 0;
+				sleepTime.usecs = 1000;
+			}
+
 #if DBG_PRINT_WAIT_TIME
 	    ov_time_gettime(&waitStart);
 	    ov_logfile_debug("%s line %u: sleeping %d secs and %d usecs", __FILE__, __LINE__, sleepTime.secs, sleepTime.usecs);
