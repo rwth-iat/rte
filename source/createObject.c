@@ -23,7 +23,11 @@
 
 #include "ksapi.h"
 #include "libov/ov_macros.h"
+#include "ksapi_commonFuncs.h"
+#include "ks_logfile.h"
+#include "ksbase_helper.h"
 
+void ksapi_createObject_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
 
 OV_DLLFNCEXPORT void ksapi_createObject_startup(
 	OV_INSTPTR_ov_object 	pobj
@@ -31,7 +35,7 @@ OV_DLLFNCEXPORT void ksapi_createObject_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_createObject pinst = Ov_StaticPtrCast(ksapi_createObject, pobj);
+
 
     /* do what the base class does first */
     ksapi_KSApiCommon_startup(pobj);
@@ -45,7 +49,32 @@ OV_DLLFNCEXPORT void ksapi_createObject_startup(
 OV_DLLFNCEXPORT void ksapi_createObject_submit(
 		OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
-    return;
+	OV_INSTPTR_ksapi_createObject	pthis = Ov_StaticPtrCast(ksapi_createObject, pobj);
+	OV_INSTPTR_ksbase_ClientBase pClient = NULL;
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_RESULT result;
+	OV_CREATEOBJ_ITEM item;
+
+	result = ksapi_KSApiCommon_prepareSubmit(pobj, &pClient, &pVtblClient);
+	if(Ov_Fail(result))
+		return;
+
+	item.new_path = pthis->v_path;
+	item.factory_path = pthis->v_classPath;
+	item.place.hint = pthis->v_position;
+	item.place.place_path = pthis->v_element;
+	item.links_len = 0;
+	item.links_val = NULL;
+	item.parameters_len = 0;
+	item.parameters_val = NULL;
+	/*	do the actual submit	*/
+	pVtblClient->m_requestCreateObject(pClient, NULL, 1, &item, (OV_INSTPTR_ov_domain) pthis, &ksapi_createObject_callback);
+	if(!(pClient->v_state & KSBASE_CLST_ERROR))
+		pthis->v_status = KSAPI_COMMON_WAITINGFORANSWER;
+	else
+		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+
+	return;
 }
 
 OV_DLLFNCEXPORT void ksapi_createObject_setandsubmit(
@@ -57,6 +86,84 @@ OV_DLLFNCEXPORT void ksapi_createObject_setandsubmit(
     OV_INT										position,
     OV_STRING									place
 ) {
-    return;
+	OV_RESULT result;
+
+	result = ksapi_KSApiCommon_genSetForSubmit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj), serverHost, serverName, path);
+	if(Ov_Fail(result))
+		return;
+
+	result = ov_string_setvalue(&(pobj->v_classPath), factorypath);
+	if(Ov_Fail(result))
+	{
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return;
+	}
+
+	result = ov_string_setvalue(&(pobj->v_element), place);
+	if(Ov_Fail(result))
+	{
+		pobj->v_status = KSAPI_COMMON_INTERNALERROR;
+		pobj->v_result = result;
+		return;
+	}
+
+	pobj->v_position = position;
+
+	ksapi_createObject_submit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj));
+
+	return;
+}
+
+void ksapi_createObject_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
+{
+	OV_INSTPTR_ksapi_createObject thisCreateObject = Ov_StaticPtrCast(ksapi_createObject, this);
+	OV_INSTPTR_ksbase_ClientBase pClient = Ov_StaticPtrCast(ksbase_ClientBase, that);
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_RESULT result;
+	OV_UINT itemsLength;
+	OV_CREATEOBJECTITEM_RES* itemsVals;
+
+	if(!this || !that)
+	{
+		KS_logfile_error(("callback issued with NULL pointers. aborting."));
+		return;
+	}
+
+	Ov_GetVTablePtr(ksbase_ClientBase, pVtblClient, pClient);
+
+	if(!pVtblClient)
+	{
+		KS_logfile_error(("%s callback: could not determine Vtable of Client %s. aborting",
+				this->v_identifier, that->v_identifier));
+		thisCreateObject->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisCreateObject->v_result = OV_ERR_BADOBJTYPE;
+		return;
+	}
+	ov_memstack_lock();
+	result = pVtblClient->m_processCreateObject(pClient, NULL, (OV_RESULT*) &(thisCreateObject->v_result), &itemsLength, &itemsVals);
+	if(Ov_Fail(result))
+	{
+		thisCreateObject->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisCreateObject->v_result = result;
+		ov_memstack_unlock();
+		return;
+	}
+
+	if(Ov_Fail(thisCreateObject->v_result))
+	{
+		thisCreateObject->v_status = KSAPI_COMMON_EXTERNALERROR;
+		ov_memstack_unlock();
+		return;
+	}
+
+	thisCreateObject->v_status = KSAPI_COMMON_REQUESTCOMPLETED;
+
+	if(itemsLength)
+	{
+		thisCreateObject->v_result = itemsVals->result;
+	}
+	ov_memstack_unlock();
+	return;
 }
 

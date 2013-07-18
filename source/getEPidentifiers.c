@@ -101,8 +101,6 @@ OV_DLLFNCEXPORT void ksapi_getEPidentifiers_submit(
 	else
 		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
 
-
-
 	return;
 }
 
@@ -189,7 +187,7 @@ void ksapi_getEPidentifiers_callback(const OV_INSTPTR_ov_domain this, const OV_I
 
 	for(i=0; i<itemsLength; i++)
 	{
-		result = ov_string_setvalue(thisgEP->v_identifierList.value[i], itemsVals[i].identifier);
+		result = ov_string_setvalue(&(thisgEP->v_identifierList.value[i]), itemsVals[i].identifier);
 		if(Ov_Fail(result))
 		{
 			thisgEP->v_status = KSAPI_COMMON_INTERNALERROR;

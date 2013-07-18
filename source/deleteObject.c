@@ -23,6 +23,11 @@
 
 #include "ksapi.h"
 #include "libov/ov_macros.h"
+#include "ksapi_commonFuncs.h"
+#include "ks_logfile.h"
+#include "ksbase_helper.h"
+
+void ksapi_deleteObject_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
 
 
 OV_DLLFNCEXPORT void ksapi_deleteObject_startup(
@@ -31,7 +36,6 @@ OV_DLLFNCEXPORT void ksapi_deleteObject_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ksapi_deleteObject pinst = Ov_StaticPtrCast(ksapi_deleteObject, pobj);
 
     /* do what the base class does first */
     ksapi_KSApiCommon_startup(pobj);
@@ -45,7 +49,23 @@ OV_DLLFNCEXPORT void ksapi_deleteObject_startup(
 OV_DLLFNCEXPORT void ksapi_deleteObject_submit(
 		OV_INSTPTR_ksapi_KSApiCommon          pobj
 ) {
-    return;
+	OV_INSTPTR_ksapi_deleteObject	pthis = Ov_StaticPtrCast(ksapi_deleteObject, pobj);
+	OV_INSTPTR_ksbase_ClientBase pClient = NULL;
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_RESULT result;
+
+	result = ksapi_KSApiCommon_prepareSubmit(pobj, &pClient, &pVtblClient);
+	if(Ov_Fail(result))
+		return;
+
+	/*	do the actual submit	*/
+	pVtblClient->m_requestDeleteObject(pClient, NULL, 1, &(pobj->v_path), (OV_INSTPTR_ov_domain) pthis, &ksapi_deleteObject_callback);
+	if(!(pClient->v_state & KSBASE_CLST_ERROR))
+		pthis->v_status = KSAPI_COMMON_WAITINGFORANSWER;
+	else
+		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+
+	return;
 }
 
 OV_DLLFNCEXPORT void ksapi_deleteObject_setandsubmit(
@@ -54,6 +74,65 @@ OV_DLLFNCEXPORT void ksapi_deleteObject_setandsubmit(
 	OV_STRING 									serverName,
 	OV_STRING 									path
 ) {
-    return;
+	OV_RESULT result;
+
+	result = ksapi_KSApiCommon_genSetForSubmit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj), serverHost, serverName, path);
+	if(Ov_Fail(result))
+		return;
+
+	ksapi_deleteObject_submit(Ov_StaticPtrCast(ksapi_KSApiCommon, pobj));
+
+	return;
 }
 
+void ksapi_deleteObject_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
+{
+	OV_INSTPTR_ksapi_deleteObject thisDeleteObject = Ov_StaticPtrCast(ksapi_deleteObject, this);
+	OV_INSTPTR_ksbase_ClientBase pClient = Ov_StaticPtrCast(ksbase_ClientBase, that);
+	OV_VTBLPTR_ksbase_ClientBase pVtblClient = NULL;
+	OV_RESULT result;
+	OV_UINT itemsLength;
+	OV_RESULT* itemsVals;
+
+	if(!this || !that)
+	{
+		KS_logfile_error(("callback issued with NULL pointers. aborting."));
+		return;
+	}
+
+	Ov_GetVTablePtr(ksbase_ClientBase, pVtblClient, pClient);
+
+	if(!pVtblClient)
+	{
+		KS_logfile_error(("%s callback: could not determine Vtable of Client %s. aborting",
+				this->v_identifier, that->v_identifier));
+		thisDeleteObject->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisDeleteObject->v_result = OV_ERR_BADOBJTYPE;
+		return;
+	}
+	ov_memstack_lock();
+	result = pVtblClient->m_processDeleteObject(pClient, NULL, (OV_RESULT*) &(thisDeleteObject->v_result), &itemsLength, &itemsVals);
+	if(Ov_Fail(result))
+	{
+		thisDeleteObject->v_status = KSAPI_COMMON_INTERNALERROR;
+		thisDeleteObject->v_result = result;
+		ov_memstack_unlock();
+		return;
+	}
+
+	if(Ov_Fail(thisDeleteObject->v_result))
+	{
+		thisDeleteObject->v_status = KSAPI_COMMON_EXTERNALERROR;
+		ov_memstack_unlock();
+		return;
+	}
+
+	thisDeleteObject->v_status = KSAPI_COMMON_REQUESTCOMPLETED;
+
+	if(itemsLength)
+	{
+		thisDeleteObject->v_result = *itemsVals;
+	}
+	ov_memstack_unlock();
+	return;
+}
