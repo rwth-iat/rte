@@ -175,22 +175,13 @@ void ksbase_RootComTask_execute(
 	OV_TIME_SPAN time_left, ts;
 #if !OV_SYSTEM_NT
 		struct timespec s;
-#else
+#endif
 #if DBG_PRINT_WAIT_TIME
 		OV_TIME waitStart;
 		OV_TIME waitEnd;
 		OV_TIME_SPAN waitTime;
 #endif
-		HANDLE hTimer = NULL;
-		LARGE_INTEGER liDueTime;
-		 // Create an unnamed waitable timer.
-		hTimer = CreateWaitableTimer(NULL, TRUE, NULL);
-		if (NULL == hTimer)
-		{
-			ov_logfile_error("CreateWaitableTimer failed (%d)\n", GetLastError());
-			return;
-		}
-#endif
+
 
 	rcTask = Ov_StaticPtrCast(ksbase_RootComTask, pobj);
 
@@ -264,22 +255,7 @@ void ksbase_RootComTask_execute(
 		s.tv_nsec = time_left.usecs*1000;
 	    nanosleep(&s, NULL);
 #else
-	    if( (time_left.secs == 0) && (time_left.usecs == 0) ) {
-	    	/* Windows does not sleep if 0 is param, but linux usleep drops timslot of thread */
-	    	time_left.usecs = 1;
-	    }
-
-	   	liDueTime.QuadPart = -(time_left.secs*10000000 + time_left.usecs*10);
-
-	   	// Set a timer to wait
-	   	if (!SetWaitableTimer(hTimer, &liDueTime, 0, NULL, NULL, 0))
-	   	{
-	   		ov_logfile_error("SetWaitableTimer failed (%d)\n", GetLastError());
-	   		return;
-	   	}
-
-	   	// Wait for the timer.
-	   	WaitForSingleObject(hTimer, INFINITE);
+	    Sleep(time_left.secs*1000 + time_left.usecs / 1000);
 #endif
 #if DBG_PRINT_WAIT_TIME
 	    ov_time_gettime(&waitEnd);
@@ -292,9 +268,6 @@ void ksbase_RootComTask_execute(
 
 	}while((ov_time_compare(&time_next, &now) > 0) || ov_activitylock);
 
-#if OV_SYSTEM_NT
-	CloseHandle(hTimer);
-#endif
 
 	//KS_logfile_debug(("leaving loop"));
 	//get called again in a few moments
