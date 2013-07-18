@@ -198,7 +198,6 @@ void ksbase_RootComTask_execute(
 	ov_time_add(&time_next, &now, &time_left);
 	ov_memstack_lock();
 	sleepLimit = atoi(ov_vendortree_getcmdlineoption_value("KSBASE_SCHED_LIMITSLEEP"));
-	ov_logfile_debug("sleepLimit: %u", sleepLimit);
 	ov_memstack_unlock();
 
 	do{//loop until next event in ov_scheduler
