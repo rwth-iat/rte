@@ -173,6 +173,8 @@ void ksbase_RootComTask_execute(
 	OV_VTBLPTR_ksbase_ComTask	pvtable;
 	OV_TIME time_next, now, earliestChild;
 	OV_TIME_SPAN time_left, ts;
+	OV_TIME_SPAN sleepTime;
+	OV_UINT sleepLimit = 0;
 #if !OV_SYSTEM_NT
 		struct timespec s;
 #endif
@@ -194,7 +196,10 @@ void ksbase_RootComTask_execute(
 	ov_time_gettime(&now);
 	//calculate time of next event
 	ov_time_add(&time_next, &now, &time_left);
-
+	ov_memstack_lock();
+	sleepLimit = atoi(ov_vendortree_getcmdlineoption_value("KSBASE_SCHED_LIMITSLEEP"));
+	ov_logfile_debug("sleepLimit: %u", sleepLimit);
+	ov_memstack_unlock();
 
 	do{//loop until next event in ov_scheduler
 
@@ -244,18 +249,29 @@ void ksbase_RootComTask_execute(
 		//sleep until next task is to be executed
 		if((time_left.secs > 0) || ((time_left.secs == 0) && (time_left.usecs > 0)))
 		{
-
+			sleepTime = time_left;
+			if(sleepTime.secs > 1)
+				sleepTime.secs = 1;
+			if(sleepLimit > 0)
+			{
+				sleepTime.secs = 0;
+				if(sleepTime.usecs > (sleepLimit * 1000))
+					sleepTime.usecs = sleepLimit * 1000;
+			}
 #if DBG_PRINT_WAIT_TIME
 	    ov_time_gettime(&waitStart);
-	    ov_logfile_debug("%s line %u: sleeping %d usecs", __FILE__, __LINE__, time_left.usecs);
+	    ov_logfile_debug("%s line %u: sleeping %d secs and %d usecs", __FILE__, __LINE__, sleepTime.secs, sleepTime.usecs);
 #endif
 
 #if !OV_SYSTEM_NT
-		s.tv_sec = time_left.secs;
-		s.tv_nsec = time_left.usecs*1000;
+		s.tv_sec = sleepTime.secs;
+		s.tv_nsec = sleepTime.usecs*1000;
 	    nanosleep(&s, NULL);
 #else
-	    Sleep(time_left.secs*1000 + time_left.usecs / 1000);
+	    Sleep(sleepTime.secs*1000 + sleepTime.usecs / 1000);
+#if DBG_PRINT_WAIT_TIME
+	   ov_logfile_debug("%s line %u: called Sleep(%u)", __FILE__, __LINE__, sleepTime.secs*1000 + sleepTime.usecs / 1000);
+#endif
 #endif
 #if DBG_PRINT_WAIT_TIME
 	    ov_time_gettime(&waitEnd);
