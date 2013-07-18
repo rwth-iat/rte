@@ -51,7 +51,7 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to create an object";
 		VARIABLES
 			/* Input *************************************************/
-			librarypath			:	STRING
+			classPath			:	STRING
 				COMMENT			=	"path of the object type"
 				INITIALVALUE	=	"";
 			position			:	INT
@@ -193,13 +193,13 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to link an object";
 		VARIABLES
 			/* Input *************************************************/
-			linkedpath			:	STRING
+			elementPath			:	STRING
 				COMMENT			=	"path of the linked object"
 				INITIALVALUE	=	"";
 			position			:	INT
 				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
 				INITIALVALUE	=	0;
-			element				:	STRING
+			placePath			:	STRING
 				COMMENT			=	"place postion points to"
 				INITIALVALUE	=	"";
 		END_VARIABLES;
@@ -216,7 +216,7 @@ LIBRARY	ksapi
 		COMMENT	=	"ov_object, which gets the information and tries to unlink an object";
 		VARIABLES
 			/* Input *************************************************/
-			linkedpath			:	STRING
+			elementPath			:	STRING
 				COMMENT			=	"path of the linked object"
 				INITIALVALUE	=	"";
 		END_VARIABLES;
