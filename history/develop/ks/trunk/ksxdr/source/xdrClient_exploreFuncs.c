@@ -44,7 +44,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetPP(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	KS_DATAPACKET tempDataPacket;
-	OV_UINT tempXID;
 
 
 	if((thisCl->v_state != KSBASE_CLST_COMPLETED) && (thisCl->v_state != KSBASE_CLST_INITIAL))
@@ -79,7 +78,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetPP(
 	do{	/*	using a do...while(0) to run this block once and be able to use break-directives to jump out when an error occurs	*/
 
 		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_GETPP, pChannel->v_usesStreamProtocol, &(tempDataPacket), &tempXID, &msgindex);
+		result = ksxdr_generateClientMessageHeader(KS_GETPP, pChannel->v_usesStreamProtocol, &(tempDataPacket), &(thisCl->v_tempXID), &msgindex);
 		if(Ov_Fail(result))
 			break;
 
@@ -205,7 +204,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetEP(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	KS_DATAPACKET tempDataPacket;
-	OV_UINT tempXID;
 
 
 	if((thisCl->v_state != KSBASE_CLST_COMPLETED) && (thisCl->v_state != KSBASE_CLST_INITIAL))
@@ -240,7 +238,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetEP(
 	do{	/*	using a do...while(0) to run this block once and be able to use break-directives to jump out when an error occurs	*/
 
 		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_GETEP, pChannel->v_usesStreamProtocol, &(tempDataPacket), &tempXID, &msgindex);
+		result = ksxdr_generateClientMessageHeader(KS_GETEP, pChannel->v_usesStreamProtocol, &(tempDataPacket), &(thisCl->v_tempXID), &msgindex);
 		if(Ov_Fail(result))
 			break;
 
@@ -364,7 +362,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetCanonicalPath(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	KS_DATAPACKET tempDataPacket;
-	OV_UINT tempXID;
 
 
 	if((thisCl->v_state != KSBASE_CLST_COMPLETED) && (thisCl->v_state != KSBASE_CLST_INITIAL))
@@ -399,7 +396,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetCanonicalPath(
 	do{	/*	using a do...while(0) to run this block once and be able to use break-directives to jump out when an error occurs	*/
 
 		/*	generate Header	*/
-		result = ksxdr_generateClientMessageHeader(KS_GETCANONICALPATH, pChannel->v_usesStreamProtocol, &(tempDataPacket), &tempXID, &msgindex);
+		result = ksxdr_generateClientMessageHeader(KS_GETCANONICALPATH, pChannel->v_usesStreamProtocol, &(tempDataPacket), &(thisCl->v_tempXID), &msgindex);
 		if(Ov_Fail(result))
 			break;
 
