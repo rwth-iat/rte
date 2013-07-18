@@ -355,21 +355,30 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT
 
 	if(response_format == RESPONSE_FORMAT_KSX){
 		//malloc worstcase stringlength which is &quot;
-		heapString = Ov_HeapMalloc(6*ov_string_getlength(*strIn));
+		heapString = Ov_HeapMalloc(6*ov_string_getlength(*strIn)+1);
 	}else if(response_format == RESPONSE_FORMAT_TCL){
 		//malloc worstcase stringlength which is \}
-		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn));
+		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn)+1);
+	}else if(response_format == RESPONSE_FORMAT_PLAIN){
+		//no manipulation is done here
+		heapString = Ov_HeapMalloc(ov_string_getlength(*strIn)+1);
+	}else if(response_format == RESPONSE_FORMAT_JSON){
+		//malloc worstcase stringlength which is \}
+		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn)+1);
+	}else{
+		//no manipulation is done here
+		heapString = Ov_HeapMalloc(ov_string_getlength(*strIn)+1);
 	}
 
 	pcIn = *strIn;
 	pcOut = heapString;
 	while(*pcIn) {
 		if(*pcIn == '"'){
-			if(response_format == RESPONSE_FORMAT_TCL){
+			if(response_format == RESPONSE_FORMAT_TCL || response_format == RESPONSE_FORMAT_JSON){
 				*pcOut = '\\';
 				pcOut++;
 				*pcOut = '"';
-			}else{
+			}else if(response_format == RESPONSE_FORMAT_KSX){
 				*pcOut = '&';
 				pcOut++;
 				*pcOut = 'q';
@@ -381,6 +390,12 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT
 				*pcOut = 't';
 				pcOut++;
 				*pcOut = ';';
+			}else if(response_format == RESPONSE_FORMAT_PLAIN){
+				//no escaping here
+				*pcOut = *pcIn;
+			}else{
+				//should not hit
+				*pcOut = *pcIn;
 			}
 		}else if(*pcIn == '\'' && response_format == RESPONSE_FORMAT_KSX){
 			*pcOut = '&';
@@ -428,6 +443,30 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '}';
+		}else if(*pcIn == '\\' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = '\\';
+		}else if(*pcIn == '\t' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = 't';
+		}else if(*pcIn == '\b' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = 'b';
+		}else if(*pcIn == '\n' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = 'n';
+		}else if(*pcIn == '\r' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = 'r';
+		}else if(*pcIn == '/' && response_format == RESPONSE_FORMAT_JSON){
+			*pcOut = '\\';
+			pcOut++;
+			*pcOut = '/';
 		}else{
 			*pcOut = *pcIn;
 		}
