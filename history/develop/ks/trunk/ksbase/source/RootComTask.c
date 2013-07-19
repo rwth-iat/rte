@@ -268,12 +268,13 @@ void ksbase_RootComTask_execute(
 				if(sleepTime.usecs > (sleepLimit * 1000))
 					sleepTime.usecs = sleepLimit * 1000;
 			}
+#if OV_SYSTEM_NT
 			else if(majorVersion <= 5)
 			{
 				sleepTime.secs = 0;
 				sleepTime.usecs = 1000;
 			}
-
+#endif
 #if DBG_PRINT_WAIT_TIME
 	    ov_time_gettime(&waitStart);
 	    ov_logfile_debug("%s line %u: sleeping %d secs and %d usecs", __FILE__, __LINE__, sleepTime.secs, sleepTime.usecs);
