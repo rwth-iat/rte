@@ -145,6 +145,74 @@ LIBRARY	ksapi
 		END_OPERATIONS;
 	END_CLASS;
 
+	CLASS	getEP				:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"get engineered properties of contained objects";
+		VARIABLES
+			/* Output *************************************************/
+			typemask			:	UINT
+				COMMENT			=	"Filter types: Domain 1; Variable 2; History 4; Link 8; Structure 16. Use bitwise or to combine. e.g. all of them: 31"
+				INITIALVALUE	=	15;
+			namemask			:	STRING
+				COMMENT			=	"A regular expression to filter the Objects, * takes everything"
+				INITIALVALUE	=	"*";
+			scopeFlags			:	UINT
+				COMMENT			=	"Flags defining what to find: Parts: 2147483648 (0x80000000); Children 1073741824 (0x40000000); Flatten 1."
+				INITIALVALUE	=	3221225472;
+			identifiers[]		:	STRING
+				COMMENT			=	"A list containing the names of the elements inside the Object named in path";
+			objectTypes[]		:	UINT
+				COMMENT			=	"A list containing the object types of the elements inside the Object named in path";
+			objectTypesStr[]	:	STRING
+				COMMENT			=	"A list containing the object types of the elements inside the Object named in path as strings";
+			creationTimes[]		:	TIME
+				COMMENT			=	"A list containing the creation times of the elements inside the Object named in path";
+			comments[]			:	STRING
+				COMMENT			=	"A list containing the comments of the elements inside the Object named in path";
+			accessRights[]		:	UINT
+				COMMENT			=	"A list containing the access rights of the elements inside the Object named in path";
+			accessRightsStr[]	:	STRING
+				COMMENT			=	"A list containing the access rights of the elements inside the Object named in path as strings";
+			semanticFlags[]		:	UINT
+				COMMENT			=	"A list containing the semantic flags of the elements inside the Object named in path";
+			DOMclassIdents[]	:	STRING
+				COMMENT			=	"A list containing the class identifiers of the domains inside the Object named in path";
+			STRUCTtypeIdents[]	:	STRING
+				COMMENT			=	"A list containing the type identifiers of the structs inside the Object named in path";
+			VARtechUnits[]		:	STRING
+				COMMENT			=	"A list containing the TechUnits of the Variables inside the Object named in path";
+			VARtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the vartypes of the Variables inside the Object named in path as strings";
+			VARtypes[]			:	UINT
+				COMMENT			=	"A list containing the vartypes of the Variables inside the Object named in path";
+			LINKtypes[]			:	UINT
+				COMMENT			=	"A list containing the types of the Links inside the Object named in path";
+			LINKtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the types of the Links inside the Object named in path as strings";
+			LINKoppositeRoles[]	:	STRING
+				COMMENT			=	"A list containing the opposite role identifiers of the links inside the Object named in path";
+			LINKassociations[]	:	STRING
+				COMMENT			=	"A list containing the associations of the links inside the Object named in path";
+			HISTtypes[]			:	UINT
+				COMMENT			=	"A list containing the types of the histories inside the Object named in path";
+			HISTtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the types of the histories inside the Object named in path";
+			HISTdefaultInts[]	:	UINT
+				COMMENT			=	"A list containing the default interpolation of the histories inside the Object named in path";
+			HISTsupportedINTs[]	:	UINT
+				COMMENT			=	"A list containing the supported interpolations of the histories inside the Object named in path";
+			HISTtypeIdents[]	:	STRING
+				COMMENT			=	"A list containing the type identifiers of the histories inside the Object named in path";	
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_GETEP>;
+		END_OPERATIONS;
+	END_CLASS;
+
 	CLASS	Variable				:	CLASS	ov/object
 		IS_INSTANTIABLE;
 		IS_FINAL;

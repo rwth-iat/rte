@@ -62,7 +62,15 @@ typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_EP_GETID(
 		OV_STRING 									namemask
 );
 
-
+typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_GETEP(
+		OV_INSTPTR_ksapi_getEP	pobj,
+		OV_STRING 									serverHost,
+		OV_STRING 									serverName,
+		OV_STRING 									path,
+		OV_OBJ_TYPE									typemask,
+		OV_STRING 									namemask,
+		OV_EP_FLAGS									scopeFlags
+);
 
 typedef OV_DLLFNCEXPORT void KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT(
 		OV_INSTPTR_ksapi_renameObject	 		pobj,
