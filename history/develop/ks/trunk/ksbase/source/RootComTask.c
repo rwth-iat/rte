@@ -115,6 +115,7 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
     	MMRESULT res;
     	OSVERSIONINFO WinVersion;
     	/*	determine version, as on XP we have to limit the sleep times	*/
+    	WinVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     	GetVersionEx(&WinVersion);
     	majorVersion = WinVersion.dwMajorVersion;
     	minorVersion = WinVersion.dwMinorVersion;
@@ -122,6 +123,7 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
     	/*	get maximum timer resolution and request windows to use it	*/
     	timeGetDevCaps(&tc, sizeof(TIMECAPS));
     	ov_logfile_info("maximum timer resolution is: %ums", tc.wPeriodMin);
+    	ov_logfile_info("Windows Version: %i.%i",majorVersion, minorVersion);
     	res = timeBeginPeriod(tc.wPeriodMin);
     	if(res != MMSYSERR_NOERROR)
     	{
