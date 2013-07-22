@@ -186,6 +186,7 @@ void ksbase_RootComTask_execute(
 	OV_TIME_SPAN time_left, ts;
 	OV_TIME_SPAN sleepTime;
 	OV_UINT sleepLimit = 0;
+	OV_STRING sleepLimitStr = NULL;
 #if !OV_SYSTEM_NT
 		struct timespec s;
 #endif
@@ -208,7 +209,11 @@ void ksbase_RootComTask_execute(
 	//calculate time of next event
 	ov_time_add(&time_next, &now, &time_left);
 	ov_memstack_lock();
-	sleepLimit = atoi(ov_vendortree_getcmdlineoption_value("KSBASE_SCHED_LIMITSLEEP"));
+	sleepLimitStr = ov_vendortree_getcmdlineoption_value("KSBASE_SCHED_LIMITSLEEP");
+	if(sleepLimitStr)
+		sleepLimit = atoi(sleepLimitStr);
+	else
+		sleepLimit = 0;
 	ov_memstack_unlock();
 
 	do{//loop until next event in ov_scheduler
