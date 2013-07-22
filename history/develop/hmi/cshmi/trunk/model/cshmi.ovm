@@ -249,10 +249,10 @@ LIBRARY cshmi
 		VARIABLES
 			cx : SINGLE
 			COMMENT = "x-axis coordinate of the center of the circle"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 0.0;
 			cy : SINGLE
 			COMMENT = "y-axis coordinate of the center of the circle"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 0.0;
 			r : SINGLE
 			COMMENT = "radius of the circle"
 			INITIALVALUE = 10.0;
@@ -268,10 +268,10 @@ LIBRARY cshmi
 		VARIABLES
 			cx : SINGLE
 			COMMENT = "x-axis coordinate of the center of the ellipse"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 0.0;
 			cy : SINGLE
 			COMMENT = "y-axis coordinate of the center of the ellipse"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 0.0;
 			rx : SINGLE
 			COMMENT = "x-axis radius of the ellipse"
 			INITIALVALUE = 5.0;
@@ -319,7 +319,7 @@ LIBRARY cshmi
 		VARIABLES
 			x : SINGLE
 			COMMENT = "x-axis coordinate of the text starting position"
-			INITIALVALUE = 10.0;
+			INITIALVALUE = 0.0;
 			y : SINGLE
 			COMMENT = "y-axis coordinate of the text starting position"
 			INITIALVALUE = 10.0;

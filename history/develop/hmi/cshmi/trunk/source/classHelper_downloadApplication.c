@@ -122,6 +122,12 @@ OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 	OV_STRING	pcOut = 0;
 	OV_STRING	strOut;
 
+	if(!strIn){
+		strOut = (OV_STRING)ov_memstack_alloc(1);
+		strOut = '\0';
+		return strOut;
+	}
+
 	//ov_path_percentsize is not the correct function, but results in a bigger size in some cases, never in a smaller
 	strOut = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strIn)+1);
 
