@@ -61,6 +61,10 @@ LIBRARY	fbcomlib
 				FLAGS			=	"i"
 				COMMENT			=	"Timeout for request in seconds"
 				INITIALVALUE	=	10;	 
+			retryAfter			:	UINT
+				FLAGS			=	"i"
+				COMMENT			=	"In case of error retry after xx seconds. Only active if doCyclic is TRUE."
+				INITIALVALUE	=	300;
 			requestSendTime		:	TIME
 				FLAGS			=	"n"
 				COMMENT			=	"Time when request was sent";
@@ -137,6 +141,7 @@ LIBRARY	fbcomlib
 		COMMENT	=	"Baseclass for variables in Packages";
 		VARIABLES
 			path				:	STRING
+				HAS_SET_ACCESSOR
 	        	FLAGS 			=	"i"
 	        	COMMENT			=	"path of remote variable"
 	        	INITIALVALUE	=	"";
