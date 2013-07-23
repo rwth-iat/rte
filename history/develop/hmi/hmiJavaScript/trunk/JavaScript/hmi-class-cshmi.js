@@ -324,6 +324,9 @@ cshmi.prototype = {
 		}else if (ObjectType.indexOf("/cshmi/SetValue") !== -1 && HMI.instanceOf(VisualParentObject, "cshmi-blackbox")){
 			// SetValue is ok to be Child of Blackbox
 			return null;
+		}else if (ObjectType.indexOf("/cshmi/TranslationSource") !== -1){
+			// TranslationSource is placeable at any place
+			return null;
 		}else{
 			HMI.hmi_log_info_onwebsite("Object (Typ: "+ObjectType+"): "+ObjectPath+" not supported");
 		}
@@ -1492,6 +1495,7 @@ cshmi.prototype = {
 		
 		var ParameterName;
 		var ParameterValue;
+		var translationSourcePath = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var requestList = new Object();
@@ -1504,7 +1508,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["TemplateFBVariableReferenceName"] = null;
 			requestList[ObjectPath]["TemplateConfigValues"] = null;
 			if (GetType === "static"){
-				//requestList[ObjectPath]["translationSource"] = null;
+				requestList[ObjectPath]["translationSource"] = null;
 			}
 			
 			var successCode = this._requestVariablesArray(requestList);
@@ -1524,6 +1528,10 @@ cshmi.prototype = {
 				//the action was not configured
 				ParameterName = "";
 			}
+			if (GetType === "static"){
+				translationSourcePath = requestList[ObjectPath]["translationSource"];
+			}
+			
 			//feeding garbage collector early
 			requestList = null;
 			
@@ -1531,10 +1539,65 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
+			this.ResourceList.Actions[ObjectPath].translationSourcePath = translationSourcePath;
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
+			translationSourcePath = this.ResourceList.Actions[ObjectPath].translationSourcePath;
+		}
+		if (translationSourcePath === undefined){
+			//fixme remove me
+			
+			var XXrequestList = new Object();
+			XXrequestList[ObjectPath] = new Object();
+			XXrequestList[ObjectPath]["translationSource"] = null;
+			var successCode = this._requestVariablesArray(XXrequestList);
+			translationSourcePath = XXrequestList[ObjectPath]["translationSource"];
+		}
+		//translate if needed
+		if (translationSourcePath !== ""){
+			var TranslationMapping = new Object();
+			if (this.ResourceList.Actions && this.ResourceList.Actions[translationSourcePath] !== undefined){
+				//the object is asked this session, so reuse the config to save communication requests
+				TranslationMapping = this.ResourceList.Actions[translationSourcePath].TranslationParameters;
+			}else{
+				var requestTranslationList = new Object();
+				requestTranslationList[translationSourcePath] = new Object();
+				requestTranslationList[translationSourcePath]["translationMapping"] = null;
+				
+				var successCode = this._requestVariablesArray(requestTranslationList);
+				if (successCode === false){
+					return null;
+				}
+				
+				var TranslationListArray = requestTranslationList[translationSourcePath]["translationMapping"].split(" ");
+				var KeyValueEntry = null;
+				var lastEntry = null;
+				for (var i=0; i < TranslationListArray.length; i++) {
+					KeyValueEntry = TranslationListArray[i].split(":");
+					if (KeyValueEntry.length >= 2){
+						if (KeyValueEntry.length > 2){
+							var Value = KeyValueEntry.slice(1).join(":");
+						}else{
+							Value = KeyValueEntry[1];
+						}
+						TranslationMapping[KeyValueEntry[0]] = Value;
+						lastEntry = KeyValueEntry[0];
+					}else if (KeyValueEntry.length === 1 && lastEntry !== null){
+						//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
+						TranslationMapping[lastEntry] = TranslationMapping[lastEntry]+" "+KeyValueEntry[0];
+					}
+				}
+				
+				//we have asked the object successful, so remember the result
+				this.ResourceList.Actions[translationSourcePath] = new Object();
+				this.ResourceList.Actions[translationSourcePath].TranslationParameters = TranslationMapping;
+			}
+			if(TranslationMapping[NewValue] !== undefined){
+				//translate
+				NewValue = TranslationMapping[NewValue];
+			}
 		}
 		
 		var SetVarCbfnc = function(Client, req){
@@ -4946,7 +5009,7 @@ cshmi.prototype = {
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
-			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.parentNode != null && VisualObject.parentNode.tagName !== "g"){
+			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.tagName === "svg" && VisualObject.parentNode && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.id === ""){
 				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			}
 		}else if (configArray["rotate"] && configArray["rotate"] !== "0"){
