@@ -1553,7 +1553,12 @@ cshmi.prototype = {
 			XXrequestList[ObjectPath] = new Object();
 			XXrequestList[ObjectPath]["translationSource"] = null;
 			var successCode = this._requestVariablesArray(XXrequestList);
-			translationSourcePath = XXrequestList[ObjectPath]["translationSource"];
+			if(XXrequestList[ObjectPath]["translationSource"] !== null){
+				translationSourcePath = XXrequestList[ObjectPath]["translationSource"];
+			}else{
+				translationSourcePath = "";
+			}
+			
 		}
 		//translate if needed
 		if (translationSourcePath !== ""){
