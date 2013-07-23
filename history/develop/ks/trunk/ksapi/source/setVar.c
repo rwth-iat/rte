@@ -129,16 +129,16 @@ OV_DLLFNCEXPORT void ksapi_setVar_submit(
     /*	iterate over variable objects in containment and linked ones and add them to the package	*/
     Ov_ForEachChildEx(ov_containment, pthis, pCurrVar, ksapi_Variable)
     {
-    	numberOfItems++;
-    	items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
-    	if(!items)
-    	{
-    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-    		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
-    		return;
-    	}
     	if(!pCurrVar->v_order)
     	{/*	variable not processed yet	*/
+    		numberOfItems++;
+    		items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
+    		if(!items)
+    		{
+    			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    			pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
+    			return;
+    		}
     		if(pCurrVar->v_path)
     		{
     			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
@@ -158,16 +158,16 @@ OV_DLLFNCEXPORT void ksapi_setVar_submit(
 
     Ov_ForEachChild(ksapi_operationToVariable, pthis, pCurrVar)
     {
-    	numberOfItems++;
-    	items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
-    	if(!items)
-    	{
-    		pthis->v_status = KSAPI_COMMON_INTERNALERROR;
-    		pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
-    		return;
-    	}
     	if(!pCurrVar->v_order)
     	{	/*	variable not processed yet	*/
+    		numberOfItems++;
+    		items = Ov_HeapRealloc(items, numberOfItems * sizeof(OV_SETVAR_ITEM));
+    		if(!items)
+    		{
+    			pthis->v_status = KSAPI_COMMON_INTERNALERROR;
+    			pthis->v_result = OV_ERR_HEAPOUTOFMEMORY;
+    			return;
+    		}
     		if(pCurrVar->v_path)
     		{
     			items[numberOfItems-1].path_and_name = pCurrVar->v_path;	/*	the string will not be changed, so we do not need to copy it	*/
