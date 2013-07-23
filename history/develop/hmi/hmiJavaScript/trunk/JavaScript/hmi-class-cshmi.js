@@ -1495,7 +1495,7 @@ cshmi.prototype = {
 		
 		var ParameterName;
 		var ParameterValue;
-		var translationSourcePath = "";
+		var TranslationSourcePath = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
 			var requestList = new Object();
@@ -1529,7 +1529,7 @@ cshmi.prototype = {
 				ParameterName = "";
 			}
 			if (GetType === "static"){
-				translationSourcePath = requestList[ObjectPath]["translationSource"];
+				TranslationSourcePath = requestList[ObjectPath]["translationSource"];
 			}
 			
 			//feeding garbage collector early
@@ -1539,44 +1539,62 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
-			this.ResourceList.Actions[ObjectPath].translationSourcePath = translationSourcePath;
+			this.ResourceList.Actions[ObjectPath].TranslationSourcePath = TranslationSourcePath;
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			translationSourcePath = this.ResourceList.Actions[ObjectPath].translationSourcePath;
+			TranslationSourcePath = this.ResourceList.Actions[ObjectPath].TranslationSourcePath;
 		}
-		if (translationSourcePath === undefined){
-			//fixme remove me
+		if (TranslationSourcePath === undefined){
+			//fixme remove me if available in all turbos
 			
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
 			XXrequestList[ObjectPath]["translationSource"] = null;
 			var successCode = this._requestVariablesArray(XXrequestList);
 			if(XXrequestList[ObjectPath]["translationSource"] !== null){
-				translationSourcePath = XXrequestList[ObjectPath]["translationSource"];
+				TranslationSourcePath = XXrequestList[ObjectPath]["translationSource"];
 			}else{
-				translationSourcePath = "";
+				TranslationSourcePath = "";
 			}
-			
 		}
 		//translate if needed
-		if (translationSourcePath !== ""){
+		if (TranslationSourcePath !== ""){
 			var TranslationMapping = new Object();
-			if (this.ResourceList.Actions && this.ResourceList.Actions[translationSourcePath] !== undefined){
+			if (this.ResourceList.Actions && this.ResourceList.Actions[TranslationSourcePath] !== undefined){
 				//the object is asked this session, so reuse the config to save communication requests
-				TranslationMapping = this.ResourceList.Actions[translationSourcePath].TranslationParameters;
+				if(this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMappingRaw){
+					var TranslationListArray = this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMappingRaw;
+					var KeyValueEntry = null;
+					for (var i=0; i < TranslationListArray.length; i++) {
+						KeyValueEntry = TranslationListArray[i].split(":");
+						if (KeyValueEntry.length >= 2){
+							if (KeyValueEntry.length > 2){
+								var Value = KeyValueEntry.slice(1).join(":");
+							}else{
+								Value = KeyValueEntry[1];
+							}
+							TranslationMapping[KeyValueEntry[0]] = Value;
+						}
+					}
+					delete this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMappingRaw;
+					this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMapping = TranslationMapping;
+				}else if(this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMapping){
+					TranslationMapping = this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMapping;
+				}
 			}else{
 				var requestTranslationList = new Object();
-				requestTranslationList[translationSourcePath] = new Object();
-				requestTranslationList[translationSourcePath]["translationMapping"] = null;
+				requestTranslationList[TranslationSourcePath] = new Object();
+				requestTranslationList[TranslationSourcePath].Parameters = new Object();
+				requestTranslationList[TranslationSourcePath].Parameters["translationMapping"] = null;
 				
 				var successCode = this._requestVariablesArray(requestTranslationList);
 				if (successCode === false){
 					return null;
 				}
 				
-				var TranslationListArray = requestTranslationList[translationSourcePath]["translationMapping"].split(" ");
+				var TranslationListArray = requestTranslationList[TranslationSourcePath]["translationMapping"].split(" ");
 				var KeyValueEntry = null;
 				var lastEntry = null;
 				for (var i=0; i < TranslationListArray.length; i++) {
@@ -1596,8 +1614,8 @@ cshmi.prototype = {
 				}
 				
 				//we have asked the object successful, so remember the result
-				this.ResourceList.Actions[translationSourcePath] = new Object();
-				this.ResourceList.Actions[translationSourcePath].TranslationParameters = TranslationMapping;
+				this.ResourceList.Actions[TranslationSourcePath] = new Object();
+				this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMapping = TranslationMapping;
 			}
 			if(TranslationMapping[NewValue] !== undefined){
 				//translate
