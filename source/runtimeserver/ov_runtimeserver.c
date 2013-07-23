@@ -524,8 +524,7 @@ int main(int argc, char **argv) {
 					{
 						if(logfileSpecified == FALSE)
 						{
-							if(!temp)
-								temp = readValue(startRead);
+							temp = readValue(startRead);
 							if(!temp || !*temp)
 								return EXIT_FAILURE;
 							if(!strcmp(temp, "stdout")) {
@@ -562,7 +561,7 @@ int main(int argc, char **argv) {
 #endif
 											hlpindex++;
 										}
-										strcpy((helper+hlpindex), temp);
+										strcpy(&(helper[hlpindex]), temp);
 										temp = helper;
 									}
 									else
@@ -594,11 +593,11 @@ int main(int argc, char **argv) {
 						if(!temp || !*temp)
 							return EXIT_FAILURE;
 						temp2 = temp;
-						while(!isWhiteSpace(temp2))
+						while((!isWhiteSpace(temp2)) && *temp2)
 							temp2++;
 						if(*temp2!='\0')
 						{	/*	whitespaces at line end are stripped: nothing may follow here	*/
-							ov_logfile_error("Error parsing OPTION in line %u: no whitespaces in allowed in options.", line);
+							ov_logfile_error("Error parsing OPTION in line %u: no whitespaces allowed in options.", line);
 						}
 						if(commandline_options)
 						{
