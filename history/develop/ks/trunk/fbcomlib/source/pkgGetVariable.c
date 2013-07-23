@@ -63,11 +63,12 @@ OV_DLLFNCEXPORT void fbcomlib_pkgGetVariable_typemethod(
 	{	/*	we are connected to a parent getVar	*/
 		if((pGetVar->v_state == FBCOMLIB_STATE_OK) ||(pGetVar->v_state == FBCOMLIB_STATE_INIT)||(pGetVar->v_state == FBCOMLIB_STATE_WAITING))
 		{
-			if(pGetVar->p_apiGet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
+			if((pGetVar->p_apiGet.v_status == KSAPI_COMMON_REQUESTCOMPLETED) || (pGetVar->p_apiGet.v_status == KSAPI_COMMON_WAITINGFORANSWER))
 			{	/*	ksapi-request completed --> get answer	*/
 				pinst->v_varResult = pinst->p_apiVar.v_varRes;
-				if(Ov_Fail(Ov_SetAnyValue(&(pinst->v_value), &(pinst->p_apiVar.v_varValue))))
-					fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pGetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
+				if(Ov_OK(pinst->v_varResult))
+						if(Ov_Fail(Ov_SetAnyValue(&(pinst->v_value), &(pinst->p_apiVar.v_varValue))))
+							fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pGetVar), FBCOMLIB_STATE_INTERNAL_ERROR);
 				return;
 			}
 

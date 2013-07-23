@@ -25,3 +25,16 @@
 #include "libov/ov_macros.h"
 
 
+OV_DLLFNCEXPORT OV_RESULT fbcomlib_pkgVariable_path_set(
+    OV_INSTPTR_fbcomlib_pkgVariable          pobj,
+    const OV_STRING  value
+) {
+	OV_RESULT result;
+
+	result = ov_string_setvalue(&(pobj->p_apiVar.v_path), value);
+	if(Ov_Fail(result))
+		return result;
+
+	return ov_string_setvalue(&(pobj->v_path), value);
+}
+

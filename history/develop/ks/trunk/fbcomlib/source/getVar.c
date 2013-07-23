@@ -36,10 +36,19 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getVar_doReset_set(
     OV_INSTPTR_fbcomlib_getVar          pobj,
     const OV_BOOL  value
 ) {
+	OV_INSTPTR_fbcomlib_pkgGetVariable fbcomlibVar = NULL;
 	if(value && ! pobj->v_doReset)
 	{
 		ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiGet), TRUE);
 		fbcomlib_FBComCommon_resetAbstract(Ov_StaticPtrCast(fbcomlib_FBComCommon, pobj));
+		Ov_ForEachChildEx(ov_containment, pobj, fbcomlibVar, fbcomlib_pkgGetVariable)
+		{
+			fbcomlibVar->p_apiVar.v_order = 0;
+		}
+		Ov_ForEachChildEx(fbcomlib_PkgVar, pobj, fbcomlibVar, fbcomlib_pkgGetVariable)
+		{
+			fbcomlibVar->p_apiVar.v_order = 0;
+		}
 	}
     pobj->v_doReset = value;
     return OV_ERR_OK;
@@ -149,6 +158,21 @@ OV_DLLFNCEXPORT void fbcomlib_getVar_typemethod(
 
 		}
 		return;
+	}
+	else if(pinst->v_state != FBCOMLIB_STATE_WRONGINPUT)
+	{
+		if(pinst->v_doCyclic && pinst->v_retryAfter)
+		{
+			if(pltc->secs > (pinst->v_requestSendTime.secs + pinst->v_retryAfter))
+			{
+				if(pinst->v_doReset)
+					fbcomlib_getVar_doReset_set(pinst, FALSE);
+				fbcomlib_getVar_doReset_set(pinst, TRUE);
+				fbcomlib_getVar_doReset_set(pinst, FALSE);
+				fbcomlib_FBComCommon_doCyclic_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), TRUE);
+			}
+
+		}
 	}
 	return;
 }
