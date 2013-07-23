@@ -735,16 +735,17 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_cshmi_CompareIteratedChild pCompareIteratedChild = NULL;
 	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
 	OV_INSTPTR_cshmi_RoutePolyline pRoutePolyline = NULL;
+	OV_INSTPTR_cshmi_TranslationSource pTranslationSource = NULL;
 
 	//be carefull to adjust the ov_string_print at the end of the function
-	#define MAXACTIONENTRIES 10
-	OV_STRING ResultListVec[MAXACTIONENTRIES] = {" ", " ", " ", " ", " ", " ", " ", " ", " ", " "};
+	#define MAXACTIONENTRIES 11
+	OV_STRING ResultListVec[MAXACTIONENTRIES] = {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "};
 	OV_STRING strIterate = NULL;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
-
 	OV_STRING ParameterName = NULL;
 	OV_STRING ParameterValue = NULL;
+	OV_STRING temp = NULL;
 	OV_BOOL elementInstantiated = FALSE;
 	OV_BOOL elementIsfirst = TRUE;
 	OV_UINT i = 0;
@@ -793,9 +794,14 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, ParameterValue);
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, ParameterValue);
 		}else{
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
+		}
+		if(ov_string_compare(pSetValue->v_translationSource, NULL) != OV_STRCMP_EQUAL){
+			ov_string_print(&strIterate, "%s%%22TranslationSourcePath%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource);
+		}else{
+			ov_string_print(&strIterate, "%s%%22TranslationSourcePath%%22:%%22%%22", strIterate);
 		}
 		ov_string_append(&strIterate, "%7D");
 
@@ -1210,9 +1216,57 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		elementIsfirst = FALSE;
 	}
 
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TranslationSource, pObj){
+		elementInstantiated = TRUE;
+		pTranslationSource = Ov_StaticPtrCast(cshmi_TranslationSource, pObj);
+		ov_string_setvalue(&strIterate, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterate, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterate, "%22:%7B");
+		ov_string_append(&strIterate, "%22Parameters%22:%7B");
+		if(pTranslationSource->v_translationMapping.veclen == 0){
+			ov_string_setvalue(&temp, " ");
+		}else if(pTranslationSource->v_translationMapping.veclen == 1){
+			ov_memstack_lock();
+			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
+			ov_memstack_unlock();
+		}else{
+			ov_memstack_lock();
+			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
+			ov_memstack_unlock();
+			for(i = 1; i < pTranslationSource->v_translationMapping.veclen;i++){
+				ov_memstack_lock();
+				ov_string_print(&temp, "%s,%%22%s%%22", temp, cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[i]));
+				ov_memstack_unlock();
+			}
+		}
+		ov_string_print(&strIterate, "%s%%22TranslationMappingRaw%%22:%%5B%s%%5D", strIterate, temp);
+
+		ov_string_append(&strIterate, "%7D");
+		ov_string_append(&strIterate, "%7D");
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterate, ",");
+		}
+		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
+	}
+	if(elementInstantiated == TRUE){
+		ResultListIndex++;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
 	//concat the result, manual for performance reasons (append is not cheap)
-	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9]);
+	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10]);
 	ov_string_setvalue(&ResultFormat, NULL);
+	ov_string_setvalue(&ParameterName, NULL);
+	ov_string_setvalue(&ParameterValue, NULL);
+	ov_string_setvalue(&temp, NULL);
 
 	ov_string_setvalue(&strIterate, NULL);
 	for(i = 0;i < MAXACTIONENTRIES;i++){
