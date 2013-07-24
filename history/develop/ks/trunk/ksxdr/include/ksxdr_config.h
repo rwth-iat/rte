@@ -64,6 +64,8 @@
 #define XDRCL_PROCANS_INCOMPLETE	(1<<0)
 #define XDRCL_PROCANS_XIDMISSMATCH	(1<<7)
 
-
-
-
+//State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error
+#define XDR_MNGRCOM_REGISTERSTATE_NOTREGISTERED 0
+#define XDR_MNGRCOM_REGISTERSTATE_WAITING 1
+#define XDR_MNGRCOM_REGISTERSTATE_REGISTERED 2
+#define XDR_MNGRCOM_REGISTERSTATE_ERROR 128

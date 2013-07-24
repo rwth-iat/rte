@@ -23,6 +23,7 @@
 
 #include "ksbase.h"
 #include "libov/ov_macros.h"
+#include "ksbase_helper.h"
 
 
 OV_DLLFNCEXPORT OV_STRING ksbase_ServerRep_name_get(
@@ -145,6 +146,9 @@ OV_DLLFNCEXPORT OV_INT ksbase_ServerRep_state_get(
     return pobj->v_state;
 }
 
+/**
+ * state of the server; 0: offline; 1: online; 2: inactive
+ */
 OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_state_set(
     OV_INSTPTR_ksbase_ServerRep          pobj,
     const OV_INT  value
@@ -219,7 +223,7 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_typemethod(
 	ov_time_gettime(&timenow);
 
 	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_BEFORE) {
-		ksbase_ServerRep_state_set(pinst, 2);
+		ksbase_ServerRep_state_set(pinst, KSBASE_SERVERREP_STATE_INACTIVE);
 	}
 	if(timenow.secs >= ((int)ksbase_ServerRep_expirationtime_get(pinst)+300)) {
 		Ov_DeleteObject(pinst);

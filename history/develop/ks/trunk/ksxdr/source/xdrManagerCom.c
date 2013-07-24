@@ -79,14 +79,14 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 		KS_logfile_debug(("%s: unregistering MANAGER ksxdr protocol", thisMngCom->v_identifier));
 		if(Ov_Fail(ksbase_Manager_unregister("MANAGER", 2, KSXDR_IDENTIFIER)))
 		{
-			thisMngCom->v_RegisterState = 128;	/*	set register error	*/
+			thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;	/*	set register error	*/
 			thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
 			thisMngCom->v_Tries = 0;		/*	for next start up reset counter	*/
 			return;
 		}
 		else
 		{
-			thisMngCom->v_RegisterState = 0;	/*	set state to unregistered	*/
+			thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_NOTREGISTERED;	/*	set state to unregistered	*/
 			thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
 			thisMngCom->v_Tries = 0;
 			return;
@@ -109,7 +109,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 			ksxdr_xdrClient_requestUnRegister(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient), NULL, servername.value.valueunion.val_string, 2, NULL, NULL);
 
 	}
-	thisMngCom->v_RegisterState = 0;	/*	set state to unregistered	*/
+	thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_NOTREGISTERED;	/*	set state to unregistered	*/
 	thisMngCom->v_cycInterval = 5000;	/*	5 seconds cyctime for next start up	*/
 	thisMngCom->v_Tries = 0;
 
@@ -143,9 +143,9 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 	switch(thisMngCom->v_RegisterState)
 	{
 
-	case 0:	/*	if not registered or registered successfully (in latter case typemethod is slowed down to TTL * 0.9) or error (in this case typemethod is slowed down for retries)	*/
-	case 2:
-	case 128:
+	case XDR_MNGRCOM_REGISTERSTATE_NOTREGISTERED:	/*	if not registered or registered successfully (in latter case typemethod is slowed down to TTL * 0.9) or error (in this case typemethod is slowed down for retries)	*/
+	case XDR_MNGRCOM_REGISTERSTATE_REGISTERED:
+	case XDR_MNGRCOM_REGISTERSTATE_ERROR:
 		if(thisMngCom->v_Tries < 3)
 		{
 			/*	if the OwnPort is not set check commandline options and if they are not set check for a TCPListener (default binding)	*/
@@ -263,13 +263,13 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				KS_logfile_debug(("%s: registering MANAGER ksxdr protocol on port %s", thisMngCom->v_identifier, thisMngCom->v_OwnPort));
 				if(Ov_Fail(ksbase_Manager_register("MANAGER", 2, KSXDR_IDENTIFIER, thisMngCom->v_OwnPort, 30)))
 				{
-					thisMngCom->v_RegisterState = 128;	/*	set register error	*/
+					thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;	/*	set register error	*/
 					thisMngCom->v_Tries++;
 					return;
 				}
 				else
 				{
-					thisMngCom->v_RegisterState = 2;	/*	set state to registered and slow down typemethod	*/
+					thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_REGISTERED;	/*	set state to registered and slow down typemethod	*/
 					thisMngCom->v_cycInterval = 30000;	/*	re-register every 30 seconds (assuming rootcomtask runs at 1 msec)	*/
 					thisMngCom->v_Tries = 0;
 					return;
@@ -298,13 +298,13 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 						KS_logfile_error(("%s: typemethod: could not create xdrClient. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
 						ov_memstack_unlock();
 						this->v_actimode = 0;
-						thisMngCom->v_RegisterState = 128;
+						thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;
 						return;
 					}
 					xdrClient->v_holdConnection = TRUE;
 				}
 				ksxdr_xdrClient_requestRegister(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient), NULL, servername.value.valueunion.val_string, 2, strtol(thisMngCom->v_OwnPort, NULL, 10), 30, Ov_StaticPtrCast(ov_domain, this), &ksxdr_xdrManagercom_Callback);
-				thisMngCom->v_RegisterState = 1;	/*	set state to waiting for answer	*/
+				thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_WAITING;	/*	set state to waiting for answer	*/
 				thisMngCom->v_cycInterval = 5000;	/*	used as a timeout: 5 seconds should be enough for a local connection (assuming rootcomtask runs at 1 msec)	*/
 				thisMngCom->v_Tries++;
 				return;
@@ -329,7 +329,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 		}
 		break;
 
-	case 1: 	/*	waiting for answer	*/
+	case XDR_MNGRCOM_REGISTERSTATE_WAITING: 	/*	waiting for answer	*/
 		/*	the callbackfunction sets state to registered or to error. if typemethod is run in this state a timeout occurred	*/
 		/*	increment Tries, reset Client, set state to error and be called again in 5 seconds	*/
 		thisMngCom->v_Tries++;
@@ -342,7 +342,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 		}
 		ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
 
-		thisMngCom->v_RegisterState = 128;
+		thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;
 		thisMngCom->v_cycInterval = 5000;
 	break;
 
@@ -362,7 +362,7 @@ void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPT
 	{	ov_memstack_lock();
 		KS_logfile_error(("%s: callback: error processing answer: %s", this->v_identifier, ov_result_getresulttext(result)));
 		ov_memstack_unlock();
-		this->v_RegisterState = 128;	/*	error	*/
+		this->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;	/*	error	*/
 		return;
 	}
 
@@ -370,7 +370,7 @@ void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPT
 	KS_logfile_debug(("%s: callback: register processed: result: %lu", this->v_identifier, result));
 	if(ksResult == KS_ERR_OK)
 	{
-		this->v_RegisterState = 2;	/*	registered	*/
+		this->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_REGISTERED;	/*	registered	*/
 		this->v_Tries = 0;
 		this->v_cycInterval = 30000;	/*	reregister in 30 seconds	*/
 		this->v_NextExecTime.secs += 30;
@@ -378,7 +378,7 @@ void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPT
 	}
 	else
 	{
-		this->v_RegisterState = 128;	/*	error	*/
+		this->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;	/*	error	*/
 		this->v_ErrCode = ksResult;
 		return;
 	}
