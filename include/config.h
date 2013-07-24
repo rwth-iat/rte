@@ -99,6 +99,8 @@
 #define REQUEST_HANDLED_BY_LINK 13
 #define REQUEST_HANDLED_BY_UNLINK 14
 #define REQUEST_HANDLED_BY_GETSERVER 15
+#define REQUEST_HANDLED_BY_REGISTER 16
+#define REQUEST_HANDLED_BY_UNREGISTER 17
 
 //authorization.c
 #define REALM "Top secret! User: root Pass: pass"
@@ -134,9 +136,6 @@
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
-//fixme welche davon gibts noch?
-OV_RESULT getvar_to_string(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_UINT format, OV_STRING* message);
-OV_RESULT setvar_at_object(OV_INSTPTR_ov_object pObj, OV_STRING* varname, OV_STRING* newcontent, OV_STRING* message);
 OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
@@ -161,6 +160,9 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 OV_RESULT exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 OV_RESULT exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+
+OV_RESULT exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
+OV_RESULT exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format);
 
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format);
