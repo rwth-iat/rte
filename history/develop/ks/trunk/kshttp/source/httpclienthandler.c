@@ -137,8 +137,6 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 		tmp_body = *body;
 	}
 
-	//fixme i see HTTP status 0 after createObject...
-
 	//no free needed since no memory allocated
 	switch (*result)
 	{
@@ -356,14 +354,18 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
 		}else if(ov_string_compare(cmd, "/register") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
-			result = OV_ERR_NOTIMPLEMENTED;
+			printresponseheader(&reply_body, response_format, "register");
+			result = exec_register(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "register");
+			request_handled_by = REQUEST_HANDLED_BY_REGISTER;
 		}else if(ov_string_compare(cmd, "/unregister") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
-			result = OV_ERR_NOTIMPLEMENTED;
+			printresponseheader(&reply_body, response_format, "unregister");
+			result = exec_unregister(&args, &reply_body, response_format);
+			printresponsefooter(&reply_body, response_format, "unregister");
+			request_handled_by = REQUEST_HANDLED_BY_UNREGISTER;
 		}else if(ov_string_compare(cmd, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
-			//FIXME: a server crashes if http://localhost:8080/getVar?path=/communication/httpservers/httpserver/staticfiles/index.html/.mimetype is called
-			//it is caused by the second dot in the filename
 			printresponseheader(&reply_body, response_format, "getvar");
 			result = exec_getvar(&args, &reply_body, response_format);
 			printresponsefooter(&reply_body, response_format, "getvar");

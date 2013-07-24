@@ -52,6 +52,8 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblCreateObj = {
 
 #define EXEC_CREATEOBJECT_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		Ov_SetDynamicVectorLength(&factorymatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&pmhpathmatch,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		return
 
@@ -67,6 +69,8 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	*/
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING_VEC factorymatch = {0,NULL};
+	OV_STRING_VEC pmhmatch = {0,NULL};
+	OV_STRING_VEC pmhpathmatch = {0,NULL};
 	OV_CREATEOBJ_ITEM *addrp = NULL;
 	OV_UINT i = 0;
 	OV_RESULT fr = OV_ERR_OK;
@@ -93,6 +97,11 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 		print_result_array(message, response_format, &fr, 1, ": Variable factory not found");
 		EXEC_CREATEOBJECT_RETURN fr; //400
 	}
+	//process Placement hint
+	Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);
+	find_arguments(args, "placementHint", &pmhmatch);
+	Ov_SetDynamicVectorLength(&pmhpathmatch,0,STRING);
+	find_arguments(args, "placePath", &pmhpathmatch);
 
 	ov_memstack_lock();
 	addrp = (OV_CREATEOBJ_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_CREATEOBJ_ITEM));
@@ -117,8 +126,27 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 			//set factory to the last factory given
 			addrp->factory_path = factorymatch.value[factorymatch.veclen-1];
 		}
-		//todo PMH implementieren
-		addrp->place.hint = KS_PMH_DEFAULT;
+
+		//placement hint
+		if(i<pmhmatch.veclen){
+			if(ov_string_compare(pmhmatch.value[i], "PMH_DEFAULT") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_DEFAULT;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_BEGIN") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_BEGIN;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_END") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_END;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_BEFORE") == OV_STRCMP_EQUAL && match.veclen<=pmhpathmatch.veclen){
+				addrp->place.hint = KS_PMH_BEFORE;
+				addrp->place.place_path = pmhpathmatch.value[i];
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_AFTER") == OV_STRCMP_EQUAL && match.veclen<=pmhpathmatch.veclen){
+				addrp->place.hint = KS_PMH_AFTER;
+				addrp->place.place_path = pmhpathmatch.value[i];
+			}else{
+				addrp->place.hint = KS_PMH_DEFAULT;
+			}
+		}else{
+			addrp->place.hint = KS_PMH_DEFAULT;
+		}
 
 		//todo, but a lot of work: do allow default value/links
 		addrp->parameters_len = 0;
