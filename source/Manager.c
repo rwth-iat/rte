@@ -102,7 +102,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				ksbase_ServerRep_timetolive_set(pNewSrvRep, timetolive);
 				ov_time_gettime(&timenow);
 				ksbase_ServerRep_regtime_set(pNewSrvRep, &timenow);
-				ksbase_ServerRep_state_set(pNewSrvRep, 1);
+				ksbase_ServerRep_state_set(pNewSrvRep, KSBASE_SERVERREP_STATE_ONLINE);
 			}
 			else
 			{
@@ -146,7 +146,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 							return result;
 					}/*	protocol found --> just reregister	*/
 					ksbase_ServerRep_regtime_set(pExistingSrvRep, &timenow);
-					ksbase_ServerRep_state_set(pExistingSrvRep, 1);
+					ksbase_ServerRep_state_set(pExistingSrvRep, KSBASE_SERVERREP_STATE_ONLINE);
 					if(ksbase_ServerRep_timetolive_get(pExistingSrvRep) > timetolive)
 						ksbase_ServerRep_timetolive_set(pExistingSrvRep, timetolive);
 					return OV_ERR_OK;
