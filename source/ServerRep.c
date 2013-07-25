@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ServerRep_constructor(
 	OV_INSTPTR_ksbase_ServerRep pthis = Ov_StaticPtrCast(ksbase_ServerRep, pobj);
 
 	/*	baseclass' constructor first	*/
-	result = ov_object_constructor(pobj);
+	result = ksbase_ComTask_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 
@@ -222,13 +222,15 @@ OV_DLLFNCEXPORT void ksbase_ServerRep_typemethod(
 
 	ov_time_gettime(&timenow);
 
-	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_BEFORE) {
+	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_AFTER) {
 		ksbase_ServerRep_state_set(pinst, KSBASE_SERVERREP_STATE_INACTIVE);
 	}
-	if(timenow.secs >= ((int)ksbase_ServerRep_expirationtime_get(pinst)+300)) {
-		Ov_DeleteObject(pinst);
+	//remove our entry after 5 minutes
+	timenow.secs -= 300;
+	if(ov_time_compare(&timenow, &(pinst->v_expirationtime)) == OV_TIMECMP_AFTER) {
+		Ov_DeleteObject(Ov_GetParent(ov_containment, pinst));
 	}
 
-    return;
+	return;
 }
 

@@ -99,9 +99,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				ksbase_ServerRep_version_set(pNewSrvRep, version);
 				ksbase_ServerRep_port_set(pNewSrvRep, &port, 1);
 				ksbase_ServerRep_protocols_set(pNewSrvRep, &protocol, 1);
-				ksbase_ServerRep_timetolive_set(pNewSrvRep, timetolive);
 				ov_time_gettime(&timenow);
 				ksbase_ServerRep_regtime_set(pNewSrvRep, &timenow);
+				ksbase_ServerRep_timetolive_set(pNewSrvRep, timetolive);	//sets expirationtime, calculated from regtime
 				ksbase_ServerRep_state_set(pNewSrvRep, KSBASE_SERVERREP_STATE_ONLINE);
 			}
 			else
