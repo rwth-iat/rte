@@ -39,6 +39,9 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	OV_INSTPTR_ksbase_RootComTask rcTask = NULL;
 	OV_INSTPTR_ksbase_NoneTicketAuthenticator pNoneAuth = NULL;
 	OV_INSTPTR_ksbase_NoneTicketGenerator pNoneGenerator = NULL;
+	OV_INSTPTR_ksbase_Manager pManager = NULL;
+	OV_ANY tempAny = {{0,{0}}, 0, {0,0}};
+
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -101,6 +104,42 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 			ov_logfile_error("Fatal: Could not create NoneGenerator: %s", ov_result_getresulttext(result));
 			ov_memstack_unlock();
 			return result;
+		}
+	}
+
+	/*
+	 * If servername is "MANAGER" create a Manager object else, delete existing Manager objects
+	 */
+	result = ov_vendortree_getservername(&tempAny, NULL);
+	if(Ov_Fail(result))
+	{
+		ov_memstack_lock();
+		ov_logfile_error("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result));
+		ov_memstack_unlock();
+		return result;
+	}
+
+	if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL)
+	{
+		pManager = Ov_SearchChildEx(ov_containment, &(pdb->root), "servers", ksbase_Manager);
+		if(!pManager)
+		{
+			result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
+			if(Ov_Fail(result))
+			{
+				ov_memstack_lock();
+				ov_logfile_error("TCPbind library open: could not create Manager: %s", ov_result_getresulttext(result));
+				ov_memstack_unlock();
+				return result;
+			}
+		}
+	}
+	else
+	{
+		pManager = Ov_SearchChildEx(ov_containment, &(pdb->root), "servers", ksbase_Manager);
+		if(pManager)
+		{
+			Ov_DeleteObject(pManager);
 		}
 	}
 
