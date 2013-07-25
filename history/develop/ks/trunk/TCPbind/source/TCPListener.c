@@ -215,7 +215,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			hints.ai_socktype = SOCK_STREAM;
 			hints.ai_flags = AI_PASSIVE;
 
-			sprintf(portbuf, "%lu", TCPbind_TCPListener_port_get(thisLi));
+			if(TCPbind_TCPListener_port_get(thisLi) != -1)
+				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
+			else
+				snprintf(portbuf, 12, "%ld", 0l);
 
 			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 			{
@@ -305,7 +308,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			hints.ai_socktype = SOCK_STREAM;
 			hints.ai_flags = AI_PASSIVE;
 
-			sprintf(portbuf, "%lu", TCPbind_TCPListener_port_get(thisLi));
+			if(TCPbind_TCPListener_port_get(thisLi) != -1)
+				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
+			else
+				snprintf(portbuf, 12, "%ld", 0l);
 
 			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 			{

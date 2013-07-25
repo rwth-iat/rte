@@ -25,6 +25,7 @@
 #include "libov/ov_vendortree.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_result.h"
 #include "TCPbind_config.h"
 
 #ifdef ov_library_open_TCPbind
@@ -51,12 +52,11 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 	OV_RESULT result;
 	OV_INT port = -1;
 	OV_STRING OptValTemp = NULL;
-	OV_INSTPTR_TCPbind_TCPChannel ptestchannel = NULL;
 	OV_INSTPTR_TCPbind_TCPListener pListener = NULL;
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pTCPbindDom = NULL;
+	OV_ANY tempAny = {{0,{0}}, 0, {0,0}};
 
-	OV_INSTPTR_ksbase_Manager pManager = NULL;
 
 	/*
 	 * set the global variables of the original version
@@ -124,21 +124,21 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 			}
 		}
 
-		if(port <0)	//no port number set --> check if we can connect to 7509
+		if(port <0)	//no port number set --> check if we are MANAGER. If so, set port to 7509.
 		{
-			KS_logfile_warning(("TCPbind library open: no port specified. trying to connect to localhost:7509 to check for a manager"));
-			if(Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, ptestchannel, pTCPbindDom, "porttest")))
-			{
-				if(Ov_Fail(TCPbind_TCPChannel_OpenConnection(Ov_StaticPtrCast(ksbase_Channel, ptestchannel), "localhost", "7509")))
+			result = ov_vendortree_getservername(&tempAny, NULL);
+				if(Ov_Fail(result))
 				{
-					port = 7509;
-					TCPbind_TCPChannel_CloseConnection(Ov_StaticPtrCast(ksbase_Channel, ptestchannel));
-					KS_logfile_debug(("TCPbind library open: could not connect to 7509. Setting port to 7509."));
+					ov_memstack_lock();
+					ov_logfile_error("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result));
+					ov_memstack_unlock();
+					return result;
 				}
-				Ov_DeleteObject(ptestchannel);
-			}
-			else
-				ov_logfile_info("TCPbind library open: No port set and not manager. Using random port.");
+
+				if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL)
+					port = 7509;
+				else
+					ov_logfile_info("TCPbind library open: No port set and not manager. Using random port.");
 		}
 
 		/*
@@ -172,24 +172,6 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		//read out port and print it
 		ov_logfile_info("TCPbind library open: listening on port %d", pListener->v_port);
 
-		/*
-		 * If port is 7509 create a Manager
-		 */
-		if(port == 7509)
-		{
-			pManager = Ov_SearchChildEx(ov_containment, &(pdb->root), "servers", ksbase_Manager);
-			if(!pManager)
-			{
-				KS_logfile_debug(("TCPbind library open: creating Manager (/servers)"));
-				result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
-				if(Ov_Fail(result))
-				{
-					ov_logfile_error("TCPbind library open: could not create Manager");
-					ov_memstack_unlock();
-					return result;
-				}
-			}
-		}
 	}
 	ov_memstack_unlock();
 
