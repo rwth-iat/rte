@@ -51,7 +51,9 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_setVar_doReset_set(
     OV_INSTPTR_fbcomlib_pkgSetVariable fbcomlibVar = NULL;
 	if(value && ! pobj->v_doReset)
     {
-    	ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon)&(pobj->p_apiSet), TRUE);
+    	if(pobj->p_apiSet.v_Reset)
+    		ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon)&(pobj->p_apiSet), FALSE);
+		ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon)&(pobj->p_apiSet), TRUE);
     	fbcomlib_FBComCommon_resetAbstract(Ov_StaticPtrCast(fbcomlib_FBComCommon, pobj));
     	Ov_ForEachChildEx(ov_containment, pobj, fbcomlibVar, fbcomlib_pkgSetVariable)
     	{
@@ -99,17 +101,21 @@ OV_DLLFNCEXPORT void fbcomlib_setVar_typemethod(
 
     	if(pinst->p_apiSet.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
     	{	/*	ksapi-request completed --> get answer	*/
+    		pinst->v_opResult = pinst->p_apiSet.v_result;
     		pinst->v_varResult = pinst->p_apiSet.v_varRes;
     		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_OK);
+    		pinst->v_errorCode = OV_ERR_OK;
     	}
     	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_INTERNALERROR)
     	{
     		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_KSAPI_ERROR);
+    		pinst->v_errorCode = pinst->p_apiSet.v_result;
     		return;
     	}
     	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_EXTERNALERROR)
     	{
     		fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_EXTERNAL_ERROR);
+    		pinst->v_errorCode = OV_ERR_GENERIC;
     		return;
     	}
     	else if(pinst->p_apiSet.v_status == KSAPI_COMMON_WAITINGFORANSWER)
