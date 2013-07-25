@@ -76,7 +76,7 @@ LIBRARY	fbcomlib
 	END_CLASS;
 	
 /***********************************************************************
-	string
+	get/setVar
 ***********************************************************************/
 	
 	CLASS variableOperation	:	CLASS	fbcomlib/FBComCommon
@@ -203,7 +203,11 @@ LIBRARY	fbcomlib
 				FLAGS			=	"o"
 				COMMENT			=	"A list containing the paths to get EP from";
 		END_VARIABLES;
+		PARTS
+			apiGetEPid				:	CLASS	ksapi/getEPidentifiers;
+		END_PARTS;
 		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 		    typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
@@ -217,7 +221,7 @@ LIBRARY	fbcomlib
 		IS_INSTANTIABLE;
 		COMMENT	=	"Function block creating an object";
 		VARIABLES
-			librarypath			:	STRING	
+			classPath			:	STRING	
 				FLAGS			=	"i"
 				COMMENT			=	"path to objecttype"
 				INITIALVALUE	=	"/Libraries/";
@@ -233,6 +237,9 @@ LIBRARY	fbcomlib
 				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 		END_VARIABLES;
+		PARTS
+			apiCreate				:	CLASS	ksapi/createObject;
+		END_PARTS;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -249,6 +256,9 @@ LIBRARY	fbcomlib
 				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 		END_VARIABLES;
+		PARTS
+			apiDelete				:	CLASS	ksapi/deleteObject;
+		END_PARTS;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -269,6 +279,9 @@ LIBRARY	fbcomlib
 				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 		END_VARIABLES;
+		PARTS
+			apiRename			:	CLASS	ksapi/renameObject;
+		END_PARTS;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -279,14 +292,14 @@ LIBRARY	fbcomlib
 		IS_INSTANTIABLE;
 		COMMENT	=	"Function block which takes the input and starts the sending";
 		VARIABLES
-			linkedpath			:	STRING
+			elementPath			:	STRING
 				FLAGS			=	"i"
 				COMMENT			=	"path to linked (child) object without anchor; path variable must include anchor of parent"
 				INITIALVALUE	=	"/TechUnits/";
 			position			:	INT	
 				FLAGS			=	"i"
 				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after";
-			element				:	STRING	
+			placePath				:	STRING	
 				FLAGS			=	"i"
 				COMMENT			=	"element position points to";
 			doReset				:	BOOL	
@@ -295,6 +308,9 @@ LIBRARY	fbcomlib
 				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 		END_VARIABLES;
+		PARTS
+			apiLink				:	CLASS	ksapi/linkObject;
+		END_PARTS;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -305,7 +321,7 @@ LIBRARY	fbcomlib
 		IS_INSTANTIABLE;
 		COMMENT	=	"Function block which takes the input and starts the sending";
 		VARIABLES
-			linkedpath			:	STRING
+			elementPath			:	STRING
 				FLAGS			=	"i"
 				COMMENT			=	"path to linked (child) object without anchor; path variable must include anchor of parent"
 				INITIALVALUE	=	"/TechUnits/";
@@ -315,6 +331,9 @@ LIBRARY	fbcomlib
 				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 		END_VARIABLES;
+		PARTS
+			apiUnlink				:	CLASS	ksapi/unlinkObject;
+		END_PARTS;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
