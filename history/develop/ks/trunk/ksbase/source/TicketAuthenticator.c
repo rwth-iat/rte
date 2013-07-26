@@ -94,7 +94,10 @@ OV_DLLFNCEXPORT void ksbase_TicketAuthenticator_shutdown(
 ) {
 	OV_INSTPTR_ksbase_TicketAuthenticator this = Ov_StaticPtrCast(ksbase_TicketAuthenticator, pobj);
 
-	ov_free(this->v_ticket.vtbl);
+	if(pdb->started == TRUE){
+		//prevent a crash if the database did not shutdown clean and the pointer points to foreign data
+		ov_free(this->v_ticket.vtbl);
+	}
 	this->v_ticket.vtbl = NULL;
 
 	ov_object_shutdown(pobj);
