@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <sys/stat.h>
 
 #include "libov/ov_database.h"
 #include "libov/ov_result.h"
@@ -714,9 +715,10 @@ int main(int argc, char **argv) {
 	char* configFile = NULL;
 	char* configBasePath = NULL;
 	OV_BOOL logfileSpecified = FALSE;
-	OV_UINT					line = 0;
-	OV_STRING				helper = NULL;
-	OV_UINT					hlpindex = 0;
+	OV_UINT			line = 0;
+	OV_STRING		helper = NULL;
+	OV_UINT			hlpindex = 0;
+ 	struct 			stat buffer;
 
 	/*
 	 *	if we are debugging, log to stderr (if not
@@ -1060,7 +1062,11 @@ int main(int argc, char **argv) {
 	}
 	if(size) {
 		ov_logfile_info("Creating database \"%s\"...", filename);
-		remove(filename); //removing the eventually existing file
+		//removing the eventually existing file
+		if(stat(filename,&buffer)==0 && remove(filename)!=0){
+			ov_logfile_error("Error: can not remove existing file \"%s\"", filename);
+			return EXIT_FAILURE;
+		}
 		result = ov_database_create(filename, size);
 		if(Ov_Fail(result)) {
 			ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
