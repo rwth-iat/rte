@@ -97,11 +97,23 @@ OV_DLLFNCEXPORT void ov_time_gettime(
 	ptime->secs = t.tv_sec;
 	ptime->usecs = t.tv_usec;
 #endif
-#if OV_SYSTEM_NT || OV_SYSTEM_OPENVMS
+#if OV_SYSTEM_OPENVMS
 	struct timeb t;
 	ftime(&t);
 	ptime->secs = t.time;
 	ptime->usecs = t.millitm*1000;
+#endif
+#if OV_SYSTEM_NT
+#define TICKS_PER_SECOND 10000000
+#define TICKS_PER_MICROSECOND 10
+#define EPOCH_DIFFERENCE 11644473600LL
+	FILETIME ft;	/*	64bit integer counting 100ns-ticks from 01.01.1601	*/
+	ULARGE_INTEGER ticks;
+	GetSystemTimeAsFileTime(&ft);
+	ticks.LowPart = ft.dwLowDateTime;
+	ticks.HighPart = ft.dwHighDateTime;
+	ptime->secs = (OV_UINT) ((ticks.QuadPart / TICKS_PER_SECOND) - EPOCH_DIFFERENCE);
+	ptime->usecs = (OV_UINT) ((ticks.QuadPart - (EPOCH_DIFFERENCE * TICKS_PER_SECOND)) - (ptime->secs * TICKS_PER_SECOND)) / TICKS_PER_MICROSECOND;
 #endif
 #if OV_SYSTEM_MC164
     MC164_GETTIME(ptime);

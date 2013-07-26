@@ -242,6 +242,8 @@ static void ov_server_usage(void)
 *	Main program
 */
 
+#define MAX_STARTUP_LIBRARIES		64
+
 int main(int argc, char **argv) {
 	/*
 	*	local variables
@@ -249,14 +251,14 @@ int main(int argc, char **argv) {
 
 	OV_STRING	            filename = NULL;
 	OV_STRING	            servername = NULL;
-	OV_STRING				acplt_home = NULL;
 	OV_STRING				configFile	=	NULL;
+	OV_STRING				configBasePath	=	NULL;	/*	obtained from the path of the configfile	*/
 	OV_STRING				helper = NULL;
 	OV_UINT					hlpindex = 0;
 	OV_UINT					line = 0;
 	FILE*					cfFile	=	NULL;
 	OV_STRING	            password = NULL;
-	OV_STRING               libraries[16];
+	OV_STRING               libraries[MAX_STARTUP_LIBRARIES];
 	OV_BOOL					logfileSpecified = FALSE;
 	OV_STRING				commandline_options = NULL;
 	OV_STRING				tempstr = NULL;
@@ -289,10 +291,6 @@ int main(int argc, char **argv) {
 #ifdef OV_DEBUG
 	ov_logfile_logtostderr(NULL);
 #endif
-	/*
-	 * get ACPLT_HOME
-	 */
-	acplt_home = getenv("ACPLT_HOME");
 	/*
 	*	parse command line arguments
 	*/
@@ -348,6 +346,7 @@ int main(int argc, char **argv) {
 				char* startRead = NULL;
 				char* temp = NULL;
 				char* temp2 = NULL;
+				OV_UINT j;
 				/*
 				 * parse config file
 				 * some memory is allocated on the heap. these variables are used while the server is running
@@ -382,43 +381,9 @@ int main(int argc, char **argv) {
 				 * 									queue that matches concerning IDENTIFIER
 				 * 									CLASS and LIBRARY before starting the server.
 				 * 									All parameters are mandatory. Use '/' as wildcard.
+				 * DBSIZE		ignored. only for dbutil
+				 * DBUTILLOG	ignored. only for dbutil
 				 */
-
-				/*
-				 * prepend ACPLT_HOME to configfile path if it is relative
-				 */
-#if OV_SYSTEM_UNIX
-				if(!(configFile[0]=='/'))
-#else
-				if(!(configFile[1]==':'|| configFile[0]=='\\'))
-#endif
-				{/*	relative path --> prepend ACPLT_HOME	*/
-					if(acplt_home && *acplt_home)
-					{
-						hlpindex = strlen(acplt_home);
-						helper = calloc(hlpindex+strlen(configFile)+2, sizeof(char));
-						if(!helper)
-						{
-							ov_logfile_error("Could not reserver memory for configfile path. Aborting.");
-							return EXIT_FAILURE;
-						}
-						strcpy(helper, acplt_home);
-						if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
-						{
-#if OV_SYSTEM_NT
-							helper[hlpindex] = '\\';
-#else
-							helper[hlpindex] = '/';
-#endif
-							hlpindex++;
-						}
-						strcpy((helper+hlpindex), configFile);
-						configFile = helper;
-					}
-					else
-						ov_logfile_error("Relative path to configfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
-
-				}
 
 				cfFile = fopen(configFile, "r");
 				if(!cfFile)
@@ -428,6 +393,24 @@ int main(int argc, char **argv) {
 				}
 				clearerr(cfFile);
 
+				/*	get base path from path part of configFile	*/
+#if OV_SYSTEM_NT
+				for(j = strlen(configFile); (configFile[j] != '\\') && (j>0); j--);
+#else
+				for(j = strlen(configFile); (configFile[j] != '/') && (j>0); j--);
+#endif
+				if((j>0))
+				{
+					configBasePath = malloc(j+2);
+					if(!configBasePath)
+					{
+						ov_logfile_error("Could not reserver memory for basePath. Aborting.");
+						return EXIT_FAILURE;
+					}
+					strncpy(configBasePath, configFile, j+1);
+					configBasePath[j+1] = '\0';
+					//ov_logfile_debug("BasePath: %s", configBasePath);
+				}
 				/*
 				 * loop over lines
 				 */
@@ -511,7 +494,7 @@ int main(int argc, char **argv) {
 					/*	LIBRARY	*/
 					else if(strstr(startRead, "LIBRARY")==startRead)
 					{
-						if (libcount<16) {
+						if (libcount<MAX_STARTUP_LIBRARIES) {
 							libraries[libcount] = readValue(startRead);
 							if(!libraries[libcount] || !*libraries[libcount])
 								return EXIT_FAILURE;
@@ -541,17 +524,17 @@ int main(int argc, char **argv) {
 #else
 								if(!(temp[1]==':'|| temp[0]=='\\'))
 #endif
-								{/*	relative path --> prepend ACPLT_HOME	*/
-									if(acplt_home && *acplt_home)
+								{/*	relative path --> prepend basePath	*/
+									if(configBasePath && *configBasePath)
 									{
-										hlpindex = strlen(acplt_home);
+										hlpindex = strlen(configBasePath);
 										helper = calloc(hlpindex+strlen(temp)+2, sizeof(char));
 										if(!helper)
 										{
 											ov_logfile_error("Could not reserver memory for logfile path. Aborting.");
 											return EXIT_FAILURE;
 										}
-										strcpy(helper, acplt_home);
+										strcpy(helper, configBasePath);
 										if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 										{
 #if OV_SYSTEM_NT
@@ -564,9 +547,6 @@ int main(int argc, char **argv) {
 										strcpy(&(helper[hlpindex]), temp);
 										temp = helper;
 									}
-									else
-										ov_logfile_error("Relative path to logfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
-
 								}
 								if(Ov_Fail(ov_logfile_open(NULL, temp, "w"))) {
 									ov_logfile_error("Could not open log file: \"%s\".\n", temp);
@@ -667,7 +647,16 @@ int main(int argc, char **argv) {
 							exec = TRUE;
 						}
 					}
-
+					/*	DBSIZE	*/
+					else if(strstr(startRead, "DBSIZE")==startRead)
+					{/*	ignored --> only for dbutil	*/
+						;
+					}
+					/*	DBUTILLOG	*/
+					else if(strstr(startRead, "DBUTILLOG")==startRead)
+					{/*	ignored --> only for dbutil	*/
+						;
+					}
 					/*
 					 * default: option unknown
 					 */
@@ -743,7 +732,7 @@ int main(int argc, char **argv) {
 		*/
 		else if(!strcmp(argv[i], "-w") || !strcmp(argv[i], "--start-with")) {
 			i++;
-			if (libcount<16) {
+			if (libcount<MAX_STARTUP_LIBRARIES) {
 			        libraries[libcount] = argv[i];
            			libcount++;
                         }
@@ -778,17 +767,17 @@ int main(int argc, char **argv) {
 #else
 					if(!(argv[i][1]==':'|| argv[i][0]=='\\'))
 #endif
-					{/*	relative path --> prepend ACPLT_HOME	*/
-						if(acplt_home && *acplt_home)
+					{/*	relative path --> prepend basePath	*/
+						if(configBasePath && *configBasePath)
 						{
-							hlpindex = strlen(acplt_home);
+							hlpindex = strlen(configBasePath);
 							helper = calloc(hlpindex+strlen(argv[i])+2, sizeof(char));
 							if(!helper)
 							{
 								ov_logfile_error("Could not reserver memory for logfile path. Aborting.");
 								return EXIT_FAILURE;
 							}
-							strcpy(helper, acplt_home);
+							strcpy(helper, configBasePath);
 							if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 							{
 #if OV_SYSTEM_NT
@@ -801,8 +790,6 @@ int main(int argc, char **argv) {
 						strcpy((helper+hlpindex), argv[i]);
 
 					}
-					else
-						ov_logfile_error("Relative path to logfile given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
 
 				}
 				if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
@@ -939,24 +926,24 @@ HELP:	   ov_server_usage();
 		return EXIT_FAILURE;
 	}
 	/*
-	 * check if filename is a relative path. if so put $(ACPLT_HOME) in front of it
+	 * check if filename is a relative path. if so put basePath in front of it
 	 */
 #if OV_SYSTEM_UNIX
 	if(!(filename[0]=='/'))
 #else
 	if(!(filename[1]==':'|| filename[0]=='\\'))
 #endif
-	{/*	relative path --> prepend ACPLT_HOME	*/
-		if(acplt_home && *acplt_home)
+	{/*	relative path --> prepend basePath	*/
+		if(configBasePath && *configBasePath)
 		{
-			hlpindex = strlen(acplt_home);
+			hlpindex = strlen(configBasePath);
 			helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
 			if(!helper)
 			{
 				ov_logfile_error("Could not reserver memory for filename path. Aborting.");
 				return EXIT_FAILURE;
 			}
-			strcpy(helper, acplt_home);
+			strcpy(helper, configBasePath);
 			if(!(helper[hlpindex-1]=='\\' || helper[hlpindex-1]=='/'))
 			{
 #if OV_SYSTEM_NT
@@ -969,9 +956,6 @@ HELP:	   ov_server_usage();
 			strcpy((helper+hlpindex), filename);
 			filename = helper;
 		}
-		else
-			ov_logfile_error("Relative path to database given. but no ACPLT_HOME set. I don't know what will happen...but I will try...");
-
 	}
 	ov_logfile_info("Mapping database \"%s\"...", filename);
 
