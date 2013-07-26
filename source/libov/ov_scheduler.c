@@ -225,6 +225,7 @@ OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	*/
 	OV_TIME				time;
 	static OV_TIME_SPAN	timespan;
+	OV_TIME_SPAN		jitter;
 	OV_SCHEDULER_EVENT	*pevent = pfirstevent;
 
 	if (ov_activitylock) {
@@ -240,7 +241,10 @@ OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	*	test if it's time for the first scheduled active object
 	*/
 	if(pevent) {
-		if(ov_time_compare(&time, &pevent->time) > 0) {
+		if(ov_time_compare(&time, &pevent->time) == OV_TIMECMP_AFTER) {
+			ov_time_diff(&jitter, &time, &pevent->time);
+			if(((jitter.secs*1000000)+jitter.usecs) > ov_vendortree_schedulerAllowedJitter())
+				ov_vendortree_incrementNumExceeds();
 			/* update the scheduled time of the pnext scheduled active object */
 			pevent->time = time;
 			/* remove the object from the beginning of the queue... */
@@ -371,7 +375,7 @@ OV_BOOL ov_scheduler_execnamedeventonce(
 				|| (!*class)
 				|| (ov_string_compare(class, pclass->v_identifier) == OV_STRCMP_EQUAL))
 			{
-				plib = Ov_GetParent(ov_containment, pclass);
+				plib = Ov_DynamicPtrCast(ov_library, Ov_GetParent(ov_containment, pclass));
 				if(!plib)		// no library --> something is wrong
 					return FALSE;
 				if((!lib)				//empty string, NULL-pointer or matching library

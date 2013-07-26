@@ -1070,6 +1070,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void) {
 	if(pdb->started) {
 		return OV_ERR_GENERIC;
 	}
+
+	if((pdb->root.v_objectstate & OV_OS_STARTED))
+	{
+		ov_logfile_warning("Trying to start database with root object marked as started. Probably the database was NOT shut down properly before and is corrupted. Will clear the flag and abort. The next try to start the database will succeed, but the server may crash.");
+		return OV_ERR_BADDATABASE;
+	}
 	/*
 	*	open and compare all libraries 
 	*/
