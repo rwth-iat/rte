@@ -1003,7 +1003,7 @@ int main(int argc, char **argv) {
 					"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 					"-c SIZE, --create SIZE          Create a new database\n"
 					"-cf CONFIGFILE, --create-from-config CONFIGFILE\n"
-					"\tCreate a new database unsing the specified configfile"
+					"\tCreate a new database unsing the specified configfile\n"
 					"-l LOGFILE, --logfile LOGFILE   Set logfile name, you may use stdout"
 #if OV_SYSTEM_NT
 					", stderr\n"
@@ -1060,6 +1060,7 @@ int main(int argc, char **argv) {
 	}
 	if(size) {
 		ov_logfile_info("Creating database \"%s\"...", filename);
+		remove(filename); //removing the eventually existing file
 		result = ov_database_create(filename, size);
 		if(Ov_Fail(result)) {
 			ERRORMSG:	ov_logfile_error("Error: %s (error code 0x%x).",
