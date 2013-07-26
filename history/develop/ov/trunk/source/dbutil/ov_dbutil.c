@@ -817,7 +817,7 @@ int main(int argc, char **argv) {
 					configBasePath = malloc(j+2);
 					if(!configBasePath)
 					{
-						ov_logfile_error("Could not reserver memory for basePath. Aborting.");
+						ov_logfile_error("Could not reserve memory for basePath. Aborting.");
 						return EXIT_FAILURE;
 					}
 
