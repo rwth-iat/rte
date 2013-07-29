@@ -52,7 +52,13 @@ _EXE =
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	=
-OV_PLATFORM_DEFINES			= -DOV_DEBUG #-DOV_VALGRIND
+OV_DEBUG					=
+ifdef OV_DEBUG
+OV_DODEBUG	=	-DOV_DEBUG
+else
+OV_DODEBUG	=
+endif
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG) #-DOV_VALGRIND
 
 #	Compiler
 #	--------

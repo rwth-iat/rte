@@ -75,7 +75,13 @@ REPOSITORY					= acplt$$repository
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	=
-OV_PLATFORM_DEFINES			= -DOV_DEBUG
+OV_DEBUG					=
+ifdef OV_DEBUG
+OV_DODEBUG	=	-DOV_DEBUG
+else
+OV_DODEBUG	=
+endif
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG)
 
 #	Special characters
 #	------------------

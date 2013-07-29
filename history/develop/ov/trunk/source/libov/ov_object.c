@@ -46,6 +46,7 @@
 
 #define OV_COMPILE_LIBOV
 
+
 #include "libov/ov_object.h"
 #include "libov/ov_time.h"
 #include "libov/ov_string.h"
@@ -1315,6 +1316,14 @@ OV_ACCESS ov_object_getaccess_nostartup(
 #define Ov_HeadAddressNM(pobj, offset)										\
 	((OV_NMHEAD*)(((OV_BYTE*)((pobj)->v_linktable))+(offset)))
 	
+	
+#define DBG_CHECKPOINTERS(ptr)												\
+	if(ptr && (((OV_BYTE*) ptr + distance) < pdb->pstart || ((OV_BYTE*) ptr + distance) > pdb->pend))		\
+	{		\
+		ov_logfile_error("moving pointers: variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));	\
+		ptr = NULL;		\
+	}		\
+	else
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -1352,10 +1361,26 @@ OV_RESULT ov_object_move(
 	/*
 	*	adjust pointer to the outer object
 	*/
+	#ifdef OV_DEBUG
+	if(pobj->v_pouterobject && (((OV_BYTE*)pobj->v_pouterobject + distance)< pdb->pstart || ((OV_BYTE*) pobj->v_pouterobject + distance) > pdb->pend))
+	{
+		pobj->v_pouterobject = NULL;
+		ov_logfile_error("moving pointers: pouterobject points outside the database for %s", pobj->v_identifier);
+	}
+	else
+	#endif
 	Ov_Adjust(OV_INSTPTR_ov_object, pobj->v_pouterobject);
 	/*
 	*	adjust pointer to the association table
 	*/
+	#ifdef OV_DEBUG
+	if(pobj->v_linktable && (((OV_BYTE*) pobj->v_linktable + distance) < pdb->pstart || ((OV_BYTE*) pobj->v_linktable + distance)> pdb->pend))
+	{
+		pobj->v_linktable = NULL;
+		ov_logfile_error("moving pointers: linktable points outside the database for %s", Ov_StringPtr(pobj->v_identifier));
+	}
+	else
+	#endif
 	Ov_Adjust(OV_ATBLPTR, pobj->v_linktable);
 	/*
 	*	to get the objectlinks in the copy the association table
@@ -1412,6 +1437,9 @@ OV_RESULT ov_object_move(
 							*/
 							switch(pvar->v_vartype & OV_VT_KSMASK) {
 							case OV_VT_STRING:
+								#ifdef OV_DEBUG
+								DBG_CHECKPOINTERS(*((OV_STRING*) Ov_VarAddress(pobj, pvar->v_offset)))
+								#endif
 								Ov_Adjust(OV_STRING, *((OV_STRING*)Ov_VarAddress(pobj, pvar->v_offset)));
 								break;
 							case OV_VT_ANY:
@@ -1425,11 +1453,22 @@ OV_RESULT ov_object_move(
 								case OV_VT_DOUBLE_VEC:
 								case OV_VT_TIME_VEC:
 								case OV_VT_TIME_SPAN_VEC:
+									#ifdef OV_DEBUG
+									DBG_CHECKPOINTERS(pany->value.valueunion.val_generic_vec.value)
+									#endif
 									Ov_Adjust(OV_POINTER, pany->value.valueunion.val_generic_vec.value);
 									break;
 								case OV_VT_STRING_VEC:
 									pvector = &pany->value.valueunion.val_string_vec;
 									if(pvector) {
+										#ifdef OV_DEBUG
+										if(pvector->value && (((OV_BYTE*) pvector->value + distance) < pdb->pstart || ((OV_BYTE*) pvector->value + distance) > pdb->pend))
+										{
+											ov_logfile_error("moving pointers: variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
+											pvector->value = NULL;
+											pvector->veclen = 0;
+										}
+										#endif
 										Ov_Adjust(OV_STRING*, pvector->value);
 										for(i=0; i<pvector->veclen; i++) {
 											Ov_Adjust(OV_STRING, pvector->value[i]);
@@ -1449,8 +1488,21 @@ OV_RESULT ov_object_move(
 							/*
 							*	variable is a dynamic vector
 							*/
+							#ifdef OV_DEBUG
+							DBG_CHECKPOINTERS(((OV_GENERIC_VEC*) Ov_VarAddress
+								(pobj, pvar->v_offset))->value)
+							#endif
 							Ov_Adjust(OV_POINTER, ((OV_GENERIC_VEC*)Ov_VarAddress
 								(pobj, pvar->v_offset))->value);
+							
+							#ifdef OV_DEBUG							
+							if(((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress
+								(pobj, pvar->v_offset))->value + distance) < pdb->pstart || ((OV_BYTE*) ((OV_GENERIC_VEC*) Ov_VarAddress
+								(pobj, pvar->v_offset))->value + distance) > pdb->pend)
+							{
+								((OV_GENERIC_VEC*) Ov_VarAddress (pobj, pvar->v_offset))->veclen = 0;
+							}
+							#endif
 							if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								pvector = (OV_STRING_VEC*)Ov_VarAddress(pobj, pvar->v_offset);
 								if(pvector) {
@@ -1467,8 +1519,13 @@ OV_RESULT ov_object_move(
 							*/
 							if((pvar->v_vartype & OV_VT_KSMASK) == OV_VT_STRING_VEC) {
 								for(i=0; i<pvar->v_veclen; i++) {
+									#ifdef OV_DEBUG
+									DBG_CHECKPOINTERS(*((OV_STRING*) Ov_VarAddress(pobj,
+											pvar->v_offset+i*sizeof(OV_STRING))))
+									#endif
 									Ov_Adjust(OV_STRING, *((OV_STRING*) Ov_VarAddress(pobj,
-										pvar->v_offset+i*sizeof(OV_STRING))));
+											pvar->v_offset+i*sizeof(OV_STRING))));
+									
 								}
 							}
 							break;

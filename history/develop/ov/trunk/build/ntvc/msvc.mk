@@ -48,7 +48,13 @@ _CPL = .cpl
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	= /DFD_SETSIZE=128 /DOV_CATCH_EXCEPTIONS
-OV_PLATFORM_DEFINES		= /DOV_DEBUG
+OV_DEBUG					=
+ifdef OV_DEBUG
+OV_DODEBUG	=	/DOV_DEBUG
+else
+OV_DODEBUG	=
+endif
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG)
 
 #	Compiler
 #	--------
