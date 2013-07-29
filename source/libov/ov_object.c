@@ -1365,7 +1365,7 @@ OV_RESULT ov_object_move(
 	if(pobj->v_pouterobject && (((OV_BYTE*)pobj->v_pouterobject + distance)< pdb->pstart || ((OV_BYTE*) pobj->v_pouterobject + distance) > pdb->pend))
 	{
 		pobj->v_pouterobject = NULL;
-		ov_logfile_error("moving pointers: pouterobject points outside the database for %s", pobj->v_identifier);
+		ov_logfile_error("moving pointers: pouterobject points outside the database for %s", Ov_StringPtr(pobj->v_identifier));
 	}
 	else
 	#endif
