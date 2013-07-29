@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 
 //#include "libovks/ov_ksserver.h"
@@ -272,6 +273,11 @@ int main(int argc, char **argv) {
 	OV_INT		            libcount;
 	OV_RESULT	            result;
 	OV_INT 		            port = 0; /* KS_ANYPORT */
+	OV_UINT					maxAllowedJitter = 0;
+	OV_UINT					ks_maxItemsPerRequest = 0;
+	OV_UINT					ks_maxStringLength = 0;
+	OV_UINT					ks_maxVectorLength = 0;
+	OV_ANY					tempAny = {{OV_VT_VOID, {0}}, 0, {0,0}};
 	OV_BOOL		            startup = TRUE;
 	int	   	            exit_status = EXIT_SUCCESS;
 	OV_BOOL		        exit = FALSE;
@@ -342,7 +348,7 @@ int main(int argc, char **argv) {
 
 			if(configFile && *configFile)
 			{
-				char lineStr[257];
+				char lineStr[256];
 				char* startRead = NULL;
 				char* temp = NULL;
 				char* temp2 = NULL;
@@ -381,6 +387,10 @@ int main(int argc, char **argv) {
 				 * 									queue that matches concerning IDENTIFIER
 				 * 									CLASS and LIBRARY before starting the server.
 				 * 									All parameters are mandatory. Use '/' as wildcard.
+				 * ALLOWEDJITTER	number of microseconds the scheduler may jitter before incrementing numExceeds in vondortree (the latter documents the realtime behaviour of the system)
+				 * KSMAXSTRLENGTH	maximum length of strings to process with ks
+				 * KSMAXVECLENGTH	maximum length of vectors to process with ks
+				 * KSMAXITEMSPERREQ	maximum number of items per ks-request
 				 * DBSIZE		ignored. only for dbutil
 				 * DBUTILLOG	ignored. only for dbutil
 				 */
@@ -417,8 +427,8 @@ int main(int argc, char **argv) {
 				while(fgets(lineStr, sizeof(lineStr), cfFile))
 				{
 					line++;
-					/*	check if line complete	 */
-					if(!strchr(lineStr, '\n'))
+					/*      check if line complete   */
+					if(!strchr(lineStr, '\n') && !feof(cfFile))
 					{
 						ov_logfile_error("Error reading config file: line %u too long", line);
 						return EXIT_FAILURE;
@@ -647,6 +657,62 @@ int main(int argc, char **argv) {
 							exec = TRUE;
 						}
 					}
+					/*	ALLOWEDJITTER	*/
+					else if(strstr(startRead, "ALLOWEDJITTER")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						maxAllowedJitter = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for ALLOWEDJITTER.", line);
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	KSMAXSTRLENGTH	*/
+					else if(strstr(startRead, "KSMAXSTRLENGTH")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						ks_maxStringLength = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXSTRLENGTH.", line);
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	KSMAXVECLENGTH	*/
+					else if(strstr(startRead, "KSMAXVECLENGTH")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						ks_maxVectorLength = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXVECLENGTH.", line);
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	KSMAXITEMSPERREQ	*/
+					else if(strstr(startRead, "KSMAXITEMSPERREQ")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp)
+							return EXIT_FAILURE;
+						ks_maxItemsPerRequest = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXITEMSPERREQ.", line);
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
 					/*	DBSIZE	*/
 					else if(strstr(startRead, "DBSIZE")==startRead)
 					{/*	ignored --> only for dbutil	*/
@@ -666,7 +732,7 @@ int main(int argc, char **argv) {
 						return EXIT_FAILURE;
 					}
 				}
-				/*	fgets returns 0 on error or eof. eof is ok, error aborts program	*/
+				/*	getline returns -1 on error or eof. eof is ok, error aborts program	*/
 				if(ferror(cfFile))
 				{
 					perror("Error reading config file");
@@ -914,6 +980,20 @@ HELP:	   ov_server_usage();
 	ov_vendortree_setserverversion(OV_VER_SERVER);
 	ov_vendortree_setservername(servername);	//02.04.06 add by Senad
 
+	/*
+	 * set allowedJitter and ks-parameters
+	 */
+	tempAny.value.vartype = OV_VT_UINT;
+	tempAny.value.valueunion.val_uint = maxAllowedJitter;
+	ov_vendortree_setAllowedJitter(&tempAny, NULL);
+	tempAny.value.valueunion.val_uint = ks_maxStringLength;
+	ov_vendortree_setKsMaxStringLength(&tempAny, NULL);
+	tempAny.value.valueunion.val_uint = ks_maxVectorLength;
+	ov_vendortree_setKsMaxVectorLength(&tempAny, NULL);
+	tempAny.value.valueunion.val_uint = ks_maxItemsPerRequest;
+	ov_vendortree_setKsMaxItems(&tempAny, NULL);
+	tempAny.value.vartype = OV_VT_VOID;
+	tempAny.value.valueunion.val_uint = 0;
 	/*
 	*	map existing database
 	*	abort if no file set

@@ -769,7 +769,7 @@ int main(int argc, char **argv) {
 
 			if(configFile && *configFile)
 			{
-				char lineStr[257];
+				char lineStr[256];
 				char* startRead = NULL;
 				char* temp = NULL;
 				OV_UINT j;
@@ -831,8 +831,8 @@ int main(int argc, char **argv) {
 				while(fgets(lineStr, sizeof(lineStr), cfFile))
 				{
 					line++;
-					/*	check if line complete	 */
-					if(!strchr(lineStr, '\n'))
+					/*      check if line complete   */
+					if(!strchr(lineStr, '\n') && !feof(cfFile))
 					{
 						ov_logfile_error("Error reading config file: line %u too long", line);
 						return EXIT_FAILURE;
@@ -925,7 +925,8 @@ int main(int argc, char **argv) {
 						temp = readValue(startRead);
 						if(!temp || !*temp)
 							return EXIT_FAILURE;
-						size = strtoul(temp, NULL, 0);
+						if(!size)
+							size = strtoul(temp, NULL, 0);
 						free(temp);
 					}
 
@@ -1005,7 +1006,8 @@ int main(int argc, char **argv) {
 					"-f FILE, --file FILE            Set database filename (*.ovd)\n"
 					"-c SIZE, --create SIZE          Create a new database\n"
 					"-cf CONFIGFILE, --create-from-config CONFIGFILE\n"
-					"\tCreate a new database unsing the specified configfile\n"
+					"\tCreate a new database using the specified configfile.\n"
+					"\tThe size of the new database must be specified in the configfile or with -c.\n"
 					"-l LOGFILE, --logfile LOGFILE   Set logfile name, you may use stdout"
 #if OV_SYSTEM_NT
 					", stderr\n"
@@ -1059,6 +1061,11 @@ int main(int argc, char **argv) {
 			strcpy((helper+hlpindex), filename);
 			filename = helper;
 		}
+	}
+	if(configFile && !size)
+	{
+		ov_logfile_error("Error: no size specified for database-creation.");
+		goto HELP;
 	}
 	if(size) {
 		ov_logfile_info("Creating database \"%s\"...", filename);

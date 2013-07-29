@@ -242,9 +242,12 @@ OV_DLLFNCEXPORT OV_TIME_SPAN *ov_scheduler_schedulenextevent(void) {
 	*/
 	if(pevent) {
 		if(ov_time_compare(&time, &pevent->time) == OV_TIMECMP_AFTER) {
-			ov_time_diff(&jitter, &time, &pevent->time);
-			if(((jitter.secs*1000000)+jitter.usecs) > ov_vendortree_schedulerAllowedJitter())
-				ov_vendortree_incrementNumExceeds();
+			if(ov_vendortree_schedulerAllowedJitter())
+			{
+				ov_time_diff(&jitter, &time, &pevent->time);
+				if(((jitter.secs*1000000)+jitter.usecs) > ov_vendortree_schedulerAllowedJitter())
+					ov_vendortree_incrementNumExceeds();
+			}
 			/* update the scheduled time of the pnext scheduled active object */
 			pevent->time = time;
 			/* remove the object from the beginning of the queue... */
