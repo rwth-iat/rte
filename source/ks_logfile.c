@@ -47,7 +47,17 @@ DLLFNCEXPORT void ks_logfile_print_sysMsg() {
 
     // Trim the end of the line and terminate it with a null
     p = sysMsg;
-    while( ( *p > 31 ) || ( *p == 9 ) ) {
+    while( ( *p > 31 )
+        || ( *p ==   9 )	//Tab character
+        //FormatMessage results in a 2-byte character (Wide Character) string, which is type casted as a 1-byte character
+        || ( *p == -28 )	//a umlaut german encoding
+        || ( *p == -10 )	//o umlaut
+        || ( *p ==  -4 )	//u umlaut
+        || ( *p == -33 )	//sz ligature
+        || ( *p == -60 )	//A umlaut
+        || ( *p == -42 )	//O umlaut
+        || ( *p == -36 )	//U umlaut
+    	) {
         ++p;
     }
     do {
