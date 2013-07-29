@@ -57,10 +57,10 @@ static OV_STRING	semantic_flag[32] = {
 static OV_STRING	cmdlineoptions = NULL;
 static OV_STRING	ksVersion = NULL;
 static OV_STRING	emptyStr = "";
-static OV_UINT		ks_maxItemsPerRequest = 1024;
-static OV_UINT		ks_maxStingLength = 8192;
-static OV_UINT		ks_maxVectorLength = 1024;
-static OV_UINT		ov_scheduler_allowedJitter = 250;
+static OV_UINT		ks_maxItemsPerRequest = 0;
+static OV_UINT		ks_maxStringLength = 0;
+static OV_UINT		ks_maxVectorLength = 0;
+static OV_UINT		ov_scheduler_allowedJitter = 0;
 static OV_UINT		ov_scheduler_numberOfExceeds = 0;
 
 OV_DLLVAREXPORT OV_BOOL ov_activitylock;
@@ -1299,12 +1299,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
 		const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
-	pvarcurrprops->value.valueunion.val_uint = ks_maxStingLength;
+	pvarcurrprops->value.valueunion.val_uint = ks_maxStringLength;
 	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxStringLength() {
-	return ks_maxStingLength;
+	return ks_maxStringLength;
 }
 
 /*
@@ -1315,7 +1315,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxStringLength(
 		const OV_TICKET	*pticket
 ) {//TODO:ticketing
 	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
-		ks_maxStingLength = pvarcurrprops->value.valueunion.val_uint;
+		ks_maxStringLength = pvarcurrprops->value.valueunion.val_uint;
 		return OV_ERR_OK;
 	}
 	return OV_ERR_BADTYPE;
