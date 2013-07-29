@@ -122,8 +122,10 @@ OV_DLLFNCEXPORT void ksbase_RootComTask_startup(
 
     	/*	get maximum timer resolution and request windows to use it	*/
     	timeGetDevCaps(&tc, sizeof(TIMECAPS));
-    	ov_logfile_info("maximum timer resolution is: %ums", tc.wPeriodMin);
-    	ov_logfile_info("Windows Version: %i.%i",majorVersion, minorVersion);
+    	if(tc.wPeriodMin > 1)
+    			ov_logfile_info("maximum timer resolution is: %ums. Server may respond slowly.", tc.wPeriodMin);
+    	if(majorVersion < 6)
+    		ov_logfile_info("Windows Version: %i.%i detected. Will limit Sleep time in RootComTask to 1ms",majorVersion, minorVersion);
     	res = timeBeginPeriod(tc.wPeriodMin);
     	if(res != MMSYSERR_NOERROR)
     	{
