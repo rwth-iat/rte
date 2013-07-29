@@ -45,7 +45,13 @@ _RES = .res
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	= -DFD_SETSIZE=128
-OV_PLATFORM_DEFINES			= -DOV_DEBUG
+OV_DEBUG					=
+ifdef OV_DEBUG
+OV_DODEBUG	=	-DOV_DEBUG
+else
+OV_DODEBUG	=
+endif
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG)
 
 #	Platform-specific C libraries
 #	-----------------------------

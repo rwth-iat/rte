@@ -56,7 +56,13 @@ _EXE =
 #	-----------------------------
 
 ACPLTKS_PLATFORM_DEFINES	= -D__MODEL__=6 -D__C166__
-OV_PLATFORM_DEFINES			=
+OV_DEBUG					=
+ifdef OV_DEBUG
+OV_DODEBUG	=	-DOV_DEBUG
+else
+OV_DODEBUG	=
+endif
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG)
 
 #	Compiler
 #	--------
