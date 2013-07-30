@@ -11,6 +11,7 @@ set libsuffix 0
 set exesuffix 0
 set bleedingedge 0
 set notbuildedlibs 0
+set ov_debug "OV_DEBUG=1"
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -144,7 +145,8 @@ proc print_msg {msg} {
 # return 1 if fail
 proc execute {args} {
 	set args [join $args]
-    global logfile
+    print_msg $args
+	global logfile
     #set cmd [concat {exec -ignorestderr} $args]
     set cmd [concat {exec } $args { >>& $logfile}]
     #puts $cmd
@@ -172,6 +174,13 @@ proc copy_wildcard {src target} {
         file copy -force $file $target
     }
 }
+proc move_wildcard {src target} {
+    set files [concat [glob -nocomplain $src]]
+    foreach file $files {
+        file copy -force $file $target
+		file delete -force $file
+    }
+}
 
 # Create directory structure
 proc create_dirs {} {
@@ -185,6 +194,7 @@ proc create_dirs {} {
 	file mkdir $releasedir/system
 	file mkdir $releasedir/system/sysdevbase
 	file mkdir $releasedir/system/sysbin
+	file mkdir $releasedir/system/syslibs
 	file mkdir $releasedir/dev
 	file mkdir $releasedir/system/addonlibs
 	file mkdir $releasedir/doc/
@@ -267,16 +277,19 @@ proc checkout_acplt {} {
 
 # Build in a directory
 proc build {package args} {
+	global ov_debug
     print_msg "Building $package"
 	
-    return [execute $args]
+    return [execute $args $ov_debug]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
 proc build_cygwin {package args} {
 	global bash
+	global ov_debug
     print_msg "Building $package"
-    eval [concat "execute" $bash \"$args\"]
+	print_msg [concat "execute" $bash \"$args\"]
+    eval [concat "execute" $bash \\\"$args $ov_debug\\\"]
 }
 
 proc build_acplt_mingw {} {
@@ -630,6 +643,7 @@ proc create_release {} {
 	global releasedir
 	global builddir
 	global env
+	global libsuffix
 
     #create a release
 	set env(ACPLT_HOME) $releasedir
@@ -651,6 +665,7 @@ proc create_release {} {
 	foreach file $libfiles {
 		file copy -force $file $releasedir/system/sysbin/
 	}
+	move_wildcard $releasedir/system/sysbin/*$libsuffix $releasedir/system/syslibs/
 	#lib dir
 	file mkdir $releasedir/system/sysdevbase/ov/lib/
 	#if { $os == "nt" } then {
@@ -724,7 +739,7 @@ proc separate {} {
 		file delete -force $releasedir/dev/$x 
 	}
 	if { [file exists $releasedir/system/addonlibs/${x}$libsuffix] } then {
-		file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/sysbin/${x}$libsuffix 
+		file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/syslibs/${x}$libsuffix 
 		file delete -force $releasedir/system/addonlibs/${x}$libsuffix
 	}
  }
@@ -770,7 +785,7 @@ proc create_systools_and_servers {} {
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 }
+		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn }
 	
 	print_msg "if you take the new ones, you'll see what you get"
 } else {
@@ -780,7 +795,7 @@ if { $bleedingedge == 1 } then {
 	}
 
 set notrunklist { ks common ServiceSystem }
-#iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider develop/ACPLTlab003lindyn
+#iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
