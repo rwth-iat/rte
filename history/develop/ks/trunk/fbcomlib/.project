@@ -3,6 +3,8 @@
 	<name>fbcomlib</name>
 	<comment></comment>
 	<projects>
+		<project>fb</project>
+		<project>ksapi</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

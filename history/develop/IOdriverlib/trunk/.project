@@ -3,6 +3,7 @@
 	<name>IOdriverlib</name>
 	<comment></comment>
 	<projects>
+		<project>fb</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
