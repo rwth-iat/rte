@@ -3,6 +3,7 @@
 	<name>MessageSys</name>
 	<comment></comment>
 	<projects>
+		<project>ksapi</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
