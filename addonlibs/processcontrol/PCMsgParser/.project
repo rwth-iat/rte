@@ -3,6 +3,7 @@
 	<name>PCMsgParser</name>
 	<comment></comment>
 	<projects>
+		<project>pflib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
