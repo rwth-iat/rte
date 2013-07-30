@@ -277,7 +277,7 @@ if(new == 0){
 	fprintf(fd,"USER_DIR          = ../../../\n");
 	fprintf(fd,"USERLIB_DIR       = $(ROOT_DIR)/system/addonlibs/\n");
 	fprintf(fd,"SYS_DIR           = $(BASE_DIR)/system/sysdevbase/\n");
-	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)/system/sysbin/\n");
+	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)/system/syslibs/\n");
 }
 
 	/* Basis-Bibliotheken? */
