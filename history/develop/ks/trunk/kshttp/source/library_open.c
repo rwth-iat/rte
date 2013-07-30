@@ -136,8 +136,9 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 	}
 
 	pSimpleAuthenticator = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, Ov_SearchChild(ov_containment, pDomTicketAuths, "httpSimpleTicket"));
-	if(pSimpleAuthenticator)
+	if(pSimpleAuthenticator){
 		Ov_DeleteObject(pSimpleAuthenticator);
+	}
 	pSimpleAuthenticator = NULL;
 
 	result = Ov_CreateObject(kshttp_httpSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "httpSimpleTicket");
@@ -149,19 +150,20 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 
 	KS_logfile_debug(("kshttp_open: creating ManagerCom"));
 	/*	create httpManagerCom object to register Server at the Manager (if wanted)	*/
-	httpMngCom = Ov_SearchChildEx(ov_containment, pDomkshttp, "ManagerCom", kshttp_httpManagerCom);
+	httpMngCom = Ov_SearchChildEx(ov_containment, pDomkshttp, "httpManagerCom", kshttp_httpManagerCom);
 	if(!httpMngCom)
 	{
-		result = Ov_CreateObject(kshttp_httpManagerCom, httpMngCom, pDomkshttp, "ManagerCom");
+		result = Ov_CreateObject(kshttp_httpManagerCom, httpMngCom, pDomkshttp, "httpManagerCom");
 		if(Ov_Fail(result))
 		{
-			KS_logfile_error(("kshttp_open: ManagerCom could not be created"));
+			KS_logfile_error(("kshttp_open: httpManagerCom could not be created"));
 			return result;
 		}
 
 		/*	if we are manager, we don't need a channel	*/
-		if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager))
+		if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager)){
 			httpMngCom->v_UseShortCut = TRUE;
+		}
 	}
 
 
