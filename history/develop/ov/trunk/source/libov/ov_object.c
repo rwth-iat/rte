@@ -1322,8 +1322,7 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	{		\
 		ov_logfile_error("moving pointers: variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));	\
 		ptr = NULL;		\
-	}		\
-	else
+	}
 /*	----------------------------------------------------------------------	*/
 
 /*
@@ -1367,7 +1366,6 @@ OV_RESULT ov_object_move(
 		pobj->v_pouterobject = NULL;
 		ov_logfile_error("moving pointers: pouterobject points outside the database for %s", Ov_StringPtr(pobj->v_identifier));
 	}
-	else
 	#endif
 	Ov_Adjust(OV_INSTPTR_ov_object, pobj->v_pouterobject);
 	/*
@@ -1379,7 +1377,6 @@ OV_RESULT ov_object_move(
 		pobj->v_linktable = NULL;
 		ov_logfile_error("moving pointers: linktable points outside the database for %s", Ov_StringPtr(pobj->v_identifier));
 	}
-	else
 	#endif
 	Ov_Adjust(OV_ATBLPTR, pobj->v_linktable);
 	/*
@@ -1453,22 +1450,27 @@ OV_RESULT ov_object_move(
 								case OV_VT_DOUBLE_VEC:
 								case OV_VT_TIME_VEC:
 								case OV_VT_TIME_SPAN_VEC:
-									#ifdef OV_DEBUG
-									DBG_CHECKPOINTERS(pany->value.valueunion.val_generic_vec.value)
-									#endif
+									if(pany->value.valueunion.val_generic_vec.value && (((OV_BYTE*) pany->value.valueunion.val_generic_vec.value + distance) < pdb->pstart || ((OV_BYTE*) pany->value.valueunion.val_generic_vec.value + distance) > pdb->pend))
+									{
+										#ifdef OV_DEBUG
+											ov_logfile_error("moving pointers: vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
+										#endif
+										pany->value.valueunion.val_generic_vec.veclen = 0;
+										pany->value.valueunion.val_generic_vec.value = NULL;
+									}
 									Ov_Adjust(OV_POINTER, pany->value.valueunion.val_generic_vec.value);
 									break;
 								case OV_VT_STRING_VEC:
 									pvector = &pany->value.valueunion.val_string_vec;
 									if(pvector) {
-										#ifdef OV_DEBUG
 										if(pvector->value && (((OV_BYTE*) pvector->value + distance) < pdb->pstart || ((OV_BYTE*) pvector->value + distance) > pdb->pend))
 										{
-											ov_logfile_error("moving pointers: variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
+											#ifdef OV_DEBUG
+												ov_logfile_error("moving pointers: string vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
+											#endif
 											pvector->value = NULL;
 											pvector->veclen = 0;
 										}
-										#endif
 										Ov_Adjust(OV_STRING*, pvector->value);
 										for(i=0; i<pvector->veclen; i++) {
 											Ov_Adjust(OV_STRING, pvector->value[i]);
