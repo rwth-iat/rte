@@ -3,6 +3,8 @@
 	<name>PCMsgCreator</name>
 	<comment></comment>
 	<projects>
+		<project>fb</project>
+		<project>MessageSys</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
