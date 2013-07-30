@@ -363,7 +363,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 			*functionStatus = XDRCL_PROCANS_INCOMPLETE;
 			datapacket->readPT = BeginOfMessage; 	/*	reset the read pointer to the place where the message began (to be read again next time)	*/
 			return OV_ERR_BADVALUE;		/*	get called again to process the request next time (if it is complete then).
-													Yes, this could block the ClientHanlder for a longer time.	*/
+													Yes, this could block the ClientHandler for a longer time.	*/
 		}
 
 		/*

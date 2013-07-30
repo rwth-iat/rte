@@ -121,9 +121,9 @@ LIBRARY ksxdr
 				COMMENT	=	"Timeout for network operations in seconds"
 				INITIALVALUE	=	30;
 			dataToSend	:	C_TYPE	<KS_DATAPACKET>
-				COMMENT	=	"Data to be send (reqeust XDR).";
+				COMMENT	=	"Data to be send (request XDR).";
 			tempXID	:	UINT
-				COMMENT	=	"XID saved temporarily (whiole a getserver is running)"
+				COMMENT	=	"XID saved temporarily (while a getserver is running)"
 				INITIALVALUE	=	0;
 			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
 				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
