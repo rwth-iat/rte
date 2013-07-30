@@ -23,7 +23,7 @@ foreach arg $argv {
 		set checkout 0
 		
 	}
-	if {$arg == "bleedingedge"} {
+	if {$arg == "trunk"} {
 		set bleedingedge 1
 	
 	}
@@ -787,9 +787,9 @@ if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
 		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn }
 	
-	print_msg "if you take the new ones, you'll see what you get"
+	print_msg "checking out trunk"
 } else {
-    print_msg "taking the safe way is a sign of weakness"
+   	 print_msg "checking out common"
 	set addon_libs { common/user }
 	set included_libs {common/core}
 	}

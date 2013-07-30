@@ -1,6 +1,9 @@
 all:
 	tclsh acplt_build.tcl
 
+trunk:
+	tclsh acplt_build.tcl trunk
+
 clean:
 	rm acplt.build -rf
 	rm acplt -rf
