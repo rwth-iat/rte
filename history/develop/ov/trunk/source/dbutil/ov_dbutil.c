@@ -893,7 +893,7 @@ int main(int argc, char **argv) {
 											helper = calloc(hlpindex+strlen(temp)+2, sizeof(char));
 											if(!helper)
 											{
-												ov_logfile_error("Could not reserver memory for logfile path. Aborting.");
+												ov_logfile_error("Could not reserve memory for logfile path. Aborting.");
 												return EXIT_FAILURE;
 											}
 											strcpy(helper, configBasePath);
@@ -1045,7 +1045,7 @@ int main(int argc, char **argv) {
 			helper = calloc(hlpindex+strlen(filename)+2, sizeof(char));
 			if(!helper)
 			{
-				ov_logfile_error("Could not reserver memory for filename path. Aborting.");
+				ov_logfile_error("Could not reserve memory for filename path. Aborting.");
 				return EXIT_FAILURE;
 			}
 			strcpy(helper, configBasePath);
