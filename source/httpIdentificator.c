@@ -25,7 +25,7 @@ OV_DLLFNCEXPORT OV_BOOL kshttp_httpIdentificator_identify (
 		return FALSE;
 	}
 	//{"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"}
-	for(i = 0;pObj->v_AllowedMethods.veclen;i++){
+	for(i = 0;i < pObj->v_AllowedMethods.veclen;i++){
 		length = ov_string_getlength(pObj->v_AllowedMethods.value[i]);
 		//ov_string_getlength returns 0 if pointer is NULL
 		if(length == 0){
