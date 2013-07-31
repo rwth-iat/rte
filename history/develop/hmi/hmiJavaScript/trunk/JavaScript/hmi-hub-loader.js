@@ -96,7 +96,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 	
 	var p = new RegExp(hubFilePattern);
 	var base = "";
-	var scriptAnchor = document.head;
+	var scriptAnchor = document.head || document.getElementsByTagName('head')[0];
 	var match = null;
 	var scriptNode = null;
 	var idx;

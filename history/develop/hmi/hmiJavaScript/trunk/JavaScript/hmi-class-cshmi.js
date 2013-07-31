@@ -123,6 +123,8 @@ TODO:
 JavaScript:
 - check return value of gethandleid
 
+CSHMIHostServer/acplt/ov/library ermoeglichen
+
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verf�gbar!
 
@@ -145,7 +147,7 @@ cshmi.prototype = {
 	 */
 	instanciateCshmi: function(Host, Server, ObjectPath) {
 		//fill cache if possible
-		if (JSON && JSON.parse){
+		if (typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
 			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
 				if(response.charAt(1) == "{"){
@@ -3616,7 +3618,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
 			//do not use a predefined VisualObject if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
@@ -3977,7 +3985,13 @@ cshmi.prototype = {
 		
 		if (VisualParentObject !== null){
 			//search a predefined children
-			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+			try{
+				var VisualObject = VisualParentObject.getElementById(ObjectPath);
+			}catch (e) {
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+				// hopefully the id is uniqe in the tree
+				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+			}
 		}
 		
 		if (VisualObject === null || VisualObject === undefined){
@@ -4240,7 +4254,13 @@ cshmi.prototype = {
 		
 		if (VisualParentObject !== null){
 			//search a predefined children
-			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+			try{
+				var VisualObject = VisualParentObject.getElementById(ObjectPath);
+			}catch (e) {
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+				// hopefully the id is uniqe in the tree
+				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+			}
 		}
 		
 		if (VisualObject === null || VisualObject === undefined){
@@ -4319,7 +4339,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
@@ -4383,7 +4409,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
@@ -4444,7 +4476,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
@@ -4505,7 +4543,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
@@ -4617,7 +4661,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
@@ -4693,7 +4743,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
@@ -4756,7 +4812,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
@@ -4825,7 +4887,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		try{
+			var VisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		if (VisualObject === null){
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
@@ -4886,8 +4954,13 @@ cshmi.prototype = {
 		}
 		
 		//search a predefined children
-		var PredefinedVisualObject = VisualParentObject.getElementById(ObjectPath);
-		
+		try{
+			var PredefinedVisualObject = VisualParentObject.getElementById(ObjectPath);
+		}catch (e) {
+			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+			// hopefully the id is uniqe in the tree
+			PredefinedVisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		}
 		
 		var VisualObject;
 		if(requestList[ObjectPath]["SVGcontent"] !== ""){
