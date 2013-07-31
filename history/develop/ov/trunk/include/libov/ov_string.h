@@ -45,7 +45,7 @@ extern "C" {
 #define	OV_STRCMP_MORE		1		/* s1 > s2 */
 #define	OV_STRCMP_LESS		-1		/* s1 < s2 */
 
-/*
+/**
 *	Set value of a string in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
@@ -53,7 +53,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	const OV_STRING		value
 );
 
-/*
+/**
 *	Set value of a string vector in the database
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_setvecvalue(
@@ -62,22 +62,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvecvalue(
 	OV_UINT				veclen
 );
 
-/*
+/**
 *	Compare two strings, result is greater than, equal to or less than zero
+*	Please check against OV_STRCMP_EQUAL, OV_STRCMP_MORE and OV_STRCMP_LESS
+*	Note: NULL is considered equal to ""
 */
 OV_DLLFNCEXPORT OV_INT ov_string_compare(
 	const OV_STRING		string1,
 	const OV_STRING		string2
 );
 
-/*
-*	Get the length of a string
+/**
+*	Get the length of a string (without the null terminator)
+*	results zero if got a NULL pointer
 */
 OV_DLLFNCEXPORT OV_UINT ov_string_getlength(
 	const OV_STRING		string
 );
 
-/*
+/**
 *	Append a string to an existing one
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_append(
@@ -85,8 +88,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 	const OV_STRING		appstring
 );
 
-/*
+/**
 *	Formatted print to a string
+*	crashes if a used value contains a NULL pointer
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	OV_STRING		*pstring,
@@ -138,17 +142,17 @@ int ov_string_match_joker(
 	int					*pk
 );
 
-/*
+/**
 *	Split a string.
 *	---------------
 *	OV_STRING *plist;
 *	OV_UINT    i,len;
 *	
 *	plist = ov_string_split("a;b;c",";",&len);
-*   for(i=0; i<len; i++) {
-*      fprintf(stderr, "%lu : %s\n", i, plist[i]);
-*   }
-*   ov_string_freelist(plist);
+*	for(i=0; i<len; i++) {
+*		fprintf(stderr, "%lu : %s\n", i, plist[i]);
+*	}
+*	ov_string_freelist(plist);
 */
 OV_DLLFNCEXPORT OV_STRING *ov_string_split(
 	const OV_STRING		str,
@@ -156,7 +160,7 @@ OV_DLLFNCEXPORT OV_STRING *ov_string_split(
 	OV_UINT             *len
 );
 OV_DLLFNCEXPORT void ov_string_freelist(
-    OV_STRING *plist
+	OV_STRING *plist
 );
 
 #ifdef __cplusplus
