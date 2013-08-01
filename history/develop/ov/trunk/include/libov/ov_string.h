@@ -65,7 +65,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvecvalue(
 /**
 *	Compare two strings, result is greater than, equal to or less than zero
 *	Please check against OV_STRCMP_EQUAL, OV_STRCMP_MORE and OV_STRCMP_LESS
+*	OV_STRCMP_MORE indicates that the first character that does not match has a greater value in string1 than in string2
 *	Note: NULL is considered equal to ""
+*
 */
 OV_DLLFNCEXPORT OV_INT ov_string_compare(
 	const OV_STRING		string1,
@@ -98,7 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 	...
 );
 
-/*
+/**
 *	Test if a string matches a regular expression
 */
 OV_DLLFNCEXPORT OV_BOOL ov_string_match(
@@ -106,7 +108,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_string_match(
 	const OV_STRING		mask
 );
 
-/*
+/**
 *	Convert a string to lower case
 *	Note: you must call ov_memstack_lock/unlock() outside of this function!
 */
@@ -114,7 +116,7 @@ OV_DLLFNCEXPORT OV_STRING ov_string_tolower(
 	const OV_STRING		string
 );
 
-/*
+/**
 *	Convert a string to upper case
 *	Note: you must call ov_memstack_lock/unlock() outside of this function!
 */
@@ -122,7 +124,7 @@ OV_DLLFNCEXPORT OV_STRING ov_string_toupper(
 	const OV_STRING		string
 );
 
-/*
+/**
 *	Helper function of ov_string_match() for sets (subroutine)
 */
 int ov_string_match_set(
@@ -132,7 +134,7 @@ int ov_string_match_set(
 	int					*pk
 );
 
-/*
+/**
 *	Helper function of ov_string_match() for jokers (subroutine)
 */
 int ov_string_match_joker(

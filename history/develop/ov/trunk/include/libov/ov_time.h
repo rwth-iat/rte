@@ -44,14 +44,14 @@ extern "C" {
 #define	OV_TIMECMP_AFTER	1		/* t1 > t2 */
 #define	OV_TIMECMP_BEFORE	-1		/* t1 < t2 */
 
-/*
+/**
 *	Get the current system time
 */
 OV_DLLFNCEXPORT void ov_time_gettime(
 	OV_TIME				*ptime
 );
 
-/*
+/**
 *	Calculate the sum of a time and a time span
 */
 OV_DLLFNCEXPORT void ov_time_add(
@@ -60,7 +60,7 @@ OV_DLLFNCEXPORT void ov_time_add(
 	const OV_TIME_SPAN	*padd2
 );
 
-/*
+/**
 *	Caluculate the difference of two times
 */
 OV_DLLFNCEXPORT void ov_time_diff(
@@ -70,29 +70,35 @@ OV_DLLFNCEXPORT void ov_time_diff(
 );
 
 /*
-*	Compare two times, result is -1, 0 or 1.
+*	Compare two times.
+*	Please check against OV_TIMECMP_AFTER, OV_TIMECMP_EQUAL and OV_TIMECMP_BEFORE
+*	OV_TIMECMP_AFTER occures if ptime1 has more seconds compared to ptime2
 */
 OV_DLLFNCEXPORT OV_INT ov_time_compare(
 	const OV_TIME		*ptime1,
 	const OV_TIME		*ptime2
 );
 
-/*
+/**
 *	Convert a time into an ASCII string
+*	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	const OV_TIME		*ptime
 );
 
-/*
+/**
 *	Convert a time span into an ASCII string
+*	the format is hhhh:mm:ss.uuuuuu
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
              const OV_TIME_SPAN  *ptimespan
 );
 
-/*
+/**
 *	Convert an ASCII string into a time
+*	checks the format of the given string, which must be either
+	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 */
 OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 	OV_TIME				*ptime,
