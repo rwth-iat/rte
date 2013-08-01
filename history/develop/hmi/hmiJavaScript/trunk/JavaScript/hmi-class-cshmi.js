@@ -123,7 +123,9 @@ TODO:
 JavaScript:
 - check return value of gethandleid
 
-CSHMIHostServer/acplt/ov/library ermoeglichen
+CSHMIHostServer/acplt/ov/library in FBRef ermoeglichen
+CSHMI:configvalue:myconfig in SetValue.TemplateFBVariableReferenceName
+
 
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verf�gbar!
@@ -1550,6 +1552,7 @@ cshmi.prototype = {
 		}
 		if (TranslationSourcePath === undefined){
 			//fixme remove me if available in all turbos
+			//caching?
 			
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
@@ -3442,6 +3445,8 @@ cshmi.prototype = {
 				}else if(OrderArray[i] === newVisualObject){
 					//we found an new entry, inserted in the creation, remove
 					OrderArray.splice(i, 1);
+				}else{
+					i++;
 				}
 			}
 			//same for Template Objects
@@ -3454,6 +3459,8 @@ cshmi.prototype = {
 				}else if(OrderArray[i] === newVisualObject){
 					//we found an new entry, inserted in the creation, remove
 					OrderArray.splice(i, 1);
+				}else{
+					i++;
 				}
 			}
 		}
