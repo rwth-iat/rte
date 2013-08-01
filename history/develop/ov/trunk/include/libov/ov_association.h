@@ -268,35 +268,41 @@ OV_DLLFNCEXPORT void ov_association_unload(
 	(pparent)->v_linktable)+(passoc)->v_parentoffset))):(NULL)):(NULL))):(NULL))
 
 /*
-*	Get first child in a 1:n association
+*	Get first child in a 1:n association or NULL if no child objects exist.
+*	This generic macro is not type safe. Whenever possible, use the macro Ov_GetFirstChild() instead!
 */
 #define Ov_Association_GetFirstChild(passoc, pparent)				\
 	((Ov_Association_IsParentClass(passoc, pparent)&&(passoc->v_assoctype==OV_AT_ONE_TO_MANY))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
 	(pparent)->v_linktable)+(passoc)->v_parentoffset))->pfirst):(NULL)):(NULL))):(NULL))
 
 /*
-*	Get last child in a 1:n association
+*	Get last child in a 1:n association or NULL if no child objects exist.
+*	This generic macro is not type safe. Whenever possible, use the macro Ov_GetLastChild() instead!
 */
 #define Ov_Association_GetLastChild(passoc, pparent)				\
 	((Ov_Association_IsParentClass(passoc, pparent)&&(passoc->v_assoctype==OV_AT_ONE_TO_MANY))?((OV_INSTPTR_ov_object)((pparent)?(((pparent)->v_linktable)?(((OV_HEAD*)(((OV_BYTE*)		\
 	(pparent)->v_linktable)+(passoc)->v_parentoffset))->plast):(NULL)):(NULL))):(NULL))
 
 /*
-*	Get next child in a 1:n association
+*	Get next child in a 1:n association or NULL if the current child object is the
+*	last object of the link.
+*	This generic macro is not type safe. Whenever possible, use the macro Ov_GetNextChild() instead!
 */
 #define Ov_Association_GetNextChild(passoc, pchild)					\
 	((Ov_Association_IsChildClass((passoc), (pchild))&&(passoc->v_assoctype==OV_AT_ONE_TO_MANY))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
 	(pchild)->v_linktable)+(passoc)->v_childoffset))->pnext):(NULL)):(NULL))):(NULL))
 
 /*
-*	Get previous child in a 1:n association
+*	Get previous child in a 1:n association or NULL if the current child object is the first object of the link.
+*	This generic macro is not type safe. Whenever possible, use the macro Ov_GetPrevChild() instead!
 */
 #define Ov_Association_GetPreviousChild(passoc, pchild)				\
 	((Ov_Association_IsChildClass(passoc, pchild)&&(passoc->v_assoctype==OV_AT_ONE_TO_MANY))?((OV_INSTPTR_ov_object)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)(((OV_BYTE*)		\
 	(pchild)->v_linktable)+(passoc)->v_childoffset))->pprevious):(NULL)):(NULL))):(NULL))
 
 /*
-*	Get parent in a 1:1 or in a 1:n association
+*	Get parent in a 1:1 or in a 1:n association or NULL if child object does not have a parent object.
+*	This generic macro is not type safe. Whenever possible, use the macro Ov_GetParent() instead!
 */
 #define Ov_Association_GetParent(passoc, pchild)		\
 	((Ov_Association_IsChildClass(passoc, pchild)&&(passoc->v_assoctype!=OV_AT_MANY_TO_MANY))?(((passoc)->v_assoctype==OV_AT_ONE_TO_ONE)?		\
@@ -396,7 +402,9 @@ OV_DLLFNCEXPORT void ov_association_unload(
 	((passoc), (pit)))
 
 /*
-*	Search for child with a given identifier in a 1:n association
+*	Search for child with a given identifier in a 1:n association or
+*	NULL no child is found or the association is not namebinding.
+*	This generic function is not type safe. Whenever possible, use the macro Ov_SearchChild() instead!
 */
 OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_association_searchchild(
 	const OV_INSTPTR_ov_association	passoc,
@@ -422,6 +430,7 @@ OV_DLLFNCEXPORT OV_UINT ov_association_getchildcount(
 
 /*
 *	Link a parent and a child object
+*	This generic function is not type safe. Whenever possible, use the macro Ov_Link() instead!
 */
 OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 	const OV_INSTPTR_ov_association	passoc,
@@ -435,6 +444,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_association_link(
 
 /*
 *	Unlink a parent and a child object
+*	This generic function is not type safe. Whenever possible, use the macro Ov_Unlink() instead!
 */
 OV_DLLFNCEXPORT void ov_association_unlink(
 	const OV_INSTPTR_ov_association	passoc,
