@@ -47,7 +47,7 @@ typedef struct {
 	OV_ELEMENT	*elements;	/* pointer to array of elements */
 }	OV_PATH;
 
-/*
+/**
 *	Resolve a path using a given path name
 *	Note: the memory for the path elements is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	const OV_UINT	version
 );
 
-/*
+/**
 *	Get the canonical path of an element
 *	Note: the memory for the path name is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
@@ -69,8 +69,8 @@ OV_DLLFNCEXPORT OV_STRING ov_path_getcanonicalpath(
 	const OV_UINT			version
 );
 
-/*
-*	Get the pointer to an object with given path name
+/**
+*	Get the pointer to an object with given path name or NULL
 *	Note: you need NOT call ov_memstack_lock()/unlock() outside of this function
 */
 OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_path_getobjectpointer(
@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_path_getobjectpointer(
 	const OV_UINT			version
 );
 
-/*
+/**
 *	Converts percent characters in asci characters
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_STRING ov_path_frompercent (
                 OV_STRING org
 );
 
-/*
+/**
 *	Converts characters in an identifier-string to their percent representation
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
@@ -98,15 +98,16 @@ OV_DLLFNCEXPORT OV_STRING ov_path_topercent (
                 OV_STRING org
 );
 
-/*
+/**
 *	returns size of a string in respect to a percent conversion
+*	crashed if called with a NULL pointer
 */
 
 OV_DLLFNCEXPORT OV_UINT ov_path_percentsize (
                 OV_STRING org
 );
 
-/*
+/**
 *	Checks if characters in a valid one
 */
 
