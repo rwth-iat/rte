@@ -1552,8 +1552,6 @@ cshmi.prototype = {
 		}
 		if (TranslationSourcePath === undefined){
 			//fixme remove me if available in all turbos
-			//caching?
-			
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
 			XXrequestList[ObjectPath]["translationSource"] = null;
@@ -1563,6 +1561,7 @@ cshmi.prototype = {
 			}else{
 				TranslationSourcePath = "";
 			}
+			this.ResourceList.Actions[ObjectPath].TranslationSourcePath = TranslationSourcePath;
 		}
 		//translate if needed
 		if (TranslationSourcePath !== ""){
