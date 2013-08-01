@@ -201,7 +201,29 @@ proc create_dirs {} {
 	file mkdir $releasedir/templates
 }
 
+
+proc get_revision {} {
+global logfile
+
+execute svn info
+#set logfile "logfile.txt"
+set in  [open $logfile r]
+set first 0
+while {[gets $in line] != -1} {
+if {[regexp "Ausgecheckt, Revision" $line] } then {
+print_msg $line
+regexp {\s*Ausgecheckt, Revision\s+(.+).\s*} $line _ first 
+}
+}
+close $in
+#file delete -force $logfile
+return $first
+
+}
+
+
 # Checkout a CVS module
+
 proc checkout {prefix module {dirname ""} {notrunk ""}} {
     print_msg "Checking out $module"
     if {$dirname == ""} then { set dirname $module }
@@ -869,6 +891,9 @@ if {$release == 1} {
 
 create_dirs
 checkout_acplt
+cd $builddir
+set date [get_revision]
+cd $basedir
 if {$checkout == 1} {
 	exit 0
 }
@@ -903,7 +928,7 @@ foreach x $addon_libs {
 }
 
 if {$release == 1} {
-    set date [clock format [clock seconds] -format "%Y%m%d"]
+    #set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-develop-$date"
     cd $basedir
 	print_msg "Compressing"
@@ -919,10 +944,34 @@ if {$release == 1} {
 if {$release == 1} {
 # Create runtime release
     print_msg "== CREATING RUNTIME RELEASE =="
-    set date [clock format [clock seconds] -format "%Y%m%d"]
+    #set date [clock format [clock seconds] -format "%Y%m%d"]
     set name "acplt-server-runtime-$date"
+	set ov_debug ""
+	file delete -force $builddir
+	create_dirs
+	checkout_acplt
+	cd $builddir
+	set date [get_revision]
 
-    create_dirs
+	cd $basedir
+	if {$checkout == 1} {
+		exit 0
+	}
+
+	if { $os == "nt" } then {
+		#for depricated msvc use following:
+		#build_acplt
+		#install_acplt {ntvc}
+		#note that ov_runtimeserver has never been compiled with msvc
+		build_acplt_mingw
+		install_acplt cygwin
+	} else {
+		build_acplt
+		install_acplt linux
+	}
+
+
+    
 	create_release
 	create_systools_and_servers
     foreach x $included_libs {
