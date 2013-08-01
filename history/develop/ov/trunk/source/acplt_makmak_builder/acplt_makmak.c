@@ -268,16 +268,16 @@ if(new == 0){
 	//server - dir
 	fprintf(fd,"ROOT_DIR          = ../../../../\n");
 	fprintf(fd,"BASE_DIR          = $(ROOT_DIR)\n");
-	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)/system/sysdevbase/ov/include/\n");
-	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)/system/sysdevbase/ov/lib/\n");
-	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)/system/sysdevbase/ov/model/\n");
-	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)/system/sysbin/\n");
+	fprintf(fd,"BASE_INC_DIR      = $(BASE_DIR)system/sysdevbase/ov/include/\n");
+	fprintf(fd,"BASE_LIB_DIR      = $(BASE_DIR)system/sysdevbase/ov/lib/\n");
+	fprintf(fd,"BASE_MODEL_DIR    = $(BASE_DIR)system/sysdevbase/ov/model/\n");
+	fprintf(fd,"BIN_DIR           = $(ROOT_DIR)system/sysbin/\n");
 
 	//server/user - dir
 	fprintf(fd,"USER_DIR          = ../../../\n");
-	fprintf(fd,"USERLIB_DIR       = $(ROOT_DIR)/system/addonlibs/\n");
-	fprintf(fd,"SYS_DIR           = $(BASE_DIR)/system/sysdevbase/\n");
-	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)/system/syslibs/\n");
+	fprintf(fd,"USERLIB_DIR       = $(ROOT_DIR)system/addonlibs/\n");
+	fprintf(fd,"SYS_DIR           = $(BASE_DIR)system/sysdevbase/\n");
+	fprintf(fd,"SYSLIB_DIR        = $(ROOT_DIR)system/syslibs/\n");
 }
 
 	/* Basis-Bibliotheken? */
