@@ -4059,7 +4059,8 @@ cshmi.prototype = {
 //				//jsonload muss auch gestartet werden, wenn wir keine Bib laden!
 //			};
 
-			document.head.appendChild(node);
+			var head = document.head || document.getElementsByTagName('head')[0];
+			head.appendChild(node);
 			jsloadObserver.checkAndTrigger();
 		}
 
