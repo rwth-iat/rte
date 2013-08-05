@@ -1692,12 +1692,8 @@ cshmi.prototype = {
 					//load hidden elements now
 					this._loadHiddenChildrenElements(VisualObject);
 				}
-			}else if (ParameterValue === "rotate"){
-				if(!isNumeric(NewValue)){
-					//ignore writing wrong value
-					return false;
-				}
-				//svg are not transformable, so the rotation is in the objects parent
+			}else if (ParameterValue === "rotate" || ParameterValue === "transform"){
+				//svg are not transformable, so the rotation/transform is in the objects parent
 				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 					//object has already an g parent
 					var rotationObject = VisualObject.parentNode;
@@ -1711,14 +1707,24 @@ cshmi.prototype = {
 					//normal visual element
 					rotationObject = VisualObject;
 				}
-				
-				if(VisualObject.getAttribute("x") !== null){
-					rotationObject.setAttribute("transform", "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")");
-				}else if(VisualObject.getAttribute("cx") !== null){
-					VisualObject.setAttribute("transform", "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")");
-				}else{
-					VisualObject.setAttribute("transform", "rotate("+NewValue+")");
+				var transformstring = "";
+				if (ParameterValue === "rotate"){
+					if(!isNumeric(NewValue)){
+						//ignore writing wrong value
+						return false;
+					}
+					if(VisualObject.getAttribute("x") !== null){
+						transformstring = "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")";
+					}else if(VisualObject.getAttribute("cx") !== null){
+						transformstring = "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")";
+					}else{
+						tranformstring = "rotate("+NewValue+")";
+					}
+				}else if (ParameterValue === "transform"){
+					//todo rotation is lost
+					tranformstring = NewValue;
 				}
+				rotationObject.setAttribute("transform", transformstring);
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
