@@ -203,6 +203,10 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_on_set(
 	OV_INSTPTR_fb_connection	pconn,
 	const OV_BOOL				on
 ) {
+	if(!pconn){
+		return OV_ERR_BADPARAM;
+	}
+	//fixme, hier sollte eigentlich fb_connection_checkelements() aufgerufen werden, oder?
 	pconn->v_on = on;
 	return OV_ERR_OK;
 }
@@ -215,6 +219,9 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_sourceport_set(
 	OV_INSTPTR_fb_connection	pconn,
 	const OV_STRING				value
 ) {
+	if(!pconn){
+		return OV_ERR_BADPARAM;
+	}
     if( ov_string_compare(pconn->v_sourceport, value)) {
         /*
         *   Initialisierung der Verbindung erzwingen
@@ -235,6 +242,9 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_targetport_set(
 	OV_INSTPTR_fb_connection	pconn,
 	const OV_STRING				value
 ) {
+	if(!pconn){
+		return OV_ERR_BADPARAM;
+	}
     if( ov_string_compare(pconn->v_targetport, value)) {
         /*
         *   Initialisierung der Verbindung erzwingen
