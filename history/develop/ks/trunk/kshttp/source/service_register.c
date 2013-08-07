@@ -63,6 +63,15 @@ OV_RESULT exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT r
 	char portstr [8];
 
 
+	//todo disallow remote registering
+	/*
+	if(!pChannel->v_isLocal)
+	{
+		ksErrCode = KS_ERR_NOREMOTE;
+		break;
+	}
+	*/
+
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	find_arguments(args, "name", &match);

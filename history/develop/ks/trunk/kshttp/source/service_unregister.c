@@ -59,9 +59,6 @@ OV_RESULT exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT
 	OV_RESULT fr = OV_ERR_OK;
 	OV_STRING servername = NULL;
 	OV_UINT serverversion;
-	OV_UINT serverport;
-	char portstr [8];
-
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -72,16 +69,6 @@ OV_RESULT exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT
 		EXEC_UNREGISTER_RETURN fr; //400
 	}else{
 		ov_string_setvalue(&servername, match.value[0]);
-	}
-	//process serverport
-	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "port", &match);
-	if(match.veclen<1 || match.value[0] == NULL){
-		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable port not found");
-		EXEC_UNREGISTER_RETURN fr; //400
-	}else{
-		serverport = atoi(match.value[0]);
 	}
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -99,7 +86,6 @@ OV_RESULT exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT
 		EXEC_UNREGISTER_RETURN fr;
 	}
 
-	sprintf(portstr, "%lu", serverport);
 	fr = ksbase_Manager_unregister(servername, serverversion, KSHTTP_IDENTIFIER);
 	if(Ov_Fail(fr)){
 		print_result_array(message, response_format, &fr, 1, ": could not register server at manager.");

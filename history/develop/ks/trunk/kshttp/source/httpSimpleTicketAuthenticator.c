@@ -31,7 +31,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpSimpleTicketAuthenticator_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
+//    OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT void kshttp_httpSimpleTicketAuthenticator_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
+    //OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
 
     /* do what the base class does first */
     ksbase_TicketAuthenticator_startup(pobj);
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void kshttp_httpSimpleTicketAuthenticator_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
+    //OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, pobj);
 
     /* do what */
 
