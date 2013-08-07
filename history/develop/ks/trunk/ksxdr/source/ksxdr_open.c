@@ -137,12 +137,12 @@ OV_RESULT ov_library_setglobalvars_ksxdr_new(void) {
 			KS_logfile_error(("ksxdr_open: ManagerCom could not be created"));
 			return result;
 		}
-
-		/*	if we are manager, we don't need a channel	*/
-		if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager))
-			xdrMngCom->v_UseShortCut = TRUE;
-
-
+	}
+	/*	if we are manager, we don't need a channel	*/
+	if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager)){
+		xdrMngCom->v_UseShortCut = TRUE;
+	}else{
+		xdrMngCom->v_UseShortCut = FALSE;
 	}
 
 	KS_logfile_debug(("leaving ksxdr_open"));
