@@ -159,11 +159,12 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 			KS_logfile_error(("kshttp_open: httpManagerCom could not be created"));
 			return result;
 		}
-
-		/*	if we are manager, we don't need a channel	*/
-		if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager)){
-			httpMngCom->v_UseShortCut = TRUE;
-		}
+	}
+	/*	if we are manager, we don't need a channel	*/
+	if(Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager)){
+		httpMngCom->v_UseShortCut = TRUE;
+	}else{
+		httpMngCom->v_UseShortCut = FALSE;
 	}
 
 
