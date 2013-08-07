@@ -85,20 +85,23 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 ) {
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_DynamicPtrCast(ksbase_Channel, Ov_GetFirstChild(ov_containment, thisCl));
+	OV_INSTPTR_kshttp_httpManagerCom pManagerCom = Ov_DynamicPtrCast(kshttp_httpManagerCom, Ov_GetParent(ov_containment, thisCl));
 
-	ks_logfile_debug("http code received from manager: %i", thisCl->v_ServerResponse.statusCode);
+	if(!thisCl || !pChannel|| !pManagerCom){
+		*result = OV_ERR_BADPLACEMENT;
+		return OV_ERR_BADPLACEMENT;
+	}
 
+	pManagerCom->v_httpErrCode = thisCl->v_ServerResponse.statusCode;
 	if(thisCl->v_ServerResponse.statusCode == 200){
 		*result = OV_ERR_OK;
 		ks_logfile_debug("Registered at %s!", pChannel->v_address);
-		return OV_ERR_OK;
 	}else if(thisCl->v_ServerResponse.statusCode == 406){
 		*result = KS_ERR_NOMANAGER;
 		ks_logfile_debug("Not registered at %s! It is no Manager.", pChannel->v_address);
-		return OV_ERR_OK;
 	}else{
+		*result = KS_ERR_GENERIC;
 		ks_logfile_debug("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_ServerResponse.statusCode);
-		return OV_ERR_GENERIC;
 	}
 
 	return OV_ERR_OK;
