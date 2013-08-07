@@ -219,10 +219,16 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
-	if(!requestUri){
+	if(!method){
 		return OV_ERR_BADPARAM;
 	}
-	if(!method){
+	if(!host){
+		return OV_ERR_BADPARAM;
+	}
+	if(!port){
+		return OV_ERR_BADPARAM;
+	}
+	if(!requestUri){
 		return OV_ERR_BADPARAM;
 	}
 
