@@ -68,10 +68,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestRegister(
 	 */
 	OV_RESULT result;
 	OV_STRING requestUri = NULL;
+	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 
 	/*	generate Header	*/
 	ov_string_print(&requestUri, "/register?name=%s&port=%u&version=2", servername, port);
-	result = kshttp_generateClientMessageHeader("GET", requestUri, Ov_StaticPtrCast(kshttp_httpClient, this), TicketGenerator, callbackThat, callback);
+	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
 
@@ -85,23 +86,21 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 ) {
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_DynamicPtrCast(ksbase_Channel, Ov_GetFirstChild(ov_containment, thisCl));
-	OV_INSTPTR_kshttp_httpManagerCom pManagerCom = Ov_DynamicPtrCast(kshttp_httpManagerCom, Ov_GetParent(ov_containment, thisCl));
 
-	if(!thisCl || !pChannel|| !pManagerCom){
+	if(!thisCl || !pChannel ){
 		*result = OV_ERR_BADPLACEMENT;
 		return OV_ERR_BADPLACEMENT;
 	}
 
-	pManagerCom->v_httpErrCode = thisCl->v_ServerResponse.statusCode;
-	if(thisCl->v_ServerResponse.statusCode == 200){
+	if(thisCl->v_httpStatusCode == 200){
 		*result = OV_ERR_OK;
 		ks_logfile_debug("Registered at %s!", pChannel->v_address);
-	}else if(thisCl->v_ServerResponse.statusCode == 406){
+	}else if(thisCl->v_httpStatusCode == 406){
 		*result = KS_ERR_NOMANAGER;
 		ks_logfile_debug("Not registered at %s! It is no Manager.", pChannel->v_address);
 	}else{
 		*result = KS_ERR_GENERIC;
-		ks_logfile_debug("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_ServerResponse.statusCode);
+		ks_logfile_debug("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode);
 	}
 
 	return OV_ERR_OK;
@@ -124,10 +123,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 	 */
 	OV_RESULT result;
 	OV_STRING requestUri = NULL;
+	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 
 	/*	generate Header	*/
 	ov_string_print(&requestUri, "/unregister?server=%s&version=2", servername);
-	result = kshttp_generateClientMessageHeader("GET", requestUri, Ov_StaticPtrCast(kshttp_httpClient, this), TicketGenerator, callbackThat, callback);
+	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
 
@@ -143,12 +143,12 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processUnRegister(
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_DynamicPtrCast(ksbase_Channel, Ov_GetFirstChild(ov_containment, thisCl));
 
-	if(thisCl->v_ServerResponse.statusCode == 200){
+	if(thisCl->v_httpStatusCode == 200){
 		*result = OV_ERR_OK;
 		ks_logfile_debug("unregistered at %s!", pChannel->v_address);
 		return OV_ERR_OK;
 	}else{
-		ks_logfile_debug("not unregistered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_ServerResponse.statusCode);
+		ks_logfile_debug("not unregistered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode);
 		return OV_ERR_GENERIC;
 	}
 

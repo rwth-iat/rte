@@ -71,17 +71,14 @@
 #define HTTPCL_MANAGERNOTFOUND	(1<<25)
 #define HTTPCL_TIMEOUT			(1<<26)
 
-#define HTTPCL_PROCANS_OK			0
-#define HTTPCL_PROCANS_INCOMPLETE	(1<<0)
-#define HTTPCL_PROCANS_XIDMISSMATCH	(1<<7)
-
 /*
  * HTTP Acceptance codes
  */
 
-#define HTTP_MSG_ACCEPTED		(0x00)
+#define HTTP_MSG_NEW			(0x00)
 #define HTTP_MSG_DENIED			(0x01)
-#define HTTP_MSG_INCOMPLETE			(0x02)
+#define HTTP_MSG_INCOMPLETE		(0x02)
+#define HTTP_MSG_ACCEPTED		(0x03)
 
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
@@ -196,18 +193,21 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT respo
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format);
 OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT response_format);
 
-OV_RESULT kshttp_generateClientMessageHeader(
+OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,
+		OV_STRING host,
+		OV_STRING port,
 		OV_STRING requestUri,
-		const OV_INSTPTR_kshttp_httpClient this,
-		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		OV_UINT messageBodyLength,
+		OV_STRING messageBody,
+		const OV_INSTPTR_kshttp_httpClientBase thisCl,
 		const OV_INSTPTR_ov_domain	callbackThat,
 		void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 		);
 
 
 OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);
-OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
-OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port);
-OV_RESULT trySend(OV_INSTPTR_kshttp_httpClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
+OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
+OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port);
+OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
 OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);

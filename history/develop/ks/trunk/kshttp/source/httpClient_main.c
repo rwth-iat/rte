@@ -46,13 +46,13 @@
 #include "config.h"
 #include "libov/ov_macros.h"
 
-OV_DLLFNCEXPORT void kshttp_httpClient_typemethod (
+OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_kshttp_httpClient				thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
+	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_RESULT result = OV_ERR_OK;
 
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
@@ -89,12 +89,12 @@ OV_DLLFNCEXPORT void kshttp_httpClient_typemethod (
 	return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_HandleData(
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	OV_INSTPTR_ksbase_DataHandler this,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
-	OV_INSTPTR_kshttp_httpClient				thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
+	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_INSTPTR_ksbase_Channel				pChannel = NULL;
 	OV_INSTPTR_ksbase_ClientTicketGenerator	pTicketGenerator = NULL;
 	OV_RESULT								result;
@@ -114,14 +114,15 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_HandleData(
 	if(result == OV_ERR_TARGETGENERIC)
 	{	/*	message incomplete --> keep waiting	*/
 		thisCl->v_state = KSBASE_CLST_BUSY;
-		thisCl->v_msgAccepted = HTTP_MSG_INCOMPLETE;
+		thisCl->v_httpParseStatus = HTTP_MSG_INCOMPLETE;
 		thisCl->v_actimode = 1;
 		return OV_ERR_OK;
 	}else if (Ov_Fail(result)){
-		thisCl->v_msgAccepted = HTTP_MSG_DENIED;
+		thisCl->v_httpParseStatus = HTTP_MSG_DENIED;
 		return OV_ERR_OK;
 	}
-	thisCl->v_msgAccepted = HTTP_MSG_ACCEPTED;
+	thisCl->v_httpParseStatus = HTTP_MSG_ACCEPTED;
+	thisCl->v_httpStatusCode = thisCl->v_ServerResponse.statusCode;
 
 	KS_logfile_debug(("decoding successful"));
 
@@ -133,13 +134,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_HandleData(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void kshttp_httpClient_startup(
+OV_DLLFNCEXPORT void kshttp_httpClientBase_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, pobj);
+    OV_INSTPTR_kshttp_httpClientBase thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
@@ -148,15 +149,15 @@ OV_DLLFNCEXPORT void kshttp_httpClient_startup(
 	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.version = NULL;
 	thisCl->v_ServerResponse.host = NULL;
-	thisCl->v_ServerResponse.content = NULL;
+	thisCl->v_ServerResponse.messageBody = NULL;
 
 	return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_reset(
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	OV_INSTPTR_ksbase_ClientBase this
 ) {
-	OV_INSTPTR_kshttp_httpClient	thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
+	OV_INSTPTR_kshttp_httpClientBase	thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_RESULT					result;
 	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
@@ -165,11 +166,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_reset(
 	thisCl->v_callback.callbackFunction = NULL;
 
 	thisCl->v_actimode = 0;
-	thisCl->v_msgAccepted = 0;
+	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
 	thisCl->v_runningKSservice = 0;
 	thisCl->v_state = KSBASE_CLST_INITIAL;
 
-	thisCl->v_ServerResponse.content = NULL;
+	thisCl->v_ServerResponse.messageBody = NULL;
 
 	ov_string_setvalue(&(thisCl->v_serverPort), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
@@ -187,18 +188,18 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_reset(
 }
 
 
-OV_DLLFNCEXPORT void kshttp_httpClient_shutdown(
+OV_DLLFNCEXPORT void kshttp_httpClientBase_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, pobj);
+	OV_INSTPTR_kshttp_httpClientBase thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, pobj);
 
 	thisCl->v_callback.instanceCalled = NULL;
 	thisCl->v_callback.callbackFunction = NULL;
 
-	thisCl->v_ServerResponse.content = NULL;
+	thisCl->v_ServerResponse.messageBody = NULL;
 
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.host), NULL);

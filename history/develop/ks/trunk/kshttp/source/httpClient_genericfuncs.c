@@ -55,7 +55,7 @@
  * 				Channel-handling
  *******************************************************************************************************************************************************************************/
 
-OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
+OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
 {
 	OV_STRING OptValTemp = NULL;
 	OV_INSTPTR_ov_class pClassChannel = NULL;
@@ -91,7 +91,7 @@ OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase
 
 			if(pClassChannel)
 			{/*	channel found create it	*/
-				result = ov_class_createobject(pClassChannel, Ov_StaticPtrCast(ov_domain, this), "httpchannel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) ppChannel);
+				result = ov_class_createobject(pClassChannel, Ov_PtrUpCast(ov_domain, this), "httpchannel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) ppChannel);
 				if(Ov_Fail(result))
 				{
 					KS_logfile_error(("%s getChannelPointer: could not create channel for manager communication. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
@@ -135,7 +135,7 @@ OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase
  ******************************************************************************************************************************************************************************/
 
 /*	if there is no connection (open or opening) open one and reset lasteventtime	*/
-OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
+OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
 {
 	OV_RESULT result;
 
@@ -164,7 +164,7 @@ OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbas
 }
 
 /*	check if connection is open. if so, send and set Client state to busy and reset lasteventtime. if not set client state to awaiting connection. activate typemethod	*/
-OV_RESULT trySend(OV_INSTPTR_kshttp_httpClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
+OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
 {
 	OV_RESULT result = OV_ERR_OK;
 
@@ -187,19 +187,27 @@ OV_RESULT trySend(OV_INSTPTR_kshttp_httpClient thisCl, OV_INSTPTR_ksbase_Channel
 	}
 	return OV_ERR_OK;
 }
-/*******************************************************************************************************************************************************************************
- * 				header
- ******************************************************************************************************************************************************************************/
 /**
- * creation of http request header (call)
- * @param datapacket: datapacket to write into
- * @return	errorcode
+ *
+ * @param method GET, POST, ...
+ * @param host Hostname or IP to communicate
+ * @param port TCP Portnumber
+ * @param requestUri URI to
+ * @param messageBodyLength The length of the message-body (for POST)
+ * @param messageBody the message-body (for POST)
+ * @param thisCl client object which does the communication
+ * @param callbackThat callback Object (ManagerObject with the register)
+ * @param callback
+ * @return
  */
-OV_RESULT kshttp_generateClientMessageHeader(
+OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,
+		OV_STRING host,
+		OV_STRING port,
 		OV_STRING requestUri,
-		const OV_INSTPTR_kshttp_httpClient this,
-		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		OV_UINT contentLength,
+		OV_STRING messageBody,
+		const OV_INSTPTR_kshttp_httpClientBase thisCl,
 		const OV_INSTPTR_ov_domain	callbackThat,
 		void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 		)
@@ -208,7 +216,6 @@ OV_RESULT kshttp_generateClientMessageHeader(
 	OV_STRING RequestLine = NULL;
 	OV_STRING RequestAdditionalHeaders = NULL;
 	OV_STRING RequestHeaders = NULL;
-	OV_INSTPTR_kshttp_httpClient thisCl = this;
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
@@ -241,8 +248,11 @@ OV_RESULT kshttp_generateClientMessageHeader(
 		return OV_ERR_OK;
 	}
 
-	ov_string_print(&RequestAdditionalHeaders, "Host:\r\nConnection: close\r\nUser-Agent: ACPLT/OV HTTP Client %s (compiled %s %s)\r\n", OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
 	ov_string_print(&RequestLine, "%s %s HTTP/1.1", method, requestUri);
+	ov_string_print(&RequestAdditionalHeaders, "Host:%s\r\nConnection: close\r\nUser-Agent: ACPLT/OV HTTP Client %s (compiled %s %s)\r\n", host, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
+	if(contentLength != 0 && messageBody){
+		ov_string_print(&RequestAdditionalHeaders, "%sContent-Length: %u\r\n", RequestAdditionalHeaders, contentLength);
+	}
 	ov_string_print(&RequestHeaders, "%s\r\n%s\r\n", RequestLine, RequestAdditionalHeaders);
 
 	result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), (OV_BYTE*) RequestHeaders, ov_string_getlength(RequestHeaders));
@@ -254,8 +264,16 @@ OV_RESULT kshttp_generateClientMessageHeader(
 		return result;
 	}
 
+	if(contentLength != 0 && messageBody){
+		result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), (OV_BYTE*) messageBody, contentLength);
+		if(Ov_Fail(result)){
+			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
+			return result;
+		}
+	}
+
 	/*	send created Message	*/
-	result = initiateConnection(thisCl, pChannel, pVtblChannel, TRUE, NULL, thisCl->v_ManagerPort);
+	result = initiateConnection(thisCl, pChannel, pVtblChannel, FALSE, host, port);
 
 	if(Ov_Fail(result))
 	{
@@ -268,8 +286,6 @@ OV_RESULT kshttp_generateClientMessageHeader(
 		return result;
 
 	thisCl->v_actimode = 1;
-
-	//thisCl->v_sentProcID = KS_REGISTER;
 
 	return OV_ERR_OK;
 }
@@ -313,7 +329,7 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 {
 	OV_STRING *pallheaderslist=NULL;
 	OV_STRING *plist=NULL;
-	OV_STRING ResponseLine = NULL;
+	OV_STRING StatusLine = NULL;
 	OV_STRING *http_request_array = NULL;
 	OV_UINT allheaderscount = 0;
 	OV_UINT beginOfContent = 0;
@@ -332,10 +348,10 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 		return OV_ERR_TARGETGENERIC;
 	}
 	//split out the first line containing the result
-	ov_string_setvalue(&ResponseLine, pallheaderslist[0]);
+	ov_string_setvalue(&StatusLine, pallheaderslist[0]);
 
 	//split out the actual result "HTTP/1.0 200 OK" or "HTTP/1.1 404 Not Found"
-	plist = ov_string_split(ResponseLine, " ", &len);
+	plist = ov_string_split(StatusLine, " ", &len);
 	if(len<3){
 		ov_string_freelist(pallheaderslist);
 		ov_string_freelist(plist);
@@ -362,7 +378,7 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 	}
 	if (dataReceived->length >= beginOfContent + responseStruct->contentLength){
 		//save pointer to the content
-		responseStruct->content = dataReceived->data + beginOfContent;
+		responseStruct->messageBody = dataReceived->data + beginOfContent;
 	}else{
 		//we do not have all data till now
 		ov_string_freelist(pallheaderslist);
