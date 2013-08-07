@@ -450,7 +450,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 				print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
 				EXEC_SETVAR_RETURN fr;
 
-	/*	TODO
+	/*	TODO Time* VEC
 			case OV_VT_TIME_VEC:
 			case OV_VT_TIME_PV_VEC:
 

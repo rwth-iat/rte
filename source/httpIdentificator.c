@@ -6,6 +6,28 @@
 #include "config.h"
 #include "libov/ov_macros.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_kshttp_httpIdentificator pinst = Ov_StaticPtrCast(kshttp_httpIdentificator, pobj);
+    OV_RESULT    result;
+
+    OV_STRING allDings[] = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
+    /* do what the base class does first */
+    result = ov_object_constructor(pobj);
+    if(Ov_Fail(result))
+         return result;
+
+    /* do what */
+    return  Ov_SetDynamicVectorValue(&pinst->v_AllowedMethods, allDings, 10, STRING);
+}
+
+
+
 /**
  * in order to detect a http request, we check if a white list of HTTP methods are provided
  */

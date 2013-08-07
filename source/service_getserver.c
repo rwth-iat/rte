@@ -112,8 +112,6 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	{	//server exists, check if ks protocol is supported
 		KS_logfile_debug(("kshttp_getserver: getserver: server exists."));
 		for(i=0; i<protocols.veclen; i++){
-//fixme register http is not implemented right now. So lie here with a break :-)
-			break;
 			if(ov_string_compare(protocols.value[i], KSHTTP_IDENTIFIER) == OV_STRCMP_EQUAL){
 				break;
 			}

@@ -204,6 +204,12 @@ void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* h
 			ov_string_print(body, "KS_ERR_NOMANAGER: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
+	case KS_ERR_NOREMOTE:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_NOREMOTE: %s%s", HTTP_406_BODY, tmp_body);
+		}
+		break;
 	case KS_ERR_SERVERUNKNOWN:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
 		if(response_format != RESPONSE_FORMAT_KSX){
@@ -233,7 +239,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	OV_STRING request_method = NULL; //GET, HEAD, etc.
 	OV_STRING request_header = NULL;
+	OV_STRING http_request_body = NULL;
+	OV_UINT http_request_bodyoffset = 0;
 	OV_STRING http_version = NULL; //HTTP version
+	OV_STRING http_host = NULL; //HTTP 1.1 host
+	OV_UINT http_request_ContentLength = 0;
 	OV_BOOL keep_alive = TRUE; //default is to keep the connection open
 	OV_STRING reply_header = NULL; //header of the reply
 	OV_STRING reply_body = NULL; //reply *WITHOUT HEADER*
@@ -296,24 +306,33 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		ov_string_setvalue(&request_header, http_request_array[0]);
 		//last line of the header will not contain \r\n
 		ov_string_append(&request_header,"\r\n");
-		//TODO for POST: ov_string_setvalue(&http_request_body, http_request[1]);
-		//http_request[1]..http_request[len-1] is the request body - will be used for POST requests (not implemented yet)
 
 		ov_string_freelist(http_request_array);
 	}else{
 		ov_string_setvalue(&request_header, this->v_streamrequestheader);
 	}
 
-	//empty the buffers
-	ksbase_free_KSDATAPACKET(dataReceived);
-
 	//debug - output header
 	KS_logfile_debug(("%s", request_header));
 
 	//parse request header into get command and arguments request
 	if(!Ov_Fail(result)){
-		result = parse_http_header(request_header, &cmd, &args, &http_version, &request_method, &gzip_accepted, &keep_alive, &response_format);
+		result = parse_http_header_from_client(request_header, &cmd, &args, &http_version, &http_host, &http_request_ContentLength, &request_method, &gzip_accepted, &keep_alive, &response_format);
+		if(ov_string_compare(request_method, "POST") == OV_STRCMP_EQUAL){
+			//save content of POST in memory
+			http_request_body = (OV_STRING)ov_malloc(http_request_ContentLength+1);
+			if(http_request_body && dataReceived->length >= http_request_ContentLength){
+				http_request_bodyoffset = ov_string_getlength(request_header)+4; //4 byte are the \r\n\r\n
+				memcpy(http_request_body, (OV_STRING)dataReceived->data + http_request_bodyoffset, http_request_ContentLength);
+				http_request_body[http_request_ContentLength] = '\0';
+			}else{
+				result = OV_ERR_BADPARAM;
+				keep_alive = FALSE; //close connection
+			}
+		}
 	}
+	//empty the buffers
+	ksbase_free_KSDATAPACKET(dataReceived);
 
 	//allow javascript connection from any source (CORS)
 	ov_string_setvalue(&reply_header, "Access-Control-Allow-Origin:*\r\n");
@@ -617,7 +636,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	ov_string_setvalue(&request_method, NULL);
 	//request_header is freed already
 	ov_string_setvalue(&http_version, NULL);
+	ov_string_setvalue(&http_host, NULL);
 	ov_string_setvalue(&reply_header, NULL);
+	ov_free(http_request_body);
+
 	//if a static file is returned body is pointing inside the database
 	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
 		ov_string_setvalue(&reply_body, NULL);

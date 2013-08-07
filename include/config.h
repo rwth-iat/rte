@@ -55,6 +55,34 @@
 
 #define KSHTTP_IDENTIFIER		"KSHTTP"
 
+//State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error
+#define HTTP_MNGRCOM_REGISTERSTATE_NOTREGISTERED 0
+#define HTTP_MNGRCOM_REGISTERSTATE_WAITING 1
+#define HTTP_MNGRCOM_REGISTERSTATE_REGISTERED 2
+#define HTTP_MNGRCOM_REGISTERSTATE_ERROR 128
+
+/*
+ * KSHTTP specific client states
+ */
+
+#define HTTPCL_WAITINGFORSENDING	(1<<18)
+#define HTTPCL_WAITINGFORPORT	(1<<19)
+#define HTTPCL_SERVERNOTFOUND	(1<<24)
+#define HTTPCL_MANAGERNOTFOUND	(1<<25)
+#define HTTPCL_TIMEOUT			(1<<26)
+
+#define HTTPCL_PROCANS_OK			0
+#define HTTPCL_PROCANS_INCOMPLETE	(1<<0)
+#define HTTPCL_PROCANS_XIDMISSMATCH	(1<<7)
+
+/*
+ * HTTP Acceptance codes
+ */
+
+#define HTTP_MSG_ACCEPTED		(0x00)
+#define HTTP_MSG_DENIED			(0x01)
+#define HTTP_MSG_INCOMPLETE			(0x02)
+
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
 
@@ -136,12 +164,12 @@
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
-OV_RESULT parse_http_header(OV_STRING buffer, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
+OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_host, OV_UINT* http_request_ContentLength, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
 OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
-OV_UINT extract_response_format(OV_STRING_VEC* args);
+OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format);
 OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
 OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type);
@@ -167,3 +195,19 @@ OV_RESULT exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, OV_UINT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, OV_UINT response_format);
 OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT response_format);
+
+OV_RESULT kshttp_generateClientMessageHeader(
+		OV_STRING method,
+		OV_STRING requestUri,
+		const OV_INSTPTR_kshttp_httpClient this,
+		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		const OV_INSTPTR_ov_domain	callbackThat,
+		void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
+		);
+
+
+OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);
+OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
+OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port);
+OV_RESULT trySend(OV_INSTPTR_kshttp_httpClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
+OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);

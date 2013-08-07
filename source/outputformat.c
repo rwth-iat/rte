@@ -17,24 +17,23 @@
  * returns the format of the output
  * constants are in the config.h file
  */
-OV_UINT extract_response_format(OV_STRING_VEC* args){
-	OV_UINT re = RESPONSE_FORMAT_NONE;
+OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format){
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	find_arguments(args, "format", &match);
 	if(match.veclen>=1){
 		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
-			re = RESPONSE_FORMAT_KSX;
+			*response_format = RESPONSE_FORMAT_KSX;
 		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
-			re = RESPONSE_FORMAT_JSON;
+			*response_format = RESPONSE_FORMAT_JSON;
 		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
-			re = RESPONSE_FORMAT_TCL;
+			*response_format = RESPONSE_FORMAT_TCL;
 		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
-			re = RESPONSE_FORMAT_PLAIN;
+			*response_format = RESPONSE_FORMAT_PLAIN;
 		}
 	}
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	return re;
+	return OV_ERR_OK;
 }
 
 /**

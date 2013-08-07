@@ -53,9 +53,10 @@ LIBRARY kshttp
 		COMMENT = "class for identifing http communication";
 		VARIABLES
 			AllowedMethods[]	:	STRING
-			INITIALVALUE = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
+			/* fixed in latest OV version INITIALVALUE = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"}*/;
 		END_VARIABLES;
 		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
 			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
 		END_OPERATIONS;
@@ -66,7 +67,7 @@ LIBRARY kshttp
 	*/
 	CLASS httpclienthandler : CLASS ksbase/ClientHandler
 	IS_INSTANTIABLE;
-	COMMENT	=	"Handler for HTTP-ks clients. Processes HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	COMMENT	=	"Handler for HTTP-ks clients. Processes incoming HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
 	VARIABLES
 		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
 		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
@@ -141,6 +142,42 @@ LIBRARY kshttp
 		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
 	END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	httpClient	:	CLASS	ksbase/ClientBase
+		IS_INSTANTIABLE;
+		COMMENT	=	"message generation and reply processing for http protocol";
+		VARIABLES
+			ManagerPort	:	STRING
+				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
+				INITIALVALUE	=	"7509";
+			msgAccepted	:	INT
+				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+				INITIALVALUE = 0;
+			timeLastEvent	:	TIME
+				COMMENT	=	"Timestamp of last state change.";
+			timeout		:	UINT
+				COMMENT	=	"Timeout for network operations in seconds"
+				INITIALVALUE	=	30;
+			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
+				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
+			ServerResponse	:	C_TYPE	<KSHTTP_RESPONSE>
+				COMMENT	=	"Structured Data for the HTTP response.";
+		END_VARIABLES;
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+			typemethod 			: 	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS authenticatedsession : CLASS ov/object

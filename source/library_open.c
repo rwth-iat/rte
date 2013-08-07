@@ -170,7 +170,6 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
    /*
 	* 		create "staticfiles" container
 	*/
-	/*	create ticket authenticators for kshttp	*/
 	httpStaticfiles = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttp, "staticfiles"));
 	if(!httpStaticfiles) {
 		result = Ov_CreateObject(ov_domain, httpStaticfiles, pDomkshttp, "staticfiles");
