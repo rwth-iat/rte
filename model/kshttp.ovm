@@ -121,18 +121,6 @@ LIBRARY kshttp
 		RegisterState	:	UINT
 			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
 			INITIALVALUE = 0;
-		ErrCode		:	INT
-			COMMENT	=	"Error Code returned by register command"
-			INITIALVALUE = 0;
-		msgAccepted	:	INT
-			COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
-			INITIALVALUE = 0;
-		msgStatus	:	INT
-			COMMENT	=	"0 = message could be processed; otherwise: errorcode"
-			INITIALVALUE = 0;
-		httpErrCode	:	INT
-			COMMENT	=	"reasons for denial"
-			INITIALVALUE = 0;
 		Tries		:	UINT
 			COMMENT	=	"Tries before successfull register. 5 is maximum"
 			INITIALVALUE = 0;
@@ -144,15 +132,14 @@ LIBRARY kshttp
 	END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS	httpClient	:	CLASS	ksbase/ClientBase
-		IS_INSTANTIABLE;
-		COMMENT	=	"message generation and reply processing for http protocol";
+	CLASS	httpClientBase	:	CLASS	ksbase/ClientBase
+		COMMENT	=	"http message generation and reply processing";
 		VARIABLES
-			ManagerPort	:	STRING
-				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
-				INITIALVALUE	=	"7509";
-			msgAccepted	:	INT
-				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+			httpParseStatus	:	INT
+				COMMENT	=	"0 = message new; 1 = denied, 2 = incomplete, 3 decoded"
+				INITIALVALUE = 0;
+			httpStatusCode	:	INT
+				COMMENT	=	"HTTP Statuscode"
 				INITIALVALUE = 0;
 			timeLastEvent	:	TIME
 				COMMENT	=	"Timestamp of last state change.";
@@ -165,18 +152,51 @@ LIBRARY kshttp
 				COMMENT	=	"Structured Data for the HTTP response.";
 		END_VARIABLES;
 		OPERATIONS
-			/**
-			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
-			*/
 			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
-			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
-			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
-			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
-			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
 			typemethod 			: 	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
 			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
 			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	httpClient	:	CLASS	kshttp/httpClientBase
+		IS_INSTANTIABLE;
+		COMMENT	=	"ks message generation and reply processing for http protocol";
+		VARIABLES
+			ManagerPort	:	STRING
+				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
+				INITIALVALUE	=	"7509";
+		END_VARIABLES;
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	genericHttpClient	:	CLASS	kshttp/httpClientBase
+		IS_INSTANTIABLE;
+		COMMENT	=	"generic client to communicate with an http server";
+		VARIABLES
+			beginCommunication	:	BOOL HAS_SET_ACCESSOR
+				COMMENT	=	"send request"
+				INITIALVALUE	=	FALSE;
+			method	:	STRING
+				COMMENT	=	"HTTP Method to use"
+				INITIALVALUE	=	"GET";
+			requestUri	:	STRING
+				COMMENT	=	"RequestUri to send to the server"
+				INITIALVALUE	=	"/";
+			messageBody	:	STRING
+				COMMENT	=	"Response of the server"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
 		END_OPERATIONS;
 	END_CLASS;
 	

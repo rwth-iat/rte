@@ -320,7 +320,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 				while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
 					httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 			}
-			kshttp_httpClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));
+			kshttp_httpClientBase_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));
 			return;
 		}
 		break;
@@ -336,7 +336,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 			while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
 				httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 		}
-		kshttp_httpClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));
+		kshttp_httpClientBase_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));
 
 		thisMngCom->v_RegisterState = HTTP_MNGRCOM_REGISTERSTATE_ERROR;
 		thisMngCom->v_cycInterval = 5000;
