@@ -195,8 +195,12 @@ LIBRARY kshttp
 			messageBody	:	STRING
 				COMMENT	=	"Response of the server"
 				INITIALVALUE	=	"";
+			contentType	:	STRING
+				COMMENT	=	"Content-Type of the response"
+				INITIALVALUE	=	"";
 		END_VARIABLES;
 		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	

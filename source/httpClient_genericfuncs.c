@@ -362,17 +362,17 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 
 	//check all other headers
 	for (i=1; i<allheaderscount; i++){
-		if(ov_string_match(pallheaderslist[i], "Host:*") == TRUE){
-			ov_string_freelist(plist);
-			plist = ov_string_split(pallheaderslist[i], "Host: ", &len);
-			if(len > 0){
-				ov_string_setvalue(&(responseStruct->host), plist[1]);
-			}
-		}else if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
+		if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
 			ov_string_freelist(plist);
 			plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
 			if(len > 0){
 				responseStruct->contentLength = atoi(plist[1]);
+			}
+		}else if(ov_string_match(pallheaderslist[i], "Content-Type:*") == TRUE){
+			ov_string_freelist(plist);
+			plist = ov_string_split(pallheaderslist[i], "Content-Type: ", &len);
+			if(len > 0){
+				ov_string_setvalue(&(responseStruct->contentType), plist[1]);
 			}
 		}
 	}
