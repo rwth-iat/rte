@@ -374,7 +374,6 @@ void kshttp_httpManagerCom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INST
 	else
 	{
 		this->v_RegisterState = HTTP_MNGRCOM_REGISTERSTATE_ERROR;	/*	error	*/
-		this->v_ErrCode = ksResult;
 		return;
 	}
 
