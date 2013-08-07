@@ -54,9 +54,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_INSTPTR_kshttp_genericHttpClient          thisCl,
 	const OV_BOOL  value
 ) {
-	kshttp_generateAndSendHttpMessage(thisCl->v_method, thisCl->v_serverHost, thisCl->v_serverPort, thisCl->v_requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
-
-	return OV_ERR_OK;
+	return kshttp_generateAndSendHttpMessage(thisCl->v_method, thisCl->v_serverHost, thisCl->v_serverPort, thisCl->v_requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
 }
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
