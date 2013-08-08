@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 
 							/*	read out port variable	*/
 							ListenerElement.elemtype = OV_ET_OBJECT;
-							ListenerElement.pobj = Ov_StaticPtrCast(ov_object, pListener);
+							ListenerElement.pobj = Ov_PtrUpCast(ov_object, pListener);
 
 							if(Ov_Fail(ov_element_searchpart(&ListenerElement, &elemPort, OV_ET_VARIABLE, "port")))
 							{

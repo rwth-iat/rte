@@ -90,11 +90,11 @@ OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ks
 			}
 
 			if(pClassChannel)
-			{/*	channel found create it	*/
+			{/*	channel class found create channel	*/
 				result = ov_class_createobject(pClassChannel, Ov_PtrUpCast(ov_domain, this), "httpchannel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) ppChannel);
 				if(Ov_Fail(result))
 				{
-					KS_logfile_error(("%s getChannelPointer: could not create channel for manager communication. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+					KS_logfile_error(("%s getChannelPointer: could not create channel for communication. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
 					return result;
 				}
 				else
@@ -318,15 +318,6 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 
 	return OV_ERR_OK;
 }
-
-void GetServerCallback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
-{
-	//OV_INSTPTR_kshttp_httpClient callingCl = Ov_StaticPtrCast(kshttp_httpClient, this);
-	//OV_INSTPTR_kshttp_httpClient callbackOwner = Ov_StaticPtrCast(kshttp_httpClient, that);
-
-	//OV_RESULT result;
-}
-
 
 /*
  * This function checks if the input buffer holds a complete request

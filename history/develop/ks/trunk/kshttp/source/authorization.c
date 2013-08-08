@@ -84,8 +84,8 @@ OV_RESULT authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRI
 	OV_INSTPTR_kshttp_authenticatedsession psession = NULL;
 	int cnr = 0;
 	char sessionname[256];
-	OV_INSTPTR_ov_domain thisdomain = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this)));
-	OV_INSTPTR_ov_domain psessions = (OV_INSTPTR_ov_domain) Ov_SearchChild(ov_containment, thisdomain, "sessions");
+	OV_INSTPTR_ov_domain thisdomain = Ov_PtrUpCast(ov_domain, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this)));
+	OV_INSTPTR_ov_domain psessions = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, thisdomain, "sessions"));
 
 	//loose coupling with the authenticated sessions
 	//check is there was a running session available

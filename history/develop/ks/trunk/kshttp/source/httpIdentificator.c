@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_createClientHandler (
     */
 	OV_INSTPTR_kshttp_httpclienthandler pClientHandler = NULL;
 	OV_UINT namecounter = 0;
-	char CHNameBuffer[29]; //"httpClientHandler + length MAXINT + '\0'
+	char CHNameBuffer[29]; //"httpClientHandler" + length MAXINT + '\0'
 	OV_RESULT result;
 
 	//get first free "httpClientHandler"-name
@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_createClientHandler (
 		pClientHandler = NULL;
 		namecounter++;
 		sprintf(CHNameBuffer, "httpClientHandler%lu", namecounter);
-		pClientHandler	= (OV_INSTPTR_kshttp_httpclienthandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
+		pClientHandler	= (OV_INSTPTR_kshttp_httpclienthandler) Ov_SearchChild(ov_containment, Ov_PtrUpCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 
 	result = Ov_CreateObject(kshttp_httpclienthandler, pClientHandler, this, CHNameBuffer);

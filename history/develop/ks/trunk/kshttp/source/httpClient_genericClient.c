@@ -63,7 +63,10 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	ov_string_setvalue(&thisCl->v_contentType, thisCl->v_ServerResponse.contentType);
 
 	if(	ov_string_match(thisCl->v_contentType, "text/*") == TRUE ||
-		ov_string_match(thisCl->v_contentType, "*xml*") == TRUE ){
+			ov_string_match(thisCl->v_contentType, "*application/xml*") == TRUE ||	//includes application/xml-dtd
+			ov_string_match(thisCl->v_contentType, "*+xml*") == TRUE ||	//includes image/svg+xml
+			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
+			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
 		if(thisCl->v_ServerResponse.contentLength != 0){
 			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
 			if(!thisCl->v_messageBody){

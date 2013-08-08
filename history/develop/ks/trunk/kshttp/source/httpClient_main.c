@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 		thisCl->v_actimode = 0;
 		KS_logfile_debug(("%s: completed. issuing callback", thisCl->v_identifier));
 		if(thisCl->v_callback.callbackFunction)
-			thisCl->v_callback.callbackFunction(thisCl->v_callback.instanceCalled, Ov_StaticPtrCast(ov_domain, this));
+			thisCl->v_callback.callbackFunction(thisCl->v_callback.instanceCalled, Ov_PtrUpCast(ov_domain, this));
 
 		if(!thisCl->v_holdConnection)	/*	close connection if not otherwise specified	*/
 		{
