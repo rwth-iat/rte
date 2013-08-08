@@ -334,6 +334,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_HandleData(
 		else
 			thisCl->v_state = KSBASE_CLST_COMPLETED;
 
+		//make sure the typemethod calls the callback and do other stuff
 		thisCl->v_actimode = 1;
 	}
 	return OV_ERR_OK;

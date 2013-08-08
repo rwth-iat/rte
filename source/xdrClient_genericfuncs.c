@@ -65,7 +65,7 @@ OV_RESULT getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_C
 			}
 
 			if(pClassChannel)
-			{/*	channel found create it	*/
+			{/*	channel class found create channel	*/
 				result = ov_class_createobject(pClassChannel, Ov_StaticPtrCast(ov_domain, this), "channel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) ppChannel);
 				if(Ov_Fail(result))
 				{
