@@ -193,7 +193,7 @@ LIBRARY kshttp
 				COMMENT	=	"RequestUri to send to the server"
 				INITIALVALUE	=	"/";
 			messageBody	:	STRING
-				COMMENT	=	"Response of the server"
+				COMMENT	=	"Response of the server if mimetype is text/*, application/xml, application/xml-dtd, *+xml, application/json, application/javascript"
 				INITIALVALUE	=	"";
 			contentType	:	STRING
 				COMMENT	=	"Content-Type of the response"
