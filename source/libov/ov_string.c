@@ -58,16 +58,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 		return OV_ERR_BADPARAM;
 	}
 	/*
-	*	free string if there's no value
+	*	free string if value is NULL or points to NULL
 	*/
-	if(!value) {
-		if(*pstring) {
-			ov_database_free(*pstring);
-			*pstring = NULL;
-		}
-		return OV_ERR_OK;
-	}
-	if(!*value) {
+	if(!value || !*value) {
 		if(*pstring) {
 			ov_database_free(*pstring);
 			*pstring = NULL;
