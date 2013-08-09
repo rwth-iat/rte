@@ -75,6 +75,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 		return OV_ERR_OK;
 	}
 	/*
+	 *  return if source and target are equal
+	 */
+	if(*pstring==value){
+		return OV_ERR_OK;
+	}
+	/*
 	*	allocate memory for new string
 	*/
 	string = ov_database_realloc(*pstring, strlen(value)+1);
