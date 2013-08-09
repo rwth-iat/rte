@@ -59,7 +59,16 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
 	OV_INSTPTR_kshttp_genericHttpClient	thisCl = Ov_DynamicPtrCast(kshttp_genericHttpClient, instanceCalling);
+	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
+	result = getChannelPointer(Ov_PtrUpCast(kshttp_httpClientBase, thisCl), &pChannel, &pVtblChannel);
+	if(Ov_Fail(result))
+	{
+		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
+		return;
+	}
 	ov_string_setvalue(&thisCl->v_contentType, thisCl->v_ServerResponse.contentType);
 
 	if(	ov_string_match(thisCl->v_contentType, "text/*") == TRUE ||
@@ -70,7 +79,12 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 		if(thisCl->v_ServerResponse.contentLength != 0){
 			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
 			if(!thisCl->v_messageBody){
-				kshttp_httpClientBase_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
+				//database too small
+				thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
+
+				//this memory is from the ksdatapackage!
+				thisCl->v_ServerResponse.messageBody = NULL;
+				pVtblChannel->m_CloseConnection(pChannel);
 				return;
 			}
 			memcpy(thisCl->v_messageBody, thisCl->v_ServerResponse.messageBody, thisCl->v_ServerResponse.contentLength);
@@ -79,6 +93,10 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	}else{
 		ov_string_setvalue(&thisCl->v_messageBody, "binary mimetype");
 	}
-	kshttp_httpClientBase_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
+
+	//this memory is from the ksdatapackage!
+	thisCl->v_ServerResponse.messageBody = NULL;
+	pVtblChannel->m_CloseConnection(pChannel);
+
 	return;
 }

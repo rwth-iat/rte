@@ -47,6 +47,7 @@
 
 #include "kshttp.h"
 #include "ks_logfile.h"
+#include "ksbase_helper.h"
 #include "ov_ksserver_backend.h"
 
 /*
@@ -75,10 +76,11 @@
  * HTTP Acceptance codes
  */
 
-#define HTTP_MSG_NEW			(0x00)
+#define HTTP_MSG_ACCEPTED		(0x00)
 #define HTTP_MSG_DENIED			(0x01)
 #define HTTP_MSG_INCOMPLETE		(0x02)
-#define HTTP_MSG_ACCEPTED		(0x03)
+#define HTTP_MSG_NEW			(0x03)
+#define HTTP_MSG_DBOUTOFMEMORY	(0x04)
 
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
@@ -161,7 +163,7 @@
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
-OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_host, OV_UINT* http_request_ContentLength, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format);
+OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest);
 OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);

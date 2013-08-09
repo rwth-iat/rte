@@ -2,9 +2,7 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "kshttp.h"
 #include "config.h"
-#include "libov/ov_macros.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_constructor(

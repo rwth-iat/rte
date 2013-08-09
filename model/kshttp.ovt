@@ -1,12 +1,12 @@
 /**
  *	KSHTTP_REQUEST
- *	This structure is used for transmitted data.
+ *	This structure is used for decoded transmitted data.
  */
 typedef struct
 {
 	OV_STRING requestHeader;
 	OV_STRING cmd;
-	OV_STRING_VEC* args;
+	OV_STRING_VEC args;
 	OV_STRING version;
 	OV_STRING host;
 	OV_UINT contentLength;
@@ -18,8 +18,8 @@ typedef struct
 } KSHTTP_REQUEST;
 
 /**
- *	KSHTTP_REQUEST
- *	This structure is used for transmitted data.
+ *	KSHTTP_RESPONSE
+ *	This structure is used for decoded transmitted data.
  */
 typedef struct
 {

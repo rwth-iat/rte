@@ -75,8 +75,8 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 	return OV_ERR_OK;
 }
 
-#define PARSE_HTTP_HEADER_RETURN if(*response_format == RESPONSE_FORMAT_NONE){\
-			*response_format = RESPONSE_FORMAT_DEFAULT;\
+#define PARSE_HTTP_HEADER_RETURN if(clientRequest->responseFormat == RESPONSE_FORMAT_NONE){\
+			clientRequest->responseFormat = RESPONSE_FORMAT_DEFAULT;\
 		}\
 		ov_string_setvalue(&RequestLine, NULL);\
 		ov_string_freelist(plist);\
@@ -90,7 +90,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd, OV_STRING_VEC* args, OV_STRING* http_version, OV_STRING* http_host, OV_UINT* http_request_ContentLength, OV_STRING* http_request_method, OV_BOOL *gzip_accepted, OV_BOOL *keep_alive, OV_UINT *response_format)
+OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -103,9 +103,9 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 	OV_UINT i = 0, len = 0, len1 = 0;
 
 	//initialize return vector properly
-	Ov_SetDynamicVectorLength(args,0,STRING);
+	Ov_SetDynamicVectorLength(&clientRequest->args,0,STRING);
 
-	pallheaderslist = ov_string_split(request_header, "\r\n", &allheaderscount);
+	pallheaderslist = ov_string_split(clientRequest->requestHeader, "\r\n", &allheaderscount);
 	if(allheaderscount<=0){
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
@@ -116,7 +116,7 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 	if(len!=3){
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
-	ov_string_setvalue(http_request_method, plist[0]);
+	ov_string_setvalue(&clientRequest->requestMethod, plist[0]);
 	//urldecode the whole request
 	ov_memstack_lock();
 	temp = url_decode(plist[1]);
@@ -126,18 +126,19 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 	//does the client use HTTP 1.0?
 	if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
 		//if so, use 1.0, otherwise 1.1 is set
-		ov_string_setvalue(http_version, "1.0");
-		*keep_alive = FALSE;
+		ov_string_setvalue(&clientRequest->version, "1.0");
+		clientRequest->keepAlive = FALSE;
 	}else{
 		//default HTTP version
-		ov_string_setvalue(http_version, "1.1");
+		ov_string_setvalue(&clientRequest->version, "1.1");
+		clientRequest->keepAlive = TRUE;
 	}
 
 	//rawrequest contains the vars and args (raw)
 	ov_string_freelist(plist);
 	plist = ov_string_split(RequestLine, "?", &len);
 	//get the command, cmd contains the /-prefixed call now
-	ov_string_setvalue(cmd, plist[0]);
+	ov_string_setvalue(&clientRequest->cmd, plist[0]);
 	//check if the request contains an ?
 	if(len > 1) {
 		//at least one part after a "?" -> split up the command
@@ -147,7 +148,7 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 		ov_string_freelist(plist);
 		plist = ov_string_split(RequestLine, "&", &len);
 		if(len > 0){
-			Ov_SetDynamicVectorLength(args,2*len,STRING);
+			Ov_SetDynamicVectorLength(&clientRequest->args,2*len,STRING);
 			for(i = 0;i < len;i++){
 				ov_string_freelist(pKeyValuepair);
 				pKeyValuepair = ov_string_split(plist[i], "=", &len1);
@@ -156,8 +157,8 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 					if(pKeyValuepair[0][0] == '\0'){
 						PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400;
 					}
-					ov_string_setvalue(&(*args).value[2 * i], pKeyValuepair[0]);
-					ov_string_setvalue(&(*args).value[2 * i + 1], pKeyValuepair[1]);
+					ov_string_setvalue(&clientRequest->args.value[2 * i], pKeyValuepair[0]);
+					ov_string_setvalue(&clientRequest->args.value[2 * i + 1], pKeyValuepair[1]);
 				}else{
 					PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400;
 				}
@@ -169,28 +170,28 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 	for (i=1; i<allheaderscount; i++){
 		if(ov_string_match(pallheaderslist[i], "Accept-Encoding:*") == TRUE){
 			if(ov_string_match(pallheaderslist[i], "*gzip*") == TRUE){
-				*gzip_accepted = TRUE;
+				clientRequest->gzipAccepted = TRUE;
 			}
 		}else if(ov_string_compare(pallheaderslist[i], "Connection: close") == OV_STRCMP_EQUAL){
 			//scan header for Connection: close - the default behavior is keep-alive
-			*keep_alive = FALSE;
+			clientRequest->keepAlive = FALSE;
 		}else if(ov_string_match(pallheaderslist[i], "Accept:*") == TRUE){
 			if(ov_string_compare(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
-				*response_format = RESPONSE_FORMAT_PLAIN;
+				clientRequest->responseFormat = RESPONSE_FORMAT_PLAIN;
 			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
-				*response_format = RESPONSE_FORMAT_TCL;
+				clientRequest->responseFormat = RESPONSE_FORMAT_TCL;
 			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
 					ov_string_compare(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
 					ov_string_compare(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
-				*response_format = RESPONSE_FORMAT_KSX;
+				clientRequest->responseFormat = RESPONSE_FORMAT_KSX;
 			}else if(ov_string_compare(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
-				*response_format = RESPONSE_FORMAT_JSON;
+				clientRequest->responseFormat = RESPONSE_FORMAT_JSON;
 			}
 		}else if(ov_string_match(pallheaderslist[i], "Host:*") == TRUE){
 			ov_string_freelist(plist);
 			plist = ov_string_split(pallheaderslist[i], "Host: ", &len);
 			if(len > 1){
-				ov_string_setvalue(http_host, plist[1]);
+				ov_string_setvalue(&clientRequest->host, plist[1]);
 				httphostsend = TRUE;
 			}else{
 				//empty Host header
@@ -200,20 +201,20 @@ OV_RESULT parse_http_header_from_client(OV_STRING request_header, OV_STRING* cmd
 			ov_string_freelist(plist);
 			plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
 			if(len > 1){
-				*http_request_ContentLength = atoi(plist[1]);
+				clientRequest->contentLength = atoi(plist[1]);
 			}
 		}
 	}
 	ov_string_freelist(pallheaderslist);
 
-	if(ov_string_compare(*http_version, "1.1") == OV_STRCMP_EQUAL && httphostsend == FALSE){
+	if(ov_string_compare(clientRequest->version, "1.1") == OV_STRCMP_EQUAL && httphostsend == FALSE){
 		/* RFC 2616: "All Internet-based HTTP/1.1 servers MUST respond with a 400 (Bad Request)
 		status code to any HTTP/1.1 request message which lacks a Host header field."
 		*/
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	//try setting format via url parameter
-	extract_response_format(args, response_format);
+	extract_response_format(&clientRequest->args, &clientRequest->responseFormat);
 	PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 }
 
