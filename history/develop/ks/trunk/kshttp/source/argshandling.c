@@ -117,12 +117,7 @@ OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	ov_string_setvalue(&clientRequest->requestMethod, plist[0]);
-	//urldecode the whole request
-	ov_memstack_lock();
-	temp = url_decode(plist[1]);
-	ov_string_setvalue(&RequestLine, temp);
-	ov_memstack_unlock();
-	temp = NULL;
+	ov_string_setvalue(&RequestLine, plist[1]);
 	//does the client use HTTP 1.0?
 	if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
 		//if so, use 1.0, otherwise 1.1 is set
@@ -157,8 +152,14 @@ OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 					if(pKeyValuepair[0][0] == '\0'){
 						PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400;
 					}
-					ov_string_setvalue(&clientRequest->args.value[2 * i], pKeyValuepair[0]);
-					ov_string_setvalue(&clientRequest->args.value[2 * i + 1], pKeyValuepair[1]);
+					//urldecode key and value
+					ov_memstack_lock();
+					temp = url_decode(pKeyValuepair[0]);
+					ov_string_setvalue(&clientRequest->args.value[2 * i], temp);
+					temp = url_decode(pKeyValuepair[1]);
+					ov_string_setvalue(&clientRequest->args.value[2 * i +1], temp);
+					ov_memstack_unlock();
+					temp = NULL;
 				}else{
 					PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400;
 				}
