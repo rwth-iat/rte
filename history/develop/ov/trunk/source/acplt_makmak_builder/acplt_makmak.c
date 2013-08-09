@@ -613,6 +613,15 @@ if(new == 0){
 	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
 #endif
 	fprintf(fd,"\tacplt_builder -l %s $(MAKMAKOPTIONS)\n", libname);
+	//todo: refector: join with with [1]
+	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
+	for(i=0; i<numDevLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
+	}
+	for(i=0; i<numSysLibs; i++) {
+		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
+	}
+	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
 	fprintf(fd,"\t-@echo  ==== New templates have been created! ====\n");
 
 	fprintf(fd,"\n");
@@ -645,6 +654,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   Rules\n");
 	fprintf(fd,"#   -----\n");
 	fprintf(fd,"$(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile\n");
+	//[1]
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
