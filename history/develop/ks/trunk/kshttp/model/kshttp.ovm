@@ -72,6 +72,8 @@ LIBRARY kshttp
 		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
 		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
 		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
+			ClientRequest	:	C_TYPE	<KSHTTP_REQUEST>
+				COMMENT	=	"Structured Data for the HTTP request.";
 	END_VARIABLES;
 	OPERATIONS
 		/**
@@ -83,6 +85,8 @@ LIBRARY kshttp
 		 *		4. The readptr of the answer data may not be altered.
 		 */
 		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+		shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 	END_OPERATIONS;	
 	END_CLASS;
 	
@@ -136,16 +140,11 @@ LIBRARY kshttp
 		COMMENT	=	"http message generation and reply processing";
 		VARIABLES
 			httpParseStatus	:	INT
-				COMMENT	=	"0 = message new; 1 = denied, 2 = incomplete, 3 decoded"
+				COMMENT	=	"0 = decoded; 1 = denied, 2 = incomplete, 3 = message new, 4 = database out of memory"
 				INITIALVALUE = 0;
 			httpStatusCode	:	INT
 				COMMENT	=	"HTTP Statuscode"
 				INITIALVALUE = 0;
-			timeLastEvent	:	TIME
-				COMMENT	=	"Timestamp of last state change.";
-			timeout		:	UINT
-				COMMENT	=	"Timeout for network operations in seconds"
-				INITIALVALUE	=	30;
 			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
 				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
 			ServerResponse	:	C_TYPE	<KSHTTP_RESPONSE>

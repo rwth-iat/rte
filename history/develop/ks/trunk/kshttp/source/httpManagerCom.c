@@ -21,10 +21,7 @@
 #endif
 
 
-#include "kshttp.h"
 #include "config.h"
-#include "libov/ov_macros.h"
-#include "ksbase_helper.h"
 
 void kshttp_httpManagerCom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling);
 

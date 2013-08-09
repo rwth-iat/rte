@@ -39,15 +39,7 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "kshttp.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_result.h"
-#include "ov_ksserver_backend.h"
-//#include "KSDATAPACKET_httphandling.h"
 #include "config.h"
-#include "ks_logfile.h"
-#include "ksbase_helper.h"
 
 /*******************************************************************************************************************************************************************************
  * 				register

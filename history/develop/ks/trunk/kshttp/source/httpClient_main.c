@@ -42,9 +42,7 @@
 
 
 #include "kshttp.h"
-#include "ksbase_helper.h"
 #include "config.h"
-#include "libov/ov_macros.h"
 
 OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
@@ -145,7 +143,6 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_startup(
     /* do what the base class does first */
     ov_object_startup(pobj);
 
-    /* do what */
 	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.version = NULL;
 	thisCl->v_ServerResponse.messageBody = NULL;

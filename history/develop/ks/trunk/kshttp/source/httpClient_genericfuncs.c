@@ -39,17 +39,7 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "kshttp.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_malloc.h"
-#include "libov/ov_result.h"
-#include "ov_ksserver_backend.h"
 #include "config.h"
-#include "ks_logfile.h"
-#include "ksbase_helper.h"
-
-
-
 
 /*******************************************************************************************************************************************************************************
  * 				Channel-handling
@@ -158,7 +148,6 @@ OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_k
 			KS_logfile_error(("%s: initiateConnection: could not open connection", this->v_identifier));
 			return result;
 		}
-		ov_time_gettime(&(this->v_timeLastEvent));
 	}
 	return OV_ERR_OK;
 }
@@ -176,7 +165,6 @@ OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Cha
 			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 			return result;
 		}
-		ov_time_gettime(&(thisCl->v_timeLastEvent));
 		thisCl->v_state = KSBASE_CLST_AWAITINGANSWER;	/*	set state to busy and activate typemethod	*/
 		thisCl->v_actimode = 1;
 	}
@@ -189,9 +177,9 @@ OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Cha
 }
 /**
  *
- * @param method GET, POST, ...
+ * @param method GET, POST, ... (defaults to GET)
  * @param host Hostname or IP to communicate
- * @param port TCP Portnumber
+ * @param port TCP Portnumber (defaults to 80)
  * @param requestUri URI to
  * @param messageBodyLength The length of the message-body (for POST)
  * @param messageBody the message-body (for POST)
@@ -220,13 +208,14 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
 	if(!method){
-		return OV_ERR_BADPARAM;
+		ov_string_setvalue(&method, "GET");
 	}
 	if(!host){
 		return OV_ERR_BADPARAM;
 	}
 	if(!port){
-		return OV_ERR_BADPARAM;
+		ov_string_setvalue(&thisCl->v_serverPort, "80");
+		ov_string_setvalue(&port, "80");
 	}
 	if(!requestUri){
 		return OV_ERR_BADPARAM;
