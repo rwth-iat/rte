@@ -612,7 +612,7 @@ if(new == 0){
 #else
 	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
 #endif
-	fprintf(fd,"\tacplt_builder -l %s $(MAKMAKOPTIONS)\n", libname);
+	fprintf(fd,"\tacplt_builder -l $(LIBRARY) $(MAKMAKOPTIONS)\n");
 	//todo: refector: join with with [1]
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
@@ -621,7 +621,7 @@ if(new == 0){
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
-	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
+	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(LIBRARY)\n\n");
 	fprintf(fd,"\t-@echo  ==== New templates have been created! ====\n");
 
 	fprintf(fd,"\n");
