@@ -347,22 +347,7 @@ KS_RESULT write_inst_from_class(KscServerBase* Server, FbDirParams& param,
     }
     
     // Bibliothek
-    help = (char*)malloc(param.path.len() + 1);
-    if(!help) {
-        return KS_ERR_TARGETGENERIC;
-    }
-    strcpy(help, (const char*)param.path );
-    ph = help;
-    while( (*ph) ) ph++;
-    while( (ph != help) && ((*ph) != '/') ) ph--;
-    if(ph != help) {
-        *ph = '\0';
-        ph++;
-    } else {
-        return KS_ERR_BADPATH;
-    }
-    Var = ph;       
-    free(help);
+    Var = (const char*)param.path;
     ifb_writeLibItem(Var, out);
     
     return KS_ERR_OK;

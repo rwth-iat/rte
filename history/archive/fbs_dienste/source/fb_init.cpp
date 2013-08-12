@@ -10,7 +10,7 @@
 int main(int argc, char **argv) {
 /*****************************************************************************/
 
-    char      licstring[] = "Copyright © LTSoft GmbH 2002-2007";
+    char      licstring[128];
     
     
     PltString HaS;                          // Hilfsstring
@@ -25,15 +25,15 @@ int main(int argc, char **argv) {
     FbCreateInstParams pars;                // Create-Dienst Parameter
     int       i;                            // Laufvariable
     
-    // Folgende Instanzen sind anzulegen
-    bool LibCont = TRUE;
-    bool TuCont = TRUE;
-    bool ConCont = TRUE;
-    bool TaskCont = TRUE;
-    bool DbInfo = TRUE;
-    bool UrTask = TRUE;
-    
-    
+    time_t timer;
+    struct tm *tblock;
+    /* Erhält die Tageszeit */
+    timer = time(NULL);
+    /* Wandelt Datum und Zeit in eine Struktur um */
+    tblock = localtime(&timer);
+
+    sprintf(licstring, "Copyright © LTSoft GmbH 2002-%d", (tblock->tm_year + 1900) );
+
         for(i=1; i<argc; i++) {
                 /*
                 *        set host und server name option
@@ -145,7 +145,7 @@ HELP:
     if(!FbFound) {
         // FB-Dll noch nicht geladen
         pars.factory = LIBRARY_FACTORY_PATH;
-            pars.path = FbPath;
+        pars.path = FbPath;
         err = IFBS_CREATE_INST(Server, pars);
         if(err) {
             fprintf(stderr, "\n Can't load 'FB'-Library. Error 0x%x (%s)\n",
@@ -156,107 +156,58 @@ HELP:
 
     // 'Libraries' - Container angelegt ?
     pars.factory = CONTAINER_CLASS_PATH;
-        pars.path = "/";
-        pars.path += FB_LIBRARIES_CONTAINER;
+    pars.path = "/";
+    pars.path += FB_LIBRARIES_CONTAINER;
     err = IFBS_CREATE_INST(Server, pars);
     if(err) {
         if(err != KS_ERR_ALREADYEXISTS) {
             fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
                     FB_LIBRARIES_CONTAINER, err, GetErrorCode(err));
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            LibCont = FALSE;  // Merke : Lib-Cont wurde schon frueher angelegt
         }
     }
     // 'TechUnits' - Container angelegt ?
-        pars.path = "/";
-        pars.path += FB_INSTANZ_CONTAINER;
+    pars.path = "/";
+    pars.path += FB_INSTANZ_CONTAINER;
     err = IFBS_CREATE_INST(Server, pars);
     if(err) {
         if(err != KS_ERR_ALREADYEXISTS) {
             fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
                     FB_INSTANZ_CONTAINER, err, GetErrorCode(err));
-            // Loesche angelegte Objekte
-            if(LibCont) {
-                HaS = "/";
-                    HaS += FB_LIBRARIES_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            // Merke : TU-Container wurde schon frueher angelegt
-            TuCont = FALSE;
         }
     }
     // 'Cons' - Container angelegt ?
-        pars.path = "/";
-        pars.path += FB_CONN_CONTAINER;
+    pars.path = "/";
+    pars.path += FB_CONN_CONTAINER;
     err = IFBS_CREATE_INST(Server, pars);
     if(err) {
         if(err != KS_ERR_ALREADYEXISTS) {
             fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
                     FB_CONN_CONTAINER, err, GetErrorCode(err));
-            // Loesche angelegte Objekte
-            if(LibCont) {
-                HaS = "/";
-                    HaS += FB_LIBRARIES_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TuCont) {
-                HaS = "/";
-                    HaS += FB_INSTANZ_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            // Merke : Conn-Container wurde schon frueher angelegt
-            ConCont = FALSE;
         }
     }
     // 'Tasks' - Container angelegt ?
-        pars.path = "/";
-        pars.path += FB_TASK_CONTAINER;
+    pars.path = "/";
+    pars.path += FB_TASK_CONTAINER;
     err = IFBS_CREATE_INST(Server, pars);
     if(err) {
         if(err != KS_ERR_ALREADYEXISTS) {
             fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
                     FB_TASK_CONTAINER, err, GetErrorCode(err));
-            // Loesche angelegte Objekte
-            if(LibCont) {
-                HaS = "/";
-                    HaS += FB_LIBRARIES_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TuCont) {
-                HaS = "/";
-                    HaS += FB_INSTANZ_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(ConCont) {
-                HaS = "/";
-                    HaS += FB_CONN_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            // Merke : Task-Container wurde schon frueher angelegt
-            TaskCont = FALSE;
+        }
+    }
+    
+    // 'serverinfo' - Container angelegt ?
+    pars.path = FB_LOGGER_CONTAINER_PATH;
+    err = IFBS_CREATE_INST(Server, pars);
+    if(err) {
+        if(err != KS_ERR_ALREADYEXISTS) {
+            fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
+                    FB_LOGGER_CONTAINER, err, GetErrorCode(err));
+            return 1;
         }
     }
     
@@ -265,42 +216,15 @@ HELP:
     pars.factory += "/";
     pars.factory += FB_DBINFO;
     pars.factory += "class";
-        pars.path = "/";
-        pars.path += FB_DBINFO;
+    pars.path = FB_LOGGER_CONTAINER_PATH;
+    pars.path += "/";
+    pars.path += FB_DBINFO;
     err = IFBS_CREATE_INST(Server, pars);
     if(err) {
         if(err != KS_ERR_ALREADYEXISTS) {
-        fprintf(stderr, "\n Can't create '%s'-Instance. Error 0x%x (%s)\n",
+            fprintf(stderr, "\n Can't create '%s'-Instance. Error 0x%x (%s)\n",
                 FB_DBINFO, err, GetErrorCode(err));
-            // Loesche angelegte Objekte
-            if(LibCont) {
-                HaS = "/";
-                    HaS += FB_LIBRARIES_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TuCont) {
-                HaS = "/";
-                    HaS += FB_INSTANZ_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(ConCont) {
-                HaS = "/";
-                    HaS += FB_CONN_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TaskCont) {
-                HaS = "/";
-                    HaS += FB_TASK_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            // Merke : dbinfo-Instanz wurde schon frueher angelegt
-            DbInfo = FALSE;
         }
     }
     
@@ -316,69 +240,24 @@ HELP:
         if(err != KS_ERR_ALREADYEXISTS) {
             fprintf(stderr, "\n Can't create %s. Error 0x%x (%s)\n",
                     FB_URTASK, err, GetErrorCode(err));
-            // Loesche angelegte Objekte
-            if(LibCont) {
-                HaS = "/";
-                    HaS += FB_LIBRARIES_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TuCont) {
-                HaS = "/";
-                    HaS += FB_INSTANZ_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(ConCont) {
-                HaS = "/";
-                    HaS += FB_CONN_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(TaskCont) {
-                HaS = "/";
-                    HaS += FB_TASK_CONTAINER;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(DbInfo) {
-                HaS = "/";
-                    HaS += FB_DBINFO;
-                IFBS_DELETE_OBJ(Server, HaS);    
-            }
-            if(!FbFound) {
-                // Entlade gerade angelegte FB-DLL
-                IFBS_DELETE_OBJ(Server, FbPath);
-            }
             return 1;
-        } else {
-            UrTask = FALSE;
         }
     }
 
     // 'UrTask' einschalten
-    if(UrTask) {
-        PltList<PltString> ValList;
-        ValList.addLast("1.0");
-        HaS = pars.path;
-        HaS += ".cyctime";
-        ifb_setVar(Server, HaS, ValList, KS_VT_TIME_SPAN, 0);
+    PltList<PltString> ValList;
+    ValList.addLast("1.0");
+    HaS = pars.path;
+    HaS += ".cyctime";
+    ifb_setVar(Server, HaS, ValList, KS_VT_TIME_SPAN, 0);
 
-        while(ValList.size()) ValList.removeFirst();  // Liste leeren
-        ValList.addLast("1");
-        HaS = pars.path;
-        HaS += ".actimode";
-        ifb_setVar(Server, HaS, ValList, KS_VT_INT, 0);
-    }
+    while(ValList.size()) ValList.removeFirst();  // Liste leeren
+    ValList.addLast("1");
+    HaS = pars.path;
+    HaS += ".actimode";
+    ifb_setVar(Server, HaS, ValList, KS_VT_INT, 0);
 
-    // 'ServerInfo' - Container angelegt ?
-    pars.factory = CONTAINER_CLASS_PATH;
-        pars.path = "/";
-        pars.path += FB_LOGGER_CONTAINER;
-    err = IFBS_CREATE_INST(Server, pars);
-    if(err) {
-        if(err != KS_ERR_ALREADYEXISTS) {
-            fprintf(stderr, "\n Can't create '%s'-Container. Error 0x%x (%s)\n",
-                    FB_LOGGER_CONTAINER, err, GetErrorCode(err));
-            return 1;
-        }
-    }
+#if 0
     // Logger angelegt?
     pars.factory = FbPath;
     pars.factory += "/Logger";
@@ -401,7 +280,7 @@ HELP:
                     err, GetErrorCode(err));
         }
     }
-
+#endif
 
     return 0;
 } /* main() */

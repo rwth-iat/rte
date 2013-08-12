@@ -339,9 +339,17 @@ KS_RESULT FB_CreateNewInstance(KscServerBase* Server,
             break;
         }
     }
+
+    // Instanz bereits vorhanden?
+    if(part == 0 ) {
+        if( test_InstanceExists(Server, pinst->Inst_name, pinst->Class_name) ) {
+            part = 1;
+        }
+    }
     
     if(part == 1) {
         // Part-Objekt bereits mit Parent-Objekt angelegt. Nur Werte setzen.
+        err = KS_ERR_OK;
         if(pinst->Inst_var) {
             Dienst_param        svcPar;
             SetInstVarItems         setVars;
@@ -357,12 +365,14 @@ KS_RESULT FB_CreateNewInstance(KscServerBase* Server,
             svcPar.Links   = 0;
             svcPar.UnLinks = 0;
             
-            return set_new_value(Server, &svcPar, out);
-            
+            err = (KS_RESULT)set_new_value(Server, &svcPar, out);
+            if(err == KS_ERR_NOACCESS) {
+                err = KS_ERR_OK;
+            }
         } else {
             // Keine Variablen in Domain
-            return KS_ERR_OK;
         }
+        return err;
     }
     
     objitem[0].factory_path = pinst->Class_name;
@@ -404,37 +414,8 @@ KS_RESULT FB_CreateNewInstance(KscServerBase* Server,
         remErr = res.obj_results[0].result;
     }
     
-    if(remErr != KS_ERR_OK) {
-
-        // Fehler bei Ausfuehrung
-        if( test_InstanceExists(Server, pinst->Inst_name, pinst->Class_name) ) {
-            
-            // Instanz bereits vorhanden. Werte aktualisieren.
-            if(pinst->Inst_var) {
-                Dienst_param        svcPar;
-                SetInstVarItems     setVars;
-                
-                setVars.next = 0;
-                setVars.Inst_name = pinst->Inst_name;
-                setVars.Inst_var  = pinst->Inst_var;
-                
-                svcPar.Set_Inst_Var = &setVars;
-                svcPar.DelInst = 0;
-                svcPar.OldLibs = 0;
-                svcPar.NewLibs = 0;
-                svcPar.Links   = 0;
-                svcPar.UnLinks = 0;
-                
-                return set_new_value(Server, &svcPar, out);
-            }
-            
-            // Instanz bereits vorhanden und hat keine Parameter.
-            // Wie lautet die Meldung?
-            remErr = KS_ERR_OK;
-        }
-    }
     
-    if(remErr) {
+    if(remErr != KS_ERR_OK) {
         out += log_getErrMsg(remErr, "Instance",pinst->Inst_name,"couldn't be created.");
     } else {
         out += log_getOkMsg("Instance", pinst->Inst_name,"created.");    

@@ -35,6 +35,7 @@
 
 #include "ifbslibdef.h"
 
+
 /******************************************************************************/
 int IsNotInList(PltString& Value, PltList<PltString> &Liste) {
 /******************************************************************************/
@@ -1122,6 +1123,81 @@ int test_connectionDataOk(
 }
 
 /*****************************************************************************/
+void checkParentDomainsInDB(KscServerBase* Server,
+                            PltList<PltString> &NotLoadedLibs,
+                            Dienst_param* Params,
+                            PltString&     out) {
+/*****************************************************************************/
+    PltString       hStr;
+    char            help[512];
+    char           *ph;
+    size_t          anz;
+    KsGetEPParams   pars;
+    InstanceItems  *pinst;
+    int             found;
+    InstanceItems   pNewInst;
+    
+    // Wenn eine Instanz in DB-Sicherung nicht gefunden wurde, lege die als Domain an    
+	pNewInst.Class_name = "/acplt/ov/domain";
+	pNewInst.Inst_var = 0;
+	pNewInst.next = 0;
+
+    anz = NotLoadedLibs.size();
+    while( anz > 0) {
+        hStr = NotLoadedLibs.removeFirst();
+        NotLoadedLibs.addLast(hStr);
+        anz--;
+        
+        sprintf(help, (const char*)hStr);
+        ph = help;
+        ph++;       // 1. '/' ignorieren
+        
+        // Alle Parent-Objekte
+        while(ph && (*ph) ) {
+            if(*ph == '/') {
+                *ph = '\0';
+                hStr = help;
+                *ph = '/';
+                                
+                // Pruefen, ob on DB bereits vorhanden
+                pars.path = hStr;
+                pars.type_mask = KS_OT_ANY;
+                pars.name_mask = "*";
+                pars.scope_flags = KS_EPF_DEFAULT;
+
+                found = 1;
+                if( Get_getEP_ErrOnly(Server,pars) != KS_ERR_OK ) {
+                    // IN DB nicht vorhanden. Steht die Instanz in Sicherung?
+                    found = 0;
+                    pinst = Params->Instance;
+                    while(pinst) {
+                        if(hStr == pinst->Inst_name) {
+                            found = 1;
+                            FB_CreateNewInstance(Server,pinst,out);
+                            break;
+                        }
+                        pinst = pinst->next;
+                    }
+                    // Ueber alle gesicherte Instanzen
+                }
+                // Instanz in DB nicht vorhanden?
+                
+                if(found == 0) {
+                    // Dann als Container anlegen
+                    pNewInst.Inst_name = (char*)((const char*)hStr);
+                    FB_CreateNewInstance(Server,&pNewInst,out);
+                }
+            }
+            // Trenner '/' gefunden
+            
+            ph++;
+        }
+        // Ueber alle Pfad-Parentobjekte
+    }
+    // Ueber alle nicht geladene Bibliotheken
+}
+
+/*****************************************************************************/
 KS_RESULT import_eval(KscServerBase* Server,
                       Dienst_param*  Params,
                       PltString&     out,
@@ -1142,7 +1218,7 @@ KS_RESULT import_eval(KscServerBase* Server,
 //  Bibliotheke laden                                                        //
 ///////////////////////////////////////////////////////////////////////////////
 
-    DelInstItems*        plib;
+    DelInstItems*      plib;
     PltList<PltString> LoadedLibs;
     PltList<PltString> NotLoadedLibs;
     int                i, anz;
@@ -1151,14 +1227,20 @@ KS_RESULT import_eval(KscServerBase* Server,
     libpath = "/";
     libpath += FB_LIBRARIES_CONTAINER;
     libpath += "/";
-    
+
     if(Params->NewLibs) {
 
         plib = Params->NewLibs;
         while(plib) {
-            CrPar.path = libpath;
-            CrPar.path += plib->Inst_name;
-            
+
+
+            // Mit Pfad?
+            if( (*plib->Inst_name) == '/' ) {
+                CrPar.path = plib->Inst_name;
+            } else {
+                CrPar.path = libpath;
+                CrPar.path += plib->Inst_name;
+            }
             error = IFBS_CREATE_INST(Server,CrPar);
             if(error) {
                 if(error == KS_ERR_ALREADYEXISTS) {
@@ -1183,25 +1265,32 @@ KS_RESULT import_eval(KscServerBase* Server,
         } /* while plib */
 
         // Gibt es nicht geladene Bibliotheken?
-        int anzLoops = 5;
-        while(NotLoadedLibs.size() && anzLoops > 0) {
-
-            anz = NotLoadedLibs.size();
-            for(i=0; i<anz; i++) {
-                log = NotLoadedLibs.removeFirst();
-
-                CrPar.path = log;
-                
-                error = IFBS_CREATE_INST(Server,CrPar);
-                if(error != KS_ERR_OK) {
-                    NotLoadedLibs.addLast(log);
-                } else {
-                    out += log_getOkMsg("Library",(const char*)log,"loaded.");                    
+        if(NotLoadedLibs.size() > 0) {
+            // Wird die Sicherung in eine leere DB geladen? Dann gibt es eventuell
+            // die Container nicht
+            checkParentDomainsInDB(Server, NotLoadedLibs, Params, out);
+        
+            // Starten wir 5 Versuche (wegen moeglichen Reihenfolge-Problem)
+            int anzLoops = 5;
+            while(NotLoadedLibs.size() && anzLoops > 0) {
+    
+                anz = NotLoadedLibs.size();
+                for(i=0; i<anz; i++) {
+                    log = NotLoadedLibs.removeFirst();
+    
+                    CrPar.path = log;
+                    
+                    error = IFBS_CREATE_INST(Server,CrPar);
+                    if(error != KS_ERR_OK) {
+                        NotLoadedLibs.addLast(log);
+                    } else {
+                        out += log_getOkMsg("Library",(const char*)log,"loaded.");                    
+                    }
                 }
+                anzLoops--;
             }
-            anzLoops--;
         }
-
+        
         // Gibt es immer noch nicht geladene Bibliotheken?
         while( NotLoadedLibs.size() ) {
             log = NotLoadedLibs.removeFirst();
@@ -1286,12 +1375,13 @@ KS_RESULT import_eval(KscServerBase* Server,
         pinst->next = Params->Instance;
         Params->Instance = pinst;
     }
-                        
+                            
     // Alle Instanzen anlegen
     while(Params->Instance) {
     
         pinst=Params->Instance;
         Params->Instance = pinst->next;
+
         
         error = FB_CreateNewInstance(Server,pinst,out);
         if(error) {
@@ -1346,7 +1436,7 @@ KS_RESULT import_eval(KscServerBase* Server,
     //    Verbindungsobjekte angelegt werden
     float serverVersion = get_serverVersion(Server);
     
-    /*
+     /*
     *  Alle Instanzen sind angelegt.
     *  Lege Verbindungsobjekte an
     */

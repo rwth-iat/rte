@@ -38,7 +38,7 @@ BASE_DIR				= ../../../../
 FBSLIB_SRC_DIR          = ../../source/
 FBSLIB_INC_DIR          = ../../include/
 
-FB_DIR					= $(BASE_DIR)fb_dbcommands/source/
+FB_DIR					= $(BASE_DIR)fbs_dienste/source/
 FB_INCLUDE_DIR			= $(FB_DIR)include/
 FB_SRC_DIR              = $(FB_DIR)source/upload/
 

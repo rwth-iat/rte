@@ -268,7 +268,7 @@ KS_RESULT ifb_writeLinks(
         // Schreiben in Datei ?
         
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 Out = "";
             }
@@ -334,7 +334,7 @@ float get_serverVersion(KscServerBase* Server)
         ph++;
     }
         
-    return atof(versString);
+    return (float)atof(versString);
 }
 
 // Objekt-Variablen protokollieren
@@ -352,10 +352,18 @@ float get_serverVersion(KscServerBase* Server)
     char           PortType[32];
     PltString      hStr;
     float          srvVersion;
+    PltString      trenner;
     
     // Wir suchen Variablen
+    trenner = ".";
     params.type_mask = KS_OT_VARIABLE;
     params.scope_flags = KS_EPF_PARTS;
+    
+    // Sonderfall "Vendor"
+    if(params.path == "/vendor") {
+        trenner = "/";
+        params.scope_flags = KS_EPF_DEFAULT;
+    }
     
     // Zugriffsrechte ab iFBSpro v2.4.0 geaendert
     srvVersion = get_serverVersion(Server);
@@ -410,10 +418,14 @@ float get_serverVersion(KscServerBase* Server)
         // Ist das eine Variable?
         if(pv->xdrTypeCode() == KS_OT_VARIABLE) {
             
+            // FIX: "ServerPassword" in "/vendor" ignorieren
+            if( (params.path == "/vendor") && (pv->identifier == "server_password") ) {
+                // Ignorieren
+            } else {
                 ListEP.addLast(pv);
              
                 Var = params.path;
-                Var += ".";
+                Var += trenner;
                 Var += pv->identifier;  /* /. */    
 
                 VarArray[AnzVars] = new KscVariable(root+Var);
@@ -426,11 +438,11 @@ float get_serverVersion(KscServerBase* Server)
                     delete pkg;
                          return KS_ERR_GENERIC;
                 }
-                
-            // Eine Variable mehr
-            AnzVars++;
+            
+                // Eine Variable mehr
+                AnzVars++;
+            }
         }
-         
     } /* for (alle Unterobjkte) */
   
     if(!pkg->getUpdate() ) {
@@ -539,26 +551,6 @@ float get_serverVersion(KscServerBase* Server)
  void ifb_writeLibItem(KsString libname, PltString& Out)
 /*****************************************************************************/
 {
-    char  help[512];
-    char  *ph;
-    char  *pc;
-    size_t len;
-    
-    len = strlen(FB_LIBRARIES_CONTAINER);
-    strcpy(help, (const char*)libname);
-    ph = help;
-    if( (*ph) == '/' ) {
-        ph++;
-    }
-    if(!strncmp(ph, FB_LIBRARIES_CONTAINER, len) ) {
-        ph += (len + 1);
-        pc = ph;
-        while( ph && ((*ph) != '/') && (*ph)) ph++;
-        if(ph && (*ph)) {
-            *ph = '\0';
-            libname = pc;
-        }
-    }
     Out += " LIBRARY\n    ";
     Out += (const char*)libname;
     Out += "\n";
@@ -566,36 +558,102 @@ float get_serverVersion(KscServerBase* Server)
 }
 
 /*****************************************************************************/
- KS_RESULT get_libs(KscServerBase* Server, KsGetEPParams& params, PltString& Out)
+ KS_RESULT get_libs(KscServerBase* Server, PltString& Out)
 /*****************************************************************************/
 {
-    KsGetEPResult  result;
-
-    bool ok = Server->getEP(0, params, result);
-    if( !ok ) {
-        KS_RESULT err = Server->getLastResult();
+    size_t   i, siz;
+    KsString Path("");
+    Path = Server->getHostAndName();
+    Path += "/vendor/libraries";
+    
+    KscVariable Var(Path);
+    if(!Var.getUpdate() ) {
+        KS_RESULT err = Var.getLastResult();
         if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
         return err;
     }
-    if( result.result != KS_ERR_OK ) {
-        return result.result;
+    const KsVarCurrProps *cp = Var.getCurrProps();
+    if((!cp) || (!(cp->value)) ) {
+        return KS_ERR_GENERIC;
     }
-
-    /* Alle Bibliotheken sichern */
-    while( result.items.size() ) {
-        KsEngPropsHandle hpp = result.items.removeFirst();
-        if(!hpp) {
-            return KS_ERR_GENERIC;
+    
+    siz = ((KsStringVecValue &) *cp->value).size();
+    for ( i = 0; i < siz; i++ ) {
+        Path = ((KsStringVecValue &) *cp->value)[i];
+        
+        if(Path != "/acplt/ov") {
+            // Bibliothek sichern
+            ifb_writeLibItem(Path, Out);
         }
-        
-        ifb_writeLibItem(hpp->identifier, Out);
-        
-    } /* while size() */
+    }
 
     return KS_ERR_OK;
 
 } /* get_libs */
 
+int isFbToolInstance(KsString& fullclas) {
+    char help[512];
+    char *ph;
+    PltString lib;
+    PltString clas;
+    
+    // String fuer weitere Bearbeitung kopieren
+    strcpy(help, (const char*)fullclas);
+    
+    // String-Ende suchen
+    ph = help;
+    while(ph && (*ph) ) ph++;
+    
+    // Class suchen
+    while(ph != help) {
+        if(*ph == '/') {
+            *ph = '\0';
+            ph++;
+            clas = ph;
+            break;
+        }
+        ph--;
+    }
+    // Class suchen
+    while(ph != help) {
+        if(*ph == '/') {
+            *ph = '\0';
+            ph++;
+            lib = ph;
+            break;
+        }
+        ph--;
+    }
+    
+    if(lib == "") {
+        // ?
+        return 0;
+    }
+    
+    if( (lib == "fb") && (clas == "dbinfoclass") ) {
+        return 1;
+    }
+    if( lib != "fbtool" ) {
+        return 0;
+    }
+    return 1;
+}
+
+/*****************************************************************************/
+void ifb_writeInstBlockAnfang(KsString &inst, KsString &clas, PltString &Out) {
+/*****************************************************************************/
+    Out += " INSTANCE  ";
+    Out += (const char*)inst;
+    Out += " :\n";
+    Out += "    CLASS ";
+    Out += clas;
+    Out += ";\n";
+}
+/*****************************************************************************/
+void ifb_writeInstBlockEnd(PltString &Out) {
+/*****************************************************************************/
+    Out += " END_INSTANCE;\n\n";
+}
 
 /*****************************************************************************/
 KS_RESULT ifb_writeInstData(
@@ -613,6 +671,7 @@ KS_RESULT ifb_writeInstData(
     KS_RESULT      fehler;
     KsGetEPResult  result;
     KsString       instClass;
+    KsString       instPath;
     
     bool ok = Server->getEP(0, params, result);
     if( !ok ) {
@@ -634,63 +693,63 @@ KS_RESULT ifb_writeInstData(
 
         if( (params.path == FB_TASK_CONTAINER_PATH) && (hpp->identifier == FB_URTASK) ) {
             // UrTask nicht sichern
+            continue;
+        }
+
+        // Bibliothek?
+        if(hpp->xdrTypeCode() == KS_OT_HISTORY) {
+             instClass = ((KsHistoryEngProps &)(*hpp)).type_identifier;
         } else {
-                
-            Out += " INSTANCE  ";
-            Out += (const char*)params.path;
-            if( hpp->access_mode & KS_AC_PART) {
-                Out += ".";
-            } else {
-                Out += "/";
-            }
-            
-            Out += (const char*)hpp->identifier;
-            Out += " :\n";
-            Out += "    CLASS ";
-            
-            if( hpp->xdrTypeCode() == KS_OT_HISTORY) {
-                
-                Out += (const char*)(((KsHistoryEngProps &)(*hpp)).type_identifier);
-                Out += ";\n";
-                
-            } else {
-                // Instanz oder Container
-                Out += (const char*)(((KsDomainEngProps &)(*hpp)).class_identifier);
-                Out += ";\n";
+             instClass = ((KsDomainEngProps &)(*hpp)).class_identifier;
+        }
+        if(instClass == "/acplt/ov/library") {
+            // Bibliotheken bereits gesichert
+            continue;
+        }
+        
+        // Automatisch erzeugte FB/Fbtool-Instanz?
+        if( isFbToolInstance(instClass) == 1 ) {
+            continue;
+        }
+        
+        instPath = (const char*)params.path;
+        if( hpp->access_mode & KS_AC_PART) {
+            instPath += ".";
+        } else {
+            instPath += "/";
+        }
+        instPath += (const char*)hpp->identifier;
 
-                KsGetEPParams helpParams;
-                
-                helpParams.path = params.path;
-                if( hpp->access_mode & KS_AC_PART) {
-                    helpParams.path += ".";
-                } else {
-                    helpParams.path += "/";
-                }
-                helpParams.path += hpp->identifier;
-                helpParams.name_mask = "*";
+        ifb_writeInstBlockAnfang(instPath, instClass, Out);
+        
+        if( hpp->xdrTypeCode() != KS_OT_HISTORY) {
+            // Instanz oder Container
+            KsGetEPParams helpParams;
             
-                if( ((KsDomainEngProps &)(*hpp)).class_identifier != CONTAINER_CLASS_PATH ) {
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // Es ist eine Instanz vom benutzerdefiniertem Typ
-                    // Variablen von Instanz rueckdokumentieren :
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-                    fehler = get_variable(Server, helpParams, Out);
-                    if (fehler) {
-                        return fehler;
-                    }
+            helpParams.path = instPath;
+            helpParams.name_mask = "*";
+        
+            if( ((KsDomainEngProps &)(*hpp)).class_identifier != CONTAINER_CLASS_PATH ) {
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // Es ist eine Instanz vom benutzerdefiniertem Typ
+                // Variablen von Instanz rueckdokumentieren :
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                fehler = get_variable(Server, helpParams, Out);
+                if (fehler) {
+                    return fehler;
                 }
             }
-            Out += " END_INSTANCE;\n\n";
+        }
+        ifb_writeInstBlockEnd(Out);
                     
-            // Schreiben in Datei ?
-            if(fout) {
+        // Schreiben in Datei ?
+        if(fout) {
+            if(Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
             }
-        } /* if nicht ur_task */
+        }
         
         // Unterliegende Instanzen sichern
         KsGetEPParams helpPars;
@@ -720,12 +779,6 @@ KS_RESULT ifb_writeInstData(
         }
         
         // Links sichern
-        if(hpp->xdrTypeCode() == KS_OT_HISTORY) {
-             instClass = ((KsHistoryEngProps &)(*hpp)).type_identifier;
-        } else {
-             instClass = ((KsDomainEngProps &)(*hpp)).class_identifier;
-        }
-
         fehler = ifb_writeLinks(Server,helpPars,instClass,Out,saveConLinks,linkParentOnly,fout);
         if(fehler) {
             return fehler;
@@ -817,7 +870,7 @@ KS_RESULT ifb_writeXlinksOfObj(KscServerBase *Server,
         
         // Schreiben in Datei ?
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 Out = "";
             }
@@ -873,7 +926,7 @@ KS_RESULT ifb_writeXlinksOfBases(KscServerBase *Server,
         
         // Schreiben in Datei?
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
@@ -920,7 +973,7 @@ KS_RESULT ifb_writeXlinksOfBases(KscServerBase *Server,
                         
                         // Schreiben in Datei?
                         if(fout) {
-                            if(Out != "") {
+                            if( Out.len() ) {
                                 fputs((const char*)Out, fout);
                                 // String-Buffer leeren
                                 Out = "";
@@ -936,6 +989,154 @@ KS_RESULT ifb_writeXlinksOfBases(KscServerBase *Server,
             default :
                 // Typ der Variable ist kein KS_VT_STRING_VEC !!!?
                 break;
+        }
+    }
+    
+    return KS_ERR_OK;
+}
+
+/*****************************************************************************/
+KS_RESULT ifb_writeRootObjs(
+    KscServerBase *Server,
+    KsGetEPParams &params,
+    PltString     &Out,
+    FILE          *fout
+) {
+/*****************************************************************************/
+    KS_RESULT      fehler;
+    KsGetEPResult  result;
+    KsString       instPath;
+    KsString       instClass;
+    KsString       vendorClass;
+    
+    bool ok = Server->getEP(0, params, result);
+    if( !ok ) {
+        fehler = Server->getLastResult();
+        if(fehler == KS_ERR_OK) fehler = KS_ERR_GENERIC;
+        return fehler;
+    }
+    if( result.result != KS_ERR_OK ) {
+        return result.result;
+    }
+
+    /* Alle Instanzen sichern */
+    while ( result.items.size() ) {
+        KsEngPropsHandle hpp = result.items.removeFirst();
+        if(!hpp) {
+            return KS_ERR_GENERIC;
+        }
+
+        // OV-Basis?
+        if( hpp->identifier == "acplt" ) {
+            // Nicht sichern
+            continue;
+        }
+        if( hpp->identifier == "vendor" ) {
+            // Wird spaeter gesichert
+            if( hpp->xdrTypeCode() != KS_OT_HISTORY) {
+                vendorClass = (const char*)(((KsDomainEngProps &)(*hpp)).class_identifier);
+            }
+            continue;
+        }
+
+        // Bibliothek?
+        if( hpp->xdrTypeCode() == KS_OT_HISTORY) {
+            instClass = (const char*)(((KsHistoryEngProps &)(*hpp)).type_identifier);            
+        } else {
+            // Instanz oder Container
+            instClass = (const char*)(((KsDomainEngProps &)(*hpp)).class_identifier);
+        }
+        if(instClass == "/acplt/ov/library") {
+            // Bibliotheken bereits gesichert
+            continue;
+        }
+        // Automatisch erzeugte FB/Fbtool-Instanz?
+        if( isFbToolInstance(instClass) == 1 ) {
+            continue;
+        }
+        
+
+        // Instanz oder Container
+        instPath = "/";
+        instPath += (const char*)hpp->identifier;
+        ifb_writeInstBlockAnfang(instPath, instClass, Out);
+                
+        if( hpp->xdrTypeCode() != KS_OT_HISTORY) {
+            KsGetEPParams helpParams;
+            
+            helpParams.path = instPath;
+            helpParams.name_mask = "*";
+            
+            if( ((KsDomainEngProps &)(*hpp)).class_identifier != CONTAINER_CLASS_PATH ) {
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                // Es ist eine Instanz vom benutzerdefiniertem Typ
+                // Variablen von Instanz rueckdokumentieren :
+                // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+                fehler = get_variable(Server, helpParams, Out);
+                if (fehler) {
+                    return fehler;
+                }
+            }
+        }
+        ifb_writeInstBlockEnd(Out);
+                    
+        // Schreiben in Datei ?
+        if(fout) {
+            if( Out.len() ) {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+
+        // Unterliegende Instanzen sichern
+        KsGetEPParams helpPars;
+        
+        helpPars.path = instPath;
+        helpPars.name_mask = "*";
+        helpPars.type_mask = KS_OT_DOMAIN | KS_OT_HISTORY;
+        helpPars.scope_flags = KS_EPF_DEFAULT;
+    
+        //                                      Recurs conLnk parentOnly
+        fehler = ifb_writeInstData(Server,helpPars,Out,TRUE,TRUE,  FALSE,  fout);
+        if(fehler) {
+            return fehler;
+        }
+            
+        // Links sichern
+        fehler = ifb_writeLinks(Server,helpPars,instClass,Out,TRUE,FALSE,fout);
+        if(fehler) {
+            return fehler;
+    }
+
+    } /* while size() */
+
+    // Sonderfall: "Vendor"-Tree
+    if(vendorClass != "") {
+        KsGetEPParams helpPar;
+        instPath = "/vendor";
+        
+        ifb_writeInstBlockAnfang(instPath, vendorClass, Out);
+    
+        helpPar.path = instPath;
+        helpPar.name_mask = "*";
+
+        fehler = get_variable(Server, helpPar, Out);
+        if (fehler) {
+            return fehler;
+        }
+        ifb_writeInstBlockEnd(Out);
+
+
+        // Schreiben in Datei ?
+        if(fout) {
+            if( Out.len() ) {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
         }
     }
     
@@ -991,115 +1192,6 @@ Out += "  Sicherung der Datenbasis.\n\n";
         Out = "";
     }
     
-/////////////////////////////////////////////////////////////////////////////////////////
-// DB-Infos :                                                                          //
-/////////////////////////////////////////////////////////////////////////////////////////
-
-    KsString            root = Server->getHostAndName();
-    KsString            Var;
-    size_t          i;      // Laufvariable;
-    
-    PltArray<KscVariable*> VarArray(7);
-    if(VarArray.size() != 7) {
-        err = OV_ERR_HEAPOUTOFMEMORY;
-        iFBS_SetLastError(1, err, log);
-            return err;
-    }
-
-    KscPackage        *pkg = new KscPackage;
-    if(!pkg) {
-        err = OV_ERR_HEAPOUTOFMEMORY;
-        iFBS_SetLastError(1, err, log);
-            return err;
-    }
-    
-    for(i = 0; i < 7; i++) {
-        switch(i) {
-            case 0: Var = "/vendor/database_size";
-                    break;
-            case 1: Var = "/vendor/database_free";
-                    break;
-            case 2: Var = "/dbinfo.instnumber";
-                    break;
-            case 3: Var = "/dbinfo.tasknumber";
-                    break;
-            case 4: Var = "/dbinfo.connnumber";
-                    break;
-            case 5: Var = "/dbinfo.serversystem";
-                    break;
-            case 6: Var = "/dbinfo.licinfo";
-                    break;
-        }
-        
-        VarArray[i] = new KscVariable(root+Var);
-            if(!VarArray[i]) {
-                delete pkg;
-                err = OV_ERR_HEAPOUTOFMEMORY;
-            iFBS_SetLastError(1, err, log);
-                return err;
-        }
-            if(!pkg->add(KscVariableHandle(VarArray[i], PltOsNew)) ){
-                        delete pkg;
-                        err = KS_ERR_GENERIC;
-            iFBS_SetLastError(1, err, log);
-                        return KS_ERR_GENERIC;
-            }
-    } /* for */
-
-    if (!pkg->getUpdate() ) {
-        err = pkg->getLastResult();
-            if(err == KS_ERR_OK) err = KS_ERR_GENERIC;
-            delete pkg;
-        iFBS_SetLastError(1, err, log);
-            return err;
-    }
-
-    // DB-Infos schreiben
-    for(i = 0; i < 7; i++ ) {
-        
-            const KsVarCurrProps *cp = (VarArray[i])->getCurrProps();
-        if((!cp) || (!cp->value) ) {
-            delete pkg;
-            err = KS_ERR_GENERIC;
-                delete pkg;
-            iFBS_SetLastError(1, err, log);
-                return err;
-        }
-        switch(i) {
-            case 0: // database_size
-                    Out += "  DB-Groesse          : ";
-                    ifb_getValueOnly(cp, Out);
-                    break;
-            case 1: // database_free
-                        Out += "  Frei                : ";
-                    ifb_getValueOnly(cp, Out);
-                    break;
-            case 2: // instnumber
-                        Out += "  Anzahl FB-Instanzen : ";
-                        ifb_getValueOnly(cp, Out);
-                    break;
-            case 3: // tasknumber
-                        Out += "  Anzahl Tasks        : ";
-                        ifb_getValueOnly(cp, Out);
-                    break;
-            case 4: // connnumber
-                        Out += "  Anzahl Verbindungen : ";
-                        ifb_getValueOnly(cp, Out);
-                    break;
-            case 5: // serversystem
-                        Out += "\n  Server-System       : ";
-                    Out += (const char*)((KsStringValue &) *cp->value);
-                    break;
-            case 6: // licinfo
-                            Out += "\nDieser Server ist registriert fuer :\n\n";
-                    Out += (const char*)((KsStringValue &) *cp->value);
-                    Out += "\n";
-                    break;
-            } 
-        Out += "\n";
-    }
-
-    delete pkg;
 
 Out += "======================================================================\n";        
 Out += "*********************************************************************/\n\n";
@@ -1115,16 +1207,10 @@ Out += "*********************************************************************/\n
     // Rueckdokumentation der Bibliotheken
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    params.path = "/";
-    params.path += FB_LIBRARIES_CONTAINER;
-    params.type_mask = KS_OT_DOMAIN;
-    params.name_mask = "*";
-    params.scope_flags = KS_EPF_DEFAULT;
-
-    err = get_libs(Server, params, Out);
+    err = get_libs(Server, Out);
     if(err) {
         if(fout) {
-            if(Out != "") {
+            if(Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
@@ -1136,12 +1222,37 @@ Out += "*********************************************************************/\n
 
     // Schreiben in Datei ?
     if(fout) {
-        fputs((const char*)Out, fout);
-        // String-Buffer leeren
-        Out = "";
+        if( Out.len() ) {
+            fputs((const char*)Out, fout);
+            // String-Buffer leeren
+            Out = "";
+        }
     }
 
+    
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // Rueckdokumentation Root-Domains
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    params.path = "/";
+    params.type_mask = KS_OT_DOMAIN;
+    params.name_mask = "*";
+    params.scope_flags = KS_EPF_DEFAULT;
+    err = ifb_writeRootObjs(Server, params, Out, fout);
+    if(err) {
+        if(fout) {
+            if( Out.len() ) {
+                fputs((const char*)Out, fout);
+                // String-Buffer leeren
+                Out = "";
+            }
+        }
+        iFBS_SetLastError(1, err, log);
+        return err;
+    }
 
+    return KS_ERR_OK;
+    
+#if 0
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Rueckdokumentation der X-Links Basis-Objektes
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -1172,7 +1283,7 @@ Out += "*********************************************************************/\n
     err = ifb_writeInstData(Server,params,Out,TRUE,FALSE, TRUE,      fout);
     if(err) {
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
@@ -1197,7 +1308,7 @@ Out += "*********************************************************************/\n
     err = ifb_writeInstData(Server,params,Out,TRUE,FALSE,TRUE,fout);
     if(err) {
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
@@ -1221,7 +1332,7 @@ Out += "*********************************************************************/\n
     err = ifb_writeInstData(Server,params,Out,TRUE,TRUE,  FALSE,  fout);
     if(err) {
         if(fout) {
-            if(Out != "") {
+            if( Out.len() ) {
                 fputs((const char*)Out, fout);
                 // String-Buffer leeren
                 Out = "";
@@ -1232,6 +1343,8 @@ Out += "*********************************************************************/\n
     }
 
    return KS_ERR_OK;
+
+#endif
 
 } /* exportproject */
 

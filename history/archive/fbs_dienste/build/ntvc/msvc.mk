@@ -121,7 +121,10 @@ $(DIENST_LIB) : $(DIENST_LIB_OBJ)
 #	Executables
 #	-----------
 
-$(FB_DBCOMMANDS_EXE) :  $(FB_DBCOMMANDS_OBJ)
+dbcommands.res: $(FBSLIB_SRC_DIR)dbcommands.rc
+	$(RC) -r -fodbcommands.res $(FBSLIB_SRC_DIR)dbcommands.rc
+
+$(FB_DBCOMMANDS_EXE) :  $(FB_DBCOMMANDS_OBJ) dbcommands.res
 	$(CXX_LINK) $^ $(ACPLTKS_LIBS) $(DIENST_LIB) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:$(FB_DBCOMMANDS_EXE)
 
 
@@ -134,10 +137,38 @@ $(FB_INIT_EXE) : $(FB_INIT_OBJ) fb_init.res
 kstest.exe : kstest.obj
 	$(CXX_LINK) $^ $(PLTSRV_LIBS) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:kstest.exe
 
+tst.exe : tst.obj
+	$(CXX_LINK) $^ $(PLTSRV_LIBS) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:tst.exe
+
+pkg_test.exe : pkg_test.obj
+	$(CXX_LINK) $^ $(ACPLTKS_LIBS) $(DIENST_LIB) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:pkg_test.exe
+
+
+
+
+
+dbsavexml$(OBJ) : dbsavexml.cpp
+	@echo Compiling $<
+	$(CXX_COMPILE) -DXML_SIMPLE=1 -DNUR_TAG_ZIECHEN_CODIEREN=1 $< -o$@
+
+ifb_dbsaveinxml$(OBJ) : ifb_dbsaveinxml.cpp
+	@echo Compiling $<
+	$(CXX_COMPILE) -DXML_SIMPLE=1 -DNUR_TAG_ZIECHEN_CODIEREN=1 $< -o$@
+
+fb_dbsavexml.res : $(FBSLIB_SRC_DIR)fb_dbsavexml.rc
+	$(RC) -r -fo$@ $<
+
+ks_savexml$(EXE) :  dbsavexml$(OBJ) ifb_dbsaveinxml$(OBJ) fb_dbsavexml.res
+	$(CXX_LINK) $^ $(ACPLTKS_LIBS) $(DIENST_LIB) wsock32.lib ADVAPI32.LIB USER32.LIB $(LINK_FLAGS) /NODEFAULTLIB:libc /out:ks_savexml$(EXE)
+
+
 #	Clean up
 #	--------
 
 clean:
+	@del *.c *.h *.bak *.map *.def *.exp *$(OBJ) *$(RES) *.pdb *.ilk
+
+cleanall:
 	@del *.c *.h *.bak *.map *.def *.exp *$(LIB) *$(DLL) *$(OBJ) *$(EXE) *$(RES) *.pdb *.ilk
 
 

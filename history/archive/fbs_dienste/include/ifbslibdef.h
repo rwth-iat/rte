@@ -321,9 +321,8 @@ KS_RESULT DelObjsFromList(KscServerBase*      Server,
 KS_RESULT TurnInstOff(KscServerBase*      Server,
                       PltList<PltString>  &InstListe);
                       
-KS_RESULT get_libs(KscServerBase* Server, KsGetEPParams& params, PltString& Out);
+KS_RESULT get_libs(KscServerBase* Server, PltString& Out);
 //KS_RESULT get_class(KscServerBase* Server, KsGetEPParams& params, PltString& Out, FILE *fout);
-KS_RESULT get_variable(KscServerBase* Server,KsGetEPParams& params,PltString& Out);
 //KS_RESULT get_task_list(KscServerBase* Server,KsGetEPParams& params,PltString& Out, FILE *fout);
 //KS_RESULT get_con_list(KscServerBase*,KsGetEPParams&,PltString&, FILE *fout);
 //KS_RESULT get_xlink_list(KscServerBase*,KsGetEPParams&,PltString&, FILE *fout, bool parentOnly=TRUE);

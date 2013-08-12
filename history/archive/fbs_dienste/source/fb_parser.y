@@ -75,7 +75,6 @@ void iFBS_SetParserError(int, char*);
         Child*                  ch_path;
         LinksItems*             link;
         DelInstItems*           delinstans;
-        SetInstVarItems*        setinstvar;
         PortType                pt;
 }
 /*
@@ -86,21 +85,17 @@ void iFBS_SetParserError(int, char*);
 %token <datatype>   TOK_DATATYPE
 %token              TOK_INSTANCE TOK_VARIABLE_VALUES TOK_END_VARIABLE_VALUES
                     TOK_END_INSTANCE TOK_LINK TOK_OF_ASSOCIATION TOK_CLASS TOK_PARENT
-                    TOK_CHILDREN TOK_END_LINK TOK_UNLINK TOK_END_UNLINK TOK_SET TOK_END_SET
-                    TOK_DELETE TOK_END_DELETE  TOK_PARAM_PORT TOK_INPUT_PORT TOK_DUMMY_PORT
-                    TOK_LIBRARY TOK_END_LIBRARY TOK_DEL_LIBRARY TOK_END_DEL_LIBRARY TOK_STATE
+                    TOK_CHILDREN TOK_END_LINK 
+                    TOK_PARAM_PORT TOK_INPUT_PORT TOK_DUMMY_PORT
+                    TOK_LIBRARY TOK_END_LIBRARY TOK_STATE
 %type<variable>     scalar_variable_value variable_values_opt variable_values
                     variable_value variable_values_block_opt vector_variable_value
 %type<var_item>     scalar_value vector_value vector_value_list
 %type<par>          blocks block
 %type<instans>      instance_block instance_blocks
-%type<link>         link_block link_blocks unlink_blocks
-                    unlink_block
+%type<link>         link_block link_blocks
 %type<ch_path>      child_paths
-%type<delinstans>   delinstance_blocks delinstance_block
-                    newlibs_blocks newlibs_block
-                    oldlibs_blocks oldlibs_block
-%type<setinstvar>   setinstvar_blocks setinstvar_block
+%type<delinstans>   newlibs_blocks newlibs_block
 %type<pt>           port_types
 %type<string>       state_opt
 /*****************************************************************************/
@@ -173,37 +168,6 @@ block:                  instance_blocks
                             }
                             $$ = ppar;
                         }
-                        | unlink_blocks
-                        {
-                            LinksItems* pLI;
-                            /* Schon Unlink-Blocks gefunden ? */
-                            if(ppar->UnLinks) {
-                                /* Am Ende hinzufuegen */
-                                pLI=ppar->UnLinks;
-                                while(pLI->next) {
-                                    pLI=pLI->next;
-                                }
-                                pLI->next = $1;
-                            } else {
-                                ppar->UnLinks = $1;
-                            }
-                            $$ = ppar;
-                        }
-                        | delinstance_blocks
-                        {
-                            DelInstItems* pDI;
-                            /* Schon Delete-Blocks gefunden ? */
-                            if(ppar->DelInst) {
-                                pDI=ppar->DelInst;
-                                while(pDI->next) {
-                                    pDI=pDI->next;
-                                }
-                                pDI->next = $1;
-                            } else {
-                                ppar->DelInst = $1;
-                            }
-                            $$ = ppar;
-                        }
                         | newlibs_blocks
                         {
                             DelInstItems* pDI;
@@ -215,34 +179,6 @@ block:                  instance_blocks
                                 pDI->next = $1;
                             } else {
                                 ppar->NewLibs = $1;
-                            }
-                            $$ = ppar;
-                        }
-                        | oldlibs_blocks
-                        {
-                            DelInstItems* pDI;
-                            if(ppar->OldLibs) {
-                                pDI=ppar->OldLibs;
-                                while(pDI->next) {
-                                    pDI=pDI->next;
-                                }
-                                pDI->next = $1;
-                            } else {
-                                ppar->OldLibs = $1;
-                            }
-                            $$ = ppar;
-                        }
-                        | setinstvar_blocks
-                        {
-                            SetInstVarItems* pSI;
-                            if (ppar->Set_Inst_Var) {
-                                pSI=ppar->Set_Inst_Var;
-                                while(pSI->next) {
-                                        pSI=pSI->next;
-                                }
-                                pSI->next = $1;
-                            } else {
-                                ppar->Set_Inst_Var = $1;
                             }
                             $$ = ppar;
                         }
@@ -345,57 +281,6 @@ link_block:                 TOK_LINK TOK_OF_ASSOCIATION TOK_IDENTIFIER ';'
                                 $$ = plink;
                             }
 ;
-unlink_blocks:              unlink_block
-                            {
-                                $$ = $1;
-                            }
-                            | unlink_blocks unlink_block
-                            {
-                                LinksItems *pLinkList = $1;
-                                /* Neues Element am Ende der Liste hinzufuegen */
-                                while ( pLinkList->next) {
-                                        pLinkList = pLinkList->next;
-                                }
-                                pLinkList->next = $2;
-                                $$ = $1;
-                            }
-;
-unlink_block:               TOK_UNLINK TOK_OF_ASSOCIATION TOK_IDENTIFIER ';'
-                                TOK_PARENT TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER
-                                 '=' TOK_PATH ';'
-                                TOK_CHILDREN TOK_IDENTIFIER ':' TOK_CLASS TOK_IDENTIFIER
-                                 '=' '{' child_paths '}' ';'
-                                TOK_END_UNLINK ';'
-                            {
-                                LinksItems*                 plink;
-                                Child*              pchild;
-                            
-                                plink = (LinksItems*)malloc(sizeof(LinksItems));
-                                if( (!plink) || (!$11) || (!$14) || (!$20) ) {
-                                    if(plink) free(plink);
-                                    pchild = $20;
-                                    while(pchild) {
-                                        $20 = pchild->next;
-                                        free(pchild);
-                                        pchild = $20;
-                                    }
-                                    yyerror("out of memory");
-                                    return EXIT_FAILURE;
-                                }
-                                plink->next = 0;
-                                plink->asso_ident = 0;
-                                plink->parent_role = 0;
-                                plink->parent_class = 0;
-                                plink->child_class = 0;
-                                
-                                plink->parent_path = $11;
-                                plink->child_role = $14;
-                                plink->children = $20;
-                                
-
-                                $$=plink;
-                            }
-;
 child_paths:                TOK_PATH
                             {
                                 Child* pchild;
@@ -438,37 +323,6 @@ child_paths:                TOK_PATH
                                 $$ = $1;
                             }
 ;
-delinstance_blocks:         delinstance_block
-                            {
-                                $$ = $1;
-                            }
-                            | delinstance_blocks delinstance_block
-                            {
-                                DelInstItems* pdelinst;
-                                pdelinst = $1;
-    
-                                /* Neues Block am ende der Liste hinzufuegen */
-                                while ( pdelinst->next) {
-                                    pdelinst = pdelinst->next;
-                                }
-                                pdelinst->next = $2;
-                                $$ = $1;
-                            }
-;
-delinstance_block:          TOK_DELETE TOK_PATH TOK_END_DELETE ';'
-                            {
-                                DelInstItems *pd = (DelInstItems*)malloc(sizeof(DelInstItems));
-                                if((!pd) || (!$2)) {
-                                    if(pd) free(pd);
-                                    yyerror("out of memory");
-                                    return EXIT_FAILURE;
-                                }
-                                pd->next = 0;
-                                pd->Inst_name = $2;
-
-                                $$ = pd;
-                            }
-;
 newlibs_blocks:             newlibs_block
                             {
                                 $$ = $1;
@@ -498,82 +352,18 @@ newlibs_block:              TOK_LIBRARY TOK_IDENTIFIER TOK_END_LIBRARY ';'
 
                                     $$ = pd;
                             }
-;
-oldlibs_blocks:             oldlibs_block
+                            | TOK_LIBRARY TOK_PATH TOK_END_LIBRARY ';'
                             {
-                                    $$ = $1;
-                            }
-                            | oldlibs_blocks oldlibs_block
-                            {
-                                DelInstItems* pdelinst;
-                                pdelinst = $1;
-
-                                while ( pdelinst->next) {
-                                    pdelinst = pdelinst->next;
-                                }
-                                pdelinst->next = $2;
-                                $$ = $1;
-                            }
-;
-oldlibs_block:              TOK_DEL_LIBRARY TOK_IDENTIFIER TOK_END_DEL_LIBRARY ';'
-                            {
-                                DelInstItems *pd = (DelInstItems*)malloc(sizeof(DelInstItems));
-                                if( (!pd) || (!$2) ) {
-                                    if(pd) free(pd);
-                                    yyerror("out of memory");
-                                    return EXIT_FAILURE;
-                                }
-                                pd->next = 0;
-                                pd->Inst_name = $2;
-
-                                $$ = pd;
-                            }
-;
-setinstvar_blocks:          setinstvar_block
-                            {
-                                $$ = $1;
-                            }
-                            | setinstvar_blocks setinstvar_block
-                            {
-                                SetInstVarItems* psiv;
-                                psiv = $1;
-
-                                while ( psiv->next) {
-                                    psiv = psiv->next;
-                                }
-                                psiv->next = $2;
-                                $$ = $1;
-                            }
-;
-setinstvar_block:           TOK_SET TOK_PATH ':' variable_values_block_opt TOK_END_SET ';'
-                            {
-                                Variables       *pVar;
-                                SetInstVarItems *ps = (SetInstVarItems*)malloc(sizeof(SetInstVarItems));
-                                if( (!ps) || (!$2) ) {
-                                    if(ps) free(ps);
-                                    pVar = $4;
-                                    while(pVar) {
-                                        $4 = pVar->next;
-                                        if(pVar->value) {
-                                            VariableItem *pVal = pVar->value;
-                                            while(pVal) {
-                                                pVar->value = pVar->value->next;
-                                                free(pVal);
-                                                pVal = pVar->value;
-                                            }
-                                        }
-                                        free(pVar);
-                                        pVar = $4;
+                                    DelInstItems* pd = (DelInstItems*)malloc(sizeof(DelInstItems));
+                                    if( (!pd) || (!$2) ) {
+                                        if(pd) free(pd);
+                                        yyerror("out of memory");
+                                        return EXIT_FAILURE;
                                     }
-                                    yyerror("out of memory");
-                                    return EXIT_FAILURE;
-                                }
-                                ps->next = 0;
-                                ps->Inst_name = $2;
-                                ps->Inst_var = $4;
+                                    pd->next = NULL;
+                                    pd->Inst_name = $2;
 
-                                $$=ps;
-                                ps = 0;
+                                    $$ = pd;
                             }
 ;
 variable_values_block_opt:  /* empty */
@@ -862,11 +652,7 @@ vector_variable_value:      TOK_IDENTIFIER '[' TOK_INTEGERVALUE ']' ':' port_typ
                                 }
                             }
 ;
-port_types:                 TOK_PARAM_PORT
-                            {
-                                $$ = PARAM_PORT;
-                            }
-                            | TOK_INPUT_PORT
+port_types:                 TOK_INPUT_PORT
                             {
                                 $$ = INPUT_PORT;
                             }

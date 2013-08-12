@@ -11,15 +11,17 @@ produced by Borland Resource Workshop
 #define VERSIONINFO_1        1
 #define IDI_ICON1        1
 
-IDI_ICON1 ICON "ks.ico"
+IDI_ICON1 ICON "fb.ico"
 
 
 
 VERSIONINFO_1 VERSIONINFO 
-FILEVERSION 1, 0, 0, 0
-PRODUCTVERSION 1, 0, 0, 0
-FILEOS VOS_NT_WINDOWS32
-FILETYPE VFT_APP
+FILEVERSION 2, 0, 1, 0
+PRODUCTVERSION 2, 0, 1, 0
+#ifdef __BORLANDC__
+FILEOS                        VOS_NT_WINDOWS32
+FILETYPE                VFT_APP
+#endif
 {
  BLOCK "StringFileInfo"
  {

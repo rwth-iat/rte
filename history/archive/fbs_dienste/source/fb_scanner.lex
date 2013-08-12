@@ -110,12 +110,10 @@ TIME                                        { yylval.datatype = KS_VT_TIME;     
 TIME_SPAN                                { yylval.datatype = KS_VT_TIME_SPAN; return TOK_DATATYPE; }
 STRING                                        { yylval.datatype = KS_VT_STRING;    return TOK_DATATYPE; }
 UNKNOWN                                        { yylval.datatype = KS_VT_VOID;      return TOK_DATATYPE; }
+VOID                                        { yylval.datatype = KS_VT_VOID;      return TOK_DATATYPE; }
 
 LIBRARY                                        return TOK_LIBRARY;
 END_LIBRARY                                return TOK_END_LIBRARY;
-
-DELETE_LIBRARY                        return TOK_DEL_LIBRARY;
-END_DELETE_LIBRARY                return TOK_END_DEL_LIBRARY;
 
 INSTANCE                                return TOK_INSTANCE;
 CLASS                                        return TOK_CLASS;
@@ -129,16 +127,7 @@ PARENT                                        return TOK_PARENT;
 CHILDREN                                return TOK_CHILDREN;
 END_LINK                                return TOK_END_LINK;
 
-SET                                                return TOK_SET;
-END_SET                                        return TOK_END_SET;
-
-DELETE                                        return TOK_DELETE;
-END_DELETE                                return TOK_END_DELETE;
-
-UNLINK                                        return TOK_UNLINK;
-END_UNLINK                                return TOK_END_UNLINK;
-
-PARAMETER                                return TOK_PARAM_PORT;
+PARAMETER                                return TOK_INPUT_PORT;
 INPUT                                        return TOK_INPUT_PORT;
 OUTPUT                                        return TOK_DUMMY_PORT;
 HIDDEN                                        return TOK_DUMMY_PORT;

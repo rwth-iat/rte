@@ -132,6 +132,7 @@ int set_new_value(KscServerBase* Server, Dienst_param* Params,
     size_t                  i;          // Lauf-Variable
     KsString                VarName;    // Merker : NAme der zu setzender Variable
     //char                    help[256];
+    int                     isVendor = 0;
 
     if( !Params->Set_Inst_Var) {
         return 0;
@@ -139,9 +140,15 @@ int set_new_value(KscServerBase* Server, Dienst_param* Params,
     if( !Params->Set_Inst_Var->Inst_var) {
         return 0;
     }
-  
+
     pset = Params->Set_Inst_Var;
 
+    // Sonderfall: "Vendor"
+    VarName = pset->Inst_name;
+    if(VarName == "/vendor") {
+        isVendor = 1;
+    }
+    
     while(pset) {
         error = GetCreateObjectVar( pset->Inst_var, setpar.items);
         if(!error) {
@@ -149,7 +156,14 @@ int set_new_value(KscServerBase* Server, Dienst_param* Params,
             for(i = 0; i < siz; i++) {
                 VarName = setpar.items[i].path_and_name;
                 setpar.items[i].path_and_name = pset->Inst_name;
-                setpar.items[i].path_and_name += VarName;
+                if(isVendor) {
+                    // Trenner ist '/'. Der Variable wurde '.' hinzugefuegt
+                    setpar.items[i].path_and_name += "/";
+                    setpar.items[i].path_and_name += VarName.substr(1);
+                } else {
+                    // Part-Variable. Trenner '.' bereits in Name
+                    setpar.items[i].path_and_name += VarName;
+                }
             }
             bool ok = Server->requestByOpcode ( KS_SETVAR, AV, setpar, erg);
             if(!ok) {

@@ -73,8 +73,8 @@ typedef enum {
 
 typedef enum {
 	DUMMY_PORT		= 0x00,
-	PARAM_PORT		= 0x01,
-	INPUT_PORT		= 0x02
+	INPUT_PORT		= 0x01,
+	PARAM_PORT		= 0x02
 }	PortType;
 	
 /*

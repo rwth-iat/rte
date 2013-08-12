@@ -53,7 +53,7 @@ int doOneServer(PltString hs, PltString filename, PltString logfile
     
     Server = GetServerByName(hs, err);
     if(err) {
-        fprintf(stderr," Can't open %s.\n     Error 0x%x (%s)\n\n\n",
+        fprintf(stderr," Can't connect to %s.\n     Error 0x%x (%s)\n\n\n",
                                      (const char*)hs, err, GetErrorCode(err));
         return 1;
     }

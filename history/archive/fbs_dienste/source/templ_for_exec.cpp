@@ -36,7 +36,7 @@
 #include "ifbslib_params.h"
 #include "par_param.h"
 
-#if (PLT_SYSTEM_LINUX == 1) || (PLT_SYSTEM_SOLARIS == 1) || defined(__MINGW32__)
+#if (PLT_SYSTEM_LINUX == 1) || (PLT_SYSTEM_SOLARIS == 1) 
 
 template class KsArray<KsString>;
 template class KsVecValueBase<KsString>;
@@ -320,7 +320,7 @@ template class PltBidirIterator<Variables*>;
 
 #endif
 
-#if PLT_SYSTEM_NT == 1 && !defined(__MINGW32__)
+#if PLT_SYSTEM_NT == 1
 
 template class PltList<ObjProps>;
 template class PltHandle<KscVariable>;
