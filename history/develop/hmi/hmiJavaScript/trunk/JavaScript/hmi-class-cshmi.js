@@ -4153,6 +4153,7 @@ cshmi.prototype = {
 		}
 		
 		cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
+			HMI.cshmi.ResourceList.Elements["tempPath"] = new Object();
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters = new Object();
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["x"] = x;
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["y"] = y;
