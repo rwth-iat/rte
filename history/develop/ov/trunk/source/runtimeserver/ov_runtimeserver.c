@@ -154,8 +154,8 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
 	while(ov_server_run==TRUE) {
 		 delay = ov_scheduler_schedulenextevent();
 		 if( delay->secs > 1 ) {
-            delay->secs = 0;
-            delay->usecs = 1000;
+            delay->secs = 1;
+            delay->usecs = 0;
          }
          
         // ov_logfile_info("ov_ksserver_stripped_run ...sleeping: %ld,%ld", delay->secs, delay->usecs);
@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
         //}
 
 #if !OV_SYSTEM_NT
-	usleep(delay->secs * 1000 + delay->usecs / 1000);
+	nanosleep(delay->secs, delay->usecs * 1000);
         // Not work on LINUX: select(0,  0,0,0,  &delay);
 #else
         if( (delay->secs == 0) && (delay->usecs == 0) ) {
