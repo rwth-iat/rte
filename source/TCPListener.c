@@ -386,6 +386,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				return;
 			}
 
+			freeaddrinfo(res);
 			if(thisLi->v_port == -1)
 			{
 				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
