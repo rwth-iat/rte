@@ -185,16 +185,15 @@ LIBRARY kshttp
 			beginCommunication	:	BOOL HAS_SET_ACCESSOR
 				COMMENT	=	"send request"
 				INITIALVALUE	=	FALSE;
-			method	:	STRING
-				COMMENT	=	"HTTP Method to use"
-				INITIALVALUE	=	"GET";
-			requestUri	:	STRING
-				COMMENT	=	"RequestUri to send to the server"
-				INITIALVALUE	=	"/";
+			URI	:	STRING HAS_SET_ACCESSOR
+				COMMENT	=	"Uniform Resource Identifier to fetch"
+				INITIALVALUE	=	"http://localhost:7509/";
 			messageBody	:	STRING
+				FLAGS = "o"
 				COMMENT	=	"Response of the server if mimetype is text/*, application/xml, application/xml-dtd, *+xml, application/json, application/javascript"
 				INITIALVALUE	=	"";
 			contentType	:	STRING
+				FLAGS = "o"
 				COMMENT	=	"Content-Type of the response"
 				INITIALVALUE	=	"";
 		END_VARIABLES;
