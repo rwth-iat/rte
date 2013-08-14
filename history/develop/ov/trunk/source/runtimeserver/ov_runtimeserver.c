@@ -250,27 +250,27 @@ int main(int argc, char **argv) {
 	*	local variables
 	*/
 
-	OV_STRING	            filename = NULL;
-	OV_STRING	            servername = NULL;
-	OV_STRING				configFile	=	NULL;
-	OV_STRING				configBasePath	=	NULL;	/*	obtained from the path of the configfile	*/
-	OV_STRING				helper = NULL;
-	OV_UINT					hlpindex = 0;
-	OV_UINT					line = 0;
+	OV_STRING	            filename = NULL;	/*	malloced	*/
+	OV_STRING	            servername = NULL;	/*	malloced	*/
+	OV_STRING				configFile	=	NULL;	/*	not malloced	*/
+	OV_STRING				configBasePath	=	NULL;	/*	obtained from the path of the configfile	*/ /*	malloced	*/
+	OV_STRING	            password = NULL;	/*	malloced	*/
+	OV_STRING               libraries[MAX_STARTUP_LIBRARIES];	/*	items malloced	*/
+	OV_INT		            libcount;
+	OV_STRING				helper = NULL;						/*	malloced and freed locally or copied to other variable	*/
+	OV_STRING				execIdent = NULL;	/*	malloced	*/
+	OV_STRING				execClass = NULL;	/*	malloced	*/
+	OV_STRING				execLib = NULL;	/*	malloced	*/
+	OV_STRING				commandline_options = NULL;	/*	malloced	*/
+	OV_STRING				tempstr = NULL;	/*	malloced and freed locally or copied to other variable	*/
 	FILE*					cfFile	=	NULL;
-	OV_STRING	            password = NULL;
-	OV_STRING               libraries[MAX_STARTUP_LIBRARIES];
+	OV_UINT					line = 0;
+	OV_UINT					hlpindex = 0;
 	OV_BOOL					logfileSpecified = FALSE;
-	OV_STRING				commandline_options = NULL;
-	OV_STRING				tempstr = NULL;
 	OV_BOOL					exec = FALSE;
-	OV_STRING				execIdent = NULL;
-	OV_STRING				execClass = NULL;
-	OV_STRING				execLib = NULL;
 	OV_INSTPTR_ov_library   plib;
 	OV_INSTPTR_ov_domain    pdom;
 	OV_INT                  i;
-	OV_INT		            libcount;
 	OV_RESULT	            result;
 	OV_INT 		            port = 0; /* KS_ANYPORT */
 	OV_UINT					maxAllowedJitter = 0;
@@ -307,7 +307,17 @@ int main(int argc, char **argv) {
 		if(!strcmp(argv[i], "-f") || !strcmp(argv[i], "--file")) {
 			i++;
 			if(i<argc) {
-				filename = argv[i];
+				if(argv[i])
+				{
+					filename = malloc(strlen(argv[i])+1);
+					if(!filename)
+						return EXIT_FAILURE;
+					strcpy(filename, argv[i]);
+				}
+				else
+				{
+					goto HELP;
+				}
 			} else {
 				goto HELP;
 			}
@@ -329,7 +339,17 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-s") || !strcmp(argv[i], "--server-name")) {
 			i++;
 			if(i<argc) {
-				servername = argv[i];
+				if(argv[i])
+				{
+					servername = malloc(strlen(argv[i])+1);
+					if(!servername)
+						return EXIT_FAILURE;
+					strcpy(servername, argv[i]);
+				}
+				else
+				{
+					goto HELP;
+				}
 			} else {
 				goto HELP;
 			}
@@ -757,7 +777,17 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-i") || !strcmp(argv[i], "--identifiy")) {
 			i++;
 			if(i<argc) {
-				password = argv[i];
+				if(argv[i])
+				{
+					password = malloc(strlen(argv[i])+1);
+					if(!password)
+						return EXIT_FAILURE;
+					strcpy(password, argv[i]);
+				}
+				else
+				{
+					goto HELP;
+				}
 			} else {
 				goto HELP;
 			}
@@ -799,10 +829,20 @@ int main(int argc, char **argv) {
 		else if(!strcmp(argv[i], "-w") || !strcmp(argv[i], "--start-with")) {
 			i++;
 			if (libcount<MAX_STARTUP_LIBRARIES) {
-			        libraries[libcount] = argv[i];
-           			libcount++;
-                        }
-                        else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
+				if(argv[i])
+				{
+					libraries[libcount] = malloc(strlen(argv[i])+1);
+					if(!libraries[libcount])
+						return EXIT_FAILURE;
+					strcpy(libraries[libcount], argv[i]);
+					libcount++;
+				}
+				else
+				{
+					goto HELP;
+				}
+			}
+			else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
 		}
 		/*
 		*	exit immideately
@@ -827,7 +867,6 @@ int main(int argc, char **argv) {
 					ov_logfile_logtontlog(NULL);
 #endif
 				} else {
-					helper = argv[i];
 #if OV_SYSTEM_UNIX
 					if(!(argv[i][0]=='/'))
 #else
@@ -854,14 +893,28 @@ int main(int argc, char **argv) {
 								hlpindex++;
 						}
 						strcpy((helper+hlpindex), argv[i]);
-
 					}
+						else
+						{	/*	absolute path --> just copy	*/
+							if(argv[i])
+							{
+								helper = malloc(strlen(argv[i])+1);
+								if(!helper)
+									return EXIT_FAILURE;
+								strcpy(helper, argv[i]);
+							}
+							else
+							{
+								goto HELP;
+							}
+						}
 
 				}
 				if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
 						ov_logfile_error("Could not open log file: \"%s\".\n", argv[i]);
 						return EXIT_FAILURE;
 					}
+				free(helper);
 				}
 			} else {
 				goto HELP;
@@ -905,17 +958,31 @@ int main(int argc, char **argv) {
 			i++;
 			if(i<argc) {
 				if(*(argv[i])!='/')			//get Identifier
-					execIdent = argv[i];
-
+				{
+					execIdent = malloc(strlen(argv[i])+1);
+					if(!execIdent)
+						return EXIT_FAILURE;
+					strcpy(execIdent, argv[i]);
+				}
 				i++;
 				if(i<argc) {
 					if(*(argv[i])!='/')		//get Class
-						execClass = argv[i];
+					{
+						execClass = malloc(strlen(argv[i])+1);
+						if(!execClass)
+							return EXIT_FAILURE;
+						strcpy(execClass, argv[i]);
+					}
 
 					i++;
 					if(i<argc) {
 						if(*(argv[i])!='/')	//get Library
-							execLib = argv[i];
+						{
+							execLib = malloc(strlen(argv[i])+1);
+							if(!execLib)
+								return EXIT_FAILURE;
+							strcpy(execLib, argv[i]);
+						}
 
 					} else {
 						goto HELP;
@@ -1190,7 +1257,19 @@ ERRORMSG:
 
 	ov_logfile_info("Unmapping database \"%s\"...", filename);
 	ov_database_unmap();
+	free(filename);
 	ov_logfile_info("Database unmapped.");
+
+	free(servername);
+	free(commandline_options);
+	free(configBasePath);
+	free(password);
+	for(i=0; i < libcount; i++)
+		free(libraries[i]);
+	free(helper);
+	free(execIdent);
+	free(execClass);
+	free(execLib);
 
 	/*
 	*	close the logfile and return
