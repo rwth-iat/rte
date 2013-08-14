@@ -1707,24 +1707,24 @@ cshmi.prototype = {
 					//normal visual element
 					rotationObject = VisualObject;
 				}
-				var transformstring = "";
+				var TransformString = "";
 				if (ParameterValue === "rotate"){
 					if(!isNumeric(NewValue)){
 						//ignore writing wrong value
 						return false;
 					}
 					if(VisualObject.getAttribute("x") !== null){
-						transformstring = "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")";
+						TransformString = "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")";
 					}else if(VisualObject.getAttribute("cx") !== null){
-						transformstring = "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")";
+						TransformString = "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")";
 					}else{
-						tranformstring = "rotate("+NewValue+")";
+						TransformString = "rotate("+NewValue+")";
 					}
 				}else if (ParameterValue === "transform"){
 					//todo rotation is lost
-					tranformstring = NewValue;
+					TransformString = NewValue;
 				}
-				rotationObject.setAttribute("transform", transformstring);
+				rotationObject.setAttribute("transform", TransformString);
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
