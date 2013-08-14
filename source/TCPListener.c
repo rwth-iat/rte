@@ -183,6 +183,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	int fd = 0, n = 0;
 #define NFDS 2
 	int sockfds[NFDS]={-1,-1};
+	char opt_on = 1;
 	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
 	socklen_t sas = sizeof(sa_stor);
@@ -256,6 +257,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				}
 				else
 					KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
+
+				if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
+				{
+					KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
+					KS_logfile_print_sysMsg();
+				}
 
 				if (bind(fd, walk->ai_addr, walk->ai_addrlen))
 				{
@@ -333,6 +340,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				ks_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
+			}
+
+			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
+			{
+				KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
+				KS_logfile_print_sysMsg();
 			}
 
 			if (bind(fd, res->ai_addr, res->ai_addrlen))
