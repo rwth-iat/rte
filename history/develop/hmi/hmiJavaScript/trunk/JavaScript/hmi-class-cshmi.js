@@ -4170,7 +4170,13 @@ cshmi.prototype = {
 		cshmimodel.getEP = function(path, requestType, requestOutput) {
 			return HMI.KSClient.getEP(path, requestType, requestOutput);
 		};
-
+		cshmimodel.getVar = function(path, requestOutput){
+			return HMI.KSClient.getVar(path, requestOutput);
+		};
+		cshmimodel.setVar = function(path, value, type){
+			return HMI.KSClient.setVar(path, value, type);
+		};
+		
 		cshmimodel.createObject = function(path, classname) {
 			return HMI.KSClient.createObject(path, classname);
 		};
