@@ -575,6 +575,7 @@ int main(int argc, char **argv) {
 											hlpindex++;
 										}
 										strcpy(&(helper[hlpindex]), temp);
+										free(temp);
 										temp = helper;
 									}
 								}
@@ -1101,6 +1102,7 @@ HELP:	   ov_server_usage();
 				hlpindex++;
 			}
 			strcpy((helper+hlpindex), filename);
+			free(filename);
 			filename = helper;
 		}
 	}
@@ -1266,7 +1268,6 @@ ERRORMSG:
 	free(password);
 	for(i=0; i < libcount; i++)
 		free(libraries[i]);
-	free(helper);
 	free(execIdent);
 	free(execClass);
 	free(execLib);
