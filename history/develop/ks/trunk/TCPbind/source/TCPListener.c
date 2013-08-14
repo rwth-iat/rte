@@ -183,7 +183,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	int fd = 0, n = 0;
 #define NFDS 2
 	int sockfds[NFDS]={-1,-1};
+#if OV_SYSTEM_NT
 	char opt_on = 1;
+#else
+	int opt_on = 1;
+#endif
 	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
 	socklen_t sas = sizeof(sa_stor);
