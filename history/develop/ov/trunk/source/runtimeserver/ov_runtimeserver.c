@@ -149,7 +149,9 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_start(void) {
 
 OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
     OV_TIME_SPAN  *delay;
-    
+#if !OV_SYSTEM_NT
+    struct timespec sleepTime;
+#endif
 //ov_logfile_info("ov_ksserver_stripped_run");
 	while(ov_server_run==TRUE) {
 		 delay = ov_scheduler_schedulenextevent();
@@ -164,7 +166,9 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
         //}
 
 #if !OV_SYSTEM_NT
-	nanosleep(delay->secs, delay->usecs * 1000);
+		 sleepTime.tv_sec = delay->secs;
+		 sleepTime.tv_nsec = delay->usecs*1000;
+		 nanosleep(&sleepTime, NULL);
         // Not work on LINUX: select(0,  0,0,0,  &delay);
 #else
         if( (delay->secs == 0) && (delay->usecs == 0) ) {
