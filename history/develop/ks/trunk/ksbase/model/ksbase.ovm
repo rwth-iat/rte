@@ -61,7 +61,7 @@ LIBRARY ksbase
 
 ///////////////////// Accessing currently calling client components
 /* 
- * Hopefully some of these information is applicable to all clients
+ * Hopefully some of this information is applicable to all clients
  * this is an interface class, which is inherited e.g. by xdrClientlientHandler and httpClientHandler
  * user applications could cast to this class and access information for 
  * determining the currently calling client
@@ -131,10 +131,10 @@ LIBRARY ksbase
 			port []						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"list of addresses / ports corresponding to the protocols. List has to be of same length as protocols[]. Could be for example a tcp port or COM1";
 			timetolive				:	UINT		HAS_ACCESSORS						FLAGS	=	"i"
-				COMMENT			=	"time in which server has to do callback"
+				COMMENT			=	"time in seconds in which server has to reregister"
 				INITIALVALUE	=	0;
 			expirationtime			:	TIME		HAS_ACCESSORS						FLAGS	=	"i"
-				COMMENT			=	"time at which server has to do callback";
+				COMMENT			=	"time until which server has to do callback";
 			/* internals ***************************************************/
 			regtime					:	TIME	HAS_ACCESSORS							FLAGS =	"i"
 				COMMENT			=	"time the server registered at the manager";
@@ -180,7 +180,7 @@ LIBRARY ksbase
 			*/
 			identify		:	C_FUNCTION <KSBASE_FNC_IDENTIFY>;
 			/**
-			*	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
+			*	function to create the ClientHandler corresponding to the protocol. This is called after a successfull identification. The function has to create the ClientHandler
 			*	and Link it to the Channel calling it with AssocChannelClientHandler.
 			*/
 			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
@@ -221,7 +221,7 @@ LIBRARY ksbase
 				COMMENT	=	"Time (in seconds) to hold the connection after a receive operations."
 				INITIALVALUE	=	60;
 			UnusedDataTimeOut	:	UINT
-				COMMENT	=	"Time (in seconds) to keep unused data in outData. (Partialpackages or so that cannot be processed)"
+				COMMENT	=	"Time (in seconds) to keep unused data in inData. (Partialpackages or so that cannot be processed)"
 				INITIALVALUE	=	300;
 			END_VARIABLES;	
 		OPERATIONS
