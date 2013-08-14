@@ -503,10 +503,13 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
+				/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
+				 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
 				if(HMI.instanceOf(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
 					//we have an movegesture on the same VisualObject, so this will handle all action
 					return;
 				}
+				*/
 				
 				//"this" is here the event target object, so work on HMI.cshmi
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
@@ -767,13 +770,17 @@ cshmi.prototype = {
 		}
 		
 		//check if object is clickable and the movement is marginal
+		/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
+		 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
 		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
 			&& (Math.abs(this.ResourceList.EventInfos.startXObj - VisualObject.getAttribute("x")) < 5)
 			&& (Math.abs(this.ResourceList.EventInfos.startYObj - VisualObject.getAttribute("y")) < 5)){
+			//this code fires even if there is a children with a click
 			
 			//no movement detected, so interprete the click
 			var interpreteEvent = "click";
 		}
+		*/
 		
 		//restore old position
 		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
@@ -787,8 +794,8 @@ cshmi.prototype = {
 		
 		if (canceled === true){
 			//no action
-		}else if (interpreteEvent === "click"){
-			this._interpreteAction(VisualObject, VisualObject.getAttribute("data-clickpath"));
+//		}else if (interpreteEvent === "click"){
+			//this._interpreteAction(VisualObject, VisualObject.getAttribute("data-clickpath"));
 		}else{
 			//get and execute all actions
 			this._interpreteAction(VisualObject, ObjectPath);
