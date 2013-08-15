@@ -20,7 +20,7 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-
+#include "limits.h"
 #include "kshttp.h"
 #include "config.h"
 
@@ -265,6 +265,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_URI_set(
 	if(Ov_Fail(result)){
 		return result;
 	}
+	ov_string_setvalue(&thisCl->v_contentType, "");
+	ov_string_setvalue(&thisCl->v_messageBody, "");
+	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_httpStatusCode = 0;
+	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
 	return ov_string_setvalue(&thisCl->v_URI, value);
 }
 
@@ -277,12 +282,18 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_STRING password = NULL;
 	OV_STRING requestUri = NULL;
 
+	ov_string_setvalue(&thisCl->v_contentType, "");
+	ov_string_setvalue(&thisCl->v_messageBody, "");
+	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_httpStatusCode = 0;
+	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
+
 	result = kshttp_decodeURI(&thisCl->v_URI, &thisCl->v_serverHost, &thisCl->v_serverPort, &username, &password, &requestUri);
 	if(Ov_Fail(result)){
 		return result;
 	}
 
-	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
+	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, username, password, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
 }
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
@@ -304,18 +315,20 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 			ov_string_match(thisCl->v_contentType, "*+xml*") == TRUE ||	//includes image/svg+xml
 			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
-		if(thisCl->v_ServerResponse.contentLength != 0){
+		if(thisCl->v_ServerResponse.transferEncodingChunked == TRUE){
+			kshttp_decodeTransferEncodingChunked((OV_STRING*)&thisCl->v_ServerResponse.messageBodyPtr, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, INT_MAX);
+		}else if(thisCl->v_ServerResponse.contentLength != 0){
 			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
 			if(!thisCl->v_messageBody){
 				//database too small
 				thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
 
 				//this memory is from the ksdatapackage!
-				thisCl->v_ServerResponse.messageBody = NULL;
+				thisCl->v_ServerResponse.messageBodyPtr = NULL;
 				pVtblChannel->m_CloseConnection(pChannel);
 				return;
 			}
-			memcpy(thisCl->v_messageBody, thisCl->v_ServerResponse.messageBody, thisCl->v_ServerResponse.contentLength);
+			memcpy(thisCl->v_messageBody, thisCl->v_ServerResponse.messageBodyPtr, thisCl->v_ServerResponse.contentLength);
 			thisCl->v_messageBody[thisCl->v_ServerResponse.contentLength] = '\0';
 		}
 	}else{
@@ -323,7 +336,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	}
 
 	//this memory is from the ksdatapackage!
-	thisCl->v_ServerResponse.messageBody = NULL;
+	thisCl->v_ServerResponse.messageBodyPtr = NULL;
 	pVtblChannel->m_CloseConnection(pChannel);
 
 	return;

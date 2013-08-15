@@ -199,8 +199,10 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,
 		OV_STRING host,
 		OV_STRING port,
+		OV_STRING username,
+		OV_STRING password,
 		OV_STRING requestUri,
-		OV_UINT messageBodyLength,
+		OV_UINT contentLength,
 		OV_STRING messageBody,
 		const OV_INSTPTR_kshttp_httpClientBase thisCl,
 		const OV_INSTPTR_ov_domain	callbackThat,
@@ -213,3 +215,4 @@ OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ks
 OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port);
 OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
 OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);
+OV_RESULT kshttp_decodeTransferEncodingChunked(OV_STRING *responseString, OV_STRING *entityBody, OV_UINT *contentLength, OV_UINT maxlength);
