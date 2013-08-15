@@ -23,12 +23,14 @@
 #include "ksxdr.h"
 #include "libov/ov_macros.h"
 #include "KSDATAPACKET_xdrhandling.h"
+#include "NoneTicketAuthenticator.h"
 
 /*
  * global pointer (within this file) to the authenticator itself (this implies no problem since the authenticator is a sigleton)
  * it is needed for the ticket functions to find necessary data
  */
 static OV_INSTPTR_ksxdr_xdrSimpleTicketAuthenticator SimpleAuth = NULL;
+
 
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrSimpleTicketAuthenticator_constructor(
@@ -52,7 +54,12 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrSimpleTicketAuthenticator_constructor(
 
 	this->v_TicketType = OV_TT_SIMPLE;
 	this->v_access = OV_AC_NONE;
-
+	this->v_TicketAccess = (OV_AC_READWRITE
+							| OV_AC_DELETEABLE
+							| OV_AC_INSTANTIABLE
+							| OV_AC_LINKABLE
+							| OV_AC_RENAMEABLE
+							| OV_AC_UNLINKABLE);
 	return OV_ERR_OK;
 }
 
@@ -157,16 +164,15 @@ OV_DLLFNCEXPORT OV_ACCESS ksxdr_xdrSimpleTicketAuthenticator_TicketGetaccess(
 			/*
 			 *	only grant read access to anyone who does not have the serverpassword
 			 */
-			if(!strcmp(pticket->ticketunion.simpleticket.id, pdb->serverpassword)) {
-				localaccess = OV_AC_READWRITE | OV_AC_INSTANTIABLE
-						| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
-						| OV_AC_UNLINKABLE;
+			if(ov_string_compare(pticket->ticketunion.simpleticket.id, pdb->serverpassword) == OV_STRCMP_EQUAL) {
+				if(SimpleAuth)
+					localaccess = SimpleAuth->v_TicketAccess;	/*	grant acces configured for simple ticket	*/
+				else
+					localaccess = OV_AC_READWRITE | OV_AC_INSTANTIABLE;	/*	grant enough access to ctreate a SimpleTicketAuthenticator (or mess with the rights)	*/
 			}
 		}
 	}
-	else localaccess = OV_AC_READWRITE | OV_AC_INSTANTIABLE
-			| OV_AC_DELETEABLE | OV_AC_RENAMEABLE | OV_AC_LINKABLE
-			| OV_AC_UNLINKABLE;
+	else localaccess = ksbase_NoneAuth->v_TicketAccess;
 	if(SimpleAuth)
 		SimpleAuth->v_access = localaccess;
 

@@ -115,17 +115,15 @@ OV_RESULT ov_library_setglobalvars_ksxdr_new(void) {
 	}
 
 	pSimpleAuthenticator = Ov_StaticPtrCast(ksxdr_xdrSimpleTicketAuthenticator, Ov_SearchChild(ov_containment, pDomTicketAuths, "xdrSimpleTicket"));
-	if(pSimpleAuthenticator)
-		Ov_DeleteObject(pSimpleAuthenticator);
-	pSimpleAuthenticator = NULL;
-
-	result = Ov_CreateObject(ksxdr_xdrSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "xdrSimpleTicket");
-	if(Ov_Fail(result))
+	if(!pSimpleAuthenticator)
 	{
-		ov_logfile_error("Fatal: could not create SimpleTicketAuthenticator object");
-		return result;
+		result = Ov_CreateObject(ksxdr_xdrSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "xdrSimpleTicket");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create SimpleTicketAuthenticator object");
+			return result;
+		}
 	}
-
 	KS_logfile_debug(("ksxdr_open: creating ManagerCom"));
 	/*	create xdrManagerCom object to register Server at the Manager (if wanted)	*/
 	xdrMngCom = Ov_SearchChildEx(ov_containment, pDomksxdr, "ManagerCom", ksxdr_xdrManagerCom);
