@@ -40,6 +40,7 @@
 #endif
 
 #include "config.h"
+#include "base64_encode.h"
 
 /*******************************************************************************************************************************************************************************
  * 				Channel-handling
@@ -180,6 +181,8 @@ OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Cha
  * @param method GET, POST, ... (defaults to GET)
  * @param host Hostname or IP to communicate
  * @param port TCP Portnumber (defaults to 80)
+ * @param username
+ * @param password
  * @param requestUri URI to
  * @param messageBodyLength The length of the message-body (for POST)
  * @param messageBody the message-body (for POST)
@@ -192,6 +195,8 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,
 		OV_STRING host,
 		OV_STRING port,
+		OV_STRING username,
+		OV_STRING password,
 		OV_STRING requestUri,
 		OV_UINT contentLength,
 		OV_STRING messageBody,
@@ -203,9 +208,14 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	OV_RESULT result;
 	OV_STRING RequestLine = NULL;
 	OV_STRING RequestAdditionalHeaders = NULL;
+	OV_STRING AuthorizationLine = NULL;
 	OV_STRING RequestHeaders = NULL;
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
+	base64_encodestate state;
+	OV_UINT n = 0, length;
+	OV_STRING out = NULL;
+	int rc = 0;
 
 	if(!method){
 		ov_string_setvalue(&method, "GET");
@@ -244,9 +254,31 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	}
 
 	ov_string_print(&RequestLine, "%s %s HTTP/1.1", method, requestUri);
-	ov_string_print(&RequestAdditionalHeaders, "Host:%s\r\nConnection: close\r\nUser-Agent: ACPLT/OV HTTP Client %s (compiled %s %s)\r\n", host, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
+	if(ov_string_compare(port, "80") == OV_STRCMP_EQUAL){
+		ov_string_print(&RequestAdditionalHeaders, "Host:%s\r\n", host);
+	}else{
+		ov_string_print(&RequestAdditionalHeaders, "Host:%s:%s\r\n", host, port);
+	}
+	ov_string_print(&RequestAdditionalHeaders, "%sConnection: close\r\nUser-Agent: ACPLT/OV HTTP Client %s (compiled %s %s)\r\n", RequestAdditionalHeaders, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
 	if(contentLength != 0 && messageBody){
 		ov_string_print(&RequestAdditionalHeaders, "%sContent-Length: %u\r\n", RequestAdditionalHeaders, contentLength);
+	}
+	if(ov_string_compare(username, NULL) != OV_STRCMP_EQUAL && ov_string_compare(password, NULL) != OV_STRCMP_EQUAL){
+		//concat username and password
+		ov_string_print(&AuthorizationLine, "%s:%s", username, password);
+
+		base64_init_encodestate(&state);
+		n = ov_string_getlength(AuthorizationLine);
+		length = 8 + ((n * 5) / 3) + (n / 72); /* bytes * 4/3 + bytes/72 + 4 rounding errors + 2*trailing '=' + trailing \n + trailing \0 */
+		out = ov_malloc((length+1) * sizeof(char));
+
+		rc = base64_encode_block(AuthorizationLine, n, out, &state);
+		rc += base64_encode_blockend(out + rc, &state);
+		out[rc-1] = '\0';
+
+		ov_string_print(&AuthorizationLine, "Authorization: Basic %s\r\n", out);
+		ov_string_append(&RequestAdditionalHeaders, AuthorizationLine);
+		ov_free(out);
 	}
 	ov_string_print(&RequestHeaders, "%s\r\n%s\r\n", RequestLine, RequestAdditionalHeaders);
 
@@ -308,7 +340,7 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 	return OV_ERR_OK;
 }
 
-/*
+/**
  * This function checks if the input buffer holds a complete request
  */
 OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
@@ -347,6 +379,7 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 	responseStruct->statusCode = atoi(plist[1]);
 
 	//check all other headers
+	responseStruct->transferEncodingChunked = FALSE;
 	for (i=1; i<allheaderscount; i++){
 		if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
 			ov_string_freelist(plist);
@@ -360,20 +393,111 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 			if(len > 0){
 				ov_string_setvalue(&(responseStruct->contentType), plist[1]);
 			}
+		}else if(ov_string_match(pallheaderslist[i], "Transfer-Encoding:*") == TRUE){
+			if(ov_string_compare(pallheaderslist[i], "Transfer-Encoding: chunked") == OV_STRCMP_EQUAL){
+				//the server does not know how much data he will send
+				responseStruct->transferEncodingChunked = TRUE;
+				responseStruct->contentLength = 0;
+			}
 		}
 	}
-	if (dataReceived->length >= beginOfContent + responseStruct->contentLength){
-		//save pointer to the content
-		responseStruct->messageBody = dataReceived->data + beginOfContent;
+	ov_string_freelist(pallheaderslist);
+	ov_string_freelist(plist);
+
+	//save pointer to the content
+	responseStruct->messageBodyPtr = dataReceived->data + beginOfContent;
+
+	//check if we have all http content
+	if(dataReceived->length >= beginOfContent + responseStruct->contentLength && responseStruct->transferEncodingChunked == FALSE){
+		//everything was received
+
+	}else if(responseStruct->transferEncodingChunked == TRUE){
+		//we have to check if this message is complete by looking into it 8-/
+		//only check if all is received, so "save" into an NULL pointer
+		return kshttp_decodeTransferEncodingChunked((OV_STRING*)&responseStruct->messageBodyPtr, NULL, &responseStruct->contentLength, dataReceived->length);
+		/*
+		OV_STRING readPointer = (OV_STRING)dataReceived->data + beginOfContent;
+		OV_STRING entityBody = NULL;
+		OV_UINT length = beginOfContent;
+		OV_UINT chunkSize = 0;
+		responseStruct->contentLength = 0;
+
+		ov_string_setvalue(&entityBody, "");
+
+		//get the length of the first chunk and move the pointer after the length
+		chunkSize = strtoul(readPointer, &readPointer, 16);
+		while (chunkSize > 0){
+			length += chunkSize + 4; // a chunk is wrapped in \r\n
+
+			if(length > dataReceived->length){
+				//we do not have all data till now
+				return OV_ERR_TARGETGENERIC;
+			}
+			//we need the next line
+			readPointer = readPointer+2;
+
+			//shorten string (overwrite the \r of the wrapping \r\n)
+			readPointer[chunkSize] = '\0';
+			ov_string_append(&entityBody, readPointer);
+			responseStruct->contentLength +=chunkSize;
+
+			//move to the end of the chunk and the newline
+			readPointer = readPointer+chunkSize+2;
+
+			//get the length of the new chunk and move the pointer after the length
+			chunkSize = strtoul(readPointer, &readPointer, 16);
+		}
+		ov_string_setvalue(&entityBody, NULL);
+*/
 	}else{
 		//we do not have all data till now
-		ov_string_freelist(pallheaderslist);
-		ov_string_freelist(plist);
 		return OV_ERR_TARGETGENERIC;
 	}
 
-	ov_string_freelist(pallheaderslist);
-	ov_string_freelist(plist);
 	return OV_ERR_OK;
+}
 
+//todo move to a clienthttp library?
+/**
+ * decodes
+ * @param responseStruct
+ * @param decodedMessageBody
+ * @return
+ */
+OV_RESULT kshttp_decodeTransferEncodingChunked(OV_STRING *responseString, OV_STRING *entityBody, OV_UINT *contentLength, OV_UINT maxlength){
+	OV_UINT length = 0;
+	OV_UINT chunkSize = 0;
+	OV_STRING readPointer = *responseString;
+	*contentLength = 0;
+
+	if(!*responseString){
+		return OV_ERR_BADPARAM;
+	}
+	ov_string_setvalue(entityBody, "");
+
+	//get the length of the first chunk and move the pointer after the length
+	chunkSize = strtoul(readPointer, &readPointer, 16);
+	while (chunkSize > 0){
+		length += chunkSize + 4; // a chunk is wrapped in \r\n
+
+		if(length > maxlength){
+			//we do not have all data till now
+			return OV_ERR_TARGETGENERIC;
+		}
+		//we need the next line
+		readPointer = readPointer+2;
+
+		//shorten string (overwrite the \r of the wrapping \r\n)
+		readPointer[chunkSize] = '\0';
+		ov_string_append(entityBody, readPointer);
+		*contentLength +=chunkSize;
+
+		//move to the end of the chunk and the newline
+		readPointer = readPointer+chunkSize+2;
+
+		//get the length of the new chunk and move the pointer after the length
+		chunkSize = strtoul(readPointer, &readPointer, 16);
+	}
+
+	return OV_ERR_OK;
 }

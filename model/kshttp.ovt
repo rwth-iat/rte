@@ -27,6 +27,7 @@ typedef struct
 	OV_INT statusCode;
 	OV_UINT contentLength;
 	OV_STRING contentType;
+	OV_BOOL transferEncodingChunked;
 	OV_UINT responseFormat;
-	OV_BYTE* messageBody;
+	OV_BYTE* messageBodyPtr;
 } KSHTTP_RESPONSE;
