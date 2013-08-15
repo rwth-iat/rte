@@ -136,16 +136,13 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 	}
 
 	pSimpleAuthenticator = Ov_StaticPtrCast(kshttp_httpSimpleTicketAuthenticator, Ov_SearchChild(ov_containment, pDomTicketAuths, "httpSimpleTicket"));
-	if(pSimpleAuthenticator){
-		Ov_DeleteObject(pSimpleAuthenticator);
-	}
-	pSimpleAuthenticator = NULL;
-
-	result = Ov_CreateObject(kshttp_httpSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "httpSimpleTicket");
-	if(Ov_Fail(result))
-	{
-		ov_logfile_error("Fatal: could not create SimpleTicketAuthenticator object");
-		return result;
+	if(!pSimpleAuthenticator){
+		result = Ov_CreateObject(kshttp_httpSimpleTicketAuthenticator, pSimpleAuthenticator, pDomTicketAuths, "httpSimpleTicket");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create SimpleTicketAuthenticator object");
+			return result;
+		}
 	}
 
 	KS_logfile_debug(("kshttp_open: creating ManagerCom"));
