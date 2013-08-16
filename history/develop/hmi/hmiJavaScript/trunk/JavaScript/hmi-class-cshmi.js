@@ -1560,7 +1560,7 @@ cshmi.prototype = {
 			TranslationSourcePath = this.ResourceList.Actions[ObjectPath].TranslationSourcePath;
 		}
 		if (TranslationSourcePath === undefined){
-			//fixme remove me if available in all turbos
+			//todo remove me if available in all turbos
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
 			XXrequestList[ObjectPath]["translationSource"] = null;
@@ -2939,9 +2939,6 @@ cshmi.prototype = {
 				prefix = FBRef.slice(0, slashIndexAfterServer);
 			}
 			
-			var Source;
-			var Target;
-			
 			if(SourceBasename.charAt(0) === "/" && SourceBasename.charAt(1) !== "/"){
 				//Basename has no prefix (perhaps from an association)
 				SourceBasename = prefix + SourceBasename;
@@ -2952,24 +2949,27 @@ cshmi.prototype = {
 			}
 			
 			if (SourceBasename === ""){
-				Source = "";
+				var SourceName = "";
 			}else if (SourceVariablename !== ""){
 				//in the svg DOM separators is always /, since it is named via ConfigValue "Name"
-				Source = SourceBasename + "/" + SourceVariablename;
+				SourceName = SourceBasename + "/" + SourceVariablename;
 			}else{
-				Source = SourceBasename;
+				SourceName = SourceBasename;
 			}
 			if (TargetBasename === ""){
-				Target = "";
+				var TargetName = "";
 			}else if (TargetVariablename !== ""){
 				//in the svg separators is always /, since it is named via ConfigValue "Name"
-				Target = TargetBasename + "/" + TargetVariablename;
+				TargetName = TargetBasename + "/" + TargetVariablename;
 			}else{
-				Target = TargetBasename;
+				TargetName = TargetBasename;
 			}
-			if(Source === ""){
+			var Source;
+			var Target;
+			
+			if(SourceName === ""){
 				//skip
-			}else if (null !== (Source = HMI.svgDocument.getElementById(Source))){
+			}else if (null !== (Source = HMI.svgDocument.getElementById(SourceName))){
 				//todo doku moeglichkeit zur direkten SourceConnectionPoint angabe (inkl richtung und default)
 				
 				if (Source.tagName === "circle"){
@@ -3025,9 +3025,9 @@ cshmi.prototype = {
 				}
 			}
 			
-			if(Target === ""){
+			if(TargetName === ""){
 				//skip
-			}else if (null !== (Target = HMI.svgDocument.getElementById(Target))){
+			}else if (null !== (Target = HMI.svgDocument.getElementById(TargetName))){
 				if (Target.tagName === "circle"){
 					TargetConnectionPoint = Target;
 				}else{
@@ -3081,39 +3081,44 @@ cshmi.prototype = {
 			}
 			
 			//Basename should be the real basename. This could be changed if there is a / in the variablename
-			var PathArray = SourceBasename.split("/");
+			var PathArray = SourceName.split("/");
 			PathArray.pop();
 			SourceBasename = PathArray.join("/");
-			PathArray = TargetBasename.split("/");
+			PathArray = TargetName.split("/");
 			PathArray.pop();
 			TargetBasename = PathArray.join("/");
+			PathArray = null;
 			
-			//get connection offset
-			if (SourceBasename === ""){
+			var SourceBase = HMI.svgDocument.getElementById(SourceBasename);
+			var TargetBase = HMI.svgDocument.getElementById(TargetBasename);
+			
+			//get connection offsets
+			if (SourceBase === null){
 				//skip
-			}else if (this.ResourceList.Actions["Connection_from_" + SourceBasename] !== undefined){
+			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined){
 				//there is already an incomming connection for this Object
-				this.ResourceList.Actions["Connection_from_" + SourceBasename].count += 1;
-				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * parseFloat(requestList[ObjectPath]["gridWidth"]);
+				SourceBase.ResourceList.ConnectionFromCount += 1;
+				OffsetSource = SourceBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{
-				//fixme must be somehow resetted a rebuildobject
-				
-				//1st incomming connection for this Object
-				this.ResourceList.Actions["Connection_from_" + SourceBasename] = new Object();
-				this.ResourceList.Actions["Connection_from_" + SourceBasename].count = 0;
+				//remember the result
+				if (SourceBase.ResourceList === undefined){
+					SourceBase.ResourceList = new Object();
+				}
+				SourceBase.ResourceList.ConnectionFromCount = 0;
 				OffsetSource = 0;
 			}
-			
-			if (TargetBasename === ""){
+			if (TargetBase === null){
 				//skip
-			}else if (this.ResourceList.Actions["Connection_to_" + TargetBasename] !== undefined){
-				//there is already an outgoing connection for this Object
-				this.ResourceList.Actions["Connection_to_" + TargetBasename].count += 1;
-				OffsetTarget = this.ResourceList.Actions["Connection_to_" + TargetBasename].count * parseFloat(requestList[ObjectPath]["gridWidth"]);
+			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined){
+				//there is already an incomming connection for this Object
+				TargetBase.ResourceList.ConnectionFromCount += 1;
+				OffsetTarget = TargetBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{
-				//1st outgoing connection for this Object
-				this.ResourceList.Actions["Connection_to_" + TargetBasename] = new Object();
-				this.ResourceList.Actions["Connection_to_" + TargetBasename].count = 0;
+				//remember the result
+				if (TargetBase.ResourceList === undefined){
+					TargetBase.ResourceList = new Object();
+				}
+				TargetBase.ResourceList.ConnectionFromCount = 0;
 				OffsetTarget = 0;
 			}
 			
