@@ -505,11 +505,11 @@ cshmi.prototype = {
 			VisualObject.addEventListener("click", function(evt){
 				/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
 				 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
-				if(HMI.instanceOf(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
-					//we have an movegesture on the same VisualObject, so this will handle all action
+				 */
+				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
+					//we have an movegesture on the VisualObject or a parent, so this will handle all action
 					return;
 				}
-				*/
 				
 				//"this" is here the event target object, so work on HMI.cshmi
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
@@ -772,15 +772,17 @@ cshmi.prototype = {
 		//check if object is clickable and the movement is marginal
 		/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
 		 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
-		if(HMI.instanceOf(VisualObject, this.cshmiOperatorClickClass)
-			&& (Math.abs(this.ResourceList.EventInfos.startXObj - VisualObject.getAttribute("x")) < 5)
+		 */
+		if((Math.abs(this.ResourceList.EventInfos.startXObj - VisualObject.getAttribute("x")) < 5)
 			&& (Math.abs(this.ResourceList.EventInfos.startYObj - VisualObject.getAttribute("y")) < 5)){
-			//this code fires even if there is a children with a click
 			
-			//no movement detected, so interprete the click
-			var interpreteEvent = "click";
+			//no movement detected, so interprete the click on the right Target
+			//search the firstchild which has a click event
+			var ClickTarget = HMI.getComponent(evt, this.cshmiOperatorClickClass);
+			if(ClickTarget !== null){
+				var interpreteEvent = "click";
+			}
 		}
-		*/
 		
 		//restore old position
 		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
@@ -794,8 +796,8 @@ cshmi.prototype = {
 		
 		if (canceled === true){
 			//no action
-//		}else if (interpreteEvent === "click"){
-			//this._interpreteAction(VisualObject, VisualObject.getAttribute("data-clickpath"));
+		}else if (interpreteEvent === "click"){
+			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"));
 		}else{
 			//get and execute all actions
 			this._interpreteAction(VisualObject, ObjectPath);
@@ -2952,7 +2954,7 @@ cshmi.prototype = {
 			if (SourceBasename === ""){
 				Source = "";
 			}else if (SourceVariablename !== ""){
-				//in the svg separators is always /, since it is named via ConfigValue "Name"
+				//in the svg DOM separators is always /, since it is named via ConfigValue "Name"
 				Source = SourceBasename + "/" + SourceVariablename;
 			}else{
 				Source = SourceBasename;
@@ -2970,8 +2972,6 @@ cshmi.prototype = {
 			}else if (null !== (Source = HMI.svgDocument.getElementById(Source))){
 				//todo doku moeglichkeit zur direkten SourceConnectionPoint angabe (inkl richtung und default)
 				
-				
-				//fixme multiple visualisations of the same object are not found correctly! could be the case in the tree and the cfcview
 				if (Source.tagName === "circle"){
 					SourceConnectionPoint = Source;
 				}else{
@@ -3080,6 +3080,14 @@ cshmi.prototype = {
 				}
 			}
 			
+			//Basename should be the real basename. This could be changed if there is a / in the variablename
+			var PathArray = SourceBasename.split("/");
+			PathArray.pop();
+			SourceBasename = PathArray.join("/");
+			PathArray = TargetBasename.split("/");
+			PathArray.pop();
+			TargetBasename = PathArray.join("/");
+			
 			//get connection offset
 			if (SourceBasename === ""){
 				//skip
@@ -3087,7 +3095,9 @@ cshmi.prototype = {
 				//there is already an incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename].count += 1;
 				OffsetSource = this.ResourceList.Actions["Connection_from_" + SourceBasename].count * parseFloat(requestList[ObjectPath]["gridWidth"]);
-			}else{ 
+			}else{
+				//fixme must be somehow resetted a rebuildobject
+				
 				//1st incomming connection for this Object
 				this.ResourceList.Actions["Connection_from_" + SourceBasename] = new Object();
 				this.ResourceList.Actions["Connection_from_" + SourceBasename].count = 0;
@@ -3652,8 +3662,7 @@ cshmi.prototype = {
 		}
 		
 		//id should be the name of the parent plus our identifier
-		var NameList = PathOfTemplateDefinition.split("/");
-		//fixme should be the name of the template, not the definition
+		var NameList = ObjectPath.split("/");
 		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
 		NameList = null;
 		
@@ -3843,7 +3852,7 @@ cshmi.prototype = {
 			//xy is set already, prevent resetting to wrong value
 			delete requestList[ObjectPath]["x"];
 			delete requestList[ObjectPath]["y"];
-		}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined){
+		}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
 			//the offsetCount must be global for all InstantiateTemplate below an iterator
 			var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
 			//the next InstantiateTemplate should go to an other position
@@ -5128,36 +5137,36 @@ cshmi.prototype = {
 		}else{
 			VisualObject.setAttribute("display", "block");
 		}
-		if(configArray["x"] && configArray["y"]){
+		if(configArray["x"] !== undefined && configArray["y"] !== undefined){
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
 			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.tagName === "svg" && VisualObject.parentNode && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.id === ""){
 				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			}
-		}else if (configArray["rotate"] && configArray["rotate"] !== "0"){
+		}else if(configArray["rotate"] !== undefined && configArray["rotate"] !== "0"){
 			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
 		}
-		if(configArray["width"] && configArray["width"] !== ""){
+		if(configArray["width"] !== undefined && configArray["width"] !== ""){
 			VisualObject.setAttribute("width", configArray["width"]);
 		}
-		if(configArray["height"] && configArray["height"] !== ""){
+		if(configArray["height"] !== undefined && configArray["height"] !== ""){
 			VisualObject.setAttribute("height", configArray["height"]);
 		}
-		if(configArray["stroke"] && configArray["stroke"] !== ""){
+		if(configArray["stroke"] !== undefined && configArray["stroke"] !== ""){
 			VisualObject.setAttribute("stroke", configArray["stroke"]);
 		}
-		if(configArray["strokeWidth"] && configArray["strokeWidth"] !== ""){
+		if(configArray["strokeWidth"] !== undefined && configArray["strokeWidth"] !== ""){
 			VisualObject.setAttribute("stroke-width", configArray["strokeWidth"]);
 		}
-		if(configArray["fill"] && configArray["fill"] !== ""){
+		if(configArray["fill"] !== undefined && configArray["fill"] !== ""){
 			VisualObject.setAttribute("fill", configArray["fill"]);
 			if (configArray["fill"].indexOf("url(") !== -1){
 				//opera has a Bug in May 2012 (v11+v12 beta), so the pointer-event is not correct in this case (buttons from processcontrol)
 				VisualObject.setAttribute('pointer-events', 'visible');
 			}
 		}
-		if(configArray["opacity"] && configArray["opacity"] !== ""){
+		if(configArray["opacity"] !== undefined && configArray["opacity"] !== ""){
 			VisualObject.setAttribute("opacity", configArray["opacity"]);
 		}
 		return true;

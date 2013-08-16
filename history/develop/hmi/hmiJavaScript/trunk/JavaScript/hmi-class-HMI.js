@@ -1302,7 +1302,7 @@ HMI.prototype = {
 	*********************************/
 	getComponent: function (evt, cssclass) {
 		//This event could be called from native IE < 9, so evt.target is not available
-		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+(evt.target ? evt.target.id : evt.srcElement.id));
+		this.hmi_log_trace("HMI.prototype.getComponent - Start - Target:"+(evt.target ? evt.target.id : evt.srcElement?evt.srcElement.id:" no event"));
 		
 		var Component = null;
 		
@@ -1312,6 +1312,9 @@ HMI.prototype = {
 		}else if(evt.srcElement){
 			//native IE code
 			Component = evt.srcElement;
+		}else{
+			//if called direct with an SVG Object
+			Component = evt;
 		}
 		while (	Component !== null
 				&&	Component !== HMI.svgDocument
