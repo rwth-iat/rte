@@ -84,6 +84,7 @@ OV_DLLFNCEXPORT OV_UINT ov_string_getlength(
 
 /**
 *	Append a string to an existing one
+*	appending a NULL pointer results in a OV_ERR_BADPARAM
 */
 OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 	OV_STRING			*pstring,
@@ -102,6 +103,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_print(
 
 /**
 *	Test if a string matches a regular expression
+*	? is an arbitrary character
+*	* is an arbitrary amount of any characters
 */
 OV_DLLFNCEXPORT OV_BOOL ov_string_match(
 	const OV_STRING		string,
@@ -146,6 +149,10 @@ int ov_string_match_joker(
 
 /**
 *	Split a string.
+*	ov_string_split("a;b;c",";",&len) => len is 3
+*	ov_string_split(";",";",&len) => len is 2
+*	ov_string_split("a",";",&len) => len is 1
+*	ov_string_split(NULL,";",&len) => len is 0
 *	---------------
 *	OV_STRING *plist;
 *	OV_UINT    i,len;
@@ -161,6 +168,11 @@ OV_DLLFNCEXPORT OV_STRING *ov_string_split(
 	const OV_STRING		sep,
 	OV_UINT             *len
 );
+
+/**
+ * frees a list
+ * checks for a NULL pointer, but does not prevent double freeing
+ */
 OV_DLLFNCEXPORT void ov_string_freelist(
 	OV_STRING *plist
 );

@@ -74,14 +74,14 @@
 	+(0*((pparent)->__classinfo.OV_PCI_##assoc))))->plast):(NULL)):(NULL)))
 
 /**
-*	Get next child in a 1:n association or NULL
+*	Get next child (in relation to pchild) in a 1:n association or NULL
 */
 #define Ov_GetNextChild(assoc, pchild)										\
 	((OV_CPT_##assoc)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
 	+(0*((pchild)->__classinfo.OV_CCI_##assoc))))->pnext):(NULL)):(NULL)))
 
 /**
-*	Get previous child a 1:n association or NULL
+*	Get previous child (in relation to pchild) a 1:n association or NULL
 */
 #define Ov_GetPreviousChild(assoc, pchild)									\
 	((OV_CPT_##assoc)((pchild)?(((pchild)->v_linktable)?(((OV_ANCHOR*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \

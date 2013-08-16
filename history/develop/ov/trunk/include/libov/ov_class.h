@@ -158,16 +158,18 @@ OV_BOOL ov_class_canunload(
 	OV_INSTPTR_ov_class		pclass
 );
 
-/*
+/**
 *	Test if a pointer to an instance of a class can be casted to another one
+*	if you want to test the object itself you can use the macro Ov_CanCastTo
 */
 OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	const OV_INSTPTR_ov_class	pclassfrom,
 	const OV_INSTPTR_ov_class	pclassto
 );
 	
-/*
+/**
 *	Create an instance of the class
+*	if the class is known to the library and you want default placing you could use the macro Ov_CreateObject
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	const OV_INSTPTR_ov_class	pclass,
