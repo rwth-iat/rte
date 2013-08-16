@@ -201,6 +201,7 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING port,
 		OV_STRING username,
 		OV_STRING password,
+		OV_BOOL usernameProvided,
 		OV_STRING requestUri,
 		OV_UINT contentLength,
 		OV_STRING messageBody,

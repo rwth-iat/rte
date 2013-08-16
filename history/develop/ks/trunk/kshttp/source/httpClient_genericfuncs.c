@@ -183,6 +183,7 @@ OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Cha
  * @param port TCP Portnumber (defaults to 80)
  * @param username
  * @param password
+ * @param usernameProvided force sending an auth header even if username and/or password is empty
  * @param requestUri URI to
  * @param messageBodyLength The length of the message-body (for POST)
  * @param messageBody the message-body (for POST)
@@ -197,6 +198,7 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING port,
 		OV_STRING username,
 		OV_STRING password,
+		OV_BOOL usernameProvided,
 		OV_STRING requestUri,
 		OV_UINT contentLength,
 		OV_STRING messageBody,
@@ -263,9 +265,14 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	if(contentLength != 0 && messageBody){
 		ov_string_print(&RequestAdditionalHeaders, "%sContent-Length: %u\r\n", RequestAdditionalHeaders, contentLength);
 	}
-	if(ov_string_compare(username, NULL) != OV_STRCMP_EQUAL && ov_string_compare(password, NULL) != OV_STRCMP_EQUAL){
-		//concat username and password
-		ov_string_print(&AuthorizationLine, "%s:%s", username, password);
+	if(ov_string_compare(username, NULL) != OV_STRCMP_EQUAL || ov_string_compare(password, NULL) != OV_STRCMP_EQUAL || usernameProvided){
+		//concat username and password, both are valid to be NULL
+		if(username == NULL){
+			ov_string_setvalue(&AuthorizationLine, ":");
+		}else{
+			ov_string_print(&AuthorizationLine, "%s:", username);
+		}
+		ov_string_append(&AuthorizationLine, password);
 
 		base64_init_encodestate(&state);
 		n = ov_string_getlength(AuthorizationLine);
