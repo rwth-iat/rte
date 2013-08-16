@@ -64,7 +64,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestRegister(
 
 	/*	generate Header	*/
 	ov_string_print(&requestUri, "/register?name=%s&port=%u&version=2", servername, port);
-	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
+	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, FALSE, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
 
@@ -119,7 +119,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 
 	/*	generate Header	*/
 	ov_string_print(&requestUri, "/unregister?server=%s&version=2", servername);
-	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
+	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, FALSE, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
 

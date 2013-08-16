@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_constructor(
  * @param requestUri
  * @return
  */
-OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *port, OV_STRING *username, OV_STRING *password, OV_STRING *requestUri){
+OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *port, OV_STRING *username, OV_STRING *password, OV_STRING *requestUri, OV_BOOL *usernameProvided){
 	OV_UINT offset = 0;
 	OV_UINT lastoffset = 0;
 	OV_UINT URIlength = 0;
@@ -151,16 +151,20 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 			lastoffset = offset+1;
 			break;
 		case '@':
-			if(state != DECODESTATE_USER_OR_SERVER){
+			if(state != DECODESTATE_USER_OR_SERVER && state != DECODESTATE_INIT){
 				state = DECODESTATE_ERROR;
 				break;
 			}
-			//usernamesupplied = TRUE;
 			thislength = offset-lastoffset;
-			strPassword = (OV_STRING)ov_database_malloc(thislength +1);
-			memcpy(strPassword, &(*URI)[lastoffset], thislength);
-			strPassword[thislength] = '\0';
-			//foundpasswordorport = TRUE;
+			if(state == DECODESTATE_INIT){
+				strUserOrServer = (OV_STRING)ov_database_malloc(thislength +1);
+				memcpy(strUserOrServer, &(*URI)[lastoffset], thislength);
+				strUserOrServer[thislength] = '\0';
+			}else{
+				strPassword = (OV_STRING)ov_database_malloc(thislength +1);
+				memcpy(strPassword, &(*URI)[lastoffset], thislength);
+				strPassword[thislength] = '\0';
+			}
 			ov_string_setvalue(username, strUserOrServer);
 			ov_string_setvalue(password, strPassword);
 			ov_database_free(strUserOrServer);
@@ -168,6 +172,9 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 			strUserOrServer = NULL;
 			strPassword = NULL;
 			lastoffset = offset+1;
+			if(usernameProvided != NULL){
+				*usernameProvided = TRUE;
+			}
 			state = DECODESTATE_PASSWORD_OK;
 			break;
 		case '/':
@@ -260,7 +267,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_URI_set(
 ) {
 	OV_RESULT result = OV_ERR_OK;
 	//check the syntax
-	result = kshttp_decodeURI(&value, &thisCl->v_serverHost, &thisCl->v_serverPort, NULL, NULL, NULL);
+	result = kshttp_decodeURI(&value, &thisCl->v_serverHost, &thisCl->v_serverPort, NULL, NULL, NULL, NULL);
 
 	if(Ov_Fail(result)){
 		return result;
@@ -281,6 +288,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_STRING username = NULL;
 	OV_STRING password = NULL;
 	OV_STRING requestUri = NULL;
+	OV_BOOL usernameProvided = FALSE;
 
 	ov_string_setvalue(&thisCl->v_contentType, "");
 	ov_string_setvalue(&thisCl->v_messageBody, "");
@@ -288,12 +296,12 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	thisCl->v_httpStatusCode = 0;
 	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
 
-	result = kshttp_decodeURI(&thisCl->v_URI, &thisCl->v_serverHost, &thisCl->v_serverPort, &username, &password, &requestUri);
+	result = kshttp_decodeURI(&thisCl->v_URI, &thisCl->v_serverHost, &thisCl->v_serverPort, &username, &password, &requestUri, &usernameProvided);
 	if(Ov_Fail(result)){
 		return result;
 	}
 
-	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, username, password, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
+	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, username, password, usernameProvided, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
 }
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
@@ -316,7 +324,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
 		if(thisCl->v_ServerResponse.transferEncodingChunked == TRUE){
-			kshttp_decodeTransferEncodingChunked((OV_STRING*)&thisCl->v_ServerResponse.messageBodyPtr, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, INT_MAX);
+			kshttp_decodeTransferEncodingChunked((OV_STRING*)&thisCl->v_ServerResponse.messageBodyPtr, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT);
 		}else if(thisCl->v_ServerResponse.contentLength != 0){
 			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
 			if(!thisCl->v_messageBody){
