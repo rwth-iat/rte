@@ -84,9 +84,9 @@ puts "servername:         ${SERVERNAME}"
 #
 #  Festlegung des Namens der Datenbasis 
 #
-set DATABASENAME "db"
-puts "Please choose the size of the database (in byte)"
-gets stdin databasesize
+#set DATABASENAME "db"
+#puts "Please choose the size of the database (in byte)"
+#gets stdin databasesize
 #
 #  Löschen einer eventuell vorhandenen alten Datenbasis
 #
@@ -100,7 +100,8 @@ if {
 # !!!! Achtung, es ist nicht klar, ob und wie hier die Fehlerinfo übergeben wird.
 #
 set env(ERRORLEVEL) 0
-exec system/sysbin/ov_dbutil -c ${databasesize} -f /servers/${SERVERNAME}/${DATABASENAME}.ovd -l ${THISSERVER}/logfiles/log_builddb.txt
+
+exec system/sysbin/ov_dbutil -cf  [file nativename ${THISSERVER}/ov_server.conf ] -l ${THISSERVER}/logfiles/log_builddb.txt
 if { $env(ERRORLEVEL) == 1} then { puts "failed (create)!" } 
 if { $env(ERRORLEVEL) == 1} then { set env(OV_ERROR) 1 }
 #
