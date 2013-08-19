@@ -42,7 +42,7 @@ OV_DLLFNCEXPORT OV_INT ksbase_ClientHandler_receivedCalls_get(
 }
 /**
  * set actimode to 0 as a default.
- * When a packet is received the Channel calls the ClientHandlers HendleRequest function. Only ion some cases a ClientHandler needs to act proactively.
+ * When a packet is received the Channel calls the ClientHandlers HandleRequest function. Only in some cases a ClientHandler needs to act proactively.
  * Therefore the typemethod can be implemented.
  */
 OV_DLLFNCEXPORT void ksbase_ClientHandler_startup(
