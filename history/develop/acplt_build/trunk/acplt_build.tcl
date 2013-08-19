@@ -145,7 +145,7 @@ proc print_msg {msg} {
 # return 1 if fail
 proc execute {args} {
 	set args [join $args]
-    print_msg $args
+    
 	global logfile
     #set cmd [concat {exec -ignorestderr} $args]
     set cmd [concat {exec } $args { >>& $logfile}]
@@ -213,6 +213,7 @@ while {[gets $in line] != -1} {
 if {[regexp "Ausgecheckt, Revision" $line] } then {
 print_msg $line
 regexp {\s*Ausgecheckt, Revision\s+(.+).\s*} $line _ first 
+continue
 }
 }
 close $in
@@ -285,7 +286,7 @@ proc checkout_acplt {} {
     cd $builddir/base
     #checkout libmpm
     checkout develop ov
-	checkout archive fb_dbcommands "" notrunk
+	checkout archive fbs_dienste "" notrunk
 
     cd $releasedir/dev
 	if {$release == 1} {
@@ -310,7 +311,7 @@ proc build_cygwin {package args} {
 	global bash
 	global ov_debug
     print_msg "Building $package"
-	print_msg [concat "execute" $bash \"$args\"]
+	
     eval [concat "execute" $bash \\\"$args $ov_debug\\\"]
 }
 
@@ -338,7 +339,7 @@ proc build_acplt_mingw {} {
     build_cygwin plt make -f makefile
 	cd $builddir/base/ks/build/cygwin
     build_cygwin ks make -f makefile
-	cd $builddir/base/fb_dbcommands/build/cygwin
+	cd $builddir/base/fbs_dienste/build/cygwin
     build_cygwin fb_dbcommands make -f makefile
 }
 
@@ -414,9 +415,9 @@ proc install_acplt { target } {
     #install $builddir/base/acplt_makmak/build/$target
 	#install solely fb_dbcommands executable
 	if { $target == "linux" } then {
-		file copy -force $builddir/base/fb_dbcommands/build/$target/fb_dbcommands $builddir/bin
+		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
 	} else {
-		file copy -force $builddir/base/fb_dbcommands/build/$target/fb_dbcommands.exe $builddir/bin
+		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands.exe $builddir/bin
 	}
 }
 
