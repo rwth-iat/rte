@@ -34,11 +34,6 @@ OV_DLLFNCEXPORT OV_STRING ksbase_ClientHandler_sourceAdr_get(
     return pobj->v_sourceAdr;
 }
 
-OV_DLLFNCEXPORT OV_STRING ksbase_ClientHandler_ovticket_get(
-    OV_INSTPTR_ksbase_ClientHandler          pobj
-) {
-    return pobj->v_ovticket;
-}
 
 OV_DLLFNCEXPORT OV_INT ksbase_ClientHandler_receivedCalls_get(
     OV_INSTPTR_ksbase_ClientHandler          pobj
