@@ -211,7 +211,7 @@ static void ov_server_usage(void)
 				"-f FILE, --file FILE             Set database filename (*.ovd)\n"
 				"-b FILE, --backup FILE           Set backup database filename (*.ovd)\n"
 				"-s SERVER, --server-name SERVER  Set server name\n"
-				"-c CONFIGFILE                    Set filename to read configuration from\n"
+				"-c CONFIGFILE, -cf CONFIGFILE    Set filename to read configuration from\n"
             	"-i ID, --identify ID             Set Ticket Identification for server access\n"
 				"-p PORT, --port-number PORT      Set server port number\n"
 				"-w LIBRARY, --start-with LIBRARY Start server with library\n"
@@ -361,7 +361,7 @@ int main(int argc, char **argv) {
 		/*
 		 * set config file option and read out file if set
 		 */
-		else if(!strcmp(argv[i], "-c"))
+		else if(!strcmp(argv[i], "-c") || !strcmp(argv[i], "-cf"))
 		{
 			i++;
 			if(i<argc){
