@@ -376,7 +376,7 @@ proc build_acplt {} {
         build plt make -C $builddir/base/plt/build/$os
         build ks make -C $builddir/base/ks/build/$os
         build ov make -C $builddir/base/ov/build/$os
-		build fb_dbcommands make -C $builddir/base/fb_dbcommands/build/$os
+		build fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
    }
    #if { $os == "nt" } then {
    #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
