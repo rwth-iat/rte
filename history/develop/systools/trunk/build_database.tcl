@@ -84,25 +84,48 @@ puts "servername:         ${SERVERNAME}"
 #
 #  Festlegung des Namens der Datenbasis 
 #
-#set DATABASENAME "db"
+set DATABASENAME "db"
 #puts "Please choose the size of the database (in byte)"
 #gets stdin databasesize
 #
 #  Löschen einer eventuell vorhandenen alten Datenbasis
 #
-if {
-[file exists ${THISSERVER}/${DATABASENAME}.ovd] == 1
-} then {file delete ${THISSERVER}/${DATABASENAME}.ovd
-}
+#if {
+#[file exists ${THISSERVER}/${DATABASENAME}.ovd] == 1
+#} then {file delete ${THISSERVER}/${DATABASENAME}.ovd
+#}
 #
 #   Erstellen der neuen Datenbasis
 #
 # !!!! Achtung, es ist nicht klar, ob und wie hier die Fehlerinfo übergeben wird.
 #
-set env(ERRORLEVEL) 0
-
+#set env(ERRORLEVEL) 0
+set LOGFILE ${THISSERVER}/logfiles/log_builddb.txt
 exec system/sysbin/ov_dbutil -cf  [file nativename ${THISSERVER}/ov_server.conf ] -l ${THISSERVER}/logfiles/log_builddb.txt
-if { $env(ERRORLEVEL) == 1} then { puts "failed (create)!" } 
-if { $env(ERRORLEVEL) == 1} then { set env(OV_ERROR) 1 }
+set tries 0
+while {$tries<20} {
+		if {
+			[file exists ${LOGFILE}] == 1 } {
+			set in [open ${LOGFILE} r]
+			set line 0
+			set tries [expr  $tries + 1]
+			while {[gets $in line] != -1} {
+			
+				if {[regexp "(.*)Database unmapped(.*)" $line] } then {
+					
+				
+					
+					puts "Database created!"
+					set tries 2000
+				}
+			}
+			close $in 
+		}
+		after 10 
+	}
+
+
+#if { $env(ERRORLEVEL) == 1} then { puts "failed (create)!" } 
+#if { $env(ERRORLEVEL) == 1} then { set env(OV_ERROR) 1 }
 #
-if { $env(ERRORLEVEL) == 0} then {puts "database ${DATABASENAME} created with ${databasesize} byte "}
+#if { $env(ERRORLEVEL) == 0} then {puts "database ${DATABASENAME} created with ${databasesize} byte "}
