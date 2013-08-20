@@ -91,9 +91,9 @@ set env(PATH) ${BINPATH}
 #
 if {$tcl_platform(os) == "Linux"} then {
    if {[info exists env(LD_LIBRARY_PATH)]} {
-         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;$env(LD_LIBRARY_PATH)"
+         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/syslibs;$env(LD_LIBRARY_PATH)"
    } else {
-         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin"
+         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/sysbin"
    }
 }
 
