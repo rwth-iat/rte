@@ -891,6 +891,9 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		return OV_ERR_GENERIC;
 	}
 
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
+
 	/*	set ksErrCode	*/
 	if(Ov_Fail(KS_DATAPACKET_write_xdr_u_long(answer, &ksErrCode)))
 	{
