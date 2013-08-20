@@ -221,12 +221,18 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 					}
 					if(i < pSrvRep->v_protocols.veclen)
 					{/*	protocol found --> delete it from list	*/
+						//ov_database_free the unregister protocol String
+						ov_string_setvalue(&pSrvRep->v_protocols.value[i], NULL);
+						ov_string_setvalue(&pSrvRep->v_port.value[i], NULL);
 						for(;i<pSrvRep->v_protocols.veclen-1; i++)
 						{
 							pSrvRep->v_protocols.value[i] = pSrvRep->v_protocols.value[i+1];
-							pSrvRep->v_protocols.value[i] = pSrvRep->v_port.value[i+1];
+							pSrvRep->v_port.value[i] = pSrvRep->v_port.value[i+1];
 						}
-						result = Ov_SetDynamicVectorLength(&(pSrvRep->v_protocols), pSrvRep->v_protocols.veclen - 1, STRING);	/*	frees the last element and does not touch the rest	*/
+						//prevent freeing of the second last entry, since it has the same pointer right now
+						pSrvRep->v_protocols.value[pSrvRep->v_protocols.veclen - 1] = NULL;
+						pSrvRep->v_port.value[pSrvRep->v_port.veclen - 1] = NULL;
+						result = Ov_SetDynamicVectorLength(&(pSrvRep->v_protocols), pSrvRep->v_protocols.veclen - 1, STRING);	/*	"frees" the last element and does not touch the rest	*/
 						if(Ov_Fail(result))
 							return result;
 						result = Ov_SetDynamicVectorLength(&(pSrvRep->v_port), pSrvRep->v_port.veclen - 1, STRING);
