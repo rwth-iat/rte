@@ -213,7 +213,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	if(!thisLi->v_SocketState)	//no socket open
 	{
 
-		if(!ov_vendortree_getcmdlineoption_value("TCPbind_NO_IPv6"))
+		if(!ov_vendortree_getcmdlineoption_value("TCPBIND_NO_IPv6"))
 		{
 			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = PF_UNSPEC;
