@@ -896,23 +896,23 @@ int main(int argc, char **argv) {
 								helper[hlpindex] = '/';
 #endif
 								hlpindex++;
-						}
+							}
 						strcpy((helper+hlpindex), argv[i]);
-					}
-						else
-						{	/*	absolute path --> just copy	*/
-							if(argv[i])
-							{
-								helper = malloc(strlen(argv[i])+1);
-								if(!helper)
-									return EXIT_FAILURE;
-								strcpy(helper, argv[i]);
-							}
-							else
-							{
-								goto HELP;
-							}
 						}
+					else
+					{	/*	absolute path --> just copy	*/
+						if(argv[i])
+						{
+							helper = malloc(strlen(argv[i])+1);
+							if(!helper)
+								return EXIT_FAILURE;
+							strcpy(helper, argv[i]);
+						}
+						else
+						{
+							goto HELP;
+						}
+					}
 
 				}
 				if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
