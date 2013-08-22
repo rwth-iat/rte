@@ -915,8 +915,7 @@ int main(int argc, char **argv) {
 						}
 					}
 
-				}
-				if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
+					if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
 						ov_logfile_error("Could not open log file: \"%s\".\n", argv[i]);
 						return EXIT_FAILURE;
 					}
