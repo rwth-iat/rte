@@ -899,6 +899,7 @@ int main(int argc, char **argv) {
 							}
 						strcpy((helper+hlpindex), argv[i]);
 						}
+					}
 					else
 					{	/*	absolute path --> just copy	*/
 						if(argv[i])
