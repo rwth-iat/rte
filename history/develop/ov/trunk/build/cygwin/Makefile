@@ -61,29 +61,34 @@ OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER
 
 COMPILER		= GNU
 
-CPP_PATH		= c:/tools/bin/
+CPP_PATH		= 
+#c:/tools/bin/
 
 FLEX			= flex
 BISON			= bison
 CPP 			= cpp
 
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
-CC				= gcc -I$(MINGWINCLUDEPATH)
+CC				= gcc 
+#-I$(MINGWINCLUDEPATH)
 CC_FLAGS		= -g -Wall -Wno-attributes -O0 -fno-strict-aliasing -Wstrict-aliasing=2
 #-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 #LINK			= gcc -mno-cygwin -L$(MINGWLIBPATH)
-LINK			= gcc  -L$(MINGWLIBPATH)
+LINK			= gcc  
+#-L$(MINGWLIBPATH)
 C_LIBS			= 
 
 #CXX				= g++ -mno-cygwin -I$(MINGWINCLUDEPATH)
-CXX				= g++ -I$(MINGWINCLUDEPATH)
+CXX				= g++ 
+#-I$(MINGWINCLUDEPATH)
 CXX_FLAGS		= $(CC_FLAGS) -fno-implicit-templates
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 #CXX_LINK		= g++ -mno-cygwin -L$(MINGWLIBPATH)
-CXX_LINK		= g++ -L$(MINGWLIBPATH)
+CXX_LINK		= g++ 
+#-L$(MINGWLIBPATH)
 #CXX_LINK		= MAKE=$(MAKE) perl ../../../plt/build/templ.pl g++ -mno-cygwin -L$(MINGWLIBPATH)
 CXX_LIBS		= $(C_LIBS) -lwsock32
 
@@ -92,12 +97,14 @@ RANLIB			= ranlib
 
 DLLTOOL			= dlltool
 #DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
-DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mdll -L$(MINGWLIBPATH)
+DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mdll 
+#-L$(MINGWLIBPATH)
 CXX_DLLWRAP		= $(DLLWRAP) --driver-name g++
 
 WINDRES			= windres --preprocessor $(CPP_PATH)cpp --define OV_USE_WINDRES \
-				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir)) \
-				  --include-dir $(MINGWINCLUDEPATH)
+				  $(foreach sourcedir, $(SOURCE_DIRS) $(OV_INCLUDE_DIR), --include-dir $(sourcedir))
+				  
+				  #--include-dir $(MINGWINCLUDEPATH)
 
 #	C-Includes
 #	----------
