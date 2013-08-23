@@ -82,8 +82,8 @@ ONCRPC_BIN_DIR				= $(ONCRPC_DIR)/bin/
 
 #	Cygwin/MinGW stuff
 
-MINGWLIBPATH				= /cygdrive/c/MinGW32/lib
-MINGWINCLUDEPATH			= /cygdrive/c/MinGW32/include
+#MINGWLIBPATH				= /cygdrive/c/MinGW32/lib
+#MINGWINCLUDEPATH			= /cygdrive/c/MinGW32/include
 
 #	stuff for C16x compatible compilers using the Keil compiler
 
