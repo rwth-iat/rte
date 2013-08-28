@@ -440,14 +440,11 @@ cshmi.prototype = {
 			document.webkitHidden === true
 		){
 			skipEvent = true;
+		}else if (this.initStage === true){
+			//we are in the init state of the sheet so interprete Action later
+			skipEvent = true;
 		}
-		if (this.initStage === true){
-			//we are in the init state of the sheet so interprete Action later onload, remembering this
-			var EventObjItem = Object();
-			EventObjItem["VisualObject"] = VisualObject;
-			EventObjItem["ObjectPath"] = ObjectPath;
-			this.ResourceList.onloadCallStack.push(EventObjItem);
-		}else if(skipEvent === false){
+		if(skipEvent === false){
 			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
@@ -470,7 +467,12 @@ cshmi.prototype = {
 			//the object was asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
-		var cyctime = requestList[ObjectPath]["cyctime"];
+		if (this.initStage === true && requestList[ObjectPath]["cyctime"] > 1 ){
+			//we are in the initStage and have a long running cycle. Force updateing quick after load
+			var cyctime = 1;
+		}else{
+			cyctime = requestList[ObjectPath]["cyctime"];
+		}
 		
 		//call us again for cyclic interpretation of the Actions
 		//only if we are in the initialisation or normal stage
@@ -503,9 +505,6 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
-				/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
-				 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
-				 */
 				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
 					//we have an movegesture on the VisualObject or a parent, so this will handle all action
 					return;
