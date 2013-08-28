@@ -1828,7 +1828,7 @@ cshmi.prototype = {
 				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
 					//the object is asked this session, so reuse the config to save communication requests
 					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
+					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
 				}else{
 					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
 				}
@@ -1870,7 +1870,7 @@ cshmi.prototype = {
 				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
 					//the object is asked this session, so reuse the config to save communication requests
 					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-					this.executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
+					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
 				}else{
 					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
 				}
@@ -3971,8 +3971,6 @@ cshmi.prototype = {
 			requestList[ObjectPath]["opacity"] = null;
 			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["sourceOfLibrary"] = null;
-			requestList[ObjectPath]["HTMLcontent"] = null;
-			
 			
 			var successCode = this._requestVariablesArray(requestList);
 			if (successCode === false){
@@ -4059,6 +4057,9 @@ cshmi.prototype = {
 		loadLibrary:
 		//externe (via http erreichbare) Bibliotheken in head anhaengen
 		for(var i = 0; i < sourceListSplitted.length; ++i){
+			if(sourceListSplitted[i] === ""){
+				continue;
+			}
 			var thisEntry = new ObserverEntry(sourceListSplitted[i]);
 			jsloadObserver.ObserverEntryArray[i] = thisEntry;
 
@@ -4089,52 +4090,55 @@ cshmi.prototype = {
 			head.appendChild(node);
 			jsloadObserver.checkAndTrigger();
 		}
-
-		//create foreignObject in <SVG>-Element
-		var SVGWidth = VisualObject.getAttribute("width");
-		var SVGLength = VisualObject.getAttribute("height");
-		var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'><body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
-		var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
-		+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
-		+HTML
-		+"</svg:svg>";
 		
-		//append foreignObject to VisualObject
-		var newNode = HMI.HMIDOMParser.parse(svgContent);
-		VisualObject.appendChild(newNode);
-		
-		
-		//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
-		if (csHMIgetElementsByClassName(VisualObject, 'autosize').length != 0) {
-			var classList = csHMIgetElementsByClassName(VisualObject, 'autosize');
-			for (var i = 0; i < classList.length; ++i) {
-				//special adjustment for <canvas>-Element
-				if (classList[i].tagName.toLowerCase() === "canvas") {
-					classList[i].width = VisualObject.getAttribute("width");
-					classList[i].height = VisualObject.getAttribute("height");
+		if(HTMLcontent !== ""){
+			//create foreignObject in <SVG>-Element
+			var SVGWidth = VisualObject.getAttribute("width");
+			var SVGLength = VisualObject.getAttribute("height");
+			var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'><body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
+			var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
+			+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
+			+HTML
+			+"</svg:svg>";
+			
+			//append foreignObject to VisualObject
+			var newNode = HMI.HMIDOMParser.parse(svgContent);
+			VisualObject.appendChild(newNode);
+			
+			
+			//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
+			if (csHMIgetElementsByClassName(VisualObject, 'autosize').length != 0) {
+				var classList = csHMIgetElementsByClassName(VisualObject, 'autosize');
+				for (var i = 0; i < classList.length; ++i) {
+					//special adjustment for <canvas>-Element
+					if (classList[i].tagName.toLowerCase() === "canvas") {
+						classList[i].width = VisualObject.getAttribute("width");
+						classList[i].height = VisualObject.getAttribute("height");
+					}
+					classList[i].style.width = VisualObject.getAttribute("width")+"px";
+					classList[i].style.height = VisualObject.getAttribute("height")+"px";
+				}		
+			}
+			if (csHMIgetElementsByClassName(VisualObject, 'autosizeX').length != 0) {
+				var classListX = csHMIgetElementsByClassName(VisualObject, 'autosizeX');
+				for (var i = 0; i < classListX.length; ++i) {
+					if (classListX[i].tagName.toLowerCase() === "canvas") {
+						classListX[i].width = VisualObject.getAttribute("width");
+					}
+					classListX[0].style.width = VisualObject.getAttribute("width")+"px";
 				}
-				classList[i].style.width = VisualObject.getAttribute("width")+"px";
-				classList[i].style.height = VisualObject.getAttribute("height")+"px";
-			}		
-		}
-		if (csHMIgetElementsByClassName(VisualObject, 'autosizeX').length != 0) {
-			var classListX = csHMIgetElementsByClassName(VisualObject, 'autosizeX');
-			for (var i = 0; i < classListX.length; ++i) {
-				if (classListX[i].tagName.toLowerCase() === "canvas") {
-					classListX[i].width = VisualObject.getAttribute("width");
+			}
+			if (csHMIgetElementsByClassName(VisualObject, 'autosizeY').length != 0) {
+				var classListY = csHMIgetElementsByClassName(VisualObject, 'autosizeY');
+				for (var i = 0; i < classListY.length; ++i) {
+					if (classListY[i].tagName.toLowerCase() === "canvas") {
+						classListY[i].height = VisualObject.getAttribute("height");
+					}
+					classListY[0].style.height = VisualObject.getAttribute("height")+"px";
 				}
-				classListX[0].style.width = VisualObject.getAttribute("width")+"px";
 			}
 		}
-		if (csHMIgetElementsByClassName(VisualObject, 'autosizeY').length != 0) {
-			var classListY = csHMIgetElementsByClassName(VisualObject, 'autosizeY');
-			for (var i = 0; i < classListY.length; ++i) {
-				if (classListY[i].tagName.toLowerCase() === "canvas") {
-					classListY[i].height = VisualObject.getAttribute("height");
-				}
-				classListY[0].style.height = VisualObject.getAttribute("height")+"px";
-			}
-		}
+		
 		
 		//create object 'cshmimodel'
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, HMI.cshmi);

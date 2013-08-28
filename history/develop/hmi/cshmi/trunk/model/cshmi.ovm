@@ -407,7 +407,7 @@ LIBRARY cshmi
 			jsOnload : STRING
 			COMMENT = "insert your JavaScript-Code here; interpretation while loading"
 			INITIALVALUE = "";
-			jsOnglobalvarchange : STRING
+			jsOnglobalvarchanged : STRING
 			COMMENT = "insert your JavaScript-Code here; interpretation while changing globalvar"
 			INITIALVALUE = "";
 		END_VARIABLES;
