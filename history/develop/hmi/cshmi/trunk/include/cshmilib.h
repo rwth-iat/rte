@@ -68,6 +68,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_path.h"
 #include "libov/ov_result.h"
+#include "libov/ov_class.h"
 #include <limits.h>
 
 #ifndef FB_INSTANZ_CONTAINER

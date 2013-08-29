@@ -295,11 +295,11 @@ cshmi.prototype = {
 	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
 		var VisualObject = null;
 		var Result = true;
-		if (ObjectType.indexOf("/cshmi/Group") !== -1){
+		if (false && ObjectType.indexOf("/cshmi/Group") !== -1){
 			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
 			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
-		}else if (ObjectType.indexOf("/cshmi/Template") !== -1){
+		}else if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
@@ -441,7 +441,7 @@ cshmi.prototype = {
 		){
 			skipEvent = true;
 		}else if (this.initStage === true){
-			//we are in the init state of the sheet so interprete Action later
+			//we are in the init state of the sheet so interprete Action later onload, remembering this
 			skipEvent = true;
 		}
 		if(skipEvent === false){
@@ -468,7 +468,6 @@ cshmi.prototype = {
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
 		if (this.initStage === true && requestList[ObjectPath]["cyctime"] > 1 ){
-			//we are in the initStage and have a long running cycle. Force updateing quick after load
 			var cyctime = 1;
 		}else{
 			cyctime = requestList[ObjectPath]["cyctime"];
@@ -3569,7 +3568,7 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * builds template, gets the parameter via KS
+	 * builds groups and template actions, gets the parameter via KS
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} calledFromInstantiateTemplate true if called from an action
@@ -3591,17 +3590,20 @@ cshmi.prototype = {
 			return VisualObject;
 		}else{
 			requestList[ObjectPath] = new Object();
-			requestList[ObjectPath]["visible"] = null;
-			requestList[ObjectPath]["stroke"] = null;
-			requestList[ObjectPath]["fill"] = null;
-			requestList[ObjectPath]["opacity"] = null;
-			requestList[ObjectPath]["rotate"] = null;
 			requestList[ObjectPath]["x"] = null;
 			requestList[ObjectPath]["y"] = null;
+			requestList[ObjectPath]["visible"] = null;
+			requestList[ObjectPath]["opacity"] = null;
+			requestList[ObjectPath]["rotate"] = null;
 			if (calledFromInstantiateTemplate === true){
+				//an action does have some special properties
 				requestList[ObjectPath]["xOffset"] = null;
 				requestList[ObjectPath]["yOffset"] = null;
 				requestList[ObjectPath]["maxTemplatesPerDirection"] = null;
+			}else{
+				//a group has other
+				requestList[ObjectPath]["width"] = null;
+				requestList[ObjectPath]["height"] = null;
 			}
 			requestList[ObjectPath]["TemplateDefinition"] = null;
 			requestList[ObjectPath]["FBReference"] = null;
@@ -3619,62 +3621,77 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
-		var TemplateLocation = "/TechUnits/cshmi/Templates/";
-		var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
-		if (requestList[ObjectPath]["TemplateDefinition"] === ""){
-			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is not configured");
-			return null;
-		}else if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
+		var wasRebuildObject = false;
+		if(requestList[ObjectPath]["TemplateDefinition"] !== undefined && requestList[ObjectPath]["TemplateDefinition"] !== ""){
+			var TemplateLocation = "/TechUnits/cshmi/Templates/";
+			var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
+		}else{
+			PathOfTemplateDefinition = null;
+		}
+		if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
 			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
 			return null;
-		}
-		
-		var requestListTemplate = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
-			requestListTemplate[PathOfTemplateDefinition] = this.ResourceList.Elements[PathOfTemplateDefinition].Parameters;
+		}else if (requestList[ObjectPath]["TemplateDefinition"] === undefined || requestList[ObjectPath]["TemplateDefinition"] === ""){
+			//no template to fill
 		}else{
-			requestListTemplate[PathOfTemplateDefinition] = new Object();
-			requestListTemplate[PathOfTemplateDefinition]["width"] = null;
-			requestListTemplate[PathOfTemplateDefinition]["height"] = null;
+			//we have an template to fill
 			
-			successCode = this._requestVariablesArray(requestListTemplate);
-			if (successCode === false){
-				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
-				return null;
+			var requestListTemplate = new Object();
+			//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+			if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
+				//the object is asked this session, so reuse the config to save communication requests
+				requestListTemplate[PathOfTemplateDefinition] = this.ResourceList.Elements[PathOfTemplateDefinition].Parameters;
+			}else{
+				requestListTemplate[PathOfTemplateDefinition] = new Object();
+				requestListTemplate[PathOfTemplateDefinition]["width"] = null;
+				requestListTemplate[PathOfTemplateDefinition]["height"] = null;
+				
+				successCode = this._requestVariablesArray(requestListTemplate);
+				if (successCode === false){
+					HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
+					return null;
+				}
+				
+				//we have asked the object successful, so remember the result
+				this.ResourceList.Elements[PathOfTemplateDefinition] = new Object();
+				this.ResourceList.Elements[PathOfTemplateDefinition].Parameters = requestListTemplate[PathOfTemplateDefinition];
 			}
-			
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Elements[PathOfTemplateDefinition] = new Object();
-			this.ResourceList.Elements[PathOfTemplateDefinition].Parameters = requestListTemplate[PathOfTemplateDefinition];
 		}
 		
-		//search a predefined children
-		try{
-			var VisualObject = VisualParentObject.getElementById(ObjectPath);
-		}catch (e) {
-			// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-			// hopefully the id is uniqe in the tree
-			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+		if (VisualParentObject !== null){
+			//search a predefined children
+			try{
+				var VisualObject = VisualParentObject.getElementById(ObjectPath);
+			}catch (e) {
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+				// hopefully the id is uniqe in the tree
+				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+			}
 		}
 		
-		if (VisualObject === null || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+		if (VisualObject === null || VisualObject === undefined || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
 			//do not use a predefined VisualObject if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
-			
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		}
 		
-		//id should be the name of the parent plus our identifier
-		var NameList = ObjectPath.split("/");
-		VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
-		NameList = null;
+		if (VisualParentObject !== null){
+			//id should be the name of the parent plus our identifier
+			var NameList = ObjectPath.split("/");
+			VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
+			NameList = null;
+		}else{
+			//we are the main sheet, so no parent available
+			VisualObject.id = "//"+HMI.KSClient.ResourceList.ModelHost+"/"+HMI.KSClient.ResourceList.ModelServer+ObjectPath;
+		}
 		
 		VisualObject.setAttribute("data-ModelSource", ObjectPath);
-		VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
+		if(PathOfTemplateDefinition){
+			VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
+		}
 		
 		HMI.addClass(VisualObject, this.cshmiTemplateClass);
+		VisualObject.setAttribute("overflow", "visible");
 		
 		if (calledFromInstantiateTemplate === true){
 			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
@@ -3694,7 +3711,12 @@ cshmi.prototype = {
 		
 		////////////////////////////////////////////////////////////////////////////
 		//FBReference
-		
+		if(requestList[ObjectPath]["FBReference"] === undefined){
+			//old Modells did not have template functionality
+			requestList[ObjectPath]["FBReference"] = "";
+			requestList[ObjectPath]["FBVariableReference"] = "";
+			requestList[ObjectPath]["ConfigValues"] = "";
+		}
 		var FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
 		for (var i=0; i < FBReferenceList.length; i++) {
 			if (i > 1){
@@ -3711,7 +3733,7 @@ cshmi.prototype = {
 					VisualObject.setAttribute("x", this.ResourceList.newRebuildObject.x);
 					VisualObject.setAttribute("y", this.ResourceList.newRebuildObject.y);
 					
-					var wasRebuildObject = true;
+					wasRebuildObject = true;
 					//.. but only once/here
 					this.ResourceList.newRebuildObject = Object();
 					break;
@@ -3896,43 +3918,49 @@ cshmi.prototype = {
 			VisualChildObject.setAttribute("overflow", "visible");
 			VisualChildObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
 			VisualChildObject.appendChild(VisualObject);
+		}else{
+			VisualChildObject = null;
 		}
 		
 		//restore Template config
 		requestList[ObjectPath]["x"] = xTemplate;
 		requestList[ObjectPath]["y"] = yTemplate;
 		
-		//width and height comes from the TemplateDefinition
-		VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
-		VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
-		VisualObject.setAttribute("overflow", "visible");
+		if(PathOfTemplateDefinition !== null){
+			//width and height comes from the TemplateDefinition
+			VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
+			VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
+		}
 		
 		//instance order is lost on zindex manipulation (dom reordering)
 		//so build a second childNodes-like collection for preserving ordering
 		VisualObject.cshmiOriginalOrderList = new Object();
-		
-		//add ourself to the parent zindex-list
-		if(VisualParentObject.cshmiOriginalOrderList === undefined){
-			VisualParentObject.cshmiOriginalOrderList = new Object();
+
+		if(VisualParentObject !== null){
+			//add ourself to the parent zindex-list
+			if(VisualParentObject.cshmiOriginalOrderList === undefined){
+				VisualParentObject.cshmiOriginalOrderList = new Object();
+			}
+			if(VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] === undefined){
+				VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] = new Array();
+			}
+			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
 		}
-		if(VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] === undefined){
-			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition] = new Array();
-		}
-		VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
 		
-		//////////////////////////////////////////////////////////////////////////
-		//get childs (graphics and actions) from the TemplateDefinition
-		//our child will be fetched later
-		
-		
-		// special handling for invisible objects
-		if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
-			//we are not visible, so we should not contact network
+		if(PathOfTemplateDefinition !== null){
+			//////////////////////////////////////////////////////////////////////////
+			//get childs (graphics and actions) from the TemplateDefinition
+			//our child will be fetched later
 			
-			//the marking of the class will be done in the caller of our function
-			this._loadChildren(VisualObject, PathOfTemplateDefinition, true);
-		}else if (VisualObject !== null){
-			this._loadChildren(VisualObject, PathOfTemplateDefinition, false);
+			// special handling for invisible objects
+			if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+				//we are not visible, so we should not contact network
+				
+				//the marking of the class will be done in the caller of our function
+				this._loadChildren(VisualObject, PathOfTemplateDefinition, true);
+			}else if (VisualObject !== null){
+				this._loadChildren(VisualObject, PathOfTemplateDefinition, false);
+			}
 		}
 		
 		if (VisualChildObject){
@@ -4263,6 +4291,8 @@ cshmi.prototype = {
 	//newwrite
 	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ï¿½hnlich. Mit this.ModellVariables...
 	
+
+//fixme funktion löschen
 	_buildSvgGroup: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)

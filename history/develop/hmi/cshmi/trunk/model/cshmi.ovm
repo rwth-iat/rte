@@ -117,12 +117,27 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "height of the group"
 			INITIALVALUE = 100.0;
+			opacity : SINGLE
+			COMMENT = "opacity of the element ([0.0-1.0])"
+			INITIALVALUE = 1.0;
+			rotate : INT
+			COMMENT = "rotate the Element"
+			INITIALVALUE = 0;
 			hideable : BOOL
 			COMMENT = "should this object be hidden if clicked on parent?"
 			INITIALVALUE = FALSE;
 			visible : BOOL
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
+			TemplateDefinition : STRING
+			HAS_SET_ACCESSOR
+			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
+			FBReference[] : STRING
+			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47'"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			FBVariableReference[] : STRING
+			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
+			ConfigValues[] : STRING
+			COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -174,29 +189,26 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
+	/* no comments to save a little bit space in the database */
 	CLASS Template : CLASS cshmi/Element
 		IS_INSTANTIABLE;
-		COMMENT = "a reference to a TemplateDefinition";
+		COMMENT = "a transitional dummy object. Will change itself to a group on startup";
 		VARIABLES
 			TemplateDefinition : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
+			HAS_SET_ACCESSOR;
 			x : SINGLE
-			COMMENT = "x-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
 			y : SINGLE
-			COMMENT = "y-axis coordinate of the Template"
 			INITIALVALUE = 0.0;
-			FBReference[] : STRING
-			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47'"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
-			FBVariableReference[] : STRING
-			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
-			ConfigValues[] : STRING
-			COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
+			FBReference[] : STRING;
+			FBVariableReference[] : STRING;
+			ConfigValues[] : STRING;
 			hideable : BOOL
-			COMMENT = "should this object be hidden if clicked on parent?"
 			INITIALVALUE = FALSE;
 		END_VARIABLES;
+		OPERATIONS
+			startup					:	C_FUNCTION	<OV_FNC_STARTUP>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS Line : CLASS cshmi/Element

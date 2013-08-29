@@ -90,3 +90,53 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
 
 	return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
 }
+
+/**
+ * change itself to an group on startup
+ */
+OV_DLLFNCEXPORT void cshmi_Template_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	*   local variables
+	*/
+	OV_INSTPTR_cshmi_Template pinst = Ov_StaticPtrCast(cshmi_Template, pobj);
+	OV_INSTPTR_cshmi_Group pGroup = NULL;
+	OV_STRING desiredName = NULL;
+	OV_STRING tempname = NULL;
+	OV_RESULT    result;
+
+	/* do what the base class does first */
+	ov_object_startup(pobj);
+
+	ov_string_setvalue(&desiredName, pobj->v_identifier);
+	ov_string_print(&tempname, "temporaryrenamed_%s", pobj->v_identifier);
+
+	result = ov_class_renameobject(pobj, Ov_GetParent(ov_containment, pobj), tempname, OV_PMH_DEFAULT, NULL);
+	ov_string_setvalue(&tempname, NULL);
+	if(Ov_Fail(result)){
+		return;
+	}
+	result = Ov_CreateObject(cshmi_Group, pGroup, Ov_GetParent(ov_containment, pobj), desiredName);
+	ov_string_setvalue(&desiredName, NULL);
+	if(Ov_Fail(result)){
+		return;
+	}
+
+	ov_string_setvalue(&pGroup->v_TemplateDefinition, pinst->v_TemplateDefinition);
+	pGroup->v_x = pinst->v_x;
+	pGroup->v_y = pinst->v_y;
+	Ov_SetDynamicVectorValue(&pGroup->v_FBReference, pinst->v_FBReference.value, pinst->v_FBReference.veclen, STRING);
+	Ov_SetDynamicVectorValue(&pGroup->v_FBVariableReference, pinst->v_FBVariableReference.value, pinst->v_FBVariableReference.veclen, STRING);
+	Ov_SetDynamicVectorValue(&pGroup->v_ConfigValues, pinst->v_ConfigValues.value, pinst->v_ConfigValues.veclen, STRING);
+	pGroup->v_hideable = pinst->v_hideable;
+	pGroup->v_visible = pinst->v_visible;
+	pGroup->v_opacity = pinst->v_opacity;
+	pGroup->v_rotate = pinst->v_rotate;
+	ov_string_setvalue(&pGroup->v_baseKsPath, pinst->v_baseKsPath);
+
+	Ov_DeleteObject(pobj);
+
+	return;
+}
+
