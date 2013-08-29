@@ -769,9 +769,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(pSetValue->v_translationSource, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22TranslationSourcePath%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource);
+			ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource);
 		}else{
-			ov_string_print(&strIterate, "%s%%22TranslationSourcePath%%22:%%22%%22", strIterate);
+			ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%%22", strIterate);
 		}
 		ov_string_append(&strIterate, "%7D");
 

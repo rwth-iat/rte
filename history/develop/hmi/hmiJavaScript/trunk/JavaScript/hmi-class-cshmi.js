@@ -1550,12 +1550,12 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
-			this.ResourceList.Actions[ObjectPath].TranslationSourcePath = TranslationSourcePath;
+			this.ResourceList.Actions[ObjectPath].translationSource = TranslationSourcePath;
 		}else{
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			TranslationSourcePath = this.ResourceList.Actions[ObjectPath].TranslationSourcePath;
+			TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
 		}
 		if (TranslationSourcePath === undefined){
 			//todo remove me if available in all turbos
