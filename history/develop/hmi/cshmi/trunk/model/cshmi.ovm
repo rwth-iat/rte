@@ -740,9 +740,27 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS ClientEvent : CLASS cshmi/Event
+		IS_INSTANTIABLE;
+		COMMENT = "client triggered actions";
+		VARIABLES
+			type : STRING IS_DERIVED
+			HAS_ACCESSORS
+			COMMENT = "type of ClientEvent; could be onload or globalvarchanged";
+		END_VARIABLES;
+		OPERATIONS
+			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	CLASS OperatorEvent : CLASS cshmi/Event
 		IS_INSTANTIABLE;
-		COMMENT = "an event from the operator; the identifier could be click, doubleclick, rightclick, aftermove, mouseover, mouseout";
+		COMMENT = "an event from the operator";
+		VARIABLES
+			type : STRING IS_DERIVED
+			HAS_ACCESSORS
+			COMMENT = "type of ClientEvent; could be click, doubleclick, rightclick, aftermove, mouseover, mouseout";
+		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
@@ -764,14 +782,6 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS ClientEvent : CLASS cshmi/Event
-		IS_INSTANTIABLE;
-		COMMENT = "client triggered actions; the identifier could be onload or globalvarchanged";
-		OPERATIONS
-			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-		END_OPERATIONS;
-	END_CLASS;
-
 	CLASS downloadApplication : CLASS ov/object
 		IS_INSTANTIABLE;
 		COMMENT = "Model turbo";

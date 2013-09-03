@@ -65,33 +65,73 @@
 
 #include "cshmilib.h"
 
+
+OV_RESULT cshmi_ClientEvent_typeSetAndCheck(
+	OV_INSTPTR_cshmi_ClientEvent          pobj,
+	const OV_STRING  value,
+	const OV_BOOL calledFromConstructor
+) {
+	OV_STRING newvalue = NULL;
+	OV_RESULT result = OV_ERR_OK;
+	if(!value){
+		return OV_ERR_BADPARAM;
+	}
+	//ov_string_match("*onload*") does not match "onload"... 8-/
+	ov_memstack_lock();
+	ov_string_print(&newvalue, "X%sX", ov_string_tolower(value));
+	ov_memstack_unlock();
+	if(ov_string_match(newvalue, "*load*") == TRUE){
+		ov_string_setvalue(&newvalue, "onload");
+	}else if(ov_string_match(newvalue, "*globalvar*") == TRUE ){
+		ov_string_setvalue(&newvalue, "globalvarchanged");
+	}else if(ov_string_compare(value, "") == OV_STRCMP_EQUAL || calledFromConstructor == TRUE){
+		//allow resetting and initial wrong EventType
+		ov_string_setvalue(&newvalue, "unconfigured");
+	}else{
+		ov_string_setvalue(&newvalue, NULL);
+		return OV_ERR_BADPARAM;
+	}
+	if(ov_string_compare(newvalue, pobj->v_identifier) != OV_STRCMP_EQUAL){
+		result = ov_class_renameobject(Ov_PtrUpCast(ov_object, pobj), Ov_GetParent(ov_containment, pobj), newvalue, OV_PMH_DEFAULT, NULL);
+	}
+	if(result == OV_ERR_CANTMOVE){
+		result = OV_ERR_ALREADYEXISTS;
+	}
+	ov_string_setvalue(&newvalue, NULL);
+	return result;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_type_set(
+	OV_INSTPTR_cshmi_ClientEvent          pobj,
+	const OV_STRING  value
+) {
+	return cshmi_ClientEvent_typeSetAndCheck(pobj, value, FALSE);
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	/*    
 	*   local variables
 	*/
+	OV_INSTPTR_cshmi_ClientEvent pinst = Ov_StaticPtrCast(cshmi_ClientEvent, pobj);
 	OV_RESULT    result;
-	OV_STRING erroroutput;
 	
 	/* do what the base class does first */
 	result = cshmi_Event_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 	
-	//todo check for camelcase
+	//try setting the type with the name, could result in an rename
+	return cshmi_ClientEvent_typeSetAndCheck(pinst, pinst->v_identifier, TRUE);
 
-	//force our keywords
-	if (	ov_string_compare(pobj->v_identifier, "onload") == OV_STRCMP_EQUAL||
-			ov_string_compare(pobj->v_identifier, "globalvarchanged") == OV_STRCMP_EQUAL){
-		return OV_ERR_OK;
-	}else{
-		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %s had wrong identifier. Rejecting construction.", ov_path_getcanonicalpath(Ov_StaticPtrCast(ov_object, pobj), 2));
-		ov_memstack_unlock();
-		ov_logfile_warning(erroroutput);
-		ov_string_print(&erroroutput, NULL);
-		return OV_ERR_BADNAME;
-	}
+	//a failure is OK
+//	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_STRING cshmi_ClientEvent_type_get(
+    OV_INSTPTR_cshmi_ClientEvent          pobj
+) {
+	return pobj->v_identifier;
+}

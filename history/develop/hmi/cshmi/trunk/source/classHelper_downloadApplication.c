@@ -703,8 +703,8 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_cshmi_IfThenElse pIfThenElse = NULL;
 	OV_INSTPTR_cshmi_Compare pCompare = NULL;
 	OV_INSTPTR_cshmi_CompareIteratedChild pCompareIteratedChild = NULL;
-	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
 	OV_INSTPTR_cshmi_RoutePolyline pRoutePolyline = NULL;
+	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
 	OV_INSTPTR_cshmi_TranslationSource pTranslationSource = NULL;
 
 	//be careful to adjust the ov_string_print at the end of the function
