@@ -407,6 +407,8 @@ cshmi.prototype = {
 			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
+		}else if (command[command.length-1] === "unconfigured"){
+			//ignore an unconfigured Event
 		}else{
 			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}
@@ -632,6 +634,8 @@ cshmi.prototype = {
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("MSPointerDown", VisualObject._moveStartDragThunk, false);
+		}else if (command[command.length-1] === "unconfigured"){
+			//ignore an unconfigured Event
 		}else{
 			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
 		}

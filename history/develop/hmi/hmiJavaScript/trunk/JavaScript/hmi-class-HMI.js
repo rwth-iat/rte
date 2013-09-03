@@ -1102,6 +1102,8 @@ HMI.prototype = {
 		
 		//present a "deep link" to the state
 		this.updateDeepLink();
+		//show the refreshInfo
+		this.hideRefreshInfo(false);
 		
 		//clean an old SVG display and displayed errors in website
 		deleteChilds(this.Playground);
@@ -1148,6 +1150,27 @@ HMI.prototype = {
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
+	},
+	
+	/**
+	 * 
+	 */
+	hideRefreshInfo: function(hide){
+		var cssvalue = hide?"none":"";
+		this.InputRefreshTime.style.display = cssvalue;
+		if(this.InputRefreshTime.labels){
+			var labellist = this.InputRefreshTime.labels;
+		}else if(HMI.svgDocument.querySelectorAll){
+			labellist = HMI.svgDocument.querySelectorAll("label[for=idRefreshTime]");
+		}else{
+			//the feature is not imported enough to shim
+			labellist = {length:0};
+		}
+		for (var i = 0; i < labellist.length; ++i) {
+			labellist[i].style.display = cssvalue;
+		}
+		labellist = null;
+		return;
 	},
 	
 	/**
@@ -1198,6 +1221,8 @@ HMI.prototype = {
 				//save for later use
 				this.KSClient.ResourceList.ModelHost = Host;
 				this.KSClient.ResourceList.ModelServer = Server;
+				
+				this.hideRefreshInfo(true);
 				
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(Host, Server, Sheet);
