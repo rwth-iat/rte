@@ -126,6 +126,8 @@ JavaScript:
 CSHMIHostServer/acplt/ov/library in FBRef ermoeglichen
 CSHMI:configvalue:myconfig in SetValue.TemplateFBVariableReferenceName
 
+rename fullqualifiedname to CSHMIfullqualifiedname
+
 
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verf�gbar!
@@ -2878,7 +2880,27 @@ cshmi.prototype = {
 		
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
-		if (VisualObject.ResourceList && VisualObject.ResourceList.RoutePolyline !== undefined){
+		var reuseConnection = true;
+		if(VisualObject.ResourceList === undefined){
+			reuseConnection = false;
+		}else if (VisualObject.ResourceList && VisualObject.ResourceList.RoutePolyline !== undefined){
+			SourceConnectionPoint = VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint;
+			TargetConnectionPoint = VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint;
+			if (SourceConnectionPoint && SourceConnectionPoint.ownerDocument === this.trashDocument){
+				//we had a connection to a deleted point
+				reuseConnection = false;
+			}else if (TargetConnectionPoint && TargetConnectionPoint.ownerDocument === this.trashDocument){
+				//we had a connection to a deleted point
+				reuseConnection = false;
+			}else if(SourceConnectionPoint === undefined){
+				//uncomplete caching
+				reuseConnection = false;
+			}else if(TargetConnectionPoint === undefined){
+				//uncomplete caching
+				reuseConnection = false;
+			}
+		}
+		if(reuseConnection == true){
 			//the object is asked this session, so reuse the config to save communication requests
 			SourceConnectionPoint = VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint;
 			SourceConnectionPointdirection = VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection;
@@ -2953,7 +2975,7 @@ cshmi.prototype = {
 			if (SourceBasename === ""){
 				var SourceName = "";
 			}else if (SourceVariablename !== ""){
-				//in the svg DOM separators is always /, since it is named via ConfigValue "Name"
+				//in the svg DOM separators is always /
 				SourceName = SourceBasename + "/" + SourceVariablename;
 			}else{
 				SourceName = SourceBasename;
@@ -2961,7 +2983,7 @@ cshmi.prototype = {
 			if (TargetBasename === ""){
 				var TargetName = "";
 			}else if (TargetVariablename !== ""){
-				//in the svg separators is always /, since it is named via ConfigValue "Name"
+				//in the svg separators is always /
 				TargetName = TargetBasename + "/" + TargetVariablename;
 			}else{
 				TargetName = TargetBasename;
@@ -3765,14 +3787,20 @@ cshmi.prototype = {
 					VisualObject.FBReference["default"] = FBRef;
 					VisualObject.id = FBRef;
 				}else{
-					//We have straightforward a full name of one FB Object, so save it with the default name
-					VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, FBReferenceList[i]);
-					if (FBReferenceList[i].charAt(0) === "/"){
-						//full path is given
-						VisualObject.setAttribute("data-NameOrigin", "FBReference");
+					//todo implement cshmihostserver
+					if(FBReferenceList[i].indexOf("CSHMIfullqualifiedname") !== -1){
+						VisualObject.FBReference["default"] = FBReferenceList[i].replace("CSHMIfullqualifiedname", this._getFBReference(VisualParentObject, false, true));
+						VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
 					}else{
-						//relative path is given, so complete the path with the BaseKsPath
-						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
+						//We have straightforward a full name of one FB Object, so save it with the default name
+						VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, FBReferenceList[i]);
+						if (FBReferenceList[i].charAt(0) === "/"){
+							//full path is given
+							VisualObject.setAttribute("data-NameOrigin", "FBReference");
+						}else{
+							//relative path is given, so complete the path with the BaseKsPath
+							VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
+						}
 					}
 					VisualObject.id = VisualObject.FBReference["default"];
 				}
@@ -5094,13 +5122,13 @@ cshmi.prototype = {
 	 * @param {BOOL} giveObject should we give the targetObject?
 	 * @return {String} Path of the FBReference or ""
 	 */
-	_getFBReference: function(VisualObject, giveObject){
+	_getFBReference: function(VisualObject, giveObject, checkNoIterator){
 		var TemplateObject = VisualObject;
 		var resultArray = ["", null];
 		var FBRef;
 		
 		//a getVar currentChild has OP_VALUE and OP_NAME set
-		if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+		if (!checkNoIterator && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 			//we are in an GetVar-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
 			do{
@@ -5131,7 +5159,7 @@ cshmi.prototype = {
 			}
 			
 		//a getEP currentChild has OP_NAME set
-		}else if (this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+		}else if (!checkNoIterator && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 			//we are in an getEP-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
 			do{
