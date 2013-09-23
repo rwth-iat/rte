@@ -125,8 +125,8 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE_SERVER}"
-catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE_SERVER} &} pid
+set COMMAND "ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE}"
+catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE} &} pid
 set tries 0
 
 #Prüfen ob server hochgfährt
