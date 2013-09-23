@@ -73,7 +73,7 @@ puts "ACPLT systemdomain:  ${THISACPLTSYSTEM}"
 #  Ermitteln des Verzeichnisses "LIBDIR" und "TEMPLATEDIR" in dem sich die zu ladenden
 #  Bibliotheks- und Templateordner befinden
 #
-set USERBINDIR ${THISACPLTSYSTEM}/system/addonlibs
+set USERBINDIR "${THISACPLTSYSTEM}/system/addonlibs ${THISACPLTSYSTEM}/system/syslibs"
 set PATH1 ${USERBINDIR}
 puts "bin-path userlibs    ${PATH1}"
 set PATH2 ${THISACPLTSYSTEM}/system/sysbin
@@ -85,7 +85,7 @@ puts "templatedomain:      ${TEMPLATEDIR}"
 #  Setzen der Prozess-Umgebungsvariablen 
 #
 set env(ACPLT_HOME) ${THISACPLTSYSTEM}
-set env(PATH) ${BINPATH}
+set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/syslibs;$env(PATH)"
 #
 #  Setzen des LD_LIBRATY_PATH fuer linux
 #
@@ -125,8 +125,8 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "${THISACPLTSYSTEM}/system/sysbin/ov_runtimeserver -f ${THISSERVER}/${DATABASENAME}.ovd -s ${SERVERNAME} -o TCPbind_NO_IPv6 -w ksbase -w fb -w TCPbind -w ksxdr -w kshttp -l ${LOGFILE}"
-set ACPLT_PROCESS [open "|$COMMAND" "RDWR"]
+set COMMAND "ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE_SERVER}"
+catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE_SERVER} &} pid
 set tries 0
 
 #Prüfen ob server hochgfährt
@@ -141,7 +141,7 @@ while {$tries<2000} {
 				if {[regexp "(.*)Server started(.*)" $line] } then {
 					puts $tries
 					# pid of the process
-					set pid [pid $ACPLT_PROCESS]
+					
 					puts "server ${SERVERNAME} is running with PID $pid"
 					set tries 2000
 				}

@@ -62,7 +62,7 @@ puts "ACPLT systemdomain: ${THISACPLTSYSTEM}"
 #  Setzen der Prozess-Umgebungsvariablen 
 #
 set env(ACPLT_HOME) ${THISACPLTSYSTEM}
-set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;$env(PATH)"
+set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/syslibs;$env(PATH) "
 #
 #  Setzen des LD_LIBRATY_PATH fuer linux
 #
@@ -90,10 +90,10 @@ set DATABASENAME "db"
 #
 #  Löschen einer eventuell vorhandenen alten Datenbasis
 #
-#if {
-#[file exists ${THISSERVER}/${DATABASENAME}.ovd] == 1
-#} then {file delete ${THISSERVER}/${DATABASENAME}.ovd
-#}
+if {
+[file exists ${THISSERVER}/${DATABASENAME}.ovd] == 1
+} then {file delete ${THISSERVER}/${DATABASENAME}.ovd
+}
 #
 #   Erstellen der neuen Datenbasis
 #
