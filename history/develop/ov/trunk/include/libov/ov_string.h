@@ -30,7 +30,7 @@
 #ifndef OV_STRING_H_INCLUDED
 #define OV_STRING_H_INCLUDED
 
-#include "ov.h"
+#include "libov/ov_ov.h"
 
 #ifdef __cplusplus
 extern "C" {
