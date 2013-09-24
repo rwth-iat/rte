@@ -204,6 +204,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_retrieveMessage_set(
 	OV_UINT inboxNameLength = sizeof(inboxName);
 	OV_UINT identifier_length = 0;
 	OV_RESULT result = 0;
+	OV_ELEMENT parentObject, part;
 	//prepare registry findservice by extracting target service name
 
 	ov_memstack_lock();
@@ -216,29 +217,59 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_retrieveMessage_set(
 	{
 		//Get pointer to service and then append "/Inbox" to find the inbox, which is a domain
 		sDom = Ov_DynamicPtrCast(ov_domain, sobj);
-		if(!sDom)
-		{	/*	object is no Domain --> it cannot be an inbox	*/
-			ov_logfile_error("%s: could not deliver message: receiving object is no domain (cannot have inbox)", pobj->v_identifier);
-			ov_memstack_unlock();
-			return OV_ERR_GENERIC;
-		}
-		Ov_ForEachChildEx(ov_containment, sDom, inboxdomain, ov_domain)
+		if(sDom)
 		{
-			identifier_length = strlen(inboxdomain->v_identifier)+1;
-			if(identifier_length != inboxNameLength)	/*	identifiers length differs from "INBOX" --> this must be the wrong one	*/
-				continue;
-			else
+			/*	iterate over all children in containment to find inbox	*/
+			Ov_ForEachChildEx(ov_containment, sDom, inboxdomain, ov_domain)
 			{
-				if(ov_string_compare(inboxName, ov_string_toupper(inboxdomain->v_identifier)) == OV_STRCMP_EQUAL)
-				{	/*	inbox found	*/
-					break;
+				identifier_length = strlen(inboxdomain->v_identifier)+1;
+				if(identifier_length != inboxNameLength)	/*	identifiers length differs from "INBOX" --> this must be the wrong one	*/
+					continue;
+				else
+				{
+					if(ov_string_compare(inboxName, ov_string_toupper(inboxdomain->v_identifier)) == OV_STRCMP_EQUAL)
+					{	/*	inbox found	*/
+						break;
+					}
 				}
 			}
 		}
 		if (!inboxdomain){
-			ov_memstack_unlock();
-			return OV_ERR_GENERIC;
+			/*	inbox not found, maybe it's a part...	*/
+			parentObject.pobj = sobj;
+			parentObject.elemtype = OV_ET_OBJECT;
+			part.elemtype = OV_ET_NONE;
+
+			/*	iterate over all parts	*/
+			ov_element_getnextpart(&parentObject, &part, OV_ET_OBJECT);
+			while(part.elemtype!=OV_ET_NONE){
+				if(part.elemunion.ppart){
+					inboxdomain = Ov_DynamicPtrCast(ov_domain, part.pobj);
+					if(inboxdomain)
+					{
+						identifier_length = strlen(inboxdomain->v_identifier)+1;
+						if(identifier_length != inboxNameLength)	/*	identifiers length differs from "INBOX" --> this must be the wrong one	*/
+							continue;
+						else
+						{
+							if(ov_string_compare(inboxName, ov_string_toupper(inboxdomain->v_identifier)) == OV_STRCMP_EQUAL)
+							{	/*	inbox found	*/
+								break;
+							}
+						}
+					}
+					inboxdomain = NULL;
+				}
+				ov_element_getnextpart(&parentObject, &part, OV_ET_OBJECT);
+			}
+
+			if (!inboxdomain){
+				/*	not a part either	*/
+				ov_memstack_unlock();
+				return OV_ERR_GENERIC;
+			}
 		}
+
 	}
 	else
 	{
