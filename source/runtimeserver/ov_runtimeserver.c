@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#if OV_SYSTEM_NT
+#include <windows.h>
+#endif
 //#include "libovks/ov_ksserver.h"
 #include "libov/ov_database.h"
 #include "libov/ov_object.h"
@@ -116,6 +119,15 @@ static void ov_server_sighandler(
 	ov_ksserver_stripped_sighandler(signal);
 }
 
+#if OV_SYSTEM_NT
+BOOL WINAPI myCtrlCHandler(DWORD dwCtrlType)
+{
+	ov_logfile_info("Received CTRL-Event. Shutting down server...");
+	ov_server_run=FALSE;
+	return TRUE;
+}
+#endif
+
 OV_DLLFNCEXPORT OV_RESULT ov_ksserver_stripped_create(
 	OV_STRING			servername,
 	OV_FNC_SIGHANDLER	*sighandler
@@ -126,7 +138,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_ksserver_stripped_create(
 		}
 
      		if(sighandler) {
-			signal(SIGTERM, sighandler);
+#if OV_SYSTEM_NT
+     			SetConsoleCtrlHandler(myCtrlCHandler,TRUE);
+#endif
+     		signal(SIGTERM, sighandler);
 			signal(SIGINT, sighandler);
 #if !PLT_SYSTEM_NT
 			signal(SIGHUP, sighandler);
