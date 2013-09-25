@@ -145,6 +145,12 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 						if(Ov_Fail(result))
 							return result;
 					}/*	protocol found --> just reregister	*/
+					else
+					{	/*	set port (again); important if server changes its port	*/
+						result = ov_string_setvalue(&(pExistingSrvRep->v_port.value[i]), port);
+						if(Ov_Fail(result))
+							return result;
+					}
 					ksbase_ServerRep_regtime_set(pExistingSrvRep, &timenow);
 					ksbase_ServerRep_state_set(pExistingSrvRep, KSBASE_SERVERREP_STATE_ONLINE);
 					if(ksbase_ServerRep_timetolive_get(pExistingSrvRep) > timetolive)
