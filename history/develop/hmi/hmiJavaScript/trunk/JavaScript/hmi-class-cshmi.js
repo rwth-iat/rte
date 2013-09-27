@@ -165,7 +165,7 @@ cshmi.prototype = {
 					var plainJSON = decodeURI(response);
 					var responseJSON = JSON.parse(plainJSON);
 				} catch (e) {
-					HMI.hmi_log_info("Parsing Cache was not successful. Skipping.");
+					HMI.hmi_log_info("Parsing Cache was not successful. Skipping: "+e.message);
 					//something went wrong, ignore the cache 8-/
 					responseJSON = {};
 				}
@@ -509,7 +509,10 @@ cshmi.prototype = {
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
 				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
-					//we have an movegesture on the VisualObject or a parent, so this will handle all action
+					//fixme handle toggle
+					
+					//we have an movegesture on the same VisualObject, so this handled all action in mouse up
+					if (evt.stopPropagation) evt.stopPropagation();
 					return;
 				}
 				
@@ -1994,6 +1997,7 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		/* changes in the structure should be blocking or at least no other communication should be performed
 		var RenameCbfnc = function(Client, req){
 			if(req.status !== 200){
 				var response = req.responseText;
@@ -2008,10 +2012,11 @@ cshmi.prototype = {
 				}
 			}
 		};
+		*/
 		
-		var result = HMI.KSClient.renameObject(OldName, NewName, RenameCbfnc, true);
+		var result = HMI.KSClient.renameObject(OldName, NewName);
 		
-		if (result !== true){
+		if (result === false){
 			return false;
 		}
 		return true;
@@ -2043,6 +2048,7 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		/* changes in the structure should be blocking or at least no other communication should be performed
 		var CreateObjectCbfnc = function(Client, req){
 			if(req.status !== 200){
 				var response = req.responseText;
@@ -2062,10 +2068,11 @@ cshmi.prototype = {
 				}
 			}
 		};
+		*/
 		
-		var result = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass, CreateObjectCbfnc, true);
+		var result = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass);
 		
-		if (result !== true){
+		if (result === false){
 			return false;
 		}
 		return true;
@@ -2092,6 +2099,7 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		/* changes in the structure should be blocking or at least no other communication should be performed
 		var DeleteObjectCbfnc = function(Client, req){
 			if(req.status !== 200){
 				var response = req.responseText;
@@ -2104,11 +2112,11 @@ cshmi.prototype = {
 				}
 			}
 		};
-
+		*/
 		
-		var result = HMI.KSClient.deleteObject(targetName, DeleteObjectCbfnc, true);
+		var result = HMI.KSClient.deleteObject(targetName);
 		
-		if (result !== true){
+		if (result === false){
 			return false;
 		}
 		return true;
@@ -2137,6 +2145,7 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		/* changes in the structure should be blocking or at least no other communication should be performed
 		var LinkObjectsCbfnc = function(Client, req){
 			if(req.status !== 200){
 				var response = req.responseText;
@@ -2153,10 +2162,11 @@ cshmi.prototype = {
 				}
 			}
 		};
+		*/
 		
-		var result = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA, LinkObjectsCbfnc, true);
+		var result = HMI.KSClient.linkObjects(ObjectA, ObjectB, PortNameA);
 		
-		if (result !== true){
+		if (result === false){
 			return false;
 		}
 		return true;
@@ -2185,6 +2195,7 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		/* changes in the structure should be blocking or at least no other communication should be performed
 		var UnlinkObjectsCbfnc = function(Client, req){
 			if(req.status !== 200){
 				var response = req.responseText;
@@ -2199,10 +2210,11 @@ cshmi.prototype = {
 				}
 			}
 		};
+		*/
 		
-		var result = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA, UnlinkObjectsCbfnc, true);
+		var result = HMI.KSClient.unlinkObjects(ObjectA, ObjectB, PortNameA);
 		
-		if (result !== true){
+		if (result === false){
 			return false;
 		}
 		return true;
@@ -5412,7 +5424,8 @@ cshmi.prototype = {
 			//toggle visibility of hideable childtemplates onclick
 			VisualParentObject.addEventListener("click", function(evt){
 				if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
-					//we have an clickgesture on the same VisualObject, so this will handle all action
+					//we have an clickgesture on the same VisualObject, so this handled all action in mouse up
+					if (evt.stopPropagation) evt.stopPropagation();
 					return;
 				}
 				
