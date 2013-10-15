@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   sfcHeader.c
+*   sscHeader.c
 *
 *   History
 *   -------
@@ -16,42 +16,42 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_sfc
-#define OV_COMPILE_LIBRARY_sfc
+#ifndef OV_COMPILE_LIBRARY_ssc
+#define OV_COMPILE_LIBRARY_ssc
 #endif
 
 
-#include "sfc.h"
-#include "sfclib.h"
+#include "ssc.h"
+#include "ssclib.h"
 
-OV_RESULT sfc_sfcHeader_checkLocation(
-	OV_INSTPTR_sfc_sfcHeader	pSFC
+OV_RESULT ssc_sscHeader_checkLocation(
+	OV_INSTPTR_ssc_sscHeader	pSSC
 ) {
-	OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC));
-	OV_INSTPTR_ov_domain pSfcContainerContainer = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pSFC));
+	OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
+	OV_INSTPTR_ov_domain pSscContainerContainer = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pSSC));
 
-	//if ( pSfcContainer == NULL )
-	if ( (pSfcContainer == NULL) && (pSfcContainerContainer != NULL) )
+	//if ( pSscContainer == NULL )
+	if ( (pSscContainer == NULL) && (pSscContainerContainer != NULL) )
 	{
-	   	pSFC->v_error=TRUE;
-	   	ov_string_setvalue(&pSFC->v_errorDetail, "sfc must be encapsulated in a functionchart.");
-		ov_logfile_error("sfc_sfcHeader_constructor: sfc must be encapsulated in a functionchart.");
+	   	pSSC->v_error=TRUE;
+	   	ov_string_setvalue(&pSSC->v_errorDetail, "ssc must be encapsulated in a functionchart.");
+		ov_logfile_error("ssc_sscHeader_constructor: ssc must be encapsulated in a functionchart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 	return OV_ERR_OK;
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_constructor(
+OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_sfc_sfcHeader pinst = Ov_StaticPtrCast(sfc_sfcHeader, pobj);
-    //OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_step pInitStep = NULL;
-    OV_INSTPTR_sfc_step pEndStep = NULL;
+    OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
+    //OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_step pInitStep = NULL;
+    OV_INSTPTR_ssc_step pEndStep = NULL;
     //OV_INSTPTR_fb_task pInitTaskParent = NULL;
     OV_RESULT    result;
 
@@ -63,24 +63,24 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_constructor(
     /* do what */
 
     // check location
-    result = sfc_sfcHeader_checkLocation (pinst);
+    result = ssc_sscHeader_checkLocation (pinst);
     if(Ov_Fail(result)) return result;
 
 
     /*
-    if (pSfcContainer == NULL)
+    if (pSscContainer == NULL)
     {
-    	ov_logfile_error("sfc_sfcHeader_constructor: sfc must be encapsulated in a functionchart.");
+    	ov_logfile_error("ssc_sscHeader_constructor: ssc must be encapsulated in a functionchart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 	*/
 
 
     // create INIT- & END-step
-    result = Ov_CreateObject(sfc_step, pInitStep, pinst, "INIT");
+    result = Ov_CreateObject(ssc_step, pInitStep, pinst, "INIT");
     pInitStep->v_internalID=0;
     pInitStep->v_actimode=1;
-    result = Ov_CreateObject(sfc_step, pEndStep, pinst, "END");
+    result = Ov_CreateObject(ssc_step, pEndStep, pinst, "END");
     pEndStep->v_internalID=999;
 
     //init variables
@@ -89,17 +89,17 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
+OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
 		OV_INSTPTR_fb_functionblock	pfb,
 		OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_sfc_sfcHeader pinst = Ov_StaticPtrCast(sfc_sfcHeader, pfb);
-    //OV_INSTPTR_fb_functionchart pSfcContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
-    //OV_INSTPTR_sfc_step      pInitStep = NULL;
-    OV_INSTPTR_sfc_step      pActiveStep = NULL;
+    OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pfb);
+    //OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
+    //OV_INSTPTR_ssc_step      pInitStep = NULL;
+    OV_INSTPTR_ssc_step      pActiveStep = NULL;
     //OV_INSTPTR_fb_task       pTask = NULL;
     OV_INSTPTR_fb_task 		 intask = &pinst->p_intask;
     //OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
@@ -115,12 +115,12 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
     intask->v_cyctime.usecs = 0;
 
     // check location
-    result = sfc_sfcHeader_checkLocation (pinst);
+    result = ssc_sscHeader_checkLocation (pinst);
     if(Ov_Fail(result)) return;
 
 
     // find active step
-    Ov_GetFirstChildEx(fb_tasklist, intask, pActiveStep, sfc_step);
+    Ov_GetFirstChildEx(fb_tasklist, intask, pActiveStep, ssc_step);
     if (pActiveStep != NULL)
     {
     	pActiveStep->v_actimode=0;
@@ -152,8 +152,8 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
 
     			/* do: */
     			//printf("init, do\n");
-    			// reset sfc
-    			result=Ov_Call0 (sfc_sfcHeader, pinst, resetSfc);
+    			// reset ssc
+    			result=Ov_Call0 (ssc_sscHeader, pinst, resetSsc);
     			if(Ov_Fail(result)) return;
 
     			// generic part
@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
     			/* transitions */
     			//printf("init, transitions\n");
     			// INIT to START
-    			if (pinst->v_EN == SFCCMD_START) pinst->v_workingState= WOST_START;
+    			if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
 
     			/* exit */
     			if (pinst->v_workingState != WOST_INIT)
@@ -214,10 +214,10 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
        			//printf("start, transitions\n");
 
        			// START to BREAK
-    			if (pinst->v_EN == SFCCMD_BREAK) pinst->v_workingState= WOST_BREAK;
+    			if (pinst->v_EN == SSCCMD_BREAK) pinst->v_workingState= WOST_BREAK;
 
     			// START to STOP
-    			if (pinst->v_EN == SFCCMD_STOP) pinst->v_workingState= WOST_STOP;
+    			if (pinst->v_EN == SSCCMD_STOP) pinst->v_workingState= WOST_STOP;
 
        			/* exit */
        			if (pinst->v_workingState != WOST_START)
@@ -275,10 +275,10 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
            		//printf("break, transitions\n");
 
            		// BREAK to STOP
-           		if (pinst->v_EN == SFCCMD_STOP) pinst->v_workingState= WOST_STOP;
+           		if (pinst->v_EN == SSCCMD_STOP) pinst->v_workingState= WOST_STOP;
 
            		// BREAK to START
-           		if (pinst->v_EN == SFCCMD_START) pinst->v_workingState= WOST_START;
+           		if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
 
            		// generic part
            		if (pinst->v_workingState != WOST_BREAK) pinst->v_woStQualifier = 3;
@@ -315,7 +315,7 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
         		}
       		    //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pActiveStep), execute, pltc);
         		//Frage: Warum funktionier hier der Aufruf von execute nicht?
-        		//Ov_Call1 (sfc_step, pActiveStep, typemethod, pltc);
+        		//Ov_Call1 (ssc_step, pActiveStep, typemethod, pltc);
         		Ov_Call1 (fb_functionblock, pActiveStep, typemethod, pltc);
 
 
@@ -328,8 +328,8 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
 
         	/* do: */
         	//printf("stop, do\n");
-        	// reset sfc
-        	result=Ov_Call0 (sfc_sfcHeader, pinst, resetSfc);
+        	// reset ssc
+        	result=Ov_Call0 (ssc_sscHeader, pinst, resetSsc);
         	if(Ov_Fail(result)) return;
 
         	// generic part
@@ -340,7 +340,7 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
            	//printf("stop, transitions\n");
 
            	// STOP to START
-        	if (pinst->v_EN == SFCCMD_START) pinst->v_workingState= WOST_START;
+        	if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
 
         	// generic part
            	if (pinst->v_workingState != WOST_STOP) pinst->v_woStQualifier = 3;
@@ -372,28 +372,28 @@ OV_DLLFNCEXPORT void sfc_sfcHeader_typemethod(
     /* Execute internal task */
     Ov_Call1 (fb_task, intask, execute, pltc);
 
-    if (ov_string_compare(pinst->v_identifier, "sfc1") == 0)
+    if (ov_string_compare(pinst->v_identifier, "ssc1") == 0)
     	printf("\n");
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
-	OV_INSTPTR_sfc_sfcHeader    pinst
+OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
+	OV_INSTPTR_ssc_sscHeader    pinst
 ) {
-	OV_INSTPTR_sfc_step      pStep = NULL;
-	OV_INSTPTR_sfc_step      pInitStep = NULL;
+	OV_INSTPTR_ssc_step      pStep = NULL;
+	OV_INSTPTR_ssc_step      pInitStep = NULL;
 	OV_INSTPTR_fb_task 		 intask = &pinst->p_intask;
 	OV_RESULT    			 result;
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
-	OV_INSTPTR_sfc_sfcHeader pSfcAction = NULL;
+	OV_INSTPTR_ssc_sscHeader pSscAction = NULL;
     //OV_TIME *pTime;
     //ov_time_gettime(&pTime);
 
     //reset all steps; find and link INIT-step to intask
-	  Ov_ForEachChildEx(ov_containment, pinst, pStep, sfc_step)
+	  Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step)
 	  {
-		  result=Ov_Call0(sfc_step, pStep, resetStep);
+		  result=Ov_Call0(ssc_step, pStep, resetStep);
 
 		  if(pStep->v_internalID == 0)
 		  {
@@ -408,7 +408,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
 	  }
 	  result=Ov_Link(fb_tasklist, intask,  pInitStep);
 
-	  // reset all actions (FB, CFC or SFC) under .actions folder
+	  // reset all actions (FB, CFC or SSC) under .actions folder
 	  Ov_ForEachChildEx(ov_containment, &pinst->p_actions, pFbAction, fb_functionblock)
 	  {
 		  // unlink from task parent
@@ -421,15 +421,15 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
 		  pFbAction->v_cyctime.usecs = 0;
 		  pFbAction->v_iexreq = TRUE;
 
-		  // reset SFC action
-		  pSfcAction=Ov_DynamicPtrCast(sfc_sfcHeader,pFbAction);
-		  if (pSfcAction != NULL)
+		  // reset SSC action
+		  pSscAction=Ov_DynamicPtrCast(ssc_sscHeader,pFbAction);
+		  if (pSscAction != NULL)
 		  {
-			  pSfcAction->v_actimode=1;
-			  pSfcAction->v_EN=SFCCMD_STOP;
-			  //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSfcAction), execute, &pTime);
-			  Ov_Call0 (sfc_sfcHeader, pSfcAction, resetSfc);
-			  pSfcAction->v_actimode=0;
+			  pSscAction->v_actimode=1;
+			  pSscAction->v_EN=SSCCMD_STOP;
+			  //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSscAction), execute, &pTime);
+			  Ov_Call0 (ssc_sscHeader, pSscAction, resetSsc);
+			  pSscAction->v_actimode=0;
 		  }
 	  }
 
@@ -451,8 +451,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_resetSfc(
 	  return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_sfcHeader_checkPlausibility(
-	OV_INSTPTR_sfc_sfcHeader          pobj
+OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_checkPlausibility(
+	OV_INSTPTR_ssc_sscHeader          pobj
 ) {
 
 

@@ -16,40 +16,40 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_sfc
-#define OV_COMPILE_LIBRARY_sfc
+#ifndef OV_COMPILE_LIBRARY_ssc
+#define OV_COMPILE_LIBRARY_ssc
 #endif
 
 
-#include "sfc.h"
-#include "sfclib.h"
+#include "ssc.h"
+#include "ssclib.h"
 #include "libov/ov_association.h"
 
-OV_DLLFNCEXPORT OV_RESULT sfc_previousTransitions_link
+OV_DLLFNCEXPORT OV_RESULT ssc_previousTransitions_link
 (
-	const OV_PPT_sfc_previousTransitions	pparent,
-	const OV_CPT_sfc_previousTransitions	pchild,
+	const OV_PPT_ssc_previousTransitions	pparent,
+	const OV_CPT_ssc_previousTransitions	pchild,
 	const OV_PLACEMENT_HINT					parenthint,
-	const OV_CPT_sfc_previousTransitions	prelparent,
+	const OV_CPT_ssc_previousTransitions	prelparent,
 	const OV_PLACEMENT_HINT					childhint,
-	const OV_CPT_sfc_previousTransitions	prelchild
+	const OV_CPT_ssc_previousTransitions	prelchild
 ) {
 	//	local Pointers
 	//
-	//OV_INSTPTR_sfc_transition pTrans = Ov_StaticPtrCast(sfc_transition, pchild);
+	//OV_INSTPTR_ssc_transition pTrans = Ov_StaticPtrCast(ssc_transition, pchild);
 
-	OV_INSTPTR_sfc_step pPreviousStep = Ov_GetParent(sfc_nextTransitions, pchild);
+	OV_INSTPTR_ssc_step pPreviousStep = Ov_GetParent(ssc_nextTransitions, pchild);
 	//OV_RESULT    result;
 
 	// check if the previousStep and nextStep are the same
 	if ( pPreviousStep == pparent)
 	{
-		ov_logfile_error("sfc_previousTransitions_link: %s - the previous step and the next step cannot be the same.", pchild->v_identifier);
+		ov_logfile_error("ssc_previousTransitions_link: %s - the previous step and the next step cannot be the same.", pchild->v_identifier);
 		return OV_ERR_BADPLACEMENT;
 	}
 
 	// link association
-	return ov_association_link(passoc_sfc_previousTransitions,
+	return ov_association_link(passoc_ssc_previousTransitions,
 		Ov_PtrUpCast(ov_object, pparent),
 		Ov_PtrUpCast(ov_object, pchild),
 		parenthint,
@@ -58,6 +58,6 @@ OV_DLLFNCEXPORT OV_RESULT sfc_previousTransitions_link
 		Ov_PtrUpCast(ov_object, prelchild));
 }
 
-OV_IMPL_UNLINK(sfc_previousTransitions)
-OV_IMPL_GETACCESS(sfc_previousTransitions)
+OV_IMPL_UNLINK(ssc_previousTransitions)
+OV_IMPL_GETACCESS(ssc_previousTransitions)
 

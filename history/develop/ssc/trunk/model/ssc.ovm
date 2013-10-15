@@ -39,7 +39,7 @@
 *
 *	File
 *	-----
-*	sfc.ovm - ACPLT Sequntial Function Chart Library model
+*	ssc.ovm - ACPLT Sequntial Function Chart Library model
 *
 *	Authors:
 *	--------
@@ -59,7 +59,7 @@
 
 #include "fb.ovm"
 
-LIBRARY sfc
+LIBRARY ssc
 
   VERSION   = "0.1";
   AUTHOR    = "Liyong Yu";
@@ -71,17 +71,17 @@ LIBRARY sfc
   Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
    
   /* Konzeptionell wurde entschieden (Epple, Qurios, Krausser, Yu), dass man nicht von fb/functionchart ableiten darf. 
-  Deswegen wurde die Verwaltungsfunktion für ein SFC als eine eigenständige Klasse definiert.
+  Deswegen wurde die Verwaltungsfunktion für ein SSC als eine eigenständige Klasse definiert.
   Es kann jedoch überlegt werden, ob dieser Design noch nötig ist.*/
-  CLASS sfcHeader : CLASS fb/functionblock
+  CLASS sscHeader : CLASS fb/functionblock
 		IS_INSTANTIABLE;
-		COMMENT = "SFC header";
+		COMMENT = "SSC header";
 		VARIABLES
 			EN   			: UINT   	FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
 			woStPhase       : UINT		FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
 			woStQualifier   : UINT		FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
 			activeStep  	: STRING	FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
-			terminated		: BOOL		FLAGS = "o"	COMMENT = "TRUE if SFC reaches END step";
+			terminated		: BOOL		FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
 			workingState    : UINT		FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
 			woStText        : STRING    FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
 			error			: BOOL		FLAGS = "o"	COMMENT = "error";
@@ -95,7 +95,7 @@ LIBRARY sfc
     	OPERATIONS
         	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
         	typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-         	resetSfc   	: C_FUNCTION <SFC_FNC_RESETSFC>;
+         	resetSsc   	: C_FUNCTION <SSC_FNC_RESETSSC>;
     	END_OPERATIONS;
   END_CLASS;
 
@@ -109,8 +109,8 @@ LIBRARY sfc
 			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
 			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
 			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
-			hasSubSfc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSFC(s) (only for entry- and do-actions)";
-			subSfcTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSFC is/are terminated";
+			hasSubSsc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSSC(s) (only for entry- and do-actions)";
+			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";
 			error			:BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
 	END_VARIABLES;
@@ -123,7 +123,7 @@ LIBRARY sfc
   	OPERATIONS
   			constructor		: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
   			typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      		resetStep   	: C_FUNCTION <SFC_FNC_RESETSTEP>;
+      		resetStep   	: C_FUNCTION <SSC_FNC_RESETSTEP>;
     END_OPERATIONS;
   END_CLASS;
   
@@ -156,11 +156,11 @@ LIBRARY sfc
     END_VARIABLES;
     OPERATIONS
       constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-      setActionName		    : 	C_FUNCTION  <SFC_FNC_SETACTIONNAME> IS_ABSTRACT;
+      setActionName		    : 	C_FUNCTION  <SSC_FNC_SETACTIONNAME> IS_ABSTRACT;
     END_OPERATIONS;
   END_CLASS;
    
-  CLASS setVariable : CLASS sfc/actionBlock
+  CLASS setVariable : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
   	COMMENT = "action block for set variable action";
     VARIABLES
@@ -169,7 +169,7 @@ LIBRARY sfc
     END_VARIABLES;
     OPERATIONS
       typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      setActionName		: C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
+      setActionName		: C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
     END_OPERATIONS;
   END_CLASS;
   
@@ -177,24 +177,24 @@ LIBRARY sfc
   /* TODO: setVariable für variable A = variable B (Die jetzige setVariable ist nur variable A = value) */
   
   
-   CLASS executeFb : CLASS sfc/actionBlock
+   CLASS executeFb : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
   	COMMENT = "action block calling FB- or CFC-action ";
     VARIABLES
     END_VARIABLES;
     OPERATIONS
       typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      setActionName		: 	C_FUNCTION  <SFC_FNC_SETACTIONNAME>;
-      checkAction       : 	C_FUNCTION  <SFC_FNC_CHECKACTION>;
+      setActionName		: 	C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
+      checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>;
     END_OPERATIONS;
   END_CLASS;
   
-  /*Yu: in der Zunkunft kann überlegt werden, executeFb und executeSfc als eine Klasse zusammenzufassen. */
-   CLASS executeSfc : CLASS sfc/executeFb
+  /*Yu: in der Zunkunft kann überlegt werden, executeFb und executeSsc als eine Klasse zusammenzufassen. */
+   CLASS executeSsc : CLASS ssc/executeFb
 	IS_INSTANTIABLE;
-  	COMMENT = "action block calling SFC action";
+  	COMMENT = "action block calling SSC action";
     VARIABLES
-      enableSfc				: UINT		FLAGS = "i"	COMMENT = "SFC commando" INITIALVALUE = 1;
+      enableSsc				: UINT		FLAGS = "i"	COMMENT = "SSC commando" INITIALVALUE = 1;
     END_VARIABLES;
     OPERATIONS
       typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -209,22 +209,22 @@ LIBRARY sfc
            Lösung: Wenn ein AB bei der Initialisierung seine Aktion findet, linkt sie als TaskChild zu sich. */
   ASSOCIATION actionBlocks : ONE_TO_MANY
     PARENT action  		: CLASS fb/functionblock;
-    CHILD  actionBlocks : CLASS sfc/executeFb;
+    CHILD  actionBlocks : CLASS ssc/executeFb;
   END_ASSOCIATION;
   
   /* Connections from steps to next transitions. */
   ASSOCIATION nextTransitions : ONE_TO_MANY
     IS_LOCAL;
-    PARENT prevStep  : CLASS sfc/step;
-    CHILD  nextTrans : CLASS sfc/transition;
+    PARENT prevStep  : CLASS ssc/step;
+    CHILD  nextTrans : CLASS ssc/transition;
   END_ASSOCIATION;
 
   /* Connections from transitions to next steps. */
 
   ASSOCIATION previousTransitions : ONE_TO_MANY
     IS_LOCAL;
-    PARENT nextStep  : CLASS sfc/step;
-    CHILD  prevTrans : CLASS sfc/transition;
+    PARENT nextStep  : CLASS ssc/step;
+    CHILD  prevTrans : CLASS ssc/transition;
   END_ASSOCIATION; 
 
 END_LIBRARY;

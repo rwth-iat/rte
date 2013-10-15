@@ -5,39 +5,39 @@
 *   Date of file generation:  15-Jul-2011 (13:34:12)
 */
 
-#ifndef OV_COMPILE_LIBRARY_sfc
-#define OV_COMPILE_LIBRARY_sfc
+#ifndef OV_COMPILE_LIBRARY_ssc
+#define OV_COMPILE_LIBRARY_ssc
 #endif
 
 /***********************************************************************
 	Debug & Error
 ***********************************************************************/
 
-#ifdef SFC_ERROR
-#define SFC_EXECUTEFB_ERROR
+#ifdef SSC_ERROR
+#define SSC_EXECUTEFB_ERROR
 #endif
 
-#ifdef SFC_DEBUG
-#define SFC_EXECUTEFB_DEBUG
+#ifdef SSC_DEBUG
+#define SSC_EXECUTEFB_DEBUG
 #endif
 
 
-#include "sfc.h"
-#include "sfclib.h"
+#include "ssc.h"
+#include "ssclib.h"
 
-OV_DLLFNCEXPORT void sfc_executeFb_typemethod(
+OV_DLLFNCEXPORT void ssc_executeFb_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_sfc_executeFb pinst = Ov_StaticPtrCast(sfc_executeFb, pfb);
+    OV_INSTPTR_ssc_executeFb pinst = Ov_StaticPtrCast(ssc_executeFb, pfb);
 
-    OV_INSTPTR_sfc_step  		pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
-    OV_INSTPTR_fb_functionblock pAction= Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent(sfc_actionBlocks, pinst));
-    OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
+    OV_INSTPTR_ssc_step  		pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_sscHeader  	pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_fb_functionblock pAction= Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent(ssc_actionBlocks, pinst));
+    OV_INSTPTR_ssc_sscHeader  	pSscAction=NULL;
     OV_INSTPTR_fb_task 			pTask=NULL;
     OV_RESULT    			 result;
 
@@ -49,26 +49,26 @@ OV_DLLFNCEXPORT void sfc_executeFb_typemethod(
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location
-    if (pSFC==NULL)
+    if (pSSC==NULL)
     {
       	pinst->v_error=TRUE;
       	ov_string_setvalue(&pinst->v_errorDetail, "wrong placement");
-    	ov_logfile_error("sfc_executeFb_typemethod: action block must be placed in a step.");
+    	ov_logfile_error("ssc_executeFb_typemethod: action block must be placed in a step.");
        	return;
     }
 
     // check action
-    result=Ov_Call0 (sfc_executeFb, pinst, checkAction);
+    result=Ov_Call0 (ssc_executeFb, pinst, checkAction);
     if(Ov_Fail(result)) return;
 
 	// execute action for once
 	Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pAction), execute, pltc);
 
-	// if subSFC terminates, then activate trans-task, else not
-	if (pSfcAction != NULL)
+	// if subSSC terminates, then activate trans-task, else not
+	if (pSscAction != NULL)
 	{
 		pTask=&pStep->p_trans;
-		if (pSfcAction->v_workingState == WOST_TERMINATE)
+		if (pSscAction->v_workingState == WOST_TERMINATE)
 		{
 			pTask->v_actimode=1;
 		} else {
@@ -81,11 +81,11 @@ OV_DLLFNCEXPORT void sfc_executeFb_typemethod(
 	return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_checkAction(
-             OV_INSTPTR_sfc_executeFb          pinst
+OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_checkAction(
+             OV_INSTPTR_ssc_executeFb          pinst
 ) {
 
-	OV_INSTPTR_fb_functionblock pAction= Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent(sfc_actionBlocks, pinst));
+	OV_INSTPTR_fb_functionblock pAction= Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent(ssc_actionBlocks, pinst));
 	OV_INSTPTR_fb_task 			pTask=NULL;
 
 
@@ -118,17 +118,17 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_checkAction(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
-             OV_INSTPTR_sfc_actionBlock                pobj,
+OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_setActionName(
+             OV_INSTPTR_ssc_actionBlock                pobj,
              const OV_STRING  value
 ) {
     //  local variables
-    OV_INSTPTR_sfc_executeSfc pinst = Ov_StaticPtrCast(sfc_executeSfc, pobj);
-    OV_INSTPTR_sfc_step  		pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_sfcHeader  	pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_ssc_executeSsc pinst = Ov_StaticPtrCast(ssc_executeSsc, pobj);
+    OV_INSTPTR_ssc_step  		pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_sscHeader  	pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
     OV_INSTPTR_fb_functionblock pAction=NULL;
     OV_INSTPTR_fb_functionblock pCurrentAction=NULL;
-    //OV_INSTPTR_sfc_sfcHeader  	pSfcAction=NULL;
+    //OV_INSTPTR_ssc_sscHeader  	pSscAction=NULL;
     //OV_RESULT    result;
 
     // init parameters
@@ -139,11 +139,11 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location
-    if (pSFC==NULL)
+    if (pSSC==NULL)
     {
       	pinst->v_error=TRUE;
       	ov_string_setvalue(&pinst->v_errorDetail, "wrong placement");
-    	ov_logfile_error("sfc_executeFb_actionName_set: action block must be encapsulated in a step.");
+    	ov_logfile_error("ssc_executeFb_actionName_set: action block must be encapsulated in a step.");
        	return OV_ERR_BADPLACEMENT;
     }
 
@@ -156,14 +156,14 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     }
 
 	//find current action
-    pCurrentAction = Ov_GetParent(sfc_actionBlocks, pinst);
+    pCurrentAction = Ov_GetParent(ssc_actionBlocks, pinst);
 
     // find new action instance
-    pAction=Ov_SearchChildEx(ov_containment, &pSFC->p_actions, value, fb_functionblock);
+    pAction=Ov_SearchChildEx(ov_containment, &pSSC->p_actions, value, fb_functionblock);
 
     if (pAction == NULL)
     {
-		//#ifdef SFC_EXECUTEFB_ERROR
+		//#ifdef SSC_EXECUTEFB_ERROR
 		ov_logfile_error("%s : action instance can not be located.", pinst->v_identifier);
 		//#endif
 
@@ -183,9 +183,9 @@ OV_DLLFNCEXPORT OV_RESULT sfc_executeFb_setActionName(
     if (pAction != NULL)
 	{
     	// unlink
-    	if (pCurrentAction != NULL) Ov_Unlink(sfc_actionBlocks, pCurrentAction, pinst);
+    	if (pCurrentAction != NULL) Ov_Unlink(ssc_actionBlocks, pCurrentAction, pinst);
     	// link
-    	Ov_Link(sfc_actionBlocks, pAction, pinst);
+    	Ov_Link(ssc_actionBlocks, pAction, pinst);
     	return ov_string_setvalue(&pinst->v_actionName,value);
 	}
 	

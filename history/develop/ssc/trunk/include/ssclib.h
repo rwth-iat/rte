@@ -38,7 +38,7 @@
 *
 *	File:
 *	------
-*	sfcliblib.h
+*	sscliblib.h
 *
 *	Editors:
 *	--------
@@ -49,8 +49,8 @@
 *
 ************************************************************************/
 
-#ifndef SFCLIB_H_INCLUDED
-#define SFCLIB_H_INCLUDED
+#ifndef SSCLIB_H_INCLUDED
+#define SSCLIB_H_INCLUDED
 
 /***********************************************************************
 	Includes
@@ -75,10 +75,10 @@
 ***********************************************************************/
 
 enum {
-	SFCCMD_STOP		= 0,	// execute exit-actions of the active step and stop SFC
-	SFCCMD_START	= 1,	// start SFC
-	SFCCMD_BREAK	= 2,	// stop SFC and hold on active step
-	SFCCMD_RESET	= 3		// stop SFC and reset sfc
+	SSCCMD_STOP		= 0,	// execute exit-actions of the active step and stop SSC
+	SSCCMD_START	= 1,	// start SSC
+	SSCCMD_BREAK	= 2,	// stop SSC and hold on active step
+	SSCCMD_RESET	= 3		// stop SSC and reset ssc
 };
 
 /***********************************************************************

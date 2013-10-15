@@ -19,7 +19,7 @@
  END_LIBRARY;
 
  LIBRARY
-    /Libraries/sfc
+    /Libraries/ssc
  END_LIBRARY;
 
  INSTANCE  /TechUnits/FunctionChart1 :
@@ -96,7 +96,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1 :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1 :
     CLASS /acplt/fb/functionchart;
     VARIABLE_VALUES
       iexreq : INPUT BOOL = TRUE;
@@ -111,7 +111,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1.intask :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1.intask :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -122,7 +122,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/IN :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/IN :
     CLASS /acplt/fb/singleport;
     VARIABLE_VALUES
       value : INPUT SINGLE = 910.000000;
@@ -132,7 +132,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/startADD :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/startADD :
     CLASS /acplt/fb/boolport;
     VARIABLE_VALUES
       value : INPUT BOOL = TRUE;
@@ -142,7 +142,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/limit :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/limit :
     CLASS /acplt/fb/singleport;
     VARIABLE_VALUES
       value : INPUT SINGLE = 1000.000000;
@@ -152,7 +152,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/OUT :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/OUT :
     CLASS /acplt/fb/singleport;
     VARIABLE_VALUES
       value : INPUT SINGLE = 1010.000000;
@@ -162,7 +162,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/acitveStep :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/acitveStep :
     CLASS /acplt/fb/stringport;
     VARIABLE_VALUES
       value : INPUT STRING = "S1";
@@ -172,8 +172,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader :
-    CLASS /Libraries/sfc/sfcHeader;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader :
+    CLASS /Libraries/ssc/sscHeader;
     VARIABLE_VALUES
       EN : INPUT UINT = 1;
       woStPhase : OUTPUT UINT = 2;
@@ -196,11 +196,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader.actions :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader.actions :
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader.actions/ADD2 :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader.actions/ADD2 :
     CLASS /Libraries/iec61131stdfb/ADD;
     VARIABLE_VALUES
       IN1 : INPUT SINGLE = 910.000000;
@@ -218,11 +218,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader.transConds :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader.transConds :
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader.transConds/GT1 :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader.transConds/GT1 :
     CLASS /Libraries/iec61131stdfb/GT;
     VARIABLE_VALUES
       IN1 : INPUT SINGLE = 909.000000;
@@ -240,7 +240,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader.intask :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader.intask :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -251,8 +251,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT :
-    CLASS /Libraries/sfc/step;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT :
+    CLASS /Libraries/ssc/step;
     VARIABLE_VALUES
       internalID : OUTPUT UINT = 0;
       X : OUTPUT BOOL = FALSE;
@@ -260,8 +260,8 @@
       phase : OUTPUT UINT = 1;
       qualifier : OUTPUT UINT = 1;
       evTransTrigger : OUTPUT BOOL = TRUE;
-      hasSubSfc : OUTPUT BOOL = FALSE;
-      subSfcTerminated : OUTPUT BOOL = FALSE;
+      hasSubSsc : OUTPUT BOOL = FALSE;
+      subSscTerminated : OUTPUT BOOL = FALSE;
       error : OUTPUT BOOL = FALSE;
       errorDetail : OUTPUT STRING = "";
       iexreq : INPUT BOOL = TRUE;
@@ -276,7 +276,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.entry :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.entry :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -287,7 +287,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.do :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.do :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -298,7 +298,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.trans :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.trans :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -309,7 +309,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.exit :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.exit :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 0;
@@ -320,8 +320,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT/reset :
-    CLASS /Libraries/sfc/setVariable;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/INIT/reset :
+    CLASS /Libraries/ssc/setVariable;
     VARIABLE_VALUES
       variable : INPUT STRING = "OUT";
       value : INPUT SINGLE = 0.000000;
@@ -341,8 +341,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/END :
-    CLASS /Libraries/sfc/step;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/END :
+    CLASS /Libraries/ssc/step;
     VARIABLE_VALUES
       internalID : OUTPUT UINT = 999;
       X : OUTPUT BOOL = FALSE;
@@ -350,8 +350,8 @@
       phase : OUTPUT UINT = 1;
       qualifier : OUTPUT UINT = 1;
       evTransTrigger : OUTPUT BOOL = FALSE;
-      hasSubSfc : OUTPUT BOOL = FALSE;
-      subSfcTerminated : OUTPUT BOOL = FALSE;
+      hasSubSsc : OUTPUT BOOL = FALSE;
+      subSscTerminated : OUTPUT BOOL = FALSE;
       error : OUTPUT BOOL = FALSE;
       errorDetail : OUTPUT STRING = "";
       iexreq : INPUT BOOL = TRUE;
@@ -365,7 +365,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/END.entry :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/END.entry :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -376,7 +376,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/END.do :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/END.do :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -387,7 +387,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/END.trans :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/END.trans :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -398,7 +398,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/END.exit :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/END.exit :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 0;
@@ -409,8 +409,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1 :
-    CLASS /Libraries/sfc/step;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1 :
+    CLASS /Libraries/ssc/step;
     VARIABLE_VALUES
       internalID : OUTPUT UINT = 1;
       X : OUTPUT BOOL = TRUE;
@@ -418,8 +418,8 @@
       phase : OUTPUT UINT = 2;
       qualifier : OUTPUT UINT = 2;
       evTransTrigger : OUTPUT BOOL = FALSE;
-      hasSubSfc : OUTPUT BOOL = FALSE;
-      subSfcTerminated : OUTPUT BOOL = FALSE;
+      hasSubSsc : OUTPUT BOOL = FALSE;
+      subSscTerminated : OUTPUT BOOL = FALSE;
       error : OUTPUT BOOL = FALSE;
       errorDetail : OUTPUT STRING = "";
       iexreq : INPUT BOOL = TRUE;
@@ -434,7 +434,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.entry :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1.entry :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -445,7 +445,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.do :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1.do :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -456,7 +456,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.trans :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1.trans :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 1;
@@ -467,7 +467,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.exit :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1.exit :
     CLASS /acplt/fb/task;
     VARIABLE_VALUES
       actimode : INPUT INT = 0;
@@ -478,8 +478,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1/callADD2 :
-    CLASS /Libraries/sfc/executeFb;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1/callADD2 :
+    CLASS /Libraries/ssc/executeFb;
     VARIABLE_VALUES
       actionQualifier : INPUT UINT = 2;
       actionName : INPUT STRING = "ADD2";
@@ -497,8 +497,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/S1/setOUT :
-    CLASS /Libraries/sfc/setVariable;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/S1/setOUT :
+    CLASS /Libraries/ssc/setVariable;
     VARIABLE_VALUES
       variable : INPUT STRING = "OUT";
       value : INPUT SINGLE = 1010.000000;
@@ -518,8 +518,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/T0 :
-    CLASS /Libraries/sfc/transition;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/T0 :
+    CLASS /Libraries/ssc/transition;
     VARIABLE_VALUES
       result : INPUT BOOL = TRUE;
       error : OUTPUT BOOL = FALSE;
@@ -536,8 +536,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/T1 :
-    CLASS /Libraries/sfc/transition;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/T1 :
+    CLASS /Libraries/ssc/transition;
     VARIABLE_VALUES
       result : INPUT BOOL = FALSE;
       error : OUTPUT BOOL = FALSE;
@@ -554,8 +554,8 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/sfcHeader/T2 :
-    CLASS /Libraries/sfc/transition;
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/sscHeader/T2 :
+    CLASS /Libraries/ssc/transition;
     VARIABLE_VALUES
       result : INPUT BOOL = FALSE;
       error : OUTPUT BOOL = FALSE;
@@ -572,7 +572,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/stop :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/stop :
     CLASS /acplt/fb/boolport;
     VARIABLE_VALUES
       value : INPUT BOOL = FALSE;
@@ -582,7 +582,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/FunctionChart1/SFC1/EN :
+ INSTANCE  /TechUnits/FunctionChart1/SSC1/EN :
     CLASS /acplt/fb/uintport;
     VARIABLE_VALUES
       value : INPUT UINT = 1;
@@ -621,7 +621,7 @@
      PARENT taskparent : CLASS unknown
            = /TechUnits/FunctionChart1.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/ADD1 , /TechUnits/FunctionChart1/SFC1};
+           = {/TechUnits/FunctionChart1/ADD1 , /TechUnits/FunctionChart1/SSC1};
  END_LINK;
 
  LINK
@@ -659,9 +659,9 @@
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/IN , /TechUnits/FunctionChart1/SFC1/startADD , /TechUnits/FunctionChart1/SFC1/limit , /TechUnits/FunctionChart1/SFC1/OUT , /TechUnits/FunctionChart1/SFC1/acitveStep , /TechUnits/FunctionChart1/SFC1/stop , /TechUnits/FunctionChart1/SFC1/EN};
+           = {/TechUnits/FunctionChart1/SSC1/IN , /TechUnits/FunctionChart1/SSC1/startADD , /TechUnits/FunctionChart1/SSC1/limit , /TechUnits/FunctionChart1/SSC1/OUT , /TechUnits/FunctionChart1/SSC1/acitveStep , /TechUnits/FunctionChart1/SSC1/stop , /TechUnits/FunctionChart1/SSC1/EN};
  END_LINK;
 
  LINK
@@ -669,279 +669,279 @@
      PARENT taskparent : CLASS unknown
            = /TechUnits/FunctionChart1.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1};
+           = {/TechUnits/FunctionChart1/SSC1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1.intask;
+           = /TechUnits/FunctionChart1/SSC1.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/IN};
+           = {/TechUnits/FunctionChart1/SSC1/IN};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/startADD};
+           = {/TechUnits/FunctionChart1/SSC1/startADD};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/limit};
+           = {/TechUnits/FunctionChart1/SSC1/limit};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/OUT};
+           = {/TechUnits/FunctionChart1/SSC1/OUT};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/acitveStep};
+           = {/TechUnits/FunctionChart1/SSC1/acitveStep};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1.intask;
+           = /TechUnits/FunctionChart1/SSC1.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader};
  END_LINK;
 
  LINK
      OF_ASSOCIATION actionBlocks
      PARENT action : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.actions/ADD2;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.actions/ADD2;
      CHILDREN actionBlocks : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1/callADD2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1/callADD2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.intask;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION nextTransitions
      PARENT prevStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT;
      CHILDREN nextTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.entry;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.entry;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/INIT/reset};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/INIT/reset};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.trans;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.trans;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.entry;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.entry;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/INIT/reset};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/INIT/reset};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/END;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/END;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION nextTransitions
      PARENT prevStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1;
      CHILDREN nextTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1 , /TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1 , /TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.intask;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.intask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.do;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.do;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1/callADD2 , /TechUnits/FunctionChart1/SFC1/sfcHeader/S1/setOUT};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1/callADD2 , /TechUnits/FunctionChart1/SSC1/sscHeader/S1/setOUT};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.trans;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.trans;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1 , /TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1 , /TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION actionBlocks
      PARENT action : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.actions/ADD2;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.actions/ADD2;
      CHILDREN actionBlocks : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1/callADD2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1/callADD2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.do;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.do;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1/callADD2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1/callADD2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.do;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.do;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/S1/setOUT};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/S1/setOUT};
  END_LINK;
 
  LINK
      OF_ASSOCIATION nextTransitions
      PARENT prevStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT;
      CHILDREN nextTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT.trans;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT.trans;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T0};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T0};
  END_LINK;
 
  LINK
      OF_ASSOCIATION nextTransitions
      PARENT prevStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1;
      CHILDREN nextTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/INIT;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/INIT;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.trans;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.trans;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T1};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T1};
  END_LINK;
 
  LINK
      OF_ASSOCIATION nextTransitions
      PARENT prevStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1;
      CHILDREN nextTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION previousTransitions
      PARENT nextStep : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/END;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/END;
      CHILDREN prevTrans : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION tasklist
      PARENT taskparent : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1.trans;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1.trans;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/sfcHeader/T2};
+           = {/TechUnits/FunctionChart1/SSC1/sscHeader/T2};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/stop};
+           = {/TechUnits/FunctionChart1/SSC1/stop};
  END_LINK;
 
  LINK
      OF_ASSOCIATION variables
      PARENT funchart : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1;
+           = /TechUnits/FunctionChart1/SSC1;
      CHILDREN ports : CLASS unknown
-           = {/TechUnits/FunctionChart1/SFC1/EN};
+           = {/TechUnits/FunctionChart1/SSC1/EN};
  END_LINK;
 
  INSTANCE  /Cons/c_ADD1_IN1 :
@@ -1022,7 +1022,7 @@
            = {/Cons/c_FunctionChart1_OUT1};
  END_LINK;
 
- INSTANCE  /Cons/c_sfcHeader_activeStep :
+ INSTANCE  /Cons/c_sscHeader_activeStep :
     CLASS /fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -1035,17 +1035,17 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/acitveStep;
+           = /TechUnits/FunctionChart1/SSC1/acitveStep;
      CHILDREN inputcon : CLASS connection
-           = {/Cons/c_sfcHeader_activeStep};
+           = {/Cons/c_sscHeader_activeStep};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader;
      CHILDREN outputcon : CLASS connection
-           = {/Cons/c_sfcHeader_activeStep};
+           = {/Cons/c_sscHeader_activeStep};
  END_LINK;
 
  INSTANCE  /Cons/c_GT1_IN1 :
@@ -1061,7 +1061,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.transConds/GT1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.transConds/GT1;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_GT1_IN1};
  END_LINK;
@@ -1069,7 +1069,7 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/OUT;
+           = /TechUnits/FunctionChart1/SSC1/OUT;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_GT1_IN1};
  END_LINK;
@@ -1087,7 +1087,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.transConds/GT1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.transConds/GT1;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_GT1_IN2};
  END_LINK;
@@ -1095,7 +1095,7 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/limit;
+           = /TechUnits/FunctionChart1/SSC1/limit;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_GT1_IN2};
  END_LINK;
@@ -1113,7 +1113,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/T1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/T1;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_GT1_OUT};
  END_LINK;
@@ -1121,12 +1121,12 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.transConds/GT1;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.transConds/GT1;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_GT1_OUT};
  END_LINK;
 
- INSTANCE  /Cons/c_SFC1_stop :
+ INSTANCE  /Cons/c_SSC1_stop :
     CLASS /fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -1139,20 +1139,20 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/T2;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/T2;
      CHILDREN inputcon : CLASS connection
-           = {/Cons/c_SFC1_stop};
+           = {/Cons/c_SSC1_stop};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/stop;
+           = /TechUnits/FunctionChart1/SSC1/stop;
      CHILDREN outputcon : CLASS connection
-           = {/Cons/c_SFC1_stop};
+           = {/Cons/c_SSC1_stop};
  END_LINK;
 
- INSTANCE  /Cons/c_SFC1_IN :
+ INSTANCE  /Cons/c_SSC1_IN :
     CLASS /fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -1165,9 +1165,9 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/IN;
+           = /TechUnits/FunctionChart1/SSC1/IN;
      CHILDREN inputcon : CLASS connection
-           = {/Cons/c_SFC1_IN};
+           = {/Cons/c_SSC1_IN};
  END_LINK;
 
  LINK
@@ -1175,10 +1175,10 @@
      PARENT sourcefb : CLASS unknown
            = /TechUnits/FunctionChart1/ADD1;
      CHILDREN outputcon : CLASS connection
-           = {/Cons/c_SFC1_IN};
+           = {/Cons/c_SSC1_IN};
  END_LINK;
 
- INSTANCE  /Cons/c_SFC1_EN :
+ INSTANCE  /Cons/c_SSC1_EN :
     CLASS /fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -1191,17 +1191,17 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader;
      CHILDREN inputcon : CLASS connection
-           = {/Cons/c_SFC1_EN};
+           = {/Cons/c_SSC1_EN};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/EN;
+           = /TechUnits/FunctionChart1/SSC1/EN;
      CHILDREN outputcon : CLASS connection
-           = {/Cons/c_SFC1_EN};
+           = {/Cons/c_SSC1_EN};
  END_LINK;
 
  INSTANCE  /Cons/c_T0_result :
@@ -1217,7 +1217,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/T0;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/T0;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_T0_result};
  END_LINK;
@@ -1225,7 +1225,7 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/startADD;
+           = /TechUnits/FunctionChart1/SSC1/startADD;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_T0_result};
  END_LINK;
@@ -1243,7 +1243,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.actions/ADD2;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.actions/ADD2;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_ADD2_IN1};
  END_LINK;
@@ -1251,7 +1251,7 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/IN;
+           = /TechUnits/FunctionChart1/SSC1/IN;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_ADD2_IN1};
  END_LINK;
@@ -1269,7 +1269,7 @@
  LINK
      OF_ASSOCIATION inputconnections
      PARENT targetfb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader/S1/setOUT;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader/S1/setOUT;
      CHILDREN inputcon : CLASS connection
            = {/Cons/c_setOUT_value};
  END_LINK;
@@ -1277,12 +1277,12 @@
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/sfcHeader.actions/ADD2;
+           = /TechUnits/FunctionChart1/SSC1/sscHeader.actions/ADD2;
      CHILDREN outputcon : CLASS connection
            = {/Cons/c_setOUT_value};
  END_LINK;
 
- INSTANCE  /Cons/c_SFC1_OUT :
+ INSTANCE  /Cons/c_SSC1_OUT :
     CLASS /fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -1297,13 +1297,13 @@
      PARENT targetfb : CLASS unknown
            = /TechUnits/FunctionChart1/OUT1;
      CHILDREN inputcon : CLASS connection
-           = {/Cons/c_SFC1_OUT};
+           = {/Cons/c_SSC1_OUT};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/FunctionChart1/SFC1/OUT;
+           = /TechUnits/FunctionChart1/SSC1/OUT;
      CHILDREN outputcon : CLASS connection
-           = {/Cons/c_SFC1_OUT};
+           = {/Cons/c_SSC1_OUT};
  END_LINK;
