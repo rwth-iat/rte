@@ -7,6 +7,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 
 #Project config parameters that are accessed by Eclipse
 DATABASE = database 
+SERVERSTARTKEYS = -w fb -w sfc
 MAKMAKOPTIONS = 
 EXTRA_CC_FLAGS = 
 EXTRA_LIBS = 
