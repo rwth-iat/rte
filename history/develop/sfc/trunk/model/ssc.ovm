@@ -1,0 +1,230 @@
+/*
+*	Copyright (C) 2010
+*	Chair of Process Control Engineering,
+*	RWTH Aachen University
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/***********************************************************************
+*
+*	File
+*	-----
+*	ssc.ovm - ACPLT Sequntial Function Chart Library model
+*
+*	Authors:
+*	--------
+*	Yu				Liyong Yu <liyong.yu@plt.rwth.aachen.de>
+*
+*	CVS:
+*	----
+*	$Revision: 1.9 $
+*	$Date: 2011-08-17 10:17:56 $
+*
+*	History:
+*	--------
+*	02-July-2011		Yu		V0.1
+*		-	Creation.
+*
+***********************************************************************/
+
+#include "fb.ovm"
+
+LIBRARY ssc
+
+  VERSION   = "0.1";
+  AUTHOR    = "Liyong Yu";
+  COPYRIGHT = "2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+  COMMENT   = "ACPLT Sequntial Function Chart Library";
+
+  /* Yu: Viele Engineeringaspekte wurden bei der Modellierung mitberücksichtig. Es wird z.B. bei jeder Instanzierung automatisch überprüft, 
+  ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
+  Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
+   
+  /* Konzeptionell wurde entschieden (Epple, Qurios, Krausser, Yu), dass man nicht von fb/functionchart ableiten darf. 
+  Deswegen wurde die Verwaltungsfunktion für ein SSC als eine eigenständige Klasse definiert.
+  Es kann jedoch überlegt werden, ob dieser Design noch nötig ist.*/
+  CLASS sscHeader : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		COMMENT = "SSC header";
+		VARIABLES
+			EN   			: UINT   	FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
+			woStPhase       : UINT		FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
+			woStQualifier   : UINT		FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
+			activeStep  	: STRING	FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
+			terminated		: BOOL		FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
+			workingState    : UINT		FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
+			woStText        : STRING    FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
+			error			: BOOL		FLAGS = "o"	COMMENT = "error";
+			errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+		END_VARIABLES;
+		PARTS
+      		actions 			: CLASS ov/domain;
+      		transConds 			: CLASS ov/domain;
+      		intask	 			: CLASS fb/task;
+    	END_PARTS;
+    	OPERATIONS
+        	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+        	typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+         	resetSsc   	: C_FUNCTION <SSC_FNC_RESETSSC>;
+    	END_OPERATIONS;
+  END_CLASS;
+
+  CLASS step : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+  	COMMENT = "step";
+  	VARIABLES
+			internalID		:UINT  		FLAGS = "n"	COMMENT = "internal ID" INITIALVALUE = 1;
+			X				:BOOL		FLAGS = "o"	COMMENT = "step flag according to IEC61131-3";
+			T				:TIME_SPAN 	FLAGS = "o"	COMMENT = "elapsed time since initiation of a step according to IEC61131-3";
+			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
+			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
+			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
+			hasSubSsc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSSC(s) (only for entry- and do-actions)";
+			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";
+			error			:BOOL		FLAGS = "o"	COMMENT = "error";
+			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
+	END_VARIABLES;
+	PARTS
+      		entry 	: CLASS fb/task;
+      		do  	: CLASS fb/task;
+      		trans  	: CLASS fb/task;	
+      		exit 	: CLASS fb/task;
+    END_PARTS;
+  	OPERATIONS
+  			constructor		: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+  			typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      		resetStep   	: C_FUNCTION <SSC_FNC_RESETSTEP>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+  CLASS transition: CLASS fb/functionblock
+	IS_INSTANTIABLE;
+  	COMMENT = "transition";
+    VARIABLES
+      result 			: BOOL 		FLAGS = "i" COMMENT = "The result of the executed transition";
+      error				: BOOL		FLAGS = "o"	COMMENT = "error";
+	  errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+    END_VARIABLES;
+    OPERATIONS
+    	constructor		: C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+        typemethod 		: C_FUNCTION 	<FB_FNC_TYPEMETHOD>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+  /* Aktion ist abstrakt, und dient als Träger für eine Aktion.
+  Eine Aktion kann ein FB sein, kann auch eine Zuweisung sein, z.B. "OUT=1". 
+  Laut IEC 61131-3 ist ein Aktionsblock nur eine grafische Element. Er kann explizit implementiert werden, muss aber nicht. 
+  In OV muss actionBlock als eine Klasse definiert werden. actionBlock veranschaulicht die Lokalisierung einer Aktion im ov-containment- und fb-task-Struktur.
+  */
+  CLASS actionBlock : CLASS fb/functionblock
+  	COMMENT = "action block ";
+    VARIABLES
+      actionQualifier   : UINT      HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "action qualifier: 1(entry) 2 (do) 3 (exit)" INITIALVALUE = 1;	
+      actionName		: STRING	HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "action name";
+      error				: BOOL		FLAGS = "o"	COMMENT = "error";
+	  errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+    END_VARIABLES;
+    OPERATIONS
+      constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+      setActionName		    : 	C_FUNCTION  <SSC_FNC_SETACTIONNAME> IS_ABSTRACT;
+    END_OPERATIONS;
+  END_CLASS;
+   
+  CLASS setVariable : CLASS ssc/actionBlock
+	IS_INSTANTIABLE;
+  	COMMENT = "action block for set variable action";
+    VARIABLES
+      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name";
+      value				: ANY 			HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "The value to be set";
+    END_VARIABLES;
+    OPERATIONS
+      typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      setActionName		: C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+  /* TODO: setVariable für Wertzuweisung auf einen internen FB-Eingang. */
+  /* TODO: setVariable für variable A = variable B (Die jetzige setVariable ist nur variable A = value) */
+  
+  
+   CLASS executeFb : CLASS ssc/actionBlock
+	IS_INSTANTIABLE;
+  	COMMENT = "action block calling FB- or CFC-action ";
+    VARIABLES
+    END_VARIABLES;
+    OPERATIONS
+      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      setActionName		: 	C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
+      checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>;
+    END_OPERATIONS;
+  END_CLASS;
+  
+  /*Yu: in der Zunkunft kann überlegt werden, executeFb und executeSsc als eine Klasse zusammenzufassen. */
+   CLASS executeSsc : CLASS ssc/executeFb
+	IS_INSTANTIABLE;
+  	COMMENT = "action block calling SSC action";
+    VARIABLES
+      enableSsc				: UINT		FLAGS = "i"	COMMENT = "SSC commando" INITIALVALUE = 1;
+    END_VARIABLES;
+    OPERATIONS
+      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;      
+    END_OPERATIONS;
+  END_CLASS;
+  
+
+  /* Associations */
+    /* Connections from steps to next transitions. */
+    /* Yu: Diese Assoziation ist zwar praktisch, sollte aber entfernt werden, damit nicht jeder FB eine zusätzliche Assoziation bekommt. 
+           Lösung: Wenn ein AB bei der Initialisierung seine Aktion findet, linkt sie als TaskChild zu sich. */
+  ASSOCIATION actionBlocks : ONE_TO_MANY
+    PARENT action  		: CLASS fb/functionblock;
+    CHILD  actionBlocks : CLASS ssc/executeFb;
+  END_ASSOCIATION;
+  
+  /* Connections from steps to next transitions. */
+  ASSOCIATION nextTransitions : ONE_TO_MANY
+    IS_LOCAL;
+    PARENT prevStep  : CLASS ssc/step;
+    CHILD  nextTrans : CLASS ssc/transition;
+  END_ASSOCIATION;
+
+  /* Connections from transitions to next steps. */
+
+  ASSOCIATION previousTransitions : ONE_TO_MANY
+    IS_LOCAL;
+    PARENT nextStep  : CLASS ssc/step;
+    CHILD  prevTrans : CLASS ssc/transition;
+  END_ASSOCIATION; 
+
+END_LIBRARY;

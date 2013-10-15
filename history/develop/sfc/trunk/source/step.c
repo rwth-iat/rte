@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   sfcStep.c
+*   sscStep.c
 *
 *   History
 *   -------
@@ -16,32 +16,32 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_sfc
-#define OV_COMPILE_LIBRARY_sfc
+#ifndef OV_COMPILE_LIBRARY_ssc
+#define OV_COMPILE_LIBRARY_ssc
 #endif
 
-#ifdef sfc_ERROR
-#define sfc_STEP_ERROR
+#ifdef ssc_ERROR
+#define ssc_STEP_ERROR
 #endif
 
 
-#include "sfc.h"
-#include "sfclib.h"
+#include "ssc.h"
+#include "ssclib.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
+OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_sfc_step pinst = Ov_StaticPtrCast(sfc_step, pobj);
+    OV_INSTPTR_ssc_step pinst = Ov_StaticPtrCast(ssc_step, pobj);
     OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
     OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
 
-    OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
     //OV_INSTPTR_fb_task    pIntask=NULL;
     OV_RESULT    result;
 
@@ -51,9 +51,9 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
          return result;
 
     // check location
-    if (pSFC==NULL)
+    if (pSSC==NULL)
     {
-    	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sfcHeader.");
+    	ov_logfile_error("ssc_step_constructor: step must be encapsulated in a sscHeader.");
     	return OV_ERR_BADPLACEMENT;
     }
 
@@ -74,34 +74,34 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_constructor(
 }
 
 
-OV_DLLFNCEXPORT void sfc_step_typemethod(
+OV_DLLFNCEXPORT void ssc_step_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_sfc_step pinst = Ov_StaticPtrCast(sfc_step, pfb);
+    OV_INSTPTR_ssc_step pinst = Ov_StaticPtrCast(ssc_step, pfb);
     OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
     OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
-    OV_INSTPTR_sfc_sfcHeader pSFC = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_sfc_step pNextStep = NULL;
-    OV_INSTPTR_sfc_sfcHeader pSubSfc=NULL;
-    OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+    OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_step pNextStep = NULL;
+    OV_INSTPTR_ssc_sscHeader pSubSsc=NULL;
+    OV_INSTPTR_ssc_executeSsc pExecuteSsc=NULL;
     // helper vaiables
     OV_BOOL	  exitLoop=FALSE;
 
     // check location
-    if (pSFC==NULL)
+    if (pSSC==NULL)
     {
-      	ov_logfile_error("sfc_step_constructor: step must be encapsulated in a sfcHeader.");
+      	ov_logfile_error("ssc_step_constructor: step must be encapsulated in a sscHeader.");
       	return;
     }
 
     // TODO:
-    // check if sfcHeader is the taskparent.
+    // check if sscHeader is the taskparent.
 
     // init variables
     pinst->v_cyctime.secs = 0;
@@ -122,19 +122,19 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     		if(pinst->v_qualifier==1)
     		{
     			/* entry */
-    			printf("%s/%s/entry\n", pSFC->v_identifier, pinst->v_identifier);
+    			printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pEntry, execute, pltc);
     			pinst->v_qualifier=2;
     		}
     		/* do */
-    		printf("%s/%s/do\n", pSFC->v_identifier, pinst->v_identifier);
+    		printf("%s/%s/do\n", pSSC->v_identifier, pinst->v_identifier);
     		Ov_Call1 (fb_task, pDo, execute, pltc);
 
-    		/* event: SFC terminates */
+    		/* event: SSC terminates */
     		if (pinst->v_internalID==999)
-    			pSFC->v_terminated=TRUE;
+    			pSSC->v_terminated=TRUE;
     		else
-    			pSFC->v_terminated=FALSE;
+    			pSSC->v_terminated=FALSE;
 
     		pinst->v_phase = 2;
     		break;
@@ -142,17 +142,17 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     	/* phase 2: transitions, exit*/
     	case 2:
 
-    		    /* subSFCs run to the end without interruption. */
-    			if (pinst->v_hasSubSfc )
+    		    /* subSSCs run to the end without interruption. */
+    			if (pinst->v_hasSubSsc )
     			{
-    				if (pinst->v_subSfcTerminated)
+    				if (pinst->v_subSscTerminated)
     					pTrans->v_actimode=1;
     				else
     					pTrans->v_actimode=0;
     			}
 
-    		// if stopping SFC, do not check transitions
-    		if (pSFC->v_workingState==WOST_STOP)
+    		// if stopping SSC, do not check transitions
+    		if (pSSC->v_workingState==WOST_STOP)
     			pTrans->v_actimode=0;
 
     		/* transitions */
@@ -160,45 +160,45 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
 
 
     		// if Trigger, or cmd "STOP" for final step
-    		if (pinst->v_evTransTrigger || ( pSFC->v_workingState==WOST_STOP) )
+    		if (pinst->v_evTransTrigger || ( pSSC->v_workingState==WOST_STOP) )
     		{
-    			// stop/break subSFCs
-				// find all action blocks calling subSFCs
-				Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
+    			// stop/break subSSCs
+				// find all action blocks calling subSSCs
+				Ov_ForEachChildEx(ov_containment, pinst, pExecuteSsc, ssc_executeSsc)
 				{
-					// find all subSFCs for do
-					if (pExecuteSfc->v_actionQualifier == ACT_DO)
+					// find all subSSCs for do
+					if (pExecuteSsc->v_actionQualifier == ACT_DO)
 					{
-						pSubSfc = Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(sfc_actionBlocks, pExecuteSfc));
+						pSubSsc = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ssc_actionBlocks, pExecuteSsc));
 
-						if (pSubSfc !=NULL)
+						if (pSubSsc !=NULL)
 						{
-							// stop subSFC
-    						pSubSfc->v_EN=0;
-    						Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pSubSfc), execute, pltc);
+							// stop subSSC
+    						pSubSsc->v_EN=0;
+    						Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pSubSsc), execute, pltc);
 						}
 					}
 				}
 
-				if (pSFC->v_workingState==WOST_STOP)
+				if (pSSC->v_workingState==WOST_STOP)
 					pExit->v_actimode=3;
 
 
     			/* exit */
-    			printf("%s/%s/exit\n", pSFC->v_identifier, pinst->v_identifier);
+    			printf("%s/%s/exit\n", pSSC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pExit, execute, pltc);
-    			// unlink from sfcHeader.intask
+    			// unlink from sscHeader.intask
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X=FALSE;
     			pinst->v_qualifier=1;
 
     			// find next step and execute its entry & do
     			// Note: this job should be done by ov_ForEachChild(fb_tasklist, ...). But it is not possible to adapt the tasklist dynamically
-    			pNextStep=Ov_DynamicPtrCast(sfc_step, Ov_GetLastChild(fb_tasklist, &pSFC->p_intask));
+    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, &pSSC->p_intask));
     			if (pNextStep != NULL)
     			{
     				// update activeStep
-    				ov_string_setvalue(&pSFC->v_activeStep, pNextStep->v_identifier);
+    				ov_string_setvalue(&pSSC->v_activeStep, pNextStep->v_identifier);
     				// execute nextStep entry & do
     				Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pNextStep), execute, pltc);
     			}
@@ -213,8 +213,8 @@ OV_DLLFNCEXPORT void sfc_step_typemethod(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_step_resetStep(
-	OV_INSTPTR_sfc_step	pinst
+OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
+	OV_INSTPTR_ssc_step	pinst
 ) {
     /*
     *   local variables
@@ -223,8 +223,8 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_resetStep(
     OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
     OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
     OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
-    OV_INSTPTR_sfc_actionBlock pActionBlock  = NULL;
-    OV_INSTPTR_sfc_executeSfc pExecuteSfc=NULL;
+    OV_INSTPTR_ssc_actionBlock pActionBlock  = NULL;
+    OV_INSTPTR_ssc_executeSsc pExecuteSsc=NULL;
 
     OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
     //OV_RESULT    result;
@@ -243,11 +243,11 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_resetStep(
     pinst->v_phase = 1;
     pinst->v_qualifier = 1;
 
-    // find subSFCs
-    Ov_ForEachChildEx(ov_containment, pinst, pExecuteSfc, sfc_executeSfc)
+    // find subSSCs
+    Ov_ForEachChildEx(ov_containment, pinst, pExecuteSsc, ssc_executeSsc)
 	{
-		if (pExecuteSfc->v_actionQualifier != ACT_EXIT)
-			pinst->v_hasSubSfc=TRUE;
+		if (pExecuteSsc->v_actionQualifier != ACT_EXIT)
+			pinst->v_hasSubSsc=TRUE;
 	}
 
     //reset subtasks
@@ -259,7 +259,7 @@ OV_DLLFNCEXPORT OV_RESULT sfc_step_resetStep(
     // TODO: reset all action blocks
 
     //activate all action blocks
-	  Ov_ForEachChildEx(ov_containment, pinst, pActionBlock, sfc_actionBlock)
+	  Ov_ForEachChildEx(ov_containment, pinst, pActionBlock, ssc_actionBlock)
 	  {
 		  pActionBlock->v_actimode=1;
 		  pActionBlock->v_cyctime.secs = 0;

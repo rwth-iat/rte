@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   sfcActionBlock.c
+*   sscActionBlock.c
 *
 *   History
 *   -------
@@ -16,25 +16,25 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_sfc
-#define OV_COMPILE_LIBRARY_sfc
+#ifndef OV_COMPILE_LIBRARY_ssc
+#define OV_COMPILE_LIBRARY_ssc
 #endif
 
 
-#include "sfc.h"
-#include "sfclib.h"
+#include "ssc.h"
+#include "ssclib.h"
 
-OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_actionQualifier_set(
-    OV_INSTPTR_sfc_actionBlock          pinst,
+OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionQualifier_set(
+    OV_INSTPTR_ssc_actionBlock          pinst,
     const OV_UINT  value
 ) {
     OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
-    OV_INSTPTR_sfc_step  pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
     OV_RESULT    result;
 
     if (pStep==NULL)
     {
-    	ov_logfile_error("sfc_actionBlock_actionQualifier_set: action block must be encapsulated in a step.");
+    	ov_logfile_error("ssc_actionBlock_actionQualifier_set: action block must be encapsulated in a step.");
     	return OV_ERR_BADPLACEMENT;
     }
 
@@ -72,21 +72,21 @@ OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_actionQualifier_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_actionName_set(
-    OV_INSTPTR_sfc_actionBlock          pinst,
+OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionName_set(
+    OV_INSTPTR_ssc_actionBlock          pinst,
     const OV_STRING  value
 ) {
-	return Ov_Call1 (sfc_actionBlock, pinst, setActionName, value);
+	return Ov_Call1 (ssc_actionBlock, pinst, setActionName, value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_constructor(
+OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_sfc_actionBlock pinst = Ov_StaticPtrCast(sfc_actionBlock, pobj);
-    OV_INSTPTR_sfc_step  pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_ssc_actionBlock pinst = Ov_StaticPtrCast(ssc_actionBlock, pobj);
+    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -102,12 +102,12 @@ OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_constructor(
     // check location
     if ( pStep==NULL )
 	{
-		ov_logfile_error("sfc_actionBlock_constructor: action block must be encapsulated in a step.");
+		ov_logfile_error("ssc_actionBlock_constructor: action block must be encapsulated in a step.");
 		return OV_ERR_BADPLACEMENT;
 	}
 
     // link to subtask
-    result=sfc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
+    result=ssc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
     // activate itself
     pinst->v_actimode = 1;
 
@@ -115,15 +115,15 @@ OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_constructor(
 }
 
 /*
-OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_checkPlausibility(
-             OV_INSTPTR_sfc_actionBlock          pobj
+OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_checkPlausibility(
+             OV_INSTPTR_ssc_actionBlock          pobj
 ) {
              return OV_ERR_OK;
 }
 */
 /*
-OV_DLLFNCEXPORT OV_RESULT sfc_actionBlock_setActionName(
-             OV_INSTPTR_sfc_actionBlock          pinst,
+OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_setActionName(
+             OV_INSTPTR_ssc_actionBlock          pinst,
              const OV_STRING  value
 ) {
              return ov_string_setvalue(&pinst->v_actionName,value);
