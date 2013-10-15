@@ -5,17 +5,17 @@
 *   Date of file generation:  15-Jul-2011 (13:34:12)
 */
 
-#ifndef OV_COMPILE_LIBRARY_ssc
-#define OV_COMPILE_LIBRARY_ssc
+#ifndef OV_COMPILE_LIBRARY_sfc
+#define OV_COMPILE_LIBRARY_sfc
 #endif
 
 
-#include "ssc.h"
-#include "ssclib.h"
+#include "sfc.h"
+#include "sfclib.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
-    OV_INSTPTR_ssc_setVariable          pinst,
+OV_DLLFNCEXPORT OV_RESULT sfc_setVariable_variable_set(
+    OV_INSTPTR_sfc_setVariable          pinst,
     const OV_STRING  value
 ) {
     // check input
@@ -32,21 +32,21 @@ OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
     return ov_string_setvalue(&pinst->v_variable,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_value_set(
-    OV_INSTPTR_ssc_setVariable          pobj,
+OV_DLLFNCEXPORT OV_RESULT sfc_setVariable_value_set(
+    OV_INSTPTR_sfc_setVariable          pobj,
     const OV_ANY*  value
 ) {
     return ov_variable_setanyvalue(&pobj->v_value, value);
 }
 
-OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
+OV_DLLFNCEXPORT void sfc_setVariable_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
     // local variables
-    OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
-    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+    OV_INSTPTR_sfc_setVariable pinst = Ov_StaticPtrCast(sfc_setVariable, pfb);
+    OV_INSTPTR_sfc_step  pStep= Ov_DynamicPtrCast(sfc_step, Ov_GetParent(ov_containment, pinst));
+    OV_INSTPTR_sfc_sfcHeader  pSFC= Ov_DynamicPtrCast(sfc_sfcHeader, Ov_GetParent(ov_containment, pStep));
     OV_RESULT    result;
 
     // init variables
@@ -60,7 +60,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     if ( pStep==NULL )
 	{
     	pinst->v_error=TRUE;
-		ov_logfile_error("ssc_actionBlock_constructor: action block must be encapsulated in a step.");
+		ov_logfile_error("sfc_actionBlock_constructor: action block must be encapsulated in a step.");
 		return;
 	}
 
@@ -72,10 +72,10 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     };
 
     // set variable
-    //result= fb_functionchart_getvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
-    //result= fb_functionchart_setvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
+    //result= fb_functionchart_getvariable(Ov_PtrUpCast(fb_functionchart, pSFC), pinst->v_variable, &pinst->v_value);
+    //result= fb_functionchart_setvariable(Ov_PtrUpCast(fb_functionchart, pSFC), pinst->v_variable, &pinst->v_value);
 
-    result= fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC)), pinst->v_variable, &pinst->v_value);
+    result= fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSFC)), pinst->v_variable, &pinst->v_value);
     if(Ov_Fail(result))
     {
     	pinst->v_error=TRUE;
@@ -92,8 +92,8 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_setActionName(
-             OV_INSTPTR_ssc_actionBlock          pinst,
+OV_DLLFNCEXPORT OV_RESULT sfc_setVariable_setActionName(
+             OV_INSTPTR_sfc_actionBlock          pinst,
              const OV_STRING  value
 ) {
 	return ov_string_setvalue(&pinst->v_actionName,value);

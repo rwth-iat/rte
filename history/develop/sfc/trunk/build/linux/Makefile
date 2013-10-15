@@ -20,7 +20,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
-	acplt_makmak -l ssc $(MAKMAKOPTIONS)
-	tclsh $(PREBUILD) ssc $(MAKMAKOPTIONS)
+	acplt_makmak -l sfc $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) sfc $(MAKMAKOPTIONS)
 	$(MAKE) EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	tclsh $(POSTBUILD) ssc
+	tclsh $(POSTBUILD) sfc
