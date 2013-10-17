@@ -1250,7 +1250,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			if (req.timeout !== undefined && async === true){
 				//timeout is not allowed with sync requests
-				req.timeout = 1000;
+				req.timeout = 5000;
 			}
 			
 			if (async === true && cbfnc !== null && cbfnc !== undefined)
