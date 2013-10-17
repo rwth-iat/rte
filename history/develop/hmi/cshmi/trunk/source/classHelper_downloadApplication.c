@@ -52,7 +52,7 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 	ov_string_append(&strChildList, ov_path_getcanonicalpath(pObj, 2));
 	ov_memstack_unlock();
 	ov_string_append(&strChildList, "%22:%7B");
-	ov_string_append(&strChildList, "%22ChildListParameters%22:[");
+	ov_string_append(&strChildList, "%22ChildListParameters%22:%5B");
 
 	//iterate over all childrens and list them
 	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChildObj){
@@ -67,7 +67,7 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 			ov_string_append(&strChildList, ",");
 		}
 	};
-	ov_string_append(&strChildList, "]%7D");
+	ov_string_append(&strChildList, "%5D%7D");
 
 	//one single append to the huge string
 	result = ov_string_append(strResult, strChildList);
@@ -113,6 +113,7 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 }
 
 /**
+ * encodes the string in a percent encoding
  * call ov_memstack_allow arround this!
  * @param strIn
  * @return
@@ -127,9 +128,8 @@ OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 		strOut = '\0';
 		return strOut;
 	}
-
-	//ov_path_percentsize is not the correct function, but results in a bigger size in some cases, never in a smaller
-	strOut = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strIn)+1);
+	//only " would be the worst case
+	strOut = (OV_STRING) ov_memstack_alloc(ov_string_getlength(strIn)*6+1);
 
 	pcIn = strIn;
 	pcOut = strOut;
@@ -145,7 +145,14 @@ OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 			pcOut++;
 			*pcOut = '5';
 		}else if(*pcIn == '"'){
-			*pcOut = '%';
+			// JSON needs " has to be encoded to \", %5C%22 is urlencoded json escaping
+			*pcOut = '%';	//JSON encoding of a backslash!
+			pcOut++;
+			*pcOut = '5';
+			pcOut++;
+			*pcOut = 'C';	//JSON end
+			pcOut++;
+			*pcOut = '%';	//urlencoding of a quote
 			pcOut++;
 			*pcOut = '2';
 			pcOut++;
@@ -174,6 +181,12 @@ OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 			*pcOut = '5';
 			pcOut++;
 			*pcOut = 'D';
+		}else if(*pcIn == '\\'){
+			*pcOut = '%';
+			pcOut++;
+			*pcOut = '5';
+			pcOut++;
+			*pcOut = 'C';
 		}else{
 			*pcOut = *pcIn;
 		}
@@ -220,7 +233,7 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 
 	//be careful to adjust the ov_string_print at the end of the function
 	#define MAXELEMENTENTRIES 11
-	OV_STRING ResultListVec[MAXELEMENTENTRIES] = {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "};
+	OV_STRING ResultListVec[MAXELEMENTENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	//Note: we do not precache blackbox or image! To risky with the encoding of the Strings.
 	OV_STRING strIterate = NULL;
 	OV_UINT ResultListIndex = 0;
@@ -709,7 +722,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	//be careful to adjust the ov_string_print at the end of the function
 	#define MAXACTIONENTRIES 11
-	OV_STRING ResultListVec[MAXACTIONENTRIES] = {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "};
+	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	OV_STRING strIterate = NULL;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
@@ -764,7 +777,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, ParameterValue);
+			ov_memstack_lock();
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
 		}
@@ -831,7 +846,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, ParameterValue);
+			ov_memstack_lock();
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
 		}
@@ -893,7 +910,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, ParameterValue);
+			ov_memstack_lock();
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
 		}
@@ -995,7 +1014,9 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, ParameterValue);
+			ov_memstack_lock();
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
 		}
@@ -1292,7 +1313,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 	//todo
 	//some static baseKsPath settings
-	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:[],%22/TechUnits/cshmi/Templates%22:[]%7D,");
+	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:%5B%5D,%22/TechUnits/cshmi/Templates%22:%5B%5D%7D,");
 
 	//Elements is a list of configured elements
 	ov_string_setvalue(&strElements, "%22Elements%22:%7B");

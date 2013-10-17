@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-06-14 17:40:22
+  Erstellt : 2013-10-17 10:32:15
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -9201,7 +9201,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 30.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBO3AC" , "PFCommand:GLBO3AC" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBO3AC" , "PFCommand:SEL_MODE" , "PFValue:GLBO3AC"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9221,7 +9221,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 56.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBODC" , "PFCommand:GLBODC" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:GLBODC" , "PFCommand:SEL_MODE" , "PFValue:GLBODC"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9241,7 +9241,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 82.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO1" , "PFCommand:KLBO1" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO1" , "PFCommand:SEL_MODE" , "PFValue:KLBO1"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9261,7 +9261,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 108.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO2" , "PFCommand:KLBO2" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:KLBO2" , "PFCommand:SEL_MODE" , "PFValue:KLBO2"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9304,7 +9304,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 170.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Strom" , "PFCommand:I" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Strom" , "PFCommand:SEL_SP" , "PFValue:I"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9324,7 +9324,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 196.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Spannung" , "PFCommand:U" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Spannung" , "PFCommand:SEL_SP" , "PFValue:U"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9344,7 +9344,7 @@ M1000,250 v40 h-100";
         y : INPUT  SINGLE = 222.000000;
         FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
         FBVariableReference[0] : INPUT  STRING = {};
-        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Leistung" , "PFCommand:P" , "PFValue:0"};
+        ConfigValues[3] : INPUT  STRING = {"buttoncontent:Leistung" , "PFCommand:SEL_SP" , "PFValue:P"};
         hideable : INPUT  BOOL = FALSE;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -11311,6 +11311,26 @@ m-15,0 l-15,-30 h30 l-15,30";
         opacity : INPUT  SINGLE = 1.000000;
         rotate : INPUT  INT = 0;
         zindex : INPUT  UINT = 30;
+        baseKsPath : INPUT  STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/ElboMainSheet/rectifier/bubFrame/occupyRectifierOnload :
+    CLASS /Libraries/cshmi/Template;
+    VARIABLE_VALUES
+        TemplateDefinition : INPUT  STRING = "Processcontrol/occupyPCU";
+        x : INPUT  SINGLE = 0.000000;
+        y : INPUT  SINGLE = 0.000000;
+        FBReference[1] : INPUT  STRING = {"TechUnits/P30/IC10/PU90/PS20/Stromrichter"};
+        FBVariableReference[0] : INPUT  STRING = {};
+        ConfigValues[0] : INPUT  STRING = {};
+        hideable : INPUT  BOOL = FALSE;
+        visible : INPUT  BOOL = TRUE;
+        stroke : INPUT  STRING = "black";
+        fill : INPUT  STRING = "none";
+        opacity : INPUT  SINGLE = 1.000000;
+        rotate : INPUT  INT = 0;
+        zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

@@ -112,11 +112,11 @@ LIBRARY cshmi
 			width : SINGLE
 			HAS_SET_ACCESSOR
 			COMMENT = "width of the group"
-			INITIALVALUE = 100.0;
+			INITIALVALUE = 1000.0;
 			height : SINGLE
 			HAS_SET_ACCESSOR
 			COMMENT = "height of the group"
-			INITIALVALUE = 100.0;
+			INITIALVALUE = 900.0;
 			opacity : SINGLE
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
@@ -133,7 +133,7 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47'"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef";
 			FBVariableReference[] : STRING
 			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
 			ConfigValues[] : STRING
@@ -453,7 +453,7 @@ LIBRARY cshmi
 			HAS_SET_ACCESSOR
 			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref or 'fullqualifiedparentname', 'absolutepathname' and 'absoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
+			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'fullqualifiedparentname', 'absolutepathname' and 'absoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
 			TemplateFBVariableReferenceName : STRING
 			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
