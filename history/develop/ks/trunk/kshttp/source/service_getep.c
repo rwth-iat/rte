@@ -513,56 +513,56 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "NONE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_READ){
+				if(one_result->access & KS_AC_READ){	//would be R in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "READ", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_WRITE){
+				if(one_result->access & KS_AC_WRITE){	//would be W in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "WRITE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_INSTANTIABLE){
+				if(one_result->access & KS_AC_INSTANTIABLE){	//would be I in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "INSTANTIABLE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_PART){
+				if(one_result->access & KS_AC_PART){	//would be P in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "PART", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_DELETEABLE){
+				if(one_result->access & KS_AC_DELETEABLE){	//would be D in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "DELETEABLE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_RENAMEABLE){
+				if(one_result->access & KS_AC_RENAMEABLE){	//would be N in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "RENAMEABLE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_LINKABLE){
+				if(one_result->access & KS_AC_LINKABLE){	//would be L in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
 					getEP_print_KSmakrovalue(&temp, "KS_AC", "LINKABLE", response_format);
 					EntryFound = TRUE;
 				}
-				if(one_result->access & KS_AC_UNLINKABLE){
+				if(one_result->access & KS_AC_UNLINKABLE){	//would be U in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}

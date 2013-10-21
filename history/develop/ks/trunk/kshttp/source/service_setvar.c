@@ -349,6 +349,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_BOOL_VEC:
 			case OV_VT_BOOL_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_bool_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_bool_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_bool_vec, len, BOOL);
 				for(i = 0; i < len; i++){
 					//killing the first character
@@ -371,6 +373,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_INT_VEC:
 			case OV_VT_INT_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_int_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_int_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_int_vec, len, INT);
 				for(i = 0; i < len; i++){
 					addrp->var_current_props.value.valueunion.val_int_vec.value[i] = (OV_INT) strtol(pArgumentList[i]+1,NULL,10);
@@ -381,6 +385,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_UINT_VEC:
 			case OV_VT_UINT_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_uint_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_uint_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_uint_vec, len, UINT);
 				for(i = 0; i < len; i++){
 					addrp->var_current_props.value.valueunion.val_uint_vec.value[i] = (OV_UINT) strtoul(pArgumentList[i]+1,NULL,10);
@@ -391,6 +397,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_SINGLE_VEC:
 			case OV_VT_SINGLE_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_single_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_single_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_single_vec, len, SINGLE);
 				for(i = 0; i < len; i++){
 					addrp->var_current_props.value.valueunion.val_single_vec.value[i] = (OV_SINGLE) atof(pArgumentList[i]+1);
@@ -401,6 +409,8 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case OV_VT_DOUBLE_VEC:
 			case OV_VT_DOUBLE_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
+				addrp->var_current_props.value.valueunion.val_double_vec.veclen = 0;
+				addrp->var_current_props.value.valueunion.val_double_vec.value = NULL;
 				Ov_SetDynamicVectorLength(&addrp->var_current_props.value.valueunion.val_double_vec, len, DOUBLE);
 				for(i = 0; i < len; i++){
 					addrp->var_current_props.value.valueunion.val_double_vec.value[i] = (OV_SINGLE) atof(pArgumentList[i]+1);
