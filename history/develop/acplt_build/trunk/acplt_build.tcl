@@ -775,6 +775,7 @@ if { [file exists $releasedir/system/sysbin/tmanager.exe] } then {
 proc create_systools_and_servers {} {
 	global releasedir
 	global batsuffix
+	global os
 	
 	file mkdir $releasedir/servers/
 	file mkdir $releasedir/servers/MANAGER
@@ -795,6 +796,11 @@ proc create_systools_and_servers {} {
 	
 	#serverstarttools
 	checkout_lib {base_serverstarttools}
+	if { $os == "nt" } then {
+	
+		file copy $releasedir/system/base_serverstarttools/libstdc++-6.dll $releasedir/system/syslibs/libstdc++-6.dll
+	
+	}
 	set files [glob -nocomplain $releasedir/system/base_serverstarttools/*$batsuffix]
     foreach f $files {
 		file copy $f $releasedir/servers/MANAGER/
@@ -808,7 +814,7 @@ proc create_systools_and_servers {} {
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn }
+		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/sfc }
 	
 	print_msg "checking out trunk"
 } else {
