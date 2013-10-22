@@ -9,7 +9,7 @@
 #define MSGREADYFORSENDING 1
 #define MSGWAITING 2
 #define MSGDONE 3
-#define MSGRECEIVERSERVICEERROR 4
+#define MSGRECEIVERERROR 4
 #define MSGFATALERROR 5
 //MSGSYS: receiving states of messages
 #define MSGNEWARRIVED 10

@@ -57,48 +57,4 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_createAnonymousMessage(OV_INSTPTR_ov_domain
 	return MessageSys_createAnonymousObject(pclass_MessageSys_Message, pParent, identifier, pObj);
 }
 
-/*
- * Checks if the delimiter matches the string
- */
-static OV_BOOL MSG_isDelimiter(OV_STRING delimiter,OV_STRING x)
-{
-  OV_UINT i;
-  OV_UINT length;
 
-  length = strlen(delimiter);
-  ////ov_logfile_debug("===>>>> isDELIMITER: delimiter='%s' -- x='%s'",delimiter,x);
-  for(i = 0; i < length;i++)
-    {
-      if(x[i] == '\0' || x[i] != delimiter[i] )
-    	  return FALSE;
-    }
-  return TRUE;
-}
-
-OV_BOOL MSG_split(OV_STRING victim, OV_STRING delimiter, OV_INT *position, OV_STRING *token) {
-	OV_UINT curPosition = 0;
-	OV_UINT vLength;
-
-	vLength = strlen(victim);
-	if(victim[*position] == 0)
-		return FALSE;
-
-	for(curPosition = (*position); curPosition <= vLength; curPosition++)
-	{
-		if(victim[curPosition] == '\0' || MSG_isDelimiter(delimiter, victim+curPosition))
-		{
-			*token = ov_memstack_alloc(curPosition-(*position)+1);
-			if(!(*token))
-				return FALSE;
-			memcpy(*token, victim+*position, curPosition-(*position) );
-			(*token)[curPosition-(*position)] = '\0';
-
-			if(victim[curPosition]=='\0')
-				*position = curPosition;
-			else
-			  *position = curPosition+strlen(delimiter);
-			return TRUE;
-		}
-	}
-	return FALSE;//never reached
-}

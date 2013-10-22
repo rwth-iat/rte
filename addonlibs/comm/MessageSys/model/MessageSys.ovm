@@ -14,6 +14,11 @@ CLASS MsgDelivery : CLASS ksbase/ComTask
 		regComponentPath	:	STRING
 			COMMENT	=	"Path to the Domain where the registered Services are located"
 			INITIALVALUE	=	"/communication/ServiceProvider/SystemServices";
+		sendTimeOut			:	UINT
+			COMMENT	=	"Time in seconds to wait for delivery of a message before it is deleted from the queue"
+			INITIALVALUE	=	5;
+		sendTime			:	TIME
+			COMMENT	=	"Time of last send process";	
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -34,26 +39,14 @@ CLASS Message : CLASS ov/object
 		receiverName : STRING HAS_ACCESSORS COMMENT = "Servername of receiver" INITIALVALUE="";
 		senderComponent : STRING HAS_ACCESSORS COMMENT = "Name of sender-component" INITIALVALUE="";
 		receiverComponent : STRING HAS_ACCESSORS COMMENT = "Name of receiver-component" INITIALVALUE="";
-		msgStatus : INT HAS_ACCESSORS COMMENT="0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERSERVICEERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE" INITIALVALUE=0 ;
-		msgID : UINT HAS_ACCESSORS INITIALVALUE=0;
+		msgStatus : INT HAS_ACCESSORS COMMENT="0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE" INITIALVALUE=0 ;
+		msgID : STRING HAS_ACCESSORS INITIALVALUE="";
+		refMsgID	:	STRING INITIALVALUE="";
+		auth	:	STRING COMMENT = "Authentication Data in header" INITIALVALUE = "";
 		msgBody : STRING HAS_ACCESSORS;
-		msgSTRING : STRING HAS_ACCESSORS;
-		sendString : STRING FLAGS =	"n";
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-		serializeMessage : C_FUNCTION <SERIALIZEMESSAGE_FNC>;
-		deserializeMessage : C_FUNCTION <DESERIALIZEMESSAGE_FNC>;
-		getSenderAddress : C_FUNCTION <GETSENDERADDRESS_FNC>;
-		getSenderName : C_FUNCTION <GETSENDERNAME_FNC>;
-		getSenderComponent : C_FUNCTION <GETSENDERSERVICE_FNC>;
-		getReceiverAddress : C_FUNCTION <GETRECEIVERADDRESS_FNC>;
-		getReceiverName : C_FUNCTION <GETRECEIVERNAME_FNC>;
-		getReceiverComponent : C_FUNCTION <GETRECEIVERSERVICE_FNC>;
-		getMsgStatus : C_FUNCTION <GETMSGSTATUS_FNC>;
-		getMsgID : C_FUNCTION <GETMSGID_FNC>;
-		getMsgType : C_FUNCTION <GETMSGTYPE_FNC>;
-		getMsgData : C_FUNCTION <GETMSGDATA_FNC>;
 	END_OPERATIONS;
 END_CLASS;
 	
