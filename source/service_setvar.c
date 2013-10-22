@@ -38,6 +38,7 @@
 
 #include "config.h"
 #include <ctype.h>
+#include "urldecode.h"
 
 static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
 	return KS_AC_READWRITE;
@@ -444,7 +445,9 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 						ov_string_setvalue(&Temp, pArgumentList[i]+1);
 						//kill the last character aka }, now we have two null bytes at the end
 						Temp[ov_string_getlength(Temp)-1] = '\0';
-						Temp2 = Temp;
+						//finally decode URLencoding
+						Temp2 = url_decode(Temp);
+						//Temp2 = Temp;
 					}
 					fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string_vec.value[i], Temp2);
 					ov_memstack_unlock();
