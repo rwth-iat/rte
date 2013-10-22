@@ -390,12 +390,16 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseMessageHeader(char const* xml, AC
  * fills the strings and vectors with the respective values
  * the vectors are all of the same length, they contain the "val"-Elements data in the order of the respective elements
  * uses the memstack. don't forget to call lock/unlock around it
+ * return OV_ERR_BADVALUE if no <bdy> or </bdy> tag is found
+ * or if an expected sd-element is not found or an unexpected sd-element is found
  */
 OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseFlatBody(char const* xml, OV_STRING* svc, OV_STRING* op,
+		OV_BOOL expectContainingObject, OV_STRING* containerName,
 		OV_STRING_VEC* ids, OV_STRING_VEC* values, OV_STRING_VEC* units, OV_STRING_VEC* types)
 {
 	OV_STRING tempPtr = NULL;
 	OV_STRING endPtr = NULL;
+	OV_STRING tempSd = NULL;
 	OV_RESULT result;
 	OV_STRING* tempIds = NULL;
 	OV_STRING* tempValues = NULL;
@@ -414,6 +418,34 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseFlatBody(char const* xml, OV_STRI
 	if(Ov_Fail(acplt_simpleMsg_xml_findElementBegin(tempPtr, "/bdy", &endPtr)) || !endPtr)
 	{
 		return OV_ERR_BADVALUE;
+	}
+
+	if(Ov_Fail(acplt_simpleMsg_xml_findElementBegin(tempPtr, "sd", &tempSd)) || !tempSd)
+	{
+		if(expectContainingObject)
+			return OV_ERR_BADVALUE;
+	}
+	else
+	{
+		if(!expectContainingObject)
+			return OV_ERR_BADVALUE;
+		else
+		{
+			result = acplt_simpleMsg_xml_getAttributeData(tempSd, "sd", "Op", containerName);
+			if(Ov_Fail(result))
+				return result;
+		}
+	}
+
+	if(Ov_Fail(acplt_simpleMsg_xml_findElementBegin(tempSd, "/sd", &tempSd)) || !tempSd)
+	{
+		if(expectContainingObject)
+			return OV_ERR_BADVALUE;
+	}
+	else
+	{
+		if(!expectContainingObject)
+			return OV_ERR_BADVALUE;
 	}
 
 	result = acplt_simpleMsg_xml_getAttributeData(tempPtr, "bdy", "Svc", svc);

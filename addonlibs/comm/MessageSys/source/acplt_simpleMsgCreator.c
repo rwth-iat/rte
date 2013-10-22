@@ -30,6 +30,7 @@ static const char msgVal [] = "val";
 static const char msgValId [] = "id=\"";
 static const char msgValType [] = "type=\"";
 static const char msgValUnit [] = "unit=\"";
+static const char msgSd [] = "sd";
 
 
 
@@ -237,13 +238,18 @@ OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_generateMsgHeader(ACPLT_MSGHEADER cons
 /*
  * generates a message with flat body form from strings service, operation and respective val-definitions
  * uses the memstack. don't forget to call lock/unlock around it.
+ * createContainerObject = TRUE tells the function to put a containing sd-element around the val-elements. the name of this element
+ * can be specified via containerName
  * ids, values, units and types have to be of same length. each set of entries [i] defines one <val> element. the entries may be empty
  */
-OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_GenerateFlatBody(const OV_STRING service, const OV_STRING operation, OV_STRING_VEC* ids, OV_STRING_VEC* values, OV_STRING_VEC* units, OV_STRING_VEC* types)
+OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_GenerateFlatBody(const OV_STRING service, const OV_STRING operation,
+		OV_BOOL createContainingObject, const OV_STRING containerName,
+		OV_STRING_VEC* ids, OV_STRING_VEC* values, OV_STRING_VEC* units, OV_STRING_VEC* types)
 {
 	OV_STRING temp = NULL;
 	OV_UINT svcLength = 0;
 	OV_UINT opLength = 0;
+	OV_UINT containerNameLength = 0;
 	OV_UINT itemLength = 0;
 	OV_STRING tempinside = NULL;
 	OV_UINT length = 0;
@@ -259,6 +265,16 @@ OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_GenerateFlatBody(const OV_STRING servi
 	/*	bdy element (<> + </> + 2*msgBdy)	*/
 	length = 2+3+2*sizeof(msgBdy);
 
+	/*	containing sd if wanted	*/
+	if(createContainingObject)
+	{	/*	(<> + </> + 2*msgSd)	*/
+		length += 2+3+2*(sizeof(msgSd)-1);
+		if(containerName)
+		{
+			containerNameLength = strlen(containerName);
+			length += 1+(sizeof(msgValId)-1)+containerNameLength+1;
+		}
+	}
 	/*	service 	*/
 	if(service)
 	{	/*	' ' +$msgSvc+$svcLength+"	*/
@@ -344,6 +360,26 @@ OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_GenerateFlatBody(const OV_STRING servi
 	*tempinside = '>';
 	tempinside++;
 
+	/*	containing sd-element if wanted	*/
+	if(createContainingObject)
+	{
+		GEN_ADD_TAGBEGIN(msgSd);
+		/*	id 	*/
+		if(containerName)
+		{
+			*tempinside = ' ';
+			tempinside++;
+			memcpy(tempinside, msgValId, sizeof(msgValId)-1);
+			tempinside += sizeof(msgValId)-1;
+			memcpy(tempinside, containerName, containerNameLength);
+			tempinside += containerNameLength;
+			*tempinside = '"';
+			tempinside++;
+		}
+		*tempinside = '>';
+		tempinside++;
+	}
+
 	/*	values	*/
 	for(i=0; i<ids->veclen; i++)
 	{	/*	iterate over all values and concatenate	*/
@@ -405,6 +441,12 @@ OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_GenerateFlatBody(const OV_STRING servi
 			*tempinside = '>';
 			tempinside++;
 		}
+	}
+
+	/*	containing sd-element if wanted	*/
+	if(createContainingObject)
+	{
+		GEN_ADD_CLOSETAG(msgSd);
 	}
 
 	GEN_ADD_CLOSETAG(msgBdy);
