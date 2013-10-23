@@ -161,6 +161,29 @@ function csHMIgetElementsByClassName(node, className){
 	}
 }
 
+function getRotationFromObject(VisualObject){
+	if (VisualObject.tagName === "g" && VisualObject.id === ""){
+		//rotation should be logical on the child svg
+		return 0;
+	}else if (VisualObject.tagName === "svg" && VisualObject.parentNode && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+		//svg are not transformable, so the rotation is in the objects parent
+		var TransformString = VisualObject.parentNode.getAttribute("transform");
+	}else if (VisualObject.tagName === "svg"){
+		//it is an template, with no rotation
+		return 0;
+	}else{
+		TransformString = VisualObject.getAttribute("transform");
+	}
+	if(TransformString === "" || TransformString === null){
+		return 0;
+	}
+	//"rotate(45,21.000000,50.000000)" or "rotate(45)"
+	
+	//remove rotate()
+	TransformString = TransformString.replace(")", "").replace("rotate(", "");
+	//get first number if there are 3, separated via comma
+	return TransformString.split(",")[0];
+}
 
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);

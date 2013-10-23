@@ -317,14 +317,13 @@ HMI.prototype = {
 				}
 			});
 		
+		var allowLocalRequests = true;
 		//detect if the file is called from http or https, but not from filesystem
-		if (-1 === window.location.protocol.indexOf('http')){
-			this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
-			this.hmi_log_onwebsite("Communication to Server failed. This website has to be transfered via HTTP.");
-			if (document.getElementById("idThrobbler") !== null){
-				document.getElementById("idThrobbler").style.display = "none";
-			}
-			return false;
+		if (window.location.protocol === "file:"){
+			HMI.HMI_Constants.ServerType = "kshttp";
+			allowLocalRequests = false;
+			HMI.InputHost.placeholder = "hostname to contact";
+			this.hmi_log_trace("HMI.prototype.init - detected direct file, only kshttp server are available");
 		}else if (window.location.search.length !== 0 && -1 !== window.location.search.search(/ServerType=/)){
 			if ( -1 !== window.location.search.search(/ServerType=php/)){
 				HMI.HMI_Constants.ServerType = "php";
@@ -439,7 +438,7 @@ HMI.prototype = {
 		}
 		
 		//detect type of SVG display
-		if (this.Playground.tagName.toLowerCase() == "embed" || this.Playground.tagName.toLowerCase() == "object"){
+		if (this.Playground.nodeName.toLowerCase() == "embed" || this.Playground.nodeName.toLowerCase() == "object"){
 			//via a container plugin tag
 			
 			//remember ContainerNode for resizing
@@ -513,7 +512,7 @@ HMI.prototype = {
 		//try to search for webmagellan and provide a link
 		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
 		var path = ksmagellanPath.shift();
-		while(this.WebmagellanPath === null && path !== undefined){
+		while(allowLocalRequests !== false && this.WebmagellanPath === null && path !== undefined){
 			req = new XMLHttpRequest();
 			req.open("GET", path, false);
 			req.send(null);
@@ -748,7 +747,7 @@ HMI.prototype = {
 		document.getElementById("idBookmark").href = newDeepLink;
 		
 		//add sheet to html5 Session history management, if new
-		if (window.history.pushState){
+		if (window.history.pushState && window.location.protocol !== "file:"){
 			if (newDeepLink != window.location.href){
 				window.history.pushState(SheetInfo, "", newDeepLink);
 			}
@@ -961,7 +960,11 @@ HMI.prototype = {
 		//get rid of spaces in the textinput
 		HMI.InputHost.value = HMI.InputHost.value.trim();
 		if (HMI.InputHost.value.length === 0){
-			HMI.InputHost.value = window.location.hostname;
+			if(window.location.hostname !== 0){
+				HMI.InputHost.value = "localhost";
+			}else{
+				HMI.InputHost.value = window.location.hostname;
+			}
 		}
 		
 		var Host;
@@ -1550,7 +1553,7 @@ HMI.prototype = {
 			//getElementsByTagNameNS in Adobe is often not complete
 			var ChildNodesLength = Fragment.childNodes.length;
 			for (idx = 0; idx < ChildNodesLength; ++idx){
-				if (Fragment.childNodes.item(idx).tagName == "svg:svg"){
+				if (Fragment.childNodes.item(idx).nodeName == "svg:svg"){
 					//recursive init necessary
 					HMI.initGestures(Fragment.childNodes.item(idx));
 				}
@@ -1649,33 +1652,57 @@ HMI.prototype = {
 	 * @param reportSize {bool} should the function report the maximum size of the object?
 	 */
 	saveAbsolutePosition: function (Element, reportSize) {
-		//absolutex and absolutey are HMI specific DOM Attributes!
+		//absolutex and localy are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		//and the function displaygestureReactionMarker
-		var absolutex = parseInt(Element.getAttribute("x"), 10);
-		var absolutey = parseInt(Element.getAttribute("y"), 10);
-		
-		if (isNaN(absolutex)){
-			absolutex = 0;
+		var localx = parseInt(Element.getAttribute("x"), 10);
+		var localy = parseInt(Element.getAttribute("y"), 10);
+		if(Element.tagName === "circle"){
+			localx = parseInt(Element.getAttribute("cx"), 10);
+			localy = parseInt(Element.getAttribute("cy"), 10);
 		}
-		if (isNaN(absolutey)){
-			absolutey = 0;
+		var localrotate = parseInt(getRotationFromObject(Element), 10);
+		var absolutex, absolutey, absoluterotate;
+		
+		if (isNaN(localx)){
+			localx = 0;
+		}
+		if (isNaN(localy)){
+			localy = 0;
+		}
+		if (isNaN(localrotate)){
+			localrotate = 0;
 		}
 		
 		if(Element.parentNode !== null && Element.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-			newabsolutex = parseInt(Element.parentNode.getAttribute("absolutex"), 10);
-			newabsolutey = parseInt(Element.parentNode.getAttribute("absolutey"), 10);
-			absolutex += newabsolutex;
-			absolutey += newabsolutey;
+			var parentabsolutex = parseInt(Element.parentNode.getAttribute("absolutex"), 10);
+			var parentabsolutey = parseInt(Element.parentNode.getAttribute("absolutey"), 10);
+			var parentabsoluterotate = parseInt(Element.parentNode.getAttribute("absoluterotate"), 10);
+			if(parentabsoluterotate == 0){
+				absolutex = parentabsolutex + localx;
+				absolutey = parentabsolutey + localy;
+			}else{
+				var cosRotate = Math.cos(parentabsoluterotate*Math.PI/180);
+				var sinRotate = Math.sin(parentabsoluterotate*Math.PI/180);
+				absolutex = parentabsolutex + cosRotate * localx - sinRotate * localy;
+				absolutey = parentabsolutey + sinRotate * localx + cosRotate * localy;
+			}
+			absoluterotate = localrotate + parentabsoluterotate;
+		}else{
+			absolutex = 0;
+			absolutey = 0;
+			absoluterotate = 0;
 		}
 		
-		if (isNaN(absolutex) || isNaN(absolutey)){
-			this.hmi_log_warning("SVG-ERROR - parentNode of "+Element.id+"  is no hmi-component (has no absolutex or absolutey). The move-Gesture will not work on child elements!");
+		if (isNaN(absolutex) || isNaN(absolutey) || isNaN(absoluterotate)){
+			this.hmi_log_warning("SVG-ERROR - parentNode of "+Element.id+"  is no hmi-component (has no localx or localy). The move-Gesture will not work on child elements!");
 			Element.setAttribute("absolutex", 0);
 			Element.setAttribute("absolutey", 0);
+			Element.setAttribute("absoluterotate", 0);
 		}else{
 			Element.setAttribute("absolutex", absolutex);
 			Element.setAttribute("absolutey", absolutey);
+			Element.setAttribute("absoluterotate", absoluterotate);
 		}
 		
 		if (reportSize === true){

@@ -88,6 +88,8 @@ function cshmi() {
 	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
+		//todo this magic prevents garbage collection!?
+		
 		this.trashDocument = HMI.svgDocument.implementation.createDocument (HMI.HMI_Constants.NAMESPACE_SVG, "html", null);
 	}
 	
@@ -250,9 +252,8 @@ cshmi.prototype = {
 		//we want to have offset parameter on all visual elements
 		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
 		for(var i = 0;i < ComponentChilds.length;i++){
-			var Position = HMI.saveAbsolutePosition(ComponentChilds[i], false);
+			HMI.saveAbsolutePosition(ComponentChilds[i], false);
 		}
-		Position = null;
 		ComponentChilds = null;
 		
 		this._interpreteOnloadCallStack();
@@ -346,6 +347,11 @@ cshmi.prototype = {
 		
 		//get and prepare Children in an recursive call
 		if (VisualObject !== null){
+			if (VisualObject.tagName === "g" && VisualObject.id === ""){
+				var containerObject = VisualObject;
+				VisualObject = VisualObject.firstChild;
+			}
+			
 			//remember the ObjectType on every object (needed for reloading via action)
 			VisualObject.setAttribute("data-ObjectType", ObjectType);
 			
@@ -362,7 +368,12 @@ cshmi.prototype = {
 			}
 		}
 		
-		return VisualObject;
+		if (containerObject){
+			//container "g"
+			return containerObject;
+		}else{
+			return VisualObject;
+		}
 	},
 	
 	/**
@@ -732,6 +743,10 @@ cshmi.prototype = {
 		if (!isNaN(newx) && !isNaN(newy)){
 			VisualObject.setAttribute("x", newx);
 			VisualObject.setAttribute("y", newy);
+			if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+				//object has already an g parent
+				VisualObject.parentNode.setAttribute("transform", "rotate("+VisualObject.getAttribute("data-rotate")+","+newx+","+newy+")");
+			}
 			
 			HMI.saveAbsolutePosition(VisualObject);
 			//we want to have offset parameter on all visual elements
@@ -794,6 +809,14 @@ cshmi.prototype = {
 		//restore old position
 		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
 		VisualObject.setAttribute("y", this.ResourceList.EventInfos.startYObj);
+		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+			//object has an g parent for rotation. We need to correct transform origin
+			VisualObject.parentNode.setAttribute("transform", 
+					"rotate("+VisualObject.getAttribute("data-rotate")+","+
+					VisualObject.getAttribute("x")+","+
+					VisualObject.getAttribute("y")+")");
+		}
+		
 		HMI.saveAbsolutePosition(VisualObject);
 		//we want to have offset parameter on all visual elements
 		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
@@ -804,6 +827,7 @@ cshmi.prototype = {
 		if (canceled === true){
 			//no action
 		}else if (interpreteEvent === "click"){
+			this.ResourceList.EventInfos.mouseRelativePosition = null;
 			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"));
 		}else{
 			//get and execute all actions
@@ -1039,24 +1063,7 @@ cshmi.prototype = {
 					return "TRUE";
 				}
 			}else if (ParameterValue === "rotate"){
-				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-					//svg are not transformable, so the rotation is in the objects parent
-					var TransformString = VisualObject.parentNode.getAttribute("transform");
-				}else if (VisualObject.tagName === "svg"){
-					//it is an template, with no rotation
-					return "0";
-				}else{
-					TransformString = VisualObject.getAttribute("transform");
-				}
-				if(TransformString === ""){
-					return 0;
-				}
-				//"rotate(45,21.000000,50.000000)" or "rotate(45)"
-				
-				//remove rotate()
-				TransformString = TransformString.replace(")", "").replace("rotate(", "");
-				//get first number if there are 3, separated via comma
-				return TransformString.split(",")[0];
+				return getRotationFromObject(VisualObject).toString();
 			}else if (ParameterValue === "previousTemplateCount"){
 				if (HMI.instanceOf(VisualObject, this.cshmiTemplateClass) !== true){
 					return 0;
@@ -1717,6 +1724,8 @@ cshmi.prototype = {
 					//element has to be shifted into an g element
 					rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 					rotationObject.setAttribute("overflow", "visible");
+					rotationObject.setAttribute("x", "0");
+					rotationObject.setAttribute("y", "0");
 					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
 					rotationObject.appendChild(VisualObject);
 				}else{
@@ -1751,6 +1760,15 @@ cshmi.prototype = {
 					//absolutex is calculated from the offset of the parentNode
 					VisualObject.setAttribute("x", NewValue - VisualObject.parentNode.getAttribute("absolutex") - relativeX);
 					VisualObject.setAttribute("absolutex", NewValue - relativeX);
+					
+					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+						//object has an g parent for rotation. We need to correct transform origin
+						VisualObject.parentNode.setAttribute("transform", 
+								"rotate("+VisualObject.getAttribute("data-rotate")+","+
+								VisualObject.getAttribute("x")+","+
+								VisualObject.getAttribute("y")+")");
+					}
+					
 					//we want to have offset parameter on all visual elements
 					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 					for(var i = 0;i < ComponentChilds.length;i++){
@@ -1767,6 +1785,15 @@ cshmi.prototype = {
 					//absolutey is calculated from the offset of the parentNode
 					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey") - relativeY);
 					VisualObject.setAttribute("absolutey", NewValue - relativeY);
+					
+					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+						//object has an g parent for rotation. We need to correct transform origin
+						VisualObject.parentNode.setAttribute("transform", 
+								"rotate("+VisualObject.getAttribute("data-rotate")+","+
+								VisualObject.getAttribute("x")+","+
+								VisualObject.getAttribute("y")+")");
+					}
+					
 					//we want to have offset parameter on all visual elements
 					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
 					for(var i = 0;i < ComponentChilds.length;i++){
@@ -2884,9 +2911,9 @@ cshmi.prototype = {
 		}
 		
 		var SourceConnectionPoint = null;
-		var SourceConnectionPointdirection = "Right";
+		var SourceConnectionPointdirection = 0;
 		var TargetConnectionPoint = null;
-		var TargetConnectionPointdirection = "Left";
+		var TargetConnectionPointdirection = 180;
 		var OffsetSource = 0;
 		var OffsetTarget = 0;
 		
@@ -3022,13 +3049,25 @@ cshmi.prototype = {
 				if(SourceConnectionPoint !== null){
 					//asv problem due to ie bug for substr. Solved in ie9
 					if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "left"){
-						SourceConnectionPointdirection = "Left";
-					}else if(SourceConnectionPoint.id.toLowerCase().substr(-5) === "right"){
-						SourceConnectionPointdirection = "Right";
+						SourceConnectionPointdirection = 180;
 					}else if(SourceConnectionPoint.id.toLowerCase().substr(-2) === "up"){
-						SourceConnectionPointdirection = "Up";
+						SourceConnectionPointdirection = 270;
+					}else if(SourceConnectionPoint.id.toLowerCase().substr(-5) === "right"){
+						SourceConnectionPointdirection = 0;
 					}else if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "down"){
-						SourceConnectionPointdirection = "Down";
+						SourceConnectionPointdirection = 90;
+					}
+					var absoluterotate = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+					if(absoluterotate < 44){
+						//nothing
+					}else if(absoluterotate < 134){
+						SourceConnectionPointdirection = (SourceConnectionPointdirection + 90) % 360;
+					}else if(absoluterotate < 226){
+						SourceConnectionPointdirection = (SourceConnectionPointdirection + 180) % 360;
+					}else if(absoluterotate < 316){
+						SourceConnectionPointdirection = (SourceConnectionPointdirection + 270) % 360;
+					}else{
+						//nothing
 					}
 				}
 				Source = null;
@@ -3048,6 +3087,7 @@ cshmi.prototype = {
 							// search tagName "circle" with name containing SourceConnectionPointOutsideDomain
 							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("SourceConnectionPointOutsideDomain") !== -1){
 								SourceConnectionPoint = domainSVG.childNodes[i];
+								//fixme merge to number
 								SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("SourceConnectionPointOutsideDomain")+34);
 								break;
 							}
@@ -3077,14 +3117,27 @@ cshmi.prototype = {
 				}
 				if (TargetConnectionPoint !== null){
 					if(TargetConnectionPoint.id.toLowerCase().substr(-4) === "left"){
-						TargetConnectionPointdirection = "Left";
-					}else if(TargetConnectionPoint.id.toLowerCase().substr(-5) === "right"){
-						TargetConnectionPointdirection = "Right";
+						TargetConnectionPointdirection = 180;
 					}else if(TargetConnectionPoint.id.toLowerCase().substr(-2) === "up"){
-						TargetConnectionPointdirection = "Up";
+						TargetConnectionPointdirection = 270;
+					}else if(TargetConnectionPoint.id.toLowerCase().substr(-5) === "right"){
+						TargetConnectionPointdirection = 0;
 					}else if(TargetConnectionPoint.id.toLowerCase().substr(-4) === "down"){
-						TargetConnectionPointdirection = "Down";
+						TargetConnectionPointdirection = 90;
 					}
+					var absoluterotate = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+					if(absoluterotate < 44){
+						//nothing
+					}else if(absoluterotate < 134){
+						TargetConnectionPointdirection = (TargetConnectionPointdirection + 90) % 360;
+					}else if(absoluterotate < 226){
+						TargetConnectionPointdirection = (TargetConnectionPointdirection + 180) % 360;
+					}else if(absoluterotate < 316){
+						TargetConnectionPointdirection = (TargetConnectionPointdirection + 270) % 360;
+					}else{
+						//nothing
+					}
+
 				}
 				Target = null;
 			//the TargetConnectionPoint is outside the domain
@@ -3093,6 +3146,7 @@ cshmi.prototype = {
 				//there should only be one TargetConnectionPointOutsideDomain, so use the cached value if it has been searched before
 				if (this.ResourceList.Actions && this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] !== undefined){
 					TargetConnectionPoint = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint;
+					//fixme to number
 					TargetConnectionPointdirection = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection;
 				}
 				//search for TargetConnectionPointOutsideDomain in all parent svgs
@@ -3125,8 +3179,14 @@ cshmi.prototype = {
 			TargetBasename = PathArray.join("/");
 			PathArray = null;
 			
-			var SourceBase = HMI.svgDocument.getElementById(SourceBasename);
-			var TargetBase = HMI.svgDocument.getElementById(TargetBasename);
+			var SourceBase = null;
+			if(SourceBasename){
+				SourceBase = HMI.svgDocument.getElementById(SourceBasename);
+			}
+			var TargetBase = null;
+			if(TargetBasename){
+				TargetBase = HMI.svgDocument.getElementById(TargetBasename);
+			}
 			
 			//get connection offsets
 			if (SourceBase === null){
@@ -3199,15 +3259,11 @@ cshmi.prototype = {
 			}
 		}
 		
-		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10) +
-			parseInt(SourceConnectionPoint.getAttribute("cx"), 10);
-		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10) +
-			parseInt(SourceConnectionPoint.getAttribute("cy"), 10);
+		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
+		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
 		
-		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10) +
-			parseInt(TargetConnectionPoint.getAttribute("cx"), 10);
-		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10) +
-			parseInt(TargetConnectionPoint.getAttribute("cy"), 10);
+		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
+		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
 		if (	this.initStage === true ||
@@ -3231,7 +3287,7 @@ cshmi.prototype = {
 			yStart = yStart - VisualObject.parentNode.getAttribute("absolutey");
 			yEnd = yEnd - VisualObject.parentNode.getAttribute("absolutey");
 			
-			if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Left"){
+			if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 180){
 				//OUTPUT --> INPUT
 				points = xStart + "," + yStart + " ";
 				xStart = xStart + OffsetSource;
@@ -3246,7 +3302,7 @@ cshmi.prototype = {
 				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Right"){
+			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 0){
 				//INPUT --> OUTPUT
 				var xTemp = xStart;
 				var yTemp = yStart;
@@ -3267,7 +3323,7 @@ cshmi.prototype = {
 				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Left"){
+			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 180){
 				//INPUT --> INPUT
 				points = xStart + "," + yStart + " ";
 				xStart = xStart - OffsetSource;
@@ -3279,7 +3335,7 @@ cshmi.prototype = {
 				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Right"){
+			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 0){
 				//OUTPUT --> OUTPUT
 				points = xStart + "," + yStart + " ";
 				xStart = xStart + OffsetSource;
@@ -3291,7 +3347,7 @@ cshmi.prototype = {
 				
 				points = points + xStart + "," + yEnd + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Down"){
+			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 90){
 				points = xStart + "," + yStart + " ";
 				yStart = yStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3305,7 +3361,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Up"){
+			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 270){
 				var xTemp = xStart;
 				var yTemp = yStart;
 				xStart = xEnd;
@@ -3325,7 +3381,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Down"){
+			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 90){
 				points = xStart + "," + yStart + " ";
 				yStart = yStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3336,7 +3392,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Up"){
+			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 270){
 				points = xStart + "," + yStart + " ";
 				yStart = yStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3347,7 +3403,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Up"){
+			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 270){
 				points = xStart + "," + yStart + " ";
 				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3358,7 +3414,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Right"){
+			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 0){
 				var xTemp = xStart;
 				var yTemp = yStart;
 				xStart = xEnd;
@@ -3375,7 +3431,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Right" && TargetConnectionPointdirection === "Down"){
+			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 90){
 				points = xStart + "," + yStart + " ";
 				xStart = xStart + OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3385,7 +3441,7 @@ cshmi.prototype = {
 				}
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Right"){
+			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 0){
 				var xTemp = xStart;
 				var yTemp = yStart;
 				xStart = xEnd;
@@ -3401,7 +3457,7 @@ cshmi.prototype = {
 				}
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Up"){
+			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 270){
 				points = xStart + "," + yStart + " ";
 				xStart = xStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3412,7 +3468,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Up" && TargetConnectionPointdirection === "Left"){
+			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 180){
 				var xTemp = xStart;
 				var yTemp = yStart;
 				xStart = xEnd;
@@ -3429,7 +3485,7 @@ cshmi.prototype = {
 				
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Left" && TargetConnectionPointdirection === "Down"){
+			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 90){
 				points = xStart + "," + yStart + " ";
 				xStart = xStart - OffsetSource;
 				points = points + xStart + "," + yStart + " ";
@@ -3439,7 +3495,7 @@ cshmi.prototype = {
 				}
 				points = points + xEnd + "," + yStart + " ";
 				points = points + xEnd + "," + yEnd;
-			}else if (SourceConnectionPointdirection === "Down" && TargetConnectionPointdirection === "Left"){
+			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 180){
 				var xTemp = xStart;
 				var yTemp = yStart;
 				xStart = xEnd;
@@ -3960,8 +4016,11 @@ cshmi.prototype = {
 			//http://www.w3.org/Graphics/SVG/WG/track/issues/2252
 			var VisualChildObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 			VisualChildObject.setAttribute("overflow", "visible");
+			VisualChildObject.setAttribute("x", "0");
+			VisualChildObject.setAttribute("y", "0");
 			VisualChildObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
 			VisualChildObject.appendChild(VisualObject);
+			VisualObject.removeAttribute("transform");
 		}else{
 			VisualChildObject = null;
 		}
@@ -5219,6 +5278,14 @@ cshmi.prototype = {
 		}else{
 			VisualObject.setAttribute("display", "block");
 		}
+		if(configArray["rotate"] !== undefined){
+			VisualObject.setAttribute("data-rotate", configArray["rotate"]);
+			if(configArray["rotate"] !== "0"){
+				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
+			}
+		}else{
+			VisualObject.setAttribute("data-rotate", "0");
+		}
 		if(configArray["x"] !== undefined && configArray["y"] !== undefined){
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
@@ -5226,8 +5293,6 @@ cshmi.prototype = {
 			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.tagName === "svg" && VisualObject.parentNode && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.id === ""){
 				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
 			}
-		}else if(configArray["rotate"] !== undefined && configArray["rotate"] !== "0"){
-			VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+")");
 		}
 		if(configArray["width"] !== undefined && configArray["width"] !== ""){
 			VisualObject.setAttribute("width", configArray["width"]);
