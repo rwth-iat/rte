@@ -99,14 +99,14 @@ HMIDOMParser.prototype = {
 			//Mozilla has a very strange way of presenting an error
 			//supported by Opera
 			//not supported by Webkit https://bugs.webkit.org/show_bug.cgi?id=13057
-			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml" && GraphicElement.documentElement.tagName == "parsererror"){
+			if (GraphicElement.documentElement.namespaceURI == "http://www.mozilla.org/newlayout/xml/parsererror.xml" && GraphicElement.documentElement.nodeName == "parsererror"){
 				//opera/firefox has a highlighting of the error here:
 				HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String: '+GraphicElement.documentElement.lastChild.textContent);
 				//opera/firefox has a readable description here:
 				HMI.hmi_log_onwebsite('Could not parse XML: '+GraphicElement.documentElement.firstChild.textContent);
 				return null;
-			}else if (GraphicElement.documentElement.firstChild.tagName == "parsererror"){
-				if(GraphicElement.documentElement.firstChild && GraphicElement.documentElement.firstChild.children.length > 2 && GraphicElement.documentElement.firstChild.children[1].tagName == "div"){
+			}else if (GraphicElement.documentElement.firstChild && GraphicElement.documentElement.firstChild.nodeName == "parsererror"){
+				if(GraphicElement.documentElement.firstChild && GraphicElement.documentElement.firstChild.children.length > 2 && GraphicElement.documentElement.firstChild.children[1].nodeName == "div"){
 					HMI.hmi_log_error('HMIDOMParser.prototype.parse: ParseError on first XML String');
 					//chrome Feb 2013 has the error info hidden in a div...
 					HMI.hmi_log_onwebsite('Could not parse XML: '+GraphicElement.documentElement.firstChild.children[1].textContent);

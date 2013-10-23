@@ -1212,7 +1212,11 @@ HMI.prototype = {
 			if (SVGRequestURI !== null){
 				//	get GraphicDescription
 				//
-				ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null);
+				if ("kshttp" === HMI.HMI_Constants.ServerType){
+					ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null, false, "text/plain");
+				}else{
+					ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null);
+				}
 			}
 			SVGRequestURI = null;
 			

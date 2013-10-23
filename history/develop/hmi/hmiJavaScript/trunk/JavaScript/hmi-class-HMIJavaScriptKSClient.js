@@ -1317,7 +1317,13 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null or empty");
 			return null;
 		}
-		var ReturnText = this.splitKsResponse(ComponentText);
+		var ReturnText;
+		if ("kshttp" === HMI.HMI_Constants.ServerType){
+			//remove ";" of text/plain encoding
+			ReturnText = Array(ComponentText.slice(0, -1));
+		}else{
+			ReturnText = this.splitKsResponse(ComponentText);
+		}
 		
 		//	ComponentText should look like:
 		//		{{GraphicDescription}} {{StyleDescription}}
