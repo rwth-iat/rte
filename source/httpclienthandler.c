@@ -500,8 +500,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//no method has found a hit
 	if (request_handled_by == REQUEST_HANDLED_BY_NONE){
-		ov_string_append(&responseBody, "ks command not supported or static file not found");
 		result = OV_ERR_BADPATH; //404
+		printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "notimplemented");
+		print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": KS command not supported or static file not found");
+		printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "notimplemented");
 	}
 
 	//BEGIN forming and sending the answer
