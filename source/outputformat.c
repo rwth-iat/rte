@@ -442,10 +442,12 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 't';
+/*		causes more problems that it solves...
 		}else if(*pcIn == ' ' && response_format == RESPONSE_FORMAT_TCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = ' ';
+*/
 		}else if(*pcIn == '$' && response_format == RESPONSE_FORMAT_TCL){
 			*pcOut = '\\';
 			pcOut++;
