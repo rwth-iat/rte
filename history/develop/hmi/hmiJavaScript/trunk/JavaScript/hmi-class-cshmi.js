@@ -128,13 +128,9 @@ JavaScript:
 CSHMIHostServer/acplt/ov/library in FBRef ermoeglichen
 CSHMI:configvalue:myconfig in SetValue.TemplateFBVariableReferenceName
 
-rename fullqualifiedname to CSHMIfullqualifiedname
-
-
 var varName = responseArray[i].split(" ");
 varName[1] evtl nicht verfï¿½gbar!
 
-- Nach dem Laden (nur gebrauchter Objecte), sollte ein Hintergrund thread die restliche Config nachladen
 - Auch das laden sollte asyncrone requests nutzen. 
 	Dafï¿½r muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
 - Nur einige wenige cycTimes (enum like?) erlauben
@@ -298,9 +294,7 @@ cshmi.prototype = {
 	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
 		var VisualObject = null;
 		var Result = true;
-		if (false && ObjectType.indexOf("/cshmi/Group") !== -1){
-			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, preventNetworkRequest);
-		}else if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
+		if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
 			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false, preventNetworkRequest);
@@ -1209,20 +1203,20 @@ cshmi.prototype = {
 					return "";
 				}
 				return "//"+PathArray[0]+"/"+PathArray[1];
-			}else if (ParameterValue === "fullqualifiedparentname"){
+			}else if (ParameterValue === "fullqualifiedparentname" || ParameterValue === "CSHMIfullqualifiedparentname"){
 				// is //dev:7509/server1/TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return PathArray.join("/");
-			}else if (ParameterValue === "fullqualifiedname"){
+			}else if (ParameterValue === "fullqualifiedname" || ParameterValue === "CSHMIfullqualifiedname"){
 				// is //dev:7509/server1/TechUnits/add
 				return FBRef;
-			}else if (ParameterValue === "absoluteparentpathname"){
+			}else if (ParameterValue === "absoluteparentpathname" || ParameterValue === "CSHMIabsoluteparentpathname"){
 				// is /TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return HMI.KSClient._splitKSPath(PathArray.join("/"))[1];
-			}else if (ParameterValue === "absolutepathname"){
+			}else if (ParameterValue === "absolutepathname" || ParameterValue === "CSHMIabsolutepathname"){
 				// is /TechUnits/add
 				return HMI.KSClient._splitKSPath(FBRef)[1];
 			}else if (ParameterValue === "identifier"){
@@ -1917,7 +1911,7 @@ cshmi.prototype = {
 			var FBRef = this._getFBReference(VisualObject, true);
 			if (FBRef[0] === ""){
 				return false;
-			}else if (ParameterValue === "fullqualifiedname"){
+			}else if (ParameterValue === "fullqualifiedname" || ParameterValue === "CSHMIfullqualifiedname"){
 				var TemplateObject = FBRef[1];
 				if (TemplateObject === null){
 					return false;
@@ -4411,86 +4405,6 @@ cshmi.prototype = {
 	
 	//newwrite
 	//alle buildSvg* in eine Funktion zusammenfassen, da sehr ï¿½hnlich. Mit this.ModellVariables...
-	
-
-//fixme funktion löschen
-	_buildSvgGroup: function(VisualParentObject, ObjectPath, preventNetworkRequest){
-		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
-			//build a skeleton to preserve zindex/sequence
-			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-			VisualObject.id = ObjectPath;
-			return VisualObject;
-		}else{
-			requestList[ObjectPath] = new Object();
-			if (VisualParentObject !== null){
-				//x,y of the first svg should be 0,0 regardless of the config
-				//with this "hack" we also can visualize a TemplateDefinition via deep link for testing
-				requestList[ObjectPath]["x"] = null;
-				requestList[ObjectPath]["y"] = null;
-			}
-			requestList[ObjectPath]["width"] = null;
-			requestList[ObjectPath]["height"] = null;
-			requestList[ObjectPath]["hideable"] = null;
-			requestList[ObjectPath]["visible"] = null;
-			
-			var successCode = this._requestVariablesArray(requestList);
-			if (successCode === false){
-				return null;
-			}
-			//we have asked the object successful, so remember the result
-			this.ResourceList.Elements[ObjectPath] = new Object();
-			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
-		}
-		
-		if (VisualParentObject !== null){
-			//search a predefined children
-			try{
-				var VisualObject = VisualParentObject.getElementById(ObjectPath);
-			}catch (e) {
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-				// hopefully the id is uniqe in the tree
-				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
-			}
-		}
-		
-		if (VisualObject === null || VisualObject === undefined){
-			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
-		}
-		
-		if (VisualParentObject !== null){
-			//id should be the name of the parent plus our identifier
-			var NameList = ObjectPath.split("/");
-			VisualObject.id = VisualParentObject.id + "/" + NameList[NameList.length-1];
-			NameList = null;
-		}else{
-			//we are the main sheet, so no parent available
-			VisualObject.id = "//"+HMI.KSClient.ResourceList.ModelHost+"/"+HMI.KSClient.ResourceList.ModelServer+ObjectPath;
-		}
-		VisualObject.setAttribute("data-ModelSource", ObjectPath);
-		
-		HMI.addClass(VisualObject, this.cshmiGroupClass);
-		
-		//setting the basic Element Variables like .visible .stroke .fill .opacity .rotate
-		this._processBasicVariables(VisualObject, requestList[ObjectPath]);
-		
-		VisualObject.setAttribute("overflow", "visible");
-		
-		if (VisualParentObject === null){
-			//if this is the first svg, we need a default container for ConfigValues for saving them
-			VisualObject.FBReference = Object();
-			VisualObject.FBReference["default"] = "";
-			VisualObject.ConfigValues = Object();
-		}
-		
-		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
-		
-		return VisualObject;
-	},
 	
 	/**
 	 * builds SVG line object, gets the parameter via KS
