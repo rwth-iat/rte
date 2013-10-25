@@ -3057,18 +3057,6 @@ cshmi.prototype = {
 					}else if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "down"){
 						SourceConnectionPointdirection = 90;
 					}
-					var absoluterotate = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
-					if(absoluterotate < 44){
-						//nothing
-					}else if(absoluterotate < 134){
-						SourceConnectionPointdirection = (SourceConnectionPointdirection + 90) % 360;
-					}else if(absoluterotate < 226){
-						SourceConnectionPointdirection = (SourceConnectionPointdirection + 180) % 360;
-					}else if(absoluterotate < 316){
-						SourceConnectionPointdirection = (SourceConnectionPointdirection + 270) % 360;
-					}else{
-						//nothing
-					}
 				}
 				Source = null;
 			}else{
@@ -3078,6 +3066,7 @@ cshmi.prototype = {
 				//there should only be one SourceConnectionPointOutsideDomain, so use the cached value if it has been searched before
 				if (this.ResourceList.Actions && this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] !== undefined){
 					SourceConnectionPoint = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint;
+					SourceConnectionPointdirection = this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection;
 				}
 				//search for SourceConnectionPointOutsideDomain in all parent svgs
 				else{
@@ -3087,7 +3076,6 @@ cshmi.prototype = {
 							// search tagName "circle" with name containing SourceConnectionPointOutsideDomain
 							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("SourceConnectionPointOutsideDomain") !== -1){
 								SourceConnectionPoint = domainSVG.childNodes[i];
-								//fixme merge to number
 								SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("SourceConnectionPointOutsideDomain")+34);
 								break;
 							}
@@ -3098,6 +3086,15 @@ cshmi.prototype = {
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] = new Object();
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint = SourceConnectionPoint;
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection = SourceConnectionPointdirection;
+				}
+				if(SourceConnectionPointdirection.toLowerCase() === "left"){
+					SourceConnectionPointdirection = 180;
+				}else if(SourceConnectionPointdirection.toLowerCase() === "up"){
+					SourceConnectionPointdirection = 270;
+				}else if(SourceConnectionPointdirection.toLowerCase() === "right"){
+					SourceConnectionPointdirection = 0;
+				}else if(SourceConnectionPointdirection.toLowerCase() === "down"){
+					SourceConnectionPointdirection = 90;
 				}
 			}
 			
@@ -3125,19 +3122,6 @@ cshmi.prototype = {
 					}else if(TargetConnectionPoint.id.toLowerCase().substr(-4) === "down"){
 						TargetConnectionPointdirection = 90;
 					}
-					var absoluterotate = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
-					if(absoluterotate < 44){
-						//nothing
-					}else if(absoluterotate < 134){
-						TargetConnectionPointdirection = (TargetConnectionPointdirection + 90) % 360;
-					}else if(absoluterotate < 226){
-						TargetConnectionPointdirection = (TargetConnectionPointdirection + 180) % 360;
-					}else if(absoluterotate < 316){
-						TargetConnectionPointdirection = (TargetConnectionPointdirection + 270) % 360;
-					}else{
-						//nothing
-					}
-
 				}
 				Target = null;
 			//the TargetConnectionPoint is outside the domain
@@ -3146,7 +3130,6 @@ cshmi.prototype = {
 				//there should only be one TargetConnectionPointOutsideDomain, so use the cached value if it has been searched before
 				if (this.ResourceList.Actions && this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] !== undefined){
 					TargetConnectionPoint = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint;
-					//fixme to number
 					TargetConnectionPointdirection = this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection;
 				}
 				//search for TargetConnectionPointOutsideDomain in all parent svgs
@@ -3167,6 +3150,15 @@ cshmi.prototype = {
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] = new Object();
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint = TargetConnectionPoint;
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection = TargetConnectionPointdirection;
+				}
+				if(TargetConnectionPointdirection.toLowerCase() === "left"){
+					TargetConnectionPointdirection = 180;
+				}else if(TargetConnectionPointdirection.toLowerCase() === "up"){
+					TargetConnectionPointdirection = 270;
+				}else if(TargetConnectionPointdirection.toLowerCase() === "right"){
+					TargetConnectionPointdirection = 0;
+				}else if(TargetConnectionPointdirection.toLowerCase() === "down"){
+					TargetConnectionPointdirection = 90;
 				}
 			}
 			
@@ -3258,6 +3250,32 @@ cshmi.prototype = {
 				return true;
 			}
 		}
+		
+		var absoluterotate = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+		if(absoluterotate < 44){
+			//nothing
+		}else if(absoluterotate < 134){
+			SourceConnectionPointdirection = (SourceConnectionPointdirection + 90) % 360;
+		}else if(absoluterotate < 226){
+			SourceConnectionPointdirection = (SourceConnectionPointdirection + 180) % 360;
+		}else if(absoluterotate < 316){
+			SourceConnectionPointdirection = (SourceConnectionPointdirection + 270) % 360;
+		}else{
+			//nothing
+		}
+		absoluterotate = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+		if(absoluterotate < 44){
+			//nothing
+		}else if(absoluterotate < 134){
+			TargetConnectionPointdirection = (TargetConnectionPointdirection + 90) % 360;
+		}else if(absoluterotate < 226){
+			TargetConnectionPointdirection = (TargetConnectionPointdirection + 180) % 360;
+		}else if(absoluterotate < 316){
+			TargetConnectionPointdirection = (TargetConnectionPointdirection + 270) % 360;
+		}else{
+			//nothing
+		}
+		absoluterotate = null;
 		
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
 		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
