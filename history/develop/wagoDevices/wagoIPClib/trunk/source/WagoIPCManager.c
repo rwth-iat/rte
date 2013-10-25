@@ -22,8 +22,8 @@
 *
 *******************************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_wagolib
-#define OV_COMPILE_LIBRARY_wagolib
+#ifndef OV_COMPILE_LIBRARY_wagoIPClib
+#define OV_COMPILE_LIBRARY_wagoIPClib
 #endif
 
 
@@ -535,7 +535,7 @@ OV_DLLFNCEXPORT void wagoIPClib_WagoIPCManager_typemethod(
 							{	/*output found*/
 									/*create new object with name "Terminal$terminalnumber:$channelnumber-SO"*/
 								ov_string_print(&clamp_name, "Terminal%03hhu:%02u-SO", ppi_info[i].position, j);
-								if(Ov_Fail(Ov_CreateObject(kbuslib_SpecialIN, pnewclamp, pinst, clamp_name)))
+								if(Ov_Fail(Ov_CreateObject(kbuslib_SpecialOUT, pnewclamp, pinst, clamp_name)))
 								{
 									ov_logfile_error("%s: creation of SpecialOUT %s failed\n", 
 									pinst->v_identifier, clamp_name);
