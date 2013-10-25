@@ -154,15 +154,15 @@ OV_RESULT exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT 
 	}else{
 		ov_string_append(message, http_port);
 	}
-	fr = finalize_response_part(message, response_format, "port");
-	/* needed?
-	begin_response_part(&temp, response_format, "servername");
-	ov_string_append(&temp, servername);
-	finalize_response_part(&temp, response_format, "servername");
-	begin_response_part(&temp, response_format, "serverversion");
-	ov_string_print(&temp, "%s%u", temp, registeredVersion);
-	finalize_response_part(&temp, response_format, "serverversion");
-	*/
+	finalize_response_part(message, response_format, "port");
+
+	begin_response_part(message, response_format, "servername");
+	ov_string_append(message, servername);
+	finalize_response_part(message, response_format, "servername");
+
+	begin_response_part(message, response_format, "serverversion");
+	ov_string_print(message, "%s%u", *message, registeredVersion);
+	finalize_response_part(message, response_format, "serverversion");
 
 	EXEC_GETSERVER_RETURN fr;
 }
