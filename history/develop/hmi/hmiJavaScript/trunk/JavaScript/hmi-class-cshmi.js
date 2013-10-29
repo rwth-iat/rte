@@ -440,23 +440,6 @@ cshmi.prototype = {
 			return true;
 		}
 		
-		var skipEvent = false;
-		//check if the page is visible at all?
-		//http://www.w3.org/TR/page-visibility/
-		//never used with ms or o prefix
-		if(	document.hidden === true ||
-			document.mozHidden === true||
-			document.webkitHidden === true
-		){
-			skipEvent = true;
-		}else if (this.initStage === true){
-			//we are in the init state of the sheet so interprete Action later onload, remembering this
-			skipEvent = true;
-		}
-		if(skipEvent === false){
-			this._interpreteAction(VisualObject, ObjectPath);
-		}
-		
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		var requestList = new Object();
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -480,6 +463,23 @@ cshmi.prototype = {
 			var cyctime = 1;
 		}else{
 			cyctime = requestList[ObjectPath]["cyctime"];
+		}
+		
+		var skipEvent = false;
+		//check if the page is visible at all?
+		//http://www.w3.org/TR/page-visibility/
+		//never used with ms or o prefix
+		if(	document.hidden === true ||
+			document.mozHidden === true||
+			document.webkitHidden === true
+		){
+			skipEvent = true;
+		}else if (this.initStage === true){
+			//we are in the init state of the sheet so interprete Action later onload, remembering this
+			skipEvent = true;
+		}
+		if(skipEvent === false){
+			this._interpreteAction(VisualObject, ObjectPath);
 		}
 		
 		//call us again for cyclic interpretation of the Actions
@@ -3076,19 +3076,21 @@ cshmi.prototype = {
 						}
 						domainSVG = domainSVG.parentNode;
 					}
+					if(isNumeric(SourceConnectionPointdirection)){
+						//nothing
+					}else if(SourceConnectionPointdirection.toLowerCase() === "left"){
+						SourceConnectionPointdirection = 180;
+					}else if(SourceConnectionPointdirection.toLowerCase() === "up"){
+						SourceConnectionPointdirection = 270;
+					}else if(SourceConnectionPointdirection.toLowerCase() === "right"){
+						SourceConnectionPointdirection = 0;
+					}else if(SourceConnectionPointdirection.toLowerCase() === "down"){
+						SourceConnectionPointdirection = 90;
+					}
 					//remember the result
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] = new Object();
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPoint = SourceConnectionPoint;
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"].SourceConnectionPointdirection = SourceConnectionPointdirection;
-				}
-				if(SourceConnectionPointdirection.toLowerCase() === "left"){
-					SourceConnectionPointdirection = 180;
-				}else if(SourceConnectionPointdirection.toLowerCase() === "up"){
-					SourceConnectionPointdirection = 270;
-				}else if(SourceConnectionPointdirection.toLowerCase() === "right"){
-					SourceConnectionPointdirection = 0;
-				}else if(SourceConnectionPointdirection.toLowerCase() === "down"){
-					SourceConnectionPointdirection = 90;
 				}
 			}
 			
@@ -3140,19 +3142,21 @@ cshmi.prototype = {
 						}
 						domainSVG = domainSVG.parentNode;
 					}
+					if(isNumeric(TargetConnectionPointdirection)){
+						//nothing
+					}else if(TargetConnectionPointdirection.toLowerCase() === "left"){
+						TargetConnectionPointdirection = 180;
+					}else if(TargetConnectionPointdirection.toLowerCase() === "up"){
+						TargetConnectionPointdirection = 270;
+					}else if(TargetConnectionPointdirection.toLowerCase() === "right"){
+						TargetConnectionPointdirection = 0;
+					}else if(TargetConnectionPointdirection.toLowerCase() === "down"){
+						TargetConnectionPointdirection = 90;
+					}
 					//remember the result
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] = new Object();
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPoint = TargetConnectionPoint;
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"].TargetConnectionPointdirection = TargetConnectionPointdirection;
-				}
-				if(TargetConnectionPointdirection.toLowerCase() === "left"){
-					TargetConnectionPointdirection = 180;
-				}else if(TargetConnectionPointdirection.toLowerCase() === "up"){
-					TargetConnectionPointdirection = 270;
-				}else if(TargetConnectionPointdirection.toLowerCase() === "right"){
-					TargetConnectionPointdirection = 0;
-				}else if(TargetConnectionPointdirection.toLowerCase() === "down"){
-					TargetConnectionPointdirection = 90;
 				}
 			}
 			
