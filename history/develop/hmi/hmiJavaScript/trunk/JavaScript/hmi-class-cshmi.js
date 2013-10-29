@@ -244,13 +244,7 @@ cshmi.prototype = {
 		
 		//calculate all offset parameter to be able to display visual feedback
 		//this is only possible now, as the orientation of the parents are not defined when they are not appended
-		var maxPosition = HMI.saveAbsolutePosition(VisualObject, true);
-		//we want to have offset parameter on all visual elements
-		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
-		for(var i = 0;i < ComponentChilds.length;i++){
-			HMI.saveAbsolutePosition(ComponentChilds[i], false);
-		}
-		ComponentChilds = null;
+		var maxPosition = HMI.saveAbsolutePosition(VisualObject);
 		
 		this._interpreteOnloadCallStack();
 		
@@ -742,12 +736,9 @@ cshmi.prototype = {
 				VisualObject.parentNode.setAttribute("transform", "rotate("+VisualObject.getAttribute("data-rotate")+","+newx+","+newy+")");
 			}
 			
-			HMI.saveAbsolutePosition(VisualObject);
 			//we want to have offset parameter on all visual elements
-			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI.saveAbsolutePosition(ComponentChilds[i]);
-			}
+			HMI.saveAbsolutePosition(VisualObject);
+			
 			//save event for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
@@ -811,12 +802,8 @@ cshmi.prototype = {
 					VisualObject.getAttribute("y")+")");
 		}
 		
-		HMI.saveAbsolutePosition(VisualObject);
 		//we want to have offset parameter on all visual elements
-		var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-		for(var i = 0;i < ComponentChilds.length;i++){
-			HMI.saveAbsolutePosition(ComponentChilds[i]);
-		}
+		HMI.saveAbsolutePosition(VisualObject);
 		
 		if (canceled === true){
 			//no action
@@ -1514,8 +1501,8 @@ cshmi.prototype = {
 	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue){
 		//get info where to set the NewValue
 		
-		var ParameterName;
-		var ParameterValue;
+		var ParameterName = "";
+		var ParameterValue = "";
 		var TranslationSourcePath = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -1739,11 +1726,14 @@ cshmi.prototype = {
 					}else{
 						TransformString = "rotate("+NewValue+")";
 					}
+					VisualObject.setAttribute("data-rotate", NewValue);
 				}else if (ParameterValue === "transform"){
 					//todo rotation is lost
 					TransformString = NewValue;
 				}
 				rotationObject.setAttribute("transform", TransformString);
+				//we want to have offset parameter on all visual elements
+				HMI.saveAbsolutePosition(rotationObject);
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
@@ -1764,10 +1754,7 @@ cshmi.prototype = {
 					}
 					
 					//we want to have offset parameter on all visual elements
-					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-					for(var i = 0;i < ComponentChilds.length;i++){
-						HMI.saveAbsolutePosition(ComponentChilds[i]);
-					}
+					HMI.saveAbsolutePosition(VisualObject);
 				}
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
@@ -1789,10 +1776,24 @@ cshmi.prototype = {
 					}
 					
 					//we want to have offset parameter on all visual elements
-					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-					for(var i = 0;i < ComponentChilds.length;i++){
-						HMI.saveAbsolutePosition(ComponentChilds[i]);
+					HMI.saveAbsolutePosition(VisualObject);
+				}
+			}else if (ParameterValue === "absoluterotate"){
+				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					//absoluterotate is calculated from the offset of the parentNode
+					VisualObject.setAttribute("absoluterotate", NewValue);
+					var rotationObject = VisualObject;
+					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+						//object has an g parent for rotation. We need to correct transform origin
+						rotationObject = VisualObject.parentNode;
 					}
+					rotationObject.setAttribute("transform", 
+							"rotate("+NewValue+","+
+							VisualObject.getAttribute("x")+","+
+							VisualObject.getAttribute("y")+")");
+					
+					//we want to have offset parameter on all visual elements
+					HMI.saveAbsolutePosition(rotationObject);
 				}
 			}else{
 				if (NewValue === "" && 
@@ -1823,11 +1824,6 @@ cshmi.prototype = {
 				//reposition absolutex/y if x, y, width or height was changed
 				if (ParameterValue === "x" || ParameterValue === "y"){
 					HMI.saveAbsolutePosition(VisualObject);
-					//we want to have offset parameter on all visual elements
-					var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-					for(var i = 0;i < ComponentChilds.length;i++){
-						HMI.saveAbsolutePosition(ComponentChilds[i]);
-					}
 				}
 			}
 			return true;
@@ -3277,22 +3273,28 @@ cshmi.prototype = {
 		
 		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
 		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
+		var rotateStart = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10);
 		
 		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
 		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
+		var rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
 		if (	this.initStage === true ||
 				xStart !== VisualObject.ResourceList.RoutePolyline.xStart ||
 				yStart !== VisualObject.ResourceList.RoutePolyline.yStart ||
+				rotateStart !== VisualObject.ResourceList.RoutePolyline.rotateStart ||
 				xEnd !== VisualObject.ResourceList.RoutePolyline.xEnd ||
-				yEnd !== VisualObject.ResourceList.RoutePolyline.yEnd) {
+				yEnd !== VisualObject.ResourceList.RoutePolyline.yEnd ||
+				rotateEnd !== VisualObject.ResourceList.RoutePolyline.rotateEnd) {
 			if(this.initStage === false){
 				//cache new start- and endPoints
 				VisualObject.ResourceList.RoutePolyline.xStart = xStart;
 				VisualObject.ResourceList.RoutePolyline.yStart = yStart;
+				VisualObject.ResourceList.RoutePolyline.rotateStart = rotateStart;
 				VisualObject.ResourceList.RoutePolyline.xEnd = xEnd;
 				VisualObject.ResourceList.RoutePolyline.yEnd = yEnd;
+				VisualObject.ResourceList.RoutePolyline.rotateEnd = rotateEnd;
 			}
 			
 			var points = "";
@@ -3612,12 +3614,7 @@ cshmi.prototype = {
 			}
 		}
 		//we want to have offset parameter on all visual elements
-		HMI.saveAbsolutePosition(newVisualObject, true);
-		var ComponentChilds = newVisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
-		for(var i = 0;i < ComponentChilds.length;i++){
-			HMI.saveAbsolutePosition(ComponentChilds[i], false);
-		}
-		ComponentChilds = null;
+		HMI.saveAbsolutePosition(newVisualObject);
 		
 		VisualObject.parentNode.replaceChild(newVisualObject, VisualObject);
 		
@@ -3661,11 +3658,6 @@ cshmi.prototype = {
 			//calculate all offset parameter to be able to display visual feedback
 			//needed now, because we append new components
 			HMI.saveAbsolutePosition(VisualObject);
-			//we want to have offset parameter on all visual elements
-			var ComponentChilds = VisualObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI.saveAbsolutePosition(ComponentChilds[i]);
-			}
 			
 			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){
@@ -5358,10 +5350,7 @@ cshmi.prototype = {
 			this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
 			
 			//we want to have offset parameter on all new visual elements
-			var ComponentChilds = VisualParentObject.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, '*');
-			for(var i = 0;i < ComponentChilds.length;i++){
-				HMI.saveAbsolutePosition(ComponentChilds[i]);
-			}
+			HMI.saveAbsolutePosition(VisualParentObject);
 			
 			//interprete onload Actions if we are already loaded
 			if (this.initStage === false){

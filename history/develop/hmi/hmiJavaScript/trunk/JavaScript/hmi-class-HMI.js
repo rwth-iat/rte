@@ -1460,7 +1460,7 @@ HMI.prototype = {
 			}
 			
 			//calculate and save absolute offset of the Components
-			this.saveAbsolutePosition(Element);
+			this.saveAbsolutePosition(Element, false);
 		}
 		
 		//	GROUND
@@ -1649,9 +1649,13 @@ HMI.prototype = {
 	/**
 	 * calculates the absolute position and saves it into the custom absolutex and absolutey attributes
 	 * @param Element Element to work on
-	 * @param reportSize {bool} should the function report the maximum size of the object?
+	 * @param {bool} recursive: handle childrens, too.
 	 */
-	saveAbsolutePosition: function (Element, reportSize) {
+	saveAbsolutePosition: function (Element, recursive) {
+		if(!Element.getAttribute){
+			return;
+		}
+		
 		//absolutex and localy are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		//and the function displaygestureReactionMarker
@@ -1705,21 +1709,26 @@ HMI.prototype = {
 			Element.setAttribute("absoluterotate", absoluterotate);
 		}
 		
-		if (reportSize === true){
-			var elementWidth = parseInt(Element.getAttribute("width"), 10);
-			var elementHeight = parseInt(Element.getAttribute("height"), 10);
-			
-			if (isNaN(elementWidth)){
-				elementWidth = 0;
-			}
-			if (isNaN(elementHeight)){
-				elementHeight = 0;
-			}
-			return new Array(absolutex+elementWidth, absolutey+elementHeight);
-		}
+		var elementWidth = parseInt(Element.getAttribute("width"), 10);
+		var elementHeight = parseInt(Element.getAttribute("height"), 10);
 		
-		return;
-	},	
+		if (isNaN(elementWidth)){
+			elementWidth = 0;
+		}
+		if (isNaN(elementHeight)){
+			elementHeight = 0;
+		}
+		if(recursive !== false){
+			//performance problems?
+			//var ComponentChilds = Element.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
+			var ComponentChilds = Element.childNodes;
+			for(var i = 0;i < ComponentChilds.length;i++){
+				HMI.saveAbsolutePosition(ComponentChilds[i], true);
+			}
+			ComponentChilds = null;
+		}
+		return new Array(absolutex+elementWidth, absolutey+elementHeight);
+	},
 	
 	/**
 	 * mouse position from an event object
