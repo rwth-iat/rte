@@ -79,14 +79,14 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 			xmlString++;	/*	move behind first delimiter	*/
 			for(i=0; xmlString[i] && xmlString[i] != '\''; i++)
 				;
-			strLength = i-1;	/*	leave out initial delimiter	*/
+			strLength = i;
 		}
 		else if(*xmlString == '\"')
 		{/*	double quote delimiter	*/
 			xmlString++;	/*	move behind first delimiter	*/
 			for(i=0; xmlString[i] && xmlString[i] != '\"'; i++)
 				;
-			strLength = i-1;
+			strLength = i;
 		}
 		else
 		{
