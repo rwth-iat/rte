@@ -1559,7 +1559,7 @@ cshmi.prototype = {
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
 			XXrequestList[ObjectPath]["translationSource"] = null;
-			var successCode = this._requestVariablesArray(XXrequestList);
+			var successCode = this._requestVariablesArray(XXrequestList, true);
 			if(XXrequestList[ObjectPath]["translationSource"] !== null){
 				TranslationSourcePath = XXrequestList[ObjectPath]["translationSource"];
 			}else{
@@ -1597,7 +1597,7 @@ cshmi.prototype = {
 				requestTranslationList[TranslationSourcePath].Parameters = new Object();
 				requestTranslationList[TranslationSourcePath].Parameters["translationMapping"] = null;
 				
-				var successCode = this._requestVariablesArray(requestTranslationList);
+				var successCode = this._requestVariablesArray(requestTranslationList, true);
 				if (successCode === false){
 					return null;
 				}
@@ -2268,6 +2268,9 @@ cshmi.prototype = {
 			if(VisualObject.parentNode !== null){
 				//VisualObject is in DOM and configured
 				var TemplateObject = VisualObject;
+			}else if(VisualObject.VisualParentObject === null){
+				//VisualObject is not in DOM and first object and we are configuring it right now (it has per definition no FBRef till now)
+				TemplateObject = VisualObject;
 			}else if(VisualObject.VisualParentObject !== undefined){
 				//VisualObject is not in DOM and we are configuring it right now (it has per definition no FBRef till now)
 				TemplateObject = VisualObject.VisualParentObject;
@@ -3748,7 +3751,7 @@ cshmi.prototype = {
 				requestListTemplate[PathOfTemplateDefinition]["width"] = null;
 				requestListTemplate[PathOfTemplateDefinition]["height"] = null;
 				
-				successCode = this._requestVariablesArray(requestListTemplate);
+				successCode = this._requestVariablesArray(requestListTemplate, true);
 				if (successCode === false){
 					HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
 					return null;
@@ -5251,9 +5254,10 @@ cshmi.prototype = {
 	 * Requests a list of OV-Variables from multiple OV-Objects
 	 * @this main cshmi object
 	 * @param {Array} requestList List of multiple Variables to fetch
+	 * @param {Boolean} ignoreError true if an BADPATH should not trigger an warning
 	 * @return {Boolean} true on success, false if an error occured
 	 */
-	_requestVariablesArray: function(requestList){
+	_requestVariablesArray: function(requestList, ignoreError){
 		var requestArray = new Array();
 		var lastOvObjName = null;
 		var VariableCount = 0;
@@ -5261,7 +5265,10 @@ cshmi.prototype = {
 		//collect all requested Variables
 		for (var ovObjName in requestList) {
 			for (var ksVarName in requestList[ovObjName]) {
-				if (lastOvObjName != ovObjName){
+				if(ovObjName === ""){
+					//vendor is a special case as usual
+					requestArray.push(ksVarName);
+				}else if (lastOvObjName != ovObjName){
 					//variable from a new object requested
 					requestArray.push(ovObjName+"."+ksVarName);
 				}else{
@@ -5272,7 +5279,9 @@ cshmi.prototype = {
 				VariableCount++;
 			}
 		}
-		
+		if(VariableCount === 0){
+			return true;
+		}
 		var response = HMI.KSClient.getVar(requestArray, "OP_VALUE", null);
 		if (response === false || response === null){
 			//communication error
@@ -5284,7 +5293,9 @@ cshmi.prototype = {
 			//all our variables gave an error, so it is an server problem and no model problem, will be reported in caller function
 			return false;
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
+			if(ignoreError === true){
+				HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
+			}
 			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
 			return false;
 		}else if (response.indexOf("KS_ERR") !== -1){
