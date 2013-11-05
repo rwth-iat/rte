@@ -76,12 +76,14 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 		/*	check delimiter	*/
 		if(*xmlString == '\'')
 		{ /*	single quote delimiter	*/
+			xmlString++;	/*	move behind first delimiter	*/
 			for(i=0; xmlString[i] && xmlString[i] != '\''; i++)
 				;
 			strLength = i-1;	/*	leave out initial delimiter	*/
 		}
 		else if(*xmlString == '\"')
 		{/*	double quote delimiter	*/
+			xmlString++;	/*	move behind first delimiter	*/
 			for(i=0; xmlString[i] && xmlString[i] != '\"'; i++)
 				;
 			strLength = i-1;
@@ -90,7 +92,6 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 		{
 			return OV_ERR_BADVALUE;
 		}
-		xmlString++;	/*	move behind first delimiter	*/
 	}
 
 	/*	length known (now), we are inside the delimiters	*/
