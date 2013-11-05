@@ -107,31 +107,31 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 		case '&':
 			/*	unescape String	*/
 			/*	"	*/
-			if(!strncmp(&(xmlString[i+1]), esc_qout, sizeof(esc_qout)))
+			if(!strncmp(&(xmlString[i+1]), esc_qout, sizeof(esc_qout)-1))
 			{
 				(*targetString)[i] = '"';
 				xmlString += sizeof(esc_qout);
 			}
 			/*	'	*/
-			else if(!strncmp(&(xmlString[i+1]), esc_apos, sizeof(esc_apos)))
+			else if(!strncmp(&(xmlString[i+1]), esc_apos, sizeof(esc_apos)-1))
 			{
 				(*targetString)[i] = '\'';
 				xmlString += sizeof(esc_apos);
 			}
 			/*	<	*/
-			else if(!strncmp(&(xmlString[i+1]), esc_lt, sizeof(esc_lt)))
+			else if(!strncmp(&(xmlString[i+1]), esc_lt, sizeof(esc_lt)-1))
 			{
 				(*targetString)[i] = '<';
 				xmlString += sizeof(esc_lt);
 			}
 			/*	>	*/
-			else if(!strncmp(&(xmlString[i+1]), esc_gt, sizeof(esc_gt)))
+			else if(!strncmp(&(xmlString[i+1]), esc_gt, sizeof(esc_gt)-1))
 			{
 				(*targetString)[i] = '>';
 				xmlString += sizeof(esc_gt);
 			}
 			/*	&	*/
-			else if(!strncmp(&(xmlString[i+1]), esc_amp, sizeof(esc_amp)))
+			else if(!strncmp(&(xmlString[i+1]), esc_amp, sizeof(esc_amp)-1))
 			{
 				(*targetString)[i] = '&';
 				xmlString += sizeof(esc_amp);
@@ -143,9 +143,9 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 			break;
 
 		case '<':
-			if(!strncmp(&(xmlString[i+1]), c_DATA_start, sizeof(c_DATA_start)))
+			if(!strncmp(&(xmlString[i+1]), c_DATA_start, sizeof(c_DATA_start)-1))
 			{	/*	CDATA element found; copy content only	*/
-				for(xmlString += sizeof(c_DATA_start)+1; *xmlString && (!strncmp(&(xmlString[i]), c_DATA_end, sizeof(c_DATA_end))); i++)
+				for(xmlString += sizeof(c_DATA_start)+1-1; *xmlString && (!strncmp(&(xmlString[i]), c_DATA_end, sizeof(c_DATA_end)-1)); i++)
 					(*targetString)[i] = xmlString[i];
 				xmlString += sizeof(c_DATA_end);
 			}
