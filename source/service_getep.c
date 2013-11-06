@@ -144,7 +144,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	OV_STRING message = NULL;
 	OV_UINT_VEC requestOutput = {0,NULL};
 	OV_STRING temp = NULL;
-	OV_STRING TimeTemp = NULL;
+	OV_STRING temp2 = NULL;
 	OV_BOOL EntryFound = FALSE;
 	OV_BOOL anyRequested = FALSE;
 	OV_UINT requestOutputDefaultDomain[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS};
@@ -315,9 +315,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
-				kshttp_timetoascii(&TimeTemp, &(one_result->creation_time), response_format);
-				ov_string_append(&temp, TimeTemp);
-				ov_string_setvalue(&TimeTemp, NULL);
+				kshttp_timetoascii(&temp2, &(one_result->creation_time), response_format);
+				ov_string_append(&temp, temp2);
+				ov_string_setvalue(&temp2, NULL);
 
 				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
 				if(response_format == RESPONSE_FORMAT_TCL){
@@ -493,7 +493,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "comment");
-				ov_string_append(&temp, one_result->comment);
+				kshttp_escapeString(&temp2, one_result->comment, response_format);
+				ov_string_append(&temp, temp2);
+				ov_string_setvalue(&temp2, NULL);
 				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
 				if(response_format == RESPONSE_FORMAT_TCL){
 					ov_string_append(&temp, "}");
@@ -593,7 +595,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			case OP_TECHUNIT:
 				if(one_result->objtype & KS_OT_VARIABLE) {
 					getEP_begin_RequestOutputPart(&temp, response_format, "techunit");
-					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit);
+					kshttp_escapeString(&temp2, one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit, response_format);
+					ov_string_append(&temp, temp2);
+					ov_string_setvalue(&temp2, NULL);
 					getEP_finalize_RequestOutputPart(&temp, response_format, "techunit");
 				}
 				break;
