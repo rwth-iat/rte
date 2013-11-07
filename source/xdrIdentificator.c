@@ -25,7 +25,24 @@
 #include "ksxdr.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
+#include "ksxdr_config.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_constructor(
+	OV_INSTPTR_ov_object 	pobj
+) {
+
+	OV_RESULT result;
+	OV_INSTPTR_ksxdr_xdrIdentificator this = Ov_StaticPtrCast(ksxdr_xdrIdentificator, pobj);
+
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
+
+	/*	set protoclID	*/
+	return ov_string_setvalue(&(this->v_protocolID), KSXDR_IDENTIFIER);
+}
 
 OV_DLLFNCEXPORT OV_BOOL ksxdr_xdrIdentificator_identify (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
