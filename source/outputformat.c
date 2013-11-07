@@ -346,12 +346,16 @@ in TCL:
 } -> \}
 
  */
-OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, OV_UINT response_format){
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, OV_UINT response_format){
 	OV_STRING heapString;
 	OV_STRING	pcIn;
 	OV_STRING	pcOut = 0;
 	OV_RESULT	fr = OV_ERR_OK;
 
+	if(*strIn == NULL){
+		return ov_string_setvalue(resultString, "");
+	}
+	
 	if(response_format == RESPONSE_FORMAT_KSX){
 		//malloc worstcase stringlength which is &quot;
 		heapString = Ov_HeapMalloc(6*ov_string_getlength(*strIn)+1);

@@ -493,7 +493,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "comment");
-				kshttp_escapeString(&temp2, one_result->comment, response_format);
+				kshttp_escapeString(&temp2, &(one_result->comment), response_format);
 				ov_string_append(&temp, temp2);
 				ov_string_setvalue(&temp2, NULL);
 				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
@@ -595,7 +595,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			case OP_TECHUNIT:
 				if(one_result->objtype & KS_OT_VARIABLE) {
 					getEP_begin_RequestOutputPart(&temp, response_format, "techunit");
-					kshttp_escapeString(&temp2, one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit, response_format);
+					kshttp_escapeString(&temp2, &(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit), response_format);
 					ov_string_append(&temp, temp2);
 					ov_string_setvalue(&temp2, NULL);
 					getEP_finalize_RequestOutputPart(&temp, response_format, "techunit");
