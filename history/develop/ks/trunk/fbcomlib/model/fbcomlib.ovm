@@ -47,7 +47,7 @@ LIBRARY	fbcomlib
 			state				:	INT
 				HAS_ACCESSORS
 				FLAGS			=	"o"
-				COMMENT			=	"Answer as int: 0: initial * 1: everything ok * 2: invalid input * 4: internal error * 8: ksapi error * 16: external error * 32: timeout * 128: unknown error"
+				COMMENT			=	"Answer as int: 0: initial * 1: request sent, awaiting answer * 2: everything OK * 4: invalid input * 8: internal error * 16: ksapi error * 32: external error * 64: timeout * 128: unknown error"
 				INITIALVALUE	=	0;
 			errorCode			:	UINT
 				FLAGS			=	"o"

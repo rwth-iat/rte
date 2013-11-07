@@ -43,9 +43,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksapi/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksserv/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/fb/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/fb/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt/&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.36541296" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
@@ -115,9 +115,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
 									<!-- IFBSPro -->
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/fb/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/include/fb/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/model/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/include/&quot;"/>
 									<!-- Dependencies -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksapi/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksapi/model/&quot;"/>
