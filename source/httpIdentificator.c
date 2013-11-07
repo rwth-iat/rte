@@ -20,6 +20,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_constructor(
     if(Ov_Fail(result))
          return result;
 
+    ov_string_setvalue(&pinst->v_protocolID, KSHTTP_IDENTIFIER);
     /* do what */
     return  Ov_SetDynamicVectorValue(&pinst->v_AllowedMethods, allDings, 10, STRING);
 }

@@ -94,6 +94,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 ) {
 	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_INSTPTR_ksbase_Channel				pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 	OV_INSTPTR_ksbase_ClientTicketGenerator	pTicketGenerator = NULL;
 	OV_RESULT								result;
 
@@ -125,6 +126,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	KS_logfile_debug(("decoding successful"));
 
 	thisCl->v_state = KSBASE_CLST_COMPLETED;
+	result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	if(Ov_Fail(result))
+	{
+		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
+		return result;
+	}
+	pVtblChannel->m_CloseConnection(pChannel);
 
 	//make sure the typemethod calls the callback and do other stuff
 	thisCl->v_actimode = 1;
