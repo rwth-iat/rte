@@ -166,6 +166,9 @@
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.47646516;cdt.managedbuild.config.gnu.so.debug.47646516.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.39337635;cdt.managedbuild.tool.gnu.c.compiler.input.47646516">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.39337635;cdt.managedbuild.config.gnu.so.debug.39337635.;cdt.managedbuild.tool.gnu.c.compiler.mingw.base.1850172486;cdt.managedbuild.tool.gnu.c.compiler.input.1188831657">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.so.debug.39337635;cdt.managedbuild.config.gnu.so.debug.39337635.;cdt.managedbuild.tool.gnu.c.compiler.so.debug.39337635;cdt.managedbuild.tool.gnu.c.compiler.input.39337635">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>

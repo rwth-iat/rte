@@ -172,6 +172,11 @@ LIBRARY ksbase
  
 	CLASS	ProtocolIdentificator				:	CLASS ov/domain
 		COMMENT	=	"Baseclass for Protocol-Identificators. Provides an identify operation. This operation scans a chunk of bytes if the data contained matches a specific protocol.";
+		VARIABLES
+			protocolID	:	STRING
+				COMMENT	=	"ID of the protocol this Identificator identifies"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
 		OPERATIONS
 			/**
 			*	Function to identify the protocol. Gets a pointer to the Channel which received the data. Has to check in inData structure to determine if the protocol fits.
@@ -221,6 +226,9 @@ LIBRARY ksbase
 			UnusedDataTimeOut	:	UINT
 				COMMENT	=	"Time (in seconds) to keep unused data in inData. (Partialpackages or so that cannot be processed)"
 				INITIALVALUE	=	300;
+			CloseAfterSend	:	BOOL
+				COMMENT	=	"TRUE tells this channel to close the connection and delete itself after successfull sending"
+				INITIALVALUE	=	FALSE;
 			END_VARIABLES;	
 		OPERATIONS
 			//real sending of data
