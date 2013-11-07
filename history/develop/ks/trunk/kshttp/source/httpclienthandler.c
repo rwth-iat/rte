@@ -235,7 +235,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
-	//OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
+	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 	OV_UINT messageBodyOffset = 0;
 	OV_STRING responseHeader = NULL; //header of the reply
@@ -262,6 +262,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	this->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
 	this->v_ClientRequest.gzipAccepted = FALSE;
 
+	ov_string_setvalue(&this->v_ClientRequest.version, "1.0");
 	ov_string_setvalue(&reply_contenttype, "text/plain");
 	ov_string_setvalue(&reply_encoding, "Windows-1252");
 
@@ -634,7 +635,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//shutdown tcp connection if no keep_alive was set
 	if (this->v_ClientRequest.keepAlive != TRUE || Ov_Fail(result)) {
-		//todo pChannel needs a flag closeAfterSend
+		pChannel->v_CloseAfterSend = TRUE;
 	}
 	return OV_ERR_OK;
 }
