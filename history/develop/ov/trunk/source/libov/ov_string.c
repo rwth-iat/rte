@@ -169,6 +169,37 @@ OV_DLLFNCEXPORT OV_INT ov_string_compare(
 	return OV_STRCMP_EQUAL;				/* NULL == NULL */
 }
 
+OV_DLLFNCEXPORT OV_INT ov_string_comparei(const OV_STRING s1, const OV_STRING s2)
+{
+	OV_UINT i;
+	if(s1)
+	{
+		if(s2)
+		{
+			for(i=0; s1[i] && s2[i]; i++)
+			{
+				if(toupper(s1[i]) > toupper(s2[i]))
+					return OV_STRCMP_MORE;
+				if(toupper(s1[i]) < toupper(s2[i]))
+					return OV_STRCMP_LESS;
+			}
+			if(s1[i] && !s2[i])
+				return OV_STRCMP_MORE;
+			if(!s1[i] && s2[i])
+				return OV_STRCMP_LESS;
+		}
+		else if(!*s1)
+			return OV_STRCMP_EQUAL;
+		else
+			return OV_STRCMP_MORE;
+	}
+	else if(s2 && *s2)
+		return OV_STRCMP_LESS;
+	else
+		return OV_STRCMP_EQUAL;
+}
+
+
 /*	----------------------------------------------------------------------	*/
 
 /*

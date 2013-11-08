@@ -55,14 +55,6 @@ OV_DECL_GETACCESS(ov_instantiation) {
 	*	do not allow to link any parent/child couple from the outside world
 	*/
 	if(pticket) {
-		if (!ov_explain) {
-		/*
-		*	child link is not visible as we can get the class using GetEP
-		*/
-			if(pchild) {
-				return OV_AC_NONE;
-			}
-		}
 		return OV_AC_READ;
 	}
 	return OV_AC_READ | OV_AC_LINKABLE | OV_AC_UNLINKABLE;

@@ -75,6 +75,13 @@ OV_DLLFNCEXPORT OV_INT ov_string_compare(
 );
 
 /**
+ * Same as ov_string_compare but not case_sensitive
+ * upper case comparison is used
+ */
+OV_DLLFNCEXPORT OV_INT ov_string_comparei(const OV_STRING s1, const OV_STRING s2);
+
+
+/**
 *	Get the length of a string (without the null terminator)
 *	results zero if got a NULL pointer
 */
