@@ -133,7 +133,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processUnRegister(
 	 */
 
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
+#if LOG_KS || LOG_KS_DEBUG
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_DynamicPtrCast(ksbase_Channel, Ov_GetFirstChild(ov_containment, thisCl));
+#endif
 
 	if(thisCl->v_httpStatusCode == 200){
 		*result = OV_ERR_OK;
