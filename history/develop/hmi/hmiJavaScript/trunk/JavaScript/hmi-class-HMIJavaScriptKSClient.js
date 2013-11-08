@@ -1298,11 +1298,34 @@ HMIJavaScriptKSClient.prototype = {
 				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
 				
 				//FIXME req.status auswerten!
-				return req.responseText;
+				return this.unescapeString(req.responseText);
 			}
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype._sendRequest - End");
 		return true;
+	},
+	
+	/*********************************
+		unescape server request
+	*********************************/
+	unescapeString: function(responseText) {
+		var backslash = String.fromCharCode(92);
+		var newline = String.fromCharCode(10);
+		var tabstop = String.fromCharCode(9);
+		var newString = responseText;
+		newString = responseText
+			.split(backslash+" ").join(" ")
+			.split(backslash+"t").join(tabstop)
+			.split(backslash+"n").join(newline)
+			.split(backslash+'"').join('"')
+			.split(backslash+"$").join("$")
+			.split(backslash+";").join(";")
+			.split(backslash+"{").join("{")
+			.split(backslash+"}").join("}")
+			.split(backslash+"[").join("[")
+			.split(backslash+"]").join("]")
+			;
+		return newString;
 	},
 	
 	/*********************************
