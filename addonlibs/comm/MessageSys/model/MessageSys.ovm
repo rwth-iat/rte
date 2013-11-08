@@ -20,6 +20,9 @@ CLASS MsgDelivery : CLASS ksbase/ComTask
 		sendTime			:	TIME
 			COMMENT	=	"Time of last send process";	
 	END_VARIABLES;
+	PARTS
+		Channels	:	CLASS	ov/domain;
+	END_PARTS;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		typemethod : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
@@ -33,22 +36,93 @@ END_CLASS;
 CLASS Message : CLASS ov/object
 	IS_INSTANTIABLE;
 	VARIABLES
-		senderAddress : STRING HAS_ACCESSORS COMMENT = "Address of sender machine" INITIALVALUE="127.0.0.1";
-		receiverAddress : STRING HAS_ACCESSORS COMMENT = "Address of receiver machine" INITIALVALUE="127.0.0.1";
-		senderName : STRING HAS_ACCESSORS COMMENT = "Servername of sender" INITIALVALUE="";
-		receiverName : STRING HAS_ACCESSORS COMMENT = "Servername of receiver" INITIALVALUE="";
-		senderComponent : STRING HAS_ACCESSORS COMMENT = "Name of sender-component" INITIALVALUE="";
-		receiverComponent : STRING HAS_ACCESSORS COMMENT = "Name of receiver-component" INITIALVALUE="";
-		msgStatus : INT HAS_ACCESSORS COMMENT="0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE" INITIALVALUE=0 ;
-		msgID : STRING HAS_ACCESSORS INITIALVALUE="";
-		refMsgID	:	STRING INITIALVALUE="";
-		auth	:	STRING COMMENT = "Authentication Data in header" INITIALVALUE = "";
-		msgBody : STRING HAS_ACCESSORS;
+		senderAddress : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Address of sender machine" 
+			INITIALVALUE	=	"127.0.0.1";
+		receiverAddress : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Address of receiver machine"
+			INITIALVALUE	=	"127.0.0.1";
+		senderName : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Servername of sender"
+			INITIALVALUE	=	"";
+		receiverName : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Servername of receiver"
+			INITIALVALUE	=	"";
+		senderComponent : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Name of sender-component"
+			INITIALVALUE	=	"";
+		receiverComponent : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Name of receiver-component"
+			INITIALVALUE	=	"";
+		msgStatus : INT
+			HAS_ACCESSORS
+			COMMENT	=	"0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE"
+			INITIALVALUE	=	0 ;
+		msgID : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"ID of this Message"
+			INITIALVALUE="";
+		refMsgID	:	STRING
+			COMMENT	=	"ID of last Message in Conversation"
+			INITIALVALUE	=	"";
+		auth	:	STRING
+			COMMENT =	"Authentication Data in header"
+			INITIALVALUE	=	"";
+		msgBody : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Message Body";
+		sendBy	:	UINT
+			HAS_SET_ACCESSOR
+			COMMENT	=	"Determines sending behaviour: 0: directly; 1: http POST; 2: ks-setvar"
+			INITIALVALUE	=	0;
+		expectAnswer	:	BOOL
+			COMMENT	=	"TRUE tells MsgDelivery to expect an answer message (keep connection open if possible with protocol)"
+			INITIALVALUE	=	FALSE;
 	END_VARIABLES;
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;
 	END_OPERATIONS;
 END_CLASS;
+
+
+	/**
+	 *	Checks whether received data is a message
+	 *	Criteria are: data begins with "<msg "; hdrL and bdyL Attributes of msg-tag are set		
+	 */
+	CLASS msgIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing MsgSys-messages";
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			identify		:	C_FUNCTION	<KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS msgHandler	:	CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for MsgSys-messages. ";
+	OPERATIONS
+		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
 	
 	/**
 	 * MessageSys Associations
@@ -61,6 +135,11 @@ END_ASSOCIATION;
 ASSOCIATION MsgDelivery2Message : ONE_TO_MANY
     PARENT parMsgDelivery2 : CLASS MessageSys/MsgDelivery;
  	CHILD chMessage : CLASS MessageSys/Message;
+END_ASSOCIATION;
+
+ASSOCIATION Message2Channel : ONE_TO_ONE
+    PARENT parMsg : CLASS MessageSys/Message;
+ 	CHILD chChannel : CLASS ksbase/Channel;
 END_ASSOCIATION;
 	
 END_LIBRARY;

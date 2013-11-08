@@ -41,7 +41,9 @@
 OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	OV_RESULT result;
 	OV_INSTPTR_ov_domain domain = NULL;
-	OV_INSTPTR_MessageSys_MsgDelivery				MsgSysDelivery  = NULL;
+	OV_INSTPTR_MessageSys_MsgDelivery		MsgSysDelivery  =	NULL;
+	OV_INSTPTR_ov_library					pLibKsapi		=	NULL;
+	OV_INSTPTR_MessageSys_msgIdentificator	pIdentificator	=	NULL;
 	/*
 	 *    set the global variables of the original version
 	 *    and if successful, load other libraries
@@ -51,6 +53,26 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	result = ov_library_setglobalvars_MessageSys();
 
 	ov_memstack_lock();
+
+	/*	check if ksapi is loaded	*/
+	Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibKsapi, ov_library)
+	{
+		if(ov_string_compare(pLibKsapi->v_identifier, "ksapi") == OV_STRCMP_EQUAL)
+		{
+			break;
+		}
+	}
+	if(!pLibKsapi)
+	{
+		result = Ov_CreateObject(ov_library, pLibKsapi, &(pdb->acplt), "ksapi");
+		if(Ov_Fail(result)){
+			ov_memstack_lock();
+			ov_logfile_error("messageSys: Fatal: Couldn't load dependency \"ksapi\" Reason: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+	}
+
 
 	//MsgDelivery
 	domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(COMPATH, 2);
@@ -65,6 +87,19 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	if(Ov_OK(result))
 		MsgSysDelivery->v_cycInterval = 1;
 
+
+	/*	create protocol identificator for msgs	*/
+	pIdentificator = Ov_StaticPtrCast(MessageSys_msgIdentificator, Ov_SearchChild(ov_containment, MsgSysDelivery, "Identificator"));
+	if(pIdentificator)
+		Ov_DeleteObject(pIdentificator);
+	pIdentificator = NULL;
+
+	result = Ov_CreateObject(MessageSys_msgIdentificator, pIdentificator, MsgSysDelivery, "Identificator");
+	if(Ov_Fail(result))
+	{
+		ov_logfile_error("Fatal: could not create Identificator object");
+		return result;
+	}
 
 	ov_memstack_unlock();
 	return OV_ERR_OK;

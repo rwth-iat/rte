@@ -12,6 +12,34 @@
 
 static OV_INT LOCALMSGCOUNTER;
 
+OV_DLLFNCEXPORT OV_ACCESS MessageSys_Message_getaccess(
+	OV_INSTPTR_ov_object		pobj,
+	const OV_ELEMENT			*pelem,
+	const OV_TICKET				*pticket
+) {
+	/*
+	*	local variables
+	*/
+
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_VARIABLE:
+			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			  if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+				  return OV_AC_NONE;
+			  else
+				  return OV_AC_READWRITE;
+			}
+			break;
+		default:
+			break;
+	}
+
+	return ov_object_getaccess(pobj, pelem, pticket);
+}
+
 OV_DLLFNCEXPORT OV_STRING MessageSys_Message_senderAddress_get(
     OV_INSTPTR_MessageSys_Message          pobj
 ) {
@@ -129,6 +157,23 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_msgBody_set(
     const OV_STRING  value
 ) {
     return ov_string_setvalue(&pobj->v_msgBody,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_sendBy_set(
+    OV_INSTPTR_MessageSys_Message          pobj,
+    const OV_UINT  value
+) {
+    if(value <= 2)
+    {
+    	//TODO: remove this block as soon as http POST is implemented for Messaging
+    	if(value == 1)
+    		return OV_ERR_BADVALUE;
+    	//TODO: end block
+    	pobj->v_sendBy = value;
+    	return OV_ERR_OK;
+    }
+    else
+    	return OV_ERR_BADVALUE;
 }
 
 OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_constructor(
