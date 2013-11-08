@@ -185,8 +185,10 @@ OV_DLLFNCEXPORT OV_INT ov_string_comparei(const OV_STRING s1, const OV_STRING s2
 			}
 			if(s1[i] && !s2[i])
 				return OV_STRCMP_MORE;
-			if(!s1[i] && s2[i])
+			else if(!s1[i] && s2[i])
 				return OV_STRCMP_LESS;
+			else
+				return OV_SRTCMP_EQUAL;
 		}
 		else if(!*s1)
 			return OV_STRCMP_EQUAL;
