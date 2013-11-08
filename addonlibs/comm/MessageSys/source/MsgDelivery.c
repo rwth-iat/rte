@@ -126,8 +126,6 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_constructor(
 	OV_INSTPTR_MessageSys_MsgDelivery this = Ov_StaticPtrCast(MessageSys_MsgDelivery, pobj);
 	OV_RESULT result;
 	OV_INSTPTR_ksapi_setVar setVar =  NULL;
-//	OV_VTBLPTR_ksapi_setVar setVarVtable = NULL;
-//	OV_VTBLPTR_MessageSys_MsgDelivery thisVtable = NULL;
 
 
 	/* do what the base class does first */
@@ -146,10 +144,6 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_constructor(
 		return OV_ERR_GENERIC;
 	}
 
-	//set up return method -- TODO Check: Why is this required? Startup is NOT enough!!!
-//	Ov_GetVTablePtr(ksapi_setVar, setVarVtable, setVar);
-//	Ov_GetVTablePtr(MessageSys_MsgDelivery, thisVtable, this);
-
 	return OV_ERR_OK;
 }
 
@@ -160,19 +154,12 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_startup(
 ) {
 
 	OV_INSTPTR_ksapi_setVar setVar =  NULL;
-//	OV_VTBLPTR_ksapi_setVar setVarVtable = NULL;
-//	OV_VTBLPTR_MessageSys_MsgDelivery thisVtable = NULL;
-//	OV_INSTPTR_MessageSys_MsgDelivery this = Ov_StaticPtrCast(MessageSys_MsgDelivery, pobj);
 	OV_STRING tmpPath = NULL;
 
 	ov_string_print(&tmpPath, "%s",SENDINGINSTANCE);
 	setVar = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(tmpPath,2);
-//	Ov_GetVTablePtr(ksapi_setVar, setVarVtable, setVar);
-//	Ov_GetVTablePtr(MessageSys_MsgDelivery, thisVtable, this);
 
 	ov_string_setvalue(&tmpPath, NULL);
-
-
 }
 
 OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
