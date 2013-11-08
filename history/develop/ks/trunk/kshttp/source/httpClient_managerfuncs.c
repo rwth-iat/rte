@@ -86,13 +86,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 
 	if(thisCl->v_httpStatusCode == 200){
 		*result = OV_ERR_OK;
-		ks_logfile_debug("Registered at %s!", pChannel->v_address);
+		KS_logfile_debug(("Registered at %s!", pChannel->v_address));
 	}else if(thisCl->v_httpStatusCode == 406){
 		*result = KS_ERR_NOMANAGER;
-		ks_logfile_debug("Not registered at %s! It is no Manager.", pChannel->v_address);
+		KS_logfile_debug(("Not registered at %s! It is no Manager.", pChannel->v_address));
 	}else{
 		*result = KS_ERR_GENERIC;
-		ks_logfile_debug("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode);
+		KS_logfile_debug(("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode));
 	}
 
 	return OV_ERR_OK;
@@ -137,10 +137,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processUnRegister(
 
 	if(thisCl->v_httpStatusCode == 200){
 		*result = OV_ERR_OK;
-		ks_logfile_debug("unregistered at %s!", pChannel->v_address);
+		KS_logfile_debug(("unregistered at %s!", pChannel->v_address));
 		return OV_ERR_OK;
 	}else{
-		ks_logfile_debug("not unregistered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode);
+		KS_logfile_debug(("not unregistered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode));
 		return OV_ERR_GENERIC;
 	}
 
