@@ -119,6 +119,14 @@ END_CLASS;
 	CLASS msgHandler	:	CLASS ksbase/ClientHandler
 	IS_INSTANTIABLE;
 	COMMENT	=	"Handler for MsgSys-messages. ";
+	VARIABLES
+		connectionTimeout	:	UINT
+			COMMENT	=	"Timeout in s for idle connections"
+			INITIALVALUE	=	120;
+		timeoutIncomplete	:	UINT
+			COMMENT	=	"Time in s to wait for the next part of an incomplete message"
+			INITIALVALUE	=	2;
+	END_VARIABLES;
 	OPERATIONS
 		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;

@@ -82,6 +82,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	OV_ELEMENT						InboxElem;
 	OV_ELEMENT						VarElem;
 	OV_INSTPTR_ksbase_Channel		pChannel	=	NULL;
+	OV_INSTPTR_MessageSys_msgHandler	thisMsgHandler = Ov_StaticPtrCast(MessageSys_msgHandler, this);
 
 	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
@@ -92,7 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	if((dataReceived->length - (dataReceived->readPT - dataReceived->data)) < 19)
 	{
 		KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
-		pChannel->v_ConnectionTimeOut = 2;
+		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_timeoutIncomplete;
 		return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 													Yes, this could block the ClientHandler for a longer time.	*/
 	}
@@ -144,13 +145,13 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	{	/*	not complete	*/
 		ov_memstack_unlock();
 		KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
-		pChannel->v_ConnectionTimeOut = 2;
+		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_timeoutIncomplete;
 		return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 															Yes, this could block the ClientHandler for a longer time.	*/
 	}
 	else
 	{
-		pChannel->v_ConnectionTimeOut = 120;
+		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_connectionTimeout;
 	}
 
 	/***********************************************************************************************************************************************************************************************
@@ -174,6 +175,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 			/*	find "holdconnection"-variable, check type and value	*/
 			InboxElem.elemtype = OV_ET_OBJECT;
 			InboxElem.pobj = Ov_StaticPtrCast(ov_object, pInbox);
+			VarElem.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(&InboxElem, &VarElem, OV_ET_VARIABLE);
 			while(VarElem.elemtype != OV_ET_NONE)
 			{
@@ -184,6 +186,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 						&& (*((OV_BOOL*) VarElem.pvalue) == TRUE))	/*	we should hold the connection	*/
 					{
 						Ov_Link(MessageSys_Message2Channel, pNewMessage,  pChannel);
+						break;
 					}
 					else
 					{
@@ -194,6 +197,10 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 			}
 		}
 
+	}
+	else
+	{
+		Ov_DeleteObject(pChannel);
 	}
 
 	ov_memstack_unlock();
