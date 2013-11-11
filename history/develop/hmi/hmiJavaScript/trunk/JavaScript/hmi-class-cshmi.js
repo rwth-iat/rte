@@ -70,6 +70,7 @@ function cshmi() {
 	this.ResourceList = Object();
 	this.ResourceList.onloadCallStack = Array();
 	this.ResourceList.globalvarChangedCallStack = Array();
+	this.ResourceList.TimeeventCallStack = Object();
 	
 	this.ResourceList.Elements = Object();
 	this.ResourceList.Actions = Object();
@@ -85,6 +86,7 @@ function cshmi() {
 	this.ResourceList.EventInfos.startXObj = null;
 	this.ResourceList.EventInfos.startYObj = null;
 	this.ResourceList.newRebuildObject = Object();
+	this.ResourceList.cyclicEventList = Object();
 	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
@@ -453,10 +455,34 @@ cshmi.prototype = {
 			//the object was asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
-		if (this.initStage === true && requestList[ObjectPath]["cyctime"] > 1 ){
-			var cyctime = 1;
-		}else{
-			cyctime = requestList[ObjectPath]["cyctime"];
+		cyctime = requestList[ObjectPath]["cyctime"];
+		
+		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
+			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
+			if (this.initStage === true && requestList[ObjectPath]["cyctime"] > 1 ){
+				var nextcyctime = 1;
+			}else{
+				nextcyctime = requestList[ObjectPath]["cyctime"];
+			}
+			this.ResourceList.TimeeventCallStack[cyctime].triggeredObjectList = Array();
+			this.ResourceList.TimeeventCallStack[cyctime].getVarCollection = Object();
+			this.ResourceList.TimeeventCallStack[cyctime].timeoutID = window.setTimeout(function() {
+				//the function will be executed in the context (this) of the HMI.cshmi object
+				HMI.cshmi._handleTimeEvent(cyctime);
+			}, nextcyctime*1000);
+		}
+		
+		var EventObjItem = Object();
+		EventObjItem["VisualObject"] = VisualObject;
+		EventObjItem["ObjectPath"] = ObjectPath;
+		this.ResourceList.TimeeventCallStack[cyctime].triggeredObjectList.push(EventObjItem);
+		
+		return true;
+	},
+	_handleTimeEvent: function(cyctime){
+		if (HMI.cshmi !== this){
+			//the active cshmi display is not "our" one, cancel Timeout
+			return true;
 		}
 		
 		var skipEvent = false;
@@ -473,19 +499,35 @@ cshmi.prototype = {
 			skipEvent = true;
 		}
 		if(skipEvent === false){
-			this._interpreteAction(VisualObject, ObjectPath);
+			var thisTime = this.ResourceList.TimeeventCallStack[cyctime];
+			for (var objectname in thisTime.getVarCollection) {
+				//delete old values
+				for (var variablename in thisTime.getVarCollection[objectname]) {
+					thisTime.getVarCollection[objectname][variablename] = null;
+				}
+			}
+			//todo there could be more variables one request can handle...
+			this._requestVariablesArray(thisTime.getVarCollection, true);
+			
+			for (var i = 0; i < thisTime.triggeredObjectList.length;){
+				var EventObjItem = thisTime.triggeredObjectList[i];
+				if(EventObjItem["VisualObject"].ownerDocument === this.trashDocument){
+					//this Object was replaced with rebuildObject, so remove from callstack
+					
+					//todo, kann man teile der collection retten?
+					thisTime.getVarCollection = Object();
+					
+					thisTime.triggeredObjectList.splice(i, 1);
+				}else{
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], thisTime.getVarCollection);
+					i++;
+				}
+			}
 		}
-		
-		//call us again for cyclic interpretation of the Actions
-		//only if we are in the initialisation or normal stage
-		if (this.initStage === true || HMI.Playground.firstChild !== null ){
-			//call a function, which is manipulating this keyword
-			window.setTimeout(function() {
-				//the function will be executed in the context (this) of the HMI.cshmi object
-				HMI.cshmi._interpreteTimeEvent(VisualObject, ObjectPath);
-			}, cyctime*1000);
-		}
-		return true;
+		this.ResourceList.TimeeventCallStack[cyctime].timeoutID = window.setTimeout(function() {
+			//the function will be executed in the context (this) of the HMI.cshmi object
+			HMI.cshmi._handleTimeEvent(cyctime);
+		}, cyctime*1000);
 	},
 	
 	/**
@@ -826,9 +868,10 @@ cshmi.prototype = {
 	 * detect all Actions and triggers them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param CyctimeObject
 	 * @return returnValue returnValue from the last Action
 	 */
-	_interpreteAction: function(VisualObject, ObjectPath){
+	_interpreteAction: function(VisualObject, ObjectPath, CyctimeObject){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		
@@ -839,11 +882,11 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "static");
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "static", CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/SetConcatValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "concat");
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "concat", CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/SetMathValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math");
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math", CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
 			}else if (varName[1].indexOf("/cshmi/RenameObject") !== -1){
@@ -857,7 +900,7 @@ cshmi.prototype = {
 			}else if (varName[1].indexOf("/cshmi/UnlinkObjects") !== -1){
 				returnValue = this._interpreteUnlinkObjects(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
-				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0], CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
 				returnValue = this._interpreteChildrenIterator(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
@@ -888,7 +931,7 @@ cshmi.prototype = {
 	 * @param callerObserver Object which hold info for the callback
 	 * @return {bool} false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
-	_getValue: function(VisualObject, ObjectPath, callerObserver){
+	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject){
 		var ParameterName = "";
 		var ParameterValue = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -961,7 +1004,7 @@ cshmi.prototype = {
 				if(req.status !== 200){
 					var newValue = false;
 				}else{
-					var response = req.responseText;
+					var response = HMI.KSClient.unescapeString(req.responseText);
 					var responseArray = HMI.KSClient.splitKsResponse(response);
 					if (responseArray.length === 0){
 						newValue = false;
@@ -975,6 +1018,16 @@ cshmi.prototype = {
 		}
 		
 		if (ParameterName === "ksVar" && preventNetworkRequest === true){
+			//prevent cyclic fetching
+			if(CyctimeObject !== undefined && CyctimeObject !== null){
+				var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
+				var pathArray = path.split(".");
+				var variablename = pathArray.pop();
+				var objectname = pathArray.join(".");
+				if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
+					delete CyctimeObject[objectname][variablename];
+				}
+			}
 			//intentionally no value
 			return null;
 		}else if (ParameterName === "ksVar" && preventNetworkRequest === false){
@@ -983,6 +1036,21 @@ cshmi.prototype = {
 				//we have no absolute path => get baseKsPath
 			}
 			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
+			if(CyctimeObject !== undefined && CyctimeObject !== null){
+				var pathArray = path.split(".");
+				var variablename = pathArray.pop();
+				var objectname = pathArray.join(".");
+				if(CyctimeObject[objectname] === undefined){
+					CyctimeObject[objectname] = Object();
+				}
+				if(CyctimeObject[objectname][variablename] === undefined || CyctimeObject[objectname][variablename] === null){
+					//this path needs a cyclic request
+					CyctimeObject[objectname][variablename] = null;
+				}else{
+					//the value was requested in this cycle
+					return CyctimeObject[objectname][variablename];
+				}
+			}
 			if(callerObserver !== undefined && callerObserver !== null){
 				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 				return true;
@@ -1213,15 +1281,37 @@ cshmi.prototype = {
 				//if we refer to an variable return this name only
 				identifier = identifier.split(".");
 				return identifier[identifier.length - 1];
-			}else if(preventNetworkRequest === true){
-				//intentionally no value
-				return null;
 			}
 			if(ParameterValue.charAt(0) !== "/"){
 				var path = FBRef+"."+ParameterValue;
 			}else{
 				//todo doku
 				path = FBRef+ParameterValue;
+			}
+			if(CyctimeObject !== undefined && CyctimeObject !== null){
+				var pathArray = path.split(".");
+				var variablename = pathArray.pop();
+				var objectname = pathArray.join(".");
+				if(CyctimeObject[objectname] === undefined){
+					CyctimeObject[objectname] = Object();
+				}
+				if(preventNetworkRequest === true){
+					//prevent cyclic fetching
+					if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
+						delete CyctimeObject[objectname][variablename];
+					}
+					//intentionally no value
+					return null;
+				}else if(CyctimeObject[objectname][variablename] === undefined || CyctimeObject[objectname][variablename] === null){
+					//this path needs a cyclic request
+					CyctimeObject[objectname][variablename] = null;
+				}else{
+					//the value was requested in this cycle
+					return CyctimeObject[objectname][variablename];
+				}
+			}else if(preventNetworkRequest === true){
+				//intentionally no value
+				return null;
 			}
 			
 			if(callerObserver !== undefined && callerObserver !== null){
@@ -1237,10 +1327,6 @@ cshmi.prototype = {
 				}
 			}
 		}else if (ParameterName === "TemplateFBVariableReferenceName"){
-			if (preventNetworkRequest === true){
-				//intentionally no value
-				return null;
-			}
 			var TemplateObject = VisualObject;
 			do{
 				if(TemplateObject.FBVariableReference && TemplateObject.FBVariableReference[ParameterValue] !== undefined){
@@ -1248,6 +1334,31 @@ cshmi.prototype = {
 					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
 						var path = TemplateObject.FBVariableReference[ParameterValue];
+						if(CyctimeObject !== undefined && CyctimeObject !== null){
+							var pathArray = path.split(".");
+							var variablename = pathArray.pop();
+							var objectname = pathArray.join(".");
+							if(CyctimeObject[objectname] === undefined){
+								CyctimeObject[objectname] = Object();
+							}
+							if(preventNetworkRequest === true){
+								//prevent cyclic fetching
+								if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
+									delete CyctimeObject[objectname][variablename];
+								}
+								//intentionally no value
+								return null;
+							}else if(CyctimeObject[objectname][variablename] === undefined || CyctimeObject[objectname][variablename] === null){
+								//this path needs a cyclic request
+								CyctimeObject[objectname][variablename] = null;
+							}else{
+								//the value was requested in this cycle
+								return CyctimeObject[objectname][variablename];
+							}
+						}else if(preventNetworkRequest === true){
+							//intentionally no value
+							return null;
+						}
 						if(callerObserver !== undefined && callerObserver !== null){
 							response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarCbfnc, true);
 							return true;
@@ -1292,7 +1403,7 @@ cshmi.prototype = {
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @return false on error, true on success
 	 */
-	_setValue: function(VisualObject, ObjectPath, GetType){
+	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject){
 		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList �bergeben...?
 		
 		//get Value to set
@@ -1322,7 +1433,7 @@ cshmi.prototype = {
 			var thisObserverEntry = new ObserverEntry("value", ".");
 			setValueObserver.ObserverEntryArray[0] = thisObserverEntry;
 			//via getValue-part of setValue object
-			var NewValue = this._getValue(VisualObject, ObjectPath+".value", setValueObserver);
+			var NewValue = this._getValue(VisualObject, ObjectPath+".value", setValueObserver, CyctimeObject);
 			
 			if(NewValue === true){
 				//the setVar is handled via a callback
@@ -1374,7 +1485,7 @@ cshmi.prototype = {
 					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
@@ -1468,7 +1579,7 @@ cshmi.prototype = {
 					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
@@ -1565,7 +1676,7 @@ cshmi.prototype = {
 			}else{
 				TranslationSourcePath = "";
 			}
-			this.ResourceList.Actions[ObjectPath].TranslationSourcePath = TranslationSourcePath;
+			this.ResourceList.Actions[ObjectPath].translationSource = TranslationSourcePath;
 		}
 		//translate if needed
 		if (TranslationSourcePath !== ""){
@@ -1633,11 +1744,11 @@ cshmi.prototype = {
 		
 		var SetVarCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+path+' not successfull: Bad Parameter ');
 				}else if (response.indexOf("KS_ERR") !== -1){
-					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+req.responseText+' (configured here: '+ObjectPath+').');
+					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 				}else{
 					HMI.hmi_log_info('Setting a variable failed.');
 				}
@@ -1787,6 +1898,7 @@ cshmi.prototype = {
 						//object has an g parent for rotation. We need to correct transform origin
 						rotationObject = VisualObject.parentNode;
 					}
+					//fixme parent g reinbasteln bei bedarf....
 					rotationObject.setAttribute("transform", 
 							"rotate("+NewValue+","+
 							VisualObject.getAttribute("x")+","+
@@ -2017,7 +2129,7 @@ cshmi.prototype = {
 		/* changes in the structure should be blocking or at least no other communication should be performed
 		var RenameCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Renaming "'+OldName+'" not successfull. Operation not allowed.');
 				}else if (response.indexOf("KS_ERR_BADNAME") !== -1){
@@ -2068,7 +2180,7 @@ cshmi.prototype = {
 		/* changes in the structure should be blocking or at least no other communication should be performed
 		var CreateObjectCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Creation of "'+targetName+'" not successfull. Operation not allowed.');
 				}else if (response.indexOf("KS_ERR_ALREADYEXISTS") !== -1){
@@ -2119,7 +2231,7 @@ cshmi.prototype = {
 		/* changes in the structure should be blocking or at least no other communication should be performed
 		var DeleteObjectCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Deleting "'+targetName+'" not successfull. Operation not allowed.');
 				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
@@ -2165,7 +2277,7 @@ cshmi.prototype = {
 		/* changes in the structure should be blocking or at least no other communication should be performed
 		var LinkObjectsCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Linking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
 				}else if (response.indexOf("KS_ERR_ALREADYEXISTS") !== -1){
@@ -2215,7 +2327,7 @@ cshmi.prototype = {
 		/* changes in the structure should be blocking or at least no other communication should be performed
 		var UnlinkObjectsCbfnc = function(Client, req){
 			if(req.status !== 200){
-				var response = req.responseText;
+				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_NOACCESS") !== -1){
 					HMI.hmi_log_onwebsite('Unlinking "'+ObjectA+'" and "'+ObjectB+'" not successfull. Operation not allowed.');
 				}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
@@ -2362,7 +2474,7 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
-	_interpreteIfThenElse: function(VisualObject, ObjectPath){
+	_interpreteIfThenElse: function(VisualObject, ObjectPath, CyctimeObject){
 		var anyCond;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -2415,10 +2527,10 @@ cshmi.prototype = {
 				}
 			}
 			if (ConditionMatched === true){
-				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".then");
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".then", CyctimeObject);
 				return true;
 			}else if (ConditionMatched === false){
-				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".else");
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".else", CyctimeObject);
 				return true;
 			}else{
 				//this Action produced an error
@@ -2439,9 +2551,9 @@ cshmi.prototype = {
 			IfThenElseObserver.ObserverEntryArray[i] = thisObserverEntry;
 			
 			if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver);
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver, CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver);
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver, CyctimeObject);
 			}else if (varName[1].indexOf("/cshmi/Confirm") !== -1){
 				ConditionMatched = this._checkConfirm(VisualObject, ObjectPath+".if/"+varName[0], IfThenElseObserver);
 			}
@@ -2467,7 +2579,7 @@ cshmi.prototype = {
 	 * @param {Boolean} CompareIteratedChild is the object a CompareIteratedChild?
 	 * @return {Boolean} true if condition matched, false if not matched, null on error, undefined if callback is in charge
 	 */
-	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver){
+	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver, CyctimeObject){
 		if (CompareIteratedChild === true && this.ResourceList.ChildrenIterator.currentChild === undefined){
 			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
 			//error state, so no boolean
@@ -2523,7 +2635,7 @@ cshmi.prototype = {
 			
 			thisObserverEntry = new ObserverEntry("withValue", ".");
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
-			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver);
+			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver, CyctimeObject);
 			if(Value2 === true){
 				//the setVar is handled via a callback
 				return true;
@@ -2539,7 +2651,7 @@ cshmi.prototype = {
 		}else{
 			thisObserverEntry = new ObserverEntry("value1", ".");
 			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
-			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver);
+			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver, CyctimeObject);
 			if(Value1 === true){
 				//the setVar is handled via a callback
 			}else{
@@ -2553,7 +2665,7 @@ cshmi.prototype = {
 			}
 			thisObserverEntry = new ObserverEntry("value2", ".");
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
-			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver);
+			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver, CyctimeObject);
 			if(Value2 === true){
 				//the setVar is handled via a callback
 			}else{
@@ -3793,6 +3905,8 @@ cshmi.prototype = {
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		if(PathOfTemplateDefinition){
 			VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
+		}else{
+			VisualObject.setAttribute("data-TemplateModelSource", "");
 		}
 		
 		HMI.addClass(VisualObject, this.cshmiTemplateClass);
@@ -3805,6 +3919,7 @@ cshmi.prototype = {
 		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		//the VPO is needed in generateFullKsPath
+		//fixme wenn ich nicht im DOM bin, dann kann ein zwischen group-objekt ein problem sein, da der parentNode im onload null ist
 		VisualObject.VisualParentObject = VisualParentObject;
 		
 		//###########################################################################
