@@ -91,6 +91,16 @@ CLASS Message : CLASS ov/object
 	END_OPERATIONS;
 END_CLASS;
 
+CLASS	inbox	:	CLASS ov/domain
+	IS_INSTANTIABLE;
+	COMMENT	=	"generic inbox class. Basicly a domain without functionality";
+	VARIABLES
+		holdConnection	:	BOOL
+			COMMENT	=	"TRUE: tells the message sys to keep the connections for incoming messages open to send answers back"
+			INITIALVALUE	=	FALSE;
+	END_VARIABLES;
+END_CLASS;
+
 
 	/**
 	 *	Checks whether received data is a message
