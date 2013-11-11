@@ -349,15 +349,20 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseMessageHeader(char const* xml, AC
 	result = acplt_simpleMsg_xml_getElementData(tempMsgText, "rcvSysAdr", &(header->rcvSysAdr));
 	if(Ov_Fail(result))
 		return result;
+	else if(!header->rcvSysAdr)
+		return OV_ERR_BADVALUE;
 
 	result = acplt_simpleMsg_xml_getElementData(tempPtr, "rcvLocAdr", &(header->rcvLocAdr));
 	if(Ov_Fail(result))
 		return result;
+	else if(!header->rcvLocAdr)
+		return OV_ERR_BADVALUE;
 
 	result = acplt_simpleMsg_xml_getElementData(tempPtr, "msgId", &(header->msgId));
 	if(Ov_Fail(result))
 		return result;
-
+	else if(!header->msgId)
+		return OV_ERR_BADVALUE;
 
 	result = acplt_simpleMsg_xml_getElementData(tempPtr, "refMsgId", &(header->refMsgId));
 	if(Ov_Fail(result) && result != OV_ERR_BADNAME)
