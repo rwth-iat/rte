@@ -332,6 +332,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_BYTE* BeginOfMessage = NULL;	/*	stores the pointer to the very beginning of the message.
 										this is needed if the message is valid but incomplete and has to be processed in the next cycle	*/
 	OV_UINT dummy;
+	OV_INSTPTR_ksxdr_xdrClientHandler thisxdrCL	=	Ov_StaticPtrCast(ksxdr_xdrClientHandler, this);
 
 	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
@@ -426,18 +427,18 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ov_memstack_lock();
 				KS_logfile_error(("%s: HandleRequest: error checking if message is complete: %s", this->v_identifier, ov_result_getresulttext(result)));
 				ov_memstack_unlock();
-				KS_logfile_error(("dataapckets content: \nlength:\t%lu\ndata-begin:\t%p\ndata-end:\t%p\nread-pt:\t%p\nwrite-pt:\t%p\n\n", dataReceived->length, dataReceived->data, dataReceived->data+dataReceived->length, dataReceived->readPT, dataReceived->writePT));
+				KS_logfile_error(("datapackets content: \nlength:\t%lu\ndata-begin:\t%p\ndata-end:\t%p\nread-pt:\t%p\nwrite-pt:\t%p\n\n", dataReceived->length, dataReceived->data, dataReceived->data+dataReceived->length, dataReceived->readPT, dataReceived->writePT));
 				return result;
 			}
 			KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
-			pChannel->v_ConnectionTimeOut = 2;
+			pChannel->v_ConnectionTimeOut = thisxdrCL->v_timeoutIncomplete;
 			dataReceived->readPT = BeginOfMessage; 	/*	reset the read pointer to the place where the message began (to be read again next time)	*/
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 											Yes, this could block the ClientHandler for a longer time.	*/
 		}
 		else
 		{
-			pChannel->v_ConnectionTimeOut = 1200;
+			pChannel->v_ConnectionTimeOut = thisxdrCL->v_connectionTimeout;
 		}
 
 		/*
@@ -506,7 +507,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		{
 			/*	save index of first byte of answer in packet in beginAnswer	*/
 			beginAnswer = ((answer->writePT - answer->data));
-			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
+			/*	reserve space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 			dummy = 0x80;
 			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
 			if(Ov_Fail(result))
