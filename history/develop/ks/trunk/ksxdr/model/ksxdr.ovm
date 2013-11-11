@@ -30,6 +30,14 @@ LIBRARY ksxdr
 	CLASS xdrClientHandler	:	CLASS ksbase/ClientHandler
 	IS_INSTANTIABLE;
 	COMMENT	=	"Handler for XDR-ks clients. Processes XDR-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	VARIABLES
+		connectionTimeout	:	UINT
+			COMMENT	=	"Timeout in s for idle connections"
+			INITIALVALUE	=	300;
+		timeoutIncomplete	:	UINT
+			COMMENT	=	"Time in s to wait for the next part of an incomplete xdr-frame"
+			INITIALVALUE	=	2;
+	END_VARIABLES;
 	OPERATIONS
 		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
