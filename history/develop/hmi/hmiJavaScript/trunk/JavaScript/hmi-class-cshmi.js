@@ -3761,11 +3761,6 @@ cshmi.prototype = {
 		}
 		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
 		if (VisualObject !== null){
-			//special handling for invisible objects
-			if (VisualObject.getAttribute("display") === "none"){
-				HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
-			}
-			
 			//remember the ObjectType on every object (needed for reloading via action)
 			VisualObject.setAttribute("data-ObjectType", "/cshmi/Template");
 			
@@ -4445,7 +4440,17 @@ cshmi.prototype = {
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
 			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
-			VisualObject.appendChild(HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false));
+			var VisualChildObject = HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false);
+			VisualObject.appendChild(VisualChildObject);
+			
+			//calculate all offset parameter to be able to display visual feedback
+			//needed now, because we append new components
+			HMI.saveAbsolutePosition(VisualChildObject);
+			
+			//interprete onload Actions if we are already loaded
+			if (HMI.cshmi.initStage === false){
+				HMI.cshmi._interpreteOnloadCallStack();
+			}
 		};
 		
 		cshmimodel.getEP = function(path, requestType, requestOutput) {

@@ -828,6 +828,9 @@ HMIJavaScriptKSClient.prototype = {
 	 * @todo add timeout für unused deleteCommunicationPoint
 	 */
 	getCommunicationPoint: function(HostAndServername) {
+		if(HostAndServername === null){
+			return null;
+		}
 		if (this.ResourceList.Servers[HostAndServername] && this.ResourceList.Servers[HostAndServername].HandleString !== undefined){
 			return this.ResourceList.Servers[HostAndServername].HandleString;
 		}else{
