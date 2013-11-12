@@ -614,6 +614,9 @@ if(new == 0){
 #endif
 	fprintf(fd,"\tacplt_builder -l $(LIBRARY) $(MAKMAKOPTIONS)\n");
 	//todo: refector: join with with [1]
+#if OV_SYSTEM_LINUX
+	fprintf(fd,"\tsed -i -e 's/\r//' $(MODEL_DIR)$(LIBRARY).ovm\n");
+#endif
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
@@ -655,6 +658,9 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd,"#   -----\n");
 	fprintf(fd,"$(LIBRARY).c $(LIBRARY).h: $(wildcard $(MODEL_DIR)$(LIBRARY).ov?) Makefile\n");
 	//[1]
+#if OV_SYSTEM_LINUX
+	fprintf(fd,"\tsed -i -e 's/\r//' $(MODEL_DIR)$(LIBRARY).ovm\n");
+#endif
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
@@ -665,6 +671,9 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
 
 	fprintf(fd,"%%.c %%.h: %%.ovm Makefile\n");
+#if OV_SYSTEM_LINUX
+	fprintf(fd,"\tsed -i -e 's/\r//' $<\n");
+#endif
 	fprintf(fd,"\t$(OV_CODEGEN_EXE) -I $(BASE_MODEL_DIR)");
 	for(i=0; i<numDevLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(devLibs[i]));
