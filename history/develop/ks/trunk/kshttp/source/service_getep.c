@@ -277,8 +277,9 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
 			begin_response_part(&temp, response_format, "LinkEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultLink, 9, UINT);
-		}else {
+		}else{
 			begin_response_part(&temp, response_format, "HistoryAndStructureUnsupported");
+			fr = Ov_SetDynamicVectorValue(&requestOutput, NULL, 0, UINT);
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
@@ -637,7 +638,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
 			finalize_response_part(&temp, response_format, "LinkEngProps");
 		}else {
-			finalize_response_part(&temp, response_format, "HistoryStructureUnsupported");
+			finalize_response_part(&temp, response_format, "HistoryAndStructureUnsupported");
 		}
 
 		one_result = one_result->pnext;
