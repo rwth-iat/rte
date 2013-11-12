@@ -161,7 +161,7 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_OBJ)
 	$(RANLIB) $@
 
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB)
-	$(LD) -o $@ $^
+	$(LD) -o $@ $^ $(LD_LIB)
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
