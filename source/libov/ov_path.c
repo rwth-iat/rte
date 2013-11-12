@@ -284,6 +284,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 				return OV_ERR_BADPATH;
 			}
 			if(ppath->elements[ppath->size].elemtype == OV_ET_NONE) {
+				/*	check if part of root-object was searched (/.xxx would cause failure up to here)	*/
+				if(identifier == pathcopy+1 && cundo == '.' && pathlen > 1)
+				{/*	we are at the second char in the original pathname, this char was '.' and
+				we have a path behind it --> we can safely assume that we are looking for a
+				part of the root-element	*/
+					result = ov_element_searchpart(&ppath->elements[ppath->size-1],
+						&ppath->elements[ppath->size], OV_ET_ANY, ov_path_frompercent(identifier+1));
+					if(Ov_Fail(result) || ppath->elements[ppath->size].elemtype == OV_ET_NONE) {
+						return OV_ERR_BADPATH;
+					}
+					ppath->size++;
+					return OV_ERR_OK;
+				}
 				return OV_ERR_BADPATH;
 			}
 			/*
