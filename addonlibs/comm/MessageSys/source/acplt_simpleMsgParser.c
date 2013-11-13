@@ -63,15 +63,14 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_findElementBegin(char const* xml, 
 		else
 		{/*	compare tag name	*/
 			if(!strncmp(*pStart, elemName, nameLength))
-			{	/*	found	*/
-				break;
+			{	/*	found name but it may only be part of the element name in the xml stream	*/
+				if((*pStart)[nameLength] == '>' || (*pStart)[nameLength] == ' ' || (*pStart)[nameLength] == '\t'
+						|| (*pStart)[nameLength] == '\r' || (*pStart)[nameLength] == '\n')	/*	element Name complete	*/
+					break;
 			}
-			else
-			{
-				*pStart = strchr(*pStart, '<');
-				if(!(*pStart))
-					return OV_ERR_OK;
-			}
+			*pStart = strchr(*pStart, '<');
+			if(!(*pStart))
+				return OV_ERR_OK;
 		}
 	}
 

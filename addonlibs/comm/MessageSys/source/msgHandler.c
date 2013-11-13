@@ -75,7 +75,8 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	OV_STRING msgEnd = NULL;
 	OV_UINT i;
 	OV_UINT msgTagLength;
-	OV_UINT msgLength;
+	OV_UINT msgLeastLength;
+	OV_UINT currDataLength;
 	OV_UINT hdrLength;
 	OV_UINT bdyLength;
 	OV_INSTPTR_MessageSys_Message	pNewMessage =	NULL;
@@ -90,8 +91,8 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	/***********************************************************************************************************************************************************************************************
 	 *	Check if message is complete in buffer. if not, return ERR_OK and wait for a short time. is the message has not arrived completely within a second we assume it is broken
 	 ***********************************************************************************************************************************************************************************************/
-
-	if((dataReceived->length - (dataReceived->readPT - dataReceived->data)) < 19)
+	currDataLength = dataReceived->length - (dataReceived->readPT - dataReceived->data);
+	if(currDataLength < 19)
 	{
 		KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
 		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_timeoutIncomplete;
@@ -99,7 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 													Yes, this could block the ClientHandler for a longer time.	*/
 	}
 	ov_memstack_lock();
-	msgString = ov_memstack_alloc(dataReceived->length - (dataReceived->readPT - dataReceived->data) + 1);
+	msgString = ov_memstack_alloc(currDataLength + 1);
 	/*	just copy until end of tag	*/
 	for(i=0; i<dataReceived->length && dataReceived->readPT[i-1] != '>'; i++)
 		msgString[i] = dataReceived->readPT[i];
@@ -139,10 +140,10 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 		KS_logfile_info(("%s: HandleRequest: Message not valid: bdyL 0 or not valid. Deleting Data.", this->v_identifier));
 		return OV_ERR_BADVALUE;
 	}
-	/*	calculate msgLength: msg-Tag + header + body + "</msg>	*/
-	msgLength = msgTagLength + hdrLength + bdyLength + 6;
+	/*	calculate the least (leaving out whitespaces between the main elements: <msg/>, </hdr> and <bdy>) msgLength: msg-Tag + header + body + "</msg>	*/
+	msgLeastLength = msgTagLength + hdrLength + bdyLength + 6;
 
-	if((dataReceived->length - (dataReceived->readPT - dataReceived->data)) < msgLength)
+	if(currDataLength < msgLeastLength)
 	{	/*	not complete	*/
 		ov_memstack_unlock();
 		KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
@@ -153,13 +154,16 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	else
 	{
 		if(Ov_Fail(acplt_simpleMsg_xml_findElementBegin((char*) dataReceived->readPT, "/msg", &msgEnd)) || !msgEnd)
-		{
+		{/*	no </msg>-tag still incomplete	*/
 			ov_memstack_unlock();
+			KS_logfile_debug(("%s: HandleRequest: buffer exceeds size of msgleastLength but no /msg tag found yet", this->v_identifier));
 			KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
 			pChannel->v_ConnectionTimeOut = thisMsgHandler->v_timeoutIncomplete;
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 																		Yes, this could block the ClientHandler for a longer time.	*/
 		}
+
+		KS_logfile_debug(("%s: HandleRequest: msgEnd is %p; that makes a length of: %u", this->v_identifier, msgEnd, (((OV_STRING) dataReceived->readPT) - msgEnd)));
 
 		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_connectionTimeout;
 	}
@@ -169,10 +173,12 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	 ***********************************************************************************************************************************************************************************************/
 
 	/*	copy rest of message into temporary string and hand it over to the parse function. increment dataReceived->readPT	*/
-	for(i=msgTagLength; i<msgLength; i++)
+	for(i=msgTagLength; i<currDataLength; i++)
 		msgString[i] = dataReceived->readPT[i];
 	msgString[i] = '\0';
 	dataReceived->readPT += i;
+
+	KS_logfile_debug(("%s: HandleRequest msgString:\n\n%s\n\n", this->v_identifier, msgString));
 
 	MessageSys_parseAndDeliverMsg(msgString, &pNewMessage, &pInbox);
 	if(pNewMessage && pInbox)
