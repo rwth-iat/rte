@@ -17,6 +17,7 @@ static char c_DATA_end [] = "]]>";
 OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_findElementBegin(char const* xml, const OV_STRING elemName, OV_STRING* pStart)
 {
 	OV_UINT nameLength = 0;
+	OV_UINT cDataCount = 0;
 
 	if(!xml || !elemName || !pStart)
 		return OV_ERR_BADPARAM;
@@ -31,10 +32,30 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_findElementBegin(char const* xml, 
 	{
 		/*	next char	*/
 		(*pStart)++;
-		/*	check for !CDATA and if found jump over it	*/
-		if(!strncmp(*pStart, c_DATA_start, sizeof(c_DATA_start)))
+		/*	check for !CDATA and if found jump over it; care for nested CDATA-elements	*/
+		if(!strncmp(*pStart, c_DATA_start, sizeof(c_DATA_start)-1))
 		{
-			*pStart = strstr(*pStart, c_DATA_end);
+			cDataCount=1;
+			(*pStart) += sizeof(c_DATA_start) + 1-1;
+			for(; cDataCount >= 1; (*pStart)++)
+			{
+				if(!strncmp(*pStart, c_DATA_end, sizeof(c_DATA_end)-1))
+				{
+					cDataCount--;
+					(*pStart) += sizeof(c_DATA_end)-1;
+				}
+				else if(**pStart == '<')
+				{
+					(*pStart)++;
+					if(!strncmp(*pStart, c_DATA_start, sizeof(c_DATA_start)-1))
+					{
+						cDataCount++;
+						(*pStart) += sizeof(c_DATA_start) + 1-1;
+					}
+				}
+				if(!(**pStart))
+					return OV_ERR_BADVALUE;
+			}
 		}
 		else
 		{/*	compare tag name	*/
@@ -68,6 +89,7 @@ static char esc_amp [] = "amp;";	/*	&	*/
 OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlString, OV_UINT strLength, OV_STRING* targetString)
 {
 	unsigned long i;
+	unsigned long cDataCount = 0;
 
 	if(!xmlString || !(*xmlString))
 		return OV_ERR_BADPARAM;
@@ -144,9 +166,22 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_extractString(char const* xmlStrin
 
 		case '<':
 			if(!strncmp(&(xmlString[i+1]), c_DATA_start, sizeof(c_DATA_start)-1))
-			{	/*	CDATA element found; copy content only	*/
-				for(xmlString += sizeof(c_DATA_start)+1-1; *xmlString && (!strncmp(&(xmlString[i]), c_DATA_end, sizeof(c_DATA_end)-1)); i++)
+			{	/*	CDATA element found; copy content only but care for nested CDATA elements	*/
+				cDataCount = 1;
+				for(xmlString += sizeof(c_DATA_start)+1-1; *xmlString && (cDataCount >= 1); i++)
+				{
 					(*targetString)[i] = xmlString[i];
+					if(xmlString[i] == '<')
+					{
+						if(!strncmp(&(xmlString[i+1]), c_DATA_start, sizeof(c_DATA_start)-1))
+							cDataCount++;
+					}
+					else if(!strncmp(&(xmlString[i]), c_DATA_end, sizeof(c_DATA_end)-1))
+						cDataCount--;
+
+
+				}
+
 				xmlString += sizeof(c_DATA_end);
 			}
 			else
@@ -178,6 +213,7 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_getElementData(char const* xml, co
 	OV_RESULT result;
 	OV_STRING beginElement = NULL;
 	char const* tempPtr =  NULL;
+	OV_UINT cDataCount = 0;
 
 	/*	find the begin of the element of concern; this function will also catch NULL-pointers for us	*/
 	result = acplt_simpleMsg_xml_findElementBegin(xml, elemName, &beginElement);
@@ -207,12 +243,28 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_getElementData(char const* xml, co
 
 		if(tempPtr[dataLength] == '<')
 		{	/*	jump over CDATA	*/
-			if(!strncmp(&(tempPtr[dataLength+1]), c_DATA_start, sizeof(c_DATA_start)))
-			{	/*	CDATA element found; copy content only	*/
-				dataLength += sizeof(c_DATA_start) + 1;
-				for(; (!strncmp(&(tempPtr[dataLength]), c_DATA_end, sizeof(c_DATA_end))); dataLength++)
+			if(!strncmp(&(tempPtr[dataLength+1]), c_DATA_start, sizeof(c_DATA_start)-1))
+			{	/*	CDATA element found; copy content only but care for nested CDATA-elements	*/
+				cDataCount++;
+				dataLength += sizeof(c_DATA_start) + 1-1;
+				for(; cDataCount >= 1; dataLength++)
+				{
+					if(!strncmp(&(tempPtr[dataLength]), c_DATA_end, sizeof(c_DATA_end)-1))
+					{
+						cDataCount--;
+						dataLength += sizeof(c_DATA_end)-1;
+					}
+					else if(tempPtr[dataLength] == '<')
+					{
+						if(!strncmp(&(tempPtr[dataLength+1]), c_DATA_start, sizeof(c_DATA_start)-1))
+						{
+							cDataCount++;
+							dataLength += sizeof(c_DATA_start) + 1-1;
+						}
+					}
 					if(!tempPtr[dataLength])
 						return OV_ERR_BADVALUE;
+				}
 			}
 			else
 				break;

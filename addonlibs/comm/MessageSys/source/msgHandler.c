@@ -72,6 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
     */
 	OV_STRING msgString = NULL;
 	OV_STRING tempData = NULL;
+	OV_STRING msgEnd = NULL;
 	OV_UINT i;
 	OV_UINT msgTagLength;
 	OV_UINT msgLength;
@@ -151,6 +152,15 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	}
 	else
 	{
+		if(Ov_Fail(acplt_simpleMsg_xml_findElementBegin((char*) dataReceived->readPT, "/msg", &msgEnd)) || !msgEnd)
+		{
+			ov_memstack_unlock();
+			KS_logfile_debug(("%s: HandleRequest: Buffer does NOT hold the complete request. waiting some time...", this->v_identifier));
+			pChannel->v_ConnectionTimeOut = thisMsgHandler->v_timeoutIncomplete;
+			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
+																		Yes, this could block the ClientHandler for a longer time.	*/
+		}
+
 		pChannel->v_ConnectionTimeOut = thisMsgHandler->v_connectionTimeout;
 	}
 
