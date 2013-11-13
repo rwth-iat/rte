@@ -37,12 +37,15 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_findElementBegin(char const* xml, 
 		{
 			cDataCount=1;
 			(*pStart) += sizeof(c_DATA_start) + 1-1;
-			for(; cDataCount >= 1; (*pStart)++)
+			while(cDataCount >= 1)
 			{
+				if(!(**pStart))
+					return OV_ERR_BADVALUE;
 				if(!strncmp(*pStart, c_DATA_end, sizeof(c_DATA_end)-1))
 				{
 					cDataCount--;
 					(*pStart) += sizeof(c_DATA_end)-1;
+					continue;
 				}
 				else if(**pStart == '<')
 				{
@@ -50,11 +53,11 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_findElementBegin(char const* xml, 
 					if(!strncmp(*pStart, c_DATA_start, sizeof(c_DATA_start)-1))
 					{
 						cDataCount++;
-						(*pStart) += sizeof(c_DATA_start) + 1-1;
+						(*pStart) += sizeof(c_DATA_start)-1;
+						continue;
 					}
 				}
-				if(!(**pStart))
-					return OV_ERR_BADVALUE;
+				(*pStart)++;
 			}
 		}
 		else
@@ -244,15 +247,19 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_getElementData(char const* xml, co
 		if(tempPtr[dataLength] == '<')
 		{	/*	jump over CDATA	*/
 			if(!strncmp(&(tempPtr[dataLength+1]), c_DATA_start, sizeof(c_DATA_start)-1))
-			{	/*	CDATA element found; copy content only but care for nested CDATA-elements	*/
+			{	/*	CDATA element found; count content but care for nested CDATA-elements	*/
 				cDataCount++;
 				dataLength += sizeof(c_DATA_start) + 1-1;
-				for(; cDataCount >= 1; dataLength++)
+				while(cDataCount >= 1)
 				{
+					if(!tempPtr[dataLength])
+						return OV_ERR_BADVALUE;
+
 					if(!strncmp(&(tempPtr[dataLength]), c_DATA_end, sizeof(c_DATA_end)-1))
 					{
 						cDataCount--;
 						dataLength += sizeof(c_DATA_end)-1;
+						continue;
 					}
 					else if(tempPtr[dataLength] == '<')
 					{
@@ -260,10 +267,10 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_xml_getElementData(char const* xml, co
 						{
 							cDataCount++;
 							dataLength += sizeof(c_DATA_start) + 1-1;
+							continue;
 						}
 					}
-					if(!tempPtr[dataLength])
-						return OV_ERR_BADVALUE;
+					dataLength++;
 				}
 			}
 			else
