@@ -352,6 +352,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				pChannel = Ov_GetChild(MessageSys_Message2Channel, msg);
 				if(!pChannel)
 				{	/*	no channel found, create new one	*/
+					KS_logfile_debug(("msgDelivers: no Channel associated with message. creating new one"));
 					result = createChannel(this, &pChannel);
 					if(Ov_Fail(result))
 					{
@@ -419,6 +420,8 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				else
 					pChannel->v_CloseAfterSend = TRUE;
 
+
+				KS_logfile_debug(("msgDelivery: pChannel->v_ConnectionState is: %u", pChannel->v_ConnectionState));
 				result = initiateConnection(pChannel, msg->v_receiverAddress, msg->v_receiverName);
 				if(Ov_Fail(result))
 				{
@@ -428,12 +431,13 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 					ov_memstack_unlock();
 					return;
 				}
+
 				Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
 				result = trySend(msg, pChannel, pVtblChannel);
 				if(Ov_Fail(result))
 				{
 					ov_memstack_lock();
-					ov_logfile_error("MessageDelivery/typeMethod: Couldn't isend message. reason: %s", ov_result_getresulttext(result));
+					ov_logfile_error("MessageDelivery/typeMethod: Couldn't send message. reason: %s", ov_result_getresulttext(result));
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_memstack_unlock();
 					return;

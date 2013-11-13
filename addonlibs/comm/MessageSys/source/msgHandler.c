@@ -181,15 +181,19 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 			{
 				if(VarElem.elemunion.pvar)
 				{
+					KS_logfile_debug(("msgHandler %s: iterating over inbox' variables: %s, type: %u", this->v_identifier, VarElem.elemunion.pvar->v_identifier, VarElem.elemunion.pvar->v_vartype & OV_VT_KSMASK));
 					if((ov_string_comparei(VarElem.elemunion.pvar->v_identifier, "holdConnection") == OV_STRCMP_EQUAL)	/*	variable name matches	*/
-						&& ((VarElem.elemunion.pvar->v_vartype | OV_VT_KSMASK) == OV_VT_BOOL)	/*	varType matches	*/
+						&& ((VarElem.elemunion.pvar->v_vartype & OV_VT_KSMASK) == OV_VT_BOOL)	/*	varType matches	*/
 						&& (*((OV_BOOL*) VarElem.pvalue) == TRUE))	/*	we should hold the connection	*/
 					{
 						Ov_Link(MessageSys_Message2Channel, pNewMessage,  pChannel);
+						pChannel->v_CloseAfterSend = FALSE;
+						KS_logfile_debug(("Value: TRUE"));
 						break;
 					}
 					else
 					{
+						KS_logfile_debug(("no match"));
 						pChannel->v_CloseAfterSend = TRUE;
 					}
 				}
