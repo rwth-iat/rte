@@ -9,9 +9,12 @@
 #define OV_COMPILE_LIBRARY_ssc
 #endif
 
-
+#include "ov.h"
 #include "ssc.h"
 #include "ssclib.h"
+
+#include "libov/ov_macros.h"
+#include "libov/ov_path.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
@@ -48,12 +51,20 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
     OV_RESULT    result;
+    OV_UINT stringCount;
+    OV_STRING* pathToVariable;
+    OV_INSTPTR_ov_object pObj = NULL;
+    OV_ELEMENT element;
+    OV_ELEMENT varElement;
+    OV_VTBLPTR_ov_object pVtblObj = NULL;
+
 
     // init variables
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = 1;
     pinst->v_error=FALSE;
+
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location
@@ -71,11 +82,48 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
        	ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
     };
 
+
     // set variable
     //result= fb_functionchart_getvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
     //result= fb_functionchart_setvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
 
-    result= fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC)), pinst->v_variable, &pinst->v_value);
+
+// Extension to set any Port at any Variable
+    //split the input at dot
+    pathToVariable =  ov_string_split(pinst->v_variable,".", &stringCount);
+    pObj = ov_path_getobjectpointer(pathToVariable[0],2);
+
+    if(pObj != NULL && pathToVariable != NULL)
+    {
+    	varElement.elemtype = OV_ET_NONE;
+    	element.elemtype = OV_ET_OBJECT;
+    	element.pobj = pObj;
+    	//iterate over all ports of the object to find the destination port for the set operation
+    	ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
+
+    	while(varElement.elemtype != OV_ET_NONE)
+    	{
+    		if(varElement.elemunion.pvar)
+    		{
+    			if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable[1]) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
+    			{
+    				//port found, use the setter to write the value
+    				Ov_GetVTablePtr(ov_object, pVtblObj, pObj);
+    				result = pVtblObj->m_setvar(varElement.pobj, &varElement, &(pinst->v_value));
+
+    			}
+    		}
+    		ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
+    	}
+    }
+    else
+    {
+    	pinst->v_error = TRUE;
+    	ov_string_setvalue(&pinst->v_errorDetail, "path not found");
+    }
+
+    //result = fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC)), pinst->v_variable, &pinst->v_value);
+
     if(Ov_Fail(result))
     {
     	pinst->v_error=TRUE;
@@ -83,7 +131,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 
     }
 
-    /*
+/*
     		OV_INSTPTR_fb_functionchart pfc,
     		 const OV_STRING varname,
     		 OV_ANY *pvarcurrprops)

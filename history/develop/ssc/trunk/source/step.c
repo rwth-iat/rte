@@ -110,10 +110,10 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     pinst->v_evTransTrigger=FALSE;
 
 
-
     // execute subtasks
     do{
-    exitLoop=TRUE;
+    	exitLoop=TRUE;
+
     	switch (pinst->v_phase)
     	{
     	/* phase 1: entry, do */
