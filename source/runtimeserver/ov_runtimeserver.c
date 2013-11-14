@@ -429,7 +429,7 @@ int main(int argc, char **argv) {
 
 				/*	get base path from path part of configFile	*/
 #if OV_SYSTEM_NT
-				for(j = strlen(configFile); (configFile[j] != '\\') && (j>0); j--);
+				for(j = strlen(configFile); configFile[j] != '\\' && configFile[j] != '/' && (j>0); j--);
 #else
 				for(j = strlen(configFile); (configFile[j] != '/') && (j>0); j--);
 #endif
