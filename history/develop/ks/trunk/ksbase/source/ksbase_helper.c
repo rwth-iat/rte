@@ -12,7 +12,7 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 	if(!name || !(*name))
 		return FALSE;
 
-	while(name[i] && i< KS_NAME_MAXLEN)
+	while(name[i] && i < KS_NAME_MAXLEN)
 	{
 		if(!((name[i] >= 65 && name[i] <= 90)			/*	A-Z	*/
 				|| (name[i] >= 97 && name[i] <= 122)	/*	a-z	*/
@@ -21,7 +21,10 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 			return FALSE;
 		i++;
 	}
-	return TRUE;
+	if(i < KS_NAME_MAXLEN)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 
