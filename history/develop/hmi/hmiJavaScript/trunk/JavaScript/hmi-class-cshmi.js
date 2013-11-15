@@ -455,14 +455,14 @@ cshmi.prototype = {
 			//the object was asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
-		cyctime = requestList[ObjectPath]["cyctime"];
+		var cyctime = requestList[ObjectPath]["cyctime"];
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
 			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
-			if (this.initStage === true && requestList[ObjectPath]["cyctime"] > 1 ){
+			if (this.initStage === true && parseFloat(requestList[ObjectPath]["cyctime"]) > 1 ){
 				var nextcyctime = 1;
 			}else{
-				nextcyctime = requestList[ObjectPath]["cyctime"];
+				nextcyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
 			}
 			this.ResourceList.TimeeventCallStack[cyctime].triggeredObjectList = Array();
 			this.ResourceList.TimeeventCallStack[cyctime].getVarCollection = Object();
