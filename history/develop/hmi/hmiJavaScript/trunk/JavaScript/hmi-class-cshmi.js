@@ -771,15 +771,7 @@ cshmi.prototype = {
 		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
 		var newy = this.ResourceList.EventInfos.startYObj+mouseY-this.ResourceList.EventInfos.startYMouse;
 		if (!isNaN(newx) && !isNaN(newy)){
-			VisualObject.setAttribute("x", newx);
-			VisualObject.setAttribute("y", newy);
-			if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-				//object has already an g parent
-				VisualObject.parentNode.setAttribute("transform", "rotate("+VisualObject.getAttribute("data-rotate")+","+newx+","+newy+")");
-			}
-			
-			//we want to have offset parameter on all visual elements
-			HMI.saveAbsolutePosition(VisualObject);
+			this._setXYRotate(VisualObject, newx, newy, null);
 			
 			//save event for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
@@ -834,18 +826,7 @@ cshmi.prototype = {
 		}
 		
 		//restore old position
-		VisualObject.setAttribute("x", this.ResourceList.EventInfos.startXObj);
-		VisualObject.setAttribute("y", this.ResourceList.EventInfos.startYObj);
-		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-			//object has an g parent for rotation. We need to correct transform origin
-			VisualObject.parentNode.setAttribute("transform", 
-					"rotate("+VisualObject.getAttribute("data-rotate")+","+
-					VisualObject.getAttribute("x")+","+
-					VisualObject.getAttribute("y")+")");
-		}
-		
-		//we want to have offset parameter on all visual elements
-		HMI.saveAbsolutePosition(VisualObject);
+		this._setXYRotate(VisualObject, this.ResourceList.EventInfos.startXObj, this.ResourceList.EventInfos.startYObj, VisualObject.getAttribute("data-rotate"));
 		
 		if (canceled === true){
 			//no action
@@ -1807,42 +1788,14 @@ cshmi.prototype = {
 					//load hidden elements now
 					this._loadHiddenChildrenElements(VisualObject);
 				}
-			}else if (ParameterValue === "rotate" || ParameterValue === "transform"){
-				//svg are not transformable, so the rotation/transform is in the objects parent
-				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-					//object has already an g parent
-					var rotationObject = VisualObject.parentNode;
-				}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
-					//element has to be shifted into an g element
-					rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-					rotationObject.setAttribute("overflow", "visible");
-					rotationObject.setAttribute("x", "0");
-					rotationObject.setAttribute("y", "0");
-					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
-					rotationObject.appendChild(VisualObject);
-				}else{
-					//normal visual element
-					rotationObject = VisualObject;
-				}
-				var TransformString = "";
-				if (ParameterValue === "rotate"){
-					if(!isNumeric(NewValue)){
-						//ignore writing wrong value
+			}else if (ParameterValue === "rotate"){
+				if(!isNumeric(NewValue)){
+					//ignore writing wrong value
 						return false;
 					}
-					if(VisualObject.getAttribute("x") !== null){
-						TransformString = "rotate("+NewValue+","+VisualObject.getAttribute("x")+","+VisualObject.getAttribute("y")+")";
-					}else if(VisualObject.getAttribute("cx") !== null){
-						TransformString = "rotate("+NewValue+","+VisualObject.getAttribute("cx")+","+VisualObject.getAttribute("cy")+")";
-					}else{
-						TransformString = "rotate("+NewValue+")";
-					}
-					VisualObject.setAttribute("data-rotate", NewValue);
-				}else if (ParameterValue === "transform"){
-					//todo rotation is lost
-					TransformString = NewValue;
-				}
-				rotationObject.setAttribute("transform", TransformString);
+				this._setXYRotate(VisualObject, null, null, NewValue);
+			}else if (ParameterValue === "transform"){
+				VisualObject.setAttribute("transform", NewValue);
 				//we want to have offset parameter on all visual elements
 				HMI.saveAbsolutePosition(rotationObject);
 			}else if (ParameterValue === "absolutex"){
@@ -1853,19 +1806,8 @@ cshmi.prototype = {
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutex is calculated from the offset of the parentNode
-					VisualObject.setAttribute("x", NewValue - VisualObject.parentNode.getAttribute("absolutex") - relativeX);
+					this._setXYRotate(VisualObject, NewValue - VisualObject.parentNode.getAttribute("absolutex") - relativeX, null, null);
 					VisualObject.setAttribute("absolutex", NewValue - relativeX);
-					
-					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-						//object has an g parent for rotation. We need to correct transform origin
-						VisualObject.parentNode.setAttribute("transform", 
-								"rotate("+VisualObject.getAttribute("data-rotate")+","+
-								VisualObject.getAttribute("x")+","+
-								VisualObject.getAttribute("y")+")");
-					}
-					
-					//we want to have offset parameter on all visual elements
-					HMI.saveAbsolutePosition(VisualObject);
 				}
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
@@ -1875,37 +1817,15 @@ cshmi.prototype = {
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutey is calculated from the offset of the parentNode
-					VisualObject.setAttribute("y", NewValue - VisualObject.parentNode.getAttribute("absolutey") - relativeY);
+					this._setXYRotate(VisualObject, null, NewValue - VisualObject.parentNode.getAttribute("absolutey") - relativeY, null);
 					VisualObject.setAttribute("absolutey", NewValue - relativeY);
-					
-					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-						//object has an g parent for rotation. We need to correct transform origin
-						VisualObject.parentNode.setAttribute("transform", 
-								"rotate("+VisualObject.getAttribute("data-rotate")+","+
-								VisualObject.getAttribute("x")+","+
-								VisualObject.getAttribute("y")+")");
-					}
-					
-					//we want to have offset parameter on all visual elements
-					HMI.saveAbsolutePosition(VisualObject);
 				}
 			}else if (ParameterValue === "absoluterotate"){
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absoluterotate is calculated from the offset of the parentNode
 					VisualObject.setAttribute("absoluterotate", NewValue);
-					var rotationObject = VisualObject;
-					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-						//object has an g parent for rotation. We need to correct transform origin
-						rotationObject = VisualObject.parentNode;
-					}
-					//fixme parent g reinbasteln bei bedarf....
-					rotationObject.setAttribute("transform", 
-							"rotate("+NewValue+","+
-							VisualObject.getAttribute("x")+","+
-							VisualObject.getAttribute("y")+")");
-					
-					//we want to have offset parameter on all visual elements
-					HMI.saveAbsolutePosition(rotationObject);
+					//fixme calculate rotation from parent
+					this._setXYRotate(VisualObject, VisualObject.getAttribute("x"), VisualObject.getAttribute("x"), NewValue);
 				}
 			}else{
 				if (NewValue === "" && 
@@ -5368,6 +5288,66 @@ cshmi.prototype = {
 			VisualObject.setAttribute("opacity", configArray["opacity"]);
 		}
 		return true;
+	},
+	
+	/** set x, y and/or rotate of an object. Parameters as null will be skipped
+	 */
+	_setXYRotate: function(VisualObject, x, y, rotate){
+		//svg are not transformable, so the rotation/transform is in the objects parent
+		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+			//object has already an g parent
+			var rotationObject = VisualObject.parentNode;
+		}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
+			//element has to be shifted into an g element
+			rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+			rotationObject.setAttribute("overflow", "visible");
+			rotationObject.setAttribute("x", "0");
+			rotationObject.setAttribute("y", "0");
+			VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
+			rotationObject.appendChild(VisualObject);
+		}else{
+			//normal visual element
+			rotationObject = VisualObject;
+		}
+		if(x === null){
+			if(VisualObject.hasAttribute("x") !== null){
+				x = VisualObject.getAttribute("x");
+			}else if(VisualObject.hasAttribute("cx") !== null){
+				x = VisualObject.getAttribute("cx");
+			}else{
+				x = 0;
+			}
+		}else if(isNumeric(x)){
+			if(VisualObject.hasAttribute("x") !== null){
+				VisualObject.setAttribute("x", x);
+			}else if(VisualObject.hasAttribute("cx") !== null){
+				VisualObject.setAttribute("cx", x);
+			}
+		}
+		if(y === null){
+			if(VisualObject.hasAttribute("y") !== null){
+				y = VisualObject.getAttribute("y");
+			}else if(VisualObject.hasAttribute("cy") !== null){
+				y = VisualObject.getAttribute("cy");
+			}else{
+				y = 0;
+			}
+		}else if(isNumeric(y)){
+			if(VisualObject.hasAttribute("y") !== null){
+				VisualObject.setAttribute("y", y);
+			}else if(VisualObject.hasAttribute("cy") !== null){
+				VisualObject.setAttribute("cy", y);
+			}
+		}
+		if(rotate === null){
+			rotate = getRotationFromObject(VisualObject);
+		}else if(isNumeric(rotate)){
+			VisualObject.setAttribute("data-rotate", rotate);
+		}
+		rotationObject.setAttribute("transform", "rotate("+rotate+","+x+","+y+")");
+		
+		//we want to have offset parameter on all visual elements
+		HMI.saveAbsolutePosition(rotationObject);
 	},
 	
 	/**
