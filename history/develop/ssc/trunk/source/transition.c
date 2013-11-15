@@ -70,18 +70,55 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     */
     OV_INSTPTR_ssc_transition 	pinst = Ov_StaticPtrCast(ssc_transition, pfb);
     //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
-    OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
-    OV_INSTPTR_fb_functionblock pTransCond = Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
+
+    //find connection object with is connected to the result port
+    OV_INSTPTR_ov_object pObj =  Ov_GetFirstChild(fb_inputconnections, pinst);
+    OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, pObj);
+
+    // OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
+
+    //find source object which sends the data to transition object
+    OV_INSTPTR_fb_object pSrcObj = Ov_GetParent( fb_outputconnections, pResultConnection);
+
+    //OV_INSTPTR_fb_functionblock pTransCond = (OV_INSTPTR_fb_functionblock)(Ov_GetParent(ov_containment, pParentObj));// Ov_DynamicPtrCast(fb_functionblock, pParentObj);
+
+    OV_INSTPTR_ov_domain        pTransCondsDomain = NULL;
+    OV_INSTPTR_ov_domain        pTransCondsContainer = NULL;
+    OV_INSTPTR_fb_task          pTransCondsTaskParent = NULL;
+
+    OV_RESULT    result;
+    OV_INSTPTR_fb_port port = NULL;
+
+    OV_INSTPTR_fb_functionblock pTransCond = NULL;
+    //Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
     OV_INSTPTR_ssc_step  		pPreStep = Ov_GetParent(ssc_nextTransitions, pinst);
     OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
+
     OV_INSTPTR_ssc_sscHeader	pSSC = Ov_StaticPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_fb_functionchart pFC = Ov_StaticPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
+
     //OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
     //OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
-    OV_INSTPTR_ov_domain        pTransCondsDomain = &pSSC->p_transConds;
-    OV_INSTPTR_ov_domain        pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
-    OV_INSTPTR_fb_task          pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
-    OV_RESULT    result;
+
+    //check if the transCond is a functionchart or a functionblock
+    if(Ov_CanCastTo(fb_port, pSrcObj))
+    {
+    	//transCond is a functionchart
+    	pTransCond = (OV_INSTPTR_fb_functionblock)(Ov_GetParent(fb_variables,(OV_INSTPTR_fb_port) pSrcObj));
+    }
+    else
+    {
+    	//transCond is a functionblock
+    	pTransCond = (OV_INSTPTR_fb_functionblock)(pSrcObj);
+    }
+
+    pTransCondsDomain = &pSSC->p_transConds;
+    pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
+    pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
+
+
+
+
 
 
     // check location and links
