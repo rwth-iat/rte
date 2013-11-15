@@ -90,6 +90,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     OV_INSTPTR_ssc_step pNextStep = NULL;
     OV_INSTPTR_ssc_sscHeader pSubSsc=NULL;
     OV_INSTPTR_ssc_executeSsc pExecuteSsc=NULL;
+    OV_TIME elapsedTime;
     // helper vaiables
     OV_BOOL	  exitLoop=FALSE;
 
@@ -122,6 +123,9 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     		if(pinst->v_qualifier==1)
     		{
     			/* entry */
+    			ov_time_gettime(&pinst->v_startTime);
+    			//initialized with zero
+    			ov_time_diff(&pinst->v_T, &pinst->v_startTime, &pinst->v_startTime);
     			printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pEntry, execute, pltc);
     			pinst->v_qualifier=2;
@@ -207,6 +211,8 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     		pinst->v_phase = 1;
     		break;
     	}
+		ov_time_gettime(&elapsedTime);
+		ov_time_diff(&pinst->v_T, &elapsedTime, &pinst->v_startTime);
     } while (!exitLoop);
 
     // step flag will be reseted by triggered transition

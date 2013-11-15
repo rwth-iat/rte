@@ -113,6 +113,7 @@ LIBRARY ssc
 			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";
 			error			:BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
+			startTime 		:TIME   	FLAGS = "n" COMMENT = "point of time in which the step is entered";
 	END_VARIABLES;
 	PARTS
       		entry 	: CLASS fb/task;
