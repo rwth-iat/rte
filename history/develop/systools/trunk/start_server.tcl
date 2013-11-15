@@ -125,31 +125,42 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 	set THISSERVER [file attributes $THISSERVER -shortname]
 }
 set LOGFILE ${THISSERVER}/logfiles/log_start_server.txt
-set COMMAND "ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE}"
-catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE} &} pid
-set tries 0
+if {[file exists ${LOGFILE}] == 1 } { 
+file delete -force $LOGFILE
+} 
+#set COMMAND "ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE}"
+#puts [file nativename ${THISSERVER}/ov_server.conf]
 
+#set pid [exec $THISACPLTSYSTEM/system/sysbin/ov_runtimeserver -f ${THISSERVER}/db.ovd -s "MANAGER" -w "ksbase" -w "fb" &]
+set pid [exec $THISACPLTSYSTEM/system/sysbin/ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE} &]
+#catch {exec ov_runtimeserver -f ${THISSERVER}/db.ovd -s "MANAGER" -l ${LOGFILE}  &} pid
+
+#catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf] -l ${LOGFILE} &} pid
+#catch {exec ov_runtimeserver -c [file nativename ${THISSERVER}/ov_server.conf]  &} pid
+#-l ${LOGFILE}
+set tries 0
+puts $pid
 #Prüfen ob server hochgfährt
-while {$tries<2000} {
-		if {
-			[file exists ${LOGFILE}] == 1 } {
-			set in [open ${LOGFILE} r]
-			set line 0
-			set tries [+ $tries 1]
-			while {[gets $in line] != -1} {
-			
-				if {[regexp "(.*)Server started(.*)" $line] } then {
-					puts $tries
-					# pid of the process
-					
-					puts "server ${SERVERNAME} is running with PID $pid"
-					set tries 2000
-				}
-			}
-			close $in 
-		}
-		after 10 
-	}
+#while {$tries<2000} {
+#		if {
+#			[file exists ${LOGFILE}] == 1 } {
+#			set in [open ${LOGFILE} r]
+#			set line 0
+#			set tries [+ $tries 1]
+#			while {[gets $in line] != -1} {
+#			
+#			if {[regexp "(.*)Server started(.*)" $line] } then {
+#					puts $tries
+#					# pid of the process
+#					
+#					puts "server ${SERVERNAME} is running with PID $pid"
+#					set tries 2000
+#				}
+#			}
+#			close $in 
+#		}
+#		after 10 
+#	}
 	
 
 	
@@ -177,10 +188,10 @@ while {$k<1} {
 # Prüfung ob server läuft
 fconfigure stdin -blocking 0
 if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
-	if { [catch {file rename ${LOGFILE} ${LOGFILE}.test}] } {
+		catch {exec tasklist } test
+	if { [string match *$pid* $test] == 1 } {
 		#puts "running"
 	} else {
-		file rename ${LOGFILE}.test ${LOGFILE}
 		puts "Server was terminated"
 		break
 	}
@@ -194,7 +205,7 @@ if {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
 }
 if { $in1 > -1 } then {
 puts "-----------------------------------------------------"
-puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template , quit = shutdown server"
+puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template , ctr+c = shutdown server"
 }
 after 1000
 gets stdin in1
@@ -205,30 +216,30 @@ fconfigure stdin -blocking 1
 # Nachladen von Templates
 #
 # ********************************************************************************
-if {[eq ${in1} "quit"] == 1} {
-if {$tcl_platform(os) == "Linux"} then {
-		set COMMAND1 "kill $pid" 
-	} else {
-	set LOADFILE "$THISACPLTSYSTEM/system/systools/kill.fbd"
- 	set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
-	}
-	puts "Initated shutdown, waiting for server to unmap the database..."
-    set PRX [open "|$COMMAND1" "RDWR"]
-	
-	set tries 0
-	while {$tries<60} {
-		set in [open ${LOGFILE} r]
-		set line 0
-		set tries [+ $tries 1]
-		while {[gets $in line] != -1} {
-			if {[regexp "(.*)Database unmapped(.*)" $line] || $tries > 50} then {
-				exit
-			}
-		}
-		after 500 
-	}
-	close $in
-}
+#if {[eq ${in1} "quit"] == 1} {
+#if {$tcl_platform(os) == "Linux"} then {
+#		set COMMAND1 "kill $pid" 
+#	} else {
+#	set LOADFILE "$THISACPLTSYSTEM/system/systools/kill.fbd"
+ #	set COMMAND1 "${THISACPLTSYSTEM}/system/sysbin/fb_dbcommands -s localhost:7509/${SERVERNAME} -load -f ${LOADFILE}"
+#	}
+#	puts "Initated shutdown, waiting for server to unmap the database..."
+ #   set PRX [open "|$COMMAND1" "RDWR"]
+#	
+#	set tries 0
+#	while {$tries<60} {
+#		set in [open ${LOGFILE} r]
+#		set line 0
+#		set tries [+ $tries 1]
+#		while {[gets $in line] != -1} {
+#			if {[regexp "(.*)Database unmapped(.*)" $line] || $tries > 50} then {
+#				exit
+#			}
+#		}
+#		after 500 
+#	}
+#	close $in
+#}
 if {[eq ${in1} t] == 1} {
 #
 #  Einlesen der vorhandenen Templateordner
