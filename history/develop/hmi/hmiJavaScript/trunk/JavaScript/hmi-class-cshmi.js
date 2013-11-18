@@ -1823,9 +1823,15 @@ cshmi.prototype = {
 			}else if (ParameterValue === "absoluterotate"){
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absoluterotate is calculated from the offset of the parentNode
-					VisualObject.setAttribute("absoluterotate", NewValue);
-					//fixme calculate rotation from parent
-					this._setXYRotate(VisualObject, VisualObject.getAttribute("x"), VisualObject.getAttribute("x"), NewValue);
+
+					if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+						//object has already an g parent
+						var rotationObject = VisualObject.parentNode;
+					}else{
+						rotationObject = VisualObject;
+					}
+					var newrotate = NewValue - getRotationFromObject(rotationObject.parentNode);
+					this._setXYRotate(VisualObject, VisualObject.getAttribute("x"), VisualObject.getAttribute("x"), newrotate);
 				}
 			}else{
 				if (NewValue === "" && 
@@ -5323,6 +5329,8 @@ cshmi.prototype = {
 			}else if(VisualObject.hasAttribute("cx") !== null){
 				VisualObject.setAttribute("cx", x);
 			}
+		}else{
+			x = 0;
 		}
 		if(y === null){
 			if(VisualObject.hasAttribute("y") !== null){
@@ -5338,11 +5346,15 @@ cshmi.prototype = {
 			}else if(VisualObject.hasAttribute("cy") !== null){
 				VisualObject.setAttribute("cy", y);
 			}
+		}else{
+			y = 0;
 		}
 		if(rotate === null){
 			rotate = getRotationFromObject(VisualObject);
 		}else if(isNumeric(rotate)){
 			VisualObject.setAttribute("data-rotate", rotate);
+		}else{
+			rotate = 0;
 		}
 		rotationObject.setAttribute("transform", "rotate("+rotate+","+x+","+y+")");
 		
