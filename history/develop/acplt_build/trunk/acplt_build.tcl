@@ -153,8 +153,8 @@ proc execute {args} {
     if { [catch $cmd msg] } {
         puts stderr "error: $msg"
         puts stderr "Consult the file '$logfile'"
-        #exit 1
-		return 1
+	    exit 1
+		#return 1
     }
 	return 0
 }
@@ -213,7 +213,12 @@ while {[gets $in line] != -1} {
 if {[regexp "Ausgecheckt, Revision" $line] } then {
 print_msg $line
 regexp {\s*Ausgecheckt, Revision\s+(.+).\s*} $line _ first 
-continue
+break
+}
+if {[regexp "Revision:" $line] } then {
+print_msg $line
+regexp {\s*Revision\s+(.+).\s*} $line _ first 
+break
 }
 }
 close $in
@@ -285,8 +290,8 @@ proc checkout_acplt {} {
     checkout archive acplt base
     cd $builddir/base
     #checkout libmpm
+    checkout archive fbs_dienste "" notrunk
     checkout develop ov
-	checkout archive fbs_dienste "" notrunk
 
     cd $releasedir/dev
 	if {$release == 1} {
@@ -814,7 +819,7 @@ proc create_systools_and_servers {} {
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/sfc }
+		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc }
 	
 	print_msg "checking out trunk"
 } else {
@@ -898,7 +903,7 @@ if {$release == 1} {
 
 create_dirs
 checkout_acplt
-cd $builddir
+cd $basedir
 set date [get_revision]
 cd $basedir
 if {$checkout == 1} {
@@ -957,7 +962,7 @@ if {$release == 1} {
 	file delete -force $builddir
 	create_dirs
 	checkout_acplt
-	cd $builddir
+	cd $basedir
 	set date [get_revision]
 
 	cd $basedir
