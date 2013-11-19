@@ -719,10 +719,11 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_cshmi_RoutePolyline pRoutePolyline = NULL;
 	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
 	OV_INSTPTR_cshmi_TranslationSource pTranslationSource = NULL;
+	OV_INSTPTR_cshmi_CreateObject pCreateObject = NULL;
 
 	//be careful to adjust the ov_string_print at the end of the function
-	#define MAXACTIONENTRIES 11
-	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+	#define MAXACTIONENTRIES 12
+	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	OV_STRING strIterate = NULL;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
@@ -1252,8 +1253,38 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		elementIsfirst = FALSE;
 	}
 
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_CreateObject, pObj){
+		elementInstantiated = TRUE;
+		pCreateObject = Ov_StaticPtrCast(cshmi_CreateObject, pObj);
+		ov_string_setvalue(&strIterate, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterate, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterate, "%22:%7B");
+		ov_string_append(&strIterate, "%22Parameters%22:%7B");
+		ov_string_print(&strIterate, "%s%%22autoRenameIfExists%%22:%%22%s%%22", strIterate, (pCreateObject->v_autoRenameIfExists==TRUE?"TRUE":"FALSE"));
+		ov_string_append(&strIterate, "%7D");
+		ov_string_append(&strIterate, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterate, ",");
+		}
+		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
+	}
+	if(elementInstantiated == TRUE){
+		ResultListIndex++;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
+
+
 	//concat the result, manual for performance reasons (append is not cheap)
-	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10]);
+	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10], ResultListVec[11]);
 	ov_string_setvalue(&ResultFormat, NULL);
 	ov_string_setvalue(&ParameterName, NULL);
 	ov_string_setvalue(&ParameterValue, NULL);

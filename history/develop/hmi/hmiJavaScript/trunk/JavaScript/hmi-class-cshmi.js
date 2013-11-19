@@ -1005,6 +1005,11 @@ cshmi.prototype = {
 				var pathArray = path.split(".");
 				var variablename = pathArray.pop();
 				var objectname = pathArray.join(".");
+				if(path.indexOf("vendor/") !== -1){
+					//vendor is special as usual...
+					objectname = "";
+					variablename = path;
+				}
 				if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
 					delete CyctimeObject[objectname][variablename];
 				}
@@ -1021,6 +1026,11 @@ cshmi.prototype = {
 				var pathArray = path.split(".");
 				var variablename = pathArray.pop();
 				var objectname = pathArray.join(".");
+				if(path.indexOf("vendor/") !== -1){
+					//vendor is special as usual...
+					objectname = "";
+					variablename = path;
+				}
 				if(CyctimeObject[objectname] === undefined){
 					CyctimeObject[objectname] = Object();
 				}
@@ -1273,6 +1283,11 @@ cshmi.prototype = {
 				var pathArray = path.split(".");
 				var variablename = pathArray.pop();
 				var objectname = pathArray.join(".");
+				if(path.indexOf("vendor/") !== -1){
+					//vendor is special as usual...
+					objectname = "";
+					variablename = path;
+				}
 				if(CyctimeObject[objectname] === undefined){
 					CyctimeObject[objectname] = Object();
 				}
@@ -1319,6 +1334,11 @@ cshmi.prototype = {
 							var pathArray = path.split(".");
 							var variablename = pathArray.pop();
 							var objectname = pathArray.join(".");
+							if(path.indexOf("vendor/") !== -1){
+								//vendor is special as usual...
+								objectname = "";
+								variablename = path;
+							}
 							if(CyctimeObject[objectname] === undefined){
 								CyctimeObject[objectname] = Object();
 							}
@@ -2084,7 +2104,23 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_interpreteCreateObject: function(VisualObject, ObjectPath){
-		//todo: implement autoRenameIfExists
+		var requestList = new Object();
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
+		}else{
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["autoRenameIfExists"] = null;
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode === false){
+				return null;
+			}
+			
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
+		}
+		
+		var autoRenameIfExists = requestList[ObjectPath]["autoRenameIfExists"];
 		
 		//via getValue-part of CreateObject object
 		var targetName = this._getValue(VisualObject, ObjectPath+".Name");
@@ -2127,6 +2163,13 @@ cshmi.prototype = {
 		
 		var result = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass);
 		
+		var originalTargetName = targetName;
+		var trycount = 1;
+		while(autoRenameIfExists === "TRUE" && trycount < 10 && result.indexOf("KS_ERR_ALREADYEXISTS") !== -1){
+			targetName = originalTargetName + Math.floor(Math.random() * 10000).toString();
+			result = HMI.KSClient.createObject(targetPlace+"/"+targetName, targetLibrary+"/"+targetClass);
+			trycount++;
+		}
 		if (result === false){
 			return false;
 		}
@@ -5405,7 +5448,7 @@ cshmi.prototype = {
 			//all our variables gave an error, so it is an server problem and no model problem, will be reported in caller function
 			return false;
 		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			if(ignoreError === true){
+			if(ignoreError === false){
 				HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
 			}
 			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
