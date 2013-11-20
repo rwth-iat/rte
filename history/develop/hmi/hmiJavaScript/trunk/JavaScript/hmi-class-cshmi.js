@@ -549,11 +549,13 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
+				//quit propagation of event in any case. We do not want the parent template to handle the click
+				if (evt.stopPropagation) evt.stopPropagation();
+				
 				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
 					//fixme handle toggle
 					
 					//we have an movegesture on the same VisualObject, so this handled all action in mouse up
-					if (evt.stopPropagation) evt.stopPropagation();
 					return;
 				}
 				
@@ -570,7 +572,6 @@ cshmi.prototype = {
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
-				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "doubleclick"){
 			VisualObject.setAttribute("cursor", "pointer");
@@ -1018,9 +1019,6 @@ cshmi.prototype = {
 			return null;
 		}else if (ParameterName === "ksVar" && preventNetworkRequest === false){
 			var response;
-			if (ParameterValue.charAt(0) !== "/"){
-				//we have no absolute path => get baseKsPath
-			}
 			var path = this._generateFullKsPath(VisualObject, ObjectPath, ParameterValue);
 			if(CyctimeObject !== undefined && CyctimeObject !== null){
 				var pathArray = path.split(".");
@@ -5342,18 +5340,23 @@ cshmi.prototype = {
 	/** set x, y and/or rotate of an object. Parameters as null will be skipped
 	 */
 	_setXYRotate: function(VisualObject, x, y, rotate){
-		//svg are not transformable, so the rotation/transform is in the objects parent
-		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-			//object has already an g parent
-			var rotationObject = VisualObject.parentNode;
-		}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
-			//element has to be shifted into an g element
-			rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-			rotationObject.setAttribute("overflow", "visible");
-			rotationObject.setAttribute("x", "0");
-			rotationObject.setAttribute("y", "0");
-			VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
-			rotationObject.appendChild(VisualObject);
+		if(rotate !== null){
+			//svg are not transformable, so the rotation/transform is in the objects parent
+			if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+				//object has already an g parent
+				var rotationObject = VisualObject.parentNode;
+			}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
+				//element has to be shifted into an g element
+				rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+				rotationObject.setAttribute("overflow", "visible");
+				rotationObject.setAttribute("x", "0");
+				rotationObject.setAttribute("y", "0");
+				VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
+				rotationObject.appendChild(VisualObject);
+			}else{
+				//normal visual element
+				rotationObject = VisualObject;
+			}
 		}else{
 			//normal visual element
 			rotationObject = VisualObject;
@@ -5573,26 +5576,25 @@ cshmi.prototype = {
 		if (requestList[ObjectPath]["hideable"] === "TRUE"){
 			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
 			VisualParentObject.setAttribute("cursor", "pointer");
-		}
-		//make the parent clickable, if we can be hidden and no sibling has done this before
-		if (requestList[ObjectPath]["hideable"] === "TRUE"
-			&& HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
-			//toggle visibility of hideable childtemplates onclick
-			VisualParentObject.addEventListener("click", function(evt){
-				if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
-					//we have an clickgesture on the same VisualObject, so this handled all action in mouse up
-					if (evt.stopPropagation) evt.stopPropagation();
-					return;
-				}
-				
-				HMI.cshmi.toggleChildTemplates(VisualParentObject);
-				
-				//quit propagation of event in any case. We do not want the parent template to handle the click
-				if (evt.stopPropagation) evt.stopPropagation();
-			}, false);
 			
-			//prevent multiple events on this
-			HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
+			//make the parent clickable, if we can be hidden and no sibling has done this before
+			if (HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
+				//toggle visibility of hideable childtemplates onclick
+				VisualParentObject.addEventListener("click", function(evt){
+					//quit propagation of event in any case. We do not want the parent template to handle the click
+					if (evt.stopPropagation) evt.stopPropagation();
+					
+					if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
+						//we have an clickgesture on the same VisualObject, so this handled all action in mouse up
+						return;
+					}
+					
+					HMI.cshmi.toggleChildTemplates(VisualParentObject);
+				}, false);
+				
+				//prevent multiple events on this
+				HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
+			}
 		}
 	},
 	
