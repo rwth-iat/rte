@@ -94,11 +94,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
     if(Ov_Fail(result))
          return result;
 
-    /* do what */
-    pinst->v_cyctime.secs = 0;
-    pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = 1;
-
     // check location
     if ( pStep==NULL )
 	{
@@ -108,6 +103,15 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 
     // link to subtask
     result=ssc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
+    result = 0;
+    /* do what */
+    pinst->v_cyctime.secs = 0;
+    pinst->v_cyctime.usecs = 0;
+    pinst->v_iexreq = 1;
+
+
+
+
     // activate itself
     pinst->v_actimode = 1;
 

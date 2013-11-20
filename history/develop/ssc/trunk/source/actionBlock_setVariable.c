@@ -95,25 +95,35 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 
     if(pObj != NULL && pathToVariable != NULL)
     {
-    	varElement.elemtype = OV_ET_NONE;
-    	element.elemtype = OV_ET_OBJECT;
-    	element.pobj = pObj;
-    	//iterate over all ports of the object to find the destination port for the set operation
-    	ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
-
-    	while(varElement.elemtype != OV_ET_NONE)
+    	if (Ov_CanCastTo(fb_functionblock,pObj))
     	{
-    		if(varElement.elemunion.pvar)
-    		{
-    			if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable[1]) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
-    			{
-    				//port found, use the setter to write the value
-    				Ov_GetVTablePtr(ov_object, pVtblObj, pObj);
-    				result = pVtblObj->m_setvar(varElement.pobj, &varElement, &(pinst->v_value));
+    		//set variable in a functionchart
 
-    			}
-    		}
-    		ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
+    		result = fb_functionchart_setport((OV_INSTPTR_fb_functionchart)pObj, pathToVariable[1], &(pinst->v_value));
+    	}
+    	else
+    	{
+    		//set variable in a functionblock
+			varElement.elemtype = OV_ET_NONE;
+			element.elemtype = OV_ET_OBJECT;
+			element.pobj = pObj;
+			//iterate over all ports of the object to find the destination port for the set operation
+			ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
+
+			while(varElement.elemtype != OV_ET_NONE)
+			{
+				if(varElement.elemunion.pvar)
+				{
+					if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable[1]) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
+					{
+						//port found, use the setter to write the value
+						Ov_GetVTablePtr(ov_object, pVtblObj, pObj);
+						result = pVtblObj->m_setvar(varElement.pobj, &varElement, &(pinst->v_value));
+
+					}
+				}
+				ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
+			}
     	}
     }
     else

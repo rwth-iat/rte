@@ -30,7 +30,8 @@
 
 OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
 	OV_INSTPTR_ov_object 	pobj
-) {
+)
+{
     /*
     *   local variables
     */
