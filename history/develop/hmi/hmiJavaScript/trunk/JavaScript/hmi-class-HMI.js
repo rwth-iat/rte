@@ -727,9 +727,15 @@ HMI.prototype = {
 	updateDeepLink: function (){
 		var newDeepLink = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1);
 		var SheetInfo = {"Host":"", "Server":"", "Sheet":""};
-		newDeepLink += "?RefreshTime="+HMI.RefreshTime;
+		newDeepLink += "?";
+		if(HMI.cshmi === null){
+			newDeepLink += "RefreshTime="+HMI.RefreshTime;
+		}
 		if(HMI.InputHost.value !== ""){
-			newDeepLink += "&Host="+HMI.InputHost.value;
+			if(newDeepLink.slice(-1) !== "?"){
+				newDeepLink += "&";
+			}
+			newDeepLink += "Host="+HMI.InputHost.value;
 			SheetInfo.Host = HMI.InputHost.value;
 		}
 		if(HMI.PossServers.selectedIndex >= 0 && HMI.PossServers.options[HMI.PossServers.selectedIndex].value !== ""){
