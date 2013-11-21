@@ -143,7 +143,7 @@ LIBRARY cshmi
 	
 	CLASS TemplateDefinition : CLASS cshmi/ContainerElement
 		IS_INSTANTIABLE;
-		COMMENT = "a grouping of elements with is referenced";
+		COMMENT = "a referenced group";
 		VARIABLES
 			width : SINGLE
 			HAS_SET_ACCESSOR
@@ -156,6 +156,9 @@ LIBRARY cshmi
 			comment : STRING
 			COMMENT = "describes the use of the Definition (including parameters)";
 		END_VARIABLES;
+		OPERATIONS
+			getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;
+		END_OPERATIONS;
 	END_CLASS;
 	
 	CLASS csContainer : CLASS cshmi/ContainerElement
@@ -452,8 +455,8 @@ LIBRARY cshmi
 			OperatorInput : STRING
 			HAS_SET_ACCESSOR
 			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
-			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'fullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'fullqualifiedparentname', 'absolutepathname' and 'absoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
+			TemplateFBReferenceVariable : STRING HAS_SET_ACCESSOR
+			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'CSHMIfullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'CSHMIfullqualifiedparentname', 'CSHMIabsolutepathname' and 'CSHMIabsoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
 			TemplateFBVariableReferenceName : STRING
 			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
@@ -570,6 +573,9 @@ LIBRARY cshmi
 			COMMENT = "Probably 'myVar:OP_NAME', path of a named reference variable object";
 			ConfigValues[] : STRING
 			COMMENT = "Perhaps 'myText:OP_CLASS' if you want to use this info later";
+			preventClone : BOOL
+			COMMENT = "do not instanciate duplicate identical objects"
+			INITIALVALUE = FALSE;
 			visible : BOOL
 			COMMENT = "the element is visible"
 			INITIALVALUE = TRUE;
@@ -784,6 +790,7 @@ LIBRARY cshmi
 	
 	CLASS downloadApplication : CLASS ov/object
 		IS_INSTANTIABLE;
+		FLAGS	=	"v";
 		COMMENT = "Model turbo";
 		VARIABLES
 			asJSON	: STRING

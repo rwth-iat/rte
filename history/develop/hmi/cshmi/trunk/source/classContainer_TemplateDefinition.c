@@ -88,3 +88,30 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_height_set(
 	}
 	return OV_ERR_OK;
 }
+
+
+OV_DLLFNCEXPORT OV_STRING cshmi_TemplateDefinition_getcomment(
+	OV_INSTPTR_ov_object 	pobj,
+	const OV_ELEMENT		*pelem
+) {
+	OV_INSTPTR_cshmi_TemplateDefinition pinst = Ov_StaticPtrCast(cshmi_TemplateDefinition, pobj);
+	OV_INSTPTR_ov_class pClass = Ov_GetParent(ov_instantiation, pobj);
+	OV_STRING temp = NULL;
+	OV_UINT classcommentlength = 0;
+	OV_UINT length = 0;
+	switch(pelem->elemtype) {
+	case OV_ET_OBJECT:
+		classcommentlength = ov_string_getlength(pClass->v_comment);
+		length = classcommentlength + ov_string_getlength(pinst->v_comment)+3;
+		temp = ov_memstack_alloc(length);
+		//strcpy adds the terminator
+		strcpy(temp, pClass->v_comment);
+		if(pinst->v_comment != NULL){
+			*(temp+classcommentlength) = ':';
+			*(temp+classcommentlength+1) = ' ';
+			strcpy((temp+classcommentlength+2), pinst->v_comment);
+		}
+		return temp;
+	}
+	return ov_object_getcomment(pobj, pelem);
+}

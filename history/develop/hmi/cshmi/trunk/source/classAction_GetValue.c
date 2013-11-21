@@ -162,3 +162,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVarPath_set(
 	}
 	return OV_ERR_NOTIMPLEMENTED;
 }
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBReferenceVariable_set(
+	OV_INSTPTR_cshmi_GetValue          pobj,
+	const OV_STRING  value
+) {
+	if(ov_string_compare(value, "fullqualifiedparentname") == OV_STRCMP_EQUAL){
+			return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIfullqualifiedparentname");
+	}else if(ov_string_compare(value, "fullqualifiedname") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIfullqualifiedname");
+	}else if(ov_string_compare(value, "absoluteparentpathname") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIabsoluteparentpathname");
+	}else if(ov_string_compare(value, "absolutepathname") == OV_STRCMP_EQUAL){
+		return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIabsolutepathname");
+	}
+	return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable,value);
+}
