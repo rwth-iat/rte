@@ -367,6 +367,7 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_print(&strIterate, "%s%%22xOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_xOffset);
 		ov_string_print(&strIterate, "%s%%22yOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_yOffset);
 		ov_string_print(&strIterate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterate, ov_string_compare(pInstantiateTemplate->v_maxTemplatesPerDirection, "")==OV_STRCMP_EQUAL?"":pInstantiateTemplate->v_maxTemplatesPerDirection);
+		ov_string_print(&strIterate, "%s%%22preventClone%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_preventClone==TRUE?"TRUE":"FALSE"));
 		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_FBReference.veclen!=1||ov_string_compare(pInstantiateTemplate->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pInstantiateTemplate->v_FBReference.value[0]);
 
 		if(pInstantiateTemplate->v_FBVariableReference.veclen == 0){
@@ -848,7 +849,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
@@ -912,7 +913,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);

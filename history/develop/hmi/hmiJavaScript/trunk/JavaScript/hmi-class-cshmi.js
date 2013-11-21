@@ -3778,6 +3778,9 @@ cshmi.prototype = {
 				requestList[ObjectPath]["xOffset"] = null;
 				requestList[ObjectPath]["yOffset"] = null;
 				requestList[ObjectPath]["maxTemplatesPerDirection"] = null;
+				
+				//fixme activate even if turbo is broken
+//				requestList[ObjectPath]["preventClone"] = null;
 			}else{
 				//a group has other
 				requestList[ObjectPath]["width"] = null;
@@ -3869,15 +3872,6 @@ cshmi.prototype = {
 		}else{
 			VisualObject.setAttribute("data-TemplateModelSource", "");
 		}
-		
-		HMI.addClass(VisualObject, this.cshmiTemplateClass);
-		VisualObject.setAttribute("overflow", "visible");
-		
-		if (calledFromInstantiateTemplate === true){
-			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
-		}
-		
-		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		//the VPO is needed in generateFullKsPath
 		//fixme wenn ich nicht im DOM bin, dann kann ein zwischen group-objekt ein problem sein, da der parentNode im onload null ist
@@ -4058,6 +4052,21 @@ cshmi.prototype = {
 			}
 		}
 		
+		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
+			if(requestList[ObjectPath]["preventClone"] === "TRUE" && HMI.svgDocument.getElementById(VisualObject.id) !== null){
+				//we should prevent a clone and we would produce one, abort
+				return null;
+			}
+		}
+		
+		HMI.addClass(VisualObject, this.cshmiTemplateClass);
+		VisualObject.setAttribute("overflow", "visible");
+		
+		if (calledFromInstantiateTemplate === true){
+			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
+		}
+		
+		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		/////////////////////////////////////////////////////////////////////////////
 		//Iterator position changing
