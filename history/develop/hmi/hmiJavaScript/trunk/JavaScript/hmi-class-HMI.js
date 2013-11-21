@@ -728,7 +728,7 @@ HMI.prototype = {
 		var newDeepLink = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1);
 		var SheetInfo = {"Host":"", "Server":"", "Sheet":""};
 		newDeepLink += "?";
-		if(HMI.cshmi === null){
+		if(this.cshmi === null && this.Playground.firstChild !== null){
 			newDeepLink += "RefreshTime="+HMI.RefreshTime;
 		}
 		if(HMI.InputHost.value !== ""){
@@ -756,7 +756,7 @@ HMI.prototype = {
 		
 		//add sheet to html5 Session history management, if new
 		if (window.history.pushState && window.location.protocol !== "file:"){
-			if (newDeepLink != window.location.href){
+			if (newDeepLink != window.location.pathname+window.location.search){
 				window.history.pushState(SheetInfo, "", newDeepLink);
 			}
 		}else{
@@ -1150,6 +1150,9 @@ HMI.prototype = {
 				HMI.hideHeader(true);
 			}
 		}
+		
+		//update the "deep link" to the state
+		this.updateDeepLink();
 		
 		//blur the buttons for convenience with keyboard interaction
 		HMI.PossSheets.blur();
