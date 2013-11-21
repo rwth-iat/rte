@@ -87,6 +87,7 @@ function HMI(debug, error, warning, info, trace) {
 	
 	this.HMI_Constants.HMIdate = null;
 	this.HMI_Constants.ServerType = null;
+	this.HMI_Constants.UrlParameterList = null;
 	
 	this.debug = debug;
 	//log critical errors to console
@@ -597,54 +598,54 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter");
 		
 		//analyse a "deep link" of a sheet
-		var HMI_Parameter_Liste = null;
+		var UrlParameterList = null;
 		if (window.location.search.length !== 0){
 			//collect parameter given by the deep link
-			HMI_Parameter_Liste = new Array();
+			UrlParameterList = new Object();
 			var wertestring = unescape(window.location.search);
 			wertestring = wertestring.slice(1);
 			var paare = wertestring.split("&");
 			for (var i=0; i < paare.length; i++) {
 				var name = paare[i].substring(0, paare[i].indexOf("="));
 				var wert = paare[i].substring(paare[i].indexOf("=")+1, paare[i].length);
-				HMI_Parameter_Liste[name] = wert;
+				UrlParameterList[name] = wert;
 			}
 			paare = null;
 			wertestring = null;
 		}
 		//jump to a "deep link" of a sheet
-		if (	HMI_Parameter_Liste !== null &&
-			 (	HMI_Parameter_Liste.Host !== undefined
-			||	HMI_Parameter_Liste.RefreshTime !== undefined
-			||	HMI_Parameter_Liste.ShowComp !== undefined
-			||	HMI_Parameter_Liste.Server !== undefined
-			||	HMI_Parameter_Liste.Sheet !== undefined)
+		if (	UrlParameterList !== null &&
+			 (	UrlParameterList.Host !== undefined
+			||	UrlParameterList.RefreshTime !== undefined
+			||	UrlParameterList.ShowComp !== undefined
+			||	UrlParameterList.Server !== undefined
+			||	UrlParameterList.Sheet !== undefined)
 			){
 			//correct host in website with user wish
-			if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
-				HMI.InputHost.value = HMI_Parameter_Liste.Host;
+			if (UrlParameterList.Host && UrlParameterList.Host.length !== 0){
+				HMI.InputHost.value = UrlParameterList.Host;
 			}
 			//request sanitised name
 			var Host = this.getHostname();
 			
 			//correct RefreshTime in website with user wish
-			if (HMI_Parameter_Liste.RefreshTime && HMI_Parameter_Liste.RefreshTime.length !== 0){
-				HMI.InputRefreshTime.value = HMI_Parameter_Liste.RefreshTime;
+			if (UrlParameterList.RefreshTime && UrlParameterList.RefreshTime.length !== 0){
+				HMI.InputRefreshTime.value = UrlParameterList.RefreshTime;
 			}
 			
 			//correct ShowComponents Status in website with user wish
-			if (HMI_Parameter_Liste.ShowComp && HMI_Parameter_Liste.ShowComp.length !== 0){
-				if (HMI_Parameter_Liste.ShowComp == "true" && document.getElementById("idShowcomponents")){
+			if (UrlParameterList.ShowComp && UrlParameterList.ShowComp.length !== 0){
+				if (UrlParameterList.ShowComp == "true" && document.getElementById("idShowcomponents")){
 					document.getElementById("idShowcomponents").checked = true;
 				}
 			}
 			HMI.ChangeRefreshTime();
 			
 			//a server and sheet is specified in "deep link" (host is always there)
-			if (	HMI_Parameter_Liste.Server
-				&&	HMI_Parameter_Liste.Server.length !== 0
-				&&	HMI_Parameter_Liste.Sheet
-				&&	HMI_Parameter_Liste.Sheet.length !== 0)
+			if (	UrlParameterList.Server
+				&&	UrlParameterList.Server.length !== 0
+				&&	UrlParameterList.Sheet
+				&&	UrlParameterList.Sheet.length !== 0)
 			{
 				HMI.ButShowServers.value = "Loading Sheet...";
 				
@@ -654,31 +655,33 @@ HMI.prototype = {
 				deleteChilds(this.Playground);
 				deleteChilds(this.ErrorOutput);
 				
-				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
-				HMI.PossSheets.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Sheet);
+				HMI.PossServers.options[0] = new Option('- list not loaded -', UrlParameterList.Server);
+				HMI.PossSheets.options[0] = new Option('- list not loaded -', UrlParameterList.Sheet);
 				
 				//deactivate the Select-Boxes, because there is no usefull content
 				HMI.PossServers.disabled = true;
 				HMI.PossSheets.disabled = true;
 				
-				//the path of the HMI Manager could be different in every OV Server (manager needed for all gestures)
-				this.KSClient.getHMIManagerPointer(Host, HMI_Parameter_Liste.Server);
+				this.HMI_Constants.UrlParameterList = UrlParameterList;
+				
+				//the path of the HMI Manager could be different in every OV Server (manager needed for all hmi gestures, not cshmi)
+				this.KSClient.getHMIManagerPointer(Host, UrlParameterList.Server);
 				//spaces in objectname are encoded as %20 within OV
-				HMI.showSheet(Host, HMI_Parameter_Liste.Server, encodeURI(HMI_Parameter_Liste.Sheet));
+				HMI.showSheet(Host, UrlParameterList.Server, encodeURI(UrlParameterList.Sheet));
 				
 				HMI.ButShowServers.value = "Reload Serverlist";
-			}else if (	HMI_Parameter_Liste.Server
-				&&	HMI_Parameter_Liste.Server.length !== 0){
+			}else if (	UrlParameterList.Server
+				&&	UrlParameterList.Server.length !== 0){
 				//only a server is specified in "deep link" => showSheets
 				
 				HMI.ButShowServers.value = "Loading Sheetlist...";
-				HMI.PossServers.options[0] = new Option('- list not loaded -', HMI_Parameter_Liste.Server);
+				HMI.PossServers.options[0] = new Option('- list not loaded -', UrlParameterList.Server);
 				HMI.PossSheets.options[0] = new Option('- list not loaded -', '');
 				
-				HMI.showSheets(Host, HMI_Parameter_Liste.Server);
+				HMI.showSheets(Host, UrlParameterList.Server);
 				
 				HMI.ButShowServers.value = "Reload Serverlist";
-			}else if (HMI_Parameter_Liste.Host && HMI_Parameter_Liste.Host.length !== 0){
+			}else if (UrlParameterList.Host && UrlParameterList.Host.length !== 0){
 				//no server and sheet specified, but a host => load serverlist
 				HMI.showServers();
 			}
@@ -696,12 +699,12 @@ HMI.prototype = {
 		}catch(e){/* nothing to do*/}
 		
 		//append html5 datalist if supported and provided
-		if(this.InputHost.list !== undefined & HMI_Parameter_Liste !== null && HMI_Parameter_Liste.hostlist !== undefined){
+		if(this.InputHost.list !== undefined & UrlParameterList !== null && UrlParameterList.hostlist !== undefined){
 			this.InputHost.setAttribute("list", "InputHost");
 			var datalistNode = document.createElement("datalist");
 			datalistNode.setAttribute("id", "InputHost");
 			
-			var hostlist = HMI_Parameter_Liste.hostlist.split(",");
+			var hostlist = UrlParameterList.hostlist.split(",");
 			for (var i=0;i < hostlist.length;i++){
 				var optionNode = document.createElement("option");
 				optionNode.setAttribute("value", hostlist[i]);
@@ -709,7 +712,6 @@ HMI.prototype = {
 			}
 			this.InputHost.parentNode.appendChild(datalistNode);
 		}
-		HMI_Parameter_Liste = null;
 		
 		if (document.getElementById("idThrobbler") !== null){
 			document.getElementById("idThrobbler").style.display = "none";

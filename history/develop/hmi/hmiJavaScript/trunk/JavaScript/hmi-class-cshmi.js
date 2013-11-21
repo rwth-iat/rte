@@ -103,7 +103,6 @@ function cshmi() {
 	this.initStage = false;
 	
 	//we want to add all elements to a class to find it later
-	this.cshmiGroupClass = "cshmi-group";
 	this.cshmiBlackboxClass = "cshmi-blackbox";
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
@@ -3899,7 +3898,12 @@ cshmi.prototype = {
 			requestList[ObjectPath]["FBVariableReference"] = "";
 			requestList[ObjectPath]["ConfigValues"] = "";
 		}
-		var FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
+		if (VisualParentObject === null && HMI.HMI_Constants.UrlParameterList && HMI.HMI_Constants.UrlParameterList.FBReference && HMI.HMI_Constants.UrlParameterList.FBReference.length > 0){
+			//a url parameter is able to overwrite the fbreference
+			var FBReferenceList = [HMI.HMI_Constants.UrlParameterList.FBReference];
+		}else{
+			FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
+		}
 		for (var i=0; i < FBReferenceList.length; i++) {
 			if (i > 1){
 				HMI.hmi_log_info_onwebsite("Only one FBReference is valid. "+ObjectPath+" has more of them.");
