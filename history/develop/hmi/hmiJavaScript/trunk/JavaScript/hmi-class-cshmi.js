@@ -4052,10 +4052,17 @@ cshmi.prototype = {
 			}
 		}
 		
+		VisualObject.setAttribute("name", VisualObject.id);
 		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
-			if(requestList[ObjectPath]["preventClone"] === "TRUE" && HMI.svgDocument.getElementById(VisualObject.id) !== null){
-				//we should prevent a clone and we would produce one, abort
-				return null;
+			if(requestList[ObjectPath]["preventClone"] === "TRUE" && HMI.svgDocument.querySelectorAll){
+				//fixme shim for QSA needed!
+				var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
+				for (var i = 0; i < CloneCandidates.length; ++i) {
+					if(CloneCandidates[i].getAttribute("data-TemplateModelSource") === PathOfTemplateDefinition){
+						//we should prevent a clone and we would produce one, abort
+						return null;
+					}
+				}
 			}
 		}
 		
