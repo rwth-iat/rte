@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-06-14 17:33:23
+  Erstellt : 2013-11-22 11:09:08
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -3223,15 +3223,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HeatExchangerLinear/lines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,0 L0,100
-
-M20,10 h5 v-5 v10 
-
-M-20,90 h-5 v-5 v10
-
-M-10,10 H10 
-
-m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10";
+        d : INPUT  STRING = "M0,0 L0,100  M20,10 h5 v-5 v10  M-20,90 h-5 v-5 v10  M-10,10 H10  m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3291,19 +3283,7 @@ m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/lines :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,20 v20
-
-M-14,-14 L11,-17
-
-M-14,14 L11,17
-
-M-16,0
-
-A17,17 0 0 0 9,-14
-
-A17,17 0 0 0 9,14
-
-A17,17 0 0 0 -16,0";
+        d : INPUT  STRING = "M0,20 v20  M-14,-14 L11,-17  M-14,14 L11,17  M-16,0  A17,17 0 0 0 9,-14  A17,17 0 0 0 9,14  A17,17 0 0 0 -16,0";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -3950,19 +3930,7 @@ A17,17 0 0 0 -16,0";
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Thyristor/visualisation :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M0,0
-
-v-30
-
-m0,30
-
-m-15,0 h30
-
-m-15,0 l-15,-30 h30 l-15,30
-
-m-8,-15 h-12
-
-m10,15 l-5,8";
+        d : INPUT  STRING = "M0,0  v-30  m0,30  m-15,0 h30  m-15,0 l-15,-30 h30 l-15,30  m-8,-15 h-12  m10,15 l-5,8";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";

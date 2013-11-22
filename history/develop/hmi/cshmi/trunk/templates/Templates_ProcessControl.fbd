@@ -2,7 +2,7 @@
 ======================================================================
   Selektierte Sicherung der Datenbasis.
 
-  Erstellt : 2013-10-15 14:22:02
+  Erstellt : 2013-11-22 11:11:24
 
   HOST                : DEV
   SERVER              : ov_hmidemo8
@@ -7782,9 +7782,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnErrorField/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21 
-
-M37.8 14 L39.9 17.5 L37.8 21";
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21  M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -8873,9 +8871,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnHandAuto/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
-
-M37.8 14 L39.9 17.5 L37.8 21";
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21  M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
@@ -9192,9 +9188,7 @@ M37.8 14 L39.9 17.5 L37.8 21";
  INSTANCE  /TechUnits/cshmi/Templates/Processcontrol/FaceplatePCUGeneric/BtnCommands/Arrows :
     CLASS /Libraries/cshmi/Path;
     VARIABLE_VALUES
-        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21
-
-M37.8 14 L39.9 17.5 L37.8 21";
+        d : INPUT  STRING = "M35.7 14 L37.8 17.5 L35.7 21  M37.8 14 L39.9 17.5 L37.8 21";
         strokeWidth : INPUT  SINGLE = 1.000000;
         visible : INPUT  BOOL = TRUE;
         stroke : INPUT  STRING = "black";
