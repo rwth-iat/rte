@@ -2020,27 +2020,44 @@ cshmi.prototype = {
 			//todo document setting ConfigValue
 			
 			var TemplateObject = VisualObject;
+			
+			//a target to use if no config value is found
+			var BackupTarget = null;
 			do{
+				if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[ParameterValue] !== undefined){
+					//we found a configValue in a parent object with the same name => overwrite it
+					TemplateObject.ConfigValues[ParameterValue] = NewValue;
+					return true;
+				}
+				
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+					if(BackupTarget === null){
+						//we have the first hit, remember
+						BackupTarget = TemplateObject;
+					}
 					break;
 				}
 				for (var item in TemplateObject.FBVariableReference){
 					if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
-						var targetFound = true;
-						break;
+						if(BackupTarget === null){
+							//we have the first hit, remember
+							BackupTarget = TemplateObject;
+						}
 					}
 				};
-				if(targetFound === true){
-					break;
-				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			
-			if(TemplateObject !== null && TemplateObject.ConfigValues){
-				TemplateObject.ConfigValues[ParameterValue] = NewValue;
+			//we did not found a configValue with this name => save on first template with FBRef or FBVarRef
+			if(BackupTarget !== null && BackupTarget.ConfigValues){
+				BackupTarget.ConfigValues[ParameterValue] = NewValue;
+				return true;
+			}else if(HMI.Playground.firstChild && HMI.Playground.firstChild.ConfigValues){
+				HMI.Playground.firstChild.ConfigValues[ParameterValue] = NewValue;
 				return true;
 			}
-			//should not happen, since the first SVG has an empty ConfigValue
+			
+			//should not happen, since the firstChild of Playground has an empty ConfigValue
 			return false;
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
@@ -4054,9 +4071,20 @@ cshmi.prototype = {
 		
 		VisualObject.setAttribute("name", VisualObject.id);
 		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
-			if(requestList[ObjectPath]["preventClone"] === "TRUE" && HMI.svgDocument.querySelectorAll){
-				//fixme shim for QSA needed!
-				var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
+			if(requestList[ObjectPath]["preventClone"] === "TRUE"){
+				if(HMI.svgDocument.querySelectorAll){
+					var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
+				}else{
+					//shim the queryselector if not available
+					CloneCandidates = Array();
+					var ComponentChilds = HMI.Playground.firstChild.getElementsByTagName("svg");
+					for(var i = 0;i < ComponentChilds.length;i++){
+						if(ComponentChilds[i].getAttribute("name") == VisualObject.id){
+							CloneCandidates.push();
+						}
+					}
+					CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
+				}
 				for (var i = 0; i < CloneCandidates.length; ++i) {
 					if(CloneCandidates[i].getAttribute("data-TemplateModelSource") === PathOfTemplateDefinition){
 						//we should prevent a clone and we would produce one, abort
