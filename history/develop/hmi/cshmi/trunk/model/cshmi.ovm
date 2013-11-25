@@ -485,7 +485,7 @@ LIBRARY cshmi
 			persistentGlobalVar : STRING
 			COMMENT = "name of the persistent global variable (survives reloading)";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object; example 'IN1' or 'fullqualifiedname' for the full name of the FBref";
+			COMMENT = "name of a variable of a referenced FB object; example 'IN1' or setting a new FBRef with 'fullqualifiedname' for the full name of the FBref";
 			TemplateFBVariableReferenceName : STRING
 			COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
