@@ -2035,7 +2035,6 @@ cshmi.prototype = {
 						//we have the first hit, remember
 						BackupTarget = TemplateObject;
 					}
-					break;
 				}
 				for (var item in TemplateObject.FBVariableReference){
 					if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
