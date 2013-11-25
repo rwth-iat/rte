@@ -44,8 +44,8 @@
  * 3. the options "TCPBIND_LISTENPORT" or "KS_PORT" The value of TCPBIND_LISTENPORT will override KS_PORT.
  * If the options are set without value a random port is chosen.
  * If the port is 7509 (registered at IANA for acplt-ks) a manager will be created.
- * If there is no portnumber set in either way, the library open function will check if it can connect to localhost:7509.
- * 		If yes, a random port is chosen. If no, 7509 will be set as port.
+ * If there is no portnumber set in either way, the library open function will check if the servername equals "MANAGER".
+ * 		If no, a random port is chosen. If yes, 7509 will be set as port.
  */
 
 OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
