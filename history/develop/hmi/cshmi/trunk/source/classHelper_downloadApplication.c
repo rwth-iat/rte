@@ -1317,12 +1317,15 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
 	OV_INSTPTR_ov_object pGroupParent = NULL;
 	OV_STRING returnString;
-	OV_STRING strResult = NULL;
+	OV_STRING strBaseKsPath = NULL;
 	OV_STRING strElements = NULL;
 	OV_STRING strActions = NULL;
 	OV_STRING strChildList = NULL;
-
-	OV_STRING strBaseKsPath = NULL;
+	OV_STRING pJSON;
+	OV_UINT lenBaseKsPath;
+	OV_UINT lenElements;
+	OV_UINT lenActions;
+	OV_UINT lenChildList;
 	OV_RESULT result = OV_ERR_OK;
 
 
@@ -1405,30 +1408,40 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		ov_string_append(&strChildList, "%7D");
 	}
 
-	//open JSON Element, concat Strings and close JSON Element
-	result = ov_string_print(&strResult, "%%7B%s%s%s%s%%7D", strBaseKsPath, strElements, strActions, strChildList);
+	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
+	lenBaseKsPath = ov_string_getlength(strBaseKsPath);
+	lenElements = ov_string_getlength(strElements);
+	lenActions = ov_string_getlength(strActions);
+	lenChildList = ov_string_getlength(strChildList);
+	pJSON = (OV_STRING) ov_memstack_alloc(lenBaseKsPath+lenElements+lenActions+lenChildList+7);
 
-	if(Ov_Fail(result)){
-		ov_logfile_debug("%d:%s Error concatting result: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+	if (!pJSON){
+		ov_logfile_debug("%d:%s Error reserving memory for concatting result: MEMSTACK full", __LINE__, __FILE__);
 		ov_string_setvalue(&strBaseKsPath, NULL);
 		ov_string_setvalue(&strActions, NULL);
 		ov_string_setvalue(&strChildList, NULL);
 		ov_string_setvalue(&strElements, NULL);
-		ov_string_setvalue(&strResult, NULL);
 		return (OV_STRING) 0;
+
 	}
-	returnString = (OV_STRING) ov_memstack_alloc(ov_path_percentsize(strResult));
-	if (returnString){
-		strcpy(returnString, strResult);
-	}
-	ov_string_setvalue(&strResult, NULL);
+
+	returnString = pJSON;
+	//open JSON Element, concat Strings and close JSON Element
+	strncpy(pJSON, "%7B", 3);
+	pJSON = pJSON + 3;
+	strncpy(pJSON, strBaseKsPath, lenBaseKsPath);
+	pJSON = pJSON + lenBaseKsPath;
+	strncpy(pJSON, strElements, lenElements);
+	pJSON = pJSON + lenElements;
+	strncpy(pJSON, strActions, lenActions);
+	pJSON = pJSON + lenActions;
+	strncpy(pJSON, strChildList, lenChildList);
+	pJSON = pJSON + lenChildList;
+	strncpy(pJSON, "%7D", 4);
+
 	ov_string_setvalue(&strBaseKsPath, NULL);
 	ov_string_setvalue(&strActions, NULL);
 	ov_string_setvalue(&strChildList, NULL);
 	ov_string_setvalue(&strElements, NULL);
-	if (returnString){
-		return returnString;
-	}else{
-		return (OV_STRING) 0;
-	}
+	return returnString;
 }
