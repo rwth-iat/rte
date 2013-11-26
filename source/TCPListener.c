@@ -79,12 +79,14 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
 	if(pobj->v_socket[0] != -1)
 	{
 		CLOSE_SOCKET(pobj->v_socket[0]);
+		pobj->v_SocketState = 0;
 		pobj->v_socket[0] = -1;
 	}
 
 	if(pobj->v_socket[1] != -1)
 	{
 		CLOSE_SOCKET(pobj->v_socket[1]);
+		pobj->v_SocketState = 0;
 		pobj->v_socket[1] = -1;
 	}
 
