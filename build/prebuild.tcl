@@ -5,7 +5,6 @@ set mimetypename "mimetype"
 set encodingname "encoding"
 set webserverlib "kshttp"
 set staticfileclassname "staticfile"
-set baseovpath "/communication/${webserverlib}/staticfiles/hmi"
 
 proc stripLineComments {inputString {commentChars ";#"}} {
 	# Switch the RE engine into line-respecting mode instead of the default whole-string mode

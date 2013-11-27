@@ -61,8 +61,9 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 	OV_INSTPTR_kshttp_httpIdentificator pIdentificator = NULL;
 	OV_INSTPTR_kshttp_httpSimpleTicketAuthenticator pSimpleAuthenticator = NULL;
 	OV_INSTPTR_kshttp_httpManagerCom httpMngCom = NULL;
-	OV_INSTPTR_ov_domain httpStaticfiles = NULL;
 	OV_INSTPTR_ov_domain httpSessions = NULL;
+	OV_INSTPTR_ov_domain pData = NULL;
+	OV_INSTPTR_ov_domain httpStaticfiles = NULL;
 
 	/*
 	 *    set the global variables of the original version
@@ -164,26 +165,6 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 		httpMngCom->v_UseShortCut = FALSE;
 	}
 
-
-   /*
-	* 		create "staticfiles" container
-	*/
-	httpStaticfiles = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pDomkshttp, "staticfiles"));
-	if(!httpStaticfiles) {
-		result = Ov_CreateObject(ov_domain, httpStaticfiles, pDomkshttp, "staticfiles");
-		if(Ov_Fail(result))
-		{
-			ov_logfile_error("Fatal: could not create staticfiles domain");
-			return result;
-		}
-	}
-	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) httpStaticfiles))
-	{
-		ov_logfile_error("Fatal: staticfiles object found but not domain (or derived)");
-		return OV_ERR_GENERIC;
-	}
-
-
 	/*
 	 * 		create "sessions" container
 	 */
@@ -202,6 +183,41 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 		return OV_ERR_GENERIC;
 	}
 
+	/*
+	* 		create "data" container
+	*/
+	pData = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &pdb->root, "data"));
+	if(!pData) {
+		result = Ov_CreateObject(ov_domain, pData, &pdb->root, "data");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create /data domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pData))
+	{
+		ov_logfile_error("Fatal: /data object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
+
+	/*
+	* 		create "kshttp" container
+	*/
+	httpStaticfiles = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, pData, "kshttp"));
+	if(!httpStaticfiles) {
+		result = Ov_CreateObject(ov_domain, httpStaticfiles, pData, "kshttp");
+		if(Ov_Fail(result))
+		{
+			ov_logfile_error("Fatal: could not create /data/kshttp domain");
+			return result;
+		}
+	}
+	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) httpStaticfiles))
+	{
+		ov_logfile_error("Fatal: /data/kshttp object found but not domain (or derived)");
+		return OV_ERR_GENERIC;
+	}
 
 	/*
 	 * calling a generated wrapper function to create all the static files from /staticfiles dir

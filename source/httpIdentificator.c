@@ -8,21 +8,18 @@
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_kshttp_httpIdentificator pinst = Ov_StaticPtrCast(kshttp_httpIdentificator, pobj);
-    OV_RESULT    result;
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_kshttp_httpIdentificator pinst = Ov_StaticPtrCast(kshttp_httpIdentificator, pobj);
+	OV_RESULT    result;
 
-    OV_STRING allDings[] = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
-    /* do what the base class does first */
-    result = ov_object_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
+	/* do what the base class does first */
+	result = ov_object_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
 
-    ov_string_setvalue(&pinst->v_protocolID, KSHTTP_IDENTIFIER);
-    /* do what */
-    return  Ov_SetDynamicVectorValue(&pinst->v_AllowedMethods, allDings, 10, STRING);
+	return ov_string_setvalue(&pinst->v_protocolID, KSHTTP_IDENTIFIER);
 }
 
 
