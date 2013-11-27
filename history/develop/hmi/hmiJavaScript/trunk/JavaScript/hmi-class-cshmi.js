@@ -5292,6 +5292,7 @@ cshmi.prototype = {
 				
 				// it could be a path to another server, so we must add the serverName
 				resultArray[0] = ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
+				resultArray[1] = TemplateObject;
 			}
 			
 		//a getEP currentChild has OP_NAME set
@@ -5309,6 +5310,7 @@ cshmi.prototype = {
 						//we have no OV-PART, so the separator is a slash
 						resultArray[0] = FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
 					}
+					resultArray[1] = TemplateObject;
 					break;
 				}
 			//loop upwards to find the Template object
