@@ -6,7 +6,7 @@ set mimetypename "mimetype"
 set encodingname "encoding"
 set webserverlib "kshttp"
 set staticfileclassname "staticfile"
-set baseovpath "/communication/${webserverlib}/staticfiles/hmi"
+set baseovpath "/data/${webserverlib}/hmi"
 set staticfileclass "/acplt/${webserverlib}/${staticfileclassname}"
 set fbdfilename "StaticDisplayComponent.fbd"
 

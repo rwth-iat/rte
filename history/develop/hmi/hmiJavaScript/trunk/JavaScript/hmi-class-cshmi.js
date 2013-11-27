@@ -152,7 +152,7 @@ cshmi.prototype = {
 		//fill cache if possible
 		if (typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
-			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}"){
+			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}" && response !== "{{}}"){
 				if(response.charAt(1) == "{"){
 					//tcl wraps two braces
 					response = response.slice(2,-2);

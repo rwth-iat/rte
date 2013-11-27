@@ -53,7 +53,7 @@ LIBRARY kshttp
 		COMMENT = "class for identifing http communication";
 		VARIABLES
 			AllowedMethods[]	:	STRING
-			/* fixed in latest OV version INITIALVALUE = {"GET", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"}*/;
+			INITIALVALUE = {"GET", "POST", "HEAD", "PUT", "PROPPATCH", "PROPFIND", "DELETE", "MOVE", "LINK", "UNLINK", "OPTIONS"};
 		END_VARIABLES;
 		OPERATIONS
 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;

@@ -465,7 +465,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	if(!Ov_Fail(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 		OV_STRING filename = NULL;
 		OV_STRING filepath = NULL;
-		OV_STRING basepath = NULL;
 		//assume index.html as a root file
 		if(ov_string_compare("/", this->v_ClientRequest.cmd) == OV_STRCMP_EQUAL){
 			filename = "index.html"; //memory given from the compiler
@@ -478,11 +477,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			filename = this->v_ClientRequest.cmd + 1;
 		}
 		ov_memstack_lock();
-		//basepath is something like /communication/httpservers/httpserver
-		basepath = ov_path_getcanonicalpath((OV_INSTPTR_ov_object)Ov_GetParent(ov_containment,Ov_GetParent(ov_containment,this)), 2); //path to the current client instance
+
 		//a dot in a filename is represented via a percent notation in an identifier, so we need
 		//to change the parameter. A directory should be possible, so we need to skip / in conversion
-		ov_string_print(&filepath, "%s/staticfiles/%s", basepath, ov_path_topercent_noslash(filename));
+		ov_string_print(&filepath, "/data/kshttp/%s", ov_path_topercent_noslash(filename));
 		ov_memstack_unlock();
 		pStaticfile = Ov_DynamicPtrCast(kshttp_staticfile, ov_path_getobjectpointer(filepath, 2));
 		ov_string_setvalue(&filepath, NULL);
