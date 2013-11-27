@@ -1814,7 +1814,7 @@ cshmi.prototype = {
 			}else if (ParameterValue === "transform"){
 				VisualObject.setAttribute("transform", NewValue);
 				//we want to have offset parameter on all visual elements
-				HMI.saveAbsolutePosition(rotationObject);
+				HMI.saveAbsolutePosition(VisualObject);
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
