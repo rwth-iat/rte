@@ -61,7 +61,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblDeleteObj = {
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -79,10 +79,10 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "path", &match);
+	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
 		EXEC_DELETEOBJECT_RETURN fr; //400
 
 	}
@@ -94,7 +94,7 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	if(!*addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
 		EXEC_DELETEOBJECT_RETURN fr;
 	}
 
@@ -115,11 +115,11 @@ OV_RESULT exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_DELETEOBJECT_RETURN fr;
 	}
-	fr = print_result_array(message, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(message, response_format, result.results_val, result.results_len, "");
 
 	ov_memstack_unlock();
 	EXEC_DELETEOBJECT_RETURN fr;

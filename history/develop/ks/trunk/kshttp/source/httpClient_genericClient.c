@@ -310,7 +310,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
-	result = getChannelPointer(Ov_PtrUpCast(kshttp_httpClientBase, thisCl), &pChannel, &pVtblChannel);
+	result = kshttp_getChannelPointer(Ov_PtrUpCast(kshttp_httpClientBase, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));

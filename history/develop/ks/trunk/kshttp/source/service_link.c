@@ -63,7 +63,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblLink = {
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -81,18 +81,18 @@ OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT respo
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "path", &match);
+	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
 		EXEC_LINK_RETURN fr; //400
 	}
 	//process element
 	Ov_SetDynamicVectorLength(&elementmatch,0,STRING);
-	find_arguments(args, "element", &elementmatch);
+	kshttp_find_arguments(args, "element", &elementmatch);
 	if(elementmatch.veclen < match.veclen){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": not enough Variables element found: ");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": not enough Variables element found: ");
 		EXEC_LINK_RETURN fr; //400
 	}
 
@@ -102,7 +102,7 @@ OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT respo
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
 		EXEC_LINK_RETURN fr;
 
 	}
@@ -130,12 +130,12 @@ OV_RESULT exec_link(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT respo
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_LINK_RETURN result.result;
 	}
 
-	fr = print_result_array(message, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(message, response_format, result.results_val, result.results_len, "");
 	ov_memstack_unlock();
 	EXEC_LINK_RETURN fr;
 }

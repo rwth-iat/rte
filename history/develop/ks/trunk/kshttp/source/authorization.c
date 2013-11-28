@@ -15,7 +15,7 @@
 		ov_string_setvalue(&temp, "");\
 		return
 
-OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* result){
+static OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* result){
 	OV_STRING* plist=NULL;
 	OV_STRING temp=NULL;
 	OV_UINT len;
@@ -57,7 +57,7 @@ OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_STRING* r
 		ov_string_setvalue(&temp, NULL);\
 		return
 
-OV_RESULT authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd){
+OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd){
 	OV_STRING random_number=NULL;
 	md5_hash_return hash;
 	OV_RESULT res;

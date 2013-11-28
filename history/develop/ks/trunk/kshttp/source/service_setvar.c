@@ -76,7 +76,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblSetvar = {
 		ov_string_setvalue(&Temp, NULL);\
 		return
 
-OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -108,18 +108,18 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 	//process path
 	Ov_SetDynamicVectorLength(&pathmatch,0,STRING);
-	find_arguments(args, "path", &pathmatch);
+	kshttp_find_arguments(args, "path", &pathmatch);
 	if(pathmatch.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
 		EXEC_SETVAR_RETURN fr; //400
 	}
 	//process newvalue
 	Ov_SetDynamicVectorLength(&newvaluematch,0,STRING);
-	find_arguments(args, "newvalue", &newvaluematch);
+	kshttp_find_arguments(args, "newvalue", &newvaluematch);
 	if(newvaluematch.veclen< pathmatch.veclen){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": not enough Variables newvalue found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": not enough Variables newvalue found");
 		EXEC_SETVAR_RETURN fr; //400
 	}
 
@@ -128,7 +128,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
 		EXEC_SETVAR_RETURN fr;
 	}
 
@@ -139,7 +139,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 	//process vartype
 	//we have to get the vartypes via GetVar, if not specified in request
 	Ov_SetDynamicVectorLength(&vartypematch,0,STRING);
-	find_arguments(args, "vartype", &vartypematch);
+	kshttp_find_arguments(args, "vartype", &vartypematch);
 	if(vartypematch.veclen< 1){
 		//getVar
 		addrpGet = Ov_MemStackAlloc(OV_STRING);
@@ -147,7 +147,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 		if(!*addrpGet) {
 			ov_memstack_unlock();
 			fr = OV_ERR_TARGETGENERIC;
-			print_result_array(message, response_format, &fr, 1, ": memory problem");
+			kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
 			EXEC_SETVAR_RETURN fr;
 		}
 		paramsGet.identifiers_val = addrpGet;
@@ -163,7 +163,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 		if(Ov_Fail(resultGet.result)){
 			//general problem like memory problem or NOACCESS
-			print_result_array(message, response_format, &resultGet.result, 1, ": general problem with get");
+			kshttp_print_result_array(message, response_format, &resultGet.result, 1, ": general problem with get");
 			ov_memstack_unlock();
 			EXEC_SETVAR_RETURN fr;
 		}
@@ -176,7 +176,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			one_resultGet = *(resultGet.items_val + i);
 			if(Ov_Fail(one_resultGet.result)){
 				fr = one_resultGet.result;
-				print_result_array(message, response_format, &fr, 1, ": problem with get");
+				kshttp_print_result_array(message, response_format, &fr, 1, ": problem with get");
 				EXEC_SETVAR_RETURN fr;
 			}
 			addrp->var_current_props.value.vartype = one_resultGet.var_current_props.value.vartype;
@@ -253,7 +253,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 					addrp->var_current_props.value.valueunion.val_bool = FALSE;
 				}else{
 					fr = OV_ERR_BADPARAM;
-					print_result_array(message, response_format, &fr, 1, ": Input not detected as bool");
+					kshttp_print_result_array(message, response_format, &fr, 1, ": Input not detected as bool");
 					EXEC_SETVAR_RETURN fr;
 				}
 				break;
@@ -326,7 +326,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
-				print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				kshttp_print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
 				EXEC_SETVAR_RETURN fr;
 			break;
 
@@ -429,7 +429,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 				if(*pArgumentList[i] != '{' && len > 2){
 					fr = OV_ERR_BADPARAM;
-					print_result_array(message, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					kshttp_print_result_array(message, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
 					EXEC_SETVAR_RETURN fr;
 				}
 
@@ -460,7 +460,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
-				print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				kshttp_print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
 				EXEC_SETVAR_RETURN fr;
 
 	/*	TODO Time* VEC
@@ -480,7 +480,7 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 					addrp->var_current_props.value.vartype);
 	*/
 				fr = OV_ERR_NOTIMPLEMENTED;
-				print_result_array(message, response_format, &fr, 1, ": Vartype not supported");
+				kshttp_print_result_array(message, response_format, &fr, 1, ": Vartype not supported");
 				EXEC_SETVAR_RETURN fr;
 		}
 
@@ -496,11 +496,11 @@ OV_RESULT exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT response_
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_SETVAR_RETURN result.result;
 	}
-	fr = print_result_array(message, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(message, response_format, result.results_val, result.results_len, "");
 
 	ov_memstack_unlock();
 	EXEC_SETVAR_RETURN fr;
