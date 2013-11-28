@@ -886,7 +886,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	}
 
 	/*	set ticketreply	*/
-	if(!(pticket->vtbl->encodereply(answer, pticket)))
+	if(!(pticket->vtbl->encodereply(answer, pticket)))	/*	this will crash if someone tries to delete the ticket-authenticator he is using at the moment	*/
 	{
 		KS_logfile_error(("%s: HandleRequest: ticket encodereply failed", this->v_identifier));
 		return OV_ERR_GENERIC;
