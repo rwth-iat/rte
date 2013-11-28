@@ -11,6 +11,10 @@ if {$targetfolder != "" && [file isdirectory $targetfolder]} {
 		set fbdfilename [file tail $fbdfilefullname]
 		set targetname "$targetfolder/$fbdfilename"
 		puts -nonewline "Copying file $fbdfilefullname to $targetfolder..."
+		if {[file exists $fbdfilefullname] == 0} {
+			puts "not available. Skipped!"
+			continue
+		}
 		if {[file exists $targetname] == 1} {
 			puts -nonewline "deleting old..."
 			file delete $targetname
