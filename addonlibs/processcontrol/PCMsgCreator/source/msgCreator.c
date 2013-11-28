@@ -25,16 +25,10 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_vendortree.h"
 #include "libov/ov_path.h"
+#include "acplt_simpleMsgHandling.h"
 
-static OV_UINT currID = 236492743;	/*	msdID will be incremented on every send	*/
 
-static const char msgBody1 [] = "<msg><hdr><rcvSysAdr>";
-static const char msgBody2 [] = "<rcvSysAdr/><rcvLocAdr>";
-static const char msgBody3 [] = "</rcvLocAdr><msgId>";
-static const char msgBody4 [] = "</msgId></hdr><bdy><val id=\"svc\">ProcessControl</val><val id=\"op\">";
-static const char msgBody5 [] = "</val><sd><val id=\"cmdr\">";
-static const char msgBody6 [] = "</val><val id=\"value\">";
-static const char msgBody7 [] = "</val></sd></bdy></msg>";
+
 
 OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     OV_INSTPTR_PCMsgCreator_msgCreator          pobj,
@@ -49,14 +43,18 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     OV_INSTPTR_MessageSys_Message pMsg = NULL;
     OV_ANY tempAny;
     OV_STRING command = NULL;
-    OV_STRING commander = NULL;
-    OV_STRING cmdValue = NULL;
+    OV_STRING ids_vec [2] = {"cmdr", "Value"};
+    OV_STRING empty_vec [2] = {NULL, NULL};
+    OV_STRING_VEC ids = {2, ids_vec};
+    OV_STRING_VEC values = {2, empty_vec};
+    OV_STRING_VEC types = {2, empty_vec};
+    OV_STRING_VEC units = {2, empty_vec};
 
     tempAny.value.vartype = OV_VT_VOID;
     tempAny.value.valueunion.val_double = 0.0;
 
 	if(!value || !*value)
-		return OV_ERR_BADPARAM;
+		return OV_ERR_OK;
 
     if(pobj->v_msgsInQueue >= pobj->v_queueLength)
     	return OV_ERR_NOACCESS;
@@ -131,31 +129,24 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return result;
     }
 
-    MessageSys_Message_msgID_set(pMsg, currID);
+    result = MessageSys_Message_sendBy_set(pMsg, 2);	/*	send via ks-setvar	*/
+    if(Ov_Fail(result))
+    {
+    	Ov_DeleteObject(pMsg);
+    	ov_memstack_unlock();
+    	return result;
+    }
 
     /*	generic party set, now build the body	*/
 
-    commander = value;
+    values.value[0] = value;
     command = strchr(value, ';')+1;
     *(command-1) = '\0';
-    cmdValue = strchr(command, ';')+1;
-    *(cmdValue-1) = '\0';
+    values.value[1] = strchr(command, ';')+1;
+    *(values.value[1]) = '\0';
 
-    /*	reserve space	*/
-    tempctr = (sizeof(msgBody1) + strlen(pobj->v_receiverHost)
-			+ sizeof(msgBody2) + strlen(pobj->v_receiverName) + strlen(pobj->v_receiverInstance)
-			+ sizeof(msgBody3) + 12
-			+ sizeof(msgBody4) + strlen(command)
-			+ sizeof(msgBody5) + strlen(commander)
-			+ sizeof(msgBody6) + strlen(cmdValue)
-			+ sizeof(msgBody7));
-    msgBody = ov_memstack_alloc(tempctr + 1);
+    msgBody = acplt_simpleMsg_GenerateFlatBody("ProcessControl", command, FALSE, NULL, &ids, &values, &units, &types);
 
-/*    ov_logfile_debug("lengths:\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu\n%lu",
-    		sizeof(msgBody1), strlen(pobj->v_receiverHost), sizeof(msgBody2), strlen(pobj->v_receiverName), strlen(pobj->v_receiverInstance),
-    		sizeof(msgBody3), 12, sizeof(msgBody4), strlen(command), sizeof(msgBody5), strlen(commander), sizeof(msgBody6), strlen(cmdValue),
-    		sizeof(msgBody7));
-*/
     if(!msgBody)
     {
     	Ov_DeleteObject(pMsg);
@@ -163,13 +154,7 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return OV_ERR_HEAPOUTOFMEMORY;
     }
 
-    snprintf(msgBody, tempctr, "%s%s%s%s%s%s%lu%s%s%s%s%s%s%s", msgBody1, pobj->v_receiverHost,
-    			msgBody2, pobj->v_receiverName, pobj->v_receiverInstance,
-    			msgBody3, currID,
-    			msgBody4, command,
-    			msgBody5, commander,
-    			msgBody6, cmdValue,
-    			msgBody7);
+
  /*   ov_logfile_debug("length: %lu\nmessageBody:\n%s\n", tempctr, msgBody);	*/
 
     result = MessageSys_Message_msgBody_set(pMsg, msgBody);
@@ -180,7 +165,6 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return result;
     }
 
-    currID++;
     ov_memstack_unlock();
 
 	return OV_ERR_OK;
