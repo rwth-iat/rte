@@ -244,13 +244,13 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
-		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
+		KS_logfile_error(("%s: Could not get Channel pointers.", thisCl->v_identifier));
 		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 		return result;
 	}
 	if(!pChannel || !pVtblChannel)
 	{
-		KS_logfile_warning(("%s: No Channel found and none should be created. Will do nothing.", this->v_identifier));
+		KS_logfile_warning(("%s: No Channel found and none should be created. Will do nothing.", thisCl->v_identifier));
 		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 		return OV_ERR_OK;
 	}
