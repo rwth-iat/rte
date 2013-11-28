@@ -191,7 +191,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 	/*
 	 *   local variables
 	 */
-
+	OV_INSTPTR_TCPbind_TCPChannel this = Ov_StaticPtrCast(TCPbind_TCPChannel, pobj);
+	int socket;
 	/* do what the base class does first */
 	ksbase_Channel_startup(pobj);
 
@@ -199,6 +200,19 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_cycInterval = 1;
 	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_usesStreamProtocol = TRUE;	/*	TCP is a stream oriented protocol	*/
 
+	socket = TCPbind_TCPChannel_socket_get(this);
+	if(socket >= 0)
+	{
+		KS_logfile_info(("TCPChannel/startup: %s starting with socket %d. resetting.", pobj->v_identifier, socket));
+		this->v_socket = -1;
+	}
+	if(this->v_ConnectionState != TCPbind_CONNSTATE_CLOSED)
+	{
+		KS_logfile_info(("TCPChannel/startup: %s starting with connectionState not CLOSED. resetting.", pobj->v_identifier));
+		this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+	}
+	if(this->v_actimode == 1)
+		this->v_actimode = 0;
 	//set time of creation of the connection
 	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
 
@@ -407,7 +421,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				datareceived = TRUE;
 			}
 
-		}while(FD_ISSET(socket, &read_flags));
+		}while((err > 0) && FD_ISSET(socket, &read_flags));
 
 		if(datareceived)
 		{
