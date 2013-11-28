@@ -13,28 +13,7 @@
 #include <sys/time.h>
 #endif
 
-/*
- * returns the format of the output
- * constants are in the config.h file
- */
-OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format){
-	OV_STRING_VEC match = {0,NULL};
-	//output format
-	find_arguments(args, "format", &match);
-	if(match.veclen>=1){
-		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_KSX;
-		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_JSON;
-		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_TCL;
-		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_PLAIN;
-		}
-	}
-	Ov_SetDynamicVectorLength(&match,0,STRING);
-	return OV_ERR_OK;
-}
+
 
 /**
  * appends the header for communication to the output string
@@ -44,12 +23,12 @@ OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format){
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format==RESPONSE_FORMAT_KSX){
 		ov_string_setvalue(output, "<response xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
-		return begin_response_part(output, response_format, entry_type);
+		return kshttp_response_part_begin(output, response_format, entry_type);
 	}else if(response_format==RESPONSE_FORMAT_JSON){
-		return begin_response_part(output, response_format, entry_type);
+		return kshttp_response_part_begin(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
 }
@@ -61,15 +40,15 @@ OV_RESULT printresponseheader(OV_STRING* output, OV_UINT response_format, OV_STR
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
 		return OV_ERR_GENERIC;
 	}
 	if(response_format==RESPONSE_FORMAT_KSX){
-		finalize_response_part(output, response_format, entry_type);
-		finalize_response_part(output, response_format, "response");
+		kshttp_response_part_finalize(output, response_format, entry_type);
+		kshttp_response_part_finalize(output, response_format, "response");
 	}else if(response_format==RESPONSE_FORMAT_JSON){
-		finalize_response_part(output, response_format, "response");
+		kshttp_response_part_finalize(output, response_format, "response");
 	}
 	return OV_ERR_OK;
 }
@@ -81,9 +60,9 @@ OV_RESULT printresponsefooter(OV_STRING* output, OV_UINT response_format, OV_STR
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_init(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	ov_string_setvalue(output, "");
-	return begin_response_part(output, response_format, entry_type);
+	return kshttp_response_part_begin(output, response_format, entry_type);
 }
 
 /**
@@ -93,7 +72,7 @@ OV_RESULT init_response_part(OV_STRING* output, OV_UINT response_format, OV_STRI
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_begin(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
 		return OV_ERR_GENERIC;
 	}
@@ -127,7 +106,7 @@ OV_RESULT begin_response_part(OV_STRING* output, OV_UINT response_format, OV_STR
  * @param format UINT for the type of response
  * @return return code always ov_err_ok
  */
-OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
+OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, OV_UINT response_format){
 	if(response_format==RESPONSE_FORMAT_TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, " ");
@@ -160,7 +139,7 @@ OV_RESULT seperate_response_parts(OV_STRING* output, OV_UINT response_format){
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_finalize(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
 		return OV_ERR_GENERIC;
 	}
@@ -203,7 +182,7 @@ OV_RESULT finalize_response_part(OV_STRING* output, OV_UINT response_format, OV_
  * @param explain_text additional text, which will be appended after the error
  * @return last error we had
  */
-OV_RESULT print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text){
+OV_RESULT kshttp_print_result_array(OV_STRING *output, OV_UINT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text){
 	OV_UINT i = 0;
 	OV_STRING temp = NULL;
 	OV_RESULT fr = OV_ERR_OK;
@@ -241,12 +220,12 @@ or
 
 	if(len > 1 && lasterror != OV_ERR_OK){
 		//wrap in "mixed" if multiple results were given
-		begin_response_part(&temp, response_format, "mixed");
+		kshttp_response_part_begin(&temp, response_format, "mixed");
 	}
 	for (i=0; i< len;i++){
 		if(Ov_Fail(results[i])){
 			fr = results[i];
-			begin_response_part(&temp, response_format, "failure");
+			kshttp_response_part_begin(&temp, response_format, "failure");
 			if(response_format == RESPONSE_FORMAT_KSX){
 				if(temp == NULL){
 					ov_string_print(&temp, "%i", fr);
@@ -260,10 +239,10 @@ or
 					ov_string_print(&temp, "%s%s%s", temp, ov_result_getresulttext(fr), explain_text);
 				}
 			}
-			finalize_response_part(&temp, response_format, "failure");
+			kshttp_response_part_finalize(&temp, response_format, "failure");
 		}else{
-			begin_response_part(&temp, response_format, "success");
-			finalize_response_part(&temp, response_format, "success");
+			kshttp_response_part_begin(&temp, response_format, "success");
+			kshttp_response_part_finalize(&temp, response_format, "success");
 			if(len == 1 && lasterror == OV_ERR_OK){
 				//only one success
 				break;
@@ -271,7 +250,7 @@ or
 		}
 	}
 	if(len > 1 && lasterror != OV_ERR_OK){
-		finalize_response_part(&temp, response_format, "mixed");
+		kshttp_response_part_finalize(&temp, response_format, "mixed");
 	}
 	ov_string_append(output, temp);
 

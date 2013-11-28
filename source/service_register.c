@@ -50,7 +50,7 @@
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -74,27 +74,27 @@ OV_RESULT exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT r
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "name", &match);
+	kshttp_find_arguments(args, "name", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable name not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable name not found");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
 		ov_string_setvalue(&servername, match.value[0]);
 	}
 	//process serverport
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "port", &match);
+	kshttp_find_arguments(args, "port", &match);
 	if(match.veclen<1 || match.value[0] == NULL){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable port not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable port not found");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
 		serverport = atoi(match.value[0]);
 	}
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "version", &match);
+	kshttp_find_arguments(args, "version", &match);
 	if(match.veclen<1 || match.value[0] == NULL){
 		serverversion = 2;
 	}else{
@@ -104,14 +104,14 @@ OV_RESULT exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT r
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
 	if(!pManager){
 		fr = KS_ERR_NOMANAGER;
-		print_result_array(message, response_format, &fr, 1, ": received Manager command but no Manager here");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": received Manager command but no Manager here");
 		EXEC_REGISTER_RETURN fr;
 	}
 
 	sprintf(portstr, "%lu", serverport);
 	fr = ksbase_Manager_register(servername, serverversion, KSHTTP_IDENTIFIER, portstr, 30);
 	if(Ov_Fail(fr)){
-		print_result_array(message, response_format, &fr, 1, ": could not register server at manager.");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": could not register server at manager.");
 		EXEC_REGISTER_RETURN fr;
 	}
 	EXEC_REGISTER_RETURN OV_ERR_OK;

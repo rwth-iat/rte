@@ -48,7 +48,7 @@
  * @param re return list
  * @return always success
  */
-OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
+OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
 	int i = 0;
 	int varname_len = 0;
 	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
@@ -75,6 +75,29 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
 	return OV_ERR_OK;
 }
 
+/*
+ * returns the format of the output
+ * constants are in the config.h file
+ */
+static OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format){
+	OV_STRING_VEC match = {0,NULL};
+	//output format
+	kshttp_find_arguments(args, "format", &match);
+	if(match.veclen>=1){
+		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
+			*response_format = RESPONSE_FORMAT_KSX;
+		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
+			*response_format = RESPONSE_FORMAT_JSON;
+		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
+			*response_format = RESPONSE_FORMAT_TCL;
+		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
+			*response_format = RESPONSE_FORMAT_PLAIN;
+		}
+	}
+	Ov_SetDynamicVectorLength(&match,0,STRING);
+	return OV_ERR_OK;
+}
+
 #define PARSE_HTTP_HEADER_RETURN if(clientRequest->responseFormat == RESPONSE_FORMAT_NONE){\
 			clientRequest->responseFormat = RESPONSE_FORMAT_DEFAULT;\
 		}\
@@ -90,7 +113,7 @@ OV_RESULT find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -232,7 +255,7 @@ OV_RESULT parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
-OV_DLLFNCEXPORT OV_STRING ov_path_topercent_noslash (
+OV_DLLFNCEXPORT OV_STRING kshttp_ov_path_topercent_noslash (
 				OV_STRING org
 ) {
 	OV_STRING newstring;

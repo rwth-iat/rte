@@ -223,7 +223,7 @@ OV_RESULT ov_library_setglobalvars_kshttp_new(void) {
 	 * calling a generated wrapper function to create all the static files from /staticfiles dir
 	 * this function is generated in prebuild.tcl
 	 */
-	result = include_localfiles(httpStaticfiles);
+	result = kshttp_include_localfiles(httpStaticfiles);
 	if(Ov_Fail(result))
 	{
 		return result;

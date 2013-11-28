@@ -133,7 +133,7 @@ puts $out "#endif"
 puts $out ""
 puts $out "#include \"config.h\""
 puts $out ""
-puts $out "OV_RESULT include_localfiles(OV_INSTPTR_ov_domain pstaticfiles){";
+puts $out "OV_RESULT kshttp_include_localfiles(OV_INSTPTR_ov_domain pstaticfiles){";
 puts $out "	OV_RESULT result = OV_ERR_OK;"
 puts $out "	OV_INSTPTR_${webserverlib}_${staticfileclassname}	pindexhtml = NULL;"
 puts $out "	OV_INSTPTR_ov_domain	pdom = pstaticfiles;"

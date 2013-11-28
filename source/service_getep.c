@@ -84,11 +84,11 @@ OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_ST
  */
 OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format == RESPONSE_FORMAT_KSX){
-		return begin_response_part(output, response_format, entry_type);
+		return kshttp_response_part_begin(output, response_format, entry_type);
 	}else if(response_format == RESPONSE_FORMAT_TCL){
 		//nothing
 	}else if(response_format == RESPONSE_FORMAT_JSON){
-		begin_response_part(output, response_format, entry_type);
+		kshttp_response_part_begin(output, response_format, entry_type);
 		return ov_string_append(output, "\"");
 	}
 	return OV_ERR_OK;
@@ -102,12 +102,12 @@ OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_form
  */
 OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
 	if(response_format == RESPONSE_FORMAT_KSX){
-		return finalize_response_part(output, response_format, entry_type);
+		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}else if(response_format == RESPONSE_FORMAT_TCL){
 		//nothing
 	}else if(response_format == RESPONSE_FORMAT_JSON){
 		ov_string_append(output, "\"");
-		return finalize_response_part(output, response_format, entry_type);
+		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
 }
@@ -132,7 +132,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
+OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -165,23 +165,23 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	 * Build Parameter for KS function
 	 */
 	//process path
-	find_arguments(args, "path", &match);
+	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen!=1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(re, response_format, &fr, 1, ": Path not found or multiple path given");
+		kshttp_print_result_array(re, response_format, &fr, 1, ": Path not found or multiple path given");
 		EXEC_GETEP_RETURN fr; //400
 	}
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
 	//todo dokumentieren
-	find_arguments(args, "nameMask", &match);
+	kshttp_find_arguments(args, "nameMask", &match);
 	if(match.veclen > 0){
 		ov_string_setvalue(&params.name_mask, match.value[0]);
 	}else{
 		ov_string_setvalue(&params.name_mask, "*");
 	}
-	find_arguments(args, "scopeFlags", &match);
+	kshttp_find_arguments(args, "scopeFlags", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "parts") == OV_STRCMP_EQUAL){
 			params.scope_flags = KS_EPF_PARTS;
@@ -197,7 +197,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		params.scope_flags = KS_EPF_DEFAULT;
 	}
 
-	find_arguments(args, "requestType", &match);
+	kshttp_find_arguments(args, "requestType", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "OT_DOMAIN") == OV_STRCMP_EQUAL){
 			params.type_mask = KS_OT_DOMAIN;
@@ -209,7 +209,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			params.type_mask = KS_OT_ANY;
 		}else{
 			fr = OV_ERR_BADPARAM;
-			print_result_array(re, response_format, &fr, 1, ": Requesttype not supported");
+			kshttp_print_result_array(re, response_format, &fr, 1, ": Requesttype not supported");
 			EXEC_GETEP_RETURN fr; //400
 		}
 	}else{
@@ -217,7 +217,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 		params.type_mask = KS_OT_DOMAIN;
 	}
 
-	find_arguments(args, "requestOutput", &match);
+	kshttp_find_arguments(args, "requestOutput", &match);
 	if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
@@ -256,7 +256,7 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		print_result_array(re, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(re, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETEP_RETURN result.result;
 	}
@@ -265,39 +265,39 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 	while(one_result != NULL){
 		//open Child item level
 		if(result.pfirst != one_result){
-			seperate_response_parts(&temp, response_format);
+			kshttp_response_parts_seperate(&temp, response_format);
 		}
 		//change target output
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			begin_response_part(&temp, response_format, "DomainEngProps");
+			kshttp_response_part_begin(&temp, response_format, "DomainEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultDomain, 7, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			begin_response_part(&temp, response_format, "VariableEngProps");
+			kshttp_response_part_begin(&temp, response_format, "VariableEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultVariable, 8, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			begin_response_part(&temp, response_format, "LinkEngProps");
+			kshttp_response_part_begin(&temp, response_format, "LinkEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultLink, 9, UINT);
 		}else{
-			begin_response_part(&temp, response_format, "HistoryAndStructureUnsupported");
+			kshttp_response_part_begin(&temp, response_format, "HistoryAndStructureUnsupported");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, NULL, 0, UINT);
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
 			ov_string_append(re, "internal memory problem");
 			fr = OV_ERR_GENERIC;
-			print_result_array(&message, response_format, &fr, 1, ": memory problem");
+			kshttp_print_result_array(&message, response_format, &fr, 1, ": memory problem");
 			EXEC_GETEP_RETURN fr; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
 					(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON))){
 				//OP_TYPE is not displayed in ksx and json, so skip the seperator here
-				seperate_response_parts(&temp, response_format);
+				kshttp_response_parts_seperate(&temp, response_format);
 			}
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//open request item level, if we have more than one entry (OP_NAME and OP_CREATIONTIME for example)
 				//ksx returns always everything
-				begin_response_part(&temp, response_format, "");
+				kshttp_response_part_begin(&temp, response_format, "");
 			}
 
 			//######################### iterate over response ###############
@@ -627,18 +627,18 @@ OV_RESULT exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format
 			}
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//close request item level, if we have more than one entry
-				finalize_response_part(&temp, response_format, "");
+				kshttp_response_part_finalize(&temp, response_format, "");
 			}
 		}
 		//close Child item level
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			finalize_response_part(&temp, response_format, "DomainEngProps");
+			kshttp_response_part_finalize(&temp, response_format, "DomainEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			finalize_response_part(&temp, response_format, "VariableEngProps");
+			kshttp_response_part_finalize(&temp, response_format, "VariableEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			finalize_response_part(&temp, response_format, "LinkEngProps");
+			kshttp_response_part_finalize(&temp, response_format, "LinkEngProps");
 		}else {
-			finalize_response_part(&temp, response_format, "HistoryAndStructureUnsupported");
+			kshttp_response_part_finalize(&temp, response_format, "HistoryAndStructureUnsupported");
 		}
 
 		one_result = one_result->pnext;

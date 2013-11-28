@@ -46,7 +46,7 @@
  * 				Channel-handling
  *******************************************************************************************************************************************************************************/
 
-OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
+OV_RESULT kshttp_getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
 {
 	OV_STRING OptValTemp = NULL;
 	OV_INSTPTR_ov_class pClassChannel = NULL;
@@ -126,7 +126,7 @@ OV_RESULT getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ks
  ******************************************************************************************************************************************************************************/
 
 /*	if there is no connection (open or opening) open one and reset lasteventtime	*/
-OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
+static OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
 {
 	OV_RESULT result;
 
@@ -154,7 +154,7 @@ OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_k
 }
 
 /*	check if connection is open. if so, send and set Client state to busy and reset lasteventtime. if not set client state to awaiting connection. activate typemethod	*/
-OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
+static OV_RESULT trySend(OV_INSTPTR_kshttp_httpClientBase thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
 {
 	OV_RESULT result = OV_ERR_OK;
 
@@ -241,7 +241,7 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -324,33 +324,10 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	return OV_ERR_OK;
 }
 
-/*************************************************************************************************************************************************************
- * 	decode header of replies (params are not checked for NULL-pointers)
- *************************************************************************************************************************************************************/
-OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
-{
-	OV_RESULT result;
-
-	result = parse_http_header_from_server(dataReceived, responseStruct);
-
-
-	/***************************************************************************************************************************************************************************
-	 * checking if request is in the buffer completely, if not, return ERR_OK and wait until it is complete. While waiting set the receive timeout value to a few seconds
-	 * 	(we received a fragmented package so there will come more data. if no data arrives within a second, we can assume the package is broken)
-	 ***************************************************************************************************************************************************************************/
-	if(result == OV_ERR_TARGETGENERIC)
-	{
-		return result;		/*	get called again to process the request next time (if it is complete then).
-												Yes, this could block the ClientHandler for a longer time.	*/
-	}
-
-	return OV_ERR_OK;
-}
-
 /**
  * This function checks if the input buffer holds a complete request
  */
-OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
+static OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
 {
 	OV_STRING *pallheaderslist=NULL;
 	OV_STRING *plist=NULL;
@@ -464,7 +441,30 @@ OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESP
 	return OV_ERR_OK;
 }
 
-//todo move to a clienthttp library?
+/*************************************************************************************************************************************************************
+ * 	decode header of replies (params are not checked for NULL-pointers)
+ *************************************************************************************************************************************************************/
+OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
+{
+	OV_RESULT result;
+
+	result = parse_http_header_from_server(dataReceived, responseStruct);
+
+
+	/***************************************************************************************************************************************************************************
+	 * checking if request is in the buffer completely, if not, return ERR_OK and wait until it is complete. While waiting set the receive timeout value to a few seconds
+	 * 	(we received a fragmented package so there will come more data. if no data arrives within a second, we can assume the package is broken)
+	 ***************************************************************************************************************************************************************************/
+	if(result == OV_ERR_TARGETGENERIC)
+	{
+		return result;		/*	get called again to process the request next time (if it is complete then).
+												Yes, this could block the ClientHandler for a longer time.	*/
+	}
+
+	return OV_ERR_OK;
+}
+
+
 /**
  * decodes
  * @param responseStruct

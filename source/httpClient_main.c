@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 
 		if(!thisCl->v_holdConnection)	/*	close connection if not otherwise specified	*/
 		{
-			result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+			result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 			if(Ov_Fail(result))
 			{
 				KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -126,7 +126,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	KS_logfile_debug(("decoding successful"));
 
 	thisCl->v_state = KSBASE_CLST_COMPLETED;
-	result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -182,7 +182,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
 
-	result = getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));

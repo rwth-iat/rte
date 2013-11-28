@@ -63,7 +63,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblCreateObj = {
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -83,32 +83,32 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	find_arguments(args, "path", &match);
+	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
 		EXEC_CREATEOBJECT_RETURN fr; //400
 	}
 	//process factory
 	Ov_SetDynamicVectorLength(&factorymatch,0,STRING);
-	find_arguments(args, "factory", &factorymatch);
+	kshttp_find_arguments(args, "factory", &factorymatch);
 	if(factorymatch.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		print_result_array(message, response_format, &fr, 1, ": Variable factory not found");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable factory not found");
 		EXEC_CREATEOBJECT_RETURN fr; //400
 	}
 	//process Placement hint
 	Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);
-	find_arguments(args, "placementHint", &pmhmatch);
+	kshttp_find_arguments(args, "placementHint", &pmhmatch);
 	Ov_SetDynamicVectorLength(&pmhpathmatch,0,STRING);
-	find_arguments(args, "placePath", &pmhpathmatch);
+	kshttp_find_arguments(args, "placePath", &pmhpathmatch);
 
 	ov_memstack_lock();
 	addrp = (OV_CREATEOBJ_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_CREATEOBJ_ITEM));
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
 		EXEC_CREATEOBJECT_RETURN fr;
 	}
 
@@ -165,16 +165,16 @@ OV_RESULT exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, OV_UI
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_CREATEOBJECT_RETURN fr;
 	}
 	for (i=0; i< result.obj_results_len;i++){
 		fr = (result.obj_results_val+i)->result;
 		if(fr == OV_ERR_GENERIC){
-			print_result_array(&temp, response_format, &fr, 1, ": perhaps a base library is not loaded");
+			kshttp_print_result_array(&temp, response_format, &fr, 1, ": perhaps a base library is not loaded");
 		}else{
-			print_result_array(&temp, response_format, &fr, 1, "");
+			kshttp_print_result_array(&temp, response_format, &fr, 1, "");
 		}
 	}
 	ov_memstack_unlock();
