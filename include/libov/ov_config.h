@@ -150,7 +150,7 @@
 #define OV_DYNAMIC_LIBRARIES	1
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".so"
-#define OV_DLLFNCEXPORT
+#define OV_DLLFNCEXPORT			/* __attribute__ ((visibility ("hidden"))) in conjunction with -fvisibility=hidden to gcc options is a possibility to simulate this for ELF, we leave it out ATM for the support of BFLAT on embadded systems*/
 #define OV_DLLVAREXPORT
 #define OV_DLLVARIMPORT 		extern
 #define _POSIX_SOURCE                      /* Require IEEE Std. 1003.1 (Needed for sigjmp) */
