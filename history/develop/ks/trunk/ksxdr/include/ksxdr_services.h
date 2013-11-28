@@ -40,12 +40,12 @@ OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL use
 OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_UINT expectedXID, OV_BOOL usesStreamProtocol, OV_UINT* xid, OV_INT* msgAccepted, OV_INT* msgStatus, OV_UINT* functionStatus);
 
-OV_RESULT getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
+OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
 
-OV_RESULT initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel,
+OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel,
 		OV_BOOL isLocal, OV_STRING host, OV_STRING port);
 
-OV_RESULT trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
+OV_RESULT ksxdr_trySend(OV_INSTPTR_ksxdr_xdrClient thisCl, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel);
 
 OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator);
 
