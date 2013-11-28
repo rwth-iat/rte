@@ -20,7 +20,7 @@
  ******************************************************************************************************************************************************************************/
 
 /*	if there is no connection (open or opening) open one	*/
-OV_RESULT initiateConnection(OV_INSTPTR_ksbase_Channel pChannel, OV_STRING host, OV_STRING port)
+static OV_RESULT MessageSys_initiateConnection(OV_INSTPTR_ksbase_Channel pChannel, OV_STRING host, OV_STRING port)
 {
 	OV_RESULT result;
 	OV_VTBLPTR_ksbase_Channel pVtblChannel = NULL;
@@ -39,7 +39,7 @@ OV_RESULT initiateConnection(OV_INSTPTR_ksbase_Channel pChannel, OV_STRING host,
 }
 
 /*	check if connection is open. if so, send and set message state to busy. if not set Message state to awaiting connection.	*/
-OV_RESULT trySend(OV_INSTPTR_MessageSys_Message pMsg, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
+static OV_RESULT MessageSys_trySend(OV_INSTPTR_MessageSys_Message pMsg, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel)
 {
 	OV_RESULT result = OV_ERR_OK;
 
@@ -62,7 +62,7 @@ OV_RESULT trySend(OV_INSTPTR_MessageSys_Message pMsg, OV_INSTPTR_ksbase_Channel 
 	return OV_ERR_OK;
 }
 
-OV_RESULT createChannel(OV_INSTPTR_MessageSys_MsgDelivery pDelivery, OV_INSTPTR_ksbase_Channel* ppChannel)
+static OV_RESULT MessageSys_createChannel(OV_INSTPTR_MessageSys_MsgDelivery pDelivery, OV_INSTPTR_ksbase_Channel* ppChannel)
 {
 	OV_STRING OptValTemp = NULL;
 	OV_INSTPTR_ov_class pClassChannel = NULL;
@@ -353,7 +353,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				if(!pChannel)
 				{	/*	no channel found, create new one	*/
 					KS_logfile_debug(("msgDelivers: no Channel associated with message. creating new one"));
-					result = createChannel(this, &pChannel);
+					result = MessageSys_createChannel(this, &pChannel);
 					if(Ov_Fail(result))
 					{
 						ov_memstack_lock();
@@ -422,7 +422,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 
 
 				KS_logfile_debug(("msgDelivery: pChannel->v_ConnectionState is: %u", pChannel->v_ConnectionState));
-				result = initiateConnection(pChannel, msg->v_receiverAddress, msg->v_receiverName);
+				result = MessageSys_initiateConnection(pChannel, msg->v_receiverAddress, msg->v_receiverName);
 				if(Ov_Fail(result))
 				{
 					ov_memstack_lock();
@@ -433,7 +433,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				}
 
 				Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
-				result = trySend(msg, pChannel, pVtblChannel);
+				result = MessageSys_trySend(msg, pChannel, pVtblChannel);
 				if(Ov_Fail(result))
 				{
 					ov_memstack_lock();
