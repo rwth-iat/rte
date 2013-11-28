@@ -495,7 +495,7 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseFlatBody(char const* xml, OV_STRI
 			return OV_ERR_BADVALUE;
 		else
 		{
-			result = acplt_simpleMsg_xml_getAttributeData(tempSd, "sd", "Op", containerName);
+			result = acplt_simpleMsg_xml_getAttributeData(tempSd, "sd", "id", containerName);
 			if(Ov_Fail(result))
 				return result;
 		}
