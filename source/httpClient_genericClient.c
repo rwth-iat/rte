@@ -324,28 +324,26 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
 		if(thisCl->v_ServerResponse.transferEncodingChunked == TRUE){
-			kshttp_decodeTransferEncodingChunked((OV_STRING*)&thisCl->v_ServerResponse.messageBodyPtr, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT);
+			kshttp_decodeTransferEncodingChunked((OV_STRING*)&pChannel->v_inData.readPT, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT);
 		}else if(thisCl->v_ServerResponse.contentLength != 0){
 			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
 			if(!thisCl->v_messageBody){
 				//database too small
 				thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
-
-				//this memory is from the ksdatapackage!
-				thisCl->v_ServerResponse.messageBodyPtr = NULL;
 				pVtblChannel->m_CloseConnection(pChannel);
+				ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 				return;
 			}
-			memcpy(thisCl->v_messageBody, thisCl->v_ServerResponse.messageBodyPtr, thisCl->v_ServerResponse.contentLength);
+			memcpy(thisCl->v_messageBody, pChannel->v_inData.readPT, thisCl->v_ServerResponse.contentLength);
 			thisCl->v_messageBody[thisCl->v_ServerResponse.contentLength] = '\0';
+			pChannel->v_inData.readPT = pChannel->v_inData.data + pChannel->v_inData.length;
 		}
 	}else{
 		ov_string_setvalue(&thisCl->v_messageBody, "binary mimetype");
 	}
 
-	//this memory is from the ksdatapackage!
-	thisCl->v_ServerResponse.messageBodyPtr = NULL;
 	pVtblChannel->m_CloseConnection(pChannel);
+	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 
 	return;
 }

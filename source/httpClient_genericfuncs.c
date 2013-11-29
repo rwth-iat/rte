@@ -338,7 +338,7 @@ static OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHT
 	OV_UINT len = 0, i = 0;
 
 	//split http header from content
-	http_request_array = ov_string_split((OV_STRING)dataReceived->data, "\r\n\r\n", &len);
+	http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
 	beginOfContent = ov_string_getlength(http_request_array[0])+4;
 
 	//seperate all headers
@@ -389,7 +389,7 @@ static OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHT
 	ov_string_freelist(plist);
 
 	//save pointer to the content
-	responseStruct->messageBodyPtr = dataReceived->data + beginOfContent;
+	dataReceived->readPT = dataReceived->data + beginOfContent;
 
 	//check if we have all http content
 	if(dataReceived->length >= beginOfContent + responseStruct->contentLength && responseStruct->transferEncodingChunked == FALSE){
@@ -398,7 +398,7 @@ static OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHT
 	}else if(responseStruct->transferEncodingChunked == TRUE){
 		//we have to check if this message is complete by looking into it 8-/
 		//only check if all is received, so "save" into an NULL pointer
-		return kshttp_decodeTransferEncodingChunked((OV_STRING*)&responseStruct->messageBodyPtr, NULL, &responseStruct->contentLength, dataReceived->length);
+		return kshttp_decodeTransferEncodingChunked((OV_STRING*)&dataReceived->readPT, NULL, &responseStruct->contentLength, dataReceived->length);
 		/*
 		OV_STRING readPointer = (OV_STRING)dataReceived->data + beginOfContent;
 		OV_STRING entityBody = NULL;
@@ -466,9 +466,11 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 
 
 /**
- * decodes
- * @param responseStruct
- * @param decodedMessageBody
+ * decodes a chunked transfer
+ * @param responseString
+ * @param entityBody is allowed to be NULL! Is in the ov_database
+ * @param contentLength
+ * @param maxlength
  * @return
  */
 OV_RESULT kshttp_decodeTransferEncodingChunked(OV_STRING *responseString, OV_STRING *entityBody, OV_UINT *contentLength, OV_UINT maxlength){
