@@ -1,5 +1,5 @@
 all:
-	tclsh acplt_build.tcl
+	tclsh acplt_build.tcl trunk
 
 trunk:
 	tclsh acplt_build.tcl trunk
@@ -10,8 +10,8 @@ clean:
 	rm acplt_build.log
 
 source:
-	tclsh acplt_build.tcl source
+	tclsh acplt_build.tcl trunk source
 
 release:
-	tclsh acplt_build.tcl release
+	tclsh acplt_build.tcl trunk release
 

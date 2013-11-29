@@ -3,8 +3,9 @@
 # (c) 2011 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
+# Author: Constantin Wagner <c.wagner@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (checkout)
+# Usage: tclsh acplt_build.tcl (release) (trunk)
 set release 0
 set checkout 0 
 set libsuffix 0
@@ -212,12 +213,12 @@ set first 0
 while {[gets $in line] != -1} {
 if {[regexp "Ausgecheckt, Revision" $line] } then {
 print_msg $line
-regexp {\s*Ausgecheckt, Revision\s+(.+).\s*} $line _ first 
+regexp {\s*Ausgecheckt, Revision\s+([0-9]+).*} $line _ first 
 break
 }
 if {[regexp "Revision:" $line] } then {
 print_msg $line
-regexp {\s*Revision\s+(.+).\s*} $line _ first 
+regexp {\s*Revision:\s+([0-9]+).*} $line _ first 
 break
 }
 }
@@ -281,6 +282,7 @@ proc checkout_acplt {} {
     global included_libs
 	global releasedir
 	global release
+	global date
     cd $builddir
     checkout archive libml
     #for source release - checkout all
@@ -293,14 +295,10 @@ proc checkout_acplt {} {
     checkout archive fbs_dienste "" notrunk
     checkout develop ov
 
-    cd $releasedir/dev
-	if {$release == 1} {
-		foreach x $included_libs {
-		checkout_better $x
-		}
-	}
-
+	#get the number of the current release - $date is global
     cd $basedir
+	set date [get_revision]
+	set date "r$date"
  }
 
 # Build in a directory
@@ -482,55 +480,6 @@ proc dbutil {args} {
 #    execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 #}
 
-proc release_lib {libname} {
-	relase_lib libname "all"
-}
-
-proc release_lib {libname option} {
-    global releasedir
-    global os
-    global make
-    cd $releasedir/dev/
-    file delete -force $releasedir/dev/$libname/
-    checkout_better $libname
-	set temp [split $libname "/"]
-	set libname [lindex $temp end]
-    cd $releasedir/dev/$libname/build/$os/
-    if { $option == "all" } then {
-	    print_msg "Note: no debug symbols will be created"
-    }
-    build $libname $make $option
-    print_msg "Deploying $libname"
-    file delete -force $releasedir/dev/$libname.build/
-    file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
-    file delete -force $releasedir/dev/$libname/
-    file mkdir $releasedir/dev/$libname/
-    file mkdir $releasedir/dev/$libname/model/
-    copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
-    file mkdir $releasedir/dev/$libname/include/
-    copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
-    #export libname.a file for compiling under windows
-    if { $os == "nt" } then {
-		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-		#}
-		if { [file exists $releasedir/dev/$libname.build/build/nt/$libname.lib] } {
-		    file mkdir $releasedir/dev/$libname/build/nt/
-			file copy -force $releasedir/dev/$libname.build/build/nt/$libname.lib $releasedir/dev/$libname/build/nt/
-		}
-    }
-    if { $os == "linux" } then {
-		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-		#}
-		if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } {
-		    file mkdir $releasedir/dev/$libname/build/linux/
-			file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
-		}
-    }
-    file delete -force $releasedir/dev/$libname.build/
-}
-
 
 proc release_lib_better {libname option} {
 	global releasedir
@@ -593,21 +542,24 @@ proc release_lib_better {libname option} {
 				
 				#deploying
 				print_msg "Deploying $libname"
-				file delete -force $releasedir/dev/$libname.build/
-				file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
-				file delete -force $releasedir/dev/$libname/
-				file mkdir $releasedir/dev/$libname/
-				file mkdir $releasedir/dev/$libname/model/
-				copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
-				file mkdir $releasedir/dev/$libname/include/
-				copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
-				if { $os == "linux" } then {
-					if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
-						file mkdir $releasedir/dev/$libname/build/linux/
-						file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+				if {$option == "debug"} {
+					#OLD CODE follows - we did not release source than				
+					file delete -force $releasedir/dev/$libname.build/
+					file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
+					file delete -force $releasedir/dev/$libname/
+					file mkdir $releasedir/dev/$libname/
+					file mkdir $releasedir/dev/$libname/model/
+					copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
+					file mkdir $releasedir/dev/$libname/include/
+					copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
+					if { $os == "linux" } then {
+						if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
+							file mkdir $releasedir/dev/$libname/build/linux/
+							file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+						}
 					}
-				}
-				file delete -force $releasedir/dev/$libname.build/
+					file delete -force $releasedir/dev/$libname.build/
+				} 
 			} else {
 				print_msg "$libname may have unmet dependencies, retrying next iteration"
 			}
@@ -617,7 +569,7 @@ proc release_lib_better {libname option} {
 		append notbuildedlibs $not_yet_build
 		print_msg "Libraries $not_yet_build could not be built, giving up"
 	}
-	
+
 	#foreach lib $libs {
 	#	set libname $lib
 	#	if { [file exists $releasedir/dev/$libnametemp/$libname] } {
@@ -661,9 +613,6 @@ proc release_lib_better {libname option} {
 	#}
 	#if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
 }	
-
-
-
 
 
 proc create_release {} {
@@ -816,17 +765,50 @@ proc create_systools_and_servers {} {
 
 }
 
+#/*
+#* Recursively removes all .svn dirs from the given folder
+#*/
+proc remove_svn_dirs {dir} {
+	global os
+	set current_dir [pwd]
+	#remove .svn directories
+	if { $os == "nt"} {
+		#God, I hate spaces in windows dirnames
+		file copy $basedir/delete_svn_folders.bat $dir
+		cd $dir
+		execute "delete_svn_folders.bat"
+		file delete -force "delete_svn_folders.bat"
+		cd $current_dir
+	} else {
+		cd $dir
+		set dirs [findDirectories "." ".svn"]
+		foreach dir $dirs {
+			file delete -force $dir
+		}
+		cd $current_dir
+	}
+}
+
+proc compress {archivename dir} {
+	global os
+	print_msg "Compressing"
+	if { $os == "linux" } then {
+		execute "zip -r $archivename-linux $dir"
+} else {
+		execute "7z a $archivename-win.zip $dir"
+	}
+}
+
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
-		set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc }
-	
+	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc }
 	print_msg "checking out trunk"
 } else {
-   	 print_msg "checking out common"
+   	print_msg "checking out common"
 	set addon_libs { common/user }
 	set included_libs {common/core}
-	}
+}
 
 set notrunklist { ks common ServiceSystem }
 #iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider 
@@ -860,52 +842,43 @@ if {$release == 1} {
 	create_dirs
 	checkout_acplt
 
+
+	file mkdir $builddir/syslibs
+    cd $builddir/syslibs
+		foreach x $included_libs {
+		checkout_better $x
+	}
+
+	file mkdir $builddir/addonlibs
+    cd $builddir/addonlibs
+		foreach x $addon_libs {
+		checkout_better $x
+	}
+
+	cd $basedir
 	#rename 
 	file rename -force acplt.build acplt-source
 	print_msg "Deleting .svn directories"
-	#remove .svn directories
-	if { $os == "nt"} {
-		#God, I hate spaces in windows dirnames
-		file copy delete_svn_folders.bat acplt-source
-		cd "acplt-source"
-		execute "delete_svn_folders.bat"
-		file delete -force "delete_svn_folders.bat"
-		cd ".."
-	} else {
-	    cd "acplt-source"
-		set dirs [findDirectories "." ".svn"]
-		foreach dir $dirs {
-			file delete -force $dir
-		}
-		cd ".."
-	}
+	remove_svn_dirs "$basedir/acplt-source"
 
-    set date [clock format [clock seconds] -format "%Y%m%d"]
-    set name "acplt-server-source-$date"
-    cd $basedir
-	print_msg "Compressing"
-    if { $os == "linux" } then {
-    	execute "zip" "-r" $name "./acplt-source"
-    } else {
-	execute "7z" "a" "$name.zip" "./acplt-source"
-    }
+	compress "acplt-server-source-$date" "./acplt-source"
+
     file delete -force "acplt-source"
 	
 	#rename back to save compiling overhead
-	file delete -force "acplt.build"
-	if { [file exists acplt.build_backup] } {
-		file rename acplt.build_backup acplt.build
-	}
+	#file delete -force "acplt.build"
+	#if { [file exists acplt.build_backup] } {
+	#	file rename acplt.build_backup acplt.build
+	#}
+	file delete -force "acplt-build"
 	print_msg "== SOURCE RELEASE CREATED =="
 # end
 }
 
-
 create_dirs
 checkout_acplt
 cd $basedir
-set date [get_revision]
-cd $basedir
+
 if {$checkout == 1} {
 	exit 0
 }
@@ -940,15 +913,8 @@ foreach x $addon_libs {
 }
 
 if {$release == 1} {
-    #set date [clock format [clock seconds] -format "%Y%m%d"]
-    set name "acplt-server-develop-$date"
-    cd $basedir
-	print_msg "Compressing"
-    if { $os == "linux" } then {
-    	execute "zip" "-r" "$name-linux" "./acplt"
-    } else {
-	execute "7z" "a" "$name-win.zip" "./acplt"
-    }
+	cd $basedir
+	compress "acplt-server-develop-$date" "./acplt"
 	print_msg "== DEVELOP RELEASE CREATED =="
 # end
 }
@@ -956,16 +922,11 @@ if {$release == 1} {
 if {$release == 1} {
 # Create runtime release
     print_msg "== CREATING RUNTIME RELEASE =="
-    #set date [clock format [clock seconds] -format "%Y%m%d"]
-    set name "acplt-server-runtime-$date"
 	set ov_debug ""
 	file delete -force $builddir
 	create_dirs
 	checkout_acplt
-	cd $basedir
-	set date [get_revision]
 
-	cd $basedir
 	if {$checkout == 1} {
 		exit 0
 	}
@@ -982,8 +943,6 @@ if {$release == 1} {
 		install_acplt linux
 	}
 
-
-    
 	create_release
 	create_systools_and_servers
     foreach x $included_libs {
@@ -1019,7 +978,6 @@ if {$release == 1} {
 	set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 
 	foreach x $stripfiles {
-       
 	  # execute  "strip --strip-debug" $x
 	  execute  "strip" "-g" "-S" "-d" $x
     }
@@ -1030,23 +988,9 @@ if {$release == 1} {
 		file delete -force $releasedir/system/tclsh.exe
 	}
 
-
-	print_msg "Compressing"
-    if { $os == "linux" } then {
-    	execute "zip" "-r" "$name-linux" "./acplt"
-    } else {
-		execute "7z" "a" "$name-win.zip" "./acplt"
-    }
+	compress "acplt-server-runtime-$date" "./acplt"
 	print_msg "== RUNTIME RELEASE CREATED =="
 # end
 }
 
-#start_server
-if { $os == "nt" } then {
-    puts "Build finished, set the environment variable ACPLT_HOME to '[string map {/ \\} $basedir
-]\\acplt'."
-    puts "Also, include the directories '%ACPLT_HOME%\\bin' and '%ACPLT_HOME%\\user\\libs' to your %PATH%"
-} else {
-    puts "Build finished, set the environment variable ACPLT_HOME to '$basedir/acplt'."
-    puts "Also, include the directory '\$ACPLT_HOME/bin' in PATH, and '\$ACPLT_HOME/bin:\$ACPLT_HOME/user/libs' in LD_LIBRARY_PATH."
-}
+puts "Build finished"
