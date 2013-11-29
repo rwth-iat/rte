@@ -1,6 +1,6 @@
 puts "== Begin moving FBDs to template folder =="
 
-set fbdfiles {"templates/StaticDisplayComponent.fbd" "templates/Sheet_EngineeringFB.fbd" "templates/Templates_Engineering.fbd" "templates/Sheet_EngineeringPandix" "templates/Templates_EnginneeringPandIX" "templates/Templates_ProcessControl.fbd"}
+set fbdfiles {"templates/StaticDisplayComponent.fbd" "templates/Sheet_EngineeringFB.fbd" "templates/Templates_Engineering.fbd" "templates/Sheet_EngineeringPandIX.fbd" "templates/Templates_EngineeringPandIX.fbd" "templates/Templates_ProcessControl.fbd"}
 
 set targetfolder "$::env(ACPLT_HOME)/templates/cshmi"
 file mkdir $targetfolder
