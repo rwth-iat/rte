@@ -770,6 +770,7 @@ proc create_systools_and_servers {} {
 #*/
 proc remove_svn_dirs {dir} {
 	global os
+	global basedir
 	set current_dir [pwd]
 	#remove .svn directories
 	if { $os == "nt"} {
