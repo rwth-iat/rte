@@ -281,7 +281,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 			kshttp_response_part_begin(&temp, response_format, "HistoryAndStructureUnsupported");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, NULL, 0, UINT);
 		}else{
-			kshttp_response_part_begin(&temp, response_format, "");
+			kshttp_response_part_begin(&temp, response_format, "dummy");
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
@@ -299,7 +299,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//open request item level, if we have more than one entry (OP_NAME and OP_CREATIONTIME for example)
 				//ksx returns always everything
-				kshttp_response_part_begin(&temp, response_format, "");
+				//kshttp_response_part_begin(&temp, response_format, "dummy");
 			}
 
 			//######################### iterate over response ###############
@@ -629,7 +629,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 			}
 			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
 				//close request item level, if we have more than one entry
-				kshttp_response_part_finalize(&temp, response_format, "");
+				//kshttp_response_part_finalize(&temp, response_format, "dummy");
 			}
 		}
 		//close Child item level
@@ -642,7 +642,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 		}else if(anyRequested){
 			kshttp_response_part_finalize(&temp, response_format, "HistoryAndStructureUnsupported");
 		}else{
-			kshttp_response_part_finalize(&temp, response_format, "");
+			kshttp_response_part_finalize(&temp, response_format, "dummy");
 		}
 
 		one_result = one_result->pnext;

@@ -73,16 +73,22 @@ OV_RESULT kshttp_response_part_init(OV_STRING* output, OV_UINT response_format, 
  * @return return code always ov_err_ok
  */
 OV_RESULT kshttp_response_part_begin(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
-		return OV_ERR_GENERIC;
-	}
 	if(response_format==RESPONSE_FORMAT_TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "{");
 		}else{
 			ov_string_append(output, "{");
 		}
-	}else if(response_format==RESPONSE_FORMAT_KSX){
+		return OV_ERR_OK;
+	}else if(response_format==RESPONSE_FORMAT_PLAIN){
+		//do nothing
+		return OV_ERR_OK;
+	}
+	//the following formats needs a entry_type to be valid
+	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
+		return OV_ERR_GENERIC;
+	}
+	if(response_format==RESPONSE_FORMAT_KSX){
 		if(*output == NULL){
 			ov_string_print(output, "<%s>", entry_type);
 		}else{
@@ -94,8 +100,6 @@ OV_RESULT kshttp_response_part_begin(OV_STRING* output, OV_UINT response_format,
 		}else{
 			ov_string_print(output, "%s{\"%s\": ", *output, entry_type);
 		}
-	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		//do nothing
 	}
 	return OV_ERR_OK;
 }
@@ -140,16 +144,24 @@ OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, OV_UINT response_for
  * @return return code always ov_err_ok
  */
 OV_RESULT kshttp_response_part_finalize(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
-		return OV_ERR_GENERIC;
-	}
 	if(response_format==RESPONSE_FORMAT_TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "}");
 		}else{
 			ov_string_append(output, "}");
 		}
-	}else if(response_format==RESPONSE_FORMAT_KSX){
+	}else if(response_format==RESPONSE_FORMAT_PLAIN){
+		if(*output == NULL){
+			ov_string_setvalue(output, ";");
+		}else{
+			ov_string_append(output, ";");
+		}
+	}
+	//the following formats needs a entry_type to be valid
+	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
+		return OV_ERR_GENERIC;
+	}
+	if(response_format==RESPONSE_FORMAT_KSX){
 		if(*output == NULL){
 			ov_string_print(output, "</%s>\n", entry_type);
 		}else{
@@ -160,12 +172,6 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, OV_UINT response_form
 			ov_string_print(output, "}\n");
 		}else{
 			ov_string_print(output, "%s}\n", *output);
-		}
-	}else if(response_format==RESPONSE_FORMAT_PLAIN){
-		if(*output == NULL){
-			ov_string_setvalue(output, ";");
-		}else{
-			ov_string_append(output, ";");
 		}
 	}
 	return OV_ERR_OK;
