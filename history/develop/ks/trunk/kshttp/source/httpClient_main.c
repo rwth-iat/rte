@@ -153,7 +153,6 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_startup(
 
 	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.version = NULL;
-	thisCl->v_ServerResponse.messageBodyPtr = NULL;
 	thisCl->v_ServerResponse.contentType = NULL;
 
 	return;
@@ -175,9 +174,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	thisCl->v_runningKSservice = 0;
 	thisCl->v_state = KSBASE_CLST_INITIAL;
 
-	//this memory is from the ksdatapackage!
-	thisCl->v_ServerResponse.messageBodyPtr = NULL;
-
 	ov_string_setvalue(&(thisCl->v_serverPort), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
@@ -189,6 +185,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 		return result;
 	}
 	pVtblChannel->m_CloseConnection(pChannel);
+	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 
 	return OV_ERR_OK;
 }
@@ -204,9 +201,6 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_shutdown(
 
 	thisCl->v_callback.instanceCalled = NULL;
 	thisCl->v_callback.callbackFunction = NULL;
-
-	//this memory is from the ksdatapackage!
-	thisCl->v_ServerResponse.messageBodyPtr = NULL;
 
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);

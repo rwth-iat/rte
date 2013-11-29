@@ -29,5 +29,4 @@ typedef struct
 	OV_STRING contentType;
 	OV_BOOL transferEncodingChunked;
 	OV_UINT responseFormat;
-	OV_BYTE* messageBodyPtr;
 } KSHTTP_RESPONSE;
