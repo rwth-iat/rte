@@ -544,22 +544,26 @@ proc release_lib_better {libname option} {
 				print_msg "Deploying $libname"
 				if {$option == "debug"} {
 					#OLD CODE follows - we did not release source than				
-					file delete -force $releasedir/dev/$libname.build/
-					file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
-					file delete -force $releasedir/dev/$libname/
-					file mkdir $releasedir/dev/$libname/
-					file mkdir $releasedir/dev/$libname/model/
-					copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
-					file mkdir $releasedir/dev/$libname/include/
-					copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
-					if { $os == "linux" } then {
-						if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
-							file mkdir $releasedir/dev/$libname/build/linux/
-							file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
-						}
-					}
-					file delete -force $releasedir/dev/$libname.build/
-				} 
+					#file delete -force $releasedir/dev/$libname.build/
+					#file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
+					#file delete -force $releasedir/dev/$libname/
+					#file mkdir $releasedir/dev/$libname/
+					#file mkdir $releasedir/dev/$libname/model/
+					#copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
+					#file mkdir $releasedir/dev/$libname/include/
+					#copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
+					#if { $os == "linux" } then {
+					#	if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
+					#		file mkdir $releasedir/dev/$libname/build/linux/
+					#		file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
+					#	}
+					#}
+					#file delete -force $releasedir/dev/$libname.build/
+					#NEW CODE: release everything: just make sure to clean up .svn information
+					remove_svn_dirs "$releasedir/dev/$libname"
+				} else {
+					#No need to anything here - dev will be deleted entierly by the runtime release
+				}
 			} else {
 				print_msg "$libname may have unmet dependencies, retrying next iteration"
 			}
@@ -777,11 +781,13 @@ proc remove_svn_dirs {dir} {
 		#God, I hate spaces in windows dirnames
 		file copy $basedir/delete_svn_folders.bat $dir
 		cd $dir
+		file delete -force ".svn"
 		execute "delete_svn_folders.bat"
 		file delete -force "delete_svn_folders.bat"
 		cd $current_dir
 	} else {
 		cd $dir
+		file delete -force ".svn"
 		set dirs [findDirectories "." ".svn"]
 		foreach dir $dirs {
 			file delete -force $dir
