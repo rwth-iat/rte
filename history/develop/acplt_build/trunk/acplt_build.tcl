@@ -916,6 +916,7 @@ foreach x $addon_libs {
 if {$release == 1} {
 	cd $basedir
 	compress "acplt-server-develop-$date" "./acplt"
+	compress "acplt-server-develop-latest" "./acplt"
 	print_msg "== DEVELOP RELEASE CREATED =="
 # end
 }
