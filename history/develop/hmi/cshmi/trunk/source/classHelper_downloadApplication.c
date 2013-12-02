@@ -536,7 +536,8 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 		ov_string_print(&strIterate, "%s%%22x1%%22:%%22%f%%22,", strIterate, pLine->v_x1);
 		ov_string_print(&strIterate, "%s%%22y1%%22:%%22%f%%22,", strIterate, pLine->v_y1);
 		ov_string_print(&strIterate, "%s%%22x2%%22:%%22%f%%22,", strIterate, pLine->v_x2);
-		ov_string_print(&strIterate, "%s%%22y2%%22:%%22%f%%22", strIterate, pLine->v_y2);
+		ov_string_print(&strIterate, "%s%%22y2%%22:%%22%f%%22,", strIterate, pLine->v_y2);
+		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pLine->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 		ov_string_append(&strIterate, "%7D");
 		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
