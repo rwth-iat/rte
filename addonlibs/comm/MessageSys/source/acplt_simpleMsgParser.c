@@ -533,13 +533,10 @@ OV_DLLFNCEXPORT OV_RESULT acplt_simpleMsg_parseFlatBody(char const* xml, OV_STRI
 	{
 		result = acplt_simpleMsg_xml_findElementBegin(tempPtr, "val", &tempPtr);
 		if(Ov_Fail(result))
-		{
-			if(result == OV_ERR_BADNAME)
-			{
-				return OV_ERR_OK;
-			}
-			else
-				return result;
+			return result;
+		if(!tempPtr)
+		{	/*	no more val-elements	*/
+			return OV_ERR_OK;
 		}
 		else
 		{	/*	new val-Element found; extract data	*/
