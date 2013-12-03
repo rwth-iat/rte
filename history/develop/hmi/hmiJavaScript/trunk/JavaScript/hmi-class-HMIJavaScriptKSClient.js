@@ -1554,10 +1554,10 @@ HMIJavaScriptKSClient.prototype = {
 				//communication error
 				return Array();
 			}else if (response === null){
-				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: response was null");
+				HMI.hmi_log_error("HMIJavaScriptKSClient.getChildObjArray of "+ObjectPath+" failed: response was null");
 				return Array();
 			}else if (response.indexOf("KS_ERR") !== -1){
-				HMI.hmi_log_error("_interpreteClientEvent of "+ObjectPath+" failed: "+response);
+				HMI.hmi_log_error("HMIJavaScriptKSClient.getChildObjArray of "+ObjectPath+" failed: "+response);
 				return Array();
 			}
 			

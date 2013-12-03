@@ -152,7 +152,7 @@ cshmi.prototype = {
 		//fill cache if possible
 		if (typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
-			if (response !== null && response.indexOf("KS_ERR") === -1 && response !== "{{{}}}" && response !== "{{}}"){
+			if (response !== null && response !== "" && response !== "{}" && response !== "{{}}" && response !== "{{{}}}" && response.indexOf("KS_ERR") === -1){
 				if(response.charAt(1) == "{"){
 					//tcl wraps two braces
 					response = response.slice(2,-2);
@@ -1848,7 +1848,7 @@ cshmi.prototype = {
 						rotationObject = VisualObject;
 					}
 					var newrotate = NewValue - getRotationFromObject(rotationObject.parentNode);
-					this._setXYRotate(VisualObject, VisualObject.getAttribute("x"), VisualObject.getAttribute("x"), newrotate);
+					this._setXYRotate(VisualObject, null, null, newrotate);
 				}
 			}else{
 				if (NewValue === "" && 
