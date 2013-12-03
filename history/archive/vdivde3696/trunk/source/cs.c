@@ -137,7 +137,7 @@ void OV_DLLFNCEXPORT vdivde3696_cs_typemethod(
 	  /* get the cyctime of functionblock or parenttask */
 	  
 	  ptask=Ov_PtrUpCast(fb_task, port);
-	  while ((ptask->v_cyctime.secs==0) && (ptask->v_cyctime.usecs==0)) {
+	  while (ptask && (ptask->v_cyctime.secs==0) && (ptask->v_cyctime.usecs==0)) {
 		ptask = Ov_GetParent(fb_tasklist, ptask);
 	  }
  	  if (!ptask) cyctime = 1.0; 

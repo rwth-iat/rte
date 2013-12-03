@@ -40,9 +40,9 @@
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt/&quot;"/>
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../model/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/model/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
 <!-- Dependencies -->
 
                                                 </option>
@@ -112,9 +112,9 @@
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
                                                       <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../model/&quot;"/>
-                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/model/&quot;"/>
+                                                      <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
 <!-- Dependencies -->
 
 
