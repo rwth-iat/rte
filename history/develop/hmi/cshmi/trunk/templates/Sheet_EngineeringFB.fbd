@@ -6,10 +6,6 @@
 * SERVER : MANAGER
 ************************************************************/
 
- INSTANCE  /TechUnits/TU :
-    CLASS /acplt/ov/domain;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/engineeringFBSheet :
     CLASS /Libraries/cshmi/Group;
     VARIABLE_VALUES
@@ -22,7 +18,7 @@
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       TemplateDefinition : INPUT STRING = "Engineering/Domainv1";
-      FBReference[1] : INPUT STRING = {"/TechUnits/TU"};
+      FBReference[1] : INPUT STRING = {"/TechUnits"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
       zindex : INPUT UINT = 0;
