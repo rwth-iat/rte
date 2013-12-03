@@ -260,16 +260,16 @@ OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open(
 				ov_library_close(plib);
 			}
 		}
-#if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
 		else {
-			ov_logfile_error("Can't load library. Reason: %s", dlerror());
-		}
+			//specific error print
+#if OV_SYSTEM_LINUX | OV_SYSTEM_SOLARIS
+			ov_logfile_error("Can't load library '%s'. Reason: %s", plib->v_identifier, dlerror());
 #endif
 #if OV_SYSTEM_NT
-		else {
-			ov_logfile_error("Can't load library. Errorcode: %d", GetLastError());
+			ov_logfile_error("Can't load library '%s'. Errorcode: %d", plib->v_identifier, GetLastError());
+#endif
 		}
-#endif		/*
+		/*
 		 *	free the temporary string
 		 */
 		Ov_HeapFree(tmpstring);
