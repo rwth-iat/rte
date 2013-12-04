@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2013-12-04 22:17:21
+* Erstellt: 2013-12-04 22:39:35
 * 
 * HOST   : DEV:7509
 * SERVER : ov_hmidemo7
@@ -10151,7 +10151,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[3] : INPUT STRING = {"/Libraries/sfc/sfcHeader" , "/acplt/sfc/sfcHeader" , "/sfc/sfcHeader"};
+      value[4] : INPUT STRING = {"/Libraries/sfc/sfcHeader" , "/acplt/sfc/sfcHeader" , "/Libraries/ssc/sscHeader" , "/acplt/ssc/sscHeader"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -10231,7 +10231,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/onload/FB_Con_Iterator.forEachChild/no_vars_or_connections.if/IsNot_var_or_connection :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/onload/FB_Con_Iterator.forEachChild/no_vars_or_connections.if/IsNot_Sfc_Var_Connection :
     CLASS /Libraries/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
@@ -10242,7 +10242,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/onload/FB_Con_Iterator.forEachChild/no_vars_or_connections.if/IsNot_var_or_connection.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/onload/FB_Con_Iterator.forEachChild/no_vars_or_connections.if/IsNot_Sfc_Var_Connection.withValue :
     CLASS /Libraries/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -10254,7 +10254,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[95] : INPUT STRING = {"/Libraries/sfc/sfcHeader" , "/acplt/sfc/sfcHeader" , "/sfc/sfcHeader" , "/acplt/ov/domain" , "/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/fb/task" , "/Libraries/fb/connection" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/Libraries/fb/task" , "/acplt/fb/connection" , "/acplt/fb/anyvar" , "/acplt/fb/boolvar" , "/acplt/fb/boolvecvar" , "/acplt/fb/doublevar" , "/acplt/fb/doublevecvar" , "/acplt/fb/intvar" , "/acplt/fb/intvecvar" , "/acplt/fb/singlevar" , "/acplt/fb/singlevecvar" , "/acplt/fb/stringvar" , "/acplt/fb/stringvecvar" , "/acplt/fb/timespanvar" , "/acplt/fb/timespanvecvar" , "/acplt/fb/timevar" , "/acplt/fb/timevecvar" , "/acplt/fb/uintvar" , "/acplt/fb/uintvecvar" , "/acplt/fb/task" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport" , "/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport"};
+      value[96] : INPUT STRING = {"/Libraries/sfc/sfcHeader" , "/acplt/sfc/sfcHeader" , "/Libraries/ssc/sscHeader" , "/acplt/ssc/sscHeader" , "/acplt/ov/domain" , "/fb/connection" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/fb/task" , "/Libraries/fb/connection" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/Libraries/fb/task" , "/acplt/fb/connection" , "/acplt/fb/anyvar" , "/acplt/fb/boolvar" , "/acplt/fb/boolvecvar" , "/acplt/fb/doublevar" , "/acplt/fb/doublevecvar" , "/acplt/fb/intvar" , "/acplt/fb/intvecvar" , "/acplt/fb/singlevar" , "/acplt/fb/singlevecvar" , "/acplt/fb/stringvar" , "/acplt/fb/stringvecvar" , "/acplt/fb/timespanvar" , "/acplt/fb/timespanvecvar" , "/acplt/fb/timevar" , "/acplt/fb/timevecvar" , "/acplt/fb/uintvar" , "/acplt/fb/uintvecvar" , "/acplt/fb/task" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport" , "/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
