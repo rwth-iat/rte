@@ -808,7 +808,7 @@ proc compress {archivename dir} {
 
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
-	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
+	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/ks/trunk/fbcomlib develop/fb develop/shutdown}
 	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc }
 	print_msg "checking out trunk"
 } else {
