@@ -91,9 +91,9 @@ void OV_DLLFNCEXPORT vdivde3696_tof1_typemethod(
 		//
 		ptask = Ov_PtrUpCast(fb_task, pfb);
 		
-		while	(ptask->v_cyctime.secs == 0 && ptask->v_cyctime.usecs	== 0)
+		while (ptask && (ptask->v_cyctime.secs==0) && (ptask->v_cyctime.usecs==0)) {
 			ptask = Ov_GetParent(fb_tasklist, ptask);
-	 	 
+		}
 	 	if (ptask == NULL)
 	 		cyctime = 1.0; 
 		else
