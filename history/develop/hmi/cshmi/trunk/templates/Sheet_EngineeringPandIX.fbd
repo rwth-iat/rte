@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2013-09-16 15:19:11
+* Erstellt: 2013-12-05 23:11:34
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -18,7 +18,7 @@
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       TemplateDefinition : INPUT STRING = "Pandix/internal/PandixEngineering";
-      FBReference[1] : INPUT STRING = {"/TechUnits/pandix/ACPLT/M4PAC"};
+      FBReference[1] : INPUT STRING = {"/TechUnits/pandix"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
       zindex : INPUT UINT = 0;
