@@ -3797,9 +3797,7 @@ cshmi.prototype = {
 				requestList[ObjectPath]["xOffset"] = null;
 				requestList[ObjectPath]["yOffset"] = null;
 				requestList[ObjectPath]["maxTemplatesPerDirection"] = null;
-				
-				//fixme activate even if turbo is broken
-//				requestList[ObjectPath]["preventClone"] = null;
+				requestList[ObjectPath]["preventClone"] = null;
 			}else{
 				//a group has other
 				requestList[ObjectPath]["width"] = null;
