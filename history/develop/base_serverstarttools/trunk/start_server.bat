@@ -7,6 +7,6 @@ rem
 rem ********************************************************************
 rem
 
-cmd /c %~dp0..\..\system\sysbin\tclsh %~dp0..\..\system\systools\start_server.tcl
+"%~dp0..\..\system\sysbin\tclsh" "%~dp0..\..\system\systools\start_server.tcl"
 
 pause
