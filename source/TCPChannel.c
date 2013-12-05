@@ -323,7 +323,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			waitd.tv_usec = 0;    //  do not wait
 			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
 			if(err)
+			{
 				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+			}
 
 			//check if data arrived
 			if((err > 0) && FD_ISSET(socket, &read_flags))
