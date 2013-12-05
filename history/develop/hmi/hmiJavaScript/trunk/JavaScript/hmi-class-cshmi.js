@@ -192,7 +192,9 @@ cshmi.prototype = {
 		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", false);
 		
 		if (VisualObject === null){
-			HMI.hmi_log_onwebsite('No sheet with name  "'+ObjectPath+'" available.');
+			if(HMI.InfoOutput.firstChild === null){
+				HMI.hmi_log_onwebsite('No sheet with name  "'+ObjectPath+'" available.');
+			}
 			return;
 		}
 		if(HMI.PlaygroundContainerNode){
@@ -2993,6 +2995,7 @@ cshmi.prototype = {
 			return false;
 		}
 		if(VisualObject.tagName !== "polyline"){
+			//todo implement für path bezierkurven
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
