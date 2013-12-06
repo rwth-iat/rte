@@ -401,7 +401,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						{
 							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
 							Ov_DeleteObject(thisCh);
-
 						}
 						else
 						{
