@@ -262,7 +262,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					continue;
 				}
 				else
+				{
 					KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
+				}
 
 				if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
 				{
@@ -418,10 +420,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if(sockfds[i] != -1)
 #endif
 			{
-
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
-
 			}
 		}
 
@@ -429,7 +429,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		waitd.tv_usec = 0;    //  do not wait
 		ret = select(highest+1, &fds, NULL, NULL, &waitd);
 		if(ret)
+		{
 			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
+		}
 #if OV_SYSTEM_NT
 		if(ret == SOCKET_ERROR)
 		{
@@ -446,67 +448,85 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		if(ret>0)	//if there is activity on the socket(s)
 		{
 			for (i = 0; (i < 2); i++) {
-				if ((sockfds[i] != -1) && (!FD_ISSET(sockfds[i], &fds)))
+				if ((sockfds[i] < 0) || (!FD_ISSET(sockfds[i], &fds)))
 					continue;
 
 				cfd = accept(sockfds[i], (struct sockaddr*)&peer, &peers);
-
-				if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
+#if OV_SYSTEM_NT
+				if(cfd != INVALID_SOCKET)
+#else
+				if(cfd >= 0)
+#endif
 				{
-					KS_logfile_error(("%s: getnameinfo for newly connected client failed", this->v_identifier));
-					KS_logfile_print_sysMsg();
-				}
-
-				KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
-
-				//disable nagle for the receivesocket
-				setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
-
-
-				//get first free "TCPChannel"-name
-				do {
-					pNewChannel = NULL;
-					namecounter++;
-					sprintf(ChannelNameBuffer, "TCPChannel%lu", namecounter);
-					pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
-				} while (pNewChannel);
-
-				//create receiving TCPChannel
-				if (Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer))) {
-					KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf));
-					//copy socket to created object
-					TCPbind_TCPChannel_socket_set(pNewChannel, cfd);
-					if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))
-							KS_logfile_error(("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier));
-					pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-					/*	check for local connection and set flag appropriately	*/
-					if((ov_string_compare(buf, "127.0.0.1") == OV_STRCMP_EQUAL)
-							|| (ov_string_compare(buf, "::1") == OV_STRCMP_EQUAL))
-						pNewChannel->v_isLocal = TRUE;
-
-					if(thisLi->v_ChannelNeedsClientHandler)
+					if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
 					{
-						pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
-						pProtIdent = Ov_GetChild(TCPbind_AssocSpecificClientHandler, thisLi);
-						if(pProtIdent)
+						KS_logfile_error(("%s: getnameinfo for newly connected client failed", this->v_identifier));
+						KS_logfile_print_sysMsg();
+					}
+
+					KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
+
+					//disable nagle for the receivesocket
+					setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+
+
+					//get first free "TCPChannel"-name
+					do {
+						pNewChannel = NULL;
+						namecounter++;
+						sprintf(ChannelNameBuffer, "TCPChannel%lu", namecounter);
+						pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
+					} while (pNewChannel);
+
+					//create receiving TCPChannel
+					if (Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer)))
+					{
+						KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf));
+						//copy socket to created object
+						TCPbind_TCPChannel_socket_set(pNewChannel, cfd);
+						if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))
 						{
-							Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
-							if(!pVTBLProtIdent)
+							KS_logfile_error(("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier));
+						}
+						pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+						/*	check for local connection and set flag appropriately	*/
+						if((ov_string_compare(buf, "127.0.0.1") == OV_STRCMP_EQUAL)
+								|| (ov_string_compare(buf, "::1") == OV_STRCMP_EQUAL))
+							pNewChannel->v_isLocal = TRUE;
+
+						if(thisLi->v_ChannelNeedsClientHandler)
+						{
+							pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
+							pProtIdent = Ov_GetChild(TCPbind_AssocSpecificClientHandler, thisLi);
+							if(pProtIdent)
 							{
-								KS_logfile_error(("%s: error getting VTablePtr for %s", this->v_identifier, pProtIdent->v_identifier));
-							}
-							else
-							{
-								if(Ov_Fail(pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, pNewChannel))))
-									KS_logfile_error(("%s: error creating ClientHandler for %s. (ProtocolIdentificator %s)", this->v_identifier, pNewChannel->v_identifier, pProtIdent->v_identifier));
+								Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
+								if(!pVTBLProtIdent)
+								{
+									KS_logfile_error(("%s: error getting VTablePtr for %s", this->v_identifier, pProtIdent->v_identifier));
+								}
+								else
+								{
+									if(Ov_Fail(pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, pNewChannel))))
+									{
+										KS_logfile_error(("%s: error creating ClientHandler for %s. (ProtocolIdentificator %s)", this->v_identifier, pNewChannel->v_identifier, pProtIdent->v_identifier));
+									}
+								}
 							}
 						}
-					}
-					else
-						pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
+						else
+							pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
 
-				} else {
-					KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));
+					} else {
+						KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));
+					}
+				}
+				else
+				{
+#if OV_SYSTEM_NT
+					errno = WSAGetLastError();
+#endif
+					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errbo is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
 				}
 			}
 		}
