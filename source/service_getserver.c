@@ -75,16 +75,14 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, O
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	kshttp_find_arguments(args, "servername", &match);
 	if(match.veclen<1){
-		fr = KS_ERR_TARGETGENERIC;
+		fr = KS_ERR_BADPARAM;
 		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable servername not found");
 		EXEC_GETSERVER_RETURN fr; //400
+	}else if(ov_string_compare(match.value[0], NULL) == OV_STRCMP_EQUAL){
+		fr = KS_ERR_BADPARAM;
+		kshttp_print_result_array(message, response_format, &fr, 1, ": requested servername empty");
+		EXEC_GETSERVER_RETURN fr;
 	}
-	if(ov_string_getlength(match.value[0]) > KS_NAME_MAXLEN){
-		fr = KS_ERR_TARGETGENERIC;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": requested servername too long");
-		EXEC_GETSERVER_RETURN fr; //400
-	}
-	//todo allow multiple getservers?
 	ov_string_setvalue(&servername, match.value[0]);
 
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -120,7 +118,6 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, O
 		if(i<protocols.veclen)
 		{	/*	kshttp supported	*/
 			KS_logfile_debug(("kshttp_getserver: getserver: kshttp supported."));
-			//fixme atoi und %u print?
 			ov_string_setvalue(&http_port, ports.value[i]);
 		}
 		else
@@ -128,7 +125,7 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, O
 			//ksbase is happy, but we are not
 			fr = KS_ERR_SERVERUNKNOWN;
 			KS_logfile_debug(("kshttp_getserver: getserver: kshttp not supported."));
-			kshttp_print_result_array(message, response_format, &fr, 1, ": Server unknown (kshttp not supported)");
+			kshttp_print_result_array(message, response_format, &fr, 1, ": Server unknown via kshttp protocol)");
 			EXEC_GETSERVER_RETURN fr; //400
 		}
 	}

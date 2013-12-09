@@ -40,6 +40,7 @@
 
 #define EXEC_REGISTER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&servername, NULL);\
+		ov_string_setvalue(&portstr, NULL);\
 		return
 
 /**
@@ -60,17 +61,7 @@ OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV
 	OV_STRING servername = NULL;
 	OV_UINT serverversion;
 	OV_UINT serverport;
-	char portstr [8];
-
-
-	//todo disallow remote registering
-	/*
-	if(!pChannel->v_isLocal)
-	{
-		ksErrCode = KS_ERR_NOREMOTE;
-		break;
-	}
-	*/
+	OV_STRING portstr = NULL;
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -78,6 +69,10 @@ OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable name not found");
+		EXEC_REGISTER_RETURN fr; //400
+	}else if(ks_isvalidname(match.value[0])){
+		fr = OV_ERR_BADPARAM;
+		kshttp_print_result_array(message, response_format, &fr, 1, ": Server name not valid");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
 		ov_string_setvalue(&servername, match.value[0]);
@@ -108,7 +103,7 @@ OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV
 		EXEC_REGISTER_RETURN fr;
 	}
 
-	sprintf(portstr, "%lu", serverport);
+	ov_string_print(&portstr, "%lu", serverport);
 	fr = ksbase_Manager_register(servername, serverversion, KSHTTP_IDENTIFIER, portstr, 30);
 	if(Ov_Fail(fr)){
 		kshttp_print_result_array(message, response_format, &fr, 1, ": could not register server at manager.");
