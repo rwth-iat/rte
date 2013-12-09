@@ -421,7 +421,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT re
 
 			case OV_VT_STRING_VEC:
 			case OV_VT_STRING_PV_VEC:
-				//request could be "{hello}%20{world}" todo doku!
+				//request could be "{hello}%20{world}"
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_string_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_string_vec.value = NULL;

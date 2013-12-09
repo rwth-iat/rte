@@ -60,8 +60,6 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_shutdown(
 
 	if(thisMngCom->v_UseShortCut == TRUE)
 	{
-		//todo not needed, as the tcp connection is usable
-
 		KS_logfile_debug(("%s: unregister: using shortCut", thisMngCom->v_identifier));
 		pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
 		if(!pManager)

@@ -216,6 +216,12 @@ static void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_ST
 			ov_string_print(body, "KS_ERR_SERVERUNKNOWN: %s%s", HTTP_404_BODY, tmp_body);
 		}
 		break;
+	case KS_ERR_TARGETGENERIC:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_413_HEADER, tmp_header);
+		if(response_format != RESPONSE_FORMAT_KSX){
+			ov_string_print(body, "KS_ERR_TARGETGENERIC: %s%s", HTTP_413_BODY, tmp_body);
+		}
+		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
 		if(response_format != RESPONSE_FORMAT_KSX){
@@ -305,7 +311,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		if(ov_string_compare(this->v_ClientRequest.requestMethod, "POST") == OV_STRCMP_EQUAL){
 			//save content of POST in memory
 			this->v_ClientRequest.messageBody = (OV_BYTE*)ov_malloc(this->v_ClientRequest.contentLength+1);
-			if(this->v_ClientRequest.messageBody && dataReceived->length >= this->v_ClientRequest.contentLength){
+			if(!this->v_ClientRequest.messageBody){
+				result = OV_ERR_TARGETGENERIC;
+				this->v_ClientRequest.keepAlive = FALSE; //close connection
+			}else if(dataReceived->length >= this->v_ClientRequest.contentLength){
 				messageBodyOffset = ov_string_getlength(this->v_ClientRequest.requestHeader)+4; //4 byte are the \r\n\r\n
 				memcpy(this->v_ClientRequest.messageBody, dataReceived->data + messageBodyOffset, this->v_ClientRequest.contentLength);
 				this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
@@ -356,15 +365,25 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getserver");
 			request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/register") == OV_STRCMP_EQUAL){
-			//name, port, ksversion
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "register");
-			result = kshttp_exec_register(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+			if(!pChannel->v_isLocal){
+				result = KS_ERR_NOREMOTE;
+				kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": Registering remote is not allowed/useful");
+			}else{
+				//name, port, ksversion
+				result = kshttp_exec_register(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+			}
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "register");
 			request_handled_by = REQUEST_HANDLED_BY_REGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/unregister") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
-			result = kshttp_exec_unregister(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+			if(!pChannel->v_isLocal){
+				result = KS_ERR_NOREMOTE;
+				kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": Registering remote is not allowed/useful");
+			}else{
+				result = kshttp_exec_unregister(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+			}
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
 			request_handled_by = REQUEST_HANDLED_BY_UNREGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getVar") == OV_STRCMP_EQUAL){
