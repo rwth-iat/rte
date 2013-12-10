@@ -181,12 +181,15 @@ OV_DLLFNCEXPORT void ov_ksserver_getep(
 
 		/*
 		*	TODO & FIXME! flatten modus...
+		*	note: flatten should have been a recursive request (Albrecht december 2013)
 		*/
 		/*
 		*	figure out the type mask
 		*/
 		mask = OV_ET_NONE;
 		if(params->type_mask & KS_OT_STRUCTURE) {
+			// 2013 note: structure is a c struct within the OV object.
+			// it was superseded with OV_PARTS therefore never activated in KS
 			mask |= OV_ET_MEMBER;
 		}
 		if(params->type_mask & KS_OT_DOMAIN) {
@@ -360,6 +363,8 @@ OV_RESULT ov_ksserver_getep_additem(
 			case OV_VT_STRUCT:
 			case OV_VT_STRUCT_VEC:
 				objtype = KS_OT_DOMAIN;  // *** KS_OT_STRUCTURE ***  ? KS ?
+				// 2013 note: structure is a c struct within the OV object.
+				// it was superseded with OV_PARTS therefore never activated in KS
 				break;
 			default:
 				objtype = KS_OT_VARIABLE;
@@ -505,6 +510,8 @@ OV_RESULT ov_ksserver_getep_additem(
 				:(((OV_ANY*)pelem->pvalue)->value.vartype & OV_VT_KSMASK);
 			return OV_ERR_OK;
 		case KS_OT_DOMAIN:   // *** KS_OT_STRUCTURE ***  ? KS ?
+			// 2013 note: structure is a c struct within the OV object.
+			// it was superseded with OV_PARTS therefore never activated in KS
 //			pprops->OV_OBJ_ENGINEERED_PROPS_u.struct_engineered_props.type_identifier
 //				= ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,
 //				Ov_GetParent(ov_instantiation, pobj)), version);
