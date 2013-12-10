@@ -49,7 +49,7 @@ enum OV_ELEM_TYPE_ENUM  {
 	OV_ET_NONE			= 0x00,		/* invalid element */
 	OV_ET_OBJECT		= 0x01,
 	OV_ET_VARIABLE		= 0x02,
-	OV_ET_MEMBER		= 0x04,
+	OV_ET_MEMBER		= 0x04,		/* structure member (superseded by PART) */
 	OV_ET_PARENTLINK	= 0x08,
 	OV_ET_CHILDLINK		= 0x10,
 	OV_ET_OPERATION		= 0x20,

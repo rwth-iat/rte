@@ -347,6 +347,7 @@
 
 /**
 *	Get pointer to the class object of an instance
+*	returns a pointer OV_INSTPTR_ov_class
 */
 #define Ov_GetClassPtr(pobj)												\
 	Ov_GetParent(ov_instantiation, Ov_PtrUpCast(ov_object, pobj))
