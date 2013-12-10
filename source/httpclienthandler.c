@@ -318,8 +318,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	if(Ov_OK(result) && ov_string_compare(this->v_ClientRequest.requestMethod, "OPTIONS") == OV_STRCMP_EQUAL){
 		//used for Cross-Origin Resource Sharing (CORS)
-		//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
-		//ov_string_append(&responseHeader, "Access-Control-Allow-Methods: POST, GET\r\n");
 
 		//hmi uses this headers, which is no problem for us
 		ov_string_append(&responseHeader, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
@@ -394,6 +392,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			}
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
+			//add Access-Control-Allow-Methods to OPTIONS if implement other Methods
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "setvar");
 			result = kshttp_exec_setvar(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "setvar");

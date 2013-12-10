@@ -61,12 +61,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_constructor(
  * helper function to decode an Uniform Resource Identifier
  * http://user:pass@localhost:8015/path/to/resource.html?query#fragment
  * parameters could be NULL, if only a check should be performed or this information is not needed
- * @param URI
- * @param server
- * @param port
- * @param username
- * @param password
- * @param requestUri
+ * @param URI Input string to analyze
+ * @param server pointer to the server string
+ * @param port pointer to the port string
+ * @param username pointer to the username string
+ * @param password pointer to the password string
+ * @param requestUri pointer to the requestURI string (without the server, port,...)
+ * @param usernameProvided pointer to an bool to indicate a username was provided
  * @return
  */
 OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *port, OV_STRING *username, OV_STRING *password, OV_STRING *requestUri, OV_BOOL *usernameProvided){
@@ -112,12 +113,19 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 		// or http://user:pass@[2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:8080/
 		switch ((*URI)[offset]) {
 		case '[':
-			//todo check state and complain
+			if(state != DECODESTATE_USER_OR_SERVER && state != DECODESTATE_INIT){
+				state = DECODESTATE_ERROR;
+				break;
+			}
 			old_state = state;
 			state = DECODESTATE_IPV6HOST;
 			lastoffset++;
 			break;
 		case ']':
+			if(state != DECODESTATE_IPV6HOST){
+				state = DECODESTATE_ERROR;
+				break;
+			}
 			state = old_state;
 			break;
 		case ':':
@@ -147,7 +155,6 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				strUserOrServer = NULL;
 				state = DECODESTATE_SERVER_OK;
 			}
-			//founduserorserver = TRUE;
 			lastoffset = offset+1;
 			break;
 		case '@':
@@ -190,7 +197,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				strServer = (OV_STRING)ov_database_malloc(thislength +1);
 				memcpy(strServer, &(*URI)[lastoffset], thislength);
 				if(strServer[thislength-1] == ']'){
-					//an ipv6 adress could include an ]
+					//an ipv6 address could include an ]
 					strServer[thislength-1] = '\0';
 				}else{
 					strServer[thislength] = '\0';
@@ -211,7 +218,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				if(state == DECODESTATE_USER_OR_SERVER){
 					//save server info
 					if(strUserOrServer[serverlength-1] == ']'){
-						//an ipv6 adress could include an ], which would be valid as a password
+						//an ipv6 address could include an ], which would be valid as a password
 						strUserOrServer[serverlength-1] = '\0';
 					}
 					//server could be NULL if only a validation is requested, so do not check return value
@@ -224,6 +231,22 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 			lastoffset = offset+1;
 			break;
 		default:
+			if(state == DECODESTATE_IPV6HOST){
+				//ipv6 address has to be hex or . (RFC 4291 sect 2.2)
+				if(
+						((*URI)[offset] >= '0'
+							&&	(*URI)[offset] <= '9')
+					||	((*URI)[offset] >= 'a'
+							&&	(*URI)[offset] <= 'f')
+					||	((*URI)[offset] >= 'A'
+							&&	(*URI)[offset] <= 'F')
+					||	(*URI)[offset] == '.'
+				){
+					//valid
+				}else{
+					state = DECODESTATE_ERROR;
+				}
+			}
 			break;
 		}
 		if(state == DECODESTATE_READY){
@@ -238,7 +261,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				plist = ov_string_split(strTemp, "#", &len);
 				ov_string_setvalue(&strTemp, NULL);
 			}else{
-				//the requestUri includes the seperator /, but not the fragment
+				//the requestUri includes the separator /, but not the fragment
 				plist = ov_string_split(&(*URI)[lastoffset-1], "#", &len);
 			}
 			//plist[0] is available, since we do not have a NULL pointer
