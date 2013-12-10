@@ -154,8 +154,8 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 				//lets start hashing
 				// GOT info look at http://en.wikipedia.org/wiki/Digest_access_authentication
 				//HA1
-				//TODO: the send username is ignored atm, since only one user root exists
-				ov_string_print(&temp, "%s:%s:%s", "root", REALM, "pass");
+				//TODO: the send username is ignored atm, since only one user simple exists
+				ov_string_print(&temp, "%s:%s:%s", "simple", REALM, "pass");
 				md5_string(&hash, temp);
 				ov_string_setvalue(&ha1, hash);
 				//HA2
