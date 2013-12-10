@@ -238,8 +238,7 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 
 	if(ov_string_compare(clientRequest->version, "1.1") == OV_STRCMP_EQUAL && httphostsend == FALSE){
 		/* RFC 2616: "All Internet-based HTTP/1.1 servers MUST respond with a 400 (Bad Request)
-		status code to any HTTP/1.1 request message which lacks a Host header field."
-		*/
+		status code to any HTTP/1.1 request message which lacks a Host header field." */
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	//try setting format via url parameter

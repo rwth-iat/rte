@@ -130,13 +130,10 @@
 #define REQUEST_HANDLED_BY_UNREGISTER 17
 
 //authorization.c
-#define REALM "Top secret! User: root Pass: pass"
+#define REALM "Top secret! User: simple Pass: pass"
 #define SESSION_TTL 1200 //http session time to live in seconds
 #define RECHECK_MD5 15   //recalculate md5 checksums ov the authenticaton every nth access
 						 //low levels will produce more cpu load since md5 will be calculated more often
-
-//maximal saved HTTP REQUEST (full request header size)
-#define MAX_HTTP_REQUEST_SIZE 8192
 
 //"HTTP/1.x " will be appended before header
 #define HTTP_200_HEADER "200 OK\r\n"

@@ -69,7 +69,6 @@
 	#include <winsock2.h>
 #endif
 
-#define BUFFER_CHUNK_SIZE 2048
 
 /*** TEMP ***/
 OV_DLLFNCEXPORT OV_BOOL kshttp_httpclienthandler_stream_get(
@@ -268,37 +267,16 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	this->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
 	this->v_ClientRequest.gzipAccepted = FALSE;
 
-	ov_string_setvalue(&this->v_ClientRequest.version, "1.0");
-	ov_string_setvalue(&reply_contenttype, "text/plain");
-	ov_string_setvalue(&reply_encoding, "Windows-1252");
-
-	//TODO NOTE: this works only for GET and HEAD, for POST one needs to evaluate content-length
-	if(dataReceived->length > MAX_HTTP_REQUEST_SIZE){
-		result = OV_ERR_BADVALUE; //414
-		this->v_ClientRequest.keepAlive = FALSE; //close connection
-		//append double line break and let server process the input
-		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)"\r\n\r\n", 9);
-	}
-
 	//if no stream mode, wait for the end of the header
 	if(this->v_stream == FALSE){
-		//if no double line break detected yet - wait till next cycle
-		if(!strstr((OV_STRING)dataReceived->data, "\r\n\r\n")){
+		//split header and footer of the http request
+		http_request_array = ov_string_split((OV_STRING)dataReceived->data, "\r\n\r\n", &len);
+
+		if(len < 1){
+			//if no double line break detected yet - wait till next cycle
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 											Yes, this could block the ClientHandler for a longer time.	*/
 		}
-	}
-	KS_logfile_debug(("httpclienthandler/HandleRequest: got http command w/ %d bytes",dataReceived->length));
-	//END handling buffer
-
-
-	if(this->v_stream == FALSE){
-		//this->v_requestbuffer contains the raw request
-		//split header and footer of the http request
-
-		http_request_array = ov_string_split((OV_STRING)dataReceived->data, "\r\n\r\n", &len);
-		//len is always > 0
-
 		ov_string_setvalue(&this->v_ClientRequest.requestHeader, http_request_array[0]);
 		ov_string_freelist(http_request_array);
 	}else{
@@ -306,56 +284,49 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 
 	//parse request header into get command and arguments request
-	if(!Ov_Fail(result)){
-		result = kshttp_parse_http_header_from_client(&this->v_ClientRequest);
-		if(ov_string_compare(this->v_ClientRequest.requestMethod, "POST") == OV_STRCMP_EQUAL){
-			//save content of POST in memory
+	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest);
+	if(this->v_ClientRequest.contentLength != 0){
+		//save message body (for POST?) in memory
+		messageBodyOffset = ov_string_getlength(this->v_ClientRequest.requestHeader)+4; //4 byte are the \r\n\r\n
+		if(dataReceived->length - messageBodyOffset >= this->v_ClientRequest.contentLength){
 			this->v_ClientRequest.messageBody = (OV_BYTE*)ov_malloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
-				result = OV_ERR_TARGETGENERIC;
-				this->v_ClientRequest.keepAlive = FALSE; //close connection
-			}else if(dataReceived->length >= this->v_ClientRequest.contentLength){
-				messageBodyOffset = ov_string_getlength(this->v_ClientRequest.requestHeader)+4; //4 byte are the \r\n\r\n
-				memcpy(this->v_ClientRequest.messageBody, dataReceived->data + messageBodyOffset, this->v_ClientRequest.contentLength);
-				this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
-			}else{
-				result = OV_ERR_BADPARAM;
-				this->v_ClientRequest.keepAlive = FALSE; //close connection
+				return OV_ERR_TARGETGENERIC;
 			}
+			memcpy(this->v_ClientRequest.messageBody, dataReceived->data + messageBodyOffset, this->v_ClientRequest.contentLength);
+			this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
+		}else{
+			//we have the full header, but not the full body yet. Get called again next time
+			return OV_ERR_OK;
 		}
 	}
+
 	//empty the buffers
 	ksbase_free_KSDATAPACKET(dataReceived);
-
-	//allow javascript connection from any source (CORS)
-	ov_string_setvalue(&responseHeader, "Access-Control-Allow-Origin:*\r\n");
-
-	if(!Ov_Fail(result)){
-		result = OV_ERR_NOTIMPLEMENTED;
-		//check which kind of request is coming in
-		if(	ov_string_compare(this->v_ClientRequest.requestMethod, "GET") == OV_STRCMP_EQUAL ||
-				ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
-			result = OV_ERR_OK;
-		}else if(ov_string_compare(this->v_ClientRequest.requestMethod, "PUSH") == OV_STRCMP_EQUAL){
-			result = OV_ERR_OK;
-		}else if(ov_string_compare(this->v_ClientRequest.requestMethod, "OPTIONS") == OV_STRCMP_EQUAL){
-			//used for Cross-Origin Resource Sharing (CORS)
-			//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
-
-			//hmi uses this headers, which is no problem for us
-			ov_string_append(&responseHeader, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
-			result = OV_ERR_OK;
-			//only an 200 is required, so abort request handling
-			request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
-		}
-	}
 
 	if(RESPONSE_FORMAT_KSX == this->v_ClientRequest.responseFormat){
 		ov_string_setvalue(&reply_contenttype, "text/xml");
 	}else if(RESPONSE_FORMAT_JSON == this->v_ClientRequest.responseFormat){
-		//todo wieder an
-		//ov_string_setvalue(&content_type, "application/json");
+		ov_string_setvalue(&reply_contenttype, "application/json");
+	}else{
+		ov_string_setvalue(&reply_contenttype, "text/plain");
 	}
+	ov_string_setvalue(&reply_encoding, "Windows-1252");
+
+	//allow javascript connection from any source (CORS)
+	ov_string_setvalue(&responseHeader, "Access-Control-Allow-Origin:*\r\n");
+
+	if(Ov_OK(result) && ov_string_compare(this->v_ClientRequest.requestMethod, "OPTIONS") == OV_STRCMP_EQUAL){
+		//used for Cross-Origin Resource Sharing (CORS)
+		//todo add if using http methods: Access-Control-Allow-Methods: POST, GET, LINK...
+		//ov_string_append(&responseHeader, "Access-Control-Allow-Methods: POST, GET\r\n");
+
+		//hmi uses this headers, which is no problem for us
+		ov_string_append(&responseHeader, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
+		//only an 200 is required, so abort request handling
+		request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
+	}
+
 	//BEGIN command routine
 	if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
 		if(ov_string_compare(this->v_ClientRequest.cmd, "/getServer") == OV_STRCMP_EQUAL){
@@ -678,6 +649,7 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	thisCl->v_ClientRequest.requestMethod = NULL;
 	thisCl->v_ClientRequest.version = NULL;
 
+	thisCl->v_ClientRequest.contentLength = 0;
 	thisCl->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
 	thisCl->v_ClientRequest.gzipAccepted = FALSE;
 
