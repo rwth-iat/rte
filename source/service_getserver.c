@@ -66,7 +66,7 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, O
 	OV_TIME ExpTime;
 	OV_INT registeredVersion;
 	OV_UINT i = 0;
-	OV_STRING http_port;
+	OV_STRING http_port = NULL;
 
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
