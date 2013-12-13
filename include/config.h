@@ -76,11 +76,13 @@
  * HTTP Acceptance codes
  */
 
-#define HTTP_MSG_ACCEPTED		(0x00)
-#define HTTP_MSG_DENIED			(0x01)
-#define HTTP_MSG_INCOMPLETE		(0x02)
-#define HTTP_MSG_NEW			(0x03)
-#define HTTP_MSG_DBOUTOFMEMORY	(0x04)
+#define HTTP_MSG_NEW				(0)
+#define HTTP_MSG_INCOMPLETE			(100)
+#define HTTP_MSG_HEADERACCEPTED		(206)
+#define HTTP_MSG_ACCEPTED			(200)
+#define HTTP_MSG_DENIED				(400)
+#define HTTP_MSG_HEAPOUTOFMEMORY	(500)
+#define HTTP_MSG_DBOUTOFMEMORY		(507)
 
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
@@ -209,5 +211,6 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		);
 
 OV_RESULT kshttp_getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel);
-OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct);
-OV_RESULT kshttp_decodeTransferEncodingChunked(OV_STRING *responseString, OV_STRING *entityBody, OV_UINT *contentLength, OV_UINT maxlength);
+OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct, OV_UINT *httpParseStatus);
+OV_RESULT kshttp_decodeTransferEncodingChunked(OV_BYTE *rawHTTPmessage, OV_BYTE **entityBody, OV_UINT *contentLength, OV_UINT receivedlength, OV_UINT *httpParseStatus);
+OV_RESULT kshttp_encodebase64(OV_STRING * strBase64string, OV_STRING input);

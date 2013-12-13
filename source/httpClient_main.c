@@ -109,18 +109,21 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	pTicketGenerator = Ov_GetChild(ksbase_AssocClientToTicketGenerator, thisCl);
 
 	KS_logfile_debug(("length of http answer: %lu\ndata: %p", dataReceived->length, dataReceived->data, dataReceived->readPT));
-	result = kshttp_processServerReplyHeader(dataReceived, &thisCl->v_ServerResponse);
-	if(result == OV_ERR_TARGETGENERIC)
+	result = kshttp_processServerReplyHeader(dataReceived, &thisCl->v_ServerResponse, &thisCl->v_httpParseStatus);
+
+	if(thisCl->v_httpParseStatus == HTTP_MSG_HEADERACCEPTED || thisCl->v_httpParseStatus == HTTP_MSG_INCOMPLETE)
 	{	/*	message incomplete --> keep waiting	*/
 		thisCl->v_state = KSBASE_CLST_BUSY;
-		thisCl->v_httpParseStatus = HTTP_MSG_INCOMPLETE;
 		thisCl->v_actimode = 1;
 		return OV_ERR_OK;
 	}else if (Ov_Fail(result)){
+		//we had other failures...
+		thisCl->v_state = KSBASE_CLST_ERROR;
 		thisCl->v_httpParseStatus = HTTP_MSG_DENIED;
-		return OV_ERR_OK;
+		return result;
 	}
 	thisCl->v_httpParseStatus = HTTP_MSG_ACCEPTED;
+
 	thisCl->v_httpStatusCode = thisCl->v_ServerResponse.statusCode;
 
 	KS_logfile_debug(("decoding successful"));
@@ -151,10 +154,10 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_startup(
     /* do what the base class does first */
     ov_object_startup(pobj);
 
-	thisCl->v_ServerResponse.contentLength = 0;
-	thisCl->v_ServerResponse.version = NULL;
 	thisCl->v_ServerResponse.contentType = NULL;
-
+	thisCl->v_ServerResponse.contentLength = 0;
+	thisCl->v_ServerResponse.contentBinary = NULL;
+	thisCl->v_ServerResponse.version = NULL;
 	return;
 }
 
@@ -177,6 +180,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	ov_string_setvalue(&(thisCl->v_serverPort), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
+	ov_free(thisCl->v_ServerResponse.contentBinary);
+	thisCl->v_ServerResponse.contentBinary = NULL;
 
 	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
@@ -204,6 +209,8 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_shutdown(
 
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
+	ov_free(thisCl->v_ServerResponse.contentBinary);
+	thisCl->v_ServerResponse.contentBinary = NULL;
 
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
