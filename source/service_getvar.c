@@ -287,9 +287,9 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_U
 
 				case OV_VT_STRUCT:
 				case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-					//fixme struct base64
 					ov_string_setvalue(&LoopEntryTypeString, "struct");
-					ov_string_print(&LoopEntryValue, "%s", "unknown");
+					ov_string_print(&LoopEntryValue, "%s", "struct datatype unsupported");
+					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 
 				//****************** VEC: *******************

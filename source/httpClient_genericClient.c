@@ -358,7 +358,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 		kshttp_decodeTransferEncodingChunked(pChannel->v_inData.readPT, &thisCl->v_ServerResponse.contentBinary, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT, NULL);
 	}else if(thisCl->v_ServerResponse.contentLength != 0){
 		//the content is available unchunked. copy it to the heap
-		thisCl->v_ServerResponse.contentBinary =  ov_malloc(thisCl->v_ServerResponse.contentLength);
+		thisCl->v_ServerResponse.contentBinary = Ov_HeapMalloc(thisCl->v_ServerResponse.contentLength);
 		if(!thisCl->v_ServerResponse.contentBinary){
 			//heap too small
 			thisCl->v_httpParseStatus = HTTP_MSG_HEAPOUTOFMEMORY;
@@ -382,7 +382,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 			//database too small
 			thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
 			pVtblChannel->m_CloseConnection(pChannel);
-			ov_free(thisCl->v_ServerResponse.contentBinary);
+			Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 			thisCl->v_ServerResponse.contentBinary = NULL;
 			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 			return;
@@ -391,7 +391,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 		//the contentBinary has no string termination till now
 		thisCl->v_messageBody[thisCl->v_ServerResponse.contentLength] = '\0';
 
-		ov_free(thisCl->v_ServerResponse.contentBinary);
+		Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 		thisCl->v_ServerResponse.contentBinary = NULL;
 	}else{
 		ov_string_setvalue(&thisCl->v_messageBody, "binary mimetype, content not exposable to this variable");
