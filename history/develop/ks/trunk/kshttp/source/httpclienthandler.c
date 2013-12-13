@@ -289,7 +289,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		//save message body (for POST?) in memory
 		messageBodyOffset = ov_string_getlength(this->v_ClientRequest.requestHeader)+4; //4 byte are the \r\n\r\n
 		if(dataReceived->length - messageBodyOffset >= this->v_ClientRequest.contentLength){
-			this->v_ClientRequest.messageBody = (OV_BYTE*)ov_malloc(this->v_ClientRequest.contentLength+1);
+			this->v_ClientRequest.messageBody = (OV_BYTE*)Ov_HeapMalloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
 				return OV_ERR_TARGETGENERIC;
 			}
@@ -607,7 +607,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	ov_string_setvalue(&this->v_ClientRequest.version, NULL);
 	ov_string_setvalue(&this->v_ClientRequest.host, NULL);
 	ov_string_setvalue(&responseHeader, NULL);
-	ov_free(this->v_ClientRequest.messageBody);
+	Ov_HeapFree(this->v_ClientRequest.messageBody);
 	this->v_ClientRequest.messageBody = NULL;
 
 	//if a static file is returned body is pointing inside the database

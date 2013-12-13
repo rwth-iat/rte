@@ -180,7 +180,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	ov_string_setvalue(&(thisCl->v_serverPort), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
-	ov_free(thisCl->v_ServerResponse.contentBinary);
+	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 	thisCl->v_ServerResponse.contentBinary = NULL;
 
 	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
@@ -209,7 +209,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_shutdown(
 
 	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
-	ov_free(thisCl->v_ServerResponse.contentBinary);
+	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 	thisCl->v_ServerResponse.contentBinary = NULL;
 
     /* set the object's state to "shut down" */

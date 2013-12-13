@@ -332,6 +332,35 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 	OV_UINT len = 0, i = 0;
 
 	if(*httpParseStatus == HTTP_MSG_NEW){
+		//fixme: we need only the first separator and split copies everything in the heap
+		/*
+		while(len + 4 <= dataReceived->length){
+			if(*(&dataReceived->readPT)[len+0] == '\r'
+				&& *(&dataReceived->readPT)[len+1] == '\n'
+				&& *(&dataReceived->readPT)[len+2] == '\r'
+				&& *(&dataReceived->readPT)[len+3] == '\n'){
+				break;
+			}
+			len++;
+		}
+		if(len + 4 >= dataReceived->length){
+			//not everything from the header is here till now
+			*httpParseStatus = HTTP_MSG_INCOMPLETE;
+			return OV_ERR_OK;
+		}
+		//remember length of the header (incl newlines)
+		responseStruct->headerLength = len + 4;
+
+		//split http header from content
+		BeginOfContent = (&dataReceived->readPT)[len+3];
+		//terminate string
+		BeginOfContent = '\0';
+
+		//Separate all headers
+		pallheaderslist = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n", &allheaderscount);
+		*/
+
+
 		//split http header from content
 		http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
 		responseStruct->headerLength = ov_string_getlength(http_request_array[0])+4;
@@ -454,9 +483,9 @@ OV_RESULT kshttp_decodeTransferEncodingChunked(OV_BYTE *rawHTTPmessage, OV_BYTE 
 
 		if(entityBody){
 			oldBody = *entityBody;
-			*entityBody = ov_realloc(oldBody, *contentLength);
+			*entityBody = Ov_HeapRealloc(oldBody, *contentLength);
 			if(!*entityBody){
-				ov_free(oldBody);
+				Ov_HeapFree(oldBody);
 				*contentLength = 0;
 				if(httpParseStatus){
 					*httpParseStatus = HTTP_MSG_DENIED;
@@ -487,14 +516,14 @@ OV_RESULT kshttp_encodebase64(OV_STRING * strBase64string, OV_STRING input){
 
 	n = ov_string_getlength(input);
 	length = 8 + ((n * 5) / 3) + (n / 72); /* bytes * 4/3 + bytes/72 + 4 rounding errors + 2*trailing '=' + trailing \n + trailing \0 */
-	out = ov_malloc((length+1) * sizeof(char));
+	out = Ov_HeapAlloc(length+1) * sizeof(char));
 
 	base64_init_encodestate(&state);
 	rc = base64_encode_block(input, n, out, &state);
 	rc += base64_encode_blockend(out + rc, &state);
 	out[rc-1] = '\0';
 	ov_string_setvalue(strBase64string, out);
-	ov_free(out);
+	Ov_HeapFree(out);
 
 	return OV_ERR_OK;
 }
