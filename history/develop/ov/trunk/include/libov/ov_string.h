@@ -155,7 +155,8 @@ int ov_string_match_joker(
 );
 
 /**
-*	Split a string.
+*	Split a string into the heap
+*
 *	ov_string_split("a;b;c",";",&len) => len is 3
 *	ov_string_split(";",";",&len) => len is 2
 *	ov_string_split("a",";",&len) => len is 1
@@ -177,7 +178,7 @@ OV_DLLFNCEXPORT OV_STRING *ov_string_split(
 );
 
 /**
- * frees a list
+ * frees a list in the heap
  * checks for a NULL pointer, but does not prevent double freeing
  */
 OV_DLLFNCEXPORT void ov_string_freelist(
