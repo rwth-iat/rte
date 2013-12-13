@@ -174,7 +174,6 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
-	//todo dokumentieren
 	kshttp_find_arguments(args, "nameMask", &match);
 	if(match.veclen > 0){
 		ov_string_setvalue(&params.name_mask, match.value[0]);

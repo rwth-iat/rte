@@ -139,10 +139,12 @@ LIBRARY kshttp
 	CLASS	httpClientBase	:	CLASS	ksbase/ClientBase
 		COMMENT	=	"http message generation and reply processing";
 		VARIABLES
-			httpParseStatus	:	INT
-				COMMENT	=	"0 = decoded; 1 = denied, 2 = incomplete, 3 = message new, 4 = database out of memory"
+			httpParseStatus	:	UINT
+				FLAGS = "o"
+				COMMENT	=	"0 = new, 200 = accepted, 206 = headeraccepted, 400 = denied, 500 = out of memory, 507 = database out of memory"
 				INITIALVALUE = 0;
 			httpStatusCode	:	INT
+				FLAGS = "o"
 				COMMENT	=	"HTTP Statuscode"
 				INITIALVALUE = 0;
 			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
@@ -192,6 +194,10 @@ LIBRARY kshttp
 				FLAGS = "o"
 				COMMENT	=	"Response of the server if mimetype is text/*, application/xml, application/xml-dtd, *+xml, application/json, application/javascript"
 				INITIALVALUE	=	"";
+			contentLength	:	UINT
+				FLAGS = "o"
+				COMMENT	=	"length of request"
+				INITIALVALUE	=	0;
 			contentType	:	STRING
 				FLAGS = "o"
 				COMMENT	=	"Content-Type of the response"

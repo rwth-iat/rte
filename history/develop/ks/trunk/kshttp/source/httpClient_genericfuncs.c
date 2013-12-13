@@ -211,13 +211,10 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	OV_STRING RequestLine = NULL;
 	OV_STRING RequestAdditionalHeaders = NULL;
 	OV_STRING AuthorizationLine = NULL;
+	OV_STRING strBase64string = NULL;
 	OV_STRING RequestHeaders = NULL;
 	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
-	base64_encodestate state;
-	OV_UINT n = 0, length;
-	OV_STRING out = NULL;
-	int rc = 0;
 
 	if(!method){
 		ov_string_setvalue(&method, "GET");
@@ -274,18 +271,12 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 		}
 		ov_string_append(&AuthorizationLine, password);
 
-		base64_init_encodestate(&state);
-		n = ov_string_getlength(AuthorizationLine);
-		length = 8 + ((n * 5) / 3) + (n / 72); /* bytes * 4/3 + bytes/72 + 4 rounding errors + 2*trailing '=' + trailing \n + trailing \0 */
-		out = ov_malloc((length+1) * sizeof(char));
+		kshttp_encodebase64(&strBase64string, AuthorizationLine);
 
-		rc = base64_encode_block(AuthorizationLine, n, out, &state);
-		rc += base64_encode_blockend(out + rc, &state);
-		out[rc-1] = '\0';
-
-		ov_string_print(&AuthorizationLine, "Authorization: Basic %s\r\n", out);
+		ov_string_print(&AuthorizationLine, "Authorization: Basic %s\r\n", strBase64string);
 		ov_string_append(&RequestAdditionalHeaders, AuthorizationLine);
-		ov_free(out);
+		ov_string_setvalue(&strBase64string, NULL);
+		ov_string_setvalue(&AuthorizationLine, NULL);
 	}
 	ov_string_print(&RequestHeaders, "%s\r\n%s\r\n", RequestLine, RequestAdditionalHeaders);
 
@@ -325,188 +316,185 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 }
 
 /**
- * This function checks if the input buffer holds a complete request
+ * decode header of replies (params are not checked for NULL-pointers)
+ * @param dataReceived
+ * @param responseStruct
+ * @param httpParseStatus
+ * @return
  */
-static OV_RESULT parse_http_header_from_server(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
+OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct, OV_UINT *httpParseStatus)
 {
 	OV_STRING *pallheaderslist=NULL;
 	OV_STRING *plist=NULL;
 	OV_STRING StatusLine = NULL;
 	OV_STRING *http_request_array = NULL;
 	OV_UINT allheaderscount = 0;
-	OV_UINT beginOfContent = 0;
 	OV_UINT len = 0, i = 0;
 
-	//split http header from content
-	http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
-	beginOfContent = ov_string_getlength(http_request_array[0])+4;
+	if(*httpParseStatus == HTTP_MSG_NEW){
+		//split http header from content
+		http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
+		responseStruct->headerLength = ov_string_getlength(http_request_array[0])+4;
 
-	//seperate all headers
-	pallheaderslist = ov_string_split(http_request_array[0], "\r\n", &allheaderscount);
-	ov_string_freelist(http_request_array);
-	if(allheaderscount<=0){
-		ov_string_freelist(pallheaderslist);
-		//not everything is here till now
-		return OV_ERR_TARGETGENERIC;
-	}
-	//split out the first line containing the result
-	ov_string_setvalue(&StatusLine, pallheaderslist[0]);
 
-	//split out the actual result "HTTP/1.0 200 OK" or "HTTP/1.1 404 Not Found"
-	plist = ov_string_split(StatusLine, " ", &len);
-	if(len<3){
-		ov_string_freelist(pallheaderslist);
-		ov_string_freelist(plist);
-		return OV_ERR_BADPARAM; //400
-	}
-	ov_string_setvalue(&responseStruct->version, plist[0]);
-	responseStruct->statusCode = atoi(plist[1]);
+		//Separate all headers
+		pallheaderslist = ov_string_split(http_request_array[0], "\r\n", &allheaderscount);
+		ov_string_freelist(http_request_array);
+		if(allheaderscount<=0){
+			ov_string_freelist(pallheaderslist);
+			//not everything is here till now
+			*httpParseStatus = HTTP_MSG_INCOMPLETE;
+			return OV_ERR_OK;
+		}
+		//split out the first line containing the result
+		ov_string_setvalue(&StatusLine, pallheaderslist[0]);
 
-	//check all other headers
-	responseStruct->transferEncodingChunked = FALSE;
-	for (i=1; i<allheaderscount; i++){
-		if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
+		//split out the actual result "HTTP/1.0 200 OK" or "HTTP/1.1 404 Not Found"
+		plist = ov_string_split(StatusLine, " ", &len);
+		if(len<3){
+			*httpParseStatus = HTTP_MSG_DENIED;
+			ov_string_freelist(pallheaderslist);
 			ov_string_freelist(plist);
-			plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
-			if(len > 0){
-				responseStruct->contentLength = atoi(plist[1]);
-			}
-		}else if(ov_string_match(pallheaderslist[i], "Content-Type:*") == TRUE){
-			ov_string_freelist(plist);
-			plist = ov_string_split(pallheaderslist[i], "Content-Type: ", &len);
-			if(len > 0){
-				ov_string_setvalue(&(responseStruct->contentType), plist[1]);
-			}
-		}else if(ov_string_match(pallheaderslist[i], "Transfer-Encoding:*") == TRUE){
-			if(ov_string_compare(pallheaderslist[i], "Transfer-Encoding: chunked") == OV_STRCMP_EQUAL){
-				//the server does not know how much data he will send
-				responseStruct->transferEncodingChunked = TRUE;
-				responseStruct->contentLength = 0;
+			return OV_ERR_BADPARAM; //400
+		}
+		ov_string_setvalue(&responseStruct->version, plist[0]);
+		responseStruct->statusCode = atoi(plist[1]);
+
+		//check all other headers
+		responseStruct->transferEncodingChunked = FALSE;
+		for (i=1; i<allheaderscount; i++){
+			if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
+				ov_string_freelist(plist);
+				plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
+				if(len > 0){
+					responseStruct->contentLength = atoi(plist[1]);
+				}
+			}else if(ov_string_match(pallheaderslist[i], "Content-Type:*") == TRUE){
+				ov_string_freelist(plist);
+				plist = ov_string_split(pallheaderslist[i], "Content-Type: ", &len);
+				if(len > 0){
+					ov_string_setvalue(&(responseStruct->contentType), plist[1]);
+				}
+			}else if(ov_string_match(pallheaderslist[i], "Transfer-Encoding:*") == TRUE){
+				if(ov_string_compare(pallheaderslist[i], "Transfer-Encoding: chunked") == OV_STRCMP_EQUAL){
+					//the server does not know how much data he will send
+					responseStruct->transferEncodingChunked = TRUE;
+					responseStruct->contentLength = 0;
+				}
 			}
 		}
-	}
-	ov_string_freelist(pallheaderslist);
-	ov_string_freelist(plist);
+		ov_string_freelist(pallheaderslist);
+		ov_string_freelist(plist);
 
-	//save pointer to the content
-	dataReceived->readPT = dataReceived->data + beginOfContent;
+		//save pointer to the content
+		dataReceived->readPT = dataReceived->data + responseStruct->headerLength;
+		*httpParseStatus = HTTP_MSG_HEADERACCEPTED;
+	}
 
 	//check if we have all http content
-	if(dataReceived->length >= beginOfContent + responseStruct->contentLength && responseStruct->transferEncodingChunked == FALSE){
+	if(dataReceived->length >= responseStruct->headerLength + responseStruct->contentLength && responseStruct->transferEncodingChunked == FALSE){
 		//everything was received
-
+		*httpParseStatus = HTTP_MSG_ACCEPTED;
+		return OV_ERR_OK;
 	}else if(responseStruct->transferEncodingChunked == TRUE){
 		//we have to check if this message is complete by looking into it 8-/
 		//only check if all is received, so "save" into an NULL pointer
-		return kshttp_decodeTransferEncodingChunked((OV_STRING*)&dataReceived->readPT, NULL, &responseStruct->contentLength, dataReceived->length);
-		/*
-		OV_STRING readPointer = (OV_STRING)dataReceived->data + beginOfContent;
-		OV_STRING entityBody = NULL;
-		OV_UINT length = beginOfContent;
-		OV_UINT chunkSize = 0;
-		responseStruct->contentLength = 0;
-
-		ov_string_setvalue(&entityBody, "");
-
-		//get the length of the first chunk and move the pointer after the length
-		chunkSize = strtoul(readPointer, &readPointer, 16);
-		while (chunkSize > 0){
-			length += chunkSize + 4; // a chunk is wrapped in \r\n
-
-			if(length > dataReceived->length){
-				//we do not have all data till now
-				return OV_ERR_TARGETGENERIC;
-			}
-			//we need the next line
-			readPointer = readPointer+2;
-
-			//shorten string (overwrite the \r of the wrapping \r\n)
-			readPointer[chunkSize] = '\0';
-			ov_string_append(&entityBody, readPointer);
-			responseStruct->contentLength +=chunkSize;
-
-			//move to the end of the chunk and the newline
-			readPointer = readPointer+chunkSize+2;
-
-			//get the length of the new chunk and move the pointer after the length
-			chunkSize = strtoul(readPointer, &readPointer, 16);
-		}
-		ov_string_setvalue(&entityBody, NULL);
-*/
+		return kshttp_decodeTransferEncodingChunked(dataReceived->readPT, NULL, &responseStruct->contentLength, dataReceived->length - responseStruct->headerLength, httpParseStatus);
 	}else{
 		//we do not have all data till now
-		return OV_ERR_TARGETGENERIC;
+		return OV_ERR_OK;
 	}
-
-	return OV_ERR_OK;
 }
-
-/*************************************************************************************************************************************************************
- * 	decode header of replies (params are not checked for NULL-pointers)
- *************************************************************************************************************************************************************/
-OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct)
-{
-	OV_RESULT result;
-
-	result = parse_http_header_from_server(dataReceived, responseStruct);
-
-
-	/***************************************************************************************************************************************************************************
-	 * checking if request is in the buffer completely, if not, return ERR_OK and wait until it is complete. While waiting set the receive timeout value to a few seconds
-	 * 	(we received a fragmented package so there will come more data. if no data arrives within a second, we can assume the package is broken)
-	 ***************************************************************************************************************************************************************************/
-	if(result == OV_ERR_TARGETGENERIC)
-	{
-		return result;		/*	get called again to process the request next time (if it is complete then).
-												Yes, this could block the ClientHandler for a longer time.	*/
-	}
-
-	return OV_ERR_OK;
-}
-
 
 /**
- * decodes a chunked transfer
- * @param responseString
- * @param entityBody is allowed to be NULL! Is in the ov_database
- * @param contentLength
- * @param maxlength
+ * decodes a chunked transfer to the heap, or tests if a decoding is possible with the data length
+ * @param rawHTTPmessage http traffic to decode
+ * @param entityBody is allowed to be NULL! Is in the heap
+ * @param contentLength of binary data
+ * @param receivedlength which is available at the rawHTTPmessage
  * @return
  */
-OV_RESULT kshttp_decodeTransferEncodingChunked(OV_STRING *responseString, OV_STRING *entityBody, OV_UINT *contentLength, OV_UINT maxlength){
-	OV_UINT length = 0;
+OV_RESULT kshttp_decodeTransferEncodingChunked(OV_BYTE *rawHTTPmessage, OV_BYTE **entityBody, OV_UINT *contentLength, OV_UINT receivedlength, OV_UINT *httpParseStatus){
+	OV_UINT readlength = 0;
 	OV_UINT chunkSize = 0;
-	OV_STRING readPointer = *responseString;
+	OV_BYTE *oldBody;
+	OV_BYTE *readPointer = NULL;
+	OV_BYTE *oldReadPointer = rawHTTPmessage;
+	OV_UINT writelength = 0;
 	*contentLength = 0;
 
-	if(!*responseString){
+	if(!rawHTTPmessage){
 		return OV_ERR_BADPARAM;
 	}
-	ov_string_setvalue(entityBody, "");
+
+	if(entityBody){
+		//initial the pointer
+		*entityBody = NULL;
+	}
 
 	//get the length of the first chunk and move the pointer after the length
-	chunkSize = strtoul(readPointer, &readPointer, 16);
+
+	chunkSize = strtoul((char *)oldReadPointer, (char **)&readPointer, 16);
+
 	while (chunkSize > 0){
-		length += chunkSize + 4; // a chunk is wrapped in \r\n
+		//strtoul does not tell us how many bytes the chunk length information was
+		readlength += readPointer - oldReadPointer;
+		readlength += 2 + chunkSize + 2; // we have \r\n, the chunk and \r\n
 
-		if(length > maxlength){
-			//we do not have all data till now
-			return OV_ERR_TARGETGENERIC;
-		}
+		writelength = *contentLength;
+		*contentLength += chunkSize;
 		//we need the next line
-		readPointer = readPointer+2;
+		readPointer += 2;
 
-		//shorten string (overwrite the \r of the wrapping \r\n)
-		readPointer[chunkSize] = '\0';
-		ov_string_append(entityBody, readPointer);
-		*contentLength +=chunkSize;
+		if(readlength > receivedlength){
+			//we do not have all data till now, abort graceful
+			*contentLength = 0;
+			return OV_ERR_OK;
+		}
+
+		if(entityBody){
+			oldBody = *entityBody;
+			*entityBody = ov_realloc(oldBody, *contentLength);
+			if(!*entityBody){
+				ov_free(oldBody);
+				*contentLength = 0;
+				if(httpParseStatus){
+					*httpParseStatus = HTTP_MSG_DENIED;
+				}
+				return OV_ERR_GENERIC;
+			}
+			memcpy(&(*entityBody)[writelength], readPointer, chunkSize);
+		}
 
 		//move to the end of the chunk and the newline
-		readPointer = readPointer+chunkSize+2;
+		oldReadPointer = readPointer+chunkSize+2;
 
 		//get the length of the new chunk and move the pointer after the length
-		chunkSize = strtoul(readPointer, &readPointer, 16);
+		chunkSize = strtoul((char *)oldReadPointer, (char **)&readPointer, 16);
 	}
+
+	if(httpParseStatus){
+		*httpParseStatus = HTTP_MSG_ACCEPTED;
+	}
+	return OV_ERR_OK;
+}
+
+OV_RESULT kshttp_encodebase64(OV_STRING * strBase64string, OV_STRING input){
+	base64_encodestate state;
+	OV_UINT n = 0, length;
+	OV_STRING out = NULL;
+	int rc = 0;
+
+	n = ov_string_getlength(input);
+	length = 8 + ((n * 5) / 3) + (n / 72); /* bytes * 4/3 + bytes/72 + 4 rounding errors + 2*trailing '=' + trailing \n + trailing \0 */
+	out = ov_malloc((length+1) * sizeof(char));
+
+	base64_init_encodestate(&state);
+	rc = base64_encode_block(input, n, out, &state);
+	rc += base64_encode_blockend(out + rc, &state);
+	out[rc-1] = '\0';
+	ov_string_setvalue(strBase64string, out);
+	ov_free(out);
 
 	return OV_ERR_OK;
 }

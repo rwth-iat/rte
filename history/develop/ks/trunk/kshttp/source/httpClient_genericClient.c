@@ -295,9 +295,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_URI_set(
 	if(Ov_Fail(result)){
 		return result;
 	}
+	thisCl->v_state = KSBASE_CLST_INITIAL;
 	ov_string_setvalue(&thisCl->v_contentType, "");
 	ov_string_setvalue(&thisCl->v_messageBody, "");
-	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_contentLength = 0;
 	thisCl->v_httpStatusCode = 0;
 	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
 	return ov_string_setvalue(&thisCl->v_URI, value);
@@ -312,13 +313,24 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_STRING password = NULL;
 	OV_STRING requestUri = NULL;
 	OV_BOOL usernameProvided = FALSE;
+	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
+	if(value == FALSE){
+		return OV_ERR_OK;
+	}
 	ov_string_setvalue(&thisCl->v_contentType, "");
 	ov_string_setvalue(&thisCl->v_messageBody, "");
 	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_contentLength = 0;
 	thisCl->v_httpStatusCode = 0;
 	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
-
+	result = kshttp_getChannelPointer(Ov_PtrUpCast(kshttp_httpClientBase, thisCl), &pChannel, &pVtblChannel);
+	if(Ov_OK(result))
+	{
+		ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
+		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
+	}
 	result = kshttp_decodeURI(&thisCl->v_URI, &thisCl->v_serverHost, &thisCl->v_serverPort, &username, &password, &requestUri, &usernameProvided);
 	if(Ov_Fail(result)){
 		return result;
@@ -341,29 +353,50 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 	}
 	ov_string_setvalue(&thisCl->v_contentType, thisCl->v_ServerResponse.contentType);
 
+	if(thisCl->v_ServerResponse.transferEncodingChunked == TRUE){
+		//the http message could be transfered as chunked, so we have to decode it (to the heap)
+		kshttp_decodeTransferEncodingChunked(pChannel->v_inData.readPT, &thisCl->v_ServerResponse.contentBinary, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT, NULL);
+	}else if(thisCl->v_ServerResponse.contentLength != 0){
+		//the content is available unchunked. copy it to the heap
+		thisCl->v_ServerResponse.contentBinary =  ov_malloc(thisCl->v_ServerResponse.contentLength);
+		if(!thisCl->v_ServerResponse.contentBinary){
+			//heap too small
+			thisCl->v_httpParseStatus = HTTP_MSG_HEAPOUTOFMEMORY;
+			pVtblChannel->m_CloseConnection(pChannel);
+			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
+			return;
+		}
+		memcpy(thisCl->v_ServerResponse.contentBinary, pChannel->v_inData.readPT, thisCl->v_ServerResponse.contentLength);
+	}
+	//move the read pointer to the end, as we handled all data
+	pChannel->v_inData.readPT = pChannel->v_inData.data + pChannel->v_inData.length;
+
+	//if the content is a string, move it to the STRING output
 	if(	ov_string_match(thisCl->v_contentType, "text/*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "*application/xml*") == TRUE ||	//includes application/xml-dtd
 			ov_string_match(thisCl->v_contentType, "*+xml*") == TRUE ||	//includes image/svg+xml
 			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
-		if(thisCl->v_ServerResponse.transferEncodingChunked == TRUE){
-			kshttp_decodeTransferEncodingChunked((OV_STRING*)&pChannel->v_inData.readPT, &thisCl->v_messageBody, &thisCl->v_ServerResponse.contentLength, OV_VL_MAXINT);
-		}else if(thisCl->v_ServerResponse.contentLength != 0){
-			thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
-			if(!thisCl->v_messageBody){
-				//database too small
-				thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
-				pVtblChannel->m_CloseConnection(pChannel);
-				ksbase_free_KSDATAPACKET(&pChannel->v_inData);
-				return;
-			}
-			memcpy(thisCl->v_messageBody, pChannel->v_inData.readPT, thisCl->v_ServerResponse.contentLength);
-			thisCl->v_messageBody[thisCl->v_ServerResponse.contentLength] = '\0';
-			pChannel->v_inData.readPT = pChannel->v_inData.data + pChannel->v_inData.length;
+		thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
+		if(!thisCl->v_messageBody){
+			//database too small
+			thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
+			pVtblChannel->m_CloseConnection(pChannel);
+			ov_free(thisCl->v_ServerResponse.contentBinary);
+			thisCl->v_ServerResponse.contentBinary = NULL;
+			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
+			return;
 		}
+		memcpy(thisCl->v_messageBody, thisCl->v_ServerResponse.contentBinary, thisCl->v_ServerResponse.contentLength);
+		//the contentBinary has no string termination till now
+		thisCl->v_messageBody[thisCl->v_ServerResponse.contentLength] = '\0';
+
+		ov_free(thisCl->v_ServerResponse.contentBinary);
+		thisCl->v_ServerResponse.contentBinary = NULL;
 	}else{
-		ov_string_setvalue(&thisCl->v_messageBody, "binary mimetype");
+		ov_string_setvalue(&thisCl->v_messageBody, "binary mimetype, content not exposable to this variable");
 	}
+	thisCl->v_contentLength = thisCl->v_ServerResponse.contentLength;
 
 	pVtblChannel->m_CloseConnection(pChannel);
 	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
