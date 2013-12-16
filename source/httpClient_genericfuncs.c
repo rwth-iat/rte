@@ -516,7 +516,7 @@ OV_RESULT kshttp_encodebase64(OV_STRING * strBase64string, OV_STRING input){
 
 	n = ov_string_getlength(input);
 	length = 8 + ((n * 5) / 3) + (n / 72); /* bytes * 4/3 + bytes/72 + 4 rounding errors + 2*trailing '=' + trailing \n + trailing \0 */
-	out = Ov_HeapAlloc(length+1) * sizeof(char));
+	out = Ov_HeapMalloc((length+1) * sizeof(char));
 
 	base64_init_encodestate(&state);
 	rc = base64_encode_block(input, n, out, &state);
