@@ -3371,264 +3371,277 @@ cshmi.prototype = {
 		}
 		absoluterotate = null;
 		
-		var xStart = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
-		var yStart = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
+		var StartX = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
+		var StartY = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
 		var rotateStart = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10);
 		
-		var xEnd = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
-		var yEnd = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
+		var EndX = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
+		var EndY = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
 		var rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
 		
 		//if start- and endPoints changed since last time, recompute polyline points
 		if (	this.initStage === true ||
-				xStart !== VisualObject.ResourceList.RoutePolyline.xStart ||
-				yStart !== VisualObject.ResourceList.RoutePolyline.yStart ||
+				StartX !== VisualObject.ResourceList.RoutePolyline.StartX ||
+				StartY !== VisualObject.ResourceList.RoutePolyline.StartY ||
 				rotateStart !== VisualObject.ResourceList.RoutePolyline.rotateStart ||
-				xEnd !== VisualObject.ResourceList.RoutePolyline.xEnd ||
-				yEnd !== VisualObject.ResourceList.RoutePolyline.yEnd ||
+				EndX !== VisualObject.ResourceList.RoutePolyline.EndX ||
+				EndY !== VisualObject.ResourceList.RoutePolyline.EndY ||
 				rotateEnd !== VisualObject.ResourceList.RoutePolyline.rotateEnd) {
 			if(this.initStage === false){
 				//cache new start- and endPoints
-				VisualObject.ResourceList.RoutePolyline.xStart = xStart;
-				VisualObject.ResourceList.RoutePolyline.yStart = yStart;
+				VisualObject.ResourceList.RoutePolyline.StartX = StartX;
+				VisualObject.ResourceList.RoutePolyline.StartY = StartY;
 				VisualObject.ResourceList.RoutePolyline.rotateStart = rotateStart;
-				VisualObject.ResourceList.RoutePolyline.xEnd = xEnd;
-				VisualObject.ResourceList.RoutePolyline.yEnd = yEnd;
+				VisualObject.ResourceList.RoutePolyline.EndX = EndX;
+				VisualObject.ResourceList.RoutePolyline.EndY = EndY;
 				VisualObject.ResourceList.RoutePolyline.rotateEnd = rotateEnd;
 			}
 			
 			var points = "";
+			//the polyline routes in the worst case through those 6 points:
+			//StartX
+			//StartY
+//			var OffsetPointSourceX = 0;
+//			var OffsetPointSourceY = 0;
+//			var ControlPointSourceX = 0;
+//			var ControlPointSourceY = 0;
+//			var ControlPointTargetX = 0;
+//			var ControlPointTargetY = 0;
+//			var OffsetPointTargetX = 0;
+//			var OffsetPointTargetY = 0;
+			//EndX
+			//EndY
 			
 			//we are perhaps not at global coordinate 0,0
-			xStart = xStart - VisualObject.parentNode.getAttribute("absolutex");
-			xEnd = xEnd - VisualObject.parentNode.getAttribute("absolutex");
-			yStart = yStart - VisualObject.parentNode.getAttribute("absolutey");
-			yEnd = yEnd - VisualObject.parentNode.getAttribute("absolutey");
+			StartX = StartX - VisualObject.parentNode.getAttribute("absolutex");
+			EndX = EndX - VisualObject.parentNode.getAttribute("absolutex");
+			StartY = StartY - VisualObject.parentNode.getAttribute("absolutey");
+			EndY = EndY - VisualObject.parentNode.getAttribute("absolutey");
 			
 			if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 180){
 				//OUTPUT --> INPUT
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (xStart >= xEnd) {
-					yStart = (yEnd+yStart)/2;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartX >= EndX) {
+					StartY = (EndY+StartY)/2;
+					points = points + StartX + "," + StartY + " ";
 					
-					xStart = xEnd - OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+					StartX = EndX - OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xStart + "," + yEnd + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + StartX + "," + EndY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 0){
 				//INPUT --> OUTPUT
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (xStart >= xEnd) {
-					yStart = (yEnd+yStart)/2;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (StartX >= EndX) {
+					StartY = (EndY+StartY)/2;
+					points = points + StartX + "," + StartY + " ";
 					
-					xStart = xEnd - OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+					StartX = EndX - OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xStart + "," + yEnd + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + StartX + "," + EndY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 180){
 				//INPUT --> INPUT
-				points = xStart + "," + yStart + " ";
-				xStart = xStart - OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (xStart >= xEnd) {
-					xStart = xEnd - OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX - OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartX >= EndX) {
+					StartX = EndX - OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xStart + "," + yEnd + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + StartX + "," + EndY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 0){
 				//OUTPUT --> OUTPUT
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (xStart <= xEnd) {
-					xStart = xEnd + OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartX <= EndX) {
+					StartX = EndX + OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xStart + "," + yEnd + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + StartX + "," + EndY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 90){
-				points = xStart + "," + yStart + " ";
-				yStart = yStart - OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (yStart <= yEnd) {
-					xStart = (xEnd+xStart)/2;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartY = StartY - OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartY <= EndY) {
+					StartX = (EndX+StartX)/2;
+					points = points + StartX + "," + StartY + " ";
 					
-					yStart = yEnd + OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+					StartY = EndY + OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 270){
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				yStart = yStart - OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (yStart <= yEnd) {
-					xStart = (xEnd+xStart)/2;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartY = StartY - OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (StartY <= EndY) {
+					StartX = (EndX+StartX)/2;
+					points = points + StartX + "," + StartY + " ";
 					
-					yStart = yEnd + OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+					StartY = EndY + OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 90){
-				points = xStart + "," + yStart + " ";
-				yStart = yStart + OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (yStart <= yEnd) {
-					yStart = yEnd + OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartY = StartY + OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartY <= EndY) {
+					StartY = EndY + OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 270){
-				points = xStart + "," + yStart + " ";
-				yStart = yStart - OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (yStart >= yEnd) {
-					yStart = yEnd - OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartY = StartY - OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (StartY >= EndY) {
+					StartY = EndY - OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 270){
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart < yEnd && xStart < xEnd)){
-					yStart = yEnd - OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY < EndY && StartX < EndX)){
+					StartY = EndY - OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 0){
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart < yEnd && xStart < xEnd)){
-					yStart = yEnd - OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY < EndY && StartX < EndX)){
+					StartY = EndY - OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 90){
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart > yEnd && xStart < xEnd)){
-					yStart = yEnd + OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY > EndY && StartX < EndX)){
+					StartY = EndY + OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 0){
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				xStart = xStart + OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart > yEnd && xStart < xEnd)){
-					yStart = yEnd + OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartX = StartX + OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY > EndY && StartX < EndX)){
+					StartY = EndY + OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 270){
-				points = xStart + "," + yStart + " ";
-				xStart = xStart - OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart < yEnd && xStart > xEnd)){
-					yStart = yEnd - OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX - OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY < EndY && StartX > EndX)){
+					StartY = EndY - OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 180){
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				xStart = xStart - OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart < yEnd && xStart > xEnd)){
-					yStart = yEnd - OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartX = StartX - OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY < EndY && StartX > EndX)){
+					StartY = EndY - OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
 				
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 90){
-				points = xStart + "," + yStart + " ";
-				xStart = xStart - OffsetSource;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart > yEnd && xStart > xEnd)){
-					yStart = yEnd + OffsetTarget;
-					points = points + xStart + "," + yStart + " ";
+				points = StartX + "," + StartY + " ";
+				StartX = StartX - OffsetSource;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY > EndY && StartX > EndX)){
+					StartY = EndY + OffsetTarget;
+					points = points + StartX + "," + StartY + " ";
 				}
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 180){
-				var xTemp = xStart;
-				var yTemp = yStart;
-				xStart = xEnd;
-				yStart = yEnd;
-				xEnd = xTemp;
-				yEnd = yTemp;
-				points = xStart + "," + yStart + " ";
-				xStart = xStart - OffsetTarget;
-				points = points + xStart + "," + yStart + " ";
-				if (!(yStart > yEnd && xStart > xEnd)){
-					yStart = yEnd + OffsetSource;
-					points = points + xStart + "," + yStart + " ";
+				var xTemp = StartX;
+				var yTemp = StartY;
+				StartX = EndX;
+				StartY = EndY;
+				EndX = xTemp;
+				EndY = yTemp;
+				points = StartX + "," + StartY + " ";
+				StartX = StartX - OffsetTarget;
+				points = points + StartX + "," + StartY + " ";
+				if (!(StartY > EndY && StartX > EndX)){
+					StartY = EndY + OffsetSource;
+					points = points + StartX + "," + StartY + " ";
 				}
-				points = points + xEnd + "," + yStart + " ";
-				points = points + xEnd + "," + yEnd;
+				points = points + EndX + "," + StartY + " ";
+				points = points + EndX + "," + EndY;
 			}
 			
 			VisualObject.setAttribute("points", points);
@@ -3787,6 +3800,7 @@ cshmi.prototype = {
 			return VisualObject;
 		}else{
 			requestList[ObjectPath] = new Object();
+			//todo: if called from henson we should handle a templatedef but they have no width
 			requestList[ObjectPath]["x"] = null;
 			requestList[ObjectPath]["y"] = null;
 			requestList[ObjectPath]["visible"] = null;
