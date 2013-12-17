@@ -315,13 +315,16 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_URI_set(
 	const OV_STRING  value
 ) {
 	OV_RESULT result = OV_ERR_OK;
-	//check the syntax
-	result = kshttp_decodeURI(&value, &thisCl->v_serverHost, &thisCl->v_serverPort, NULL, NULL, NULL, NULL);
 
+	//reset client
+	result = kshttp_genericHttpClient_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
 	if(Ov_Fail(result)){
 		return result;
 	}
-	result = kshttp_genericHttpClient_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
+
+	//check the syntax
+	result = kshttp_decodeURI(&value, &thisCl->v_serverHost, &thisCl->v_serverPort, NULL, NULL, NULL, NULL);
+
 	if(Ov_Fail(result)){
 		return result;
 	}
