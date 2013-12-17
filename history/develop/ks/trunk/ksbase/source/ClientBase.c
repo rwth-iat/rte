@@ -98,11 +98,36 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_serverName_set(
 
 }
 
-
+/**
+ * resets all variables from the ClientBase class and closes the connection
+ */
 OV_DLLFNCEXPORT	OV_RESULT ksbase_ClientBase_reset(
-	OV_INSTPTR_ksbase_ClientBase this
+	OV_INSTPTR_ksbase_ClientBase thisCl
 ){
-	return OV_ERR_NOTIMPLEMENTED;
+	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
+	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
+
+	thisCl->v_actimode = 0;
+	ov_string_setvalue(&thisCl->v_serverHost, "");
+	ov_string_setvalue(&thisCl->v_serverName, "");
+	ov_string_setvalue(&thisCl->v_serverPort, "");
+
+	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_runningKSservice = 0;
+
+	thisCl->v_callback.instanceCalled = NULL;
+	thisCl->v_callback.callbackFunction = NULL;
+
+	pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisCl);
+	Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
+
+	if(pVtblChannel){
+		pVtblChannel->m_CloseConnection(pChannel);
+	}
+	if(pChannel){
+		ksbase_free_KSDATAPACKET(&pChannel->v_inData);
+	}
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_ClientBase_requestRegister(

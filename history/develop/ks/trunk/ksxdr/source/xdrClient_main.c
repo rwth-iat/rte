@@ -397,33 +397,21 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_reset(OV_INSTPTR_ksbase_ClientBase thi
 {
 	OV_INSTPTR_ksxdr_xdrClient	thisCl = Ov_StaticPtrCast(ksxdr_xdrClient, this);
 	OV_RESULT					result;
-	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
-	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
+
+	result = ksbase_ClientBase_reset(this);
+	if(Ov_Fail(result)){
+		return result;
+	}
 
 	ksbase_free_KSDATAPACKET(&(thisCl->v_dataReceived));
 	ksbase_free_KSDATAPACKET(&(thisCl->v_dataToSend));
 
-	thisCl->v_callback.instanceCalled = NULL;
-	thisCl->v_callback.callbackFunction = NULL;
-
-	thisCl->v_actimode = 0;
 	thisCl->v_msgAccepted = 0;
 	thisCl->v_msgStatus = 0;
 	thisCl->v_rpcErrCode = 0;
 	thisCl->v_runningKSservice = 0;
 	thisCl->v_sentProcID = 0;
 	thisCl->v_sentXID = 0;
-	thisCl->v_state = KSBASE_CLST_INITIAL;
-
-	ov_string_setvalue(&(thisCl->v_serverPort), "");
-
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
-	if(Ov_Fail(result))
-	{
-		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
-		return result;
-	}
-	pVtblChannel->m_CloseConnection(pChannel);
 
 	return OV_ERR_OK;
 }

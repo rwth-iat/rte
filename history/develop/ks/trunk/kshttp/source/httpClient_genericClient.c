@@ -61,6 +61,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_reset(
 	if(Ov_Fail(fr)){
 		return fr;
 	}
+	ov_string_setvalue(&thisCl->v_serverPort, "80");
+
 	ov_string_setvalue(&thisCl->v_messageBody, NULL);
 	thisCl->v_contentLength = 0;
 	ov_string_setvalue(&thisCl->v_contentType, NULL);
