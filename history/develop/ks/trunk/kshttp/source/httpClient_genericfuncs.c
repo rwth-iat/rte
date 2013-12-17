@@ -315,6 +315,21 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	return OV_ERR_OK;
 }
 
+OV_BYTE *kshttp_strnstr(OV_BYTE *haystack, OV_STRING needle, OV_UINT length){
+	OV_UINT needle_length = strlen(needle);
+	OV_UINT i;
+
+	for (i = 0; i < length; i++){
+		if (i + needle_length > length){
+			return NULL;
+		}
+		if (strncmp((char*)&haystack[i], needle, needle_length) == 0){
+			return &haystack[i];
+		}
+	}
+	return NULL;
+}
+
 /**
  * decode header of replies (params are not checked for NULL-pointers)
  * @param dataReceived
@@ -326,60 +341,38 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 {
 	OV_STRING *pallheaderslist=NULL;
 	OV_STRING *plist=NULL;
-	OV_STRING StatusLine = NULL;
-	OV_STRING *http_request_array = NULL;
 	OV_UINT allheaderscount = 0;
 	OV_UINT len = 0, i = 0;
+	OV_BYTE *endOfHeader = NULL;
 
 	if(*httpParseStatus == HTTP_MSG_NEW){
-		//fixme: we need only the first separator and split copies everything in the heap
-		/*
-		while(len + 4 <= dataReceived->length){
-			if(*(&dataReceived->readPT)[len+0] == '\r'
-				&& *(&dataReceived->readPT)[len+1] == '\n'
-				&& *(&dataReceived->readPT)[len+2] == '\r'
-				&& *(&dataReceived->readPT)[len+3] == '\n'){
-				break;
-			}
-			len++;
-		}
-		if(len + 4 >= dataReceived->length){
+		endOfHeader = kshttp_strnstr(dataReceived->data, "\r\n\r\n", dataReceived->length);
+		if(!endOfHeader){
 			//not everything from the header is here till now
 			*httpParseStatus = HTTP_MSG_INCOMPLETE;
 			return OV_ERR_OK;
 		}
-		//remember length of the header (incl newlines)
-		responseStruct->headerLength = len + 4;
 
 		//split http header from content
-		BeginOfContent = (&dataReceived->readPT)[len+3];
-		//terminate string
-		BeginOfContent = '\0';
+//		http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
+
+		//terminate after header for ov_string_split
+		*endOfHeader = '\0';
+
+		//header plus both line breaks
+		responseStruct->headerLength = endOfHeader - dataReceived->data + 4;
 
 		//Separate all headers
-		pallheaderslist = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n", &allheaderscount);
-		*/
-
-
-		//split http header from content
-		http_request_array = ov_string_split((OV_STRING)dataReceived->readPT, "\r\n\r\n", &len);
-		responseStruct->headerLength = ov_string_getlength(http_request_array[0])+4;
-
-
-		//Separate all headers
-		pallheaderslist = ov_string_split(http_request_array[0], "\r\n", &allheaderscount);
-		ov_string_freelist(http_request_array);
+		pallheaderslist = ov_string_split((OV_STRING)dataReceived->data, "\r\n", &allheaderscount);
 		if(allheaderscount<=0){
 			ov_string_freelist(pallheaderslist);
 			//not everything is here till now
 			*httpParseStatus = HTTP_MSG_INCOMPLETE;
 			return OV_ERR_OK;
 		}
-		//split out the first line containing the result
-		ov_string_setvalue(&StatusLine, pallheaderslist[0]);
 
 		//split out the actual result "HTTP/1.0 200 OK" or "HTTP/1.1 404 Not Found"
-		plist = ov_string_split(StatusLine, " ", &len);
+		plist = ov_string_split(pallheaderslist[0], " ", &len);
 		if(len<3){
 			*httpParseStatus = HTTP_MSG_DENIED;
 			ov_string_freelist(pallheaderslist);
@@ -392,20 +385,30 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 		//check all other headers
 		responseStruct->transferEncodingChunked = FALSE;
 		for (i=1; i<allheaderscount; i++){
-			if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
+			if(ov_string_match(pallheaderslist[i], "?ontent-?ength:*") == TRUE){
 				ov_string_freelist(plist);
 				plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
-				if(len > 0){
+				if(len == 1){
+					//we have no result? perhaps the header was lowercase... second try
+					ov_string_freelist(plist);
+					plist = ov_string_split(pallheaderslist[i], "content-length: ", &len);
+				}
+				if(len == 2){
 					responseStruct->contentLength = atoi(plist[1]);
 				}
-			}else if(ov_string_match(pallheaderslist[i], "Content-Type:*") == TRUE){
+			}else if(ov_string_match(pallheaderslist[i], "content-type:*") == TRUE){
 				ov_string_freelist(plist);
 				plist = ov_string_split(pallheaderslist[i], "Content-Type: ", &len);
-				if(len > 0){
+				if(len == 1){
+					//we have no result? perhaps the header was lowercase... second try
+					ov_string_freelist(plist);
+					plist = ov_string_split(pallheaderslist[i], "content-type: ", &len);
+				}
+				if(len == 2){
 					ov_string_setvalue(&(responseStruct->contentType), plist[1]);
 				}
-			}else if(ov_string_match(pallheaderslist[i], "Transfer-Encoding:*") == TRUE){
-				if(ov_string_compare(pallheaderslist[i], "Transfer-Encoding: chunked") == OV_STRCMP_EQUAL){
+			}else if(ov_string_match(pallheaderslist[i], "?ransfer-?ncoding:*") == TRUE){
+				if(ov_string_comparei(pallheaderslist[i], "Transfer-Encoding: chunked") == OV_STRCMP_EQUAL){
 					//the server does not know how much data he will send
 					responseStruct->transferEncodingChunked = TRUE;
 					responseStruct->contentLength = 0;

@@ -169,19 +169,16 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
+	/* ksbase reset*/
+	thisCl->v_actimode = 0;
+	ov_string_setvalue(&(thisCl->v_serverHost), NULL);
+	ov_string_setvalue(&thisCl->v_serverName, "<unused>");
+	ov_string_setvalue(&thisCl->v_serverPort, "80");
+	thisCl->v_state = KSBASE_CLST_INITIAL;
+	thisCl->v_runningKSservice = 0;
+
 	thisCl->v_callback.instanceCalled = NULL;
 	thisCl->v_callback.callbackFunction = NULL;
-
-	thisCl->v_actimode = 0;
-	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
-	thisCl->v_runningKSservice = 0;
-	thisCl->v_state = KSBASE_CLST_INITIAL;
-
-	ov_string_setvalue(&(thisCl->v_serverPort), NULL);
-	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
-	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
-	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
-	thisCl->v_ServerResponse.contentBinary = NULL;
 
 	result = kshttp_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
@@ -191,6 +188,14 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	}
 	pVtblChannel->m_CloseConnection(pChannel);
 	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
+
+	/* httpclientbase */
+	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
+	thisCl->v_httpStatusCode = 0;
+	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
+	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
+	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
+	thisCl->v_ServerResponse.contentBinary = NULL;
 
 	return OV_ERR_OK;
 }

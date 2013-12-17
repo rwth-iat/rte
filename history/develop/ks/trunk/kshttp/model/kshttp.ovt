@@ -9,6 +9,7 @@ typedef struct
 	OV_STRING_VEC args;
 	OV_STRING version;
 	OV_STRING host;
+	OV_UINT headerLength;
 	OV_UINT contentLength;
 	OV_BYTE* messageBody;
 	OV_STRING requestMethod;

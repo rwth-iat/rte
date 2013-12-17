@@ -238,13 +238,6 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT re
 		//	OV_VT_x_PV is an ANY which is set to x
 		//
 		switch (addrp->var_current_props.value.vartype){
-			case OV_VT_BYTE:
-			case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
-				fr = ov_string_setvalue(&Temp, newvaluematch.value[i]);
-				//fixme klappt dies? Sehe da beim Speicher Probleme
-				addrp->var_current_props.value.valueunion.val_byte = Temp[ov_string_getlength(Temp)-1];
-				break;
-
 			case OV_VT_BOOL:
 			case OV_VT_BOOL_PV:
 				if (CHECK_BOOLTRUE(newvaluematch.value[i])){
@@ -330,12 +323,6 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT re
 				EXEC_SETVAR_RETURN fr;
 			break;
 
-			/*	TODO	implement this?
-			case OV_VT_STATE:
-				ov_logfile_debug("%s:%d OV_VT_STATE", __FILE__, __LINE__);
-			break;
-
-	*/
 			//****************** VEC: *******************
 			/* request could be "{1}%20{10}"
 			 * split at "%20", discard the "{" via pointer arithmetic (+1)
@@ -343,7 +330,8 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, OV_UINT re
 			 * with STRING_VEC we have to do some more
 			 */
 
-	/*		case OV_VT_BYTE_VEC:
+	/*		todo implement is base64encoded
+			case OV_VT_BYTE_VEC:
 			case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 	*/
 

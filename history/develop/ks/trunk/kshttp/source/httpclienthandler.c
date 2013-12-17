@@ -242,15 +242,15 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
-	OV_UINT messageBodyOffset = 0;
+	OV_BYTE *endOfHeader = NULL;
+
 	OV_STRING responseHeader = NULL; //header of the reply
 	OV_STRING responseBody = NULL; //reply *WITHOUT HEADER*
-	int responseBodylength = 0; //length of the return body
+	OV_INT responseBodylength = 0; //length of the return body
 
 	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
 	OV_BOOL gzip_applicable = FALSE;
 
-	OV_UINT len;
 	OV_RESULT result = OV_ERR_OK;
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING reply_contenttype = NULL;
@@ -260,8 +260,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_STRING gzip_compressed_body = NULL;
 	OV_INT gzip_compressed_body_length = 0;
 
-	OV_STRING* http_request_array = NULL;
-
 	OV_INSTPTR_kshttp_staticfile pStaticfile;
 
 	this->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
@@ -270,15 +268,22 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	//if no stream mode, wait for the end of the header
 	if(this->v_stream == FALSE){
 		//split header and footer of the http request
-		http_request_array = ov_string_split((OV_STRING)dataReceived->data, "\r\n\r\n", &len);
-
-		if(len < 1){
+		endOfHeader = kshttp_strnstr(dataReceived->readPT, "\r\n\r\n", dataReceived->length);
+		if(!endOfHeader){
 			//if no double line break detected yet - wait till next cycle
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
 											Yes, this could block the ClientHandler for a longer time.	*/
 		}
-		ov_string_setvalue(&this->v_ClientRequest.requestHeader, http_request_array[0]);
-		ov_string_freelist(http_request_array);
+
+		//terminate after header for ov_string_split
+		*endOfHeader = '\0';
+
+		//header plus both line breaks
+		this->v_ClientRequest.headerLength = endOfHeader - dataReceived->data + 4;
+
+		ov_string_setvalue(&this->v_ClientRequest.requestHeader, (OV_STRING)dataReceived->data);
+		//save pointer to the content
+		dataReceived->readPT = dataReceived->readPT + this->v_ClientRequest.headerLength;
 	}else{
 		ov_string_setvalue(&this->v_ClientRequest.requestHeader, this->v_streamrequestheader);
 	}
@@ -287,13 +292,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest);
 	if(this->v_ClientRequest.contentLength != 0){
 		//save message body (for POST?) in memory
-		messageBodyOffset = ov_string_getlength(this->v_ClientRequest.requestHeader)+4; //4 byte are the \r\n\r\n
-		if(dataReceived->length - messageBodyOffset >= this->v_ClientRequest.contentLength){
+		if(dataReceived->length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
 			this->v_ClientRequest.messageBody = (OV_BYTE*)Ov_HeapMalloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
 				return OV_ERR_TARGETGENERIC;
 			}
-			memcpy(this->v_ClientRequest.messageBody, dataReceived->data + messageBodyOffset, this->v_ClientRequest.contentLength);
+
+			memcpy(this->v_ClientRequest.messageBody, dataReceived->data + this->v_ClientRequest.headerLength, this->v_ClientRequest.contentLength);
 			this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
 		}else{
 			//we have the full header, but not the full body yet. Get called again next time
@@ -529,7 +534,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	if(ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
 		responseBodylength = 0;
 	}else{
-		responseBodylength = (int)ov_string_getlength(responseBody);
+		responseBodylength = ov_string_getlength(responseBody);
 	}
 
 #ifndef KSHTTP_DISABLE_GZIP
@@ -639,7 +644,7 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	/* do what the base class does first */
 	ksbase_ClientHandler_startup(pobj);
 
-	// reset strings
+	// initial strings
 	thisCl->v_ClientRequest.args.veclen = 0;
 	thisCl->v_ClientRequest.args.value = NULL;
 	thisCl->v_ClientRequest.cmd = NULL;

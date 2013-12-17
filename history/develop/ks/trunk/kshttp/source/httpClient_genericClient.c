@@ -48,6 +48,29 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_constructor(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_reset(
+	OV_INSTPTR_ksbase_ClientBase this
+) {
+	/*
+	*   local variables
+	*/
+	OV_BOOL fr = OV_ERR_OK;
+	OV_INSTPTR_kshttp_genericHttpClient thisCl = Ov_StaticPtrCast(kshttp_genericHttpClient, this);
+
+	fr = kshttp_httpClientBase_reset(this);
+	if(Ov_Fail(fr)){
+		return fr;
+	}
+	ov_string_setvalue(&thisCl->v_messageBody, NULL);
+	thisCl->v_contentLength = 0;
+	ov_string_setvalue(&thisCl->v_contentType, NULL);
+
+	return OV_ERR_OK;
+}
+
+
+
+
 #define DECODESTATE_INIT 0
 #define DECODESTATE_USER_OR_SERVER 1
 #define DECODESTATE_PASSWORD_OK 2
@@ -91,7 +114,6 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 		return OV_ERR_BADPARAM;
 	}
 
-
 	if(ov_string_match(*URI, "http://*") == TRUE){
 		//http:// found
 		lastoffset = 7;
@@ -105,6 +127,8 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 		lastoffset = 0;
 		offset = 0;
 	}
+	//setting default port to 80. Will be overwritten if set via url
+	ov_string_setvalue(port, "80");
 
 	while(offset <= URIlength){
 		//    http://user:pass@localhost:8015/path/to/resource.html?query#fragment
@@ -295,12 +319,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_URI_set(
 	if(Ov_Fail(result)){
 		return result;
 	}
-	thisCl->v_state = KSBASE_CLST_INITIAL;
-	ov_string_setvalue(&thisCl->v_contentType, "");
-	ov_string_setvalue(&thisCl->v_messageBody, "");
-	thisCl->v_contentLength = 0;
-	thisCl->v_httpStatusCode = 0;
-	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
+	result = kshttp_genericHttpClient_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
+	if(Ov_Fail(result)){
+		return result;
+	}
 	return ov_string_setvalue(&thisCl->v_URI, value);
 }
 
@@ -313,24 +335,12 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	OV_STRING password = NULL;
 	OV_STRING requestUri = NULL;
 	OV_BOOL usernameProvided = FALSE;
-	OV_INSTPTR_ksbase_Channel	pChannel = NULL;
-	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
 
 	if(value == FALSE){
 		return OV_ERR_OK;
 	}
-	ov_string_setvalue(&thisCl->v_contentType, "");
-	ov_string_setvalue(&thisCl->v_messageBody, "");
-	thisCl->v_state = KSBASE_CLST_INITIAL;
-	thisCl->v_contentLength = 0;
-	thisCl->v_httpStatusCode = 0;
-	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
-	result = kshttp_getChannelPointer(Ov_PtrUpCast(kshttp_httpClientBase, thisCl), &pChannel, &pVtblChannel);
-	if(Ov_OK(result))
-	{
-		ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
-		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
-	}
+	kshttp_genericHttpClient_reset(Ov_PtrUpCast(ksbase_ClientBase, thisCl));
+
 	result = kshttp_decodeURI(&thisCl->v_URI, &thisCl->v_serverHost, &thisCl->v_serverPort, &username, &password, &requestUri, &usernameProvided);
 	if(Ov_Fail(result)){
 		return result;
@@ -381,9 +391,9 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_I
 		if(!thisCl->v_messageBody){
 			//database too small
 			thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;
-			pVtblChannel->m_CloseConnection(pChannel);
 			Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 			thisCl->v_ServerResponse.contentBinary = NULL;
+			pVtblChannel->m_CloseConnection(pChannel);
 			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 			return;
 		}
