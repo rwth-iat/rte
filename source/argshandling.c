@@ -197,28 +197,33 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 
 	//check all other headers
 	for (i=1; i<allheaderscount; i++){
-		if(ov_string_match(pallheaderslist[i], "Accept-Encoding:*") == TRUE){
+		if(ov_string_match(pallheaderslist[i], "?ccept-?ncoding:*") == TRUE){
 			if(ov_string_match(pallheaderslist[i], "*gzip*") == TRUE){
 				clientRequest->gzipAccepted = TRUE;
 			}
-		}else if(ov_string_compare(pallheaderslist[i], "Connection: close") == OV_STRCMP_EQUAL){
+		}else if(ov_string_compare(pallheaderslist[i], "?onnection: close") == OV_STRCMP_EQUAL){
 			//scan header for Connection: close - the default behavior is keep-alive
 			clientRequest->keepAlive = FALSE;
-		}else if(ov_string_match(pallheaderslist[i], "Accept:*") == TRUE){
-			if(ov_string_compare(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
+		}else if(ov_string_match(pallheaderslist[i], "?ccept:*") == TRUE){
+			if(ov_string_comparei(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
 				clientRequest->responseFormat = RESPONSE_FORMAT_PLAIN;
-			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
+			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
 				clientRequest->responseFormat = RESPONSE_FORMAT_TCL;
-			}else if(ov_string_compare(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
-					ov_string_compare(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
-					ov_string_compare(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
+			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
+					ov_string_comparei(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
+					ov_string_comparei(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
 				clientRequest->responseFormat = RESPONSE_FORMAT_KSX;
-			}else if(ov_string_compare(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
+			}else if(ov_string_comparei(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
 				clientRequest->responseFormat = RESPONSE_FORMAT_JSON;
 			}
-		}else if(ov_string_match(pallheaderslist[i], "Host:*") == TRUE){
+		}else if(ov_string_match(pallheaderslist[i], "?ost:*") == TRUE){
 			ov_string_freelist(plist);
 			plist = ov_string_split(pallheaderslist[i], "Host: ", &len);
+			if(len == 1){
+				//we have no result? perhaps the header was lowercase... second try
+				ov_string_freelist(plist);
+				plist = ov_string_split(pallheaderslist[i], "host: ", &len);
+			}
 			if(len > 1){
 				ov_string_setvalue(&clientRequest->host, plist[1]);
 				httphostsend = TRUE;
@@ -226,9 +231,14 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 				//empty Host header
 				httphostsend = TRUE;
 			}
-		}else if(ov_string_match(pallheaderslist[i], "Content-Length:*") == TRUE){
+		}else if(ov_string_match(pallheaderslist[i], "?ontent-?ength:*") == TRUE){
 			ov_string_freelist(plist);
 			plist = ov_string_split(pallheaderslist[i], "Content-Length: ", &len);
+			if(len == 1){
+				//we have no result? perhaps the header was lowercase... second try
+				ov_string_freelist(plist);
+				plist = ov_string_split(pallheaderslist[i], "content-length: ", &len);
+			}
 			if(len > 1){
 				clientRequest->contentLength = atoi(plist[1]);
 			}
