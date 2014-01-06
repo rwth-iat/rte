@@ -160,6 +160,20 @@ proc execute {args} {
 	return 0
 }
 
+# Same as execute, just ignores errors
+proc execute_ignore {args} {
+	set args [join $args]
+    
+	global logfile
+    #set cmd [concat {exec -ignorestderr} $args]
+    set cmd [concat {exec } $args { >>& $logfile}]
+    #puts $cmd
+    if { [catch $cmd msg] } {
+		return 1
+    }
+	return 0
+}
+
 # Execute a command
 proc execute_ignore {args} {
     global logfile
@@ -781,8 +795,8 @@ proc remove_svn_dirs {dir} {
 		#God, I hate spaces in windows dirnames
 		file copy $basedir/delete_svn_folders.bat $dir
 		cd $dir
-		file delete -force ".svn"
-		execute "delete_svn_folders.bat"
+		#file delete -force ".svn"
+		execute_ignore "delete_svn_folders.bat"
 		file delete -force "delete_svn_folders.bat"
 		cd $current_dir
 	} else {
