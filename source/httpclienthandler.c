@@ -248,7 +248,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_STRING responseBody = NULL; //reply *WITHOUT HEADER*
 	OV_INT responseBodylength = 0; //length of the return body
 
-	OV_UINT request_handled_by = REQUEST_HANDLED_BY_NONE;
+	enum KSHTTP_REQUESTHANDLEDBY request_handled_by = NONE;
 	OV_BOOL gzip_applicable = FALSE;
 
 	OV_RESULT result = OV_ERR_OK;
@@ -327,17 +327,17 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		//hmi uses this headers, which is no problem for us
 		ov_string_append(&responseHeader, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
 		//only an 200 is required, so abort request handling
-		request_handled_by = REQUEST_HANDLED_BY_CORS_OPTION;
+		request_handled_by = CORSOPTION;
 	}
 
 	//BEGIN command routine
-	if(Ov_OK(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
+	if(Ov_OK(result) && request_handled_by == NONE){
 		if(ov_string_compare(this->v_ClientRequest.cmd, "/getServer") == OV_STRCMP_EQUAL){
 			//http GET
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getserver");
 			result = kshttp_exec_getserver(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getserver");
-			request_handled_by = REQUEST_HANDLED_BY_GETSERVER;
+			request_handled_by = GETSERVER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/register") == OV_STRCMP_EQUAL){
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "register");
 			if(!pChannel->v_isLocal){
@@ -348,7 +348,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 				result = kshttp_exec_register(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			}
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "register");
-			request_handled_by = REQUEST_HANDLED_BY_REGISTER;
+			request_handled_by = REGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/unregister") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
@@ -359,7 +359,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 				result = kshttp_exec_unregister(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			}
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
-			request_handled_by = REQUEST_HANDLED_BY_UNREGISTER;
+			request_handled_by = UNREGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getvar");
@@ -369,7 +369,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			kshttp_find_arguments(&this->v_ClientRequest.args, "stream", &match);
 			if(match.veclen>0){
 				result = OV_ERR_NOTIMPLEMENTED;
-				request_handled_by = REQUEST_HANDLED_BY_GETVAR;
+				request_handled_by = GETVAR;
 			}else if(FALSE){
 				//disabled, because we are not called cyclic
 
@@ -390,10 +390,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 					//no - set body to null
 					ov_string_setvalue(&responseBody, NULL);
 				}
-				request_handled_by = REQUEST_HANDLED_BY_GETVARSTREAM;
+				request_handled_by = GETVARSTREAM;
 			}else{
 				//no
-				request_handled_by = REQUEST_HANDLED_BY_GETVAR;
+				request_handled_by = GETVAR;
 			}
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
@@ -401,50 +401,50 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "setvar");
 			result = kshttp_exec_setvar(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "setvar");
-			request_handled_by = REQUEST_HANDLED_BY_SETVAR;
+			request_handled_by = SETVAR;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getEP") == OV_STRCMP_EQUAL){
 			//http PROPFIND, used in WebDAV
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getep");
 			result = kshttp_exec_getep(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getep");
-			request_handled_by = REQUEST_HANDLED_BY_GETEP;
+			request_handled_by = GETEP;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/createObject") == OV_STRCMP_EQUAL){
 			//http PUT, used in WebDAV
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "createobject");
 			result = kshttp_exec_createObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "createobject");
-			request_handled_by = REQUEST_HANDLED_BY_CREATEOBJECT;
+			request_handled_by = CREATEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/deleteObject") == OV_STRCMP_EQUAL){
 			//http DELETE, used in WebDAV
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "deleteobject");
 			result = kshttp_exec_deleteObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "deleteobject");
-			request_handled_by = REQUEST_HANDLED_BY_DELETEOBJECT;
+			request_handled_by = DELETEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/renameObject") == OV_STRCMP_EQUAL){
 			//http MOVE, used in WebDAV
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "renameobject");
 			result = kshttp_exec_renameObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "renameobject");
-			request_handled_by = REQUEST_HANDLED_BY_RENAMEOBJECT;
+			request_handled_by = RENAMEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/link") == OV_STRCMP_EQUAL){
 			//http LINK
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "link");
 			result = kshttp_exec_link(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "link");
-			request_handled_by = REQUEST_HANDLED_BY_LINK;
+			request_handled_by = LINK;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/unlink") == OV_STRCMP_EQUAL){
 			//http UNLINK
 			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "unlink");
 			result = kshttp_exec_unlink(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
 			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "unlink");
-			request_handled_by = REQUEST_HANDLED_BY_UNLINK;
+			request_handled_by = UNLINK;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/auth") == OV_STRCMP_EQUAL){
 			result = kshttp_authorize(1, this, this->v_ClientRequest.requestHeader, &responseHeader, this->v_ClientRequest.requestMethod, this->v_ClientRequest.cmd);
 			if(!Ov_Fail(result)){
 				ov_string_append(&responseBody, "Secret area");
 				result = OV_ERR_OK;
 			}
-			request_handled_by = REQUEST_HANDLED_BY_AUTH;
+			request_handled_by = HTTPAUTH;
 		}
 	}
 	//END command routine
@@ -456,7 +456,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//BEGIN static file routine
 	//no command matched yet... Is it a static file?
-	if(!Ov_Fail(result) && request_handled_by == REQUEST_HANDLED_BY_NONE){
+	if(!Ov_Fail(result) && request_handled_by == NONE){
 		OV_STRING filename = NULL;
 		OV_STRING filepath = NULL;
 		//assume index.html as a root file
@@ -486,13 +486,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			result = OV_ERR_OK;
 			//reply_body is NULL right now
 			responseBody = pStaticfile->v_content;
-			request_handled_by = REQUEST_HANDLED_BY_STATICFILE;
+			request_handled_by = STATICFILE;
 		}
 	}
 	//END static file routine
 
 	//no method has found a hit
-	if (request_handled_by == REQUEST_HANDLED_BY_NONE){
+	if (request_handled_by == NONE){
 		result = OV_ERR_BADPATH; //404
 		kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "notimplemented");
 		kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": KS command not supported or static file not found");
@@ -514,7 +514,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	//Append common data to header:
 	ov_string_print(&responseHeader, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", responseHeader, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
 	//no-cache
-	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
+	if(request_handled_by != STATICFILE){
 		if(ov_string_compare(this->v_ClientRequest.version, "1.0") == OV_STRCMP_EQUAL){
 			//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
 			ov_string_print(&responseHeader, "%sPragma: no-cache\r\n", responseHeader);
@@ -556,7 +556,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 #endif
 
-	if(request_handled_by != REQUEST_HANDLED_BY_GETVARSTREAM){
+	if(request_handled_by != GETVARSTREAM){
 		//append content length
 		if(gzip_applicable){
 			ov_string_print(&responseHeader, "%sContent-Length: %i\r\n", responseHeader, gzip_compressed_body_length);
@@ -583,7 +583,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 
 	//are we starting a stream?
-	if(this->v_stream == FALSE && request_handled_by == REQUEST_HANDLED_BY_GETVARSTREAM){
+	if(this->v_stream == FALSE && request_handled_by == GETVARSTREAM){
 		this->v_stream = TRUE;
 		//speed the processing time down to 5ms
 		this->v_cycInterval = 5;
@@ -616,7 +616,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	this->v_ClientRequest.messageBody = NULL;
 
 	//if a static file is returned body is pointing inside the database
-	if(request_handled_by != REQUEST_HANDLED_BY_STATICFILE){
+	if(request_handled_by != STATICFILE){
 		ov_string_setvalue(&responseBody, NULL);
 	}
 
