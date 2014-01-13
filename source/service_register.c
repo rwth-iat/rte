@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2013
+ *	Copyright (C) 2014
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -51,7 +51,7 @@
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/

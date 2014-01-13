@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2013
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -79,27 +79,27 @@ OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV
  * returns the format of the output
  * constants are in the config.h file
  */
-static OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_format){
+static OV_RESULT extract_response_format(OV_STRING_VEC* args, KSHTTP_RESPONSEFORMAT *response_format){
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	kshttp_find_arguments(args, "format", &match);
 	if(match.veclen>=1){
 		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_KSX;
+			*response_format = KSX;
 		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_JSON;
+			*response_format = JSON;
 		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_TCL;
+			*response_format = TCL;
 		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
-			*response_format = RESPONSE_FORMAT_PLAIN;
+			*response_format = PLAIN;
 		}
 	}
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	return OV_ERR_OK;
 }
 
-#define PARSE_HTTP_HEADER_RETURN if(clientRequest->responseFormat == RESPONSE_FORMAT_NONE){\
-			clientRequest->responseFormat = RESPONSE_FORMAT_DEFAULT;\
+#define PARSE_HTTP_HEADER_RETURN if(*response_format == FORMATUNDEFINED){\
+			*response_format = FORMATDEFAULT;\
 		}\
 		ov_string_setvalue(&RequestLine, NULL);\
 		ov_string_freelist(plist);\
@@ -113,7 +113,7 @@ static OV_RESULT extract_response_format(OV_STRING_VEC* args, OV_UINT*response_f
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSEFORMAT *response_format)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -206,15 +206,15 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 			clientRequest->keepAlive = FALSE;
 		}else if(ov_string_match(pallheaderslist[i], "?ccept:*") == TRUE){
 			if(ov_string_comparei(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
-				clientRequest->responseFormat = RESPONSE_FORMAT_PLAIN;
+				*response_format = PLAIN;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
-				clientRequest->responseFormat = RESPONSE_FORMAT_TCL;
+				*response_format = TCL;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
-				clientRequest->responseFormat = RESPONSE_FORMAT_KSX;
+				*response_format = KSX;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
-				clientRequest->responseFormat = RESPONSE_FORMAT_JSON;
+				*response_format = JSON;
 			}
 		}else if(ov_string_match(pallheaderslist[i], "?ost:*") == TRUE){
 			ov_string_freelist(plist);
@@ -252,7 +252,7 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	//try setting format via url parameter
-	extract_response_format(&clientRequest->args, &clientRequest->responseFormat);
+	extract_response_format(&clientRequest->args, response_format);
 	PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 }
 

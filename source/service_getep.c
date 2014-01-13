@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2013
+ *	Copyright (C) 2014
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -48,11 +48,11 @@
  * @param response_format UINT format descriptor
  * @return
  */
-OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, OV_UINT response_format){
+OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
-	if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON){
+	if(response_format == KSX || response_format == JSON){
 		//kill all underscores. TIME_SPAN_VEC for example has two...
 		ov_memstack_lock();
 		changedValue = ov_memstack_alloc(ov_string_getlength(value)+1);
@@ -82,12 +82,12 @@ OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_ST
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(response_format == RESPONSE_FORMAT_KSX){
+OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+	if(response_format == KSX){
 		return kshttp_response_part_begin(output, response_format, entry_type);
-	}else if(response_format == RESPONSE_FORMAT_TCL){
+	}else if(response_format == TCL){
 		//nothing
-	}else if(response_format == RESPONSE_FORMAT_JSON){
+	}else if(response_format == JSON){
 		kshttp_response_part_begin(output, response_format, entry_type);
 		return ov_string_append(output, "\"");
 	}
@@ -100,12 +100,12 @@ OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, OV_UINT response_form
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, OV_UINT response_format, OV_STRING entry_type){
-	if(response_format == RESPONSE_FORMAT_KSX){
+OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+	if(response_format == KSX){
 		return kshttp_response_part_finalize(output, response_format, entry_type);
-	}else if(response_format == RESPONSE_FORMAT_TCL){
+	}else if(response_format == TCL){
 		//nothing
-	}else if(response_format == RESPONSE_FORMAT_JSON){
+	}else if(response_format == JSON){
 		ov_string_append(output, "\"");
 		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}
@@ -132,7 +132,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response_format){
+OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -217,7 +217,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 	}
 
 	kshttp_find_arguments(args, "requestOutput", &match);
-	if(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+	if(response_format == KSX || response_format == JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
 	}else{
@@ -291,11 +291,11 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
-					(response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON))){
+					(response_format == KSX || response_format == JSON))){
 				//OP_TYPE is not displayed in ksx and json, so skip the seperator here
 				kshttp_response_parts_seperate(&temp, response_format);
 			}
-			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
+			if(requestOutput.veclen > 1 && response_format==TCL){
 				//open request item level, if we have more than one entry (OP_NAME and OP_CREATIONTIME for example)
 				//ksx returns always everything
 				//kshttp_response_part_begin(&temp, response_format, "dummy");
@@ -309,7 +309,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				getEP_finalize_RequestOutputPart(&temp, response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -322,7 +322,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				ov_string_setvalue(&temp2, NULL);
 
 				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
@@ -407,56 +407,56 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 					getEP_begin_RequestOutputPart(&temp, response_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype) {
 						case KS_LT_LOCAL_1_1:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "local-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_1");
 							}
 							break;
 						case KS_LT_LOCAL_1_MANY:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "local-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_MANY:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "local-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_1:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "local-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_1:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "global-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_MANY:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "global-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_MANY:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "global-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_1:
-							if(response_format == RESPONSE_FORMAT_KSX){
+							if(response_format == KSX){
 								ov_string_append(&temp, "global-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
@@ -472,7 +472,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				break;
 			case OP_TYPE:
 				//ksx has this information in the surrounding XML element
-				if(response_format != RESPONSE_FORMAT_KSX && response_format != RESPONSE_FORMAT_JSON){
+				if(response_format != KSX && response_format != JSON){
 					if(one_result->objtype == KS_OT_DOMAIN){
 						ov_string_append(&temp, "KS_OT_DOMAIN");
 					}else if(one_result->objtype == KS_OT_VARIABLE){
@@ -487,7 +487,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				}
 				break;
 			case OP_COMMENT:
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -499,12 +499,12 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				ov_string_append(&temp, temp2);
 				ov_string_setvalue(&temp2, NULL);
 				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_ACCESS:
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -574,13 +574,13 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 					EntryFound = TRUE;
 				}
 				getEP_finalize_RequestOutputPart(&temp, response_format, "access");
-				if(response_format == RESPONSE_FORMAT_TCL){
+				if(response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_SEMANTIC:
 				getEP_begin_RequestOutputPart(&temp, response_format, "semantics");
-				if(response_format == RESPONSE_FORMAT_KSX){
+				if(response_format == KSX){
 					//could add a char info, as an additional xml element
 					ov_string_print(&temp, "%s%i", temp, one_result->semantic_flags);
 				}else{
@@ -626,7 +626,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, OV_UINT response
 				getEP_finalize_RequestOutputPart(&temp, response_format, "NOT_IMPLEMENTED");
 				break;
 			}
-			if(requestOutput.veclen > 1 && response_format==RESPONSE_FORMAT_TCL){
+			if(requestOutput.veclen > 1 && response_format==TCL){
 				//close request item level, if we have more than one entry
 				//kshttp_response_part_finalize(&temp, response_format, "dummy");
 			}

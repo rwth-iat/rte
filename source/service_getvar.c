@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2013
+ *	Copyright (C) 2014
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -88,7 +88,7 @@ http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{
  * @param message pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_UINT response_format){
+OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -188,7 +188,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_U
 		if(Ov_Fail(fr)){
 			lasterror = fr;
 			kshttp_response_part_begin(&LoopEntryList, response_format, "failure");
-			if(response_format == RESPONSE_FORMAT_KSX){
+			if(response_format == KSX){
 				if(LoopEntryList == NULL){
 					ov_string_print(&LoopEntryList, "%i", fr);
 				}else{
@@ -449,7 +449,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, OV_U
 					break;
 			}//end switch vartype
 			kshttp_response_part_begin(&LoopEntryList, response_format, "var");
-			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == RESPONSE_FORMAT_KSX || response_format == RESPONSE_FORMAT_JSON)){
+			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == KSX || response_format == JSON)){
 				//get additional data if we serve ksx
 				kshttp_response_part_begin(&LoopEntryList, response_format, "value");
 				kshttp_response_part_begin(&LoopEntryList, response_format, LoopEntryTypeString);

@@ -15,7 +15,6 @@ typedef struct
 	OV_STRING requestMethod;
 	OV_BOOL gzipAccepted;
 	OV_BOOL keepAlive;
-	OV_UINT responseFormat;
 } KSHTTP_REQUEST;
 
 /**
@@ -31,5 +30,4 @@ typedef struct
 	OV_BYTE* contentBinary;
 	OV_STRING contentType;
 	OV_BOOL transferEncodingChunked;
-	OV_UINT responseFormat;
 } KSHTTP_RESPONSE;
