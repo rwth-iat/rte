@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2013
+ *	Copyright (C) 2014
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -120,7 +120,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streambuffer_set(
  * @param header will be overwritten
  * @param body will be overwritten in an error state
  */
-static void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body, OV_UINT response_format){
+static void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body, KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING tmp_header = NULL;
 	OV_STRING tmp_body = NULL;
 	//this is very ugly, but better than code duplication
@@ -145,85 +145,85 @@ static void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_ST
 		break;
 	case OV_ERR_BADNAME:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_BADNAME: %s%s", HTTP_400_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADPARAM:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_400_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_BADPARAM: %s%s", HTTP_400_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADAUTH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_401_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_BADAUTH: %s%s", HTTP_401_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_NOACCESS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_403_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_NOACCESS: %s%s", HTTP_403_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADPATH:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADVALUE:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_BADVALUE: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_NOTIMPLEMENTED:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_501_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_NOTIMPLEMENTED: %s%s", HTTP_501_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_GENERIC:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_ALREADYEXISTS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_409_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_NOMANAGER:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_NOMANAGER: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_NOREMOTE:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_406_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_NOREMOTE: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_SERVERUNKNOWN:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_404_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_SERVERUNKNOWN: %s%s", HTTP_404_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_TARGETGENERIC:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_413_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR_TARGETGENERIC: %s%s", HTTP_413_BODY, tmp_body);
 		}
 		break;
 	default:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_503_HEADER, tmp_header);
-		if(response_format != RESPONSE_FORMAT_KSX){
+		if(response_format != KSX){
 			ov_string_print(body, "KS_ERR (unknown): %s%s", HTTP_503_BODY, tmp_body);
 		}
 		break;
@@ -248,7 +248,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_STRING responseBody = NULL; //reply *WITHOUT HEADER*
 	OV_INT responseBodylength = 0; //length of the return body
 
-	enum KSHTTP_REQUESTHANDLEDBY request_handled_by = NONE;
+	KSHTTP_REQUESTHANDLEDBY request_handled_by = NONE;
 	OV_BOOL gzip_applicable = FALSE;
 
 	OV_RESULT result = OV_ERR_OK;
@@ -262,7 +262,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	OV_INSTPTR_kshttp_staticfile pStaticfile;
 
-	this->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
+	KSHTTP_RESPONSEFORMAT response_format = FORMATUNDEFINED;
 	this->v_ClientRequest.gzipAccepted = FALSE;
 
 	//if no stream mode, wait for the end of the header
@@ -289,7 +289,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 
 	//parse request header into get command and arguments request
-	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest);
+	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest, &response_format);
 	if(this->v_ClientRequest.contentLength != 0){
 		//save message body (for POST?) in memory
 		if(dataReceived->length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
@@ -309,9 +309,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	//empty the buffers
 	ksbase_free_KSDATAPACKET(dataReceived);
 
-	if(RESPONSE_FORMAT_KSX == this->v_ClientRequest.responseFormat){
+	if(KSX == response_format){
 		ov_string_setvalue(&reply_contenttype, "text/xml");
-	}else if(RESPONSE_FORMAT_JSON == this->v_ClientRequest.responseFormat){
+	}else if(JSON == response_format){
 		ov_string_setvalue(&reply_contenttype, "application/json");
 	}else{
 		ov_string_setvalue(&reply_contenttype, "text/plain");
@@ -334,37 +334,37 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	if(Ov_OK(result) && request_handled_by == NONE){
 		if(ov_string_compare(this->v_ClientRequest.cmd, "/getServer") == OV_STRCMP_EQUAL){
 			//http GET
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getserver");
-			result = kshttp_exec_getserver(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getserver");
+			kshttp_printresponseheader(&responseBody, response_format, "getserver");
+			result = kshttp_exec_getserver(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "getserver");
 			request_handled_by = GETSERVER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/register") == OV_STRCMP_EQUAL){
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "register");
+			kshttp_printresponseheader(&responseBody, response_format, "register");
 			if(!pChannel->v_isLocal){
 				result = KS_ERR_NOREMOTE;
-				kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": Registering remote is not allowed/useful");
+				kshttp_print_result_array(&responseBody, response_format, &result, 1, ": Registering remote is not allowed/useful");
 			}else{
 				//name, port, ksversion
-				result = kshttp_exec_register(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+				result = kshttp_exec_register(&this->v_ClientRequest.args, &responseBody, response_format);
 			}
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "register");
+			kshttp_printresponsefooter(&responseBody, response_format, "register");
 			request_handled_by = REGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/unregister") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
+			kshttp_printresponseheader(&responseBody, response_format, "unregister");
 			if(!pChannel->v_isLocal){
 				result = KS_ERR_NOREMOTE;
-				kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": Registering remote is not allowed/useful");
+				kshttp_print_result_array(&responseBody, response_format, &result, 1, ": Registering remote is not allowed/useful");
 			}else{
-				result = kshttp_exec_unregister(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
+				result = kshttp_exec_unregister(&this->v_ClientRequest.args, &responseBody, response_format);
 			}
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "unregister");
+			kshttp_printresponsefooter(&responseBody, response_format, "unregister");
 			request_handled_by = UNREGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getvar");
-			result = kshttp_exec_getvar(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getvar");
+			kshttp_printresponseheader(&responseBody, response_format, "getvar");
+			result = kshttp_exec_getvar(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "getvar");
 			//stream required?
 			kshttp_find_arguments(&this->v_ClientRequest.args, "stream", &match);
 			if(match.veclen>0){
@@ -398,45 +398,45 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
 			//add Access-Control-Allow-Methods to OPTIONS if implement other Methods
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "setvar");
-			result = kshttp_exec_setvar(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "setvar");
+			kshttp_printresponseheader(&responseBody, response_format, "setvar");
+			result = kshttp_exec_setvar(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "setvar");
 			request_handled_by = SETVAR;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getEP") == OV_STRCMP_EQUAL){
 			//http PROPFIND, used in WebDAV
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "getep");
-			result = kshttp_exec_getep(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "getep");
+			kshttp_printresponseheader(&responseBody, response_format, "getep");
+			result = kshttp_exec_getep(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "getep");
 			request_handled_by = GETEP;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/createObject") == OV_STRCMP_EQUAL){
 			//http PUT, used in WebDAV
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "createobject");
-			result = kshttp_exec_createObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "createobject");
+			kshttp_printresponseheader(&responseBody, response_format, "createobject");
+			result = kshttp_exec_createObject(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "createobject");
 			request_handled_by = CREATEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/deleteObject") == OV_STRCMP_EQUAL){
 			//http DELETE, used in WebDAV
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "deleteobject");
-			result = kshttp_exec_deleteObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "deleteobject");
+			kshttp_printresponseheader(&responseBody, response_format, "deleteobject");
+			result = kshttp_exec_deleteObject(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "deleteobject");
 			request_handled_by = DELETEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/renameObject") == OV_STRCMP_EQUAL){
 			//http MOVE, used in WebDAV
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "renameobject");
-			result = kshttp_exec_renameObject(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "renameobject");
+			kshttp_printresponseheader(&responseBody, response_format, "renameobject");
+			result = kshttp_exec_renameObject(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "renameobject");
 			request_handled_by = RENAMEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/link") == OV_STRCMP_EQUAL){
 			//http LINK
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "link");
-			result = kshttp_exec_link(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "link");
+			kshttp_printresponseheader(&responseBody, response_format, "link");
+			result = kshttp_exec_link(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "link");
 			request_handled_by = LINK;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/unlink") == OV_STRCMP_EQUAL){
 			//http UNLINK
-			kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "unlink");
-			result = kshttp_exec_unlink(&this->v_ClientRequest.args, &responseBody, this->v_ClientRequest.responseFormat);
-			kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "unlink");
+			kshttp_printresponseheader(&responseBody, response_format, "unlink");
+			result = kshttp_exec_unlink(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "unlink");
 			request_handled_by = UNLINK;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/auth") == OV_STRCMP_EQUAL){
 			result = kshttp_authorize(1, this, this->v_ClientRequest.requestHeader, &responseHeader, this->v_ClientRequest.requestMethod, this->v_ClientRequest.cmd);
@@ -494,9 +494,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	//no method has found a hit
 	if (request_handled_by == NONE){
 		result = OV_ERR_BADPATH; //404
-		kshttp_printresponseheader(&responseBody, this->v_ClientRequest.responseFormat, "notimplemented");
-		kshttp_print_result_array(&responseBody, this->v_ClientRequest.responseFormat, &result, 1, ": KS command not supported or static file not found");
-		kshttp_printresponsefooter(&responseBody, this->v_ClientRequest.responseFormat, "notimplemented");
+		kshttp_printresponseheader(&responseBody, response_format, "notimplemented");
+		kshttp_print_result_array(&responseBody, response_format, &result, 1, ": KS command not supported or static file not found");
+		kshttp_printresponsefooter(&responseBody, response_format, "notimplemented");
 	}
 
 	//BEGIN forming and sending the answer
@@ -509,7 +509,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 
 	//now we have to format the raw http answer
-	map_result_to_http(&result, &this->v_ClientRequest.version, &responseHeader, &responseBody, this->v_ClientRequest.responseFormat);
+	map_result_to_http(&result, &this->v_ClientRequest.version, &responseHeader, &responseBody, response_format);
 
 	//Append common data to header:
 	ov_string_print(&responseHeader, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", responseHeader, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
@@ -654,7 +654,6 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	thisCl->v_ClientRequest.version = NULL;
 
 	thisCl->v_ClientRequest.contentLength = 0;
-	thisCl->v_ClientRequest.responseFormat = RESPONSE_FORMAT_NONE;
 	thisCl->v_ClientRequest.gzipAccepted = FALSE;
 
 	return;
