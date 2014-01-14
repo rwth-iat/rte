@@ -1663,9 +1663,11 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
+			if (GetType === "static"){
+				TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
+			}
 		}
-		if (TranslationSourcePath === undefined){
+		if (GetType === "static" && TranslationSourcePath === undefined){
 			//todo remove me if available in all turbos
 			var XXrequestList = new Object();
 			XXrequestList[ObjectPath] = new Object();
