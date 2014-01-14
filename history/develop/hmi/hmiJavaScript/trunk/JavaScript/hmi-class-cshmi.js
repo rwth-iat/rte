@@ -2621,7 +2621,7 @@ cshmi.prototype = {
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
 			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver, CyctimeObject);
 			if(Value2 === true){
-				//the setVar is handled via a callback
+				//the checkcondition is handled via a callback
 				return true;
 			}else{
 				thisObserverEntry.requirementsFulfilled = true;
@@ -2637,7 +2637,7 @@ cshmi.prototype = {
 			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
 			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver, CyctimeObject);
 			if(Value1 === true){
-				//the setVar is handled via a callback
+				//the checkcondition is handled via a callback
 			}else{
 				thisObserverEntry.requirementsFulfilled = true;
 				thisObserverEntry.value = Value1;
@@ -2651,7 +2651,7 @@ cshmi.prototype = {
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
 			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver, CyctimeObject);
 			if(Value2 === true){
-				//the setVar is handled via a callback
+				//the checkcondition is handled via a callback
 			}else{
 				thisObserverEntry.requirementsFulfilled = true;
 				thisObserverEntry.value = Value2;
@@ -3401,14 +3401,14 @@ cshmi.prototype = {
 			//the polyline routes in the worst case through those 6 points:
 			//StartX
 			//StartY
-//			var OffsetPointSourceX = 0;
-//			var OffsetPointSourceY = 0;
-//			var ControlPointSourceX = 0;
-//			var ControlPointSourceY = 0;
-//			var ControlPointTargetX = 0;
-//			var ControlPointTargetY = 0;
-//			var OffsetPointTargetX = 0;
-//			var OffsetPointTargetY = 0;
+			var OffsetPointSourceX  = 0;
+			var OffsetPointSourceY  = 0;
+			var ContrlPointSourceX = 0;	//same as OffsetPointSource if not needed
+			var ContrlPointSourceY = 0;
+			var ContrlPointTargetX = 0;	//same as ContrlPointSource if not needed
+			var ContrlPointTargetY = 0;
+			var OffsetPointTargetX  = 0;	//same as ContrlPointTarget if not needed
+			var OffsetPointTargetY  = 0;
 			//EndX
 			//EndY
 			
@@ -3419,233 +3419,384 @@ cshmi.prototype = {
 			EndY = EndY - VisualObject.parentNode.getAttribute("absolutey");
 			
 			if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 180){
-				//OUTPUT --> INPUT
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartX >= EndX) {
-					StartY = (EndY+StartY)/2;
-					points = points + StartX + "," + StartY + " ";
+				//to right/OUTPUT --> from left/INPUT
+				OffsetPointSourceX = StartX + OffsetSource;
+				OffsetPointSourceY = StartY;
+				if (OffsetPointSourceX >= EndX) {
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = (EndY+StartY)/2;
 					
-					StartX = EndX - OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+					ContrlPointTargetX = EndX - OffsetTarget;
+					ContrlPointTargetY = ContrlPointSourceY;
+					
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else{
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = OffsetPointSourceX;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + StartX + "," + EndY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 0){
-				//INPUT --> OUTPUT
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (StartX >= EndX) {
-					StartY = (EndY+StartY)/2;
-					points = points + StartX + "," + StartY + " ";
+				//to left/INPUT --> from right/OUTPUT
+				OffsetPointSourceX = StartX - OffsetSource;
+				OffsetPointSourceY = StartY;
+				if (OffsetPointSourceX <= EndX) {
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = (EndY+StartY)/2;
 					
-					StartX = EndX - OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+					ContrlPointTargetX = EndX + OffsetTarget;
+					ContrlPointTargetY = ContrlPointSourceY;
+					
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else{
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = OffsetPointSourceX;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + StartX + "," + EndY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 180){
-				//INPUT --> INPUT
-				points = StartX + "," + StartY + " ";
-				StartX = StartX - OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartX >= EndX) {
-					StartX = EndX - OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to left/INPUT --> from left/INPUT
+				if (StartX - OffsetSource >= EndX) {
+					OffsetPointSourceX = EndX - OffsetTarget;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX - OffsetTarget;
+					OffsetPointTargetY = EndY;
+				}else{
+					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = OffsetPointSourceX;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + StartX + "," + EndY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 0){
-				//OUTPUT --> OUTPUT
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartX <= EndX) {
-					StartX = EndX + OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//toright/OUTPUT --> fromright/OUTPUT
+				if (StartX + OffsetSource <= EndX) {
+					OffsetPointSourceX = EndX + OffsetTarget;
+					OffsetPointSourceY = StartY;
+				}else{
+					OffsetPointSourceX = StartX + OffsetSource;
+					OffsetPointSourceY = StartY;
 				}
-				
-				points = points + StartX + "," + EndY + " ";
-				points = points + EndX + "," + EndY;
+				ContrlPointSourceX = OffsetPointSourceX;
+				ContrlPointSourceY = OffsetPointSourceY;
+				ContrlPointTargetX = ContrlPointSourceX;
+				ContrlPointTargetY = ContrlPointSourceY;
+				OffsetPointTargetX = ContrlPointTargetX;
+				OffsetPointTargetY = EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 90){
-				points = StartX + "," + StartY + " ";
-				StartY = StartY - OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartY <= EndY) {
-					StartX = (EndX+StartX)/2;
-					points = points + StartX + "," + StartY + " ";
-					
-					StartY = EndY + OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to up --> from down
+				if (StartY - OffsetSource < EndY){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY - OffsetSource;
+					ContrlPointSourceX = (EndX+StartX)/2;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = EndY + OffsetTarget;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY + OffsetTarget;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY - OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 270){
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartY = StartY - OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (StartY <= EndY) {
-					StartX = (EndX+StartX)/2;
-					points = points + StartX + "," + StartY + " ";
-					
-					StartY = EndY + OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+				//to down --> from up
+				if (StartY + OffsetSource < EndY){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = StartY + OffsetSource;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = (StartX + EndX)/2;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = EndY - OffsetTarget;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 90){
-				points = StartX + "," + StartY + " ";
-				StartY = StartY + OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartY <= EndY) {
-					StartY = EndY + OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to down --> from down
+				if(StartY < EndY){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = StartY + OffsetSource;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY + OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY + OffsetSource;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 270){
-				points = StartX + "," + StartY + " ";
-				StartY = StartY - OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (StartY >= EndY) {
-					StartY = EndY - OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to up --> from up
+				if (StartY - OffsetSource < EndY - OffsetTarget) {
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY - OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY - OffsetTarget;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY - OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY - OffsetTarget;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 270){
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY < EndY && StartX < EndX)){
-					StartY = EndY - OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to right --> from up
+				if(StartY > EndY - OffsetTarget){
+					OffsetPointSourceX = StartX + OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = EndY - OffsetTarget;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY - OffsetTarget;
+				}else{
+					OffsetPointSourceX = EndX;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 0){
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY < EndY && StartX < EndX)){
-					StartY = EndY - OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+				//to up --> from right
+				if (StartY - OffsetSource < EndY && StartX < EndX + OffsetTarget){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY - OffsetSource;
+					ContrlPointSourceX = EndX + OffsetTarget;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX + OffsetTarget;
+					OffsetPointTargetY = EndY;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX + OffsetTarget;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 90){
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY > EndY && StartX < EndX)){
-					StartY = EndY + OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to right --> from down
+				if (StartX + OffsetSource < EndX){
+					OffsetPointSourceX = StartX + OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = EndY + OffsetTarget;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY + OffsetTarget;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 0){
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartX = StartX + OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY > EndY && StartX < EndX)){
-					StartY = EndY + OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+				//to down --> from right
+				if (StartX < EndX){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = EndX + OffsetTarget;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX + OffsetTarget;
+					OffsetPointTargetY = EndY;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 270){
-				points = StartX + "," + StartY + " ";
-				StartX = StartX - OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY < EndY && StartX > EndX)){
-					StartY = EndY - OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to left --> from up
+				if(StartX - OffsetSource < EndX){
+					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = EndY - OffsetTarget;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY - OffsetTarget;
+				}else{
+					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 180){
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartX = StartX - OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY < EndY && StartX > EndX)){
-					StartY = EndY - OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+				//to up --> from left
+				if (StartY - OffsetSource < EndY) {
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY - OffsetSource;
+					ContrlPointSourceX = EndX - OffsetTarget;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
 				}
-				
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 180 && TargetConnectionPointdirection === 90){
-				points = StartX + "," + StartY + " ";
-				StartX = StartX - OffsetSource;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY > EndY && StartX > EndX)){
-					StartY = EndY + OffsetTarget;
-					points = points + StartX + "," + StartY + " ";
+				//to left --> from down
+				if (StartX - OffsetSource < EndX){
+					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = EndY + OffsetTarget;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY + OffsetTarget;
+				}else{
+					//fixme
+					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = EndY + OffsetTarget;
 				}
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 180){
-				var xTemp = StartX;
-				var yTemp = StartY;
-				StartX = EndX;
-				StartY = EndY;
-				EndX = xTemp;
-				EndY = yTemp;
-				points = StartX + "," + StartY + " ";
-				StartX = StartX - OffsetTarget;
-				points = points + StartX + "," + StartY + " ";
-				if (!(StartY > EndY && StartX > EndX)){
-					StartY = EndY + OffsetSource;
-					points = points + StartX + "," + StartY + " ";
+				//to down --> from left
+				if (StartY + OffsetSource >= EndY) {
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = EndX - OffsetTarget;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = EndY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
 				}
-				points = points + EndX + "," + StartY + " ";
-				points = points + EndX + "," + EndY;
 			}
 			
-			VisualObject.setAttribute("points", points);
+			points = StartX + "," + StartY + " " + OffsetPointSourceX + "," + OffsetPointSourceY + " "
+			 + ContrlPointSourceX + "," + ContrlPointSourceY + " " + ContrlPointTargetX + "," + ContrlPointTargetY + " "
+			 + OffsetPointTargetX + "," + OffsetPointTargetY + " "
+			 + EndX + "," + EndY;
 			
+			/*
+			var line1 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+			line1.id = VisualObject.id + "*" + "first";
+			line1.setAttribute("x1", OffsetPointSourceX);
+			line1.setAttribute("y1", OffsetPointSourceY);
+			line1.setAttribute("x2", ContrlPointSourceX);
+			line1.setAttribute("y2", ContrlPointSourceY);
+			line1.setAttribute("stroke", "red");
+			line1.setAttribute("stroke-width", "4");
+			var line2 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+			line2.id = VisualObject.id + "*" + "second";
+			line2.setAttribute("x1", ContrlPointSourceX);
+			line2.setAttribute("y1", ContrlPointSourceY);
+			line2.setAttribute("x2", ContrlPointTargetX);
+			line2.setAttribute("y2", ContrlPointTargetY);
+			line2.setAttribute("stroke", "blue");
+			line2.setAttribute("stroke-width", "4");
+			var line3 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
+			line3.id = VisualObject.id + "*" + "third";
+			line3.setAttribute("x1", ContrlPointTargetX);
+			line3.setAttribute("y1", ContrlPointTargetY);
+			line3.setAttribute("x2", OffsetPointTargetX);
+			line3.setAttribute("y2", OffsetPointTargetY);
+			line3.setAttribute("stroke", "green");
+			line3.setAttribute("stroke-width", "4");
+			
+			if(VisualObject.ResourceList.line1){
+				VisualObject.parentNode.replaceChild(line1, VisualObject.ResourceList.line1);
+				VisualObject.parentNode.replaceChild(line2, VisualObject.ResourceList.line2);
+				VisualObject.parentNode.replaceChild(line3, VisualObject.ResourceList.line3);
+			}else{
+				VisualObject.parentNode.insertBefore(line3, VisualObject.nextSibling);
+				VisualObject.parentNode.insertBefore(line2, line3);
+				VisualObject.parentNode.insertBefore(line1, line2);
+			}
+			VisualObject.ResourceList.line1 = line1;
+			VisualObject.ResourceList.line2 = line2;
+			VisualObject.ResourceList.line3 = line3;
+			*/
+			
+			VisualObject.setAttribute("points", points);
 		}else{
 			//do nothing because the polyline was routed correctly last time
 		}
