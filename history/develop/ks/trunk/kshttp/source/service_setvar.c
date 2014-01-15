@@ -290,8 +290,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 
 			case OV_VT_TIME:
 			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
-				//todo reimplement
-				fr = ov_time_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
+				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i], response_format);
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting time value failed");
 					EXEC_SETVAR_RETURN fr;

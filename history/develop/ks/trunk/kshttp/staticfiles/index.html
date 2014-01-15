@@ -51,6 +51,7 @@
 					<option value="renameObject">renameObject</option>
 					<option value="link">link</option>
 					<option value="unlink">unlink</option>
+					<option value="getLogfile">getLogfile</option>
 				</select>
 				path: 
 				<input id="idPathInput" value="" placeholder="full path to the object/variable" style="width:200px;">
@@ -110,6 +111,10 @@
 		<p>Unlinks two pairs of objects with an OV association.</p>
 		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
 		example: <code>/unlink?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		<h2>getLogfile</h2>
+		<p>Outputs logfile outputs of the server.</p>
+		example: <code>/getLogfile?format=ksx</code><br>
+		example: <code>/getLogfile?format=ksx&amp;from=2014-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=10</code><br>
 		
 		<script type="text/javascript" >
 		var CommandPlayground = document.getElementById("idCommandPlayground");
@@ -196,6 +201,10 @@
 				SecondtextLabel.innerHTML = "link partner: ";
 				SecondtextSpan.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
+				PathInput.value = "4";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
 			}else{
 				SecondtextSpan.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
@@ -242,6 +251,8 @@
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
 				urlstring += "&path="+PathInput.value;
 				urlstring += "&element="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
+				urlstring += "&maxentries="+PathInput.value;
 			}else{
 				return;
 			}

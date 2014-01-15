@@ -438,6 +438,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			result = kshttp_exec_unlink(&this->v_ClientRequest.args, &responseBody, response_format);
 			kshttp_printresponsefooter(&responseBody, response_format, "unlink");
 			request_handled_by = UNLINK;
+		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/getLogfile") == OV_STRCMP_EQUAL){
+			kshttp_printresponseheader(&responseBody, response_format, "logfile");
+			result = kshttp_exec_getlogfile(&this->v_ClientRequest.args, &responseBody, response_format);
+			kshttp_printresponsefooter(&responseBody, response_format, "logfile");
+			request_handled_by = GETLOGFILE;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/auth") == OV_STRCMP_EQUAL){
 			result = kshttp_authorize(1, this, this->v_ClientRequest.requestHeader, &responseHeader, this->v_ClientRequest.requestMethod, this->v_ClientRequest.cmd);
 			if(!Ov_Fail(result)){
