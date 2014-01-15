@@ -294,7 +294,7 @@ OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONS
 	//XML needs                  2002-05-30T09:30:10.123456
 	//id in String               01234567890123456789012345
 
-	OV_STRING timetemp;
+	OV_STRING timetemp = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 
 	if(ov_string_getlength(timestring) < 18){
@@ -306,7 +306,7 @@ OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONS
 	timetemp[4] = '/';
 	timetemp[7] = '/';
 	timetemp[10] = ' ';
-	fr = ov_time_asciitotime(time, timestring);
+	fr = ov_time_asciitotime(time, timetemp);
 
 	ov_string_setvalue(&timetemp, NULL);
 	return fr;
