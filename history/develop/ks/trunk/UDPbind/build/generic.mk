@@ -51,9 +51,9 @@ VPATH     = $(MODEL_DIR) $(SOURCE_DIR) $(INCLUDE_DIR) \
 			$(BASE_INC_DIR) $(BASE_MODEL_DIR)
 
 ifeq ($(COMPILER), MSVC)
-DEFINES    = /DOV_SYSTEM_$(SYSTEM)=1 /DPLT_SYSTEM_$(SYSTEM)=1
+DEFINES    = /DOV_SYSTEM_$(SYSTEM)=1 /DPLT_SYSTEM_$(SYSTEM)=1 /Dov_library_open_UDPbind=ov_library_open_UDPbind_old
 else
-DEFINES    = -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_SYSTEM_$(SYSTEM)=1
+DEFINES    = -DOV_SYSTEM_$(SYSTEM)=1 -DPLT_SYSTEM_$(SYSTEM)=1 -Dov_library_open_UDPbind=ov_library_open_UDPbind_old
 endif
 
 #	User library
