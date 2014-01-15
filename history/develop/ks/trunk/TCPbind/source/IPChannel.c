@@ -3,7 +3,7 @@
  *
  *   FILE
  *   ----
- *   TCPChannel.c
+ *   IPChannel.c
  *
  *   History
  *   -------
@@ -16,19 +16,29 @@
  ******************************************************************************/
 
 
+#include "protocol_config.h"
+#if IPbind_useTCP
 #ifndef OV_COMPILE_LIBRARY_TCPbind
 #define OV_COMPILE_LIBRARY_TCPbind
+#include "TCPbind.h"
+#include "TCPbind_config.h"
+#endif
 #endif
 
+#if IPbind_useUDP
+#ifndef OV_COMPILE_LIBRARY_UDPbind
+#define OV_COMPILE_LIBRARY_UDPbind
+#endif
+#include "UDPbind.h"
+#include "UDPbind_config.h"
+#endif
 
-#include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
 #include "libov/ov_result.h"
 #include "libov/ov_memstack.h"
-#include "TCPbind_helper.h"
+#include "socket_helper.h"
 #include "ks_logfile.h"
-#include "TCPbind_config.h"
 #include "ksbase_helper.h"
 
 
@@ -65,27 +75,27 @@
 #endif
 
 
-OV_DLLFNCEXPORT OV_INT TCPbind_TCPChannel_socket_get(
-		OV_INSTPTR_TCPbind_TCPChannel          pobj
+OV_DLLFNCEXPORT OV_INT IPbind_IPChannel_socket_get(
+		OV_INSTPTR_IPbind_IPChannel          pobj
 ) {
 	return pobj->v_socket;
 }
 
-OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
-		OV_INSTPTR_TCPbind_TCPChannel          pobj,
+OV_DLLFNCEXPORT OV_RESULT IPbind_IPChannel_socket_set(
+		OV_INSTPTR_IPbind_IPChannel          pobj,
 		const OV_INT  value
 ) {
 	OV_INT socket;
 
-	socket = TCPbind_TCPChannel_socket_get(pobj);
+	socket = IPbind_IPChannel_socket_get(pobj);
 	if(socket >= 0 && socket != value)
 	{
 		CLOSE_SOCKET(socket);
-		KS_logfile_debug(("TCPChannel/socket %s closing socket %d", pobj->v_identifier, socket));
+		KS_logfile_debug((LIB_IPPROTO "Channel/socket %s closing socket %d", pobj->v_identifier, socket));
 	}
 	pobj->v_socket = value;
 	if(pobj->v_socket < 0)
-		pobj->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+		pobj->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 
 	//activate typemethod if a socket is there
 	if(value >= 0)
@@ -95,19 +105,19 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 }
 
 /**
- * The TCHChannel SendData function is used to trigger the sending of the outData buffer.
+ * The XXXChannel SendData function is used to trigger the sending of the outData buffer.
  * It takes a pointer to the Channel itself as parameter.
  * The SendData function will to send the complete buffer. If the buffer can be send only partially (to much data or some other reason) the rest of the outData buffer will be send by the typemethod.
  *
  */
 
-OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
+OV_DLLFNCEXPORT OV_RESULT IPbind_IPChannel_SendData(
 		OV_INSTPTR_ksbase_Channel this
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_TCPbind_TCPChannel thisCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+	OV_INSTPTR_IPbind_IPChannel thisCh = Ov_StaticPtrCast(IPbind_IPChannel, this);
 	OV_INT socket = -1;
 	fd_set write_flags;
 	struct timeval waitd;
@@ -119,12 +129,12 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	{
 		if(!thisCh->v_outData.readPT)
 			thisCh->v_outData.readPT = thisCh->v_outData.data;
-		socket = TCPbind_TCPChannel_socket_get(thisCh);
+		socket = IPbind_IPChannel_socket_get(thisCh);
 
 		//Check if socket is ok
-		if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
+		if (socket < 0 || thisCh->v_ConnectionState == KSBASE_CONNSTATE_CLOSED) { // check if the socket might be OK.
 			KS_logfile_info(("%s/SendData: no socket set, nothing sent",this->v_identifier));
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			thisCh->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 			return OV_ERR_GENERIC;
 		}
 
@@ -164,7 +174,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 #endif
 
 			KS_logfile_error(("%s: send() failed: %d", thisCh->v_identifier, errno));
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
+			thisCh->v_ConnectionState = KSBASE_CONNSTATE_SENDERROR;
 			return OV_ERR_GENERIC;
 		}
 
@@ -185,59 +195,63 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
+OV_DLLFNCEXPORT void IPbind_IPChannel_startup(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_TCPbind_TCPChannel this = Ov_StaticPtrCast(TCPbind_TCPChannel, pobj);
+	OV_INSTPTR_IPbind_IPChannel this = Ov_StaticPtrCast(IPbind_IPChannel, pobj);
 	int socket;
 	/* do what the base class does first */
 	ksbase_Channel_startup(pobj);
 
 	/* do what */
-	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_cycInterval = 1;
-	Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_usesStreamProtocol = TRUE;	/*	TCP is a stream oriented protocol	*/
-
-	socket = TCPbind_TCPChannel_socket_get(this);
+	Ov_StaticPtrCast(IPbind_IPChannel, pobj)->v_cycInterval = 1;
+#if IPbind_useTCP
+	Ov_StaticPtrCast(IPbind_IPChannel, pobj)->v_usesStreamProtocol = TRUE;	/*	TCP is a stream oriented protocol	*/
+#endif
+#if IPbind_useUDP
+	Ov_StaticPtrCast(IPbind_IPChannel, pobj)->v_usesStreamProtocol = FALSE;	/*	UDP is not a stream oriented protocol	*/
+#endif
+	socket = IPbind_IPChannel_socket_get(this);
 	if(socket >= 0)
 	{
-		KS_logfile_info(("TCPChannel/startup: %s starting with socket %d. resetting.", pobj->v_identifier, socket));
+		KS_logfile_info((LIB_IPPROTO "Channel/startup: %s starting with socket %d. resetting.", pobj->v_identifier, socket));
 		this->v_socket = -1;
 	}
-	if(this->v_ConnectionState != TCPbind_CONNSTATE_CLOSED)
+	if(this->v_ConnectionState != KSBASE_CONNSTATE_CLOSED)
 	{
-		KS_logfile_info(("TCPChannel/startup: %s starting with connectionState not CLOSED. resetting.", pobj->v_identifier));
-		this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+		KS_logfile_info((LIB_IPPROTO "Channel/startup: %s starting with connectionState not CLOSED. resetting.", pobj->v_identifier));
+		this->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 	}
 	if(this->v_actimode == 1)
 		this->v_actimode = 0;
 	//set time of creation of the connection
-	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
+	ov_time_gettime(&(Ov_StaticPtrCast(IPbind_IPChannel, pobj)->v_LastReceiveTime));
 
 	return;
 }
 
-OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
+OV_DLLFNCEXPORT void IPbind_IPChannel_shutdown(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_TCPbind_TCPChannel this = Ov_StaticPtrCast(TCPbind_TCPChannel, pobj);
+	OV_INSTPTR_IPbind_IPChannel this = Ov_StaticPtrCast(IPbind_IPChannel, pobj);
 	OV_INSTPTR_ksbase_ClientHandler pClientHandler = NULL;
 	int socket;
 	/* do what */
 
-		KS_logfile_debug(("TCPChannel/shutdown: %s", pobj->v_identifier));
-		socket = TCPbind_TCPChannel_socket_get(this);
+		KS_logfile_debug((LIB_IPPROTO "Channel/shutdown: %s", pobj->v_identifier));
+		socket = IPbind_IPChannel_socket_get(this);
 		if(socket >= 0)
 		{
 			CLOSE_SOCKET(socket);
-			KS_logfile_debug(("TCPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
-			TCPbind_TCPChannel_socket_set(this, -1);
-			this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			KS_logfile_debug((LIB_IPPROTO "Channel/shutdown %s closing socket %d", pobj->v_identifier, socket));
+			IPbind_IPChannel_socket_set(this, -1);
+			this->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 		}
 
 
@@ -269,7 +283,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 }
 
 /**
- * The TCPChannel typemethod is run cyclically to receive data.
+ * The XXXChannel typemethod is run cyclically to receive data.
  * The received data is stored in the inData buffer. It is appended to the buffer. When a function has processed the buffer (or a part of it) the processed data should be deleted from it
  * to avoid unnecessary memory usage. When no data has arrived for UnusedDataTimeOut seconds the inData buffer is deleted.
  * When an open connection did not receive any data for ConnectionTimeOut seconds it is closed.
@@ -277,13 +291,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
  * functions HandleRequest or HandleData are called.
  */
 
-OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
+OV_DLLFNCEXPORT void IPbind_IPChannel_typemethod (
 		OV_INSTPTR_ksbase_ComTask	this
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_TCPbind_TCPChannel thisCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+	OV_INSTPTR_IPbind_IPChannel thisCh = Ov_StaticPtrCast(IPbind_IPChannel, this);
 	OV_INSTPTR_ksbase_ClientHandler pClientHandler = NULL;
 	OV_VTBLPTR_ksbase_ClientHandler pVTBLClientHandler = NULL;
 	OV_INSTPTR_ksbase_DataHandler pDataHandler = NULL;
@@ -309,9 +323,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	 *	Handle incoming data
 	 **********************************************************************************************************************************************************************************/
 
-	socket = TCPbind_TCPChannel_socket_get(thisCh);
+	socket = IPbind_IPChannel_socket_get(thisCh);
 
-	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
+	if (socket >= 0 && thisCh->v_ConnectionState == KSBASE_CONNSTATE_OPEN)		//if socket ok
 	{
 		//receive data in chunks (we dont know how much it will be)
 		do
@@ -332,10 +346,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			{
 				//Data arrived
 				//reallocate memory for receiving data. Note the temp-pointer: if realloc fails, the original pointer is NOT freed
-				tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
+				tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + IPbind_CHUNKSIZE);
 				if(!tempdata)
 				{
-					KS_logfile_error(("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+TCPbind_CHUNKSIZE));
+					KS_logfile_error(("%s: failed to allocate memory for received data (length: %u)", this->v_identifier, thisCh->v_inData.length+IPbind_CHUNKSIZE));
 					ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 					Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					return;
@@ -357,14 +371,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				else
 					thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
 
-				err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
-				if(err < TCPbind_CHUNKSIZE)
+				err = recv(socket, (char*) thisCh->v_inData.writePT, IPbind_CHUNKSIZE, 0);		//receive data
+				if(err < IPbind_CHUNKSIZE)
 				{
 					if(err == 0)
 					{
 						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
-						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-						TCPbind_TCPChannel_socket_set(thisCh, -1);
+						thisCh->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
+						IPbind_IPChannel_socket_set(thisCh, -1);
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 							ov_free(tempdata);
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
@@ -391,8 +405,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					{
 						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
 						CLOSE_SOCKET(socket);
-						TCPbind_TCPChannel_socket_set(thisCh, -1);
-						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+						IPbind_IPChannel_socket_set(thisCh, -1);
+						thisCh->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 							ov_free(tempdata);
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
@@ -432,7 +446,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			 *********************************************************************************************************************************************************/
 			if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTASSOCATIED)
 			{
-				TCPbind_TCPChannel_AssociateClientHandler(thisCh);
+				IPbind_IPChannel_AssociateClientHandler(thisCh);
 			}
 
 			/*****************************************************************************************************************************************************************************
@@ -464,7 +478,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						}
 						else
 						{
-							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							IPbind_IPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
@@ -509,7 +523,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						}
 						else
 						{
-							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+							IPbind_IPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
@@ -532,7 +546,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		 ****************************************************************************************************************************************************************************/
 		if(thisCh->v_outData.length)
 		{
-			TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
+			IPbind_IPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 			if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
 			{/*	channel should close after send and everything is sent	*/
 				Ov_DeleteObject(thisCh);
@@ -571,17 +585,17 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	{
 		if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTNEEDED)
 		{
-			if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)
+			if(thisCh->v_ConnectionState == KSBASE_CONNSTATE_OPEN)
 			{
 				KS_logfile_info(("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut));
 				CLOSE_SOCKET(socket);
-				TCPbind_TCPChannel_socket_set(thisCh, -1);
-				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+				IPbind_IPChannel_socket_set(thisCh, -1);
+				thisCh->v_ConnectionState = KSBASE_CONNSTATE_CLOSED;
 			}
 		}
 		else
 		{
-			KS_logfile_info(("%s: received nothing for %u seconds. Deleting TCPChannel", this->v_identifier, thisCh->v_ConnectionTimeOut));
+			KS_logfile_info(("%s: received nothing for %u seconds. Deleting Channel", this->v_identifier, thisCh->v_ConnectionTimeOut));
 			Ov_DeleteObject(thisCh);
 		}
 	}
@@ -600,22 +614,22 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	return;
 }
 
-OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenLocalConn(
+OV_DLLFNCEXPORT OV_RESULT IPbind_IPChannel_OpenLocalConn(
 		OV_INSTPTR_ksbase_Channel this,
 		OV_STRING port
 ) {
 
-	return TCPbind_TCPChannel_OpenConnection(this, "127.0.0.1", port);
+	return IPbind_IPChannel_OpenConnection(this, "127.0.0.1", port);
 }
 
 /**
- * The TCHChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
+ * The XXXChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
  * It furthermore takes a pointer to an int used to return the socket selector.
  * This functions is IPv6 compatible.
  * It returns OV_ERR_OK on success.
  */
 
-OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
+OV_DLLFNCEXPORT OV_RESULT IPbind_IPChannel_OpenConnection(
 		OV_INSTPTR_ksbase_Channel this,
 		OV_STRING host,
 		OV_STRING port
@@ -631,24 +645,28 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	int on = 1; 	//used to disable nagle algorithm
-	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+	OV_INSTPTR_IPbind_IPChannel thisIPCh = Ov_StaticPtrCast(IPbind_IPChannel, this);
 
 	if(!host || !(*host) || !port || !(*port))
 		return OV_ERR_BADPARAM;
 
 	/*	close old connection	*/
-	TCPbind_TCPChannel_CloseConnection(this);
+	IPbind_IPChannel_CloseConnection(this);
 
 	//set connection information
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = PF_UNSPEC;
+#if	IPbind_useTCP
 	hints.ai_socktype = SOCK_STREAM;
-
+#endif
+#if IPbind_useUDP
+	hints.ai_socktype = SOCK_DGRAM;
+#endif
 	//resolve address
 	if ((ret = getaddrinfo(host, port, &hints, &res))!=0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisIPCh->v_ConnectionState = KSBASE_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -662,7 +680,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
 			CLOSE_SOCKET(sockfd);
 			sockfd = -1;
-			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
+			KS_logfile_debug(("%s: connect failed", thisIPCh->v_identifier));
 			continue;
 		}
 		break;
@@ -673,7 +691,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if (sockfd == -1)
 	{
 		KS_logfile_info(("%s: could not establish connection", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisIPCh->v_ConnectionState = KSBASE_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -681,7 +699,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if( getpeername(sockfd, sa, &sas))
 	{
 		KS_logfile_error(("%s: could not resolve connected peer", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisIPCh->v_ConnectionState = KSBASE_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
@@ -689,40 +707,41 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 	{
 		KS_logfile_error(("%s: could not resolve connected peer's address", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		thisIPCh->v_ConnectionState = KSBASE_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
-	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
-	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-	TCPbind_TCPChannel_socket_set(thisTCPCh, sockfd);
+	ov_string_setvalue(&(thisIPCh->v_address), hbuf);
+	thisIPCh->v_ConnectionState = KSBASE_CONNSTATE_OPEN;
+	IPbind_IPChannel_socket_set(thisIPCh, sockfd);
 
-	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, this->v_address));
+	KS_logfile_debug(("%s: connected to %s.", thisIPCh->v_identifier, this->v_address));
 	//set time of Opening the Connection
 	ov_time_gettime(&(this->v_LastReceiveTime));
 
+#if IPbind_useTCP
 	//disable nagle for the receivesocket
 	setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
-
+#endif
 	return OV_ERR_OK;
 }
 
 
-OV_DLLFNCEXPORT void TCPbind_TCPChannel_CloseConnection(
+OV_DLLFNCEXPORT void IPbind_IPChannel_CloseConnection(
 		OV_INSTPTR_ksbase_Channel this
 ) {
-	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
-	if(thisTCPCh->v_socket >= 0)
+	OV_INSTPTR_IPbind_IPChannel thisIPCh = Ov_StaticPtrCast(IPbind_IPChannel, this);
+	if(thisIPCh->v_socket >= 0)
 	{
-		TCPbind_TCPChannel_socket_set(thisTCPCh, -1);
-		KS_logfile_debug(("TCPChannel %s socket %d closed", thisTCPCh->v_identifier, thisTCPCh->v_socket));
+		IPbind_IPChannel_socket_set(thisIPCh, -1);
+		KS_logfile_debug((LIB_IPPROTO "Channel %s socket %d closed", thisIPCh->v_identifier, thisIPCh->v_socket));
 	}
 	return;
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
-		OV_INSTPTR_TCPbind_TCPChannel this
+OV_DLLFNCEXPORT OV_RESULT IPbind_IPChannel_AssociateClientHandler(
+		OV_INSTPTR_IPbind_IPChannel this
 ) {
 	OV_INSTPTR_ov_class pClassProtIdent = NULL;
 	OV_INSTPTR_ksbase_ProtocolIdentificator pProtIdent = NULL;
@@ -760,7 +779,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 					}
 					KS_logfile_debug(("ClientHandler created."));
 					this->v_ClientHandlerAssociated = KSBASE_CH_ASSOCIATED;
-					this->v_ConnectionTimeOut = TCPbind_TTL_AFTER_ASSOC;
+					this->v_ConnectionTimeOut = IPbind_TTL_AFTER_ASSOC;
 					break;
 				}
 			}
@@ -776,7 +795,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 	if(this->v_ClientHandlerAssociated == KSBASE_CH_NOTASSOCATIED)
 	{
 		this->v_ClientHandlerAssociated = KSBASE_CH_NOTFOUND;
-		KS_logfile_error(("No ClientHandler could be associated. Deleting TCPChannel"));
+		KS_logfile_error(("No ClientHandler could be associated. Deleting Channel"));
 		Ov_DeleteObject(this);
 	}
 	return OV_ERR_OK;
