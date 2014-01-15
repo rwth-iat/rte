@@ -264,13 +264,13 @@ or
 }
 
 /**
- * Convert a timestring into an XML, TCL or plaintext timestring
+ * Convert a time into a XML, TCL or plaintext timestring
 */
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPONSEFORMAT response_format){
 	//timetoascii has timeformat 2002/05/30 09:30:10.123456
 	//TCL needs                  2002-05-30 09:30:10.123
-	//XML needs                  2002-05-30T09:30:10.1
-	//id in String               012345678901234567890123
+	//XML needs                  2002-05-30T09:30:10.123456
+	//id in String               01234567890123456789012345
 
 	ov_string_setvalue(timestring, ov_time_timetoascii(time));
 
@@ -279,7 +279,6 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 	(*timestring)[7] = '-';
 	if(response_format == KSX){
 		(*timestring)[10] = 'T';
-		(*timestring)[21] = '\0';
 	}else{
 		(*timestring)[23] = '\0';
 	}
@@ -287,7 +286,34 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 }
 
 /**
- * Convert a timespan into an XML, TCL or plaintext timestring
+ * Convert a XML, TCL or plaintext timestring into a time
+*/
+OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONSEFORMAT response_format){
+	//asciitotime has timeformat 2002/05/30 09:30:10.123456
+	//TCL needs                  2002-05-30 09:30:10.123
+	//XML needs                  2002-05-30T09:30:10.123456
+	//id in String               01234567890123456789012345
+
+	OV_STRING timetemp;
+	OV_RESULT fr = OV_ERR_OK;
+
+	if(ov_string_getlength(timestring) < 18){
+		return OV_ERR_BADPARAM;
+	}
+	//work on a copy of the string
+	ov_string_setvalue(&timetemp, timestring);
+	//manipulate string to correct format
+	timetemp[4] = '/';
+	timetemp[7] = '/';
+	timetemp[10] = ' ';
+	fr = ov_time_asciitotime(time, timestring);
+
+	ov_string_setvalue(&timetemp, NULL);
+	return fr;
+}
+
+/**
+ * Convert a timespan into a XML, TCL or plaintext timestring
  * XML PT42S Period: T time delimiter, 42 Seconds
  */
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSHTTP_RESPONSEFORMAT response_format){
