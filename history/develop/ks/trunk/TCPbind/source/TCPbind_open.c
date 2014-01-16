@@ -163,7 +163,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		pListener->v_ChannelNeedsClientHandler = TRUE;
 		//run typemethod once to create socket
 		TCPbind_TCPListener_typemethod(Ov_StaticPtrCast(ksbase_ComTask, pListener));
-		if(pListener->v_SocketState == KSBASE_CONNSTATE_COULDNOTOPEN)
+		if(pListener->v_SocketState == TCPbind_CONNSTATE_COULDNOTOPEN)
 		{
 			ov_logfile_error("TCPbind library open: Listener could not open socket");
 			ov_memstack_unlock();

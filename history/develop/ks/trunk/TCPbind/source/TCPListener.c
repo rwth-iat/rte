@@ -3,7 +3,7 @@
  *
  *   FILE
  *   ----
- *   IPListener.c
+ *   TCPListener.c
  *
  *   History
  *   -------
@@ -16,28 +16,16 @@
  ******************************************************************************/
 
 
-#include "protocol_config.h"
-#if IPbind_useTCP
 #ifndef OV_COMPILE_LIBRARY_TCPbind
 #define OV_COMPILE_LIBRARY_TCPbind
+#endif
+
+
 #include "TCPbind.h"
-#include "TCPbind_config.h"
-#endif
-#endif
-
-#if IPbind_useUDP
-#ifndef OV_COMPILE_LIBRARY_UDPbind
-#define OV_COMPILE_LIBRARY_UDPbind
-#endif
-#include "UDPbind.h"
-#include "UDPbind_config.h"
-#endif
-
-
-
 #include "libov/ov_macros.h"
-#include "socket_helper.h"
+#include "TCPbind_helper.h"
 #include "ks_logfile.h"
+#include "TCPbind_config.h"
 #include "ksbase_helper.h"
 #include "libov/ov_vendortree.h"
 
@@ -77,14 +65,14 @@
 #include <ws2tcpip.h>
 #endif
 
-OV_DLLFNCEXPORT OV_INT IPbind_IPListener_port_get(
-		OV_INSTPTR_IPbind_IPListener          pobj
+OV_DLLFNCEXPORT OV_INT TCPbind_TCPListener_port_get(
+		OV_INSTPTR_TCPbind_TCPListener          pobj
 ) {
 	return pobj->v_port;
 }
 
-OV_DLLFNCEXPORT OV_RESULT IPbind_IPListener_port_set(
-		OV_INSTPTR_IPbind_IPListener          pobj,
+OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
+		OV_INSTPTR_TCPbind_TCPListener          pobj,
 		const OV_INT  value
 ) {
 
@@ -108,13 +96,13 @@ OV_DLLFNCEXPORT OV_RESULT IPbind_IPListener_port_set(
 
 
 
-OV_DLLFNCEXPORT OV_RESULT IPbind_IPListener_constructor(
+OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_constructor(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_IPbind_IPListener pinst = Ov_StaticPtrCast(IPbind_IPListener, pobj);
+	OV_INSTPTR_TCPbind_TCPListener pinst = Ov_StaticPtrCast(TCPbind_TCPListener, pobj);
 	OV_RESULT result;
 	/* do what the base class does first */
 	result = ksbase_ComTask_constructor(pobj);
@@ -128,15 +116,15 @@ OV_DLLFNCEXPORT OV_RESULT IPbind_IPListener_constructor(
 	return result;
 }
 
-OV_DLLFNCEXPORT void IPbind_IPListener_shutdown(
+OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_IPbind_IPListener pinst = Ov_StaticPtrCast(IPbind_IPListener, pobj);
-	OV_INSTPTR_IPbind_IPChannel pChannel = NULL;
-	OV_INSTPTR_IPbind_IPChannel pNextChannel = NULL;
+	OV_INSTPTR_TCPbind_TCPListener pinst = Ov_StaticPtrCast(TCPbind_TCPListener, pobj);
+	OV_INSTPTR_TCPbind_TCPChannel pChannel = NULL;
+	OV_INSTPTR_TCPbind_TCPChannel pNextChannel = NULL;
 
 	/* do what */
 	//close socket
@@ -155,21 +143,21 @@ OV_DLLFNCEXPORT void IPbind_IPListener_shutdown(
 	pinst->v_actimode = 0;
 
 	/*
-	 * iterate over all IPChannels in containment and delete them if they act as Servers (probably all of them)
+	 * iterate over all TCPChannels in containment and delete them if they act as Servers (probably all of them)
 	 * we cannot use Ov_ForEachChildEx here since we would delete an object before getting the next child
 	 */
-	pNextChannel = Ov_StaticPtrCast(IPbind_IPChannel, Ov_GetFirstChild(ov_containment, Ov_StaticPtrCast(ov_domain, pinst)));
+	pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetFirstChild(ov_containment, Ov_StaticPtrCast(ov_domain, pinst)));
 	while(pNextChannel)
 	{
-		if(Ov_CanCastTo(IPbind_IPChannel, pNextChannel))
+		if(Ov_CanCastTo(TCPbind_TCPChannel, pNextChannel))
 		{
 			pChannel = pNextChannel;
-			pNextChannel = Ov_StaticPtrCast(IPbind_IPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pChannel)));
+			pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pChannel)));
 			if(pChannel->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED)
 				Ov_DeleteObject(pChannel);
 		}
 		else
-			pNextChannel = Ov_StaticPtrCast(IPbind_IPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pNextChannel)));
+			pNextChannel = Ov_StaticPtrCast(TCPbind_TCPChannel, Ov_GetNextChild(ov_containment, Ov_StaticPtrCast(ov_object, pNextChannel)));
 
 	}
 
@@ -180,14 +168,14 @@ OV_DLLFNCEXPORT void IPbind_IPListener_shutdown(
 	return;
 }
 
-OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
+OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		OV_INSTPTR_ksbase_ComTask	this
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_IPbind_IPListener thisLi = Ov_StaticPtrCast(IPbind_IPListener, this);
-	OV_INSTPTR_IPbind_IPChannel pNewChannel = NULL;
+	OV_INSTPTR_TCPbind_TCPListener thisLi = Ov_StaticPtrCast(TCPbind_TCPListener, this);
+	OV_INSTPTR_TCPbind_TCPChannel pNewChannel = NULL;
 	OV_INSTPTR_ksbase_ProtocolIdentificator pProtIdent = NULL;
 	OV_VTBLPTR_ksbase_ProtocolIdentificator pVTBLProtIdent = NULL;
 	struct addrinfo *res;
@@ -218,7 +206,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 	char buf[NI_MAXHOST];
 	int on = 1;
 	OV_UINT namecounter = 0;
-	char ChannelNameBuffer[21];	//name for XXXChannelxxxxxxxxxx (MAX_UINT Channels should be enough...)
+	char ChannelNameBuffer[21];	//name for TCPChannelxxxxxxxxxx (MAX_UINT Channels should be enough...)
 
 	/*
 	 * If no socket is open, open one and start listening.
@@ -227,32 +215,22 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 	if(!thisLi->v_SocketState)	//no socket open
 	{
 
-#if	IPbind_useTCP
 		if(!ov_vendortree_getcmdlineoption_value("TCPBIND_NO_IPv6"))
-#endif
-#if	IPbind_useUDP
-		if(!ov_vendortree_getcmdlineoption_value("UDPBIND_NO_IPv6"))
-#endif
 		{
 			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = PF_UNSPEC;
-#if	IPbind_useTCP
 			hints.ai_socktype = SOCK_STREAM;
-#endif
-#if	IPbind_useUDP
-			hints.ai_socktype = SOCK_DGRAM;
-#endif
 			hints.ai_flags = AI_PASSIVE;
 
-			if(IPbind_IPListener_port_get(thisLi) != -1)
-				snprintf(portbuf, 12, "%ld", IPbind_IPListener_port_get(thisLi));
+			if(TCPbind_TCPListener_port_get(thisLi) != -1)
+				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
 			else
 				snprintf(portbuf, 12, "%ld", 0l);
 
 			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 			{
 				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
@@ -309,7 +287,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 				{
 					KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 					KS_logfile_print_sysMsg();
-					thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+					thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 					return;
 				}
 
@@ -317,7 +295,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 				{
 					KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 					KS_logfile_print_sysMsg();
-					thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+					thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 					return;
 				}
 
@@ -332,33 +310,28 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 			freeaddrinfo(res);
 			if(thisLi->v_port == -1)
 			{
-				IPbind_IPListener_port_set(thisLi, atoi(sbuf));
+				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
 			}
 			thisLi->v_socket[0] = sockfds[0];
 			thisLi->v_socket[1] = sockfds[1];
-			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
 		}
 		else
 		{
 			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = AF_INET;
-#if	IPbind_useTCP
 			hints.ai_socktype = SOCK_STREAM;
-#endif
-#if	IPbind_useUDP
-			hints.ai_socktype = SOCK_DGRAM;
-#endif
 			hints.ai_flags = AI_PASSIVE;
 
-			if(IPbind_IPListener_port_get(thisLi) != -1)
-				snprintf(portbuf, 12, "%ld", IPbind_IPListener_port_get(thisLi));
+			if(TCPbind_TCPListener_port_get(thisLi) != -1)
+				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
 			else
 				snprintf(portbuf, 12, "%ld", 0l);
 
 			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
 			{
 				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
@@ -373,7 +346,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 #endif
 				KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
 				ks_logfile_print_sysMsg();
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
@@ -390,7 +363,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 #endif
 				KS_logfile_error(("%s: failed to bind to socket: %d", thisLi->v_identifier, errno));
 				ks_logfile_print_sysMsg();
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 			if (listen(fd, 5) == -1)
@@ -398,14 +371,14 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 				KS_logfile_error(("%s: failed to start listening on socket: %d", thisLi->v_identifier, errno));
 				ks_logfile_print_sysMsg();
 				printf("Listener->port:\t%lu\ngetaddinfo-port:\t%d", thisLi->v_port, atoi(sbuf));
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 			if(getsockname(fd, sa, &sas))
 			{
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
@@ -413,19 +386,19 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 			{
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			}
 
 			freeaddrinfo(res);
 			if(thisLi->v_port == -1)
 			{
-				IPbind_IPListener_port_set(thisLi, atoi(sbuf));
+				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
 			}
 
 			thisLi->v_socket[0] = fd;
 			thisLi->v_socket[1] = -1;
-			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
 		}
 			KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 	}
@@ -433,7 +406,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 		 * Socket is open now
 		 */
 
-	if(thisLi->v_SocketState == KSBASE_CONNSTATE_OPEN)
+	if(thisLi->v_SocketState == TCPbind_CONNSTATE_OPEN)
 	{
 
 		sockfds[0] = thisLi->v_socket[0];
@@ -493,30 +466,29 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 
 					KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
 
-#if IPbind_useTCP
 					//disable nagle for the receivesocket
 					setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
-#endif
 
-					//get first free "XXXChannel"-name
+
+					//get first free "TCPChannel"-name
 					do {
 						pNewChannel = NULL;
 						namecounter++;
-						sprintf(ChannelNameBuffer, LIB_IPPROTO "Channel%lu", namecounter);
-						pNewChannel	= (OV_INSTPTR_IPbind_IPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
+						sprintf(ChannelNameBuffer, "TCPChannel%lu", namecounter);
+						pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
 					} while (pNewChannel);
 
-					//create receiving XXXChannel
-					if (Ov_OK(Ov_CreateObject(IPbind_IPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer)))
+					//create receiving TCPChannel
+					if (Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer)))
 					{
 						KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf));
 						//copy socket to created object
-						IPbind_IPChannel_socket_set(pNewChannel, cfd);
+						TCPbind_TCPChannel_socket_set(pNewChannel, cfd);
 						if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))
 						{
-							KS_logfile_error(("%s: failed to set address for Channel %s", this->v_identifier, pNewChannel->v_identifier));
+							KS_logfile_error(("%s: failed to set address for TCHChannel %s", this->v_identifier, pNewChannel->v_identifier));
 						}
-						pNewChannel->v_ConnectionState = KSBASE_CONNSTATE_OPEN;
+						pNewChannel->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
 						/*	check for local connection and set flag appropriately	*/
 						if((ov_string_compare(buf, "127.0.0.1") == OV_STRCMP_EQUAL)
 								|| (ov_string_compare(buf, "::1") == OV_STRCMP_EQUAL))
@@ -525,7 +497,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 						if(thisLi->v_ChannelNeedsClientHandler)
 						{
 							pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
-							pProtIdent = Ov_GetChild(IPPbind_AssocSpecificClientHandler, thisLi);
+							pProtIdent = Ov_GetChild(TCPbind_AssocSpecificClientHandler, thisLi);
 							if(pProtIdent)
 							{
 								Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
@@ -546,7 +518,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 							pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
 
 					} else {
-						KS_logfile_error(("%s: Creation of Channel for %s failed (socket %d).", this->v_identifier, buf, cfd));
+						KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));
 					}
 				}
 				else
@@ -554,7 +526,7 @@ OV_DLLFNCEXPORT void IPbind_IPListener_typemethod (
 #if OV_SYSTEM_NT
 					errno = WSAGetLastError();
 #endif
-					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errno is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
+					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errbo is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
 				}
 			}
 		}
