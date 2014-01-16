@@ -314,7 +314,19 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 			thisLi->v_socket[0] = sockfds[0];
 			thisLi->v_socket[1] = sockfds[1];
-			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
+#if OV_SYSTEM_NT
+			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
+					|| (thisLi->v_socket[1] != -1 && thisLi->v_socket[1] != INVALID_SOCKET))
+#else
+			if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
+#endif
+			{
+				thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+			}
+			else
+			{
+				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+			}
 		}
 		else
 		{
@@ -398,7 +410,18 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 			thisLi->v_socket[0] = fd;
 			thisLi->v_socket[1] = -1;
-			thisLi->v_SocketState = TCPbind_CONNSTATE_OPEN;
+#if OV_SYSTEM_NT
+			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET))
+#else
+			if(thisLi->v_socket[0] != -1)
+#endif
+			{
+				thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+			}
+			else
+			{
+				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+			}
 		}
 			KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 	}
