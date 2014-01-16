@@ -1,5 +1,5 @@
-#ifndef socket_helper_INCLUDED
-#define socket_helper_INCLUDED
+#ifndef TCPbind_helper_INCLUDED
+#define TCPbind_helper_INCLUDED
 
 #if OV_SYSTEM_NT
  #define CLOSE_SOCKET closesocket
