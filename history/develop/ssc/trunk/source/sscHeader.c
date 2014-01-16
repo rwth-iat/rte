@@ -23,7 +23,109 @@
 
 #include "ssc.h"
 #include "ssclib.h"
+#include "libov/ov_path.h"
+#include <string.h>
+#include "libov/ov_macros.h"
 
+OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
+    OV_INSTPTR_ssc_sscHeader          pobj,
+    const OV_STRING  value
+)
+{
+	OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
+
+	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
+	OV_INSTPTR_ssc_step foundStep = NULL;
+
+	if (pinst->v_workingState == WOST_INIT)
+	{
+		//find the matching init step
+		Ov_ForEachChild(ov_containment, pobj, pstep)
+		{
+
+			if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
+			{
+				if(ov_string_compare(((OV_INSTPTR_ssc_step)pstep)->v_identifier, value) == OV_STRCMP_EQUAL)
+				{
+					foundStep = (OV_INSTPTR_ssc_step)pstep;
+					break;
+				}
+
+			}
+		}
+		if(foundStep != NULL)
+		{
+			Ov_ForEachChild(ov_containment, pobj, pstep)
+			{
+				if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
+				{
+					if(foundStep == (OV_INSTPTR_ssc_step)pstep)
+					{
+						((OV_INSTPTR_ssc_step)pstep)->v_internalID = 0;
+						((OV_INSTPTR_ssc_step)pstep)->v_actimode = 1;
+					}
+					else //deactivate all non init steps and set the correct id
+					{
+						if (((OV_INSTPTR_ssc_step)pstep)->v_internalID != 999) //not an end step
+						{
+							((OV_INSTPTR_ssc_step)pstep)->v_internalID = 1;
+						}
+						((OV_INSTPTR_ssc_step)pstep)->v_actimode = 0;
+					}
+				}
+			}
+		}
+		else
+		{
+			pinst->v_error = TRUE;
+			ov_string_setvalue(&(pinst->v_errorDetail), "step not found");
+			return Ov_Fail(OV_ERR_BADVALUE);
+		}
+	}
+	else
+	{
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&(pinst->v_errorDetail),"init and end step can only be set when workingState = 0");
+		return Ov_Fail(OV_ERR_BADVALUE);
+	}
+    return ov_string_setvalue(&pobj->v_initStepName,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
+    OV_INSTPTR_ssc_sscHeader          pobj,
+    const OV_STRING  value
+)
+{
+	//OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
+	OV_UINT count = 0; // count of end step strings
+	int i = 0; // loop variable
+	int n = 1;
+	OV_STRING *pEndStepList = ov_string_split(value,",",&count);
+
+	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
+	Ov_ForEachChild(ov_containment, pobj, pstep)
+	{
+		if(Ov_CanCastTo(ssc_step, pstep))
+		{
+			for(i = 0; i<count; i++)
+			{
+
+				if(ov_string_compare(((OV_INSTPTR_ssc_step)pstep)->v_identifier, pEndStepList[i]) == OV_STRCMP_EQUAL)
+				{
+					((OV_INSTPTR_ssc_step)pstep)->v_internalID = 999;
+					n++;
+				}
+			}
+		}
+	}
+	if(n < count)
+	{
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&(pinst->v_errorDetail),"could not set all end steps");
+		return Ov_Fail(OV_ERR_BADVALUE);
+	}
+    return ov_string_setvalue(&pobj->v_endStepName,value);
+}
 OV_RESULT ssc_sscHeader_checkLocation(
 	OV_INSTPTR_ssc_sscHeader	pSSC
 ) {
@@ -116,7 +218,10 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
 
     // check location
     result = ssc_sscHeader_checkLocation (pinst);
-    if(Ov_Fail(result)) return;
+    if(Ov_Fail(result))
+   	{
+    	return;
+    }
 
 
     // find active step

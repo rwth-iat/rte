@@ -77,15 +77,17 @@ LIBRARY ssc
 		IS_INSTANTIABLE;
 		COMMENT = "SSC header";
 		VARIABLES
-			EN   			: UINT   	FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
-			woStPhase       : UINT		FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
-			woStQualifier   : UINT		FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
-			activeStep  	: STRING	FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
-			terminated		: BOOL		FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
-			workingState    : UINT		FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
-			woStText        : STRING    FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
-			error			: BOOL		FLAGS = "o"	COMMENT = "error";
-			errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
+			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" ;
+			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step";
+			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
+			woStQualifier   : UINT							FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
+			activeStep  	: STRING						FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
+			terminated		: BOOL							FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
+			workingState    : UINT							FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
+			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
+			error			: BOOL							FLAGS = "o"	COMMENT = "error";
+			errorDetail		: STRING						FLAGS = "o"	COMMENT = "error details";
 		END_VARIABLES;
 		PARTS
       		actions 			: CLASS ov/domain;

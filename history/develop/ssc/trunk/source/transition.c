@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     OV_INSTPTR_ssc_transition 	pinst = Ov_StaticPtrCast(ssc_transition, pfb);
     //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
 
-    //find connection object with is connected to the result port
+    //find connection object which is connected to the result port
     OV_INSTPTR_ov_object pObj =  Ov_GetFirstChild(fb_inputconnections, pinst);
     OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, pObj);
 
@@ -101,17 +101,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     //OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
     //OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
 
-    //check if the transCond is a functionchart or a functionblock
-    if(Ov_CanCastTo(fb_port, pSrcObj))
-    {
-    	//transCond is a functionchart
-    	pTransCond = (OV_INSTPTR_fb_functionblock)(Ov_GetParent(fb_variables,(OV_INSTPTR_fb_port) pSrcObj));
-    }
-    else
-    {
-    	//transCond is a functionblock
-    	pTransCond = (OV_INSTPTR_fb_functionblock)(pSrcObj);
-    }
+
 
     pTransCondsDomain = &pSSC->p_transConds;
     pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
@@ -119,7 +109,30 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 
 
 
-
+    //check whether the transCond is a functionchart or a functionblock
+    if(Ov_CanCastTo(fb_port, pSrcObj))
+    {
+    	//transCond is a functionchart, check if the functionchart is within the transCond Container
+    	pTransCond =  (OV_INSTPTR_fb_functionblock)(Ov_GetParent(fb_variables,(OV_INSTPTR_fb_port) pSrcObj));
+    }
+    else if (Ov_CanCastTo(fb_functionblock, pSrcObj))
+    {
+    	//transCond is a functionblock, check if the functionblock is within the transCond Container
+    	pTransCond = (OV_INSTPTR_fb_functionblock)(pSrcObj);
+    }
+    //the transition condition is not in the transCond-container, so it does not need to be triggered
+    //the only valid option is now, that the transition condition is a port of the embedding function chart
+    //else an error should be generated
+	if(Ov_GetParent(ov_containment,pTransCond) != pTransCondsContainer )
+	{
+		if(pTransCond != pFC) //the found functionchart/block is not the embedding functionchart
+		{
+			pinst->v_error=TRUE;
+			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
+			return;
+		}
+		pTransCond = NULL;
+	}
 
 
     // check location and links
@@ -140,12 +153,12 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
         // check location
     	if (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC))
     	{
-    		if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC)) )
-    		{
-    			pinst->v_error=TRUE;
-    			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
-    			return;
-    		}
+    		//if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC)) )
+    		//{
+    		//	pinst->v_error=TRUE;
+    		//	ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
+    		//	return;
+    		//}
 
     		// check tasklist
     		if (pTransCondsTaskParent != NULL)
