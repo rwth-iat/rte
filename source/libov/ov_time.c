@@ -227,8 +227,10 @@ static OV_STRING ov_time_timetoascii_internal(
 	*	convert the time to a string
 	*/
 	if(uselocaltime){
+		//POSIX C
 		ptm = localtime(&secs);
 	}else{
+		//POSIX C
 		ptm = gmtime(&secs);
 	}
 	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
@@ -354,9 +356,22 @@ static OV_RESULT ov_time_asciitotime_internal(
 	tm.tm_year -= 1900;
 	tm.tm_mon--;
 	if(uselocaltime){
+		//POSIX C
+		//time_t mktime (struct tm*);
 		secs = mktime(&tm);
 	}else{
-		secs = _mkgmtime(&tm);
+		//POSIX forgot the utc version of mktime
+		#if OV_SYSTEM_UNIX
+		//unix has
+		//time_t timegm(struct tm *);
+		secs = timegm(&tm);
+		#endif
+
+		//Microsoft invented mkgmtime (but this is not available in minGW because of default MSVCRT_VERSION=600
+		//so there seems not clean way for doing this without much code problems
+		#if !OV_SYSTEM_UNIX
+			return OV_ERR_NOTIMPLEMENTED;
+		#endif
 	}
 	if(secs == -1) {
 		return OV_ERR_BADPARAM;
@@ -381,6 +396,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
 
 /*
 *	Convert an ASCII string into a time (UTC)
+*	Warning: this is NOTIMPLEMENTED under windows!
 */
 OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_utc(
 	OV_TIME				*ptime,
