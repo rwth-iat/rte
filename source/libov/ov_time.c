@@ -215,7 +215,7 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 */
 static OV_STRING ov_time_timetoascii_internal(
 	const OV_TIME		*ptime,
-	const OV_BOOL localtime
+	const OV_BOOL uselocaltime
 ) {
 	/*
 	*	local variables
@@ -226,7 +226,7 @@ static OV_STRING ov_time_timetoascii_internal(
 	/*
 	*	convert the time to a string
 	*/
-	if(localtime){
+	if(uselocaltime){
 		ptm = localtime(&secs);
 	}else{
 		ptm = gmtime(&secs);
@@ -302,7 +302,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
 static OV_RESULT ov_time_asciitotime_internal(
 	OV_TIME				*ptime,
 	const OV_STRING		timestring,
-	const OV_BOOL localtime
+	const OV_BOOL uselocaltime
 ) {
 	/*
 	*	local variables
@@ -353,7 +353,7 @@ static OV_RESULT ov_time_asciitotime_internal(
 		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
 	tm.tm_year -= 1900;
 	tm.tm_mon--;
-	if(localtime){
+	if(uselocaltime){
 		secs = mktime(&tm);
 	}else{
 		secs = _mkgmtime(&tm);
