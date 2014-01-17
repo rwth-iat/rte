@@ -264,7 +264,7 @@ or
 }
 
 /**
- * Convert a time into a XML, TCL or plaintext timestring
+ * Convert a time into a XML, TCL or plaintext timestring (local time)
 */
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPONSEFORMAT response_format){
 	//timetoascii has timeformat 2002/05/30 09:30:10.123456
@@ -272,7 +272,7 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 	//XML needs                  2002-05-30T09:30:10.123456
 	//id in String               01234567890123456789012345
 
-	ov_string_setvalue(timestring, ov_time_timetoascii(time));
+	ov_string_setvalue(timestring, ov_time_timetoascii_local(time));
 
 	//manipulate string to correct format, timetoascii garantees the correct length of the string
 	(*timestring)[4] = '-';
@@ -286,7 +286,7 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 }
 
 /**
- * Convert a XML, TCL or plaintext timestring into a time
+ * Convert a XML, TCL or plaintext timestring into a time (local time)
 */
 OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONSEFORMAT response_format){
 	//asciitotime has timeformat 2002/05/30 09:30:10.123456
@@ -306,7 +306,7 @@ OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONS
 	timetemp[4] = '/';
 	timetemp[7] = '/';
 	timetemp[10] = ' ';
-	fr = ov_time_asciitotime(time, timetemp);
+	fr = ov_time_asciitotime_local(time, timetemp);
 
 	ov_string_setvalue(&timetemp, NULL);
 	return fr;
