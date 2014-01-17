@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_utc(
 *	Convert a time into an ASCII string (local time)
 *	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
 */
-OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_localitme(
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_local(
 	const OV_TIME		*ptime
 );
 
