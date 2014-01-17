@@ -96,7 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
     const OV_STRING  value
 )
 {
-	//OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
+	OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
 	OV_UINT count = 0; // count of end step strings
 	int i = 0; // loop variable
 	int n = 1;
