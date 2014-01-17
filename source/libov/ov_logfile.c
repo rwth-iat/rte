@@ -479,10 +479,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	*	or vice versa
 	*/
 	step = ov_time_compare(to, from);
-	if(!step) {
-		step = 1;
+	if(step == OV_TIMECMP_EQUAL) {
+		step = OV_TIMECMP_AFTER;
 	}
-	if(step > 0) {
+	if(step == OV_TIMECMP_AFTER) {
 		start = bufidx;
 	} else {
 		if(bufidx) {
@@ -504,7 +504,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 				count++;
 			}
 		}
-		if(step > 0) {
+		if(step == OV_TIMECMP_AFTER) {
 			if(k == OV_LOGFILE_MAXMSGS-1) {
 				k = 0;
 			} else {
