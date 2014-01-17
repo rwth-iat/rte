@@ -80,10 +80,26 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 );
 
 /**
-*	Convert a time into an ASCII string
+*	Convert a time into an ASCII string (utc, backward compatibility function)
 *	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
+	const OV_TIME		*ptime
+);
+
+/**
+*	Convert a time into an ASCII string (utc)
+*	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_utc(
+	const OV_TIME		*ptime
+);
+
+/**
+*	Convert a time into an ASCII string (local time)
+*	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_localitme(
 	const OV_TIME		*ptime
 );
 
@@ -96,11 +112,31 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
 );
 
 /**
-*	Convert an ASCII string into a time
+*	Convert an ASCII string into a time (local time, backward compatibility function)
 *	checks the format of the given string, which must be either
 	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 */
 OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
+);
+
+/**
+*	Convert an ASCII string into a time (local time)
+*	checks the format of the given string, which must be either
+	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
+);
+
+/**
+*	Convert an ASCII string into a time (UTC)
+*	checks the format of the given string, which must be either
+	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_utc(
 	OV_TIME				*ptime,
 	const OV_STRING		timestring
 );

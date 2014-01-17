@@ -213,8 +213,9 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 /*
 *	Convert a time into an ASCII string
 */
-OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
-	const OV_TIME		*ptime
+static OV_STRING ov_time_timetoascii_internal(
+	const OV_TIME		*ptime,
+	const OV_BOOL localtime
 ) {
 	/*
 	*	local variables
@@ -225,12 +226,44 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	/*
 	*	convert the time to a string
 	*/
-	ptm = gmtime(&secs);
+	if(localtime){
+		ptm = localtime(&secs);
+	}else{
+		ptm = gmtime(&secs);
+	}
 	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime->usecs);
 	return timestring;
 }
+
+/*
+*	Convert a time into an ASCII string
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
+	const OV_TIME		*ptime
+) {
+	return ov_time_timetoascii_internal(ptime, FALSE);
+}
+
+/*
+*	Convert a time into an ASCII string
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_utc(
+	const OV_TIME		*ptime
+) {
+	return ov_time_timetoascii_internal(ptime, FALSE);
+}
+
+/*
+*	Convert a time into an ASCII string
+*/
+OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_localtime(
+	const OV_TIME		*ptime
+) {
+	return ov_time_timetoascii_internal(ptime, TRUE);
+}
+
 
 /*	----------------------------------------------------------------------	*/
 
@@ -266,9 +299,10 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
 /*
 *	Convert an ASCII string into a time
 */
-OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
+static OV_RESULT ov_time_asciitotime_internal(
 	OV_TIME				*ptime,
-	const OV_STRING		timestring
+	const OV_STRING		timestring,
+	const OV_BOOL localtime
 ) {
 	/*
 	*	local variables
@@ -319,7 +353,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
 	tm.tm_year -= 1900;
 	tm.tm_mon--;
-	secs = mktime(&tm);
+	if(localtime){
+		secs = mktime(&tm);
+	}else{
+		secs = _mkgmtime(&tm);
+	}
 	if(secs == -1) {
 		return OV_ERR_BADPARAM;
 	}
@@ -329,6 +367,36 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 	ptime->secs = secs;
 	ptime->usecs = usecs;
 	return OV_ERR_OK;
+}
+
+/*
+*	Convert an ASCII string into a time (local)
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
+) {
+	return ov_time_asciitotime_internal(ptime, timestring, TRUE);
+}
+
+/*
+*	Convert an ASCII string into a time (UTC)
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_utc(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
+) {
+	return ov_time_asciitotime_internal(ptime, timestring, FALSE);
+}
+
+/*
+*	Convert an ASCII string into a time (local time, backward compatibility function)
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
+	OV_TIME				*ptime,
+	const OV_STRING		timestring
+) {
+	return ov_time_asciitotime_internal(ptime, timestring, TRUE);
 }
 
 /*	----------------------------------------------------------------------	*/
