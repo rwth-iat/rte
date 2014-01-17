@@ -78,19 +78,27 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 	Ov_SetDynamicVectorLength(&frommatch,0,STRING);
 	kshttp_find_arguments(args, "from", &frommatch);
 	if(frommatch.veclen == 1){
-		kshttp_asciitotime(&from, frommatch.value[0], response_format);
+		fr = kshttp_asciitotime(&from, frommatch.value[0], response_format);
 	}else{
 		from.secs = 0;
 		from.usecs = 0;
+	}
+	if(Ov_Fail(fr)){
+		kshttp_print_result_array(message, response_format, &fr, 1, ": did not recognised 'from' time.");
+		EXEC_GETLOGFILE_RETURN fr;
 	}
 
 	//process to
 	Ov_SetDynamicVectorLength(&tomatch,0,STRING);
 	kshttp_find_arguments(args, "to", &tomatch);
 	if(tomatch.veclen == 1){
-		kshttp_asciitotime(&to, tomatch.value[0], response_format);
+		fr = kshttp_asciitotime(&to, tomatch.value[0], response_format);
 	}else{
 		ov_time_gettime(&to);
+	}
+	if(Ov_Fail(fr)){
+		kshttp_print_result_array(message, response_format, &fr, 1, ": did not recognised 'to' time.");
+		EXEC_GETLOGFILE_RETURN fr;
 	}
 
 	//process maxnomessages
