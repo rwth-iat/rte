@@ -54,7 +54,8 @@ OV_DODEBUG	=	-DOV_DEBUG
 else
 OV_DODEBUG	=
 endif
-OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER
+#Sten increasing mscvrt default version to get mkgmtime supported
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DMSVCRT_VERSION=800
 
 #	Compiler
 #	--------
