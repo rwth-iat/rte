@@ -285,6 +285,9 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_ANYtoANY_K_set(
 				case 25:
 					pobj->v_OUT.value.vartype = OV_VT_TIME_SPAN_VEC;
 				break;
+				default:
+					return OV_ERR_BADPARAM;
+				break;
 			}
 		}
 	}
@@ -1543,8 +1546,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 8:		//TIME
 					pinst->v_OUT.value.vartype = OV_VT_TIME;
-					ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time, pinst->v_IN.value.valueunion.val_string);
-					
+					pinst->v_OUT.value.valueunion.val_time.secs = 0;
+					pinst->v_OUT.value.valueunion.val_time.usecs = 0;
+					if(Ov_Fail(ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time, pinst->v_IN.value.valueunion.val_string)))
+					{
+						ov_logfile_error("%s: converting string to time failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 9:		//TIME_SPAN
@@ -1733,7 +1741,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, 1, TIME)))
 					{
-						ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time_vec.value[0], pinst->v_IN.value.valueunion.val_string);
+						pinst->v_OUT.value.valueunion.val_time_vec.value[0].secs = 0;
+						pinst->v_OUT.value.valueunion.val_time_vec.value[0].usecs = 0;
+						if(Ov_Fail(ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time_vec.value[0], pinst->v_IN.value.valueunion.val_string)))
+						{
+							ov_logfile_error("%s: converting string to time_vec failed, no operation performed", pinst->v_identifier);
+							return;
+						}
 					}
 					else
 					{
@@ -3239,7 +3253,13 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 				
 				case 8:		//TIME
 					pinst->v_OUT.value.vartype = OV_VT_TIME;
-					ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time, pinst->v_IN.value.valueunion.val_string_vec.value[0]);
+					pinst->v_OUT.value.valueunion.val_time.secs = 0;
+					pinst->v_OUT.value.valueunion.val_time.usecs = 0;
+					if(Ov_Fail(ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time, pinst->v_IN.value.valueunion.val_string_vec.value[0])))
+					{
+						ov_logfile_error("%s: converting string_vec to time failed, no operation performed", pinst->v_identifier);
+						return;
+					}
 				break;
 				
 				case 9:		//TIME_SPAN
@@ -3356,8 +3376,15 @@ OV_DLLFNCEXPORT void iec61131stdfb_ANYtoANY_typemethod(
 					pinst->v_OUT.value.vartype = OV_VT_TIME_VEC;
 					if(Ov_OK(Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_time_vec, pinst->v_IN.value.valueunion.val_string_vec.veclen, TIME)))
 					{
-						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++)
-							ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time_vec.value[i], pinst->v_IN.value.valueunion.val_string_vec.value[i]);
+						for(i=0; i < pinst->v_IN.value.valueunion.val_string_vec.veclen; i++){
+							pinst->v_OUT.value.valueunion.val_time_vec.value[i].secs = 0;
+							pinst->v_OUT.value.valueunion.val_time_vec.value[i].usecs = 0;
+							if(Ov_Fail(ov_time_asciitotime(&pinst->v_OUT.value.valueunion.val_time_vec.value[i], pinst->v_IN.value.valueunion.val_string_vec.value[i])))
+							{
+								ov_logfile_error("%s: converting string_vec to time_vec failed, no operation performed", pinst->v_identifier);
+								return;
+							}
+						}
 					}
 					else
 					{
