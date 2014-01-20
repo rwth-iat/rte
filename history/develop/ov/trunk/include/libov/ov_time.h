@@ -133,7 +133,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
 
 /**
 *	Convert an ASCII string into a time (UTC)
-*	Warning: this is NOTIMPLEMENTED under windows!
+*	Warning: this is NOTIMPLEMENTED with some compilers on windows!
 *	checks the format of the given string, which must be either
 	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
 */
