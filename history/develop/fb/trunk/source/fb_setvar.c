@@ -4,7 +4,7 @@
 ***   #####################################                                 ***
 ***                                                                         ***
 ***   L T S o f t                                                           ***
-***   Agentur für Leittechnik Software GmbH                                 ***
+***   Agentur fï¿½r Leittechnik Software GmbH                                 ***
 ***   Brabanterstr. 13                                                      ***
 ***   D-50171 Kerpen                                                        ***
 ***   Tel : 02237/92869-2                                                   ***
@@ -2721,6 +2721,7 @@ OV_RESULT fb_set_dynvec_byte_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -3099,6 +3100,7 @@ OV_RESULT fb_set_dynvec_bool_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -3432,6 +3434,7 @@ OV_RESULT fb_set_dynvec_int_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -3760,6 +3763,7 @@ OV_RESULT fb_set_dynvec_uint_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -4089,6 +4093,7 @@ OV_RESULT fb_set_dynvec_single_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -4416,6 +4421,7 @@ OV_RESULT fb_set_dynvec_double_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -4774,6 +4780,7 @@ OV_RESULT fb_set_dynvec_time_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -5134,6 +5141,7 @@ OV_RESULT fb_set_dynvec_time_span_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -5598,6 +5606,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
             }
             break;
         default:
+        	   if(pval) { fb_free_string_struct(pval, veclen); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -5875,6 +5884,7 @@ OV_RESULT fb_set_vec_byte_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -6146,6 +6156,7 @@ OV_RESULT fb_set_vec_bool_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -6410,6 +6421,7 @@ OV_RESULT fb_set_vec_int_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -6674,6 +6686,7 @@ OV_RESULT fb_set_vec_uint_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -6948,6 +6961,7 @@ OV_RESULT fb_set_vec_single_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -7220,6 +7234,7 @@ OV_RESULT fb_set_vec_double_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -7497,6 +7512,7 @@ OV_RESULT fb_set_vec_time_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -7772,6 +7788,7 @@ OV_RESULT fb_set_vec_time_span_varvalue(
             }
             break;
         default:
+        	   if(pval) { free(pval); }
 	           return OV_ERR_BADTYPE;
     }
 
@@ -8124,6 +8141,7 @@ OV_RESULT fb_set_vec_string_varvalue(
             }
             break;
         default:
+        	   if(pval) { fb_free_string_struct(pval, veclen); }
 	           return OV_ERR_BADTYPE;
     }
 
