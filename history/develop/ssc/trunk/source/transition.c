@@ -36,9 +36,9 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
     *   local variables
     */
     OV_INSTPTR_ssc_transition pinst = Ov_StaticPtrCast(ssc_transition, pobj);
+    OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
 
-    OV_INSTPTR_ov_domain  pContainer = Ov_GetParent(ov_containment, pinst);
-    OV_INSTPTR_ssc_sscHeader pSSC = NULL;
+
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -47,15 +47,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
          return result;
 
     // check location
-    if (Ov_CanCastTo(ssc_sscHeader, pContainer))
+    if (pSSC == NULL)
 	{
-    	pSSC=Ov_DynamicPtrCast(ssc_sscHeader, pContainer);
-	} else {
-		if (pContainer!=NULL)
-		{
-			ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a sscHeader.");
-			return OV_ERR_BADPLACEMENT;
-		}
+		ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a sscHeader.");
+		return OV_ERR_BADPLACEMENT;
 	}
 
     return OV_ERR_OK;
@@ -88,7 +83,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     OV_INSTPTR_fb_task          pTransCondsTaskParent = NULL;
 
     OV_RESULT    result;
-    OV_INSTPTR_fb_port port = NULL;
+    //OV_INSTPTR_fb_port port = NULL;
 
     OV_INSTPTR_fb_functionblock pTransCond = NULL;
     //Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
@@ -125,7 +120,8 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     //else an error should be generated
 	if(Ov_GetParent(ov_containment,pTransCond) != pTransCondsContainer )
 	{
-		if(pTransCond != pFC) //the found functionchart/block is not the embedding functionchart
+
+		if((void*)pTransCond != (void*)pFC) //the found functionchart/block is not the embedding functionchart
 		{
 			pinst->v_error=TRUE;
 			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
