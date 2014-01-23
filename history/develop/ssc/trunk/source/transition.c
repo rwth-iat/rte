@@ -68,8 +68,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
 
     //find connection object which is connected to the result port
-    OV_INSTPTR_ov_object pObj =  Ov_GetFirstChild(fb_inputconnections, pinst);
-    OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, pObj);
+    OV_INSTPTR_fb_connection pResultConnection = Ov_GetFirstChild(fb_inputconnections, pinst);
 
     // OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
 
@@ -99,7 +98,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 
 
     pTransCondsDomain = &pSSC->p_transConds;
-    pTransCondsContainer = Ov_StaticPtrCast(ov_domain, Ov_GetParent(ov_containment, pTransCond));
+    pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
     pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
 
 
@@ -108,20 +107,19 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     if(Ov_CanCastTo(fb_port, pSrcObj))
     {
     	//transCond is a functionchart, check if the functionchart is within the transCond Container
-    	pTransCond =  (OV_INSTPTR_fb_functionblock)(Ov_GetParent(fb_variables,(OV_INSTPTR_fb_port) pSrcObj));
+    	pTransCond =  Ov_StaticPtrCast(fb_functionblock, Ov_GetParent(fb_variables, Ov_StaticPtrCast(fb_port, pSrcObj)));
     }
     else if (Ov_CanCastTo(fb_functionblock, pSrcObj))
     {
     	//transCond is a functionblock, check if the functionblock is within the transCond Container
-    	pTransCond = (OV_INSTPTR_fb_functionblock)(pSrcObj);
+    	pTransCond = Ov_StaticPtrCast(fb_functionblock, pSrcObj);
     }
     //the transition condition is not in the transCond-container, so it does not need to be triggered
     //the only valid option is now, that the transition condition is a port of the embedding function chart
     //else an error should be generated
 	if(Ov_GetParent(ov_containment,pTransCond) != pTransCondsContainer )
 	{
-
-		if((void*)pTransCond != (void*)pFC) //the found functionchart/block is not the embedding functionchart
+		if(pTransCond != Ov_PtrUpCast(fb_functionblock, pFC)) //the found functionchart/block is not the embedding functionchart
 		{
 			pinst->v_error=TRUE;
 			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");

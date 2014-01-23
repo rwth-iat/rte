@@ -45,9 +45,9 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 
 			if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
 			{
-				if(ov_string_compare(((OV_INSTPTR_ssc_step)pstep)->v_identifier, value) == OV_STRCMP_EQUAL)
+				if(ov_string_compare(pstep->v_identifier, value) == OV_STRCMP_EQUAL)
 				{
-					foundStep = (OV_INSTPTR_ssc_step)pstep;
+					foundStep = Ov_StaticPtrCast(ssc_step, pstep);
 					break;
 				}
 
@@ -59,18 +59,18 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 			{
 				if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
 				{
-					if(foundStep == (OV_INSTPTR_ssc_step)pstep)
+					if(foundStep == Ov_StaticPtrCast(ssc_step, pstep))
 					{
-						((OV_INSTPTR_ssc_step)pstep)->v_internalID = 0;
-						((OV_INSTPTR_ssc_step)pstep)->v_actimode = 1;
+						Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 0;
+						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = 1;
 					}
 					else //deactivate all non init steps and set the correct id
 					{
-						if (((OV_INSTPTR_ssc_step)pstep)->v_internalID != 999) //not an end step
+						if (Ov_StaticPtrCast(ssc_step, pstep)->v_internalID != 999) //not an end step
 						{
-							((OV_INSTPTR_ssc_step)pstep)->v_internalID = 1;
+							Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 1;
 						}
-						((OV_INSTPTR_ssc_step)pstep)->v_actimode = 0;
+						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = 0;
 					}
 				}
 			}
@@ -79,14 +79,14 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 		{
 			pinst->v_error = TRUE;
 			ov_string_setvalue(&(pinst->v_errorDetail), "step not found");
-			return Ov_Fail(OV_ERR_BADVALUE);
+			return OV_ERR_BADVALUE;
 		}
 	}
 	else
 	{
 		pinst->v_error = TRUE;
 		ov_string_setvalue(&(pinst->v_errorDetail),"init and end step can only be set when workingState = 0");
-		return Ov_Fail(OV_ERR_BADVALUE);
+		return OV_ERR_BADVALUE;
 	}
     return ov_string_setvalue(&pobj->v_initStepName,value);
 }
@@ -110,9 +110,9 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 			for(i = 0; i<count; i++)
 			{
 
-				if(ov_string_compare(((OV_INSTPTR_ssc_step)pstep)->v_identifier, pEndStepList[i]) == OV_STRCMP_EQUAL)
+				if(ov_string_compare(pstep->v_identifier, pEndStepList[i]) == OV_STRCMP_EQUAL)
 				{
-					((OV_INSTPTR_ssc_step)pstep)->v_internalID = 999;
+					Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 999;
 					n++;
 				}
 			}
@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	{
 		pinst->v_error = TRUE;
 		ov_string_setvalue(&(pinst->v_errorDetail),"could not set all end steps");
-		return Ov_Fail(OV_ERR_BADVALUE);
+		return OV_ERR_BADVALUE;
 	}
     return ov_string_setvalue(&pobj->v_endStepName,value);
 }

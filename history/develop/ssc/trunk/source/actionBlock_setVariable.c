@@ -49,7 +49,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     // local variables
     OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
     OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+    //OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
     OV_RESULT    result;
     OV_UINT stringCount;
     OV_STRING* pathToVariable;

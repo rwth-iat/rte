@@ -85,7 +85,7 @@ LIBRARY ssc
 			activeStep  	: STRING						FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
 			terminated		: BOOL							FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
 			workingState    : UINT							FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
-			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: reset/start/break/terminate/abort" INITIALVALUE = "INIT";
+			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: INIT/START/BREAK/STOP" INITIALVALUE = "INIT";
 			error			: BOOL							FLAGS = "o"	COMMENT = "error";
 			errorDetail		: STRING						FLAGS = "o"	COMMENT = "error details";
 		END_VARIABLES;
