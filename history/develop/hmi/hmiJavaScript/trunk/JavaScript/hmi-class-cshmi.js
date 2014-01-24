@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2013
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -251,7 +251,7 @@ cshmi.prototype = {
 		
 		this._interpreteOnloadCallStack();
 		
-		/*
+		/*  Warning of not visible content disabled. Was a bad usability concept
 		var invisibleObjectName = "";
 		var ComponentChilds = VisualObject.getElementsByTagName("svg");
 		for(var i = 0;i < ComponentChilds.length;i++){
@@ -646,7 +646,7 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
-			if(VisualObject.getAttribute("x") === null || VisualObject.getAttribute("y") === null){
+			if(!VisualObject.hasAttribute("x") || !VisualObject.hasAttribute("y")){
 				HMI.hmi_log_info_onwebsite("OperatorEvent aftermove "+ObjectPath+" is not under an object with x,y coordinates. Aborting.");
 				return false;
 			}
@@ -672,7 +672,7 @@ cshmi.prototype = {
 			};
 			VisualObject._moveHandleClickThunk = function(evt){
 				//stop the propagation
-				HMI.cshmi._moveHandleClick(VisualObject, ObjectPath, evt, true);
+				HMI.cshmi._moveHandleClick(VisualObject, ObjectPath, evt);
 			};
 			
 			//todo: try to implement via HTML5 drag&drop
@@ -711,8 +711,16 @@ cshmi.prototype = {
 		this.ResourceList.EventInfos.startXMouse = mouseposition[0];
 		this.ResourceList.EventInfos.startYMouse = mouseposition[1];
 		this.ResourceList.EventInfos.mouseRelativePosition = HMI.getClickPosition(evt, VisualObject);
-		this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x"), 10);
-		this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("y"), 10);
+		if(VisualObject.hasAttribute("x")){
+			this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x"), 10);
+			this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("y"), 10);
+		}else if(VisualObject.hasAttribute("cx")){
+			this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("cx"), 10);
+			this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("cy"), 10);
+		}else if(VisualObject.hasAttribute("x1")){
+			this.ResourceList.EventInfos.startXObj = parseInt(VisualObject.getAttribute("x1"), 10);
+			this.ResourceList.EventInfos.startYObj = parseInt(VisualObject.getAttribute("y1"), 10);
+		}
 		
 		if(evt.type === 'touchstart'){
 			HMI.hmi_log_trace("moveStartDrag - touch (x:"+mouseposition[0]+",y:"+mouseposition[1]+") detected, killing legacy events");
@@ -773,13 +781,17 @@ cshmi.prototype = {
 		var newx = this.ResourceList.EventInfos.startXObj+mouseX-this.ResourceList.EventInfos.startXMouse;
 		var newy = this.ResourceList.EventInfos.startYObj+mouseY-this.ResourceList.EventInfos.startYMouse;
 		if (!isNaN(newx) && !isNaN(newy)){
-			this._setXYRotate(VisualObject, newx, newy, null);
+			if(typeof VisualObject.adjustingPolylinePoints === "function"){
+				VisualObject.adjustingPolylinePoints(newx, newy);
+			}else{
+				this._setXYRotate(VisualObject, newx, newy, null);
+			} 
 			
 			//save event for use in an action
 			this.ResourceList.EventInfos.EventObj = evt;
 		}
 		if (evt.stopPropagation) evt.stopPropagation();
-		if (evt.preventDefault) evt.preventDefault();  //default is scrolling, so disable it
+		if (evt.preventDefault) evt.preventDefault();  //default is scrolling with touch, so disable it
 		if (evt.preventManipulation) evt.preventManipulation(); //stop panning and zooming in ie10
 	},
 	
@@ -791,6 +803,8 @@ cshmi.prototype = {
 	 * @return nothing
 	 */
 	_moveStopDrag : function(VisualObject, ObjectPath, evt, canceled){
+		if (evt.stopPropagation) evt.stopPropagation();
+		
 		HMI.hmi_log_trace("moveStopDrag - Stop with object: "+VisualObject.id);
 		if(evt.type === 'touchend'){
 			HMI.hmi_log_trace("moveStartDrag - touch up detected");
@@ -816,15 +830,33 @@ cshmi.prototype = {
 		/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
 		 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
 		 */
-		if((Math.abs(this.ResourceList.EventInfos.startXObj - VisualObject.getAttribute("x")) < 5)
-			&& (Math.abs(this.ResourceList.EventInfos.startYObj - VisualObject.getAttribute("y")) < 5)){
+		var ClickTarget = null;
+		if(VisualObject.hasAttribute("x")){	//svg, rect
+			var x = parseFloat(VisualObject.getAttribute("x"));
+			var y = parseFloat(VisualObject.getAttribute("y"));
+		}else if(VisualObject.hasAttribute("x1")){	//lines
+			x = parseFloat(VisualObject.getAttribute("x1"));
+			y = parseFloat(VisualObject.getAttribute("y1"));
+		}else if(VisualObject.hasAttribute("cx")){	//circles
+			x = parseFloat(VisualObject.getAttribute("cx"));
+			y = parseFloat(VisualObject.getAttribute("cy"));
+		}else{
+			x = undefined;
+			y= undefined;
+		}
+		
+		if(x !== undefined && (Math.abs(this.ResourceList.EventInfos.startXObj - x) < 5)
+			&& (Math.abs(this.ResourceList.EventInfos.startYObj - y) < 5)){
 			
 			//no movement detected, so interprete the click on the right Target
 			//search the firstchild which has a click event
-			var ClickTarget = HMI.getComponent(evt, this.cshmiOperatorClickClass);
-			if(ClickTarget !== null){
-				var interpreteEvent = "click";
-			}
+			ClickTarget = HMI.getComponent(evt, this.cshmiOperatorClickClass);
+		}
+		
+		if(typeof VisualObject.savingPolylinePoints === "function"){
+			//we manipulating a routed polyline
+			VisualObject.savingPolylinePoints();
+			return;
 		}
 		
 		//restore old position
@@ -832,7 +864,7 @@ cshmi.prototype = {
 		
 		if (canceled === true){
 			//no action
-		}else if (interpreteEvent === "click"){
+		}else if(ClickTarget !== null){
 			this.ResourceList.EventInfos.mouseRelativePosition = null;
 			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"));
 		}else{
@@ -843,8 +875,6 @@ cshmi.prototype = {
 		//an later action should not interprete this event
 		this.ResourceList.EventInfos.EventObj = null;
 		this.ResourceList.EventInfos.mouseRelativePosition = null;
-		
-		if (evt.stopPropagation) evt.stopPropagation();
 	},
 	
 	/**
@@ -1827,7 +1857,7 @@ cshmi.prototype = {
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutex is calculated from the offset of the parentNode
-					this._setXYRotate(VisualObject, NewValue - VisualObject.parentNode.getAttribute("absolutex") - relativeX, null, null);
+					this._setXYRotate(VisualObject, NewValue - parseFloat(VisualObject.parentNode.getAttribute("absolutex")) - relativeX, null, null);
 					VisualObject.setAttribute("absolutex", NewValue - relativeX);
 				}
 			}else if (ParameterValue === "absolutey"){
@@ -1838,7 +1868,7 @@ cshmi.prototype = {
 				}
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absolutey is calculated from the offset of the parentNode
-					this._setXYRotate(VisualObject, null, NewValue - VisualObject.parentNode.getAttribute("absolutey") - relativeY, null);
+					this._setXYRotate(VisualObject, null, NewValue - parseFloat(VisualObject.parentNode.getAttribute("absolutey")) - relativeY, null);
 					VisualObject.setAttribute("absolutey", NewValue - relativeY);
 				}
 			}else if (ParameterValue === "absoluterotate"){
@@ -3399,26 +3429,25 @@ cshmi.prototype = {
 				VisualObject.ResourceList.RoutePolyline.rotateEnd = rotateEnd;
 			}
 			
-			var points = "";
 			//the polyline routes in the worst case through those 6 points:
 			//StartX
 			//StartY
-			var OffsetPointSourceX  = 0;
-			var OffsetPointSourceY  = 0;
+			var OffsetPointSourceX = 0;
+			var OffsetPointSourceY = 0;
 			var ContrlPointSourceX = 0;	//same as OffsetPointSource if not needed
 			var ContrlPointSourceY = 0;
 			var ContrlPointTargetX = 0;	//same as ContrlPointSource if not needed
 			var ContrlPointTargetY = 0;
-			var OffsetPointTargetX  = 0;	//same as ContrlPointTarget if not needed
-			var OffsetPointTargetY  = 0;
+			var OffsetPointTargetX = 0;	//same as ContrlPointTarget if not needed
+			var OffsetPointTargetY = 0;
 			//EndX
 			//EndY
 			
 			//we are perhaps not at global coordinate 0,0
-			StartX = StartX - VisualObject.parentNode.getAttribute("absolutex");
-			EndX = EndX - VisualObject.parentNode.getAttribute("absolutex");
-			StartY = StartY - VisualObject.parentNode.getAttribute("absolutey");
-			EndY = EndY - VisualObject.parentNode.getAttribute("absolutey");
+			StartX = StartX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
+			EndX = EndX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
+			StartY = StartY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
+			EndY = EndY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
 			
 			if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 180){
 				//to right/OUTPUT --> from left/INPUT
@@ -3753,52 +3782,160 @@ cshmi.prototype = {
 				}
 			}
 			
-			points = StartX + "," + StartY + " " + OffsetPointSourceX + "," + OffsetPointSourceY + " "
-			 + ContrlPointSourceX + "," + ContrlPointSourceY + " " + ContrlPointTargetX + "," + ContrlPointTargetY + " "
-			 + OffsetPointTargetX + "," + OffsetPointTargetY + " "
-			 + EndX + "," + EndY;
+			//begin manipulation magic
+			
+			if(!VisualObject.ResourceList.Coords){
+				VisualObject.ResourceList.Coords = Object();
+			}
+			VisualObject.ResourceList.Coords.StartX = StartX;
+			VisualObject.ResourceList.Coords.StartY = StartY;
+			VisualObject.ResourceList.Coords.OffsetPointSourceX = OffsetPointSourceX;
+			VisualObject.ResourceList.Coords.OffsetPointSourceY = OffsetPointSourceY;
+			VisualObject.ResourceList.Coords.ContrlPointSourceX = ContrlPointSourceX;
+			VisualObject.ResourceList.Coords.ContrlPointSourceY = ContrlPointSourceY;
+			VisualObject.ResourceList.Coords.ContrlPointTargetX = ContrlPointTargetX;
+			VisualObject.ResourceList.Coords.ContrlPointTargetY = ContrlPointTargetY;
+			VisualObject.ResourceList.Coords.OffsetPointTargetX = OffsetPointTargetX;
+			VisualObject.ResourceList.Coords.OffsetPointTargetY = OffsetPointTargetY;
+			VisualObject.ResourceList.Coords.EndX = EndX;
+			VisualObject.ResourceList.Coords.EndY = EndY;
+			
+			if(VisualObject.ResourceList.linesArray === undefined){
+				var linesArray = VisualObject.ResourceList.linesArray = 
+					[HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
+					 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
+					 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line')];
+				linesArray[0].setAttribute("data-lineid", "1");
+				linesArray[1].setAttribute("data-lineid", "2");
+				linesArray[2].setAttribute("data-lineid", "3");
+				linesArray[0].id = VisualObject.id + "*" + "first";
+				linesArray[1].id = VisualObject.id + "*" + "second";
+				linesArray[2].id = VisualObject.id + "*" + "third";
+				
+				//this can not be handled in the for loop, as the scope will always be the last line
+				linesArray[0]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[0], ObjectPath, evt); };
+				linesArray[0]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[0], ObjectPath, evt); };
+				linesArray[0]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, null); };
+				linesArray[0]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, true); };
+				linesArray[0]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[0], ObjectPath, evt, true); };
+				linesArray[1]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[1], ObjectPath, evt); };
+				linesArray[1]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[1], ObjectPath, evt); };
+				linesArray[1]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, null); };
+				linesArray[1]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, true); };
+				linesArray[1]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[1], ObjectPath, evt, true); };
+				linesArray[2]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[2], ObjectPath, evt); };
+				linesArray[2]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[2], ObjectPath, evt); };
+				linesArray[2]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, null); };
+				linesArray[2]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, true); };
+				linesArray[2]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[2], ObjectPath, evt, true); };
+				
+				var adjustingPolylinePoints = function(newx, newy){
+					//using the transparent line for visualisation the manipulation as a helperline
+					this.setAttribute("stroke-width", "3px");
+					this.setAttribute("opacity", "1");
+					
+					if(this.getAttribute("cursor") === "col-resize"){
+						this.setAttribute("x1", newx);
+						this.setAttribute("x2", newx);
+					}else if(this.getAttribute("cursor") === "row-resize"){
+						this.setAttribute("y1", newy);
+						this.setAttribute("y2", newy);
+					}
+				};
+				var savingPolylinePoints = function(){
+					//reset the transparent helper line
+					this.setAttribute("opacity", "0");
+					this.setAttribute("stroke-width", "10px");
+					
+					if(this.getAttribute("cursor") === "col-resize"){
+						var newX = parseFloat(this.getAttribute("x1"));
+						var oldX = 0;
+						//detect old Coordinate
+						if(this.getAttribute("data-lineid") === "1"){
+							oldX = VisualObject.ResourceList.Coords.OffsetPointSourceX;
+						}else if(this.getAttribute("data-lineid") === "2"){
+							oldX = VisualObject.ResourceList.Coords.ContrlPointSourceX;
+						}else if(this.getAttribute("data-lineid") === "3"){
+							oldX = VisualObject.ResourceList.Coords.ContrlPointTargetX;
+						}
+						//all X coordinates which had this position has to be updated
+						if(VisualObject.ResourceList.Coords.OffsetPointSourceX === oldX){ VisualObject.ResourceList.Coords.OffsetPointSourceX = newX;}
+						if(VisualObject.ResourceList.Coords.ContrlPointSourceX === oldX){ VisualObject.ResourceList.Coords.ContrlPointSourceX = newX;}
+						if(VisualObject.ResourceList.Coords.ContrlPointTargetX === oldX){ VisualObject.ResourceList.Coords.ContrlPointTargetX = newX;}
+						if(VisualObject.ResourceList.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.Coords.OffsetPointTargetX = newX;}
+					}else if(this.getAttribute("cursor") === "row-resize"){
+						var newY = parseFloat(this.getAttribute("y1"));
+						var oldY = 0;
+						//detect old Coordinate
+						if(this.getAttribute("data-lineid") === "1"){
+							oldY = VisualObject.ResourceList.Coords.OffsetPointSourceY;
+						}else if(this.getAttribute("data-lineid") === "2"){
+							oldY = VisualObject.ResourceList.Coords.ContrlPointSourceY;
+						}else if(this.getAttribute("data-lineid") === "3"){
+							oldY = VisualObject.ResourceList.Coords.ContrlPointTargetY;
+						}
+						//all Y coordinates which had this position has to be updated
+						if(VisualObject.ResourceList.Coords.OffsetPointSourceY === oldY){ VisualObject.ResourceList.Coords.OffsetPointSourceY = newY;}
+						if(VisualObject.ResourceList.Coords.ContrlPointSourceY === oldY){ VisualObject.ResourceList.Coords.ContrlPointSourceY = newY;}
+						if(VisualObject.ResourceList.Coords.ContrlPointTargetY === oldY){ VisualObject.ResourceList.Coords.ContrlPointTargetY = newY;}
+						if(VisualObject.ResourceList.Coords.OffsetPointTargetY === oldY){ VisualObject.ResourceList.Coords.OffsetPointTargetY = newY;}
+					}
+					VisualObject.correctAllLines(VisualObject);
+					
+					/*
+					if(JSON && JSON.stringify){
+						HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.Coords));
+					} */
+				};
+				
+				for(var i = 0; i<linesArray.length;i++){
+					linesArray[i].setAttribute("stroke", VisualObject.getAttribute("stroke"));
+					linesArray[i].setAttribute("stroke-width", "10px");
+					linesArray[i].setAttribute("opacity", "0");
+					
+					linesArray[i].savingPolylinePoints = savingPolylinePoints;
+					linesArray[i].adjustingPolylinePoints = adjustingPolylinePoints;
+					
+					//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
+					linesArray[i].addEventListener("touchstart", linesArray[i]._moveStartDragThunk, false);
+					linesArray[i].addEventListener("mousedown", linesArray[i]._moveStartDragThunk, false);
+				}
+				
+				VisualObject.parentNode.insertBefore(linesArray[2], VisualObject.nextSibling);
+				VisualObject.parentNode.insertBefore(linesArray[1], linesArray[2]);
+				VisualObject.parentNode.insertBefore(linesArray[0], linesArray[1]);
+			}//end buildup the three lines
+			
+			VisualObject.correctAllLines = function(VisualObject){
+				var points = VisualObject.ResourceList.Coords.StartX + "," + VisualObject.ResourceList.Coords.StartY + " " + VisualObject.ResourceList.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.Coords.OffsetPointSourceY + " "
+				+ VisualObject.ResourceList.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.Coords.ContrlPointSourceY + " " + VisualObject.ResourceList.Coords.ContrlPointTargetX + "," + VisualObject.ResourceList.Coords.ContrlPointTargetY + " "
+				+ VisualObject.ResourceList.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.Coords.OffsetPointTargetY + " "
+				+ VisualObject.ResourceList.Coords.EndX + "," + VisualObject.ResourceList.Coords.EndY;
+				VisualObject.setAttribute("points", points);
+				
+				var linesArray = VisualObject.ResourceList.linesArray;
+				linesArray[0].setAttribute("x1", VisualObject.ResourceList.Coords.OffsetPointSourceX);
+				linesArray[0].setAttribute("y1", VisualObject.ResourceList.Coords.OffsetPointSourceY);
+				linesArray[0].setAttribute("x2", VisualObject.ResourceList.Coords.ContrlPointSourceX);
+				linesArray[0].setAttribute("y2", VisualObject.ResourceList.Coords.ContrlPointSourceY);
+				linesArray[0].setAttribute("cursor", VisualObject.ResourceList.Coords.OffsetPointSourceX===VisualObject.ResourceList.Coords.ContrlPointSourceX?"col-resize":"row-resize");
+				linesArray[1].setAttribute("x1", VisualObject.ResourceList.Coords.ContrlPointSourceX);
+				linesArray[1].setAttribute("y1", VisualObject.ResourceList.Coords.ContrlPointSourceY);
+				linesArray[1].setAttribute("x2", VisualObject.ResourceList.Coords.ContrlPointTargetX);
+				linesArray[1].setAttribute("y2", VisualObject.ResourceList.Coords.ContrlPointTargetY);
+				linesArray[1].setAttribute("cursor", VisualObject.ResourceList.Coords.ContrlPointSourceX===VisualObject.ResourceList.Coords.ContrlPointTargetX?"col-resize":"row-resize");
+				linesArray[2].setAttribute("x1", VisualObject.ResourceList.Coords.ContrlPointTargetX);
+				linesArray[2].setAttribute("y1", VisualObject.ResourceList.Coords.ContrlPointTargetY);
+				linesArray[2].setAttribute("x2", VisualObject.ResourceList.Coords.OffsetPointTargetX);
+				linesArray[2].setAttribute("y2", VisualObject.ResourceList.Coords.OffsetPointTargetY);
+				linesArray[2].setAttribute("cursor", VisualObject.ResourceList.Coords.ContrlPointTargetX===VisualObject.ResourceList.Coords.OffsetPointTargetX?"col-resize":"row-resize");
+			};
+			VisualObject.correctAllLines(VisualObject);
 			
 			/*
-			var line1 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-			line1.id = VisualObject.id + "*" + "first";
-			line1.setAttribute("x1", OffsetPointSourceX);
-			line1.setAttribute("y1", OffsetPointSourceY);
-			line1.setAttribute("x2", ContrlPointSourceX);
-			line1.setAttribute("y2", ContrlPointSourceY);
-			line1.setAttribute("stroke", "red");
-			line1.setAttribute("stroke-width", "4");
-			var line2 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-			line2.id = VisualObject.id + "*" + "second";
-			line2.setAttribute("x1", ContrlPointSourceX);
-			line2.setAttribute("y1", ContrlPointSourceY);
-			line2.setAttribute("x2", ContrlPointTargetX);
-			line2.setAttribute("y2", ContrlPointTargetY);
-			line2.setAttribute("stroke", "blue");
-			line2.setAttribute("stroke-width", "4");
-			var line3 = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
-			line3.id = VisualObject.id + "*" + "third";
-			line3.setAttribute("x1", ContrlPointTargetX);
-			line3.setAttribute("y1", ContrlPointTargetY);
-			line3.setAttribute("x2", OffsetPointTargetX);
-			line3.setAttribute("y2", OffsetPointTargetY);
-			line3.setAttribute("stroke", "green");
-			line3.setAttribute("stroke-width", "4");
-			
-			if(VisualObject.ResourceList.line1){
-				VisualObject.parentNode.replaceChild(line1, VisualObject.ResourceList.line1);
-				VisualObject.parentNode.replaceChild(line2, VisualObject.ResourceList.line2);
-				VisualObject.parentNode.replaceChild(line3, VisualObject.ResourceList.line3);
-			}else{
-				VisualObject.parentNode.insertBefore(line3, VisualObject.nextSibling);
-				VisualObject.parentNode.insertBefore(line2, line3);
-				VisualObject.parentNode.insertBefore(line1, line2);
-			}
-			VisualObject.ResourceList.line1 = line1;
-			VisualObject.ResourceList.line2 = line2;
-			VisualObject.ResourceList.line3 = line3;
-			*/
-			
-			VisualObject.setAttribute("points", points);
+			if (this.initStage === true){
+				HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "");
+			} */
 		}else{
 			//do nothing because the polyline was routed correctly last time
 		}
@@ -5579,34 +5716,34 @@ cshmi.prototype = {
 			rotationObject = VisualObject;
 		}
 		if(x === null){
-			if(VisualObject.hasAttribute("x") !== null){
+			if(VisualObject.hasAttribute("x")){
 				x = VisualObject.getAttribute("x");
-			}else if(VisualObject.hasAttribute("cx") !== null){
+			}else if(VisualObject.hasAttribute("cx")){
 				x = VisualObject.getAttribute("cx");
 			}else{
 				x = 0;
 			}
 		}else if(isNumeric(x)){
-			if(VisualObject.hasAttribute("x") !== null){
+			if(VisualObject.hasAttribute("x")){
 				VisualObject.setAttribute("x", x);
-			}else if(VisualObject.hasAttribute("cx") !== null){
+			}else if(VisualObject.hasAttribute("cx")){
 				VisualObject.setAttribute("cx", x);
 			}
 		}else{
 			x = 0;
 		}
 		if(y === null){
-			if(VisualObject.hasAttribute("y") !== null){
+			if(VisualObject.hasAttribute("y")){
 				y = VisualObject.getAttribute("y");
-			}else if(VisualObject.hasAttribute("cy") !== null){
+			}else if(VisualObject.hasAttribute("cy")){
 				y = VisualObject.getAttribute("cy");
 			}else{
 				y = 0;
 			}
 		}else if(isNumeric(y)){
-			if(VisualObject.hasAttribute("y") !== null){
+			if(VisualObject.hasAttribute("y")){
 				VisualObject.setAttribute("y", y);
-			}else if(VisualObject.hasAttribute("cy") !== null){
+			}else if(VisualObject.hasAttribute("cy")){
 				VisualObject.setAttribute("cy", y);
 			}
 		}else{
