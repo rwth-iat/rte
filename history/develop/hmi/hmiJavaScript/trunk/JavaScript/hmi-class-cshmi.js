@@ -4181,17 +4181,19 @@ cshmi.prototype = {
 			}
 		}
 		
-		if (VisualParentObject !== null && VisualParentObject.getElementById){
+		if (VisualParentObject !== null){
 			//search a predefined children
-			try{
-				var VisualObject = VisualParentObject.getElementById(ObjectPath);
-			}catch (e) {
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-				// hopefully the id is uniqe in the tree
+			if(VisualParentObject.getElementById){
+				try{
+					var VisualObject = VisualParentObject.getElementById(ObjectPath);
+				}catch (e) {
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+					// hopefully the id is uniqe in the tree
+					VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+				}
+			}else{
 				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 			}
-		}else{
-			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 		}
 		
 		if (VisualObject === null || VisualObject === undefined || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
@@ -4609,11 +4611,15 @@ cshmi.prototype = {
 		
 		if (VisualParentObject !== null){
 			//search a predefined children
-			try{
-				var VisualObject = VisualParentObject.getElementById(ObjectPath);
-			}catch (e) {
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-				// hopefully the id is uniqe in the tree
+			if(VisualParentObject.getElementById){
+				try{
+					var VisualObject = VisualParentObject.getElementById(ObjectPath);
+				}catch (e) {
+					// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+					// hopefully the id is uniqe in the tree
+					VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+				}
+			}else{
 				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 			}
 		}
