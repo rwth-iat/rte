@@ -666,6 +666,7 @@ LIBRARY cshmi
 			TargetBasename : CLASS cshmi/GetValue;
 			SourceVariablename : CLASS cshmi/GetValue;
 			TargetVariablename : CLASS cshmi/GetValue;
+			RoutingString : CLASS cshmi/SetValue;
 		END_PARTS;
 	END_CLASS;
 	
@@ -782,8 +783,9 @@ LIBRARY cshmi
 		COMMENT = "time triggered actions";
 		VARIABLES
 			cyctime : SINGLE
+			HAS_SET_ACCESSOR
 			UNIT = "sec"
-			COMMENT = "the cycle time for the execution of the action"
+			COMMENT = "the cycle time for the execution of the action, zero disables the event"
 			INITIALVALUE = 10.0;
 		END_VARIABLES;
 	END_CLASS;

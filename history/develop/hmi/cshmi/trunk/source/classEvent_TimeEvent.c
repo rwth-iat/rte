@@ -65,3 +65,13 @@
 
 #include "cshmilib.h"
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
+	OV_INSTPTR_cshmi_TimeEvent          pobj,
+	const OV_SINGLE  value
+) {
+	if(value < 0){
+		return OV_ERR_BADVALUE;
+	}
+	pobj->v_cyctime = value;
+	return OV_ERR_OK;
+}

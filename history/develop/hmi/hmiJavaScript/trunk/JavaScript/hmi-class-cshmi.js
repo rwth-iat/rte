@@ -460,14 +460,22 @@ cshmi.prototype = {
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
 			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
-			if (this.initStage === true && parseFloat(requestList[ObjectPath]["cyctime"]) > 1 ){
+			if (parseFloat(requestList[ObjectPath]["cyctime"]) === 0 ){
+				//zero disables
+				return true;
+			}else if (this.initStage === true && parseFloat(requestList[ObjectPath]["cyctime"]) > 1 ){
 				var nextcyctime = 1;
 			}else{
 				nextcyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
 			}
+			var preserveThis = this;
 			this.ResourceList.TimeeventCallStack[cyctime].triggeredObjectList = Array();
 			this.ResourceList.TimeeventCallStack[cyctime].getVarCollection = Object();
 			this.ResourceList.TimeeventCallStack[cyctime].timeoutID = window.setTimeout(function() {
+				if (HMI.cshmi !== preserveThis){
+					//the active cshmi display is not "our" one, cancel Timeout
+					return true;
+				}
 				//the function will be executed in the context (this) of the HMI.cshmi object
 				HMI.cshmi._handleTimeEvent(cyctime);
 			}, nextcyctime*1000);
@@ -481,11 +489,6 @@ cshmi.prototype = {
 		return true;
 	},
 	_handleTimeEvent: function(cyctime){
-		if (HMI.cshmi !== this){
-			//the active cshmi display is not "our" one, cancel Timeout
-			return true;
-		}
-		
 		var skipEvent = false;
 		//check if the page is visible at all?
 		//http://www.w3.org/TR/page-visibility/
@@ -525,7 +528,12 @@ cshmi.prototype = {
 				}
 			}
 		}
+		var preserveThis = this;
 		this.ResourceList.TimeeventCallStack[cyctime].timeoutID = window.setTimeout(function() {
+			if (HMI.cshmi !== preserveThis){
+				//the active cshmi display is not "our" one, cancel Timeout
+				return true;
+			}
 			//the function will be executed in the context (this) of the HMI.cshmi object
 			HMI.cshmi._handleTimeEvent(cyctime);
 		}, cyctime*1000);
@@ -942,6 +950,7 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param callerObserver Object which hold info for the callback
+	 * @param CyctimeObject
 	 * @return {bool} false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
 	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject){
@@ -1431,6 +1440,7 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
+	 * @param CyctimeObject
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject){
@@ -1637,9 +1647,10 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @param {String} NewValue Value to set
+	 * @param {Boolean} ignoreError a unconfigured setvar should not trigger a warning
 	 * @return false on error, true on success
 	 */
-	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue){
+	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue, ignoreError){
 		//get info where to set the NewValue
 		
 		var ParameterName = "";
@@ -2092,6 +2103,8 @@ cshmi.prototype = {
 			
 			//should not happen, since the firstChild of Playground has an empty ConfigValue
 			return false;
+		}else if (ignoreError === true){
+			return true;
 		}
 		HMI.hmi_log_info_onwebsite('SetValue '+ObjectPath+' not configured.');
 		return false;
@@ -3350,6 +3363,7 @@ cshmi.prototype = {
 				VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection = TargetConnectionPointdirection;
 				VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
 				VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
+				VisualObject.ResourceList.RoutePolyline.Coords = new Object();
 			}
 		}
 		
@@ -3411,23 +3425,164 @@ cshmi.prototype = {
 		var EndY = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
 		var rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
 		
-		//if start- and endPoints changed since last time, recompute polyline points
-		if (	this.initStage === true ||
-				StartX !== VisualObject.ResourceList.RoutePolyline.StartX ||
-				StartY !== VisualObject.ResourceList.RoutePolyline.StartY ||
-				rotateStart !== VisualObject.ResourceList.RoutePolyline.rotateStart ||
-				EndX !== VisualObject.ResourceList.RoutePolyline.EndX ||
-				EndY !== VisualObject.ResourceList.RoutePolyline.EndY ||
-				rotateEnd !== VisualObject.ResourceList.RoutePolyline.rotateEnd) {
-			if(this.initStage === false){
-				//cache new start- and endPoints
-				VisualObject.ResourceList.RoutePolyline.StartX = StartX;
-				VisualObject.ResourceList.RoutePolyline.StartY = StartY;
-				VisualObject.ResourceList.RoutePolyline.rotateStart = rotateStart;
-				VisualObject.ResourceList.RoutePolyline.EndX = EndX;
-				VisualObject.ResourceList.RoutePolyline.EndY = EndY;
-				VisualObject.ResourceList.RoutePolyline.rotateEnd = rotateEnd;
+		//we are perhaps not at global coordinate 0,0
+		StartX = StartX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
+		EndX = EndX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
+		StartY = StartY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
+		EndY = EndY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
+		
+		if(VisualObject.ResourceList.linesArray === undefined){
+			var linesArray = VisualObject.ResourceList.linesArray = 
+				[HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
+				 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
+				 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line')];
+			linesArray[0].setAttribute("data-lineid", "1");
+			linesArray[1].setAttribute("data-lineid", "2");
+			linesArray[2].setAttribute("data-lineid", "3");
+			linesArray[0].id = VisualObject.id + "*" + "first";
+			linesArray[1].id = VisualObject.id + "*" + "second";
+			linesArray[2].id = VisualObject.id + "*" + "third";
+			
+			//this can not be handled in the for loop, as the scope will always be the last line
+			linesArray[0]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[0], ObjectPath, evt); };
+			linesArray[0]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[0], ObjectPath, evt); };
+			linesArray[0]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, null); };
+			linesArray[0]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, true); };
+			linesArray[0]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[0], ObjectPath, evt, true); };
+			linesArray[1]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[1], ObjectPath, evt); };
+			linesArray[1]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[1], ObjectPath, evt); };
+			linesArray[1]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, null); };
+			linesArray[1]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, true); };
+			linesArray[1]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[1], ObjectPath, evt, true); };
+			linesArray[2]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[2], ObjectPath, evt); };
+			linesArray[2]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[2], ObjectPath, evt); };
+			linesArray[2]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, null); };
+			linesArray[2]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, true); };
+			linesArray[2]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[2], ObjectPath, evt, true); };
+			
+			var adjustingPolylinePoints = function(newx, newy){
+				//using the transparent line for visualisation the manipulation as a helperline
+				this.setAttribute("stroke-width", "3px");
+				this.setAttribute("opacity", "1");
+				
+				if(this.getAttribute("cursor") === "col-resize"){
+					this.setAttribute("x1", newx);
+					this.setAttribute("x2", newx);
+				}else if(this.getAttribute("cursor") === "row-resize"){
+					this.setAttribute("y1", newy);
+					this.setAttribute("y2", newy);
+				}
+			};
+			var savingPolylinePoints = function(){
+				//reset the transparent helper line
+				this.setAttribute("opacity", "0");
+				this.setAttribute("stroke-width", "10px");
+				
+				if(this.getAttribute("cursor") === "col-resize"){
+					var newX = parseFloat(this.getAttribute("x1"));
+					var oldX = 0;
+					//detect old Coordinate
+					if(this.getAttribute("data-lineid") === "1"){
+						oldX = VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX;
+					}else if(this.getAttribute("data-lineid") === "2"){
+						oldX = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX;
+					}else if(this.getAttribute("data-lineid") === "3"){
+						oldX = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX;
+					}
+					//all X coordinates which had this position has to be updated
+					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX = newX;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX = newX;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX = newX;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX = newX;}
+				}else if(this.getAttribute("cursor") === "row-resize"){
+					var newY = parseFloat(this.getAttribute("y1"));
+					var oldY = 0;
+					//detect old Coordinate
+					if(this.getAttribute("data-lineid") === "1"){
+						oldY = VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY;
+					}else if(this.getAttribute("data-lineid") === "2"){
+						oldY = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY;
+					}else if(this.getAttribute("data-lineid") === "3"){
+						oldY = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY;
+					}
+					//all Y coordinates which had this position has to be updated
+					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY = newY;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY = newY;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY = newY;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY = newY;}
+				}
+				VisualObject.correctAllLines(VisualObject);
+				
+				if(JSON && JSON.stringify){
+					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), true);
+				}
+				VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
+			};
+			
+			for(var i = 0; i<linesArray.length;i++){
+				linesArray[i].setAttribute("stroke", VisualObject.getAttribute("stroke"));
+				linesArray[i].setAttribute("stroke-width", "10px");
+				linesArray[i].setAttribute("opacity", "0");
+				
+				linesArray[i].savingPolylinePoints = savingPolylinePoints;
+				linesArray[i].adjustingPolylinePoints = adjustingPolylinePoints;
+				
+				//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
+				linesArray[i].addEventListener("touchstart", linesArray[i]._moveStartDragThunk, false);
+				linesArray[i].addEventListener("mousedown", linesArray[i]._moveStartDragThunk, false);
 			}
+			
+			VisualObject.parentNode.insertBefore(linesArray[2], VisualObject.nextSibling);
+			VisualObject.parentNode.insertBefore(linesArray[1], linesArray[2]);
+			VisualObject.parentNode.insertBefore(linesArray[0], linesArray[1]);
+			
+			VisualObject.correctAllLines = function(VisualObject){
+				var points = VisualObject.ResourceList.RoutePolyline.Coords.StartX + "," + VisualObject.ResourceList.RoutePolyline.Coords.StartY + " " + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY + " "
+				+ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY + " " + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY + " "
+				+ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY + " "
+				+ VisualObject.ResourceList.RoutePolyline.Coords.EndX + "," + VisualObject.ResourceList.RoutePolyline.Coords.EndY;
+				VisualObject.setAttribute("points", points);
+				
+				var linesArray = VisualObject.ResourceList.linesArray;
+				linesArray[0].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX);
+				linesArray[0].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY);
+				linesArray[0].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX);
+				linesArray[0].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY);
+				linesArray[0].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX?"col-resize":"row-resize");
+				linesArray[1].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX);
+				linesArray[1].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY);
+				linesArray[1].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX);
+				linesArray[1].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY);
+				linesArray[1].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX?"col-resize":"row-resize");
+				linesArray[2].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX);
+				linesArray[2].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY);
+				linesArray[2].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX);
+				linesArray[2].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY);
+				linesArray[2].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX===VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX?"col-resize":"row-resize");
+			};
+		}
+		
+		var routingString = null;
+		if (VisualObject.ResourceList.RoutePolyline.Coords.StartX === undefined && JSON && JSON.parse){
+			routingString = HMI.cshmi._getValue(VisualObject, ObjectPath+".RoutingString.value");
+			if(routingString){
+				if(routingString.charAt(0) !== "{"){
+					routingString = "{"+routingString + "}";
+				}
+				var temp = JSON.parse(routingString);
+				VisualObject.ResourceList.RoutePolyline.Coords = temp;
+				temp = null;
+			}
+			routingString = null;
+		}
+		
+		//if start- and endPoints changed since last time, recompute polyline points
+		if (StartX !== VisualObject.ResourceList.RoutePolyline.Coords.StartX ||
+				StartY !== VisualObject.ResourceList.RoutePolyline.Coords.StartY ||
+				rotateStart !== VisualObject.ResourceList.RoutePolyline.Coords.rotateStart ||
+				EndX !== VisualObject.ResourceList.RoutePolyline.Coords.EndX ||
+				EndY !== VisualObject.ResourceList.RoutePolyline.Coords.EndY ||
+				rotateEnd !== VisualObject.ResourceList.RoutePolyline.Coords.rotateEnd) {
 			
 			//the polyline routes in the worst case through those 6 points:
 			//StartX
@@ -3442,12 +3597,6 @@ cshmi.prototype = {
 			var OffsetPointTargetY = 0;
 			//EndX
 			//EndY
-			
-			//we are perhaps not at global coordinate 0,0
-			StartX = StartX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
-			EndX = EndX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
-			StartY = StartY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
-			EndY = EndY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
 			
 			if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 180){
 				//to right/OUTPUT --> from left/INPUT
@@ -3782,162 +3931,34 @@ cshmi.prototype = {
 				}
 			}
 			
-			//begin manipulation magic
+			//remember manipulation result
+			VisualObject.ResourceList.RoutePolyline.Coords.StartX = StartX;
+			VisualObject.ResourceList.RoutePolyline.Coords.StartY = StartY;
+			VisualObject.ResourceList.RoutePolyline.Coords.rotateStart = rotateStart;
+			VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX = OffsetPointSourceX;
+			VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY = OffsetPointSourceY;
+			VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX = ContrlPointSourceX;
+			VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY = ContrlPointSourceY;
+			VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX = ContrlPointTargetX;
+			VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY = ContrlPointTargetY;
+			VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX = OffsetPointTargetX;
+			VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY = OffsetPointTargetY;
+			VisualObject.ResourceList.RoutePolyline.Coords.EndX = EndX;
+			VisualObject.ResourceList.RoutePolyline.Coords.EndY = EndY;
+			VisualObject.ResourceList.RoutePolyline.Coords.rotateEnd = rotateEnd;
 			
-			if(!VisualObject.ResourceList.Coords){
-				VisualObject.ResourceList.Coords = Object();
-			}
-			VisualObject.ResourceList.Coords.StartX = StartX;
-			VisualObject.ResourceList.Coords.StartY = StartY;
-			VisualObject.ResourceList.Coords.OffsetPointSourceX = OffsetPointSourceX;
-			VisualObject.ResourceList.Coords.OffsetPointSourceY = OffsetPointSourceY;
-			VisualObject.ResourceList.Coords.ContrlPointSourceX = ContrlPointSourceX;
-			VisualObject.ResourceList.Coords.ContrlPointSourceY = ContrlPointSourceY;
-			VisualObject.ResourceList.Coords.ContrlPointTargetX = ContrlPointTargetX;
-			VisualObject.ResourceList.Coords.ContrlPointTargetY = ContrlPointTargetY;
-			VisualObject.ResourceList.Coords.OffsetPointTargetX = OffsetPointTargetX;
-			VisualObject.ResourceList.Coords.OffsetPointTargetY = OffsetPointTargetY;
-			VisualObject.ResourceList.Coords.EndX = EndX;
-			VisualObject.ResourceList.Coords.EndY = EndY;
-			
-			if(VisualObject.ResourceList.linesArray === undefined){
-				var linesArray = VisualObject.ResourceList.linesArray = 
-					[HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
-					 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line'),
-					 HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line')];
-				linesArray[0].setAttribute("data-lineid", "1");
-				linesArray[1].setAttribute("data-lineid", "2");
-				linesArray[2].setAttribute("data-lineid", "3");
-				linesArray[0].id = VisualObject.id + "*" + "first";
-				linesArray[1].id = VisualObject.id + "*" + "second";
-				linesArray[2].id = VisualObject.id + "*" + "third";
-				
-				//this can not be handled in the for loop, as the scope will always be the last line
-				linesArray[0]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[0], ObjectPath, evt); };
-				linesArray[0]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[0], ObjectPath, evt); };
-				linesArray[0]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, null); };
-				linesArray[0]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[0], ObjectPath, evt, true); };
-				linesArray[0]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[0], ObjectPath, evt, true); };
-				linesArray[1]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[1], ObjectPath, evt); };
-				linesArray[1]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[1], ObjectPath, evt); };
-				linesArray[1]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, null); };
-				linesArray[1]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[1], ObjectPath, evt, true); };
-				linesArray[1]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[1], ObjectPath, evt, true); };
-				linesArray[2]._moveStartDragThunk = function(evt){ HMI.cshmi._moveStartDrag(linesArray[2], ObjectPath, evt); };
-				linesArray[2]._moveMouseMoveThunk = function(evt){ HMI.cshmi._moveMouseMove(linesArray[2], ObjectPath, evt); };
-				linesArray[2]._moveStopDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, null); };
-				linesArray[2]._moveCancelDragThunk = function(evt){ HMI.cshmi._moveStopDrag(linesArray[2], ObjectPath, evt, true); };
-				linesArray[2]._moveHandleClickThunk = function(evt){ HMI.cshmi._moveHandleClick(linesArray[2], ObjectPath, evt, true); };
-				
-				var adjustingPolylinePoints = function(newx, newy){
-					//using the transparent line for visualisation the manipulation as a helperline
-					this.setAttribute("stroke-width", "3px");
-					this.setAttribute("opacity", "1");
-					
-					if(this.getAttribute("cursor") === "col-resize"){
-						this.setAttribute("x1", newx);
-						this.setAttribute("x2", newx);
-					}else if(this.getAttribute("cursor") === "row-resize"){
-						this.setAttribute("y1", newy);
-						this.setAttribute("y2", newy);
-					}
-				};
-				var savingPolylinePoints = function(){
-					//reset the transparent helper line
-					this.setAttribute("opacity", "0");
-					this.setAttribute("stroke-width", "10px");
-					
-					if(this.getAttribute("cursor") === "col-resize"){
-						var newX = parseFloat(this.getAttribute("x1"));
-						var oldX = 0;
-						//detect old Coordinate
-						if(this.getAttribute("data-lineid") === "1"){
-							oldX = VisualObject.ResourceList.Coords.OffsetPointSourceX;
-						}else if(this.getAttribute("data-lineid") === "2"){
-							oldX = VisualObject.ResourceList.Coords.ContrlPointSourceX;
-						}else if(this.getAttribute("data-lineid") === "3"){
-							oldX = VisualObject.ResourceList.Coords.ContrlPointTargetX;
-						}
-						//all X coordinates which had this position has to be updated
-						if(VisualObject.ResourceList.Coords.OffsetPointSourceX === oldX){ VisualObject.ResourceList.Coords.OffsetPointSourceX = newX;}
-						if(VisualObject.ResourceList.Coords.ContrlPointSourceX === oldX){ VisualObject.ResourceList.Coords.ContrlPointSourceX = newX;}
-						if(VisualObject.ResourceList.Coords.ContrlPointTargetX === oldX){ VisualObject.ResourceList.Coords.ContrlPointTargetX = newX;}
-						if(VisualObject.ResourceList.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.Coords.OffsetPointTargetX = newX;}
-					}else if(this.getAttribute("cursor") === "row-resize"){
-						var newY = parseFloat(this.getAttribute("y1"));
-						var oldY = 0;
-						//detect old Coordinate
-						if(this.getAttribute("data-lineid") === "1"){
-							oldY = VisualObject.ResourceList.Coords.OffsetPointSourceY;
-						}else if(this.getAttribute("data-lineid") === "2"){
-							oldY = VisualObject.ResourceList.Coords.ContrlPointSourceY;
-						}else if(this.getAttribute("data-lineid") === "3"){
-							oldY = VisualObject.ResourceList.Coords.ContrlPointTargetY;
-						}
-						//all Y coordinates which had this position has to be updated
-						if(VisualObject.ResourceList.Coords.OffsetPointSourceY === oldY){ VisualObject.ResourceList.Coords.OffsetPointSourceY = newY;}
-						if(VisualObject.ResourceList.Coords.ContrlPointSourceY === oldY){ VisualObject.ResourceList.Coords.ContrlPointSourceY = newY;}
-						if(VisualObject.ResourceList.Coords.ContrlPointTargetY === oldY){ VisualObject.ResourceList.Coords.ContrlPointTargetY = newY;}
-						if(VisualObject.ResourceList.Coords.OffsetPointTargetY === oldY){ VisualObject.ResourceList.Coords.OffsetPointTargetY = newY;}
-					}
-					VisualObject.correctAllLines(VisualObject);
-					
-					/*
-					if(JSON && JSON.stringify){
-						HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.Coords));
-					} */
-				};
-				
-				for(var i = 0; i<linesArray.length;i++){
-					linesArray[i].setAttribute("stroke", VisualObject.getAttribute("stroke"));
-					linesArray[i].setAttribute("stroke-width", "10px");
-					linesArray[i].setAttribute("opacity", "0");
-					
-					linesArray[i].savingPolylinePoints = savingPolylinePoints;
-					linesArray[i].adjustingPolylinePoints = adjustingPolylinePoints;
-					
-					//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
-					linesArray[i].addEventListener("touchstart", linesArray[i]._moveStartDragThunk, false);
-					linesArray[i].addEventListener("mousedown", linesArray[i]._moveStartDragThunk, false);
-				}
-				
-				VisualObject.parentNode.insertBefore(linesArray[2], VisualObject.nextSibling);
-				VisualObject.parentNode.insertBefore(linesArray[1], linesArray[2]);
-				VisualObject.parentNode.insertBefore(linesArray[0], linesArray[1]);
-			}//end buildup the three lines
-			
-			VisualObject.correctAllLines = function(VisualObject){
-				var points = VisualObject.ResourceList.Coords.StartX + "," + VisualObject.ResourceList.Coords.StartY + " " + VisualObject.ResourceList.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.Coords.OffsetPointSourceY + " "
-				+ VisualObject.ResourceList.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.Coords.ContrlPointSourceY + " " + VisualObject.ResourceList.Coords.ContrlPointTargetX + "," + VisualObject.ResourceList.Coords.ContrlPointTargetY + " "
-				+ VisualObject.ResourceList.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.Coords.OffsetPointTargetY + " "
-				+ VisualObject.ResourceList.Coords.EndX + "," + VisualObject.ResourceList.Coords.EndY;
-				VisualObject.setAttribute("points", points);
-				
-				var linesArray = VisualObject.ResourceList.linesArray;
-				linesArray[0].setAttribute("x1", VisualObject.ResourceList.Coords.OffsetPointSourceX);
-				linesArray[0].setAttribute("y1", VisualObject.ResourceList.Coords.OffsetPointSourceY);
-				linesArray[0].setAttribute("x2", VisualObject.ResourceList.Coords.ContrlPointSourceX);
-				linesArray[0].setAttribute("y2", VisualObject.ResourceList.Coords.ContrlPointSourceY);
-				linesArray[0].setAttribute("cursor", VisualObject.ResourceList.Coords.OffsetPointSourceX===VisualObject.ResourceList.Coords.ContrlPointSourceX?"col-resize":"row-resize");
-				linesArray[1].setAttribute("x1", VisualObject.ResourceList.Coords.ContrlPointSourceX);
-				linesArray[1].setAttribute("y1", VisualObject.ResourceList.Coords.ContrlPointSourceY);
-				linesArray[1].setAttribute("x2", VisualObject.ResourceList.Coords.ContrlPointTargetX);
-				linesArray[1].setAttribute("y2", VisualObject.ResourceList.Coords.ContrlPointTargetY);
-				linesArray[1].setAttribute("cursor", VisualObject.ResourceList.Coords.ContrlPointSourceX===VisualObject.ResourceList.Coords.ContrlPointTargetX?"col-resize":"row-resize");
-				linesArray[2].setAttribute("x1", VisualObject.ResourceList.Coords.ContrlPointTargetX);
-				linesArray[2].setAttribute("y1", VisualObject.ResourceList.Coords.ContrlPointTargetY);
-				linesArray[2].setAttribute("x2", VisualObject.ResourceList.Coords.OffsetPointTargetX);
-				linesArray[2].setAttribute("y2", VisualObject.ResourceList.Coords.OffsetPointTargetY);
-				linesArray[2].setAttribute("cursor", VisualObject.ResourceList.Coords.ContrlPointTargetX===VisualObject.ResourceList.Coords.OffsetPointTargetX?"col-resize":"row-resize");
-			};
 			VisualObject.correctAllLines(VisualObject);
-			
-			/*
-			if (this.initStage === true){
-				HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "");
-			} */
-		}else{
-			//do nothing because the polyline was routed correctly last time
+			if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated !== false){
+				if(JSON && JSON.stringify){
+					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", true);
+				}
+			}
+			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = false;
+			//end calculate new points
+		}else if(VisualObject.ResourceList.RoutePolyline.Coords.StartX !== undefined && VisualObject.ResourceList.RoutePolyline.LineWasManipulated === undefined){
+			//initial fill if we have a fresh polyline
+			VisualObject.correctAllLines(VisualObject);
+			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
 		}
 		return true;
 	},
@@ -5899,7 +5920,7 @@ cshmi.prototype = {
 		
 		//for this objects, the init stage should be set (needed for getValue and timeevent)
 		var oldStage = this.initStage;
-		this.initStage= true;
+		this.initStage = true;
 		
 		while(this.ResourceList.onloadCallStack.length !== 0){
 			var EventObjItem = this.ResourceList.onloadCallStack.shift();
