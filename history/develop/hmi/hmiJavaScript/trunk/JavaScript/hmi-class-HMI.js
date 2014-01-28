@@ -1670,11 +1670,15 @@ HMI.prototype = {
 		//absolutex and localy are HMI specific DOM Attributes!
 		//They are ignored by the SVG Renderer but used for position calculation in the move gesture
 		//and the function displaygestureReactionMarker
-		var localx = parseInt(Element.getAttribute("x"), 10);
-		var localy = parseInt(Element.getAttribute("y"), 10);
-		if(Element.tagName === "circle"){
+		if(Element.hasAttribute("x")){
+			var localx = parseInt(Element.getAttribute("x"), 10);
+			var localy = parseInt(Element.getAttribute("y"), 10);
+		}else if(Element.hasAttribute("cx")){
 			localx = parseInt(Element.getAttribute("cx"), 10);
 			localy = parseInt(Element.getAttribute("cy"), 10);
+		}else if(Element.hasAttribute("x1")){
+			localx = parseInt(Element.getAttribute("x1"), 10);
+			localy = parseInt(Element.getAttribute("y1"), 10);
 		}
 		var localrotate = parseInt(getRotationFromObject(Element), 10);
 		var absolutex, absolutey, absoluterotate;

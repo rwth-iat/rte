@@ -1127,7 +1127,7 @@ cshmi.prototype = {
 			}else if (ParameterValue === "verAlignment"){
 				if (VisualObject.tagName !== "text"){
 					return "";
-				}else if (VisualObject.getAttribute("dy") === "0.7ex"){
+				}else if (VisualObject.getAttribute("dy") === "0.6ex"){
 					return "middle";
 				}else if (VisualObject.getAttribute("dy") === "1ex"){
 					return "hanging";
@@ -1921,8 +1921,8 @@ cshmi.prototype = {
 						secondchild.setAttribute(ParameterValue, NewValue);
 					}
 				}
-				//reposition absolutex/y if x, y, width or height was changed
-				if (ParameterValue === "x" || ParameterValue === "y"){
+				//reposition absolutex/y if x, y, x1, y1, cx or cy was changed
+				if (ParameterValue === "x" || ParameterValue === "y" || ParameterValue === "cx" || ParameterValue === "cy" || ParameterValue === "x1" || ParameterValue === "y1"){
 					HMI.saveAbsolutePosition(VisualObject);
 				}
 			}
@@ -4181,7 +4181,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		if (VisualParentObject !== null){
+		if (VisualParentObject !== null && VisualParentObject.getElementById){
 			//search a predefined children
 			try{
 				var VisualObject = VisualParentObject.getElementById(ObjectPath);
@@ -4190,6 +4190,8 @@ cshmi.prototype = {
 				// hopefully the id is uniqe in the tree
 				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 			}
+		}else{
+			VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 		}
 		
 		if (VisualObject === null || VisualObject === undefined || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
@@ -4210,6 +4212,7 @@ cshmi.prototype = {
 		VisualObject.setAttribute("data-ModelSource", ObjectPath);
 		VisualObject.setAttribute("data-NameOrigin", "TemplateName");
 		if(PathOfTemplateDefinition){
+			HMI.addClass(VisualObject, this.cshmiTemplateClass);
 			VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
 		}else{
 			VisualObject.setAttribute("data-TemplateModelSource", "");
@@ -4419,7 +4422,6 @@ cshmi.prototype = {
 			}
 		}
 		
-		HMI.addClass(VisualObject, this.cshmiTemplateClass);
 		VisualObject.setAttribute("overflow", "visible");
 		
 		if (calledFromInstantiateTemplate === true){
@@ -5262,7 +5264,7 @@ cshmi.prototype = {
 		if (requestList[ObjectPath]["verAlignment"] == "auto"){
 			//no change needed
 		}else if (requestList[ObjectPath]["verAlignment"] == "middle"){
-			VisualObject.setAttribute("dy", "0.7ex");
+			VisualObject.setAttribute("dy", "0.6ex");
 		}else if (requestList[ObjectPath]["verAlignment"] == "hanging"){
 			VisualObject.setAttribute("dy", "1ex");
 		}
