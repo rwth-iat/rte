@@ -3465,10 +3465,10 @@ cshmi.prototype = {
 				this.setAttribute("stroke-width", "3px");
 				this.setAttribute("opacity", "1");
 				
-				if(this.getAttribute("cursor") === "col-resize"){
+				if(this.style.cursor === "col-resize"){
 					this.setAttribute("x1", newx);
 					this.setAttribute("x2", newx);
-				}else if(this.getAttribute("cursor") === "row-resize"){
+				}else if(this.style.cursor === "row-resize"){
 					this.setAttribute("y1", newy);
 					this.setAttribute("y2", newy);
 				}
@@ -3478,7 +3478,7 @@ cshmi.prototype = {
 				this.setAttribute("opacity", "0");
 				this.setAttribute("stroke-width", "10px");
 				
-				if(this.getAttribute("cursor") === "col-resize"){
+				if(this.style.cursor === "col-resize"){
 					var newX = parseFloat(this.getAttribute("x1"));
 					var oldX = 0;
 					//detect old Coordinate
@@ -3494,7 +3494,7 @@ cshmi.prototype = {
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX = newX;}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX = newX;}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX = newX;}
-				}else if(this.getAttribute("cursor") === "row-resize"){
+				}else if(this.style.cursor === "row-resize"){
 					var newY = parseFloat(this.getAttribute("y1"));
 					var oldY = 0;
 					//detect old Coordinate
@@ -3548,17 +3548,17 @@ cshmi.prototype = {
 				linesArray[0].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY);
 				linesArray[0].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX);
 				linesArray[0].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY);
-				linesArray[0].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX?"col-resize":"row-resize");
+				linesArray[0].style.cursor = VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX?"col-resize":"row-resize";
 				linesArray[1].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX);
 				linesArray[1].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY);
 				linesArray[1].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX);
 				linesArray[1].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY);
-				linesArray[1].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX?"col-resize":"row-resize");
+				linesArray[1].style.cursor = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX===VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX?"col-resize":"row-resize";
 				linesArray[2].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX);
 				linesArray[2].setAttribute("y1", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY);
 				linesArray[2].setAttribute("x2", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX);
 				linesArray[2].setAttribute("y2", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY);
-				linesArray[2].setAttribute("cursor", VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX===VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX?"col-resize":"row-resize");
+				linesArray[2].style.cursor = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX===VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX?"col-resize":"row-resize";
 			};
 		}
 		
