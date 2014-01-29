@@ -4181,17 +4181,18 @@ cshmi.prototype = {
 			}
 		}
 		
+		//search a predefined children
 		if (VisualParentObject !== null){
-			//search a predefined children
-			if(VisualParentObject.getElementById){
-				try{
+			try{
+				if(VisualParentObject.tagName !== "g"){
 					var VisualObject = VisualParentObject.getElementById(ObjectPath);
-				}catch (e) {
-					// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-					// hopefully the id is uniqe in the tree
-					VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+				}else{
+					//the parent can be a container g element
+					VisualObject = VisualParentObject.parentNode.getElementById(ObjectPath);
 				}
-			}else{
+			}catch (e) {
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+				// hopefully the id is uniqe in the tree
 				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 			}
 		}
@@ -4609,17 +4610,18 @@ cshmi.prototype = {
 			this.ResourceList.Elements[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		
+		//search a predefined children
 		if (VisualParentObject !== null){
-			//search a predefined children
-			if(VisualParentObject.getElementById){
-				try{
+			try{
+				if(VisualParentObject.tagName !== "g"){
 					var VisualObject = VisualParentObject.getElementById(ObjectPath);
-				}catch (e) {
-					// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
-					// hopefully the id is uniqe in the tree
-					VisualObject = HMI.svgDocument.getElementById(ObjectPath);
+				}else{
+					//the parent can be a container g element
+					VisualObject = VisualParentObject.parentNode.getElementById(ObjectPath);
 				}
-			}else{
+			}catch (e) {
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=280391
+				// hopefully the id is uniqe in the tree
 				VisualObject = HMI.svgDocument.getElementById(ObjectPath);
 			}
 		}
