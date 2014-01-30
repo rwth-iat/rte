@@ -3563,13 +3563,17 @@ cshmi.prototype = {
 		}
 		
 		var routingString = null;
-		if (VisualObject.ResourceList.RoutePolyline.Coords.StartX === undefined && JSON && JSON.parse){
+		if (VisualObject.ResourceList.RoutePolyline.Coords.StartX === undefined && typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			routingString = HMI.cshmi._getValue(VisualObject, ObjectPath+".RoutingString.value");
 			if(routingString){
 				if(routingString.charAt(0) !== "{"){
 					routingString = "{"+routingString + "}";
 				}
-				var temp = JSON.parse(routingString);
+				try {
+					var temp = JSON.parse(routingString);
+				} catch (e) {
+					temp = Object();
+				}
 				VisualObject.ResourceList.RoutePolyline.Coords = temp;
 				temp = null;
 			}
