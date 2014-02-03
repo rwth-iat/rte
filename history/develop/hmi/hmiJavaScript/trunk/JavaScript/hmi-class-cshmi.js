@@ -3513,7 +3513,7 @@ cshmi.prototype = {
 				}
 				VisualObject.correctAllLines(VisualObject);
 				
-				if(JSON && JSON.stringify){
+				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled === true){
 					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), true);
 				}
 				VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
@@ -3576,6 +3576,9 @@ cshmi.prototype = {
 				}
 				VisualObject.ResourceList.RoutePolyline.Coords = temp;
 				temp = null;
+			}else if(routingString === false){
+				//the target has no possiblity to store this value (KS_ERR)
+				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
 			}
 			routingString = null;
 		}
@@ -3953,7 +3956,7 @@ cshmi.prototype = {
 			
 			VisualObject.correctAllLines(VisualObject);
 			if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated !== false){
-				if(JSON && JSON.stringify){
+				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled === true){
 					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", true);
 				}
 			}

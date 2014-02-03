@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -1014,6 +1014,8 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		
+		this.cshmi = null;
+		
 		//deactivate the Select-Boxes, because there is no usefull content
 		HMI.PossServers.disabled = true;
 		HMI.PossSheets.disabled = true;
@@ -1059,6 +1061,8 @@ HMI.prototype = {
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
+		
+		this.cshmi = null;
 		
 		HMI.PossSheets.disabled = true;
 		document.getElementById("idBookmark").style.display = "none";
@@ -1121,6 +1125,8 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		document.getElementById("idBookmark").style.display = "none";
+		
+		this.cshmi = null;
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
 		HMI.RefreshTimeoutID = null;
