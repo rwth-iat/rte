@@ -2534,7 +2534,7 @@ cshmi.prototype = {
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
 		
-		//fixme bei UND verknï¿½pfung kann man evtl frï¿½hzeitig eine lï¿½sung haben
+		//todo bei UND verknï¿½pfung kann man evtl fruehzeitig eine lï¿½sung haben
 		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
@@ -3042,6 +3042,10 @@ cshmi.prototype = {
 		if(VisualObject.tagName !== "polyline"){
 			//todo implement für path bezierkurven
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
+			return false;
+		}
+		if(VisualObject.getAttribute("display") === "none"){
+			//we are not visible, so do not route at all
 			return false;
 		}
 		
@@ -3905,15 +3909,14 @@ cshmi.prototype = {
 					OffsetPointTargetX = EndX;
 					OffsetPointTargetY = EndY + OffsetTarget;
 				}else{
-					//fixme
-					OffsetPointSourceX = StartX - OffsetSource;
+					OffsetPointSourceX = EndX;
 					OffsetPointSourceY = StartY;
 					ContrlPointSourceX = OffsetPointSourceX;
 					ContrlPointSourceY = OffsetPointSourceY;
 					ContrlPointTargetX = ContrlPointSourceX;
 					ContrlPointTargetY = ContrlPointSourceY;
 					OffsetPointTargetX = EndX;
-					OffsetPointTargetY = EndY + OffsetTarget;
+					OffsetPointTargetY = ContrlPointTargetY;
 				}
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 180){
 				//to down --> from left
