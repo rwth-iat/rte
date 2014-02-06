@@ -618,7 +618,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenLocalConn(
 		OV_STRING port
 ) {
 
-	return TCPbind_TCPChannel_OpenConnection(this, "127.0.0.1", port);
+	return TCPbind_TCPChannel_OpenConnection(this, "localhost", port);
 }
 
 /**
