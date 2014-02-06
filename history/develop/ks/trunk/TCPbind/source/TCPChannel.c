@@ -343,30 +343,40 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 
 				//if this is the first chunk of data in the packet, initialize the read pointer
 				if(!thisCh->v_inData.readPT)
+				{
 					thisCh->v_inData.readPT = tempdata;
+				}
 				else
 				{
 					/*	get the readPT index and set readPT to this index in the newly allocated memory	*/
 					thisCh->v_inData.readPT = tempdata + (thisCh->v_inData.readPT - thisCh->v_inData.data);
 				}
 				thisCh->v_inData.data = tempdata;
-
+				/*	tempdata has done its job now. not used from here on	*/
 
 				if(!thisCh->v_inData.writePT)
+				{
 					thisCh->v_inData.writePT = thisCh->v_inData.data;
+				}
 				else
+				{
 					thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
+				}
 
 				err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
 				if(err < TCPbind_CHUNKSIZE)
 				{
+					//last part received or closed/failure
 					if(err == 0)
 					{
 						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-							ov_free(tempdata);
+						{
+							ov_free(thisCh->v_inData.data);
+							thisCh->v_inData.data = NULL;
+						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
 								&& !thisCh->v_inData.length)
@@ -394,7 +404,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-							ov_free(tempdata);
+						{
+							ov_free(thisCh->v_inData.data);
+							thisCh->v_inData.data = NULL;
+						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
 								&& !thisCh->v_inData.length)
