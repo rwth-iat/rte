@@ -538,7 +538,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 							}
 						}
 						else
+						{
 							pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
+						}
 
 					} else {
 						KS_logfile_error(("%s: Creation of TCPChannel for %s failed (socket %d).", this->v_identifier, buf, cfd));
@@ -549,7 +551,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 #if OV_SYSTEM_NT
 					errno = WSAGetLastError();
 #endif
-					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errbo is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
+					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errno is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
 				}
 			}
 		}
