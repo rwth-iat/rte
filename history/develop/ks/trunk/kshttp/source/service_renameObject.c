@@ -38,18 +38,6 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_RENAMEABLE;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblRenameObj = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
 #define EXEC_RENAMEOBJECT_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		Ov_SetDynamicVectorLength(&newnamematch,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
@@ -75,7 +63,7 @@ OV_RESULT kshttp_exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message
 	OV_RENAMEOBJECT_PAR	params;
 	OV_RENAMEOBJECT_RES	result;
 
-	static OV_TICKET ticket = { &defaultticketvtblRenameObj,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -118,7 +106,13 @@ OV_RESULT kshttp_exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message
 		addrp ++;
 	}
 
-	ov_ksserver_renameobject(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
+	ov_ksserver_renameobject(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

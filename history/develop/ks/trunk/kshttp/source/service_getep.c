@@ -112,17 +112,6 @@ OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFOR
 	return OV_ERR_OK;
 }
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_READ;
-}
-//we need ony a getaccess for the getEP service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtbl = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
 #define EXEC_GETEP_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&message, NULL);\
@@ -139,7 +128,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 	OV_GETEP_RES	result;
 	OV_OBJ_ENGINEERED_PROPS	*one_result;
 
-	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	OV_STRING message = NULL;
 	OV_UINT_VEC requestOutput = {0,NULL};
@@ -152,7 +141,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 	OV_UINT requestOutputDefaultLink[] = {OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS, OP_ASSOCIDENT, OP_ROLEIDENT};
 	OV_RESULT fr = OV_ERR_OK;
 	unsigned char flagiterator = 'a';
-	int i = 0;
+	OV_UINT i = 0;
 
 	//initialize ov_string
 	params.path = NULL;
@@ -250,8 +239,14 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 		}
 	}
 
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
 	ov_memstack_lock(); //needed for ov_path_resolve and the class_identifier
-	ov_ksserver_getep(2, &ticket, &params, &result);
+	ov_ksserver_getep(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS

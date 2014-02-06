@@ -38,25 +38,21 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_LINKABLE;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblLink = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
 #define EXEC_LINK_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		Ov_SetDynamicVectorLength(&elementmatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&placehintmatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&placepathmatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&oppositeplacehintmatch,0,STRING);\
+		Ov_SetDynamicVectorLength(&oppositeplacepathmatch,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
 		return
 
 /**
  * Syntax: /link?path=/TechUnits/con.sourcefb&element=/TechUnits/testFB
+ * placehint=BEGIN
+ * placehint=BEFORE&placepath=/TechUnits/add
+ * oppositeplacehint=AFTER&oppositeplacepath=/TechUnits/add2
+ *
  *
  * extracts the command for the linking and let do ks_server_link the job
  * @param args arguments of the http get request
@@ -69,6 +65,11 @@ OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP
 	*/
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING_VEC elementmatch = {0,NULL};
+	OV_STRING_VEC placehintmatch = {0,NULL};
+	OV_STRING_VEC placepathmatch = {0,NULL};
+	OV_STRING_VEC oppositeplacehintmatch = {0,NULL};
+	OV_STRING_VEC oppositeplacepathmatch = {0,NULL};
+
 	OV_LINK_ITEM *addrp = NULL;
 	OV_UINT i = 0;
 	OV_RESULT fr = OV_ERR_OK;
@@ -76,8 +77,7 @@ OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP
 
 	OV_LINK_PAR	params;
 	OV_LINK_RES	result;
-
-	static OV_TICKET ticket = { &defaultticketvtblLink,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -110,20 +110,73 @@ OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP
 	params.items_val = addrp;
 	params.items_len = match.veclen;
 
+	kshttp_find_arguments(args, "placehint", &placehintmatch);
+	kshttp_find_arguments(args, "placepath", &placepathmatch);
+	kshttp_find_arguments(args, "oppositeplacehint", &oppositeplacehintmatch);
+	kshttp_find_arguments(args, "oppositeplacepath", &oppositeplacepathmatch);
+
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){
 		addrp->link_path = match.value[i];
 		addrp->element_path = elementmatch.value[i];
-		//todo PMH implementieren
+
+		//handle placement hint if available, start with the default
 		addrp->place.hint = KS_PMH_DEFAULT;
 		addrp->place.place_path = NULL;
 		addrp->opposite_place.hint = KS_PMH_DEFAULT;
 		addrp->opposite_place.place_path = NULL;
+		if(placehintmatch.veclen >= match.veclen){
+			ov_memstack_lock();
+			ov_string_setvalue(&temp, ov_string_toupper(placehintmatch.value[i]));
+			ov_memstack_unlock();
+			if(ov_string_compare(temp, "DEFAULT") == OV_STRCMP_EQUAL){
+				//change nothing
+			}else if(ov_string_compare(temp, "BEGIN") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_BEGIN;
+			}else if(ov_string_compare(temp, "END") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_END;
+			}else if(ov_string_compare(temp, "BEFORE") == OV_STRCMP_EQUAL && ov_string_compare(placepathmatch.value[i], NULL) != OV_STRCMP_EQUAL){
+				//BEFORE needs an relative placement partner, too
+				addrp->place.hint = KS_PMH_BEFORE;
+				addrp->place.place_path = placepathmatch.value[i]; //save to set direct, as the StrVec will be cleared right before ending this function
+			}else if(ov_string_compare(temp, "AFTER") == OV_STRCMP_EQUAL && ov_string_compare(placepathmatch.value[i], NULL) != OV_STRCMP_EQUAL){
+				//AFTER needs an relative placement partner, too
+				addrp->place.hint = KS_PMH_AFTER;
+				addrp->place.place_path = placepathmatch.value[i]; //save to set direct, as the StrVec will be cleared right before ending this function
+			}
+			if(oppositeplacehintmatch.veclen >= match.veclen){
+				ov_memstack_lock();
+				ov_string_setvalue(&temp, ov_string_toupper(oppositeplacehintmatch.value[i]));
+				ov_memstack_unlock();
+
+				if(ov_string_compare(temp, "DEFAULT") == OV_STRCMP_EQUAL){
+					//change nothing
+				}else if(ov_string_compare(temp, "BEGIN") == OV_STRCMP_EQUAL){
+					addrp->opposite_place.hint = KS_PMH_BEGIN;
+				}else if(ov_string_compare(temp, "END") == OV_STRCMP_EQUAL){
+					addrp->opposite_place.hint = KS_PMH_END;
+				}else if(ov_string_compare(temp, "BEFORE") == OV_STRCMP_EQUAL && ov_string_compare(oppositeplacepathmatch.value[i], NULL) != OV_STRCMP_EQUAL){
+					//BEFORE needs an relative placement partner, too
+					addrp->opposite_place.hint = KS_PMH_BEFORE;
+					addrp->opposite_place.place_path = oppositeplacepathmatch.value[i]; //save to set direct, as the StrVec will be cleared right before ending this function
+				}else if(ov_string_compare(temp, "AFTER") == OV_STRCMP_EQUAL && ov_string_compare(oppositeplacepathmatch.value[i], NULL) != OV_STRCMP_EQUAL){
+					//AFTER needs an relative placement partner, too
+					addrp->opposite_place.hint = KS_PMH_AFTER;
+					addrp->opposite_place.place_path = oppositeplacepathmatch.value[i]; //save to set direct, as the StrVec will be cleared right before ending this function
+				}
+			}
+		}
 		//add one size of a pointer
 		addrp ++;
 	}
 
-	ov_ksserver_link(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
+	ov_ksserver_link(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

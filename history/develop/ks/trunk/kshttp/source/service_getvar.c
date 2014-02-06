@@ -39,34 +39,6 @@
 #include "config.h"
 
 /*
-static OV_TICKET *ov_kshttp_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type);
-static void ov_kshttp_ticket_defaultticket_deleteticket(OV_TICKET *pticket) {
-	return;
-}
-static OV_BOOL ov_kshttp_ticket_defaultticket_encodereply(XDR *y, OV_TICKET *x) {
-	return TRUE;
-}
-*/
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_READ;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblVar = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-/*
-static OV_TICKET *ov_kshttp_ticket_defaultticket_createticket(XDR *xdr, OV_TICKET_TYPE type) {
-	static OV_TICKET ticket = { &defaultticketvtbl,  OV_TT_SIMPLE };
-	return &ticket;
-	//test auf serverpasswort und zugriff
-}
-*/
-
-/*
 falsche ergebnisse bei: evtl behoben durch neuen code
 http://localhost:8080/getVar?path[1]=/TechUnits/cshmi/Templates/Engineering/Domainv1/Trash.SVGcontent&path[9]=.Bitmapcontent
 http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{010}%20{/TechUnits/HMIManager}%20{SHOWSHEETS}
@@ -109,7 +81,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 	OV_RESULT fr = OV_ERR_OK;
 	OV_RESULT lasterror = OV_ERR_OK;
 
-	static OV_TICKET ticket = { &defaultticketvtblVar,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	/**
 	 * Build Parameter for KS function
@@ -144,8 +116,13 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 		addrp ++;
 	}
 
-	ov_ksserver_getvar(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
 
+	ov_ksserver_getvar(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 /*
 <response xmlns="http://acplt.org/schemas/ksx/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://acplt.org/schemas/ksx/2.0 ksx.xsd">

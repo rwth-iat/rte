@@ -49,6 +49,7 @@
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
 #include "ov_ksserver_backend.h"
+#include "NoneTicketAuthenticator.h"
 
 /*
  * KS_HTTP identifier
@@ -172,7 +173,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPONSEFORMAT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring);
 OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, KSHTTP_RESPONSEFORMAT response_format);
 
 OV_RESULT kshttp_generateAndSendHttpMessage(
