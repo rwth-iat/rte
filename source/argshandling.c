@@ -49,8 +49,8 @@
  * @return always success
  */
 OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
-	int i = 0;
-	int varname_len = 0;
+	OV_UINT i = 0;
+	OV_INT varname_len = 0;
 	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
 	if(args == NULL || varname == NULL)return OV_ERR_OK;
 	//iterate over argument names

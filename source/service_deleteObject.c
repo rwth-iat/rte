@@ -38,19 +38,6 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_DELETEABLE;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblDeleteObj = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
-
 #define EXEC_DELETEOBJECT_RETURN	ov_string_freelist(pVarsList); \
 	Ov_SetDynamicVectorLength(&match,0,STRING);\
 	return
@@ -75,7 +62,7 @@ OV_RESULT kshttp_exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message
 	OV_DELETEOBJECT_PAR	params;
 	OV_DELETEOBJECT_RES	result;
 
-	static OV_TICKET ticket = { &defaultticketvtblDeleteObj,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -108,7 +95,13 @@ OV_RESULT kshttp_exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message
 		addrp ++;
 	}
 
-	ov_ksserver_deleteobject(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
+	ov_ksserver_deleteobject(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

@@ -40,19 +40,6 @@
 #include <ctype.h>
 #include "urldecode.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_READWRITE;
-}
-
-//we need ony a getaccess for the setVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblSetvar = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
-
 #define CHECK_BOOLTRUE(Value)	\
 			ov_string_compare(Value, "1")		== OV_STRCMP_EQUAL	\
 		||	ov_string_compare(Value, "T")	== OV_STRCMP_EQUAL	\
@@ -104,7 +91,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 	OV_VAR_TYPE lastVarType = OV_VT_VOID;
 	OV_BOOL isNegative = FALSE;
 
-	static OV_TICKET ticket = { &defaultticketvtblSetvar,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&pathmatch,0,STRING);
@@ -135,6 +122,9 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 	params.items_val = addrp;
 	params.items_len = pathmatch.veclen;
 
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
 	//#####################################################################
 	//process vartype
 	//we have to get the vartypes via GetVar, if not specified in request
@@ -159,7 +149,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			//add one size of a pointer
 			addrpGet ++;
 		}
-		ov_ksserver_getvar(2, &ticket, &paramsGet, &resultGet);
+		ov_ksserver_getvar(2, pticket, &paramsGet, &resultGet);
 
 		if(Ov_Fail(resultGet.result)){
 			//general problem like memory problem or NOACCESS
@@ -290,7 +280,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 
 			case OV_VT_TIME:
 			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
-				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i], response_format);
+				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					ov_string_append(message, "Setting time value failed");
 					EXEC_SETVAR_RETURN fr;
@@ -475,7 +465,10 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 		addrp ++;
 	}
 
-	ov_ksserver_setvar(2, &ticket, &params, &result);
+	ov_ksserver_setvar(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

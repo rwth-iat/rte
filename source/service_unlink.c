@@ -38,18 +38,6 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_UNLINKABLE;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblUnlink = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
 #define EXEC_UNLINK_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		Ov_SetDynamicVectorLength(&elementmatch,0,STRING);\
 		ov_string_setvalue(&temp, NULL);\
@@ -77,7 +65,7 @@ OV_RESULT kshttp_exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 	OV_UNLINK_PAR	params;
 	OV_UNLINK_RES	result;
 
-	static OV_TICKET ticket = { &defaultticketvtblUnlink,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -117,7 +105,13 @@ OV_RESULT kshttp_exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 		addrp ++;
 	}
 
-	ov_ksserver_unlink(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
+	ov_ksserver_unlink(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

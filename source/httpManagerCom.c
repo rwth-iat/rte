@@ -206,7 +206,9 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 									port = *((OV_INT*) elemPort.pvalue);
 								}
 								else
+								{
 									KS_logfile_error(("element value* is NULL"));
+								}
 								OptValTemp = ov_memstack_alloc(12);	/*	this way prevent us from NULL-pointer exceptions in ov_string_print	*/
 								if(OptValTemp)
 								{

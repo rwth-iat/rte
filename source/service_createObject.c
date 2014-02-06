@@ -38,18 +38,6 @@
 
 #include "config.h"
 
-static OV_ACCESS ov_kshttp_ticket_defaultticket_getaccess(const OV_TICKET *a) {
-	return KS_AC_INSTANTIABLE;
-}
-
-//we need ony a getaccess for the getVar service
-OV_DLLVAREXPORT OV_TICKET_VTBL defaultticketvtblCreateObj = {
-	NULL,
-	NULL,
-	NULL,
-	ov_kshttp_ticket_defaultticket_getaccess
-};
-
 #define EXEC_CREATEOBJECT_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		Ov_SetDynamicVectorLength(&factorymatch,0,STRING);\
 		Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);\
@@ -79,7 +67,7 @@ OV_RESULT kshttp_exec_createObject(OV_STRING_VEC* const args, OV_STRING* message
 	OV_CREATEOBJECT_PAR	params;
 	OV_CREATEOBJECT_RES	result;
 
-	static OV_TICKET ticket = { &defaultticketvtblCreateObj,  OV_TT_NONE };
+	OV_TICKET* pticket = NULL;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -158,7 +146,13 @@ OV_RESULT kshttp_exec_createObject(OV_STRING_VEC* const args, OV_STRING* message
 		addrp ++;
 	}
 
-	ov_ksserver_createobject(2, &ticket, &params, &result);
+	//create NONE-ticket
+	pticket = ksbase_NoneAuth->v_ticket.vtbl->createticket(NULL, OV_TT_NONE);
+
+	ov_ksserver_createobject(2, pticket, &params, &result);
+
+	/*	delete Ticket	*/
+	pticket->vtbl->deleteticket(pticket);
 
 	/**
 	 * Parse result from KS function

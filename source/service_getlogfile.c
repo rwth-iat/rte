@@ -78,7 +78,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 	Ov_SetDynamicVectorLength(&frommatch,0,STRING);
 	kshttp_find_arguments(args, "from", &frommatch);
 	if(frommatch.veclen == 1){
-		fr = kshttp_asciitotime(&from, frommatch.value[0], response_format);
+		fr = kshttp_asciitotime(&from, frommatch.value[0]);
 	}else{
 		from.secs = 0;
 		from.usecs = 0;
@@ -92,7 +92,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 	Ov_SetDynamicVectorLength(&tomatch,0,STRING);
 	kshttp_find_arguments(args, "to", &tomatch);
 	if(tomatch.veclen == 1){
-		fr = kshttp_asciitotime(&to, tomatch.value[0], response_format);
+		fr = kshttp_asciitotime(&to, tomatch.value[0]);
 	}else{
 		ov_time_gettime(&to);
 	}

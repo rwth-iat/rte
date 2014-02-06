@@ -288,7 +288,7 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 /**
  * Convert a XML, TCL or plaintext timestring into a time (local time)
 */
-OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring){
 	//asciitotime has timeformat 2002/05/30 09:30:10.123456
 	//TCL needs                  2002-05-30 09:30:10.123
 	//XML needs                  2002-05-30T09:30:10.123456
@@ -327,7 +327,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSH
 		return OV_ERR_OK;
 	}
 	//XML format requested
-	if(ptime-secs < 0){
+	if(ptime->secs < 0){
 		//will be checked at the end
 		secs = -ptime->secs;
 	}
