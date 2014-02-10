@@ -30,7 +30,7 @@
 #define OV_COMPILE_LIBOV
 
 #include "libov/ov_supervise.h"
-
+#include "libov/ov_config.h"
 #include <setjmp.h>
 #if OV_SYSTEM_UNIX
 #include <sys/time.h>

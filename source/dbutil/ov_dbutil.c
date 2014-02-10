@@ -25,7 +25,7 @@
  *	--------
  *	03-Jul-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
  *	20-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
- *	11-Oct-2004 Ansgar Münnemann <ansgar@plt.rwth-aachen.de>: integration of extended infos and dbdump functions.
+ *	11-Oct-2004 Ansgar Mï¿½nnemann <ansgar@plt.rwth-aachen.de>: integration of extended infos and dbdump functions.
  */
 
 #include <stdio.h>
@@ -38,7 +38,7 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
-
+#include "libov/ov_config.h"
 
 /*	----------------------------------------------------------------------	*/
 /*
@@ -557,7 +557,7 @@ void ov_instanceoutput(
 	fprintf(handle, "%s", res);
 	ov_memstack_unlock();
 
-	/* schreibt den Namen der zugeörigen Bibliothek und Klasse aus */
+	/* schreibt den Namen der zugeï¿½rigen Bibliothek und Klasse aus */
 	fprintf(handle, " : CLASS ");
 	ov_memstack_lock();
 	res = ov_path_getcanonicalpath( Ov_StaticPtrCast(ov_object, pclass), 2);
