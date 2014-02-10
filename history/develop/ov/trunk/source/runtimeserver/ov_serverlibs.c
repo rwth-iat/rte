@@ -6,7 +6,7 @@
  * ov_runtimeserver has to be linked with "-Wl,--whole-archive -Wl,-z,muldefs"
  */
 
-
+#include "libov/ov_config.h"
 
 #if OV_STATIC_LIBRARIES
 
@@ -15,17 +15,18 @@
 #include "libov/ov_logfile.h"
 #include "libov/ov_macros.h"
 #include "ov_ksserver_stripped.h"
-#include "ksserv.h"
-#include "ksservtcp.h"
+#include "ksbase.h"
+#include "TCPbind.h"
+#include "ksxdr.h"
+#include "kshttp.h"
 #include "fb.h"
-#include "iec61131stdfb.h"
-
 
 Ov_BeginStaticLibraryTable
-Ov_DefineStaticLibrary(ksserv)
-Ov_DefineStaticLibrary(ksservtcp)
+Ov_DefineStaticLibrary(ksbase)
+Ov_DefineStaticLibrary(TCPbind)
+Ov_DefineStaticLibrary(ksxdr)
+Ov_DefineStaticLibrary(kshttp)
 Ov_DefineStaticLibrary(fb)
-Ov_DefineStaticLibrary(iec61131stdfb)
 Ov_EndStaticLibraryTable;
 
 #endif

@@ -75,6 +75,12 @@
 #define OV_SYSTEM_UNIX 0
 #endif
 
+/* No-MMU Defines */
+/* set this to 1 if your hardware has no MMU 
+   No-MMU systems using uclibc do neither support dynamic linking nor the full libm	*/
+#define OV_ARCH_NOMMU	0
+
+
 /*
 *	Compiler
 *	--------
@@ -146,8 +152,13 @@
 */
 #if OV_SYSTEM_UNIX
 #define OV_DYNAMIC_DATABASE		0
+#if !OV_ARCH_NOMMU
 #define OV_STATIC_LIBRARIES		0
-#define OV_DYNAMIC_LIBRARIES	1
+#define OV_DYNAMIC_LIBRARIES		1
+#else
+#define OV_STATIC_LIBRARIES		1
+#define OV_DYNAMIC_LIBRARIES		0
+#endif
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".so"
 #define OV_DLLFNCEXPORT			/* __attribute__ ((visibility ("hidden"))) in conjunction with -fvisibility=hidden to gcc options is a possibility to simulate this for ELF, we leave it out ATM for the support of BFLAT on embadded systems*/
@@ -158,8 +169,13 @@
 
 #if OV_SYSTEM_NT
 #define OV_DYNAMIC_DATABASE		0
+#if !OV_ARCH_NOMMU
 #define OV_STATIC_LIBRARIES		0
-#define OV_DYNAMIC_LIBRARIES	1
+#define OV_DYNAMIC_LIBRARIES		1
+#else
+#define OV_STATIC_LIBRARIES		1
+#define OV_DYNAMIC_LIBRARIES		0
+#endif
 #define OV_MEMSPEC
 #define OV_DLLFLNSUFFIX			".dll"
 #if OV_COMPILER_MSVC
@@ -308,10 +324,7 @@ char *strdup(const char *s);
 #define TRUE (1)
 #endif
 
-/*No-MMU Defines*/
 
-/*set this to 1 if your hardware has no MMU*/
-#define OV_ARCH_NOMMU	0
 
 
 #endif
