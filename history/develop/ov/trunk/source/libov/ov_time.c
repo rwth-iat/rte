@@ -31,6 +31,7 @@
 
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
+#include "libov/ov_config.h"
 
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
@@ -361,26 +362,31 @@ static OV_RESULT ov_time_asciitotime_internal(
 		secs = mktime(&tm);
 	}else{
 		//POSIX forgot the utc version of mktime
-		#if OV_SYSTEM_UNIX
-			//unix has
-			//time_t timegm(struct tm *);
-			secs = timegm(&tm);
-		#endif
+		#if OV_ARCH_NOMMU
+			// uclibc does not always know timegm or similar
+			return OV_ERR_NOTIMPLEMENTED;
+		#else
+			#if OV_SYSTEM_UNIX
+				//unix has
+				//time_t timegm(struct tm *);
+				secs = timegm(&tm);
+			#endif
 
-		#if OV_SYSTEM_NT
-			#if OV_COMPILER_CYGWIN && __MSVCRT_VERSION__ >= 0x0800
-				//Microsoft invented _mkgmtime (but this is only available in minGW with MSVCRT_VERSION>=800
-				secs = _mkgmtime(&tm);
-			#elif OV_COMPILER_MSVC
-				secs = _mkgmtime(&tm);
-			#else
-				//there is no clean way for doing this without much code problems
+			#if OV_SYSTEM_NT
+				#if OV_COMPILER_CYGWIN && __MSVCRT_VERSION__ >= 0x0800
+					//Microsoft invented _mkgmtime (but this is only available in minGW with MSVCRT_VERSION>=800
+					secs = _mkgmtime(&tm);
+				#elif OV_COMPILER_MSVC
+					secs = _mkgmtime(&tm);
+				#else
+					//there is no clean way for doing this without much code problems
+					return OV_ERR_NOTIMPLEMENTED;
+				#endif
+			#endif
+
+			#if OV_SYSTEM_UNIX + OV_SYSTEM_NT != 1
 				return OV_ERR_NOTIMPLEMENTED;
 			#endif
-		#endif
-
-		#if OV_SYSTEM_UNIX + OV_SYSTEM_NT != 1
-			return OV_ERR_NOTIMPLEMENTED;
 		#endif
 	}
 	if(secs == -1) {
