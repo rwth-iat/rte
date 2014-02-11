@@ -24,8 +24,7 @@
 #	17-Jun-1998 Dirk Meyer <dirk@plt.rwth-aachen.de>: File created.
 #	16-Apr-1999 Dirk Meyer <dirk@plt.rwth-aachen.de>: Major revision.
 #	09-Jul-2001 Ansgar M�nnemann <ansgar@plt.rwth-aachen.de>: ov_builder included.
-#	02-Jun-2013 Sten Gruener <s.gruener@plt.rwth-aachen.de>: Notes on valgrind.
-#	10-Feb-2014 Lars Evertz <l.evertz@plt.rwth-aachen.de>: Notes on Cross compiling and corresponding enhancements, notes on static linking	
+#   02-Jun-2013 Sten Gruener <s.gruener@plt.rwth-aachen.de>: Notes on valgrind.
 
 #===Notes on valgrind===#
 # In case you want to use valgrind to search for memleaks, do the following:
@@ -40,17 +39,6 @@
 #
 # In case of segfaults, try to run suspect libraries without creating /acplt/malloc and watch for
 # database miss output in the console. You may work on stack memory with ov_database_* functions
-
-#===Notes on Cross compiling===#
-#  In case you want to cross-compile ov (libov, as well as runtimeserver etc.) 
-#  search this file for __CROSS__ and perform the specified modifications in the comments found.
-#  Modifications concern build paths and targets for special architectures.
-
-#===Notes on staticly linked servers===#
-#  If you need a ststicly linked runtiemserver use the target ov_runtimeserver-static.
-#  In this case you need to uncomment the rule for ov_serverlibs.o and fit it to the libraries of your choice.
-#  Don't forget to fit the 'ov_serverlibs.c' file to the libraries of your choice then.
-#  The target 'statics' builds a static libov, a staticly linked dbutil and a staticly linked runtimeserver.
 
 #	Filename conventions
 #	--------------------
@@ -79,12 +67,6 @@ COMPILER		= GNU
 
 FLEX			= flex
 BISON			= bison
-
-#__CROSS__ uncomment the following lines when cross compiling for a target without MMO, using uclibc
-#CC = ucfront-gcc gcc
-#CC_FLAGS = -g -Wall -O2 -fomit-frame-pointer -pipe -msoft-float -fno-builtin -DEMBED -fno-strict-aliasing
-#LD	= $(CC) -Wl,-elf2flt -msoft-float
-#LD_FLAGS = 
 
 CC			= gcc
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
@@ -130,8 +112,6 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 
 targets: $(TARGETS)
 
-statics: $(OV_LIBOV_LIB) ov_dbutil-static ov_runtimeserver-static
-
 example: $(EXAMPLE)
 	@
 
@@ -152,29 +132,11 @@ all: targets example
 .y.c:
 	$(BISON) -t -d -o$@ $<
 
-
-#__CROSS__ when cross cimpiling you need to remove the './' before Codegen as you do not want to unse the codegen just cross-compiled on your local machine
 .ovm.c:
 	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
 
 .ovm.h:
 	./$(OV_CODEGEN_EXE) -I $(OV_MODEL_DIR) -f $< -l $(notdir $(basename $<))
-
-
-#   Specialties for staticly linked servers
-#   -----------------------------------------
-
-#	uncomment the lines below for a staticly linked server. Add the '-I' paths for the libraries of your choice, corresponding to the libraries in the 'ov_serverlibs.c' file
-
-#ov_serverlibs.o	:	ov_serverlibs.c
-#	$(COMPILE_C) $< -o $@ -I../../../../../../ksbase/include/	\
-#			-I../../../../../../ksbase/build/linux/	\
-#			-I../../../../../../ksxdr/build/linux/	\
-#			-I../../../../../../kshttp/build/linux/	\
-#			-I../../../../../../TCPbind/build/linux/	\
-#			-I../../../../../../fb/build/linux/
-			
-
 
 #   Dependencies
 #   ------------
@@ -238,11 +200,6 @@ $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
 $(OV_DBUTIL_EXE) : $(OV_DBUTIL_OBJ) $(OV_LIBOV_DLL)
 	$(LINK) -rdynamic -o $@ $^ $(C_LIBS) $(LD_LIB)
 
-#	ACPLT/OV database utility staticly linked
-
-ov_dbutil-static : $(OV_DBUTIL_OBJ) $(OV_LIBOV_LIB)
-	$(LINK) -o $(OV_DBUTIL_EXE) $^ ../../../../libml/libml.a
-
 #	ACPLT/KS-Server for ACPLT/OV
 
 $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
@@ -252,23 +209,6 @@ $(OV_SERVER_EXE) : $(OV_SERVER_OBJ) $(OV_LIBOVKS_DLL) $(OV_LIBOV_DLL)
 
 $(OV_RUNTIMESERVER_EXE) : $(OV_RUNTIMESERVER_OBJ) $(OV_LIBOV_DLL)
 	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
-
-#	ACPLT Runtime-Server for ACPLT/OV staticly linked
-
-ov_runtimeserver-static : $(OV_RUNTIMESERVER_OBJ) $(OV_LIBOV_LIB)
-	$(LINK) -Wl,--whole-archive -Wl,-z,muldefs -o $(OV_RUNTIMESERVER_EXE) $^	\
-			libs/ksbase.a	\
-			libs/ksxdr.a	\
-			libs/kshttp.a	\
-			libs/TCPbind.a	\
-			libs/fb.a	\
-			../../../../libml/libml.a
-			
-#__CROSS__ uncomment the following command when compiling for No-MMU-Systems using uclibc
-#__CROSS__ 'flthdr -s' sets the stack-size for the executable. Don't forget to leave the <TAB> there. This is still part of the rule
-#	flthdr -s 65535 $(OV_RUNTIMESERVER_EXE)
-
-
 
 #	ACPLT/OV database dumper
 
