@@ -152,7 +152,7 @@ cshmi.prototype = {
 		//fill cache if possible
 		if (typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
-			if (response !== null && response !== "" && response !== "{}" && response !== "{{}}" && response !== "{{{}}}" && response.indexOf("KS_ERR") === -1){
+			if (response && response !== "" && response !== "{}" && response !== "{{}}" && response !== "{{{}}}" && response.indexOf("KS_ERR") === -1){
 				if(response.charAt(1) == "{"){
 					//tcl wraps two braces
 					response = response.slice(2,-2);
@@ -1456,7 +1456,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setStaticValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
@@ -1502,7 +1502,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setConCatValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
@@ -1555,7 +1555,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("cshmi._setValue on "+this.ObjectPath+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setMathValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
@@ -2534,7 +2534,7 @@ cshmi.prototype = {
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
 		
-		//todo bei UND verkn�pfung kann man evtl fruehzeitig eine l�sung haben
+		//todo bei UND verknuepfung kann man evtl fruehzeitig eine loesung haben
 		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
@@ -3468,6 +3468,10 @@ cshmi.prototype = {
 				//using the transparent line for visualisation the manipulation as a helperline
 				this.setAttribute("stroke-width", "3px");
 				this.setAttribute("opacity", "1");
+				
+				//fixme
+				//limit position
+				//alle Events von VisualObject reimplementieren
 				
 				if(this.style.cursor === "col-resize"){
 					this.setAttribute("x1", newx);
