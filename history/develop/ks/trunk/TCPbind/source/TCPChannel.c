@@ -566,7 +566,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		}
 		else
 		{
-			KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+			#if LOG_KS || LOG_KS_DEBUG
+				if(thisCh->v_ConnectionTimeOut != thisCh->v_UnusedDataTimeOut){
+					//too much noise every millisecond if no one feels responsive for this data
+					KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+				}
+			#endif
 			thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
 			Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 		}
