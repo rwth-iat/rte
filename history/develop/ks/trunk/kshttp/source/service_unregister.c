@@ -67,7 +67,7 @@ OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, 
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable name not found");
 		EXEC_UNREGISTER_RETURN fr; //400
-	}else if(ks_isvalidname(match.value[0])){
+	}else if(!ks_isvalidname(match.value[0])){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(message, response_format, &fr, 1, ": Server name not valid");
 		EXEC_UNREGISTER_RETURN fr; //400
