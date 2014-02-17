@@ -210,7 +210,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 	/*
 	 * If no socket is open, open one and start listening.
-	 * This code was copied from ct 19/12. If is meant to make the sockets IPv6 compatible.
+	 * This code was copied from ct magazine 19/12. It is meant to make the sockets IPv6 compatible.
 	 */
 	if(!thisLi->v_SocketState)	//no socket open
 	{
@@ -246,24 +246,25 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					continue;
 				}
 
-				if (walk->ai_family == AF_INET6)
+				if(walk->ai_family == AF_INET)
 				{
-
+					KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
+				}
+				else if (walk->ai_family == AF_INET6)
+				{
 					KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
+					//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
 					if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
 					{
 						continue;
 					}
 				}
-				else if(walk->ai_family != AF_INET)
-				{		//Whitelisting IPV4 and IPV6
+				else
+				{
+					//Blacklisting other than IPv4 and IPv6
 					KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
 					CLOSE_SOCKET(fd);
 					continue;
-				}
-				else
-				{
-					KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
 				}
 
 				if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
@@ -312,7 +313,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			{
 				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
 			}
+			//remembering IPv4 socket
 			thisLi->v_socket[0] = sockfds[0];
+			//remembering IPv6 socket
 			thisLi->v_socket[1] = sockfds[1];
 #if OV_SYSTEM_NT
 			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
@@ -407,8 +410,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			{
 				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
 			}
-
+			//remembering IPv4 socket
 			thisLi->v_socket[0] = fd;
+			//setting IPv6 socket to initial state
 			thisLi->v_socket[1] = -1;
 #if OV_SYSTEM_NT
 			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET))
@@ -423,7 +427,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
 			}
 		}
-			KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
+		KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
 	}
 		/**
 		 * Socket is open now
