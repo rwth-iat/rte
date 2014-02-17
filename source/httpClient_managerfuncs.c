@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2013
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -79,6 +79,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_DynamicPtrCast(ksbase_Channel, Ov_GetFirstChild(ov_containment, thisCl));
 
+	#if LOG_KS || LOG_KS_DEBUG
+		OV_STRING strContent = NULL;
+	#endif
+
 	if(!thisCl || !pChannel ){
 		*result = OV_ERR_BADPLACEMENT;
 		return OV_ERR_BADPLACEMENT;
@@ -92,7 +96,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 		KS_logfile_debug(("Not registered at %s! It is no Manager.", pChannel->v_address));
 	}else{
 		*result = KS_ERR_GENERIC;
-		KS_logfile_debug(("Not registered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode));
+		#if LOG_KS || LOG_KS_DEBUG
+			strContent = Ov_HeapMalloc(thisCl->v_ServerResponse.contentLength+1);
+			strncpy(strContent, (OV_STRING)pChannel->v_inData.readPT, thisCl->v_ServerResponse.contentLength);
+			strContent[thisCl->v_ServerResponse.contentLength] = '\0';
+			KS_logfile_debug(("Not registered at %s! Got http code: %i, with content: %s", pChannel->v_address, thisCl->v_httpStatusCode, strContent));
+			Ov_HeapFree(strContent);
+		#endif
 	}
 
 	return OV_ERR_OK;
