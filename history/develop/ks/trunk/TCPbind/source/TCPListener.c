@@ -168,6 +168,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 	return;
 }
 
+typedef enum TCPBIND_PROT {PROTUNDEFINED=0,IPv4=4,IPv6=6} TCPBIND_PROT;
+
 OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		OV_INSTPTR_ksbase_ComTask	this
 ) {
@@ -179,23 +181,23 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	OV_INSTPTR_ksbase_ProtocolIdentificator pProtIdent = NULL;
 	OV_VTBLPTR_ksbase_ProtocolIdentificator pVTBLProtIdent = NULL;
 	OV_BOOL protV4only = FALSE;
-	struct addrinfo *res;
+	struct addrinfo *resultingaddrinfo;
 	struct addrinfo hints;
 	int ret;
-	char portbuf [12];
-	int fd = 0, n = 0;
-#define NFDS 2
-	int sockfds[NFDS]={-1,-1};
+	int fd = 0;
+	#define NUMPROT 2
+	TCPBIND_PROT Protocolfamily[NUMPROT] = {PROTUNDEFINED, PROTUNDEFINED};
+	int sockfds[NUMPROT]={-1,-1};
 #if OV_SYSTEM_NT
 	char opt_on = 1;
 #else
 	int opt_on = 1;
 #endif
-	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
-	socklen_t sas = sizeof(sa_stor);
-	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
-	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
+	socklen_t sockaddsize;
+	struct sockaddr* sockaddress = (struct sockaddr*) &sa_stor;
+	char hostbuf[NI_MAXHOST];
+	char portbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	fd_set fds;
 	int highest;
@@ -222,35 +224,47 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			protV4only = TRUE;
 		}
 		ov_memstack_unlock();
-
-		memset(&hints, 0, sizeof(struct addrinfo));
-		hints.ai_socktype = SOCK_STREAM;
-		hints.ai_flags = AI_PASSIVE;
 		if(protV4only){
-			hints.ai_family = AF_INET;
+			Protocolfamily[0] = IPv4;
 		}else{
-			hints.ai_family = PF_UNSPEC;
+			Protocolfamily[0] = IPv4;
+			Protocolfamily[1] = IPv6;
 		}
+		portbuf[0] = '\0';
 
-		if(TCPbind_TCPListener_port_get(thisLi) != -1){
-			snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
-		}
-		else
-		{
-			snprintf(portbuf, 12, "%ld", 0l);
-		}
+		for (i = 0; i < NUMPROT; i++){
+			memset(&hints, 0, sizeof(struct addrinfo));
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_flags = AI_PASSIVE;
+			if(Protocolfamily[i] == IPv4){
+				hints.ai_family = AF_INET;
+			}else if(Protocolfamily[i] == IPv6){
+				hints.ai_family = PF_INET6;
+			}else{
+				hints.ai_family = PF_UNSPEC;
+			}
 
-		if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
-		{
-			KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
-			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-			return;
-		}
+			if(TCPbind_TCPListener_port_get(thisLi) != -1){
+				snprintf(portbuf, NI_MAXSERV, "%ld", TCPbind_TCPListener_port_get(thisLi));
+			}
+			else if(portbuf[0] == '\0')
+			{
+				snprintf(portbuf, NI_MAXSERV, "%ld", 0l);
+			}
+			else
+			{
+				//reuse port from the last protocol
+			}
 
-		walk = res;
-		do{
+			if((ret = getaddrinfo(NULL, portbuf, &hints, &resultingaddrinfo)) != 0)
+			{
+				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
+				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			}
+
 			//create an endpoint for communication
-			fd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
 #if OV_SYSTEM_NT
 			if((fd==-1) || (fd==INVALID_SOCKET))
 			{
@@ -259,30 +273,27 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if (fd == -1)
 			{
 #endif
-				walk = walk->ai_next;
 				continue;
 			}
 
-			if(walk->ai_family == AF_INET)
+			if(resultingaddrinfo->ai_family == AF_INET)
 			{
 				KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
 			}
-			else if (walk->ai_family == AF_INET6)
+			else if (resultingaddrinfo->ai_family == AF_INET6)
 			{
 				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
 				{
-					walk = walk->ai_next;
 					continue;
 				}
 			}
 			else
 			{
-				//Blacklisting other than IPv4 and IPv6
+				//Blacklisting other than IPv4 and IPv6, should not get hit
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
 				CLOSE_SOCKET(fd);
-				walk = walk->ai_next;
 				continue;
 			}
 
@@ -293,54 +304,48 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			//assign the address to this socket
-			if (bind(fd, walk->ai_addr, walk->ai_addrlen))
+			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen))
 			{
-				walk = walk->ai_next;
 				continue;
 			}
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
 			if (listen(fd, 5) == -1)
 			{
-				walk = walk->ai_next;
 				continue;
 			}
 
+			//sockaddsize should indicate the amount of space of addr (in bytes) but could be actual size of the last socket address.
+			sockaddsize = sizeof(sa_stor);
 			//get the current address to which we are bound
-			if(getsockname(fd, sa, &sas))
+			if(getsockname(fd, sockaddress, &sockaddsize))
 			{
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				freeaddrinfo(res);
+				freeaddrinfo(resultingaddrinfo);
 				return;
 			}
 
 			//convert the socket address to a corresponding host and service
-			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
+			if(getnameinfo( sockaddress, sockaddsize, hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf), flags))
 			{
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				freeaddrinfo(res);
+				freeaddrinfo(resultingaddrinfo);
 				return;
 			}
 
-			KS_logfile_debug(("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hbuf, sbuf, fd));
+			KS_logfile_debug(("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hostbuf, portbuf, fd));
 
-			if(walk->ai_family == AF_INET){
-				//v4
+			if(Protocolfamily[i] == IPv4){
 				sockfds[0] = fd;
-			}else{
-				//v6
+			}else if(Protocolfamily[i] == IPv6){
 				sockfds[1] = fd;
 			}
-			if(n>=NFDS){
-				break;
-			}
-			walk = walk->ai_next;
-		}while(walk != NULL && !protV4only);
-		freeaddrinfo(res);
+		}
+		freeaddrinfo(resultingaddrinfo);
 
 		if(sockfds[0] == -1 && sockfds[1] == -1){
 			KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
@@ -350,7 +355,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		}
 		if(thisLi->v_port == -1)
 		{
-			TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
+			TCPbind_TCPListener_port_set(thisLi, atoi(portbuf));
 		}
 		//remembering IPv4 socket
 		thisLi->v_socket[0] = sockfds[0];
