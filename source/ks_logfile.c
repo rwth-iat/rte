@@ -49,6 +49,8 @@ DLLFNCEXPORT void ks_logfile_print_sysMsg() {
     p = sysMsg;
     while( ( *p > 31 )
         || ( *p ==   9 )	//Tab character
+        || ( *p ==   13 )	//return character
+        || ( *p ==   10 )	//newline character
         //FormatMessage results in a 2-byte character (Wide Character) string, which is type casted as a 1-byte character
         || ( *p == -28 )	//a umlaut german encoding
         || ( *p == -10 )	//o umlaut
