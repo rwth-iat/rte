@@ -178,6 +178,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	OV_INSTPTR_TCPbind_TCPChannel pNewChannel = NULL;
 	OV_INSTPTR_ksbase_ProtocolIdentificator pProtIdent = NULL;
 	OV_VTBLPTR_ksbase_ProtocolIdentificator pVTBLProtIdent = NULL;
+	OV_BOOL protV4only = FALSE;
 	struct addrinfo *res;
 	struct addrinfo hints;
 	int ret;
@@ -214,143 +215,42 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	 */
 	if(!thisLi->v_SocketState)	//no socket open
 	{
+		ov_memstack_lock();
+		if(!ov_vendortree_getcmdlineoption_value("TCPBIND_NO_IPv6")){
+			protV4only = FALSE;
+		}else{
+			protV4only = TRUE;
+		}
+		ov_memstack_unlock();
 
-		if(!ov_vendortree_getcmdlineoption_value("TCPBIND_NO_IPv6"))
-		{
-			memset(&hints, 0, sizeof(struct addrinfo));
+		memset(&hints, 0, sizeof(struct addrinfo));
+		hints.ai_socktype = SOCK_STREAM;
+		hints.ai_flags = AI_PASSIVE;
+		if(protV4only){
+			hints.ai_family = AF_INET;
+		}else{
 			hints.ai_family = PF_UNSPEC;
-			hints.ai_socktype = SOCK_STREAM;
-			hints.ai_flags = AI_PASSIVE;
+		}
 
-			if(TCPbind_TCPListener_port_get(thisLi) != -1)
-				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
-			else
-				snprintf(portbuf, 12, "%ld", 0l);
-
-			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
-			{
-				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
-			}
-
-			for (walk = res; walk != NULL; walk = walk->ai_next)
-			{
-				fd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-#if OV_SYSTEM_NT
-				if((fd==-1) || (fd==INVALID_SOCKET))
-#else
-				if (fd == -1)
-#endif
-				{
-					continue;
-				}
-
-				if(walk->ai_family == AF_INET)
-				{
-					KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
-				}
-				else if (walk->ai_family == AF_INET6)
-				{
-					KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
-					//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
-					if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
-					{
-						continue;
-					}
-				}
-				else
-				{
-					//Blacklisting other than IPv4 and IPv6
-					KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
-					CLOSE_SOCKET(fd);
-					continue;
-				}
-
-				if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
-				{
-					KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
-					KS_logfile_print_sysMsg();
-				}
-
-				if (bind(fd, walk->ai_addr, walk->ai_addrlen))
-				{
-					continue;
-				}
-
-				if (listen(fd, 5) == -1)
-				{
-					continue;
-				}
-
-
-				if(getsockname(fd, sa, &sas))
-				{
-					KS_logfile_error(("%s: getsockname failed", this->v_identifier));
-					KS_logfile_print_sysMsg();
-					thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-					return;
-				}
-
-				if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
-				{
-					KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
-					KS_logfile_print_sysMsg();
-					thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-					return;
-				}
-
-
-				KS_logfile_debug(("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hbuf, sbuf, fd));
-
-				sockfds[n++] = fd;
-				if(n>=NFDS)
-					break;
-			}
-
-			freeaddrinfo(res);
-			if(thisLi->v_port == -1)
-			{
-				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
-			}
-			//remembering IPv4 socket
-			thisLi->v_socket[0] = sockfds[0];
-			//remembering IPv6 socket
-			thisLi->v_socket[1] = sockfds[1];
-#if OV_SYSTEM_NT
-			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
-					|| (thisLi->v_socket[1] != -1 && thisLi->v_socket[1] != INVALID_SOCKET))
-#else
-			if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
-#endif
-			{
-				thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
-			}
-			else
-			{
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
-			}
+		if(TCPbind_TCPListener_port_get(thisLi) != -1){
+			snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
 		}
 		else
 		{
-			memset(&hints, 0, sizeof(struct addrinfo));
-			hints.ai_family = AF_INET;
-			hints.ai_socktype = SOCK_STREAM;
-			hints.ai_flags = AI_PASSIVE;
+			snprintf(portbuf, 12, "%ld", 0l);
+		}
 
-			if(TCPbind_TCPListener_port_get(thisLi) != -1)
-				snprintf(portbuf, 12, "%ld", TCPbind_TCPListener_port_get(thisLi));
-			else
-				snprintf(portbuf, 12, "%ld", 0l);
+		if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
+		{
+			KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
+			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			return;
+		}
 
-			if((ret = getaddrinfo(NULL, portbuf, &hints, &res)) != 0)
-			{
-				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
-			}
-
-			fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		walk = res;
+		do{
+			//create an endpoint for communication
+			fd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
 #if OV_SYSTEM_NT
 			if((fd==-1) || (fd==INVALID_SOCKET))
 			{
@@ -359,10 +259,31 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			if (fd == -1)
 			{
 #endif
-				KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
-				ks_logfile_print_sysMsg();
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
+				walk = walk->ai_next;
+				continue;
+			}
+
+			if(walk->ai_family == AF_INET)
+			{
+				KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
+			}
+			else if (walk->ai_family == AF_INET6)
+			{
+				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
+				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
+				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
+				{
+					walk = walk->ai_next;
+					continue;
+				}
+			}
+			else
+			{
+				//Blacklisting other than IPv4 and IPv6
+				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
+				CLOSE_SOCKET(fd);
+				walk = walk->ai_next;
+				continue;
 			}
 
 			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
@@ -371,67 +292,88 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				KS_logfile_print_sysMsg();
 			}
 
-			if (bind(fd, res->ai_addr, res->ai_addrlen))
+			//assign the address to this socket
+			if (bind(fd, walk->ai_addr, walk->ai_addrlen))
 			{
-#if OV_SYSTEM_NT
-				errno = WSAGetLastError();
-#endif
-				KS_logfile_error(("%s: failed to bind to socket: %d", thisLi->v_identifier, errno));
-				ks_logfile_print_sysMsg();
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
+				walk = walk->ai_next;
+				continue;
 			}
+
+			//mark the socket as a passive socket, to be able to accept incoming connections to it
 			if (listen(fd, 5) == -1)
 			{
-				KS_logfile_error(("%s: failed to start listening on socket: %d", thisLi->v_identifier, errno));
-				ks_logfile_print_sysMsg();
-				printf("Listener->port:\t%lu\ngetaddinfo-port:\t%d", thisLi->v_port, atoi(sbuf));
-				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
+				walk = walk->ai_next;
+				continue;
 			}
+
+			//get the current address to which we are bound
 			if(getsockname(fd, sa, &sas))
 			{
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				freeaddrinfo(res);
 				return;
 			}
 
+			//convert the socket address to a corresponding host and service
 			if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
 			{
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				freeaddrinfo(res);
 				return;
 			}
 
-			freeaddrinfo(res);
-			if(thisLi->v_port == -1)
-			{
-				TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
+			KS_logfile_debug(("%s: listening on %s on port %s (socket: %d)",this->v_identifier, hbuf, sbuf, fd));
+
+			if(walk->ai_family == AF_INET){
+				//v4
+				sockfds[0] = fd;
+			}else{
+				//v6
+				sockfds[1] = fd;
 			}
-			//remembering IPv4 socket
-			thisLi->v_socket[0] = fd;
-			//setting IPv6 socket to initial state
-			thisLi->v_socket[1] = -1;
-#if OV_SYSTEM_NT
-			if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET))
-#else
-			if(thisLi->v_socket[0] != -1)
-#endif
-			{
-				thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+			if(n>=NFDS){
+				break;
 			}
-			else
-			{
-				thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
-			}
+			walk = walk->ai_next;
+		}while(walk != NULL && !protV4only);
+		freeaddrinfo(res);
+
+		if(sockfds[0] == -1 && sockfds[1] == -1){
+			KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
+			ks_logfile_print_sysMsg();
+			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			return;
 		}
-		KS_logfile_debug(("%s: sockets are: %d and %d", thisLi->v_identifier, thisLi->v_socket[0], thisLi->v_socket[1]));
+		if(thisLi->v_port == -1)
+		{
+			TCPbind_TCPListener_port_set(thisLi, atoi(sbuf));
+		}
+		//remembering IPv4 socket
+		thisLi->v_socket[0] = sockfds[0];
+		//remembering IPv6 socket
+		thisLi->v_socket[1] = sockfds[1];
+#if OV_SYSTEM_NT
+		if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
+				|| (thisLi->v_socket[1] != -1 && thisLi->v_socket[1] != INVALID_SOCKET))
+#else
+		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
+#endif
+		{
+			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
+		}
+		else
+		{
+			thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
+		}
 	}
-		/**
-		 * Socket is open now
-		 */
+
+	/**
+	 * Socket is open now
+	 */
 
 	if(thisLi->v_SocketState == TCPbind_CONNSTATE_OPEN)
 	{
