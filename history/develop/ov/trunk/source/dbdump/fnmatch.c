@@ -251,6 +251,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_tt *err_c) {
 			list_el->contents.string = (char*)malloc(2);
 			if (list_el->contents.string == NULL) {
 				*err_c = ERR_NO_MEM;
+				free(list_el);
 				return(NULL);
 			}
 			if (last == NULL) {
@@ -281,6 +282,7 @@ list_t *Acplt_Compile_Mask (char *mask, error_tt *err_c) {
 			list_el->contents.string = (char*)malloc(2);
 			if (list_el->contents.string == NULL) {
 				*err_c = ERR_NO_MEM;
+				free(list_el);
 				return(NULL);
 			}
 			if (last == NULL) {
