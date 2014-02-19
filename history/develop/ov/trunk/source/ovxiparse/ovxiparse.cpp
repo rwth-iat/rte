@@ -1362,7 +1362,7 @@ bool write_state(KS_STATE state)
 
 //-------------------------------------------------------------------------------
 
-// write the semantic falgs of a variable
+// write the semantic flags of a variable
 bool write_flags(uint flags)
 {
 	uint				i,j;
@@ -1385,6 +1385,7 @@ bool write_flags(uint flags)
 	}
 	arg[j]=0;
 	fprintf(fout, "%s", arg);
+	free(arg);
 	return TRUE;
 }
 
