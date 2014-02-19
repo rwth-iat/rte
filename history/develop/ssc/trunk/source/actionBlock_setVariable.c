@@ -22,6 +22,12 @@ OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
     const OV_STRING  value
 ) {
     // check input
+	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//allow INITIAL_VALUE for loading an backup
+		return OV_ERR_OK;
+	}
+
+	//fixme this problem has to be solved!
     if (ov_string_compare(value, NULL)==0)
     {
     	pinst->v_error=TRUE;

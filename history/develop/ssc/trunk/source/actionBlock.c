@@ -76,6 +76,11 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionName_set(
     OV_INSTPTR_ssc_actionBlock          pinst,
     const OV_STRING  value
 ) {
+	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//allow INITIAL_VALUE for loading an backup
+		return OV_ERR_OK;
+	}
+
 	return Ov_Call1 (ssc_actionBlock, pinst, setActionName, value);
 }
 

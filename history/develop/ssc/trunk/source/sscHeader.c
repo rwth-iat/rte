@@ -37,6 +37,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
 	OV_INSTPTR_ssc_step foundStep = NULL;
 
+	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//allow INITIAL_VALUE for loading an backup
+		return OV_ERR_OK;
+	}
 	if (pinst->v_workingState == WOST_INIT)
 	{
 		//find the matching init step
@@ -101,8 +105,13 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	int i = 0; // loop variable
 	int n = 1;
 	OV_STRING *pEndStepList = ov_string_split(value,",",&count);
-
 	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
+
+	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
+		//allow INITIAL_VALUE for loading an backup
+		return OV_ERR_OK;
+	}
+
 	Ov_ForEachChild(ov_containment, pobj, pstep)
 	{
 		if(Ov_CanCastTo(ssc_step, pstep))
