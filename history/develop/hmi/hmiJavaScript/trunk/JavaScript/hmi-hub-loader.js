@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -155,7 +155,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 		}else{
 			node.setAttribute("type", "text/javascript");
 		}
-		node.setAttribute("charset", "ISO-8859-1");
+		node.setAttribute("charset", "windows-1252");
 		if (node.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
 			node.src = base+hubFilelist[idx];

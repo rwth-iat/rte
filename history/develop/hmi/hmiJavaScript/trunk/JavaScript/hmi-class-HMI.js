@@ -1014,6 +1014,7 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		
+		//prevent further interpretion of timeevents
 		this.cshmi = null;
 		
 		//deactivate the Select-Boxes, because there is no usefull content
@@ -1062,6 +1063,7 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		
+		//prevent further interpretion of timeevents
 		this.cshmi = null;
 		
 		HMI.PossSheets.disabled = true;
@@ -1126,6 +1128,7 @@ HMI.prototype = {
 		deleteChilds(this.InfoOutput);
 		document.getElementById("idBookmark").style.display = "none";
 		
+		//prevent further interpretion of timeevents
 		this.cshmi = null;
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1720,7 +1723,7 @@ HMI.prototype = {
 		}
 		
 		if (isNaN(absolutex) || isNaN(absolutey) || isNaN(absoluterotate)){
-			this.hmi_log_warning("SVG-ERROR - parentNode of "+Element.id+"  is no hmi-component (has no localx or localy). The move-Gesture will not work on child elements!");
+			this.hmi_log_warning("SVG-ERROR - parentNode of "+Element.id+" has no localx or localy. Some features will not work.");
 			Element.setAttribute("absolutex", 0);
 			Element.setAttribute("absolutey", 0);
 			Element.setAttribute("absoluterotate", 0);

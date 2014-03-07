@@ -4662,50 +4662,9 @@ cshmi.prototype = {
 
 		VisualObject.setAttribute("overflow", "visible");
 		
+		var HTMLcontent = requestList[ObjectPath]["HTMLcontent"];
 		var sourceList = requestList[ObjectPath]["sourceOfLibrary"];
 		var jsOnload = requestList[ObjectPath]["jsOnload"];
-		var HTMLcontent = requestList[ObjectPath]["HTMLcontent"];
-				
-		var sourceListSplitted = sourceList.split(" ");
-		jsloadObserver = new cshmiObserver(VisualObject, ObjectPath, sourceListSplitted.length);
-		
-
-		loadLibrary:
-		//externe (via http erreichbare) Bibliotheken in head anhaengen
-		for(var i = 0; i < sourceListSplitted.length; ++i){
-			if(sourceListSplitted[i] === ""){
-				continue;
-			}
-			var thisEntry = new ObserverEntry(sourceListSplitted[i]);
-			jsloadObserver.ObserverEntryArray[i] = thisEntry;
-
-			//append only if same JS-library is not already loaded
-			var scripts = document.getElementsByTagName('script');
-			
-			for (var j = 0; j < scripts.length; ++j) {
-				if (sourceListSplitted[i] === scripts[j].src){
-					continue loadLibrary;
-				}
-			}
-			
-			var node = document.createElement("script");
-			node.type = "text/javascript";
-			node.src = sourceListSplitted[i];
-			node.async = false;
-//			node.onload = node.onerror = function(evt){
-//				//todo hier sauber insertvalue oder so nutzen. parameter muss man rausfinden
-//				thisEntry.requirementsFulfilled = true;
-//				if(evt.type !== "load"){
-//				};
-//				HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
-//				jsloadObserver.checkAndTrigger();
-//				//jsonload muss auch gestartet werden, wenn wir keine Bib laden!
-//			};
-
-			var head = document.head || document.getElementsByTagName('head')[0];
-			head.appendChild(node);
-			jsloadObserver.checkAndTrigger();
-		}
 		
 		if(HTMLcontent !== ""){
 			//create foreignObject in <SVG>-Element
@@ -4755,108 +4714,156 @@ cshmi.prototype = {
 			}
 		}
 		
-		
-		//create object 'cshmimodel'
-		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, HMI.cshmi);
-		var varNames = new Array();
+		if(sourceList !== "" || jsOnload  !== ""){
+			//create object 'cshmimodel'
+			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, HMI.cshmi);
+			var varNames = new Array();
 
-		//find out at which position a SetValue stands
-		for(var i = 0; i < responseArray.length; ++i){
-			
-			var objectType = responseArray[i].split(' ')[1];
-			
-			if(objectType.match(/SetValue/)){	
-				//get names of created SetValues
-				varNames.push(responseArray[i].split(' ')[0]);
+			//find out at which position a SetValue stands
+			for(var i = 0; i < responseArray.length; ++i){
+				
+				var objectType = responseArray[i].split(' ')[1];
+				
+				if(objectType.match(/SetValue/)){	
+					//get names of created SetValues
+					varNames.push(responseArray[i].split(' ')[0]);
+				}
 			}
+			
+			function myVariable(VisualObject, ObjectPath, varName) {
+				this.VisualObject = VisualObject;
+				this.ObjectPath = ObjectPath;
+				this.varName = varName;
+				this.getValue = function () {
+					var getValueObjectPath = ObjectPath+"/"+varName+".value";
+					return HMI.cshmi._getValue(VisualObject, getValueObjectPath);
+				};
+				this.setValue = function (newValue) {
+					var setValueObjectPath = ObjectPath+"/"+varName;
+					HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue);
+				};
+			};
+			
+			var cshmimodel = new Object();
+			cshmimodel.variables = new Object();
+
+			for(var i = 0; i < varNames.length; ++i){
+				cshmimodel.variables[varNames[i]] = new myVariable(VisualObject, ObjectPath, varNames[i]);
+			}
+			
+			cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
+				HMI.cshmi.ResourceList.Elements["tempPath"] = new Object();
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters = new Object();
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["x"] = x;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["y"] = y;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["rotate"] = rotate;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["hideable"] = hideable;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["TemplateDefinition"] = PathOfTemplateDefinition;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
+				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
+				var VisualChildObject = HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false);
+				VisualObject.appendChild(VisualChildObject);
+				
+				//calculate all offset parameter to be able to display visual feedback
+				//needed now, because we append new components
+				HMI.saveAbsolutePosition(VisualChildObject);
+				
+				//interprete onload Actions if we are already loaded
+				if (HMI.cshmi.initStage === false){
+					HMI.cshmi._interpreteOnloadCallStack();
+				}
+			};
+			
+			cshmimodel.getEP = function(path, requestType, requestOutput) {
+				return HMI.KSClient.getEP(path, requestType, requestOutput);
+			};
+			cshmimodel.getVar = function(path, requestOutput){
+				return HMI.KSClient.getVar(path, requestOutput);
+			};
+			cshmimodel.setVar = function(path, value, type){
+				return HMI.KSClient.setVar(path, value, type);
+			};
+			
+			cshmimodel.createObject = function(path, classname) {
+				return HMI.KSClient.createObject(path, classname);
+			};
+			
+			cshmimodel.deleteObject = function(path) {
+				return HMI.KSClient.deleteObject(path);
+			};
+			
+			cshmimodel.linkObjects = function(pathA, pathB, portnameA) {
+				return HMI.KSClient.linkObjects(pathA, pathB, portnameA);
+			};
+			
+			cshmimodel.unlinkObjects = function(pathA, pathB, portnameA) {
+				return HMI.KSClient.unlinkObjects(pathA, pathB, portnameA);
+			};
+			
+			cshmimodel.renameObjects = function(oldName, newName) {
+				return HMI.KSClient.renameObject(oldName, newName);
+			};
+			
+			//TODO: 
+			//Error-log aufnehmen in API
+			
+			VisualObject.ResourceList = new Object();
+			VisualObject.ResourceList.cshmimodel = cshmimodel;
 		}
 		
-		function myVariable(VisualObject, ObjectPath, varName) {
-			this.VisualObject = VisualObject;
-			this.ObjectPath = ObjectPath;
-			this.varName = varName;
-			this.getValue = function () {
-				var getValueObjectPath = ObjectPath+"/"+varName+".value";
-				return HMI.cshmi._getValue(VisualObject, getValueObjectPath);
-			};
-			this.setValue = function (newValue) {
-				var setValueObjectPath = ObjectPath+"/"+varName;
-				HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue);
-			};
-		};
+		var sourceListSplitted = sourceList.split(" ");
+		jsloadObserver = new cshmiObserver(VisualObject, ObjectPath, sourceListSplitted.length);
 		
-		var cshmimodel = new Object();
-		cshmimodel.variables = new Object();
+		loadLibrary:
+		//externe (via http erreichbare) Bibliotheken in head anhaengen
+		for(var i = 0; i < sourceListSplitted.length; ++i){
+			if(sourceListSplitted[i] === ""){
+				continue;
+			}
+			var thisEntry = new ObserverEntry(sourceListSplitted[i]);
+			jsloadObserver.ObserverEntryArray[i] = thisEntry;
 
-		for(var i = 0; i < varNames.length; ++i){
-			cshmimodel.variables[varNames[i]] = new myVariable(VisualObject, ObjectPath, varNames[i]);
+			//append only if same JS-library is not already loaded
+			var scripts = document.getElementsByTagName('script');
+			
+			for (var j = 0; j < scripts.length; ++j) {
+				if (sourceListSplitted[i] === scripts[j].src){
+					continue loadLibrary;
+				}
+			}
+			
+			var node = document.createElement("script");
+			node.type = "text/javascript";
+			node.src = sourceListSplitted[i];
+			node.async = false;
+//			node.onload = node.onerror = function(evt){
+//				//todo hier sauber insertvalue oder so nutzen. parameter muss man rausfinden
+//				thisEntry.requirementsFulfilled = true;
+//				if(evt.type !== "load"){
+//				};
+//				HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
+//				jsloadObserver.checkAndTrigger();
+//				//jsonload muss auch gestartet werden, wenn wir keine Bib laden!
+//			};
+
+			var head = document.head || document.getElementsByTagName('head')[0];
+			head.appendChild(node);
+			jsloadObserver.checkAndTrigger();
 		}
 		
-		cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
-			HMI.cshmi.ResourceList.Elements["tempPath"] = new Object();
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters = new Object();
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["x"] = x;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["y"] = y;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["rotate"] = rotate;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["hideable"] = hideable;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["TemplateDefinition"] = PathOfTemplateDefinition;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
-			HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
-			var VisualChildObject = HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false);
-			VisualObject.appendChild(VisualChildObject);
-			
-			//calculate all offset parameter to be able to display visual feedback
-			//needed now, because we append new components
-			HMI.saveAbsolutePosition(VisualChildObject);
-			
-			//interprete onload Actions if we are already loaded
-			if (HMI.cshmi.initStage === false){
-				HMI.cshmi._interpreteOnloadCallStack();
-			}
-		};
-		
-		cshmimodel.getEP = function(path, requestType, requestOutput) {
-			return HMI.KSClient.getEP(path, requestType, requestOutput);
-		};
-		cshmimodel.getVar = function(path, requestOutput){
-			return HMI.KSClient.getVar(path, requestOutput);
-		};
-		cshmimodel.setVar = function(path, value, type){
-			return HMI.KSClient.setVar(path, value, type);
-		};
-		
-		cshmimodel.createObject = function(path, classname) {
-			return HMI.KSClient.createObject(path, classname);
-		};
-		
-		cshmimodel.deleteObject = function(path) {
-			return HMI.KSClient.deleteObject(path);
-		};
-		
-		cshmimodel.linkObjects = function(pathA, pathB, portnameA) {
-			return HMI.KSClient.linkObjects(pathA, pathB, portnameA);
-		};
-		
-		cshmimodel.unlinkObjects = function(pathA, pathB, portnameA) {
-			return HMI.KSClient.unlinkObjects(pathA, pathB, portnameA);
-		};
-		
-		cshmimodel.renameObjects = function(oldName, newName) {
-			return HMI.KSClient.renameObject(oldName, newName);
-		};
-		
-		//TODO: 
-		//Error-log aufnehmen in API
-		
-		VisualObject.ResourceList = new Object();
-		VisualObject.ResourceList.cshmimodel = cshmimodel;
-		
-		//"onload" - TODO: noch sporadisch
-		window.setTimeout(function(){
-			HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload);
-		}, 4000);
+		if(jsOnload  !== ""){
+			//"onload" - TODO: noch sporadisch
+			var preserveThis = this;
+			window.setTimeout(function(){
+				if (HMI.cshmi !== preserveThis){
+					//the active cshmi display is not "our" one, cancel Timeout
+					return true;
+				}
+				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload);
+			}, 4000);
+		}
 		
 		return VisualObject;
 	},
