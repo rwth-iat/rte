@@ -26,6 +26,7 @@ proc processDir {dirname} {
 		
 		#default value
 		set mimetype "text/html"
+		set encodingvalue "windows-1252"
 		if { $extension == ".tcl" } {
 			puts "skipping myself"
 			continue
@@ -82,6 +83,7 @@ proc processDir {dirname} {
 		close $in
 		puts $out "\");"
 		puts $out "		ov_string_setvalue(&(pindexhtml->v_${mimetypename}), \"$mimetype\");";
+		puts $out "		ov_string_setvalue(&(pindexhtml->v_${encodingname}), \"$encodingvalue\");";
 		puts $out "	\}"
 		puts "done"
 	}
