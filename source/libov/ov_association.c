@@ -1283,7 +1283,7 @@ OV_RESULT ov_association_linktable_allocate(
 /*
 *	Calculation of linkoffsets and linktablesizes of derived classes, when
 *	inserting a new link with 'addsize' bytes at the linktable address 'offset'
-* 	using the recuriv function 'linktable_insert'
+* 	using the recursive function 'linktable_insert'
 */
 void ov_association_linktable_insert(
 	OV_INSTPTR_ov_class		passocclass,
@@ -1306,7 +1306,7 @@ void ov_association_linktable_insert(
 	/*
 	*	when adjusting the offsets of the child and parent association, we store the
 	*	actual offsets of the associations, so we can prevent the changing
-	*	of teir offsets before the linktable of the instances has been changed
+	*	of their offsets before the linktable of the instances has been changed
 	*/
 
 	/*
