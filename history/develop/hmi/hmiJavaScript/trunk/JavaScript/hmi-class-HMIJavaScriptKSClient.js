@@ -387,12 +387,22 @@ HMIJavaScriptKSClient.prototype = {
 					if(i!=0){
 						newvalue += "}%20{";
 					}
-					newvalue += encodeURIComponent(value[i]);
+					if(escape){
+						//escape is evil, but we need latin1 support
+						newvalue += escape(value[i]);
+					}else{
+						newvalue += encodeURIComponent(value[i]);
+					}
 				}
 				value = newvalue + "}";
 				newvalue = null;
 			}else{
-				value = encodeURIComponent(value);
+				if(escape){
+					//escape is evil, but we need latin1 support
+					value = escape(value);
+				}else{
+					value = encodeURIComponent(value);
+				}
 			}
 			urlparameter = "http://"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
