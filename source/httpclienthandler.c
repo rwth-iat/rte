@@ -316,7 +316,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}else{
 		ov_string_setvalue(&reply_contenttype, "text/plain");
 	}
-	ov_string_setvalue(&reply_encoding, "Windows-1252");
+	ov_string_setvalue(&reply_encoding, "windows-1252");
 
 	//allow javascript connection from any source (CORS)
 	ov_string_setvalue(&responseHeader, "Access-Control-Allow-Origin:*\r\n");

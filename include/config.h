@@ -51,6 +51,13 @@
 #include "ov_ksserver_backend.h"
 #include "NoneTicketAuthenticator.h"
 
+
+#ifdef __GNUC__
+#define UNUSED __attribute__ ((unused))
+#else
+#define UNUSED
+#endif
+
 /*
  * KS_HTTP identifier
  */

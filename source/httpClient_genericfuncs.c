@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2013
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -126,7 +126,7 @@ OV_RESULT kshttp_getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INS
  ******************************************************************************************************************************************************************************/
 
 /*	if there is no connection (open or opening) open one and reset lasteventtime	*/
-static OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
+static OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase UNUSED this, OV_INSTPTR_ksbase_Channel pChannel, OV_VTBLPTR_ksbase_Channel pVtblChannel, OV_BOOL isLocal, OV_STRING host, OV_STRING port)
 {
 	OV_RESULT result;
 
