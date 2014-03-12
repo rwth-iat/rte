@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2013
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	OV_INSTPTR_ksbase_DataHandler this,
 	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* answer
+	KS_DATAPACKET* UNUSED answer
 ) {
 	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_INSTPTR_ksbase_Channel				pChannel = NULL;
@@ -120,6 +120,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 		//we had other failures...
 		thisCl->v_state = KSBASE_CLST_ERROR;
 		thisCl->v_httpParseStatus = HTTP_MSG_DENIED;
+		ksbase_free_KSDATAPACKET(dataReceived);
 		return result;
 	}
 	thisCl->v_httpParseStatus = HTTP_MSG_ACCEPTED;

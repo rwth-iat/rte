@@ -9,8 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 DATABASE = database 
 DATABASECREATEKEYS = -w ksbase -w TCPbind -w ksxdr -w kshttp
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS =
-EXTRA_CC_FLAGS = -DLOG_KS=0
+EXTRA_CC_FLAGS = -DLOG_KS=0 -Wextra
 #EXTRA_CC_FLAGS = -DKSHTTP_DISABLE_GZIP
 EXTRA_LIBS = 
 LD_FLAGS = ../../lib/nt/libz.a -lwsock32
