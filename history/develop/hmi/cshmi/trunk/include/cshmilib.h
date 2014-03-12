@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -85,5 +85,12 @@
 #define CSHMI_ZINDEX_BOTTOM	0
 #define CSHMI_ZINDEX_TOP		ULONG_MAX
 #define CSHMI_ZINDEX_DEFAULT	CSHMI_ZINDEX_TOP
+
+#ifdef __GNUC__
+#define UNUSED __attribute__ ((unused))
+#else
+#define UNUSED
+#endif
+
 
 #endif

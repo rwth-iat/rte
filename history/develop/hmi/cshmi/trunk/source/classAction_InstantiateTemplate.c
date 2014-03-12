@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,3 +64,17 @@
 
 
 #include "cshmilib.h"
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_opacity_set(
+	OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+	const OV_SINGLE  value
+) {
+	if(value > 1.0){
+		pobj->v_opacity = 1;
+	}else if(value < 1.0){
+		pobj->v_opacity = 0;
+	}else{
+		pobj->v_opacity = value;
+	}
+	return OV_ERR_OK;
+}

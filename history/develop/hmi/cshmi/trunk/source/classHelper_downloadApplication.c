@@ -722,10 +722,11 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_cshmi_TimeEvent pTimeEvent = NULL;
 	OV_INSTPTR_cshmi_TranslationSource pTranslationSource = NULL;
 	OV_INSTPTR_cshmi_CreateObject pCreateObject = NULL;
+	OV_INSTPTR_cshmi_Vibrate pVibrate = NULL;
 
 	//be careful to adjust the ov_string_print at the end of the function
-	#define MAXACTIONENTRIES 12
-	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+	#define MAXACTIONENTRIES 13
+	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	OV_STRING strIterate = NULL;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
@@ -1284,9 +1285,53 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 		elementIsfirst = FALSE;
 	}
 
+	elementInstantiated = FALSE;
+	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Vibrate, pObj){
+		elementInstantiated = TRUE;
+		pVibrate = Ov_StaticPtrCast(cshmi_Vibrate, pObj);
+		ov_string_setvalue(&strIterate, "%22");
+		ov_memstack_lock();
+		ov_string_append(&strIterate, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj), 2));
+		ov_memstack_unlock();
+		ov_string_append(&strIterate, "%22:%7B");
+		ov_string_append(&strIterate, "%22Parameters%22:%7B");
+		if(pVibrate->v_pattern.veclen == 0){
+			ov_string_setvalue(&temp, " ");
+		}else if(pVibrate->v_pattern.veclen == 1){
+			ov_memstack_lock();
+			ov_string_print(&temp, "%u", pVibrate->v_pattern.value[0]);
+			ov_memstack_unlock();
+		}else{
+			ov_memstack_lock();
+			ov_string_print(&temp, "%u", pVibrate->v_pattern.value[0]);
+			ov_memstack_unlock();
+			for(i = 1; i < pVibrate->v_pattern.veclen;i++){
+				ov_memstack_lock();
+				ov_string_print(&temp, "%s,%u", temp, pVibrate->v_pattern.value[i]);
+				ov_memstack_unlock();
+			}
+		}
+		ov_string_print(&strIterate, "%s%%22pattern%%22:%%5B%s%%5D", strIterate, temp);
+		ov_string_append(&strIterate, "%7D");
+		ov_string_append(&strIterate, "%7D");
+
+		if(Ov_GetNextChild(ov_instantiation, pObj) != NULL){
+			ov_string_append(&strIterate, ",");
+		}
+		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
+	}
+	if(elementInstantiated == TRUE){
+		ResultListIndex++;
+		if(elementIsfirst == TRUE){
+			ov_string_append(&ResultFormat, "%s");
+		}else{
+			ov_string_append(&ResultFormat, ",%s");
+		}
+		elementIsfirst = FALSE;
+	}
 
 	//concat the result, manual for performance reasons (append is not cheap)
-	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10], ResultListVec[11]);
+	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10], ResultListVec[11], ResultListVec[12]);
 	ov_string_setvalue(&ResultFormat, NULL);
 	ov_string_setvalue(&ParameterName, NULL);
 	ov_string_setvalue(&ParameterValue, NULL);
@@ -1312,7 +1357,7 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
  *
  */
 OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
-    OV_INSTPTR_cshmi_downloadApplication          pThis
+		OV_INSTPTR_cshmi_downloadApplication        UNUSED pThis
 ) {
 	OV_INSTPTR_ov_object pTUcshmi = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;

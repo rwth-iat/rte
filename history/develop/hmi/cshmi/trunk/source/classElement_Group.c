@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -86,6 +86,21 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Group_height_set(
 		return OV_ERR_BADPARAM;
 	}else{
 		pobj->v_height = value;
+	}
+	return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Group_opacity_set(
+	OV_INSTPTR_cshmi_Group          pobj,
+	const OV_SINGLE  value
+) {
+	if(value > 1.0){
+		pobj->v_opacity = 1;
+	}else if(value < 1.0){
+		pobj->v_opacity = 0;
+	}else{
+		pobj->v_opacity = value;
 	}
 	return OV_ERR_OK;
 }

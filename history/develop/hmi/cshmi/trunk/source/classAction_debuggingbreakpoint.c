@@ -40,7 +40,7 @@
 *
 *	File:
 *	------
-*	classAction_debugger.c
+*	classAction_debuggingbreakpoint.c
 *
 *	Editors:
 *	--------
@@ -64,7 +64,7 @@
 
 #include "cshmilib.h"
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_debugger_constructor(
+OV_DLLFNCEXPORT OV_RESULT cshmi_debuggingbreakpoint_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
 	//	local variables
@@ -76,7 +76,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_debugger_constructor(
 	if(Ov_Fail(result))
 		return result;
 
-	//debugger is most usefull before the existing statements
+	//debugger is most useful before the existing statements
 	cshmi_Object_zindex_set(Ov_StaticPtrCast(cshmi_Object, pobj), CSHMI_ZINDEX_BOTTOM);
 
 	return OV_ERR_OK;

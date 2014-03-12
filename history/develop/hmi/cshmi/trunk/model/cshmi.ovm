@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -104,23 +104,29 @@ LIBRARY cshmi
 		COMMENT = "a grouping of elements";
 		VARIABLES
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the group"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the group"
 			INITIALVALUE = 0.0;
 			width : SINGLE
 			HAS_SET_ACCESSOR
+			UNIT = "pixel"
 			COMMENT = "width of the group"
 			INITIALVALUE = 1000.0;
 			height : SINGLE
 			HAS_SET_ACCESSOR
+			UNIT = "pixel"
 			COMMENT = "height of the group"
 			INITIALVALUE = 900.0;
 			opacity : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			rotate : INT
+			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
 			hideable : BOOL
@@ -147,10 +153,12 @@ LIBRARY cshmi
 		VARIABLES
 			width : SINGLE
 			HAS_SET_ACCESSOR
+			UNIT = "pixel"
 			COMMENT = "width of the Template"
 			INITIALVALUE = 100.0;
 			height : SINGLE
 			HAS_SET_ACCESSOR
+			UNIT = "pixel"
 			COMMENT = "height of the Template"
 			INITIALVALUE = 100.0;
 			comment : STRING
@@ -181,9 +189,11 @@ LIBRARY cshmi
 			COMMENT = "fill color (CSS color name or hex like #000000)"
 			INITIALVALUE = "none";
 			opacity : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			rotate : INT
+			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
 		END_VARIABLES;
@@ -219,15 +229,19 @@ LIBRARY cshmi
 		COMMENT = "a line";
 		VARIABLES
 			x1 : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of starting point"
 			INITIALVALUE = 0.0;
-			y1 : SINGLE 
+			y1 : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of starting point"
 			INITIALVALUE = 0.0;
 			x2 : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of ending point"
 			INITIALVALUE = 10.0;
 			y2 : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of ending point"
 			INITIALVALUE = 0.0;
 			strokeWidth : SINGLE
@@ -241,15 +255,19 @@ LIBRARY cshmi
 		COMMENT = "a rectangle";
 		VARIABLES
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the rectangle"
 			INITIALVALUE = 0.0;
 			width : SINGLE
+			UNIT = "pixel"
 			COMMENT = "width of the rectangle"
 			INITIALVALUE = 100.0;
 			height : SINGLE
+			UNIT = "pixel"
 			COMMENT = "height of the rectangle"
 			INITIALVALUE = 100.0;
 			strokeWidth : SINGLE
@@ -263,12 +281,15 @@ LIBRARY cshmi
 		COMMENT = "a circle";
 		VARIABLES
 			cx : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the center of the circle"
 			INITIALVALUE = 0.0;
 			cy : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the center of the circle"
 			INITIALVALUE = 0.0;
 			r : SINGLE
+			UNIT = "pixel"
 			COMMENT = "radius of the circle"
 			INITIALVALUE = 10.0;
 			strokeWidth : SINGLE
@@ -282,15 +303,19 @@ LIBRARY cshmi
 		COMMENT = "an ellipse";
 		VARIABLES
 			cx : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the center of the ellipse"
 			INITIALVALUE = 0.0;
 			cy : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the center of the ellipse"
 			INITIALVALUE = 0.0;
 			rx : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis radius of the ellipse"
 			INITIALVALUE = 5.0;
 			ry : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis radius of the ellipse"
 			INITIALVALUE = 10.0;
 			strokeWidth : SINGLE
@@ -333,9 +358,11 @@ LIBRARY cshmi
 		COMMENT = "text";
 		VARIABLES
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the text starting position"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the text starting position"
 			INITIALVALUE = 10.0;
 			content : STRING
@@ -377,15 +404,19 @@ LIBRARY cshmi
 		COMMENT = "an image, bitmap or vector";
 		VARIABLES
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the image"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the image"
 			INITIALVALUE = 0.0;
 			width : SINGLE
+			UNIT = "pixel"
 			COMMENT = "width of the image (aspect ratio is not preserved!)"
 			INITIALVALUE = 100.0;
 			height : SINGLE
+			UNIT = "pixel"
 			COMMENT = "height of the image (aspect ratio is not preserved!)"
 			INITIALVALUE = 100.0;
 			SVGcontent : STRING
@@ -403,15 +434,19 @@ LIBRARY cshmi
 		COMMENT = "allows HTML content and/or native JS code";
 		VARIABLES
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the Blackbox"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the Blackbox"
 			INITIALVALUE = 0.0;
 			width : SINGLE
+			UNIT = "pixel"
 			COMMENT = "width of the Blackbox"
 			INITIALVALUE = 100.0;
 			height : SINGLE
+			UNIT = "pixel"
 			COMMENT = "height of the Blackbox"
 			INITIALVALUE = 100.0;
 			sourceOfLibrary[] : STRING
@@ -554,15 +589,19 @@ LIBRARY cshmi
 			TemplateDefinition : STRING
 			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			x : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis coordinate of the first Template"
 			INITIALVALUE = 0.0;
 			y : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis coordinate of the first Template"
 			INITIALVALUE = 0.0;
 			xOffset : SINGLE
+			UNIT = "pixel"
 			COMMENT = "x-axis offset to previously instantiated Template"
 			INITIALVALUE = 0.0;
 			yOffset : SINGLE
+			UNIT = "pixel"
 			COMMENT = "y-axis offset to previously instantiated Template"
 			INITIALVALUE = 0.0;
 			maxTemplatesPerDirection : STRING
@@ -586,9 +625,11 @@ LIBRARY cshmi
 			COMMENT = "fill color (CSS color name or hex like #000000)"
 			INITIALVALUE = "none";
 			rotate : INT
+			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
 			opacity : SINGLE
+			HAS_SET_ACCESSOR
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			hideable : BOOL
@@ -655,9 +696,11 @@ LIBRARY cshmi
 		COMMENT = "a multi purpose connection between two objects";
 		VARIABLES
 			offset : SINGLE
+			UNIT = "pixel"
 			COMMENT = "minimum pixel distance from Object till 1st direction change of polyline"
 			INITIALVALUE = 40.0;
 			gridWidth : SINGLE
+			UNIT = "pixel"
 			COMMENT = "Pixel offset between polylines from same Object"
 			INITIALVALUE = 3.0;
 		END_VARIABLES;
@@ -670,7 +713,23 @@ LIBRARY cshmi
 		END_PARTS;
 	END_CLASS;
 	
-	CLASS debugger : CLASS cshmi/Action
+	CLASS RebuildObject : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "rebuild the visual object from event";
+	END_CLASS;
+	
+	CLASS Vibrate : CLASS cshmi/Action
+		IS_INSTANTIABLE;
+		COMMENT = "Vibrate the display component";
+		VARIABLES
+			pattern[] : UINT
+			UNIT = "millisecond"
+			COMMENT = "Vibration pattern for example vib, pause, vib [50, 100, 150]"
+			INITIALVALUE = {1000};
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS debuggingbreakpoint : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "break point in the execution";
 		OPERATIONS
@@ -678,11 +737,6 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	
-	CLASS RebuildObject : CLASS cshmi/Action
-		IS_INSTANTIABLE;
-		COMMENT = "rebuild the visual object from event";
-	END_CLASS;
 	
 	/* Conditions */
 	
@@ -784,7 +838,7 @@ LIBRARY cshmi
 		VARIABLES
 			cyctime : SINGLE
 			HAS_SET_ACCESSOR
-			UNIT = "sec"
+			UNIT = "second"
 			COMMENT = "the cycle time for the execution of the action, zero disables the event"
 			INITIALVALUE = 10.0;
 		END_VARIABLES;
