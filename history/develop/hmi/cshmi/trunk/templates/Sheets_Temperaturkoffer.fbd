@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-03-07 15:43:27
+* Erstellt: 2014-03-12 11:41:47
 * 
 * HOST   : 192.168.1.99:7509
 * SERVER : MANAGER
@@ -41,7 +41,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/Pt100"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};
@@ -61,7 +61,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/TypK"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};
@@ -81,7 +81,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/Pyrometer"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};
@@ -101,7 +101,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/DigitalOutButton";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/DOButton";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/Relais"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
@@ -141,7 +141,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/Pt100"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};
@@ -202,7 +202,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/TypK"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};
@@ -263,7 +263,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "IOdriverlib/AnalogInputDisplay";
+      TemplateDefinition : INPUT STRING = "IOdriverlib/AIRotationPointerDisplay";
       FBReference[1] : INPUT STRING = {"/TechUnits/Drivers/Pyrometer"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"ValueUnit:C"};

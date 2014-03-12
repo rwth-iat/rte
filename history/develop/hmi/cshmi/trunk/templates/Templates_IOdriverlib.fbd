@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-03-07 13:33:09
+* Erstellt: 2014-03-12 11:38:55
 * 
 * HOST   : 192.168.1.99:7509
 * SERVER : MANAGER
@@ -10,7 +10,7 @@
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 100.000000;
@@ -21,7 +21,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -30,7 +30,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/onload/Save_ValueRange :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/onload/Save_ValueRange :
     CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -46,7 +46,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/onload/Save_ValueRange/addMax :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/onload/Save_ValueRange/addMax :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -64,7 +64,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/onload/Save_ValueRange/subMin :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/onload/Save_ValueRange/subMin :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -82,7 +82,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/Rect :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/Rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -100,7 +100,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -120,7 +120,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton/Rect :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton/Rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -138,7 +138,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 100.000000;
@@ -161,7 +161,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton/Text/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton/Text/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -170,7 +170,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton/Text/onload/Set_Content :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton/Text/onload/Set_Content :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -187,7 +187,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/OnOffButton/Text/onload/Set_Content.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/OnOffButton/Text/onload/Set_Content.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -205,7 +205,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 10.000000;
@@ -225,7 +225,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/ValueVerlaufPath :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/ValueVerlaufPath :
     CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
       d : INPUT STRING = "M0,0 A1 1 0 0 1 180,00 L160,0 A1 1 0 0 0 20,00 L0,0";
@@ -240,7 +240,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 90.000000;
@@ -260,7 +260,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/Path :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/Path :
     CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
       d : INPUT STRING = "M0,-3L-90,0L0,3A1 1 0 0 0 0,-3";
@@ -275,7 +275,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/Path/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/Path/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -284,7 +284,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/Path/onload/Set_rendering :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/Path/onload/Set_rendering :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -301,7 +301,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/Path/onload/Set_rendering.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/Path/onload/Set_rendering.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -319,7 +319,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/CyclicTime :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 1.000000;
@@ -328,7 +328,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation :
     CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -344,7 +344,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/addActualValue :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/addActualValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -362,7 +362,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/divValueRange :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/divValueRange :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -380,7 +380,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/mul180 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime/Set_Rotation/mul180 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -398,7 +398,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -421,7 +421,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -430,7 +430,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -446,7 +446,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Min :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Min :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -464,7 +464,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Space :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Space :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -482,7 +482,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Unit :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MinAnzeige/onload/Set_Min/get_Unit :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -500,7 +500,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 180.000000;
@@ -523,7 +523,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -532,7 +532,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -548,7 +548,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Min :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Min :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -566,7 +566,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Space :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Space :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -584,7 +584,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Unit :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/MaxAnzeige/onload/Set_Max/get_Unit :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -602,7 +602,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -622,7 +622,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Rect :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -640,7 +640,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 90.000000;
@@ -663,7 +663,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 1.000000;
@@ -672,7 +672,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -688,7 +688,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Temperature :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Temperature :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -706,7 +706,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Space :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Space :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -724,7 +724,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AnalogInputDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Unit :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature/Set_content/get_Unit :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
