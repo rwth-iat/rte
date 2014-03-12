@@ -930,7 +930,11 @@ cshmi.prototype = {
 				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/RebuildObject") !== -1){
 				returnValue = this._interpreteRebuildObject(VisualObject, ObjectPath+"/"+varName[0]);
-			}else if (varName[1].indexOf("/cshmi/debugger") !== -1){
+			}else if (varName[1].indexOf("/cshmi/Vibrate") !== -1){
+				returnValue = this._interpreteVibrate(VisualObject, ObjectPath+"/"+varName[0]);
+			}else if (varName[1].indexOf("/cshmi/debugger") !== -1 || varName[1].indexOf("/cshmi/debuggingbreakpoint") !== -1){
+				//fixme remove old name in summer 2014
+				
 				//breakpoint requested
 				returnValue = true;
 				debugger;
@@ -4066,6 +4070,52 @@ cshmi.prototype = {
 		//interprete onload Actions if we are already loaded
 		if (this.initStage === false){
 			this._interpreteOnloadCallStack();
+		}
+		
+		return true;
+	},
+	
+	
+	/**
+	 * vibrate the display component
+	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
+	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @return {Boolean} true on success, false if an error occured
+	 */
+	_interpreteVibrate: function(VisualObject, ObjectPath){
+		var pattern = null;
+		var requestList = new Object();
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
+			pattern = this.ResourceList.Actions[ObjectPath].Parameters["pattern"];
+		}else{
+			requestList[ObjectPath] = new Object();
+			requestList[ObjectPath]["pattern"] = null;
+			var successCode = this._requestVariablesArray(requestList);
+			if (successCode === false){
+				return null;
+			}
+			
+			var temppattern = requestList[ObjectPath]["pattern"];
+			
+			if(temppattern.indexOf(" ") !== -1){
+				temppattern = temppattern.split(" ");
+			}else if(temppattern.indexOf("{") === -1){
+				temppattern = HMI.KSClient.splitKsResponse(temppattern);
+			}else{
+				temppattern = [temppattern];
+			}
+			pattern = Array();
+			for (var i = 0;i < temppattern.length;i++){
+				pattern[i] = parseInt(temppattern[i], 10);
+			}
+			//we have asked the object successful, so remember the result
+			this.ResourceList.Actions[ObjectPath] = new Object();
+			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
+			this.ResourceList.Actions[ObjectPath].Parameters["pattern"] = pattern;
+		}
+		if (navigator.vibrate){
+			navigator.vibrate(pattern);
 		}
 		
 		return true;
