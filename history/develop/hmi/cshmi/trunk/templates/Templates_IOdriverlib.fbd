@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-03-12 11:38:55
+* Erstellt: 2014-03-13 10:47:52
 * 
 * HOST   : 192.168.1.99:7509
 * SERVER : MANAGER
@@ -742,7 +742,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 1.000000;
@@ -753,7 +753,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 1.000000;
@@ -762,7 +762,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -771,7 +771,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.if :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -779,7 +779,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -789,7 +789,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -807,7 +807,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -825,7 +825,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.then :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -833,7 +833,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.then/Set_CurrentState :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.then/Set_CurrentState :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -850,7 +850,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.then/Set_CurrentState.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.then/Set_CurrentState.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -868,7 +868,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.then/TriggerUpdate :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.then/TriggerUpdate :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -885,7 +885,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.then/TriggerUpdate.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.then/TriggerUpdate.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -903,7 +903,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.else :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -911,7 +911,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.else/Set_CurrentState :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.else/Set_CurrentState :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -928,7 +928,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.else/Set_CurrentState.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.else/Set_CurrentState.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -946,7 +946,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.else/TriggerUpdate :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.else/TriggerUpdate :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -963,7 +963,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/getSpCyclic/Save_CurrentState.else/TriggerUpdate.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic/Save_CurrentState.else/TriggerUpdate.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -981,7 +981,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -999,7 +999,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "globalvarchanged";
@@ -1008,7 +1008,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -1017,7 +1017,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.if :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1025,7 +1025,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -1035,7 +1035,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1053,7 +1053,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1071,7 +1071,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.then :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1079,7 +1079,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.then/Set_color :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.then/Set_color :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -1096,7 +1096,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.then/Set_color.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.then/Set_color.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1114,7 +1114,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.else :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1122,7 +1122,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.else/Set_color :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.else/Set_color :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -1139,7 +1139,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Rect/globalvarchanged/If_CurrentStateTrue.else/Set_color.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Rect/globalvarchanged/If_CurrentStateTrue.else/Set_color.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1157,7 +1157,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 100.000000;
@@ -1180,7 +1180,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text/globalvarchanged :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text/globalvarchanged :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "globalvarchanged";
@@ -1189,7 +1189,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text/globalvarchanged/Set_Concat :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text/globalvarchanged/Set_Concat :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1205,7 +1205,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text/globalvarchanged/Set_Concat/Get_Name :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text/globalvarchanged/Set_Concat/Get_Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1223,7 +1223,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text/globalvarchanged/Set_Concat/Get_Space :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text/globalvarchanged/Set_Concat/Get_Space :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1241,7 +1241,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/Text/globalvarchanged/Set_Concat/Get_CurrentState :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/Text/globalvarchanged/Set_Concat/Get_CurrentState :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1259,7 +1259,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -1268,7 +1268,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -1277,7 +1277,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.if :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1285,7 +1285,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -1295,7 +1295,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1313,7 +1313,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1331,7 +1331,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.then :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1339,7 +1339,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.then/Set_DO_OFF :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.then/Set_DO_OFF :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -1356,7 +1356,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.then/Set_DO_OFF.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.then/Set_DO_OFF.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1374,7 +1374,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.else :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -1382,7 +1382,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.else/Set_DO_ON :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.else/Set_DO_ON :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -1399,7 +1399,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DigitalOutButton/click/Set_DO.else/Set_DO_ON.value :
+ INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/click/Set_DO.else/Set_DO_ON.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
