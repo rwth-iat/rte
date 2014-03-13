@@ -137,6 +137,8 @@ typedef enum KSHTTP_REQUESTHANDLEDBY {NONE,GETVAR,GETVARSTREAM,SETVAR,GETEP,GETH
 #define HTTP_406_BODY   "error 406: Bad Value requested\r\n"
 #define HTTP_409_HEADER "406 Conflict\r\n"
 #define HTTP_409_BODY   "error 409: Conflict\r\n"
+#define HTTP_412_HEADER "412 Precondition Failed\r\n"
+#define HTTP_412_BODY   "error 412: Precondition Failed\r\n"
 #define HTTP_413_HEADER "413 Request Entity Too Large\r\n"
 #define HTTP_413_BODY   "error 414: Request Entity Too Large\r\n"
 #define HTTP_414_HEADER "414 Request-URL Too Long\r\n"

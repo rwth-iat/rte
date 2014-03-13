@@ -1796,6 +1796,20 @@ cshmi.prototype = {
 					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+path+' not successfull: Bad Parameter ');
 				}else if (response.indexOf("KS_ERR") !== -1){
 					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+response+' (configured here: '+ObjectPath+').');
+				}else if (response.indexOf("KS_VT_VOID") !== -1 || response.status === 412){
+					//we are setting a value for a void variable:
+					
+					//tcl response: "TksS-0146::TKS_NOTIMPLEMENTED variable type KS_VT_VOID not implemented"
+					//kshttp response: http status 412
+					
+					//guessing the correct Vartype
+					if(!isNumeric(NewValue)){
+						HMI.KSClient.setVar(path, NewValue, "KS_VT_STRING", null, false);
+					}else if(NewValue.indexOf(".") !== -1){
+						HMI.KSClient.setVar(path, NewValue, "KS_VT_DOUBLE", null, false);
+					}else{
+						HMI.KSClient.setVar(path, NewValue, "KS_VT_INT", null, false);
+					}
 				}else{
 					HMI.hmi_log_info('Setting a variable failed.');
 				}

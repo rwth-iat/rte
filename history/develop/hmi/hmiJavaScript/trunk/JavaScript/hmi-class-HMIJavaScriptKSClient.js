@@ -404,7 +404,10 @@ HMIJavaScriptKSClient.prototype = {
 					value = encodeURIComponent(value);
 				}
 			}
-			urlparameter = "http://"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value;
+			if(type !== null && type !== undefined){
+				optionalurlparameter = "&vartype="+type;
+			}
+			urlparameter = "http://"+Handle+"/setVar?path=" +ServerAndPath[1]+"&newvalue="+value+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
 			if(Object.prototype.toString.call(value) === "[object Array]"){
 				value = "{"+value.join("}%20{")+"}";
