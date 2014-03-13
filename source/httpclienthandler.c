@@ -191,6 +191,12 @@ static void map_result_to_http(OV_RESULT* result, OV_STRING* http_version, OV_ST
 			ov_string_print(body, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		}
 		break;
+	case OV_ERR_BADTYPE:
+		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_412_HEADER, tmp_header);
+		if(response_format != KSX){
+			ov_string_print(body, "KS_ERR_BADTYPE: %s%s", HTTP_412_BODY, tmp_body);
+		}
+		break;
 	case OV_ERR_ALREADYEXISTS:
 		ov_string_print(header, "HTTP/%s %s%s", *http_version, HTTP_409_HEADER, tmp_header);
 		if(response_format != KSX){

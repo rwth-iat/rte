@@ -269,20 +269,25 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 				addrp->var_current_props.value.valueunion.val_string = NULL;
 				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
-					ov_string_append(message, "Setting string value failed");
+					kshttp_print_result_array(message, response_format, &fr, 1, ": Setting string value failed");
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
 
 			case OV_VT_VOID:
 			case OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
+				if(ov_string_getlength(newvaluematch.value[i]) > 0){
+					fr = OV_ERR_BADTYPE;
+					kshttp_print_result_array(message, response_format, &fr, 1, ": Variable is/should be void, but a newvalue is given");
+					EXEC_SETVAR_RETURN fr;
+				}
 				break;
 
 			case OV_VT_TIME:
 			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
-					ov_string_append(message, "Setting time value failed");
+					kshttp_print_result_array(message, response_format, &fr, 1, ": Setting time value failed");
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
