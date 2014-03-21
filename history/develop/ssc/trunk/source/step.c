@@ -126,12 +126,12 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     			ov_time_gettime(&pinst->v_startTime);
     			//initialized with zero
     			ov_time_diff(&pinst->v_T, &pinst->v_startTime, &pinst->v_startTime);
-    			printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
+    			//printf("%s/%s/entry\n", pSSC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pEntry, execute, pltc);
     			pinst->v_qualifier=2;
     		}
     		/* do */
-    		printf("%s/%s/do\n", pSSC->v_identifier, pinst->v_identifier);
+    		//printf("%s/%s/do\n", pSSC->v_identifier, pinst->v_identifier);
     		Ov_Call1 (fb_task, pDo, execute, pltc);
 
     		/* event: SSC terminates */
@@ -189,7 +189,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
 
     			/* exit */
-    			printf("%s/%s/exit\n", pSSC->v_identifier, pinst->v_identifier);
+    			//printf("%s/%s/exit\n", pSSC->v_identifier, pinst->v_identifier);
     			Ov_Call1 (fb_task, pExit, execute, pltc);
     			// unlink from sscHeader.intask
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
