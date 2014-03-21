@@ -77,7 +77,7 @@ LIBRARY ssc
 		IS_INSTANTIABLE;
 		COMMENT = "SSC header";
 		VARIABLES
-			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: start/stop/break" INITIALVALUE = 0;
+			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2" INITIALVALUE = 0;
 			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" ;
 			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step";
 			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
