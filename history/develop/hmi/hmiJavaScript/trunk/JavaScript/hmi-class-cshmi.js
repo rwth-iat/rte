@@ -654,10 +654,6 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command[command.length-1] === "aftermove"){
-			if(!VisualObject.hasAttribute("x") || !VisualObject.hasAttribute("y")){
-				HMI.hmi_log_info_onwebsite("OperatorEvent aftermove "+ObjectPath+" is not under an object with x,y coordinates. Aborting.");
-				return false;
-			}
 			VisualObject.setAttribute("cursor", "move");
 			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
 			VisualObject.setAttribute("data-aftermovepath", ObjectPath);
@@ -2605,7 +2601,7 @@ cshmi.prototype = {
 				ConditionMatched = this._checkConfirm(VisualObject, ObjectPath+".if/"+varName[0], IfThenElseObserver);
 			}
 			if(ConditionMatched === undefined){
-				//the checkCondition is handled via a callback
+				//the checkCondition is handled via a callback or in an later loop
 			}else{
 				thisObserverEntry.value = ConditionMatched;
 				thisObserverEntry.requirementsFulfilled = true;
@@ -2805,7 +2801,9 @@ cshmi.prototype = {
 					return;
 				}
 			}
-			return true;
+			IfThenElseObserver.updateValueInArray(ObjectPath, true);
+			IfThenElseObserver.checkAndTrigger();
+			return;
 		}else if (comptype === "<="){
 			for (var i=0; i<Value2.length; i++){
 				if (!(Value1 <= Value2[i])){
