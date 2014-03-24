@@ -3487,7 +3487,6 @@ cshmi.prototype = {
 				
 				//fixme
 				//limit position
-				//alle Events von VisualObject reimplementieren
 				
 				if(this.style.cursor === "col-resize"){
 					this.setAttribute("x1", newx);
@@ -3556,7 +3555,7 @@ cshmi.prototype = {
 				linesArray[i].addEventListener("mousedown", linesArray[i]._moveStartDragThunk, false);
 			}
 			
-			VisualObject.parentNode.insertBefore(linesArray[2], VisualObject.nextSibling);
+			VisualObject.parentNode.insertBefore(linesArray[2], VisualObject);
 			VisualObject.parentNode.insertBefore(linesArray[1], linesArray[2]);
 			VisualObject.parentNode.insertBefore(linesArray[0], linesArray[1]);
 			
@@ -3613,7 +3612,9 @@ cshmi.prototype = {
 				rotateStart !== VisualObject.ResourceList.RoutePolyline.Coords.rotateStart ||
 				EndX !== VisualObject.ResourceList.RoutePolyline.Coords.EndX ||
 				EndY !== VisualObject.ResourceList.RoutePolyline.Coords.EndY ||
-				rotateEnd !== VisualObject.ResourceList.RoutePolyline.Coords.rotateEnd) {
+				rotateEnd !== VisualObject.ResourceList.RoutePolyline.Coords.rotateEnd ||
+				VisualObject.getAttribute("points") === "" //we were hidden last time
+			) {
 			
 			//the polyline routes in the worst case through those 6 points:
 			//StartX
