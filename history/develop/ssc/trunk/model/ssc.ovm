@@ -39,7 +39,7 @@
 *
 *	File
 *	-----
-*	ssc.ovm - ACPLT Sequntial Function Chart Library model
+*	ssc.ovm - ACPLT Sequential Function Chart Library model
 *
 *	Authors:
 *	--------
@@ -64,7 +64,7 @@ LIBRARY ssc
   VERSION   = "0.1";
   AUTHOR    = "Liyong Yu";
   COPYRIGHT = "2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
-  COMMENT   = "ACPLT Sequntial Function Chart Library";
+  COMMENT   = "ACPLT Sequential Function Chart Library";
 
   /* Yu: Viele Engineeringaspekte wurden bei der Modellierung mitberücksichtig. Es wird z.B. bei jeder Instanzierung automatisch überprüft, 
   ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
@@ -136,7 +136,9 @@ LIBRARY ssc
     VARIABLES
       result 			: BOOL 		FLAGS = "i" COMMENT = "The result of the executed transition";
       error				: BOOL		FLAGS = "o"	COMMENT = "error";
-	  errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+      errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
+      visuallayoutPrev	: STRING	FLAGS = "p" COMMENT = "visual layout information for HMI";
+      visuallayoutNext	: STRING	FLAGS = "p" COMMENT = "visual layout information for HMI";
     END_VARIABLES;
     OPERATIONS
     	constructor		: C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
