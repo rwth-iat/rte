@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_comptype_set(
 		return ov_string_setvalue(&pobj->v_comptype,value);
 	}else{
 		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %i had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
+		ov_string_print(&erroroutput, "object %s had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
 		ov_memstack_unlock();
 		ov_logfile_warning(erroroutput);
 		ov_string_setvalue(&erroroutput, NULL);
