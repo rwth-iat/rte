@@ -354,7 +354,7 @@ void ov_scheduler_insertevent(
 *	returns TRUE after execution
 *	returns FALSE if there was no matching event found
 */
-OV_BOOL ov_scheduler_execnamedeventonce(
+OV_DLLFNCEXPORT OV_BOOL ov_scheduler_execnamedeventonce(
 		OV_STRING ident,
 		OV_STRING class,
 		OV_STRING lib
