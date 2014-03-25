@@ -650,7 +650,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getksversion(
 /*
  *	Set ks version
  */
-OV_DLLFNCEXPORT void ov_vendortree_setksversion(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setksversion(
 		OV_STRING	version
 ) {
 	if(ksVersion) {
@@ -663,6 +663,7 @@ OV_DLLFNCEXPORT void ov_vendortree_setksversion(
 			strcpy(ksVersion, version);
 		}
 	}
+	return OV_ERR_OK;
 }
 
 
