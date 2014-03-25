@@ -170,7 +170,9 @@
 	#define OV_DLLVAREXPORT
 #endif
 #define OV_DLLVARIMPORT 		extern
+#ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE                      /* Require IEEE Std. 1003.1 (Needed for sigjmp) */
+#endif
 #endif
 
 #if OV_SYSTEM_NT
