@@ -1,7 +1,7 @@
 /*
-*   $Id: ov_server.rc,v 1.1.1.1 2011-01-31 07:47:43 henning Exp $
+*   $Id: ov_runtimeserver.rc,v 1.1.1.1 2011-01-31 07:47:43 henning Exp $
 *
-*   Copyright (C) 1998-1999
+*   Copyright (C) 1998-2014
 *   Lehrstuhl fuer Prozessleittechnik,
 *   RWTH Aachen, D-52056 Aachen, Germany.
 *   All rights reserved.
@@ -45,7 +45,7 @@ FILETYPE		VFT_DLL
    VALUE "FileDescription", "ACPLT/OV Server\000"
    VALUE "FileVersion", "1.0.0\000\000"
    VALUE "InternalName", "ov_runtimeserver.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2010\000\000"
+   VALUE "LegalCopyright", "Copyright © PLT 1998-2014\000\000"
    VALUE "OriginalFilename", "ov_runtimeserver.exe\000"
    VALUE "Author", "Henning Mersch <h.mersch@plt.rwth-aachen.de>\000"
   }
