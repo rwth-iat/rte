@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlocks_link
 	// send action instance identity
 	ov_string_setvalue(&pActionBlock->v_actionName, pAction->v_identifier);
 	// init action block
-	pActionBlock->v_error=0;
+	pActionBlock->v_error=FALSE;
 	ov_string_setvalue(&pActionBlock->v_errorDetail, NULL);
 
     return ov_association_link(passoc_ssc_actionBlocks, Ov_PtrUpCast
@@ -88,15 +88,7 @@ OV_DLLFNCEXPORT void ssc_actionBlocks_unlink
 	//	local Pointers
 	OV_INSTPTR_ssc_executeFb    pActionBlock = Ov_StaticPtrCast(ssc_executeFb, pchild);
 
-	// reset parameter
-	if (ov_string_compare(pActionBlock->v_actionName, pparent->v_identifier) == 0)
-	{
-		ov_string_setvalue(&pActionBlock->v_actionName, NULL);
-		pActionBlock->v_error=TRUE;
-		ov_string_setvalue(&pActionBlock->v_errorDetail, "action is not defined");
-
-	}
-
+	ov_string_setvalue(&pActionBlock->v_actionName, NULL);
 
 	/* Unlink */
 	ov_association_unlink (passoc_ssc_actionBlocks,

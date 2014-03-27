@@ -122,21 +122,3 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 
     return OV_ERR_OK;
 }
-
-/*
-OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_checkPlausibility(
-             OV_INSTPTR_ssc_actionBlock          pobj
-) {
-             return OV_ERR_OK;
-}
-*/
-/*
-OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_setActionName(
-             OV_INSTPTR_ssc_actionBlock          pinst,
-             const OV_STRING  value
-) {
-             return ov_string_setvalue(&pinst->v_actionName,value);
-}
-*/
-
-

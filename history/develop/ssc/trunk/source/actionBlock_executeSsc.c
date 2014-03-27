@@ -13,24 +13,6 @@
 #include "ssc.h"
 #include "ssclib.h"
 
-OV_DLLFNCEXPORT OV_RESULT ssc_executeSsc_actionName_set(
-    OV_INSTPTR_ssc_executeSsc          pinst,
-    const OV_STRING  value
-) {
-    //find action
-
-	//return, if not defined
-
-	//find current action
-
-	// if not exists, create association
-
-	// if different, unlink, and link to new action
-
-	return ov_string_setvalue(&pinst->v_actionName,value);
-}
-
-
 OV_DLLFNCEXPORT void ssc_executeSsc_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
@@ -50,7 +32,7 @@ OV_DLLFNCEXPORT void ssc_executeSsc_typemethod(
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = 1;
-    pinst->v_error=0;
+    pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location

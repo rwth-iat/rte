@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT void ssc_executeFb_typemethod(
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = 1;
-    pinst->v_error=0;
+    pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location
@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_setActionName(
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = 1;
-    pinst->v_error=0;
+    pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
     // check location
@@ -148,7 +148,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_setActionName(
     }
 
     // check action name definition
-    if (ov_string_compare(value, NULL) == 0)
+    if (ov_string_compare(value, NULL) == OV_STRCMP_EQUAL)
     {
     	pinst->v_error=TRUE;
     	ov_string_setvalue(&pinst->v_errorDetail, "action is not defined");
@@ -167,28 +167,29 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_setActionName(
 		ov_logfile_error("%s : action instance can not be located.", pinst->v_identifier);
 		//#endif
 
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "action can not be located");
     	if ( pCurrentAction == NULL )
     	{
-    		pinst->v_error=TRUE;
-    		ov_string_setvalue(&pinst->v_errorDetail, "action can not be located");
-    		return ov_string_setvalue(&pinst->v_actionName,value);
+    		//resetting actionName just to be sure
+    		ov_string_setvalue(&pinst->v_actionName, NULL);
     	}
+		return OV_ERR_BADPARAM;
 	}
-
-    if ( (pCurrentAction != NULL) && (pAction == NULL) )
+    else
 	{
-	    return OV_ERR_OK;
-	}
+    	//activate new action
 
-    if (pAction != NULL)
-	{
-    	// unlink
-    	if (pCurrentAction != NULL) Ov_Unlink(ssc_actionBlocks, pCurrentAction, pinst);
-    	// link
+    	// unlink old action
+    	if (pCurrentAction != NULL)
+    	{
+    		Ov_Unlink(ssc_actionBlocks, pCurrentAction, pinst);
+    	}
+    	// link new action
     	Ov_Link(ssc_actionBlocks, pAction, pinst);
     	return ov_string_setvalue(&pinst->v_actionName,value);
 	}
 	
- return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
