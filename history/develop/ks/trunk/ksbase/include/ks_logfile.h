@@ -132,5 +132,8 @@ DLLFNCEXPORT void ks_logfile_error(
 	...
 );
 
+/**
+ * displays the clear text error message from the last failed system call
+ */
 DLLFNCEXPORT void ks_logfile_print_sysMsg();
 
