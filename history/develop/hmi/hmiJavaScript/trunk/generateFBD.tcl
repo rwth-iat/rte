@@ -155,13 +155,15 @@ close $out
 puts ""
 puts "File $fbdfilename written."
 
-if {$::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
+if {[info exists ::env(FBDmovetarget)] && $::env(FBDmovetarget) != "" && [file isdirectory $::env(FBDmovetarget)]} {
 	set targetname "$::env(FBDmovetarget)/$fbdfilename"
 	if {[file exists $targetname] == 1} {
 		file delete $targetname
 	}
-	file copy $fbdfilename $targetname
-	puts "Copied to $::env(FBDmovetarget)/$fbdfilename"
+	file rename $fbdfilename $targetname
+	puts "Moved to $::env(FBDmovetarget)/$fbdfilename"
+} else {
+	puts "hint: setting a env variable FBDmovetarget will trigger an move to that position."
 }
 
 puts "== End processing static files =="
