@@ -77,7 +77,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 
     //OV_INSTPTR_fb_functionblock pTransCond = (OV_INSTPTR_fb_functionblock)(Ov_GetParent(ov_containment, pParentObj));// Ov_DynamicPtrCast(fb_functionblock, pParentObj);
 
-    OV_INSTPTR_ov_domain        pTransCondsDomain = NULL;
+    //  OV_INSTPTR_ov_domain        pTransCondsDomain = NULL;
     OV_INSTPTR_ov_domain        pTransCondsContainer = NULL;
     OV_INSTPTR_fb_task          pTransCondsTaskParent = NULL;
 
@@ -97,9 +97,9 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 
 
 
-    pTransCondsDomain = &pSSC->p_transConds;
-    pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
-    pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
+    //pTransCondsDomain = &pSSC->p_transConds;
+    //pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
+    //pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
 
 
 
@@ -114,6 +114,11 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     	//transCond is a functionblock, check if the functionblock is within the transCond Container
     	pTransCond = Ov_StaticPtrCast(fb_functionblock, pSrcObj);
     }
+
+    pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
+    pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
+
+
     //the transition condition is not in the transCond-container, so it does not need to be triggered
     //the only valid option is now, that the transition condition is a port of the embedding function chart
     //else an error should be generated
