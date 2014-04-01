@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_executeSsc_getaccess(
 	*/
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pobj));
 	OV_INSTPTR_ssc_sscHeader activeHeader= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
-	OV_ACCESS access_code = ov_object_getaccess(pobj, pelem, pticket);
+	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 
 	/*
 	*	switch based on the element's type

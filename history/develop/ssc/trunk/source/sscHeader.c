@@ -583,7 +583,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_sscHeader_getaccess(
 	*/
 	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_StaticPtrCast(ssc_sscHeader, pobj);
 
-	OV_ACCESS access_code = ov_object_getaccess(pobj, pelem, pticket);
+	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 	/*
 	*	switch based on the element's type
 	*/
