@@ -232,7 +232,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_transition_getaccess(
 				access_code = (access_code | OV_AC_DELETEABLE);
 			}else{
 				//disallow deletion
-				access_code = (access_code & OV_AC_DELETEABLE);
+				access_code = (access_code &~ OV_AC_DELETEABLE);
 			}
 			break;
 		default:
