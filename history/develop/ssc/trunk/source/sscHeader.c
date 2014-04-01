@@ -38,7 +38,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 	OV_INSTPTR_ssc_step foundStep = NULL;
 
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an backup
+		//allow old INITIAL_VALUE for loading an backup
 		return OV_ERR_OK;
 	}
 	if (pinst->v_workingState == WOST_INIT)
@@ -108,7 +108,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
 
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an backup
+		//allow old INITIAL_VALUE for loading an backup
 		return OV_ERR_OK;
 	}
 
@@ -573,4 +573,37 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_checkPlausibility(
     return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_ACCESS ssc_sscHeader_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+	/*
+	*   local variables
+	*/
+	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_StaticPtrCast(ssc_sscHeader, pobj);
 
+	OV_ACCESS access_code = ov_object_getaccess(pobj, pelem, pticket);
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_OBJECT:
+			if(!activeHeader){
+				//skip handling
+			}else if(	activeHeader->v_workingState == WOST_INIT ||
+						activeHeader->v_workingState == WOST_STOP ||
+						activeHeader->v_workingState == WOST_TERMINATE)
+			{
+				//allow deletion
+				access_code = (access_code | OV_AC_DELETEABLE);
+			}else{
+				//disallow deletion
+				access_code = (access_code & OV_AC_DELETEABLE);
+			}
+			break;
+		default:
+			break;
+	}
+	return access_code;
+}

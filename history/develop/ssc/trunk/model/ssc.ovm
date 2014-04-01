@@ -78,13 +78,13 @@ LIBRARY ssc
 		COMMENT = "SSC header";
 		VARIABLES
 			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2" INITIALVALUE = 0;
-			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" ;
-			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step";
+			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" INITIALVALUE = "INIT";
+			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step" INITIALVALUE = "END";
 			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
 			woStQualifier   : UINT							FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
 			activeStep  	: STRING						FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
 			terminated		: BOOL							FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
-			workingState    : UINT							FLAGS = "o"	COMMENT = "working state" INITIALVALUE = 10;
+			workingState    : UINT							FLAGS = "o"	COMMENT = "working state: INIT: 0, START = 1, BREAK = 2, STOP = 3, TERMINATE = 4" INITIALVALUE = 0;
 			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: INIT/START/BREAK/STOP" INITIALVALUE = "INIT";
 			error			: BOOL							FLAGS = "o"	COMMENT = "error";
 			errorDetail		: STRING						FLAGS = "o"	COMMENT = "error details";
@@ -96,8 +96,9 @@ LIBRARY ssc
     	END_PARTS;
     	OPERATIONS
         	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-        	typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-         	resetSsc   	: C_FUNCTION <SSC_FNC_RESETSSC>;
+        	typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+        	getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
+         	resetSsc		:	C_FUNCTION <SSC_FNC_RESETSSC>;
     	END_OPERATIONS;
   END_CLASS;
 
@@ -126,6 +127,7 @@ LIBRARY ssc
   	OPERATIONS
   			constructor		: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
   			typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+  			getaccess		: C_FUNCTION	<OV_FNC_GETACCESS>;
       		resetStep   	: C_FUNCTION <SSC_FNC_RESETSTEP>;
     END_OPERATIONS;
   END_CLASS;
@@ -143,6 +145,7 @@ LIBRARY ssc
     OPERATIONS
     	constructor		: C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
         typemethod 		: C_FUNCTION 	<FB_FNC_TYPEMETHOD>;
+        getaccess		: C_FUNCTION	<OV_FNC_GETACCESS>;
     END_OPERATIONS;
   END_CLASS;
   
@@ -174,6 +177,7 @@ LIBRARY ssc
     END_VARIABLES;
     OPERATIONS
       typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
       setActionName		: C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
     END_OPERATIONS;
   END_CLASS;
@@ -188,7 +192,8 @@ LIBRARY ssc
     VARIABLES
     END_VARIABLES;
     OPERATIONS
-      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
       setActionName		: 	C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
       checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>;
     END_OPERATIONS;
@@ -202,8 +207,9 @@ LIBRARY ssc
       enableSsc				: UINT		FLAGS = "i"	COMMENT = "SSC commando" INITIALVALUE = 1;
     END_VARIABLES;
     OPERATIONS
-      typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;      
+      typemethod	: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      getaccess		: C_FUNCTION <OV_FNC_GETACCESS>;
+      destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
     END_OPERATIONS;
   END_CLASS;
   

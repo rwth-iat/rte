@@ -277,3 +277,38 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
     return OV_ERR_OK;
 }
 
+
+OV_DLLFNCEXPORT OV_ACCESS ssc_step_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+	/*
+	*   local variables
+	*/
+	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pobj));
+	OV_ACCESS access_code = ov_object_getaccess(pobj, pelem, pticket);
+
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_OBJECT:
+			if(!activeHeader){
+				//skip handling
+			}else if(	activeHeader->v_workingState == WOST_INIT ||
+						activeHeader->v_workingState == WOST_STOP ||
+						activeHeader->v_workingState == WOST_TERMINATE)
+			{
+				//allow deletion
+				access_code = (access_code | OV_AC_DELETEABLE);
+			}else{
+				//disallow deletion
+				access_code = (access_code & OV_AC_DELETEABLE);
+			}
+			break;
+		default:
+			break;
+	}
+	return access_code;
+}
