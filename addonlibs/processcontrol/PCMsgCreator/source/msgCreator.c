@@ -44,9 +44,10 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     OV_ANY tempAny;
     OV_STRING command = NULL;
     OV_STRING ids_vec [2] = {"cmdr", "Value"};
+    OV_STRING values_vec [2] = {NULL, NULL};
     OV_STRING empty_vec [2] = {NULL, NULL};
     OV_STRING_VEC ids = {2, ids_vec};
-    OV_STRING_VEC values = {2, empty_vec};
+    OV_STRING_VEC values = {2, values_vec};
     OV_STRING_VEC types = {2, empty_vec};
     OV_STRING_VEC units = {2, empty_vec};
 
@@ -143,7 +144,7 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     command = strchr(value, ';')+1;
     *(command-1) = '\0';
     values.value[1] = strchr(command, ';')+1;
-    *(values.value[1]) = '\0';
+    *(values.value[1]-1) = '\0';
 
     msgBody = acplt_simpleMsg_GenerateFlatBody("ProcessControl", command, FALSE, NULL, &ids, &values, &units, &types);
 
