@@ -78,6 +78,30 @@
 function HMIJavaScriptKSClient() {
 	/** Public **********************/
 	
+	this.KSCONSTANTS = Object();
+	this.KSCONSTANTS.KS_VT_VOID           = "0x00000000";
+	this.KSCONSTANTS.KS_VT_BOOL           = "0x00000002";
+	this.KSCONSTANTS.KS_VT_INT            = "0x00000010";
+	this.KSCONSTANTS.KS_VT_UINT           = "0x00000011";
+	this.KSCONSTANTS.KS_VT_SINGLE         = "0x00000020";
+	this.KSCONSTANTS.KS_VT_DOUBLE         = "0x00000021";
+	this.KSCONSTANTS.KS_VT_STRING         = "0x00000030";
+	this.KSCONSTANTS.KS_VT_TIME           = "0x00000031";
+	this.KSCONSTANTS.KS_VT_TIME_SPAN      = "0x00000032";
+	this.KSCONSTANTS.KS_VT_STATE          = "0x00000038";
+	this.KSCONSTANTS.KS_VT_STRUCT         = "0x00000040";
+	this.KSCONSTANTS.KS_VT_BYTE_VEC       = "0x00000081";
+	this.KSCONSTANTS.KS_VT_BOOL_VEC       = "0x00000082";
+	this.KSCONSTANTS.KS_VT_INT_VEC        = "0x00000090";
+	this.KSCONSTANTS.KS_VT_UINT_VEC       = "0x00000091";
+	this.KSCONSTANTS.KS_VT_SINGLE_VEC     = "0x000000a0";
+	this.KSCONSTANTS.KS_VT_DOUBLE_VEC     = "0x000000a1";
+	this.KSCONSTANTS.KS_VT_STRING_VEC     = "0x000000b0";
+	this.KSCONSTANTS.KS_VT_TIME_VEC       = "0x000000b1";
+	this.KSCONSTANTS.KS_VT_TIME_SPAN_VEC  = "0x000000b2";
+	this.KSCONSTANTS.KS_VT_TIME_SERIES    = "0x000000b3";
+	this.KSCONSTANTS.KS_VT_STATE_VEC      = "0x000000b8";
+	
 	//object to cache communication details
 	this.ResourceList = Object();
 	
@@ -371,22 +395,12 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			if(type !== null && type !== undefined){
-				//TKS "define" does not work... 8-(
-				//optionalurlparameter = "%20-type%20"+type.replace("KS_", "$TKS::");
-				//therefor by hand 8-/
-				if(type === "KS_VT_STRING"){
-					optionalurlparameter = "%20-type%200x00000030";
-				}else if(type === "KS_VT_DOUBLE"){
-					optionalurlparameter = "%20-type%200x00000021";
-				}else if(type === "KS_VT_INT"){
-					optionalurlparameter = "%20-type%200x00000010";
-				}else{
-					return null;
-				}
+				//TCL is not able to interprete the type as text
+				optionalurlparameter = "%20-type%20"+this.KSCONSTANTS[type];
 			}
 			
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=setvar%20"+
-			"{"+ServerAndPath[1]+"%20{"+value+"}}"+optionalurlparameter;
+			"{"+ServerAndPath[1]+"%20{"+value+"}"+optionalurlparameter+"}";
 		}else if ("kshttp" === HMI.HMI_Constants.ServerType){
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
