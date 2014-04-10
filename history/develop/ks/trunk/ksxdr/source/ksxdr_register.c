@@ -24,9 +24,9 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 
 	ov_memstack_lock();
 	if(Ov_Fail(KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &servername, KS_NAME_MAXLEN))
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverversion))
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverport))
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverttl)))
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &serverversion))
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &serverport))
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &serverttl)))
 	{
 		KS_logfile_error(("ksxdr_register: Error decoding Register message. Sending answer."));
 		*msgState = XDR_MSGST_GARBAGE_ARGS;

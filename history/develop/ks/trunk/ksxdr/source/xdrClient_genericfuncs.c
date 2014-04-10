@@ -189,44 +189,44 @@ OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL use
 	{
 		/*	reserve space for rpc-header	*/
 		varToSet = 0x80000000;
-		result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+		result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 		if(Ov_Fail(result))
 			return result;
 	}
 
 	varToSet = client_xid++;	/*	write xid (and increment variable)	*/
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 	*xid = varToSet;
 
 	varToSet = KSXDR_MSGTYPE_CALL;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
 	varToSet = KSXDR_RPCVERSION;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
 	varToSet = KSXDR_PROGRAMNUMBER;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
 	varToSet = KSXDR_PROGRAMVERSION;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &procedureNumber);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &procedureNumber);
 	if(Ov_Fail(result))
 		return result;
 
 	/*	rpc auth part (not used)	*/
 	varToSet = XDR_AUTH_NONE;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
@@ -235,7 +235,7 @@ OV_RESULT ksxdr_generateClientMessageHeader(OV_UINT procedureNumber, OV_BOOL use
 		return result;
 
 	varToSet = XDR_AUTH_NONE;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 	if(Ov_Fail(result))
 		return result;
 
@@ -258,7 +258,7 @@ OV_RESULT ksxdr_insertTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbase_
 	if(!TicketGenerator)	/*	use none ticket if no Generator specified	*/
 	{
 		varToSet = OV_TT_NONE;
-		result = KS_DATAPACKET_write_xdr_u_long(datapacket, &varToSet);
+		result = KS_DATAPACKET_write_xdr_uint(datapacket, &varToSet);
 		if(Ov_Fail(result))
 			return result;
 	}
@@ -282,7 +282,7 @@ OV_RESULT ksxdr_readBackTicket(KS_DATAPACKET* datapacket, const OV_INSTPTR_ksbas
 	OV_INT TicketType;
 	OV_VTBLPTR_ksbase_ClientTicketGenerator pVtblTicketGen = NULL;
 
-	result = KS_DATAPACKET_read_xdr_long(datapacket, &TicketType);
+	result = KS_DATAPACKET_read_xdr_int(datapacket, &TicketType);
 	if(Ov_Fail(result))
 		return result;
 
@@ -325,13 +325,13 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 	if(usesStreamProtocol)
 	{
 		/*	header	*/
-		result = KS_DATAPACKET_read_xdr_u_long(datapacket, &header);
+		result = KS_DATAPACKET_read_xdr_uint(datapacket, &header);
 		if(Ov_Fail(result))
 			return result;
 	}
 
 	/*	xid	*/
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, xid);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, xid);
 	if(Ov_Fail(result))
 		return result;
 
@@ -342,7 +342,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 		return OV_ERR_BADVALUE;
 	}
 	/*	messageType	*/
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, &dummy);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &dummy);
 	if(Ov_Fail(result))
 		return result;
 	if(dummy != KSXDR_MSGTYPE_REPLY)
@@ -380,14 +380,14 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 
 
 	/*	acceptance	*/
-	result = KS_DATAPACKET_read_xdr_long(datapacket, msgAccepted);
+	result = KS_DATAPACKET_read_xdr_int(datapacket, msgAccepted);
 	if(Ov_Fail(result))
 		return result;
 	if(*msgAccepted != XDR_MSG_ACCEPTED)
 	{
 		/*	rejected decode reason	*/
 		/*	reason	*/
-		result = KS_DATAPACKET_read_xdr_long(datapacket, msgStatus);
+		result = KS_DATAPACKET_read_xdr_int(datapacket, msgStatus);
 		if(Ov_Fail(result))
 			return result;
 
@@ -405,7 +405,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 
 	/*	message accepted	*/
 	/*	auth verifier has to be no auth*/
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, &dummy);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &dummy);
 	if(Ov_Fail(result))
 		return result;
 	if(dummy)
@@ -414,7 +414,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 		return OV_ERR_BADVALUE;
 	}
 
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, &dummy);	/*	no auth data following (length 0)	*/
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &dummy);	/*	no auth data following (length 0)	*/
 	if(Ov_Fail(result))
 		return result;
 	if(dummy)
@@ -424,7 +424,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 	}
 
 	/*	message state	*/
-	result = KS_DATAPACKET_read_xdr_long(datapacket, msgStatus);
+	result = KS_DATAPACKET_read_xdr_int(datapacket, msgStatus);
 	if(Ov_Fail(result))
 		return result;
 
@@ -438,7 +438,7 @@ OV_RESULT ksxdr_processServerReplyHeader(KS_DATAPACKET* datapacket, const OV_INS
 	}
 
 	/*	handle tickets (call readBack)	*/
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, &ticketindicator);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &ticketindicator);
 	if(Ov_Fail(result))
 		return result;
 	if(ticketindicator)	/*	TicketType != none	*/

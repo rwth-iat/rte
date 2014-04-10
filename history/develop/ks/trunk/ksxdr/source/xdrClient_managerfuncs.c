@@ -82,18 +82,18 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestRegister(
 			break;
 
 		/*	lowest needed version	*/
-		result = KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &version);
+		result = KS_DATAPACKET_write_xdr_uint(&(pChannel->v_outData), &version);
 		if(Ov_Fail(result))
 			break;
 
 		/*	port	*/
-		result = KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &port);
+		result = KS_DATAPACKET_write_xdr_uint(&(pChannel->v_outData), &port);
 		if(Ov_Fail(result))
 			break;
 
 		/*	time to live	*/
 		varToSet = 30;	/*	30 seconds ttl	*/
-		result = KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &varToSet);
+		result = KS_DATAPACKET_write_xdr_uint(&(pChannel->v_outData), &varToSet);
 		if(Ov_Fail(result))
 			break;
 		/*	set length (if necessary)	*/
@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestUnRegister(
 			break;
 
 		/*	server version	*/
-		result =  KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &version);
+		result =  KS_DATAPACKET_write_xdr_uint(&(pChannel->v_outData), &version);
 		if(Ov_Fail(result))
 			break;
 
@@ -303,7 +303,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetServer(
 			break;
 
 		/*	least server version	*/
-		result =  KS_DATAPACKET_write_xdr_u_long(&(pChannel->v_outData), &leastVersion);
+		result =  KS_DATAPACKET_write_xdr_uint(&(pChannel->v_outData), &leastVersion);
 		if(Ov_Fail(result))
 			break;
 
@@ -364,11 +364,11 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetServer(
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	/*	version	*/
-	fncresult = KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), regVersion);
+	fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), regVersion);
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	/*	port	*/
-	fncresult = KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), &xdr_port);
+	fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), &xdr_port);
 	if(Ov_Fail(fncresult))
 		return fncresult;
 	*port = ov_memstack_alloc(12 * sizeof(char));
@@ -377,15 +377,15 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetServer(
 	sprintf(*port, "%lu", xdr_port);
 
 	/*	Expiration Time	*/
-	fncresult = KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), &(expirationTime->secs));
+	fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), &(expirationTime->secs));
 	if(Ov_Fail(fncresult))
 		return fncresult;
-	fncresult = KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), &(expirationTime->usecs));
+	fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), &(expirationTime->usecs));
 	if(Ov_Fail(fncresult))
 		return fncresult;
 
 	/*	state	*/
-	return KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), serverState);
+	return KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), serverState);
 
 }
 

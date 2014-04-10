@@ -41,7 +41,7 @@ OV_RESULT ksxdr_getVar_encoderesults(KS_DATAPACKET* serviceAnswer, OV_GETVAR_RES
 	switch(results->result)
 	{
 	case OV_ERR_OK:
-		result = KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &results->items_len);
+		result = KS_DATAPACKET_write_xdr_uint(serviceAnswer, &results->items_len);
 		if(Ov_Fail(result))
 			return result;
 

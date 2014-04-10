@@ -60,7 +60,7 @@ OV_RESULT ksxdr_getCanonicalPath_encoderesults(KS_DATAPACKET* serviceAnswer, OV_
 	switch(results->result)
 	{
 	case OV_ERR_OK:
-		result = KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &(results->results_len));
+		result = KS_DATAPACKET_write_xdr_uint(serviceAnswer, &(results->results_len));
 		if(Ov_Fail(result))
 			return result;
 		for(i=0; i<results->results_len; i++)

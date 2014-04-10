@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetPP(
 			break;
 
 		/*	dummy	*/
-		result = KS_DATAPACKET_write_xdr_u_long(&(tempDataPacket), &dummy);
+		result = KS_DATAPACKET_write_xdr_uint(&(tempDataPacket), &dummy);
 		if(Ov_Fail(result))
 			break;
 
@@ -482,7 +482,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetCanonicalPath(
 		return fncresult;
 	if(Ov_OK(*result))
 	{
-		fncresult = KS_DATAPACKET_read_xdr_u_long(&(thisCl->v_dataReceived), items_length);
+		fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), items_length);
 		if(Ov_Fail(fncresult))
 			return fncresult;
 

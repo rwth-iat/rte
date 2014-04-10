@@ -25,7 +25,7 @@ OV_RESULT ksxdr_setVar_decodeparams(KS_DATAPACKET* dataReceived, OV_SETVAR_PAR* 
 	OV_RESULT result;
 	OV_UINT i;
 
-	result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &params->items_len);
+	result = KS_DATAPACKET_read_xdr_uint(dataReceived, &params->items_len);
 	if(Ov_Fail(result))
 		return result;
 
@@ -54,7 +54,7 @@ OV_RESULT ksxdr_setVar_encoderesults(KS_DATAPACKET* serviceAnswer, OV_SETVAR_RES
 	switch(results->result)
 	{
 	case OV_ERR_OK:
-		return KS_DATAPACKET_write_xdr_array(serviceAnswer, (void**) &results->results_val, sizeof(OV_RESULT), &results->results_len, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_long);
+		return KS_DATAPACKET_write_xdr_array(serviceAnswer, (void**) &results->results_val, sizeof(OV_RESULT), &results->results_len, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_int);
 		break;
 
 	default:

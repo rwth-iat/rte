@@ -12,17 +12,15 @@
 #include "libov/ov_memstack.h"
 #include "ksbase_helper.h"
 #include <string.h>
+#include <stdint.h>
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ov_ksserver_backend.h"
 /*
  * unsigned long (OV_UINT)
  */
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_u_long(KS_DATAPACKET* datapacket, OV_UINT* value)
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_uint(KS_DATAPACKET* datapacket, OV_UINT* value)
 {
-	char temp[4];
-	unsigned int i = 0;
-
 	if(!datapacket
 			|| !datapacket->data)
 		return OV_ERR_GENERIC;
@@ -32,9 +30,12 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_u_long(KS_DATAPACKET* datapacke
 			&& (datapacket->readPT >= datapacket->data)
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
-		for(i=0; i<4; i++)
-			temp[3-i] = datapacket->readPT[i];
-		memcpy(value, temp, 4);
+		/*	shift left is defined als multiplication with powers of 2
+		 * so it does the same independent of endianess of host system	*/
+		*value = (OV_UINT)(((datapacket->readPT[0]) << 24)
+				| ((datapacket->readPT[1]) << 16)
+				| ((datapacket->readPT[2]) << 8)
+				| ((datapacket->readPT[3])));
 		datapacket->readPT += 4;
 		return OV_ERR_OK;
 	}
@@ -42,14 +43,17 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_u_long(KS_DATAPACKET* datapacke
 	return OV_ERR_GENERIC;
 }
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_u_long(KS_DATAPACKET* datapacket, const OV_UINT* value)
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_uint(KS_DATAPACKET* datapacket, const OV_UINT* value)
 {
 	unsigned char temp[4];
-	unsigned int i = 0;
 
 	if(value)
-		for(i=0; i<4; i++)
-			temp[3-i] = ((unsigned char*)value)[i];
+	{
+		temp[0] = (unsigned char)((*value & 0xFF000000) >> 24);
+		temp[1] = (unsigned char)((*value & 0x00FF0000) >> 16);
+		temp[2] = (unsigned char)((*value & 0x0000FF00) >> 8);
+		temp[3] = (unsigned char)((*value & 0x000000FF));
+	}
 	else
 		memset(temp, 0, 4);
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 4);
@@ -58,11 +62,8 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_u_long(KS_DATAPACKET* datapack
 /*
  * long (OV_INT)
  */
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_long(KS_DATAPACKET* datapacket, OV_INT* value)
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_int(KS_DATAPACKET* datapacket, OV_INT* value)
 {
-	char temp[4];
-	unsigned int i = 0;
-
 	if(!datapacket
 			|| !datapacket->data)
 		return OV_ERR_GENERIC;
@@ -73,9 +74,10 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_long(KS_DATAPACKET* datapacket,
 			&& (datapacket->readPT >= datapacket->data)
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
-		for(i=0; i<4; i++)
-			temp[3-i] = datapacket->readPT[i];
-		memcpy(value, temp, 4);
+		*value = (OV_INT)(((datapacket->readPT[0]) << 24)
+				| ((datapacket->readPT[1]) << 16)
+				| ((datapacket->readPT[2]) << 8)
+				| ((datapacket->readPT[3])));
 		datapacket->readPT += 4;
 		return OV_ERR_OK;
 	}
@@ -83,14 +85,17 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_long(KS_DATAPACKET* datapacket,
 	return OV_ERR_GENERIC;
 }
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_long(KS_DATAPACKET* datapacket, const OV_INT* value)
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_int(KS_DATAPACKET* datapacket, const OV_INT* value)
 {
 	unsigned char temp[4];
-	unsigned int i = 0;
 
 	if(value)
-		for(i=0; i<4; i++)
-			temp[3-i] = ((unsigned char*)value)[i];
+	{
+			temp[0] = (unsigned char)((*value & 0xFF000000) >> 24);
+			temp[1] = (unsigned char)((*value & 0x00FF0000) >> 16);
+			temp[2] = (unsigned char)((*value & 0x0000FF00) >> 8);
+			temp[3] = (unsigned char)((*value & 0x000000FF));
+	}
 	else
 		memset(temp, 0, 4);
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 4);
@@ -101,8 +106,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_long(KS_DATAPACKET* datapacket
  */
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_single(KS_DATAPACKET* datapacket, OV_SINGLE* value)
 {
-	char temp[4];
-	unsigned int i = 0;
+	OV_UINT temp;
 
 	if(!datapacket
 			|| !datapacket->data)
@@ -114,10 +118,12 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_single(KS_DATAPACKET* datapacke
 			&& (datapacket->readPT >= datapacket->data)
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
-		for(i=0; i<4; i++)
-			temp[3-i] = datapacket->readPT[i];
-		memcpy(value, temp, 4);
+		temp = (OV_UINT)((OV_UINT)((datapacket->readPT[0]) << 24)
+				| (OV_UINT)((datapacket->readPT[1]) << 16)
+				| (OV_UINT)((datapacket->readPT[2]) << 8)
+				| (OV_UINT)((datapacket->readPT[3])));
 		datapacket->readPT += 4;
+		memcpy(value, &temp, sizeof(OV_UINT));
 		return OV_ERR_OK;
 	}
 
@@ -127,13 +133,20 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_single(KS_DATAPACKET* datapacke
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_single(KS_DATAPACKET* datapacket, const OV_SINGLE* value)
 {
 	unsigned char temp[4];
-	unsigned int i = 0;
+	OV_UINT temp2;
 
 	if(value)
-		for(i=0; i<4; i++)
-			temp[3-i] = ((unsigned char*)value)[i];
+	{
+		memcpy(&temp2, value, sizeof(OV_UINT));
+		temp[0] = (unsigned char)((temp2 & 0xFF000000) >> 24);
+		temp[1] = (unsigned char)((temp2 & 0x00FF0000) >> 16);
+		temp[2] = (unsigned char)((temp2 & 0x0000FF00) >> 8);
+		temp[3] = (unsigned char)((temp2 & 0x000000FF));
+	}
 	else
+	{
 		memset(temp, 0, 4);
+	}
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 4);
 }
 
@@ -143,8 +156,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_single(KS_DATAPACKET* datapack
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacket, OV_DOUBLE* value)
 {
-	char temp[8];
-	unsigned int i = 0;
+	uint64_t temp;
 
 	if(!datapacket
 			|| !datapacket->data)
@@ -156,10 +168,28 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacke
 			&& (datapacket->readPT >= datapacket->data)
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
-		for(i=0; i<8; i++)
-			temp[7-i] = datapacket->readPT[i];
-		memcpy(value, temp, 8);
+		/*	some "old" arm cores represent the double format in two little endian DWORDs with the most significant word first^^	*/
+#ifndef ARCH_OLD_ARM
+		temp = (((uint64_t)(datapacket->readPT[0]) << 56)
+					| ((uint64_t)(datapacket->readPT[1]) << 48)
+					| ((uint64_t)(datapacket->readPT[2]) << 40)
+					| ((uint64_t)(datapacket->readPT[3]) << 32)
+					| ((uint64_t)(datapacket->readPT[4]) << 24)
+					| ((uint64_t)(datapacket->readPT[5]) << 16)
+					| ((uint64_t)(datapacket->readPT[6]) << 8)
+					| ((uint64_t)(datapacket->readPT[7])));
+#else
+		temp = (((uint64_t)(datapacket->readPT[4]) << 56)
+					| ((uint64_t)(datapacket->readPT[5]) << 48)
+					| ((uint64_t)(datapacket->readPT[6]) << 40)
+					| ((uint64_t)(datapacket->readPT[7]) << 32)
+					| ((uint64_t)(datapacket->readPT[0]) << 24)
+					| ((uint64_t)(datapacket->readPT[1]) << 16)
+					| ((uint64_t)(datapacket->readPT[2]) << 8)
+					| ((uint64_t)(datapacket->readPT[3])));
+#endif
 		datapacket->readPT += 8;
+		memcpy(value, &temp, sizeof(OV_DOUBLE));
 		return OV_ERR_OK;
 	}
 
@@ -169,11 +199,31 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacke
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_double(KS_DATAPACKET* datapacket, const OV_DOUBLE* value)
 {
 	unsigned char temp[8];
-	unsigned int i = 0;
+	uint64_t temp2;
 
 	if(value)
-		for(i=0; i<8; i++)
-			temp[7-i] = ((unsigned char*)value)[i];
+	{
+		memcpy(&temp2, value, sizeof(OV_DOUBLE));
+#ifndef ARCH_OLD_ARM
+		temp[0] = (unsigned char)((temp2 & 0xFF00000000000000) >> 56);
+		temp[1] = (unsigned char)((temp2 & 0x00FF000000000000) >> 48);
+		temp[2] = (unsigned char)((temp2 & 0x0000FF0000000000) >> 40);
+		temp[3] = (unsigned char)((temp2 & 0x000000FF00000000) >> 32);
+		temp[4] = (unsigned char)((temp2 & 0x00000000FF000000) >> 24);
+		temp[5] = (unsigned char)((temp2 & 0x0000000000FF0000) >> 16);
+		temp[6] = (unsigned char)((temp2 & 0x000000000000FF00) >> 8);
+		temp[7] = (unsigned char)((temp2 & 0x00000000000000FF));
+#else
+		temp[4] = (unsigned char)((temp2 & 0xFF00000000000000) >> 56);
+		temp[5] = (unsigned char)((temp2 & 0x00FF000000000000) >> 48);
+		temp[6] = (unsigned char)((temp2 & 0x0000FF0000000000) >> 40);
+		temp[7] = (unsigned char)((temp2 & 0x000000FF00000000) >> 32);
+		temp[0] = (unsigned char)((temp2 & 0x00000000FF000000) >> 24);
+		temp[1] = (unsigned char)((temp2 & 0x0000000000FF0000) >> 16);
+		temp[2] = (unsigned char)((temp2 & 0x000000000000FF00) >> 8);
+		temp[3] = (unsigned char)((temp2 & 0x00000000000000FF));
+#endif
+	}
 	else
 		memset(temp, 0, 4);
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 8);
@@ -194,7 +244,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_string(KS_DATAPACKET* datapacke
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_u_long(datapacket, &length))
+	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
 		return OV_ERR_GENERIC;
 
 	//check if it fits into the buffer (do not forget terminating '\0')
@@ -242,7 +292,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_string_tomemstack(KS_DATAPACKET
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_u_long(datapacket, &length))
+	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
 		return OV_ERR_GENERIC;
 
 	//check if it fits into the buffer (do not forget terminating '\0')
@@ -288,7 +338,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_string(KS_DATAPACKET* datapack
 
 	/*	NULL-pointers are treated as empty strings because the xdr-stream structure is predefined	*/
 	if(!value || !(*value))
-		return KS_DATAPACKET_write_xdr_u_long(datapacket, (OV_UINT*) &i);	/*	at this point i contains 0	*/
+		return KS_DATAPACKET_write_xdr_uint(datapacket, (OV_UINT*) &i);	/*	at this point i contains 0	*/
 
 
 	ov_memstack_lock();
@@ -327,7 +377,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_opaque(KS_DATAPACKET* datapacke
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_u_long(datapacket, &length))
+	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
 		return OV_ERR_GENERIC;
 	if(!length)
 	{
@@ -376,7 +426,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_opaque_tomemstack(KS_DATAPACKET
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_u_long(datapacket, &length))
+	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
 		return OV_ERR_GENERIC;
 	if(!length)
 	{
@@ -423,7 +473,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_opaque(KS_DATAPACKET* datapack
 
 	/*	NULL-pointers are treated as empty values because the xdr-stream structure is predefined	*/
 	if(!value)
-		return KS_DATAPACKET_write_xdr_u_long(datapacket, (OV_UINT*) &i);	/*	at this point i contains 0	*/
+		return KS_DATAPACKET_write_xdr_uint(datapacket, (OV_UINT*) &i);	/*	at this point i contains 0	*/
 
 	xdradd = length;
 	while(xdradd%4)	/*	alignment!	*/
@@ -520,7 +570,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_array_tomemstack(KS_DATAPACKET*
 	if(!value || ! length)
 		return OV_ERR_BADPARAM;
 
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, length);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, length);
 	if(Ov_Fail(result))
 		return result;
 
@@ -551,7 +601,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_array(KS_DATAPACKET* datapacke
 	if(!value || !length)
 		return OV_ERR_BADPARAM;
 
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, length);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, length);
 	if(Ov_Fail(result))
 		return result;
 
