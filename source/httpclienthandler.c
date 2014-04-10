@@ -40,35 +40,10 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-
-#include <time.h>
-
 #include "config.h"
-#include "kshttp.h"
 #ifndef KSHTTP_DISABLE_GZIP
 	#include "gzip.h"
 #endif
-#include "ksbase_helper.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-
-//TCP sockets
-#if !OV_SYSTEM_NT
-	#include <arpa/inet.h>
-	#include <sys/socket.h>
-	#include <sys/ioctl.h>
-	#include <netinet/in.h>
-	#include <unistd.h>
-	#include <fcntl.h>
-#else
-	#include <winsock2.h>
-#endif
-
 
 /*** TEMP ***/
 OV_DLLFNCEXPORT OV_BOOL kshttp_httpclienthandler_stream_get(

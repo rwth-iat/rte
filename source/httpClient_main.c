@@ -95,7 +95,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_INSTPTR_ksbase_Channel				pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel	pVtblChannel = NULL;
-	OV_INSTPTR_ksbase_ClientTicketGenerator	pTicketGenerator = NULL;
 	OV_RESULT								result;
 
 	/*	process header and generic stuff	*/
@@ -105,8 +104,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 		KS_logfile_error(("%s: HandleData: no Channel object associated. cannot process data.", this->v_identifier));
 		return OV_ERR_GENERIC;
 	}
-
-	pTicketGenerator = Ov_GetChild(ksbase_AssocClientToTicketGenerator, thisCl);
 
 	KS_logfile_debug(("length of http answer: %lu\ndata: %p", dataReceived->length, dataReceived->data, dataReceived->readPT));
 	result = kshttp_processServerReplyHeader(dataReceived, &thisCl->v_ServerResponse, &thisCl->v_httpParseStatus);
