@@ -335,7 +335,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * 
 	 * @param path of the variable to set
 	 * @param {String} value to set (StringVec are Arrays)
-	 * @param {String} type variable type to set, null if no change
+	 * @param {String} type variable type (for example "KS_VT_STRING") to set, null if no change
 	 * @param cbfnc callback function
 	 * @param async request async communication
 	 * @param responseFormat Mime-Type of requested response
@@ -371,7 +371,18 @@ HMIJavaScriptKSClient.prototype = {
 				return null;
 			}
 			if(type !== null && type !== undefined){
-				optionalurlparameter = "%20-type%20"+type;
+				//TKS "define" does not work... 8-(
+				//optionalurlparameter = "%20-type%20"+type.replace("KS_", "$TKS::");
+				//therefor by hand 8-/
+				if(type === "KS_VT_STRING"){
+					optionalurlparameter = "%20-type%200x00000030";
+				}else if(type === "KS_VT_DOUBLE"){
+					optionalurlparameter = "%20-type%200x00000021";
+				}else if(type === "KS_VT_INT"){
+					optionalurlparameter = "%20-type%200x00000010";
+				}else{
+					return null;
+				}
 			}
 			
 			urlparameter = HMI.KSGateway_Path+"?obj="+Handle + "&args=setvar%20"+
