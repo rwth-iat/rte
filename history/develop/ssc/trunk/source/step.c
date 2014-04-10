@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
     pExit->v_actimode=1;
 
     //activate
-    pinst->v_iexreq=1;
+    pinst->v_iexreq=TRUE;
 
     return OV_ERR_OK;
 }

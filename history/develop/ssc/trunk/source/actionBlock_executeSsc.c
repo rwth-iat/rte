@@ -31,7 +31,7 @@ OV_DLLFNCEXPORT void ssc_executeSsc_typemethod(
     // init parameters
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = 1;
+    pinst->v_iexreq = TRUE;
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 

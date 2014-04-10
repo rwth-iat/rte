@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT void ssc_executeFb_typemethod(
     // init parameters
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = 1;
+    pinst->v_iexreq = TRUE;
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
@@ -113,7 +113,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_checkAction(
 	pAction->v_actimode = 1;
 	pAction->v_cyctime.secs = 0;
 	pAction->v_cyctime.usecs = 0;
-	pAction->v_iexreq = 1;
+	pAction->v_iexreq = TRUE;
 
 	return OV_ERR_OK;
 }
@@ -134,7 +134,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_setActionName(
     // init parameters
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = 1;
+    pinst->v_iexreq = TRUE;
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 

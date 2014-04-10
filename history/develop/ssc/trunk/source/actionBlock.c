@@ -112,7 +112,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
     /* do what */
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = 1;
+    pinst->v_iexreq = TRUE;
 
 
 
