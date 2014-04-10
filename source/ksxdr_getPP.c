@@ -38,7 +38,7 @@ result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &params->type_mask);
 		return result;
 KS_logfile_debug(("getPP_decodeparams: name_mask: \n\t\t%s", params->name_mask));
 
-	return KS_DATAPACKET_read_xdr_u_long(dataReceived, &dummy); 	/*	getPP seems to add 4 bytes containing 0x40 everytime. I do not now what these bytes mean. libovks does not decode them	*/
+	return KS_DATAPACKET_read_xdr_uint(dataReceived, &dummy); 	/*	getPP seems to add 4 bytes containing 0x40 everytime. I do not now what these bytes mean. libovks does not decode them	*/
 }
 
 /*
@@ -206,7 +206,7 @@ OV_RESULT ksxdr_getPP_encoderesults(KS_DATAPACKET* serviceAnswer, OV_GETPP_RES* 
 		/*
 		*	serialize the array size first
 		*/
-		fncresult = KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &items_len);
+		fncresult = KS_DATAPACKET_write_xdr_uint(serviceAnswer, &items_len);
 		if(Ov_Fail(fncresult)) {
 			return fncresult;
 		}

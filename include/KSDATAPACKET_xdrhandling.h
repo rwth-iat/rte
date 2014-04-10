@@ -12,11 +12,11 @@
  * If no data is read, the read pointer is not modified. Otherwise it is shifted to the next data to be read.
  */
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_u_long(KS_DATAPACKET* datapacket, OV_UINT* value);
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_u_long(KS_DATAPACKET* datapacket, const OV_UINT* value);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_uint(KS_DATAPACKET* datapacket, OV_UINT* value);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_uint(KS_DATAPACKET* datapacket, const OV_UINT* value);
 
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_long(KS_DATAPACKET* datapacket, OV_INT* value);
-OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_long(KS_DATAPACKET* datapacket, const OV_INT* value);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_int(KS_DATAPACKET* datapacket, OV_INT* value);
+OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_int(KS_DATAPACKET* datapacket, const OV_INT* value);
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_single(KS_DATAPACKET* datapacket, OV_SINGLE* value);
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_single(KS_DATAPACKET* datapacket, const OV_SINGLE* value);
@@ -131,8 +131,8 @@ OV_RESULT xdr_write_OV_UNLINK_ITEM (KS_DATAPACKET* dataPacket,	OV_UNLINK_ITEM* p
 /*
 *	XDR routines for enumeration values
 */
-#define KS_DATAPACKET_read_xdr_OV_BOOL(datapacket, bool)					KS_DATAPACKET_read_xdr_long(datapacket, (OV_INT*) bool)
-#define KS_DATAPACKET_read_xdr_OV_ENUM(datapacket, enumeration)					KS_DATAPACKET_read_xdr_long(datapacket, (OV_INT*) enumeration)
+#define KS_DATAPACKET_read_xdr_OV_BOOL(datapacket, bool)					KS_DATAPACKET_read_xdr_int(datapacket, (OV_INT*) bool)
+#define KS_DATAPACKET_read_xdr_OV_ENUM(datapacket, enumeration)					KS_DATAPACKET_read_xdr_int(datapacket, (OV_INT*) enumeration)
 #define KS_DATAPACKET_read_xdr_OV_TICKET_TYPE			KS_DATAPACKET_read_xdr_OV_ENUM
 #define KS_DATAPACKET_read_xdr_OV_VAR_TYPE				KS_DATAPACKET_read_xdr_OV_ENUM
 #define KS_DATAPACKET_read_xdr_OV_STATE					KS_DATAPACKET_read_xdr_OV_ENUM
@@ -147,8 +147,8 @@ OV_RESULT xdr_write_OV_UNLINK_ITEM (KS_DATAPACKET* dataPacket,	OV_UNLINK_ITEM* p
 #define KS_DATAPACKET_read_xdr_OV_HSEL_TYPE				KS_DATAPACKET_read_xdr_OV_ENUM
 #define KS_DATAPACKET_read_xdr_OV_RESULT				KS_DATAPACKET_read_xdr_OV_ENUM
 
-#define KS_DATAPACKET_write_xdr_OV_BOOL(datapacket, bool)					KS_DATAPACKET_write_xdr_long(datapacket, (OV_INT*) bool)
-#define KS_DATAPACKET_write_xdr_OV_ENUM(datapacket, enumeration)					KS_DATAPACKET_write_xdr_long(datapacket, (OV_INT*) enumeration)
+#define KS_DATAPACKET_write_xdr_OV_BOOL(datapacket, bool)					KS_DATAPACKET_write_xdr_int(datapacket, (OV_INT*) bool)
+#define KS_DATAPACKET_write_xdr_OV_ENUM(datapacket, enumeration)					KS_DATAPACKET_write_xdr_int(datapacket, (OV_INT*) enumeration)
 #define KS_DATAPACKET_write_xdr_OV_TICKET_TYPE			KS_DATAPACKET_write_xdr_OV_ENUM
 #define KS_DATAPACKET_write_xdr_OV_VAR_TYPE				KS_DATAPACKET_write_xdr_OV_ENUM
 #define KS_DATAPACKET_write_xdr_OV_STATE					KS_DATAPACKET_write_xdr_OV_ENUM
@@ -167,8 +167,8 @@ OV_RESULT xdr_write_OV_UNLINK_ITEM (KS_DATAPACKET* dataPacket,	OV_UNLINK_ITEM* p
  * More XDR routine defines
  */
 
-#define KS_DATAPACKET_read_xdr_OV_SEMANTIC_FLAGS				KS_DATAPACKET_read_xdr_u_long
-#define KS_DATAPACKET_write_xdr_OV_SEMANTIC_FLAGS				KS_DATAPACKET_write_xdr_u_long
+#define KS_DATAPACKET_read_xdr_OV_SEMANTIC_FLAGS				KS_DATAPACKET_read_xdr_uint
+#define KS_DATAPACKET_write_xdr_OV_SEMANTIC_FLAGS				KS_DATAPACKET_write_xdr_uint
 
 
 

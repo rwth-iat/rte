@@ -304,7 +304,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processDeleteObject(
 		return fncresult;
 	if(Ov_OK(*result))
 		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
-				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 	else
 		return OV_ERR_OK;
 }
@@ -447,7 +447,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRenameObject(
 		return fncresult;
 	if(Ov_OK(*result))
 		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
-				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 	else
 		return OV_ERR_OK;
 }
@@ -590,7 +590,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processLink(
 		return fncresult;
 	if(Ov_OK(*result))
 		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
-				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 	else
 		return OV_ERR_OK;
 }
@@ -733,7 +733,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnLink(
 		return fncresult;
 	if(Ov_OK(*result))
 		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
-				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 	else
 		return OV_ERR_OK;
 }

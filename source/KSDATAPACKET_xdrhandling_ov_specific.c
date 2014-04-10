@@ -27,22 +27,22 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME(KS_DATAPACKET* datapack
 	OV_RESULT result;
 	if(!ptime)
 		return OV_ERR_BADPARAM;
-	result = KS_DATAPACKET_read_xdr_u_long(datapacket, &ptime->secs);
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &ptime->secs);
 	if(Ov_Fail(result))
 		return result;
 
-	return KS_DATAPACKET_read_xdr_u_long(datapacket, &ptime->usecs);
+	return KS_DATAPACKET_read_xdr_uint(datapacket, &ptime->usecs);
 }
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME(KS_DATAPACKET* datapacket, const OV_TIME* ptime) {
 	OV_RESULT result;
 	if(!ptime)
 		return OV_ERR_BADPARAM;
-	result = KS_DATAPACKET_write_xdr_u_long(datapacket, &ptime->secs);
+	result = KS_DATAPACKET_write_xdr_uint(datapacket, &ptime->secs);
 	if(Ov_Fail(result))
 		return result;
 
-	return KS_DATAPACKET_write_xdr_u_long(datapacket, &ptime->usecs);
+	return KS_DATAPACKET_write_xdr_uint(datapacket, &ptime->usecs);
 }
 
 /*
@@ -54,11 +54,11 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_TIME_SPAN(KS_DATAPACKET* dat
 	OV_RESULT result;
 	if(!ptimespan)
 		return OV_ERR_BADPARAM;
-	result = KS_DATAPACKET_read_xdr_long(datapacket, &ptimespan->secs);
+	result = KS_DATAPACKET_read_xdr_int(datapacket, &ptimespan->secs);
 	if(Ov_Fail(result))
 		return result;
 
-	return KS_DATAPACKET_read_xdr_long(datapacket, &ptimespan->usecs);
+	return KS_DATAPACKET_read_xdr_int(datapacket, &ptimespan->usecs);
 }
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME_SPAN(KS_DATAPACKET* datapacket, const OV_TIME_SPAN* ptimespan)
@@ -66,11 +66,11 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_TIME_SPAN(KS_DATAPACKET* da
 	OV_RESULT result;
 	if(!ptimespan)
 		return OV_ERR_BADPARAM;
-	result = KS_DATAPACKET_write_xdr_long(datapacket, &ptimespan->secs);
+	result = KS_DATAPACKET_write_xdr_int(datapacket, &ptimespan->secs);
 	if(Ov_Fail(result))
 		return result;
 
-	return KS_DATAPACKET_write_xdr_long(datapacket, &ptimespan->usecs);
+	return KS_DATAPACKET_write_xdr_int(datapacket, &ptimespan->usecs);
 }
 
 
@@ -129,11 +129,11 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* dat
 		case OV_VT_BOOL:
 			return KS_DATAPACKET_read_xdr_OV_BOOL(datapacket, &value->valueunion.val_bool);
 		case OV_VT_INT:
-			return KS_DATAPACKET_read_xdr_long(datapacket, &value->valueunion.val_int);
+			return KS_DATAPACKET_read_xdr_int(datapacket, &value->valueunion.val_int);
 		case OV_VT_STATE:
 			return KS_DATAPACKET_read_xdr_OV_STATE(datapacket, &value->valueunion.val_state);
 		case OV_VT_UINT:
-			return KS_DATAPACKET_read_xdr_u_long(datapacket, &value->valueunion.val_uint);
+			return KS_DATAPACKET_read_xdr_uint(datapacket, &value->valueunion.val_uint);
 		case OV_VT_SINGLE:
 			return KS_DATAPACKET_read_xdr_single(datapacket, &value->valueunion.val_single);
 		case OV_VT_DOUBLE:
@@ -149,16 +149,16 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_OV_VAR_VALUE(KS_DATAPACKET* dat
 					&value->valueunion.val_struct.elements, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_OV_NAMED_ELEMENT);
 		case OV_VT_BOOL_VEC:
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_bool_vec.value, sizeof(OV_BOOL),
-					&value->valueunion.val_bool_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+					&value->valueunion.val_bool_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 		case OV_VT_INT_VEC:
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_int_vec.value, sizeof(OV_INT),
-					&value->valueunion.val_int_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_long);
+					&value->valueunion.val_int_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
 		case OV_VT_STATE_VEC:
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_state_vec.value, sizeof(OV_STATE),
-					&value->valueunion.val_state_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_u_long);
+					&value->valueunion.val_state_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_uint);
 		case OV_VT_UINT_VEC:
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_uint_vec.value, sizeof(OV_UINT),
-					&value->valueunion.val_uint_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_u_long);
+					&value->valueunion.val_uint_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_uint);
 		case OV_VT_SINGLE_VEC:
 			return KS_DATAPACKET_read_xdr_array_tomemstack(datapacket, (void**) &value->valueunion.val_single_vec.value, sizeof(OV_SINGLE),
 					&value->valueunion.val_single_vec.veclen, (xdr_readfncptr) &KS_DATAPACKET_read_xdr_single);
@@ -200,11 +200,11 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_VAR_VALUE(KS_DATAPACKET* da
 	case OV_VT_BOOL:
 		return KS_DATAPACKET_write_xdr_OV_BOOL(datapacket, &value->valueunion.val_bool);
 	case OV_VT_INT:
-		return KS_DATAPACKET_write_xdr_long(datapacket, &value->valueunion.val_int);
+		return KS_DATAPACKET_write_xdr_int(datapacket, &value->valueunion.val_int);
 	case OV_VT_STATE:
 		return KS_DATAPACKET_write_xdr_OV_STATE(datapacket, &value->valueunion.val_state);
 	case OV_VT_UINT:
-		return KS_DATAPACKET_write_xdr_u_long(datapacket, &value->valueunion.val_uint);
+		return KS_DATAPACKET_write_xdr_uint(datapacket, &value->valueunion.val_uint);
 	case OV_VT_SINGLE:
 		return KS_DATAPACKET_write_xdr_single(datapacket, &value->valueunion.val_single);
 	case OV_VT_DOUBLE:
@@ -220,16 +220,16 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_OV_VAR_VALUE(KS_DATAPACKET* da
 				&value->valueunion.val_struct.elements, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_OV_NAMED_ELEMENT);
 	case OV_VT_BOOL_VEC:
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_bool_vec.value, sizeof(OV_BOOL),
-				&value->valueunion.val_bool_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_long);
+				&value->valueunion.val_bool_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_int);
 	case OV_VT_INT_VEC:
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_int_vec.value, sizeof(OV_INT),
-				&value->valueunion.val_int_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_long);
+				&value->valueunion.val_int_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_int);
 	case OV_VT_STATE_VEC:
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_state_vec.value, sizeof(OV_STATE),
-				&value->valueunion.val_state_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_u_long);
+				&value->valueunion.val_state_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_uint);
 	case OV_VT_UINT_VEC:
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_uint_vec.value, sizeof(OV_UINT),
-				&value->valueunion.val_uint_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_u_long);
+				&value->valueunion.val_uint_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_uint);
 	case OV_VT_SINGLE_VEC:
 		return KS_DATAPACKET_write_xdr_array(datapacket, (void**) &value->valueunion.val_single_vec.value, sizeof(OV_SINGLE),
 				&value->valueunion.val_single_vec.veclen, (xdr_writefncptr) &KS_DATAPACKET_write_xdr_single);

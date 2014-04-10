@@ -22,7 +22,7 @@ OV_RESULT ksxdr_unregister(const OV_UINT version, const OV_TICKET* pticket, KS_D
 	OV_RESULT result;
 
 	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(dataReceived, &servername, KS_NAME_MAXLEN))
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverversion)))
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &serverversion)))
 	{
 		KS_logfile_error(("ksxdr_unregister: Error decoding Unregister message. Sending answer."));
 		*msgState = XDR_MSGST_GARBAGE_ARGS;

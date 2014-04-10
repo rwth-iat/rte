@@ -57,7 +57,7 @@ OV_RESULT ksxdr_renameObject_decodeparams(KS_DATAPACKET* dataReceived, OV_RENAME
 	OV_RESULT result;
 	OV_UINT i;
 
-	result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &params->items_len);
+	result = KS_DATAPACKET_read_xdr_uint(dataReceived, &params->items_len);
 	if(Ov_Fail(result))
 		return result;
 	params->items_val = ov_memstack_alloc(params->items_len * sizeof(OV_RENAMEOBJECT_ITEM));
@@ -86,7 +86,7 @@ OV_RESULT ksxdr_renameObject_encoderesults(KS_DATAPACKET* serviceAnswer, OV_RENA
 	{
 	case OV_ERR_OK:
 		return KS_DATAPACKET_write_xdr_array(serviceAnswer, (void**) &results->results_val, sizeof(OV_RESULT), &results->results_len,
-				(xdr_writefncptr) &KS_DATAPACKET_write_xdr_long);
+				(xdr_writefncptr) &KS_DATAPACKET_write_xdr_int);
 	default:
 		break;
 	}

@@ -38,7 +38,7 @@ OV_RESULT ksxdr_deleteObject_encoderesults(KS_DATAPACKET* serviceAnswer, OV_DELE
 	{
 	case OV_ERR_OK:
 		return KS_DATAPACKET_write_xdr_array(serviceAnswer, (void**) &results->results_val, sizeof(OV_RESULT), &results->results_len,
-				(xdr_writefncptr) &KS_DATAPACKET_write_xdr_long);
+				(xdr_writefncptr) &KS_DATAPACKET_write_xdr_int);
 	default:
 		break;
 	}

@@ -295,7 +295,7 @@ OV_RESULT ksxdr_getEP_encoderesults(KS_DATAPACKET* serviceAnswer, OV_GETEP_RES* 
 		/*
 		 *	serialize the array size first
 		 */
-		fncresult = KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &items_len);
+		fncresult = KS_DATAPACKET_write_xdr_uint(serviceAnswer, &items_len);
 		if(Ov_Fail(fncresult)) {
 			return fncresult;
 		}

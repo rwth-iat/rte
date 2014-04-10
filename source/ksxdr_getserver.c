@@ -30,7 +30,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 
 
 	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(dataReceived, &servername, KS_NAME_MAXLEN))
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &serverversion)))
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &serverversion)))
 	{
 		KS_logfile_error(("ksxdr_getserver: Error decoding getserver message. Sending answer."));
 		*msgState = XDR_MSGST_GARBAGE_ARGS;
@@ -110,12 +110,12 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 	/*	servername	*/
 	KS_DATAPACKET_write_xdr_string(serviceAnswer, &servername);
 	/*	version	*/
-	KS_DATAPACKET_write_xdr_long(serviceAnswer, &registeredVersion);
+	KS_DATAPACKET_write_xdr_int(serviceAnswer, &registeredVersion);
 	/*	port	*/
-	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &xdr_port);
+	KS_DATAPACKET_write_xdr_uint(serviceAnswer, &xdr_port);
 	/*	Expiration Time	*/
-	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &ExpTime.secs);
-	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &ExpTime.usecs);
+	KS_DATAPACKET_write_xdr_uint(serviceAnswer, &ExpTime.secs);
+	KS_DATAPACKET_write_xdr_uint(serviceAnswer, &ExpTime.usecs);
 	/*	set living-state	*/
 	ov_time_gettime(&ttemp);
 	if(ov_time_compare(&ttemp, &ExpTime) == OV_TIMECMP_BEFORE)
@@ -125,7 +125,7 @@ OV_RESULT ksxdr_getserver(const OV_UINT version, const OV_TICKET* pticket, KS_DA
 	else
 		i=2;	/*	server state 2: means probably dead	*/
 
-	KS_DATAPACKET_write_xdr_u_long(serviceAnswer, &i);
+	KS_DATAPACKET_write_xdr_uint(serviceAnswer, &i);
 
 	ov_free(servername);
 	return OV_ERR_OK;

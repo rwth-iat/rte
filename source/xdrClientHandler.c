@@ -87,32 +87,32 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 	OV_UINT dummy;
 
 	/*	xid is always here	*/
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &xid);
+	result = KS_DATAPACKET_write_xdr_uint(answer, &xid);
 	if(Ov_Fail(result))
 		return result;
 
 		/*	with this function we always put together a reply	*/
 	dummy = KSXDR_MSGTYPE_REPLY;
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+	result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 	if(Ov_Fail(result))
 		return result;
 
 	/*	acceptance	*/
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &msgAccepted);
+	result = KS_DATAPACKET_write_xdr_uint(answer, &msgAccepted);
 	if(Ov_Fail(result))
 		return result;
 
 	if(msgAccepted != XDR_MSG_ACCEPTED)
 	{	/*	rejected add reason	*/
 		/*	reason	*/
-		result = KS_DATAPACKET_write_xdr_u_long(answer, &msgState);
+		result = KS_DATAPACKET_write_xdr_uint(answer, &msgState);
 		if(Ov_Fail(result))
 			return result;
 
 		if(msgState == XDR_DEN_AUTH_ERROR)
 		{/*	rejection because of bad authentication	*/
 			dummy = XDR_AUTH_FAILED;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 
@@ -120,11 +120,11 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 		else
 		{/*	rejection because of rpc mismatch --> return highest and lowest supported version (here both 2)	*/
 			dummy = 0x02;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 
@@ -136,17 +136,17 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 	/*	message accepted	*/
 	/*	auth verifier	--> no auth*/
 	dummy = XDR_AUTH_NONE;
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+	result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 	if(Ov_Fail(result))
 		return result;
 
 	dummy = 0;
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);	/*	no auth data following (length 0)	*/
+	result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);	/*	no auth data following (length 0)	*/
 	if(Ov_Fail(result))
 		return result;
 
 	/*	message state	*/
-	result = KS_DATAPACKET_write_xdr_u_long(answer, &msgState);
+	result = KS_DATAPACKET_write_xdr_uint(answer, &msgState);
 	if(Ov_Fail(result))
 		return result;
 
@@ -155,10 +155,10 @@ OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT
 		if(msgState == XDR_MSGST_PROG_MISMATCH)
 		{/*rejection because of program version mismatch -->return highest and lowest supported ks-version (here both 2)	*/
 			dummy = 0x02;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 		}
@@ -183,7 +183,7 @@ OV_BOOL bufferHoldsCompleteRequest(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOf
 
 
 	dataReceived->readPT = BeginOfMessage;
-	*result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &header);	/*	read out header	*/
+	*result = KS_DATAPACKET_read_xdr_uint(dataReceived, &header);	/*	read out header	*/
 	if(Ov_Fail(*result))
 		return FALSE;
 
@@ -255,7 +255,7 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 	dataReceived->writePT = BeginOfMessage;
 
 
-	result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &fragmentHeader);	/*	first fragment	*/
+	result = KS_DATAPACKET_read_xdr_uint(dataReceived, &fragmentHeader);	/*	first fragment	*/
 	if(Ov_Fail(result))
 		return result;
 	dataReceived->writePT += 4;	/*	let writePT point to the same spot as readPT	*/
@@ -265,7 +265,7 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 	dataReceived->readPT += fragmentLength;
 	while(!(fragmentHeader & 0x80000000))	/*	while the current fragment is not the last one	*/
 	{
-		result = KS_DATAPACKET_read_xdr_u_long(dataReceived, &fragmentHeader);	/*	"next" fragment;
+		result = KS_DATAPACKET_read_xdr_uint(dataReceived, &fragmentHeader);	/*	"next" fragment;
 																					from here on, readPT is
 																					4 bytes per cycle in
 																					front of writePT	*/
@@ -343,19 +343,19 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	if(pChannel->v_usesStreamProtocol == TRUE)
 	{
 		BeginOfMessage = dataReceived->readPT;
-		if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &header)))				//not part of rpc call
+		if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &header)))				//not part of rpc call
 		{
 			KS_logfile_error(("%s: HandleRequest: cold not decode stream protocol header", this->v_identifier));
 			return OV_ERR_GENERIC;
 		}
 	}
 
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &xid))					//offset 0 in rpc call
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &messageType))	//offset 4
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &rpcVersion))	//offset 8
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &progId))		//offset 12
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &ProgVersion))	//offset 16
-			|| Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &procedure)))	//offset 20
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &xid))					//offset 0 in rpc call
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &messageType))	//offset 4
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &rpcVersion))	//offset 8
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &progId))		//offset 12
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &ProgVersion))	//offset 16
+			|| Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &procedure)))	//offset 20
 	{
 		KS_logfile_error(("%s: HandleRequest: cold not decode rpc-header", this->v_identifier));
 		KS_logfile_debug(("datapacket: \n\tlength:\t\t%lu\n\tdata:\t\t%p\n\treadPT:\t\t%p\n\twritePt:\t%p\n", dataReceived->length, dataReceived->data, dataReceived->readPT, dataReceived->writePT));
@@ -403,7 +403,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			beginAnswer = ((answer->writePT - answer->data));
 			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 			dummy = 0x80;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 					return result;
 
@@ -459,7 +459,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	 * there auth_credentials and auth_verification. Both contain up to 400 bytes opaque data (variable length)
 	 **************************************************************************************************************************************************************************/
 			/*credentials*/
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &authflavour)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &authflavour)))
 	{
 		KS_logfile_error(("%s: HandleRequest: reading auth_cred flavor failed", this->v_identifier));
 		msgAccepted = XDR_MSG_DENIED;
@@ -478,7 +478,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		msgState = XDR_DEN_AUTH_ERROR;
 	}
 			/*verifier*/
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &authflavour)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &authflavour)))
 	{
 		KS_logfile_error(("%s: HandleRequest: reading auth_ver flavor failed", this->v_identifier));
 		msgAccepted = XDR_MSG_DENIED;
@@ -509,7 +509,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			beginAnswer = ((answer->writePT - answer->data));
 			/*	reserve space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 			dummy = 0x80;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 
@@ -528,7 +528,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	 * handle ticket indicator; offset now should be 36 (since the auth blocks should be 8 bytes each (opaque data length 0))
 	 **************************************************************************************************************************************************************************/
 		/* read ticket indicator*/
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_u_long(dataReceived, &authflavour)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(dataReceived, &authflavour)))
 	{
 		KS_logfile_error(("%s: HandleRequest: reading ticketindicator failed", this->v_identifier));
 		msgState = XDR_MSGST_SUCCESS;
@@ -589,7 +589,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			beginAnswer = ((answer->writePT - answer->data));
 			/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 			dummy = 0x80;
-			result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+			result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 			if(Ov_Fail(result))
 				return result;
 
@@ -866,7 +866,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		beginAnswer = ((answer->writePT - answer->data));
 		/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 		dummy = 0x80;
-		result = KS_DATAPACKET_write_xdr_u_long(answer, &dummy);
+		result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
 		if(Ov_Fail(result))
 			return result;
 
@@ -878,7 +878,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 
 	/*	set auth part in reply. set tickettype and use ticket->encodereply for specific data	*/
 	/*	set ticketindicator	*/
-	if(Ov_Fail(KS_DATAPACKET_write_xdr_u_long(answer, &authflavour)))
+	if(Ov_Fail(KS_DATAPACKET_write_xdr_uint(answer, &authflavour)))
 	{
 		ksbase_free_KSDATAPACKET(&serviceAnswer);
 		ksbase_free_KSDATAPACKET(answer);
@@ -896,7 +896,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	pticket->vtbl->deleteticket(pticket);
 
 	/*	set ksErrCode	*/
-	if(Ov_Fail(KS_DATAPACKET_write_xdr_u_long(answer, &ksErrCode)))
+	if(Ov_Fail(KS_DATAPACKET_write_xdr_uint(answer, &ksErrCode)))
 	{
 		ksbase_free_KSDATAPACKET(&serviceAnswer);
 		ksbase_free_KSDATAPACKET(answer);
