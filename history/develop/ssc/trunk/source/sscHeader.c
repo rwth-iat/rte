@@ -196,6 +196,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
 
     //init variables
     pinst->v_workingState= WOST_INIT;
+    pinst->v_iexreq = TRUE;
 
     return OV_ERR_OK;
 }
