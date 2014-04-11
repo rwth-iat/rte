@@ -33,9 +33,9 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_uint(KS_DATAPACKET* datapacket,
 		/*	shift left is defined als multiplication with powers of 2
 		 * so it does the same independent of endianess of host system	*/
 		*value = (OV_UINT)(((datapacket->readPT[0]) << 24)
-				| ((datapacket->readPT[1]) << 16)
-				| ((datapacket->readPT[2]) << 8)
-				| ((datapacket->readPT[3])));
+		                 | ((datapacket->readPT[1]) << 16)
+		                 | ((datapacket->readPT[2]) << 8)
+		                 | ((datapacket->readPT[3])));
 		datapacket->readPT += 4;
 		return OV_ERR_OK;
 	}
@@ -75,9 +75,9 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_int(KS_DATAPACKET* datapacket, 
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
 		*value = (OV_INT)(((datapacket->readPT[0]) << 24)
-				| ((datapacket->readPT[1]) << 16)
-				| ((datapacket->readPT[2]) << 8)
-				| ((datapacket->readPT[3])));
+		                | ((datapacket->readPT[1]) << 16)
+		                | ((datapacket->readPT[2]) << 8)
+		                | ((datapacket->readPT[3])));
 		datapacket->readPT += 4;
 		return OV_ERR_OK;
 	}
@@ -91,13 +91,15 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_int(KS_DATAPACKET* datapacket,
 
 	if(value)
 	{
-			temp[0] = (unsigned char)((*value & 0xFF000000) >> 24);
-			temp[1] = (unsigned char)((*value & 0x00FF0000) >> 16);
-			temp[2] = (unsigned char)((*value & 0x0000FF00) >> 8);
-			temp[3] = (unsigned char)((*value & 0x000000FF));
+		temp[0] = (unsigned char)((*value & 0xFF000000) >> 24);
+		temp[1] = (unsigned char)((*value & 0x00FF0000) >> 16);
+		temp[2] = (unsigned char)((*value & 0x0000FF00) >> 8);
+		temp[3] = (unsigned char)((*value & 0x000000FF));
 	}
 	else
+	{
 		memset(temp, 0, 4);
+	}
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 4);
 }
 
@@ -119,9 +121,9 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_single(KS_DATAPACKET* datapacke
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
 		temp = (OV_UINT)((OV_UINT)((datapacket->readPT[0]) << 24)
-				| (OV_UINT)((datapacket->readPT[1]) << 16)
-				| (OV_UINT)((datapacket->readPT[2]) << 8)
-				| (OV_UINT)((datapacket->readPT[3])));
+		               | (OV_UINT)((datapacket->readPT[1]) << 16)
+		               | (OV_UINT)((datapacket->readPT[2]) << 8)
+		               | (OV_UINT)((datapacket->readPT[3])));
 		datapacket->readPT += 4;
 		memcpy(value, &temp, sizeof(OV_UINT));
 		return OV_ERR_OK;
@@ -175,13 +177,13 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacke
 		/*	some "old" arm cores represent the double format in two little endian DWORDs with the most significant word first^^	*/
 #ifndef ARCH_OLD_ARM
 		temp = (((uint64_t)(datapacket->readPT[0]) << 56)
-				| ((uint64_t)(datapacket->readPT[1]) << 48)
-				| ((uint64_t)(datapacket->readPT[2]) << 40)
-				| ((uint64_t)(datapacket->readPT[3]) << 32)
-				| ((uint64_t)(datapacket->readPT[4]) << 24)
-				| ((uint64_t)(datapacket->readPT[5]) << 16)
-				| ((uint64_t)(datapacket->readPT[6]) << 8)
-				| ((uint64_t)(datapacket->readPT[7])));
+		      | ((uint64_t)(datapacket->readPT[1]) << 48)
+		      | ((uint64_t)(datapacket->readPT[2]) << 40)
+		      | ((uint64_t)(datapacket->readPT[3]) << 32)
+		      | ((uint64_t)(datapacket->readPT[4]) << 24)
+		      | ((uint64_t)(datapacket->readPT[5]) << 16)
+		      | ((uint64_t)(datapacket->readPT[6]) << 8)
+		      | ((uint64_t)(datapacket->readPT[7])));
 		memcpy(value, &temp, sizeof(OV_DOUBLE));
 #else
 		temp[0] = datapacket->readPT[3];
@@ -251,7 +253,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_string(KS_DATAPACKET* datapacke
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(datapacket, &length)))
 		return OV_ERR_GENERIC;
 
 	//check if it fits into the buffer (do not forget terminating '\0')
@@ -299,7 +301,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_string_tomemstack(KS_DATAPACKET
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(datapacket, &length)))
 		return OV_ERR_GENERIC;
 
 	//check if it fits into the buffer (do not forget terminating '\0')
@@ -384,7 +386,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_opaque(KS_DATAPACKET* datapacke
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(datapacket, &length)))
 		return OV_ERR_GENERIC;
 	if(!length)
 	{
@@ -433,7 +435,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_opaque_tomemstack(KS_DATAPACKET
 	if(!value)
 		return OV_ERR_BADPARAM;
 
-	if(KS_DATAPACKET_read_xdr_uint(datapacket, &length))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(datapacket, &length)))
 		return OV_ERR_GENERIC;
 	if(!length)
 	{
