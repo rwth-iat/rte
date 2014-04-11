@@ -156,7 +156,11 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_single(KS_DATAPACKET* datapack
 
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacket, OV_DOUBLE* value)
 {
+#ifndef ARCH_OLD_ARM
 	uint64_t temp;
+#else
+	unsigned char temp[8];
+#endif
 
 	if(!datapacket
 			|| !datapacket->data)
@@ -171,25 +175,26 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacke
 		/*	some "old" arm cores represent the double format in two little endian DWORDs with the most significant word first^^	*/
 #ifndef ARCH_OLD_ARM
 		temp = (((uint64_t)(datapacket->readPT[0]) << 56)
-					| ((uint64_t)(datapacket->readPT[1]) << 48)
-					| ((uint64_t)(datapacket->readPT[2]) << 40)
-					| ((uint64_t)(datapacket->readPT[3]) << 32)
-					| ((uint64_t)(datapacket->readPT[4]) << 24)
-					| ((uint64_t)(datapacket->readPT[5]) << 16)
-					| ((uint64_t)(datapacket->readPT[6]) << 8)
-					| ((uint64_t)(datapacket->readPT[7])));
+				| ((uint64_t)(datapacket->readPT[1]) << 48)
+				| ((uint64_t)(datapacket->readPT[2]) << 40)
+				| ((uint64_t)(datapacket->readPT[3]) << 32)
+				| ((uint64_t)(datapacket->readPT[4]) << 24)
+				| ((uint64_t)(datapacket->readPT[5]) << 16)
+				| ((uint64_t)(datapacket->readPT[6]) << 8)
+				| ((uint64_t)(datapacket->readPT[7])));
+		memcpy(value, &temp, sizeof(OV_DOUBLE));
 #else
-		temp = (((uint64_t)(datapacket->readPT[4]) << 56)
-					| ((uint64_t)(datapacket->readPT[5]) << 48)
-					| ((uint64_t)(datapacket->readPT[6]) << 40)
-					| ((uint64_t)(datapacket->readPT[7]) << 32)
-					| ((uint64_t)(datapacket->readPT[0]) << 24)
-					| ((uint64_t)(datapacket->readPT[1]) << 16)
-					| ((uint64_t)(datapacket->readPT[2]) << 8)
-					| ((uint64_t)(datapacket->readPT[3])));
+		temp[0] = datapacket->readPT[3];
+		temp[1] = datapacket->readPT[2];
+		temp[2] = datapacket->readPT[1];
+		temp[3] = datapacket->readPT[0];
+		temp[4] = datapacket->readPT[7];
+		temp[5] = datapacket->readPT[6];
+		temp[6] = datapacket->readPT[5];
+		temp[7] = datapacket->readPT[4];
+		memcpy(value, temp, sizeof(OV_DOUBLE));
 #endif
 		datapacket->readPT += 8;
-		memcpy(value, &temp, sizeof(OV_DOUBLE));
 		return OV_ERR_OK;
 	}
 
@@ -199,12 +204,14 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_double(KS_DATAPACKET* datapacke
 OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_double(KS_DATAPACKET* datapacket, const OV_DOUBLE* value)
 {
 	unsigned char temp[8];
+#ifndef ARCH_OLD_ARM
 	uint64_t temp2;
+#endif
 
 	if(value)
 	{
-		memcpy(&temp2, value, sizeof(OV_DOUBLE));
 #ifndef ARCH_OLD_ARM
+		memcpy(&temp2, value, sizeof(OV_DOUBLE));
 		temp[0] = (unsigned char)((temp2 & 0xFF00000000000000) >> 56);
 		temp[1] = (unsigned char)((temp2 & 0x00FF000000000000) >> 48);
 		temp[2] = (unsigned char)((temp2 & 0x0000FF0000000000) >> 40);
@@ -214,18 +221,18 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_double(KS_DATAPACKET* datapack
 		temp[6] = (unsigned char)((temp2 & 0x000000000000FF00) >> 8);
 		temp[7] = (unsigned char)((temp2 & 0x00000000000000FF));
 #else
-		temp[4] = (unsigned char)((temp2 & 0xFF00000000000000) >> 56);
-		temp[5] = (unsigned char)((temp2 & 0x00FF000000000000) >> 48);
-		temp[6] = (unsigned char)((temp2 & 0x0000FF0000000000) >> 40);
-		temp[7] = (unsigned char)((temp2 & 0x000000FF00000000) >> 32);
-		temp[0] = (unsigned char)((temp2 & 0x00000000FF000000) >> 24);
-		temp[1] = (unsigned char)((temp2 & 0x0000000000FF0000) >> 16);
-		temp[2] = (unsigned char)((temp2 & 0x000000000000FF00) >> 8);
-		temp[3] = (unsigned char)((temp2 & 0x00000000000000FF));
+		temp[0] = ((unsigned char*)value)[3];
+		temp[1] = ((unsigned char*)value)[2];
+		temp[2] = ((unsigned char*)value)[1];
+		temp[3] = ((unsigned char*)value)[0];
+		temp[4] = ((unsigned char*)value)[7];
+		temp[5] = ((unsigned char*)value)[6];
+		temp[6] = ((unsigned char*)value)[5];
+		temp[7] = ((unsigned char*)value)[4];
 #endif
 	}
 	else
-		memset(temp, 0, 4);
+		memset(temp, 0, 8);
 	return ksbase_KSDATAPACKET_append(datapacket, temp, 8);
 }
 
