@@ -583,7 +583,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_array_tomemstack(KS_DATAPACKET*
 	if(Ov_Fail(result))
 		return result;
 
-	temp = ov_memstack_alloc(*length * elementSize);
+	temp = ov_memstack_alloc((*length) * elementSize);
 	if(!temp)
 		return OV_ERR_HEAPOUTOFMEMORY;
 
