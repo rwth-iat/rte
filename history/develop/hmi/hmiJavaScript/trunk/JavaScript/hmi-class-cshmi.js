@@ -1957,20 +1957,12 @@ cshmi.prototype = {
 			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
 			
 			for (var i = 0; i < blackboxes.length; ++i){	
-	
 				//get string of "jsOnglobalvarchanged"
-				//TODO iteration through all objects
 				var blackboxObjectpath = blackboxes[i].getAttribute("data-ModelSource");
 				var requestList = new Object();
 				
-				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
-					//the object is asked this session, so reuse the config to save communication requests
-					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
-				}else{
-					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
-				}
+				requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
+				this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "globalVar");
 			}
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
@@ -1999,20 +1991,12 @@ cshmi.prototype = {
 			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
 			
 			for (var i = 0; i < blackboxes.length; ++i){	
-	
 				//get string of "jsOnglobalvarchanged"
-				//TODO iteration through all objects
 				var blackboxObjectpath = blackboxes[i].getAttribute("data-ModelSource");
 				var requestList = new Object();
 				
-				//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-				if (this.ResourceList.Elements && this.ResourceList.Elements[blackboxObjectpath] !== undefined){
-					//the object is asked this session, so reuse the config to save communication requests
-					requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"]);
-				}else{
-					requestList[blackboxObjectpath]["jsOnglobalvarchanged"] = null;
-				}
+				requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
+				this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "persistentGlobalVar");
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
@@ -4279,6 +4263,7 @@ cshmi.prototype = {
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		}
 		
+		//fixme VisualObject.id kann auch von einem Iterator kommen.
 		if (VisualParentObject !== null){
 			//id should be the name of the parent plus our identifier
 			var NameList = ObjectPath.split("/");
@@ -4808,6 +4793,9 @@ cshmi.prototype = {
 			};
 			
 			var cshmimodel = new Object();
+			cshmimodel.VisualObject = null;
+			cshmimodel.document = HMI.svgDocument;
+			cshmimodel.window = window;
 			cshmimodel.variables = new Object();
 
 			for(var i = 0; i < varNames.length; ++i){
@@ -4869,8 +4857,12 @@ cshmi.prototype = {
 				return HMI.KSClient.renameObject(oldName, newName);
 			};
 			
-			//TODO: 
-			//Error-log aufnehmen in API
+			cshmimodel.log_info_onwebsite = function(text) {
+				HMI.hmi_log_info_onwebsite(text);
+			};
+			cshmimodel.log_error_onwebsite = function(text) {
+				HMI.hmi_log_onwebsite(text);
+			};
 			
 			VisualObject.ResourceList = new Object();
 			VisualObject.ResourceList.cshmimodel = cshmimodel;
@@ -4917,14 +4909,14 @@ cshmi.prototype = {
 		}
 		
 		if(jsOnload  !== ""){
-			//"onload" - TODO: noch sporadisch
+			//"onload" - TODO: sauber starten, wenn alles geladen ist
 			var preserveThis = this;
 			window.setTimeout(function(){
 				if (HMI.cshmi !== preserveThis){
 					//the active cshmi display is not "our" one, cancel Timeout
 					return true;
 				}
-				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload);
+				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
 			}, 4000);
 		}
 		
@@ -4935,17 +4927,22 @@ cshmi.prototype = {
 	 * executes JavaScript Code
 	 * @param {SVGElement} VisualObject visual Object which is active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param {String} jsOnload JavaScript-Code inserted in Blackbox and hereby executed via eval()
+	 * @param {String} evalcode JavaScript-Code to be executed via eval()
+	 * @param {String} locationidentifier
 	 */
-
-	_executeScript: function(VisualObject, ObjectPath, jsOnload){
-		
+	_executeScript: function(VisualObject, ObjectPath, jsOnload, locationidentifier){
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
 		var cshmimodel = VisualObject.ResourceList.cshmimodel;
+		cshmimodel.VisualObject = VisualObject;
 
-		//evaluate JS-Code of Blackbox
-		eval(jsOnload);
-					
+		//evaluate JS-Code
+		try {
+			eval(evalcode);
+		} catch (e) {
+			HMI.hmi_log_onwebsite("JS Code in "+locationidentifier+" of "+ObjectPath+" is not valid.");
+		}
+		
+		cshmimodel.VisualObject = null;
 	},
 	
 	/***************************************************************************************************************
