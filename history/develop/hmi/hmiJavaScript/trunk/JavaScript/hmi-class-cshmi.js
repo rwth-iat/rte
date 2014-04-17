@@ -4909,21 +4909,21 @@ cshmi.prototype = {
 		}
 		
 		if(jsOnload  !== ""){
+			var retrytime = 4000;
 			if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
-				this._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-			}else{
-				//we have to wait for the libraries to load
-				
-				//"onload" - TODO: sauber starten, wenn alles geladen ist
-				var preserveThis = this;
-				window.setTimeout(function(){
-					if (HMI.cshmi !== preserveThis){
-						//the active cshmi display is not "our" one, cancel Timeout
-						return true;
-					}
-					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-				}, 4000);
+				retrytime = 100;
 			}
+			//we have to wait for the libraries or DOMTree to load
+			
+			//"onload" - TODO: sauber starten, wenn alles geladen ist
+			var preserveThis = this;
+			window.setTimeout(function(){
+				if (HMI.cshmi !== preserveThis){
+					//the active cshmi display is not "our" one, cancel Timeout
+					return true;
+				}
+				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+			}, retrytime);
 		}
 		
 		return VisualObject;
