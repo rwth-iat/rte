@@ -160,10 +160,10 @@ if {[info exists ::env(FBDmovetarget)] && $::env(FBDmovetarget) != "" && [file i
 	if {[file exists $targetname] == 1} {
 		file delete $targetname
 	}
-	file rename $fbdfilename $targetname
-	puts "Moved to $::env(FBDmovetarget)/$fbdfilename"
+	file copy $fbdfilename $targetname
+	puts "Copied to $::env(FBDmovetarget)/$fbdfilename"
 } else {
-	puts "hint: setting a env variable FBDmovetarget will trigger an move to that position."
+	puts "hint: setting a env variable FBDmovetarget will trigger an copy to that position."
 }
 
 puts "== End processing static files =="
