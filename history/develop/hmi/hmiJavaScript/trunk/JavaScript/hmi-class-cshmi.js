@@ -4909,15 +4909,21 @@ cshmi.prototype = {
 		}
 		
 		if(jsOnload  !== ""){
-			//"onload" - TODO: sauber starten, wenn alles geladen ist
-			var preserveThis = this;
-			window.setTimeout(function(){
-				if (HMI.cshmi !== preserveThis){
-					//the active cshmi display is not "our" one, cancel Timeout
-					return true;
-				}
-				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-			}, 4000);
+			if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
+				this._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+			}else{
+				//we have to wait for the libraries to load
+				
+				//"onload" - TODO: sauber starten, wenn alles geladen ist
+				var preserveThis = this;
+				window.setTimeout(function(){
+					if (HMI.cshmi !== preserveThis){
+						//the active cshmi display is not "our" one, cancel Timeout
+						return true;
+					}
+					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+				}, 4000);
+			}
 		}
 		
 		return VisualObject;
@@ -4930,7 +4936,7 @@ cshmi.prototype = {
 	 * @param {String} evalcode JavaScript-Code to be executed via eval()
 	 * @param {String} locationidentifier
 	 */
-	_executeScript: function(VisualObject, ObjectPath, jsOnload, locationidentifier){
+	_executeScript: function(VisualObject, ObjectPath, evalcode, locationidentifier){
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
 		var cshmimodel = VisualObject.ResourceList.cshmimodel;
 		cshmimodel.VisualObject = VisualObject;
