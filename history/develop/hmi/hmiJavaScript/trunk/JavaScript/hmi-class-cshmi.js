@@ -2999,7 +2999,13 @@ cshmi.prototype = {
 			var ChildrenTypeList = ChildrenType.split(" ");
 			var response;
 			for (var i=0; i < ChildrenTypeList.length; i++) {
-				response = HMI.KSClient.getVar(FBRef +'.' + ChildrenTypeList[i], "OP_VALUE", null);
+				if(ChildrenTypeList[i].charAt(0) !== "/"){
+					var path = FBRef + "." + ChildrenTypeList[i];
+				}else{
+					//todo doku
+					path = FBRef + ChildrenTypeList[i];
+				}
+				response = HMI.KSClient.getVar(path, "OP_VALUE", null);
 				if (response === false || response === null){
 					continue;
 				}
