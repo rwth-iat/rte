@@ -314,8 +314,12 @@ int main(int argc, char **argv) {
 				if(argv[i])
 				{
 					filename = malloc(strlen(argv[i])+1);
-					if(!filename)
+					if(!filename){
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
+					}
 					strcpy(filename, argv[i]);
 				}
 				else
@@ -346,8 +350,12 @@ int main(int argc, char **argv) {
 				if(argv[i])
 				{
 					servername = malloc(strlen(argv[i])+1);
-					if(!servername)
+					if(!servername){
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
+					}
 					strcpy(servername, argv[i]);
 				}
 				else
@@ -423,6 +431,9 @@ int main(int argc, char **argv) {
 				if(!cfFile)
 				{
 					perror("Could not open config file");
+					/* TODO add with new libov release!
+					ov_logfile_free();
+					*/
 					return EXIT_FAILURE;
 				}
 				clearerr(cfFile);
@@ -439,6 +450,9 @@ int main(int argc, char **argv) {
 					if(!configBasePath)
 					{
 						ov_logfile_error("Could not reserve memory for basePath. Aborting.");
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
 					}
 					strncpy(configBasePath, configFile, j+1);
@@ -455,6 +469,9 @@ int main(int argc, char **argv) {
 					if(!strchr(lineStr, '\n') && !feof(cfFile))
 					{
 						ov_logfile_error("Error reading config file: line %u too long", line);
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
 					}
 
@@ -481,16 +498,24 @@ int main(int argc, char **argv) {
 					{
 						if(!filename)
 							filename = readValue(startRead);
-						if(!filename || !*filename)
+						if(!filename || !*filename){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 					}
 					/*	SERVERNAME	*/
 					else if(strstr(startRead, "SERVERNAME")==startRead)
 					{
 						if(!servername)
 							servername = readValue(startRead);
-						if(!servername || !*servername)
+						if(!servername || !*servername){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						temp2 = servername;
 						while((*temp2>='0' && *temp2<='9')
 								|| (*temp2>='A' && *temp2<='Z')
@@ -507,20 +532,31 @@ int main(int argc, char **argv) {
 					{
 						if(!password)
 							password = readValue(startRead);
-						if(!password || !*password)
+						if(!password || !*password){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 					}
 					/*	PORT	*/
 					else if(strstr(startRead, "PORT")==startRead)
 					{
 						if(!port)
 							temp = readValue(startRead);
-						if(!temp || !*temp)
+						if(!temp || !*temp){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						port = strtol(temp, &temp2, 0);
 						if(*temp2)
 						{
 							ov_logfile_error("Error parsing line %u: too many arguments for PORT.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -530,8 +566,12 @@ int main(int argc, char **argv) {
 					{
 						if (libcount<MAX_STARTUP_LIBRARIES) {
 							libraries[libcount] = readValue(startRead);
-							if(!libraries[libcount] || !*libraries[libcount])
+							if(!libraries[libcount] || !*libraries[libcount]){
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
+							}
 							libcount++;
 						}
 						else 	ov_logfile_error("Too many libraries in start command and configfile.\n");
@@ -542,8 +582,12 @@ int main(int argc, char **argv) {
 						if(logfileSpecified == FALSE)
 						{
 							temp = readValue(startRead);
-							if(!temp || !*temp)
+							if(!temp || !*temp){
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
+							}
 							if(!strcmp(temp, "stdout")) {
 								ov_logfile_logtostdout(NULL);
 							} else if(!strcmp(temp, "stderr")) {
@@ -566,6 +610,9 @@ int main(int argc, char **argv) {
 										if(!helper)
 										{
 											ov_logfile_error("Could not reserve memory for logfile path. Aborting.");
+											/* TODO add with new libov release!
+											ov_logfile_free();
+											*/
 											return EXIT_FAILURE;
 										}
 										strcpy(helper, configBasePath);
@@ -585,6 +632,9 @@ int main(int argc, char **argv) {
 								}
 								if(Ov_Fail(ov_logfile_open(NULL, temp, "w"))) {
 									ov_logfile_error("Could not open log file: \"%s\".\n", temp);
+									/* TODO add with new libov release!
+									ov_logfile_free();
+									*/
 									return EXIT_FAILURE;
 								}
 							}
@@ -598,6 +648,9 @@ int main(int argc, char **argv) {
 						if(*(startRead+12))
 						{
 							ov_logfile_error("Error parsing line %u: ACTIVITYLOCK does not accept parameters.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 					}
@@ -638,6 +691,9 @@ int main(int argc, char **argv) {
 						if(*(startRead+9))
 						{
 							ov_logfile_error("Error parsing line %u: NOSTARTUP does not accept parameters.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 					}
@@ -648,6 +704,9 @@ int main(int argc, char **argv) {
 						if(*(startRead+4))
 						{
 							ov_logfile_error("Error parsing line %u: EXIT does not accept parameters.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 					}
@@ -677,6 +736,9 @@ int main(int argc, char **argv) {
 							if(*temp2)
 							{
 								ov_logfile_error("Error parsing line %u: too many arguments to EXEC option.", line);
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
 							}
 							exec = TRUE;
@@ -686,12 +748,19 @@ int main(int argc, char **argv) {
 					else if(strstr(startRead, "ALLOWEDJITTER")==startRead)
 					{
 						temp = readValue(startRead);
-						if(!temp || !*temp)
+						if(!temp || !*temp){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						maxAllowedJitter = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
 							ov_logfile_error("Error parsing line %u: too many arguments for ALLOWEDJITTER.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -700,12 +769,19 @@ int main(int argc, char **argv) {
 					else if(strstr(startRead, "KSMAXSTRLENGTH")==startRead)
 					{
 						temp = readValue(startRead);
-						if(!temp || !*temp)
+						if(!temp || !*temp){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						ks_maxStringLength = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
 							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXSTRLENGTH.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -714,12 +790,19 @@ int main(int argc, char **argv) {
 					else if(strstr(startRead, "KSMAXVECLENGTH")==startRead)
 					{
 						temp = readValue(startRead);
-						if(!temp || !*temp)
+						if(!temp || !*temp){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						ks_maxVectorLength = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
 							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXVECLENGTH.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -728,12 +811,19 @@ int main(int argc, char **argv) {
 					else if(strstr(startRead, "KSMAXITEMSPERREQ")==startRead)
 					{
 						temp = readValue(startRead);
-						if(!temp || !*temp)
+						if(!temp || !*temp){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						ks_maxItemsPerRequest = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
 							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXITEMSPERREQ.", line);
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
 						}
 						free(temp);
@@ -754,6 +844,9 @@ int main(int argc, char **argv) {
 					else
 					{
 						ov_logfile_error("Error parsing line %u: unknown option", line);
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
 					}
 				}
@@ -761,6 +854,9 @@ int main(int argc, char **argv) {
 				if(ferror(cfFile))
 				{
 					perror("Error reading config file");
+					/* TODO add with new libov release!
+					ov_logfile_free();
+					*/
 					return EXIT_FAILURE;
 				}
 			}
@@ -785,8 +881,12 @@ int main(int argc, char **argv) {
 				if(argv[i])
 				{
 					password = malloc(strlen(argv[i])+1);
-					if(!password)
+					if(!password){
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
+					}
 					strcpy(password, argv[i]);
 				}
 				else
@@ -837,8 +937,12 @@ int main(int argc, char **argv) {
 				if(argv[i])
 				{
 					libraries[libcount] = malloc(strlen(argv[i])+1);
-					if(!libraries[libcount])
+					if(!libraries[libcount]){
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
+					}
 					strcpy(libraries[libcount], argv[i]);
 					libcount++;
 				}
@@ -885,6 +989,9 @@ int main(int argc, char **argv) {
 							if(!helper)
 							{
 								ov_logfile_error("Could not reserve memory for logfile path. Aborting.");
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
 							}
 							strcpy(helper, configBasePath);
@@ -905,8 +1012,12 @@ int main(int argc, char **argv) {
 						if(argv[i])
 						{
 							helper = malloc(strlen(argv[i])+1);
-							if(!helper)
+							if(!helper){
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
+							}
 							strcpy(helper, argv[i]);
 						}
 						else
@@ -917,6 +1028,9 @@ int main(int argc, char **argv) {
 
 					if(Ov_Fail(ov_logfile_open(NULL, helper, "w"))) {
 						ov_logfile_error("Could not open log file: \"%s\".\n", argv[i]);
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
 					}
 				free(helper);
@@ -950,6 +1064,9 @@ int main(int argc, char **argv) {
 		*/
 		else if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
 			printf("ACPLT/KS Server for ACPLT/OV " OV_VER_SERVER "\n");
+			/* TODO add with new libov release!
+			ov_logfile_free();
+			*/
 			return EXIT_FAILURE;
 		}
 		/*
@@ -965,8 +1082,12 @@ int main(int argc, char **argv) {
 				if(*(argv[i])!='/')			//get Identifier
 				{
 					execIdent = malloc(strlen(argv[i])+1);
-					if(!execIdent)
+					if(!execIdent){
+						/* TODO add with new libov release!
+						ov_logfile_free();
+						*/
 						return EXIT_FAILURE;
+					}
 					strcpy(execIdent, argv[i]);
 				}
 				i++;
@@ -974,8 +1095,12 @@ int main(int argc, char **argv) {
 					if(*(argv[i])!='/')		//get Class
 					{
 						execClass = malloc(strlen(argv[i])+1);
-						if(!execClass)
+						if(!execClass){
+							/* TODO add with new libov release!
+							ov_logfile_free();
+							*/
 							return EXIT_FAILURE;
+						}
 						strcpy(execClass, argv[i]);
 					}
 
@@ -984,8 +1109,12 @@ int main(int argc, char **argv) {
 						if(*(argv[i])!='/')	//get Library
 						{
 							execLib = malloc(strlen(argv[i])+1);
-							if(!execLib)
+							if(!execLib){
+								/* TODO add with new libov release!
+								ov_logfile_free();
+								*/
 								return EXIT_FAILURE;
+							}
 							strcpy(execLib, argv[i]);
 						}
 
@@ -1004,8 +1133,11 @@ int main(int argc, char **argv) {
 		*	display help option
 		*/
 		else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
-HELP:	   ov_server_usage();			
-         return EXIT_FAILURE;
+HELP:		ov_server_usage();			
+			/* TODO add with new libov release!
+			ov_logfile_free();
+			*/
+			return EXIT_FAILURE;
 		} else {
 			goto HELP;
 		}
@@ -1026,6 +1158,9 @@ HELP:	   ov_server_usage();
 			goto ERRORMSG;
 		}
 		ov_logfile_info("Message sent successfully.");
+		/* TODO add with new libov release!
+		ov_logfile_free();
+		*/
 		return EXIT_SUCCESS;
 	}
 #endif
@@ -1035,6 +1170,9 @@ HELP:	   ov_server_usage();
 	if(!servername) {
 		ov_logfile_error("No server name set. Aborting.");
 		ov_server_usage();
+		/* TODO add with new libov release!
+		ov_logfile_free();
+		*/
 		return EXIT_FAILURE;
 	}
 #ifdef OV_TICKET_DEMO
@@ -1075,6 +1213,9 @@ HELP:	   ov_server_usage();
 	{
 		ov_logfile_error("No database file set. Aborting.");
 		ov_server_usage();
+		/* TODO add with new libov release!
+		ov_logfile_free();
+		*/
 		return EXIT_FAILURE;
 	}
 	/*
@@ -1093,6 +1234,9 @@ HELP:	   ov_server_usage();
 			if(!helper)
 			{
 				ov_logfile_error("Could not reserve memory for filename path. Aborting.");
+				/* TODO add with new libov release!
+				ov_logfile_free();
+				*/
 				return EXIT_FAILURE;
 			}
 			strcpy(helper, configBasePath);
@@ -1134,6 +1278,9 @@ MAPBACKUP:
 ERRORMSG:
 		ov_logfile_error("Error: %s (error code 0x%4.4x).",
 			ov_result_getresulttext(result), result);
+		/* TODO add with new libov release!
+		ov_logfile_free();
+		*/
 		return EXIT_FAILURE;
 	}
 	ov_logfile_info("Database mapped.");
@@ -1277,9 +1424,12 @@ ERRORMSG:
 	free(execLib);
 
 	/*
-	*	close the logfile and return
+	*	close the logfile, free its memory and return
 	*/
 	ov_logfile_close();
+	/* TODO add with new libov release!
+	ov_logfile_free();
+	*/
 	return exit_status;
 }
 
