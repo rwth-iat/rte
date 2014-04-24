@@ -35,15 +35,18 @@
 extern "C" {
 #endif
 
-/*
+/**
 *	Maximum number of messages to keep for ov_logfile_getmessages
 */
 #ifndef OV_LOGFILE_MAXMSGS
 #define OV_LOGFILE_MAXMSGS	((sizeof(int)>2)?(128):(16))
 #endif
 
-/*
+/**
 *	Open/create a logfile
+*	@param ident will be "ACPLT/OV" if NULL
+*	@param filename
+*	@param mode will be passed to fopen, for example "w"
 */
 OV_DLLFNCEXPORT OV_RESULT ov_logfile_open(
 	const OV_STRING	ident,
@@ -51,27 +54,30 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_open(
 	OV_STRING	mode
 );
 
-/*
+/**
 *	Close the logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_close(void);
 
-/*
+/**
 *	Log to stdout
+*	@param ident will be "ACPLT/OV" if NULL
 */
 OV_DLLFNCEXPORT void ov_logfile_logtostdout(
 	const OV_STRING	ident
 );
 
-/*
+/**
 *	Log to stderr
+*	@param ident will be "ACPLT/OV" if NULL
 */
 OV_DLLFNCEXPORT void ov_logfile_logtostderr(
 	const OV_STRING	ident
 );
 
-/*
+/**
 *	Log to the NT logger (Windows NT only)
+*	@param ident will be "ACPLT/OV" if NULL
 */
 #if OV_SYSTEM_NT
 OV_DLLFNCEXPORT void ov_logfile_logtontlog(
@@ -79,7 +85,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 );
 #endif
 
-/*
+/**
 *	Print text to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_print(
@@ -87,7 +93,7 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 	const OV_STRING	msg
 );
 
-/*
+/**
 *	Print info to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_info(
@@ -95,7 +101,7 @@ OV_DLLFNCEXPORT void ov_logfile_info(
 	...
 );
 
-/*
+/**
 *	Print debug info to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_debug(
@@ -103,7 +109,7 @@ OV_DLLFNCEXPORT void ov_logfile_debug(
 	...
 );
 
-/*
+/**
 *	Print warning to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_warning(
@@ -111,7 +117,7 @@ OV_DLLFNCEXPORT void ov_logfile_warning(
 	...
 );
 
-/*
+/**
 *	Print error to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_error(
@@ -119,7 +125,7 @@ OV_DLLFNCEXPORT void ov_logfile_error(
 	...
 );
 
-/*
+/**
 *	Print alert to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_alert(
@@ -127,7 +133,7 @@ OV_DLLFNCEXPORT void ov_logfile_alert(
 	...
 );
 
-/*
+/**
 *	Get messages from the logfile
 *	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
 *	is able to scan from oldest to newst messages or vice versa (by switching to/from times)
@@ -146,6 +152,13 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	OV_TIME		**times,
 	OV_UINT		*no_messages
 );
+
+/**
+ *	frees the heap memory used by the logfile array
+ */
+/* TODO add with new libov release!
+void ov_logfile_free();
+*/
 
 #ifdef __cplusplus
 }	/* extern "C" */

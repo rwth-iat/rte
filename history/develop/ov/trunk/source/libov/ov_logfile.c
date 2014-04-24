@@ -59,6 +59,9 @@
 */
 static char			msg[1024];
 
+/**
+ * bufidx identifies the next free entry or is MAXMSGS if not initialised yet
+ */
 static OV_UINT		bufidx = OV_LOGFILE_MAXMSGS;
 static OV_STRING	msgbuf[OV_LOGFILE_MAXMSGS];
 static OV_TIME		timebuf[OV_LOGFILE_MAXMSGS];
@@ -75,8 +78,11 @@ static HANDLE		eventsource = NULL;
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Open/create a logfile
+*	@param ident will be "ACPLT/OV" if NULL
+*	@param filename
+*	@param mode will be passed to fopen, for example "w"
 */
 OV_DLLFNCEXPORT OV_RESULT ov_logfile_open(
 	const OV_STRING	ident,
@@ -105,7 +111,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_open(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Close the logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_close(void) {
@@ -131,8 +137,9 @@ OV_DLLFNCEXPORT void ov_logfile_close(void) {
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Log to stdout
+*	@param ident will be "ACPLT/OV" if NULL
 */
 OV_DLLFNCEXPORT void ov_logfile_logtostdout(
 	const OV_STRING	ident
@@ -148,8 +155,9 @@ OV_DLLFNCEXPORT void ov_logfile_logtostdout(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Log to stderr
+*	@param ident will be "ACPLT/OV" if NULL
 */
 OV_DLLFNCEXPORT void ov_logfile_logtostderr(
 	const OV_STRING	ident
@@ -165,8 +173,9 @@ OV_DLLFNCEXPORT void ov_logfile_logtostderr(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Log to the NT logger (Windows NT only)
+*	@param ident will be "ACPLT/OV" if NULL
 */
 #if OV_SYSTEM_NT
 OV_DLLFNCEXPORT void ov_logfile_logtontlog(
@@ -212,7 +221,7 @@ OV_DLLFNCEXPORT void ov_logfile_logtontlog(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print text to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_print(
@@ -316,8 +325,6 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 	 *	we need to see whether this has performance issues
 	*/
 		fflush(logfile);
-
-		
 	}
 #endif
 	Ov_HeapFree(output);
@@ -325,7 +332,7 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print info to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_info(
@@ -351,7 +358,7 @@ OV_DLLFNCEXPORT void ov_logfile_info(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print debug info to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_debug(
@@ -377,7 +384,7 @@ OV_DLLFNCEXPORT void ov_logfile_debug(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print warning to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_warning(
@@ -403,7 +410,7 @@ OV_DLLFNCEXPORT void ov_logfile_warning(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print error to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_error(
@@ -429,7 +436,7 @@ OV_DLLFNCEXPORT void ov_logfile_error(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Print alert to logfile
 */
 OV_DLLFNCEXPORT void ov_logfile_alert(
@@ -455,9 +462,16 @@ OV_DLLFNCEXPORT void ov_logfile_alert(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Get messages from the logfile
 *	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
+*	is able to scan from oldest to newst messages or vice versa (by switching to/from times)
+*	@param from
+*	@param to
+*	@param max_no_messages
+*	@param messages pointer to an STRING array. Could be NULL if not interesting
+*	@param times pointer to an TIME array. Could be NULL if not interesting
+*	@param no_messages number of results in the messages and/or times arrays
 */
 OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	OV_TIME		*from,
@@ -563,6 +577,25 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	}
 	return OV_ERR_OK;
 }
+
+/**
+ *	frees the heap memory used by the logfile array
+ */
+/* TODO add with new libov release!
+void ov_logfile_free() {
+	OV_UINT runindex = 0;
+	if(bufidx == OV_LOGFILE_MAXMSGS) {
+		//no logfile used till now
+		return;
+	}
+	//bufidx is the next free entry
+	for(runindex = 0;runindex < bufidx;runindex++){
+		Ov_HeapFree(msgbuf[runindex]);
+	}
+	bufidx = OV_LOGFILE_MAXMSGS;
+	return;
+}
+*/
 
 /*	----------------------------------------------------------------------	*/
 
