@@ -356,8 +356,10 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_write_xdr_string(KS_DATAPACKET* datapack
 	while(xdradd%4)	/*	care for alignment	*/
 		xdradd++;
 	temp = ov_memstack_alloc(xdradd + 4);		/*	reserve space for length (4bytes) and string	*/
-	if(!temp)
+	if(!temp){
+		ov_memstack_unlock();
 		return OV_ERR_HEAPOUTOFMEMORY;
+	}
 	/*	initialize	*/
 	memset(temp, 0, xdradd+4);
 	/*	copy in length	*/
