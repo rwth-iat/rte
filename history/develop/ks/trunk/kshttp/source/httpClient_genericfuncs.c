@@ -86,6 +86,7 @@ OV_RESULT kshttp_getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INS
 				if(Ov_Fail(result))
 				{
 					KS_logfile_error(("%s getChannelPointer: could not create channel for communication. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+					ov_memstack_unlock();
 					return result;
 				}
 				else
@@ -94,6 +95,7 @@ OV_RESULT kshttp_getChannelPointer(OV_INSTPTR_kshttp_httpClientBase this, OV_INS
 					if(Ov_Fail(result))
 					{
 						KS_logfile_error(("%s getChannelPointer: could not link with channel. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+						ov_memstack_unlock();
 						return result;
 					}
 					(*ppChannel)->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
