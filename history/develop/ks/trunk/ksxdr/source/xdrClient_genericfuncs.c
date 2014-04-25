@@ -70,6 +70,7 @@ OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ks
 				if(Ov_Fail(result))
 				{
 					KS_logfile_error(("%s getChannelPointer: could not create channel for manager communication. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+					ov_memstack_unlock();
 					return result;
 				}
 				else
@@ -78,6 +79,7 @@ OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ks
 					if(Ov_Fail(result))
 					{
 						KS_logfile_error(("%s getChannelPointer: could not link with channel. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
+						ov_memstack_unlock();
 						return result;
 					}
 					(*ppChannel)->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
