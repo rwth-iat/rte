@@ -1215,6 +1215,7 @@ HELP:		ov_server_usage();
 		ov_server_usage();
 		/* TODO add with new libov release!
 		ov_logfile_free();
+		ov_vendortree_free();
 		*/
 		return EXIT_FAILURE;
 	}
@@ -1236,6 +1237,7 @@ HELP:		ov_server_usage();
 				ov_logfile_error("Could not reserve memory for filename path. Aborting.");
 				/* TODO add with new libov release!
 				ov_logfile_free();
+				ov_vendortree_free();
 				*/
 				return EXIT_FAILURE;
 			}
@@ -1280,6 +1282,7 @@ ERRORMSG:
 			ov_result_getresulttext(result), result);
 		/* TODO add with new libov release!
 		ov_logfile_free();
+		ov_vendortree_free();
 		*/
 		return EXIT_FAILURE;
 	}
@@ -1429,6 +1432,7 @@ ERRORMSG:
 	ov_logfile_close();
 	/* TODO add with new libov release!
 	ov_logfile_free();
+	ov_vendortree_free();
 	*/
 	return exit_status;
 }
