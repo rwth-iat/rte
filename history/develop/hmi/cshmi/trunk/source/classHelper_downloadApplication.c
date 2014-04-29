@@ -20,7 +20,6 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-#include "cshmi.h"
 #include "cshmilib.h"
 
 /**

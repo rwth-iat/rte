@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_opacity_set(
 ) {
 	if(value > 1.0){
 		pobj->v_opacity = 1;
-	}else if(value < 1.0){
+	}else if(value < 0.0){
 		pobj->v_opacity = 0;
 	}else{
 		pobj->v_opacity = value;
