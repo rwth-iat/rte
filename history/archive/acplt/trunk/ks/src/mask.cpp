@@ -57,7 +57,7 @@ KsMask::m_loop(const char *name, int n, int m) const
                    break;
         default  : if (mask[m]=='\\') m++;
                    #if (PLT_IGNOR_UPCASE)
-                       if (m>=l || (mask[m]!=toupper(name[n]) && mask[m]!=tolower(name[n]))
+                       if (m>=l || (mask[m]!=toupper(name[n]) && mask[m]!=tolower(name[n])))
                            return 0;
                    #else
                        if (m>=l || mask[m]!=name[n]) 
