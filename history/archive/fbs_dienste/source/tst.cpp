@@ -15,7 +15,8 @@ int main(int argc, char **argv)
     char help[256];
     char *ph;
     
-    strcpy(help, argv[0]);
+    help[255] = '\0'; //make sure the string is terminated
+    strncpy(help, argv[0], 255);
     ph = help;
     while( ph && (*ph) ) {
         if( (*ph) == '\\') {
