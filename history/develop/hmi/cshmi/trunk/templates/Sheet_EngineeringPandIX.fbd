@@ -1,9 +1,9 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2013-12-05 23:11:34
+* Erstellt: 2014-04-29 14:16:49
 * 
-* HOST   : LOCALHOST:7509
-* SERVER : MANAGER
+* HOST   : DEV:7509
+* SERVER : pandix
 ************************************************************/
 
  INSTANCE  /TechUnits/cshmi/engineeringPandIXSheet :
@@ -17,7 +17,7 @@
       rotate : INPUT INT = 0;
       hideable : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "Pandix/internal/PandixEngineering";
+      TemplateDefinition : INPUT STRING = "Pandix/PandixEngineering";
       FBReference[1] : INPUT STRING = {"/TechUnits/pandix"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
