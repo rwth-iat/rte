@@ -14,7 +14,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 35.000000;
@@ -25,7 +25,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/leftPosition :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.500000;
         y : INPUT  SINGLE = 0.500000;
@@ -43,7 +43,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/middlePosition :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 30.500000;
         y : INPUT  SINGLE = 0.500000;
@@ -61,7 +61,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/rightPosition :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 60.500000;
         y : INPUT  SINGLE = 0.500000;
@@ -79,7 +79,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/arrow1 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "7.5,0.5 23.5,30 23,25 19.5,26 23.5,30";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -94,7 +94,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/arrow2 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "7.5,30.5 23.5,0.5 23,7 18.5,6 23.5,0.5";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -109,7 +109,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/arrow3 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "67.5,30.5 67.5,0.5 65,7.5 70,7.5 67.5,0.5 ";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -124,7 +124,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/arrow4 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "83.5,0.5 83.5,30.5 86,23.5 81,23.5 83.5,30.5";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -139,7 +139,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValveSymbol/lineMiddlePos :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "37.5,0.5 37.5,15.5 53.5,15.5 53.5,0.5 53.5,30.5";
         strokeWidth : INPUT  SINGLE = 1.500000;
@@ -154,7 +154,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 160.000000;
         height : INPUT  SINGLE = 50.000000;
@@ -165,7 +165,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/43DirectionalValveSymbol";
         x : INPUT  SINGLE = 0.000000;
@@ -185,7 +185,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 2.000000;
         zindex : INPUT  UINT = 0;
@@ -194,7 +194,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -203,7 +203,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -211,7 +211,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -219,7 +219,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -227,7 +227,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -237,7 +237,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -255,7 +255,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -273,7 +273,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -283,7 +283,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -301,7 +301,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -319,7 +319,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.then/setX30 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -336,7 +336,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.then/setX30.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -354,7 +354,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -363,7 +363,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -371,7 +371,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -379,7 +379,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -387,7 +387,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/OPSTA_40 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -397,7 +397,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/OPSTA_40.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -415,7 +415,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/OPSTA_40.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -433,7 +433,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -443,7 +443,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -461,7 +461,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -479,7 +479,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.then/setX00 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -496,7 +496,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.then/setX00.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -514,7 +514,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -523,7 +523,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -531,7 +531,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -539,7 +539,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -547,7 +547,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/OPSTA_50 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -557,7 +557,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/OPSTA_50.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -575,7 +575,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/OPSTA_50.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -593,7 +593,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -603,7 +603,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -621,7 +621,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -639,7 +639,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.then/setXminus30 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -656,7 +656,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/43DirectionalValve/addSymbol/cyclicUpdate/isLeft.else/isMiddle.else/isRight.then/setXminus30.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -674,7 +674,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -685,7 +685,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/title :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
         y : INPUT  SINGLE = -10.000000;
@@ -708,7 +708,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -716,7 +716,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/title/onload/setTitle :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -733,7 +733,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/title/onload/setTitle.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -751,7 +751,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/line :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "0,5 25,5 25,2 32,7.5 25,13 25,10 0,10 0,5";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -766,7 +766,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/line/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -774,7 +774,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/line/onload/setRotation :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -791,7 +791,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/arrow/line/onload/setRotation.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -809,7 +809,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -820,7 +820,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/filterPath :
-    CLASS /Libraries/cshmi/Path;
+    CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M-30,0 L0,-30 L30,0 L0,30 L-30,0";
         strokeWidth : INPUT  SINGLE = 2.000000;
@@ -835,7 +835,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/line1 :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = -30.000000;
         y1 : INPUT  SINGLE = 0.000000;
@@ -853,7 +853,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/line1/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -861,7 +861,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/line1/onload/dashedLine :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -878,7 +878,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/filter/line1/onload/dashedLine.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -896,7 +896,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1000.000000;
         height : INPUT  SINGLE = 1000.000000;
@@ -907,7 +907,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline/figure :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -925,7 +925,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline/figure/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -933,7 +933,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline/figure/onload/setWidth :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -950,7 +950,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/pipeline/figure/onload/setWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -968,7 +968,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1670.000000;
         height : INPUT  SINGLE = 935.000000;
@@ -979,7 +979,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/backgroud :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -997,7 +997,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 1;
         baseKsPath : INPUT  STRING = "";
@@ -1005,7 +1005,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -1014,7 +1014,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1022,7 +1022,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1030,7 +1030,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1038,7 +1038,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1048,7 +1048,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1066,7 +1066,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1084,7 +1084,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then/setvisible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1101,7 +1101,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.then/setvisible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1119,7 +1119,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -1128,7 +1128,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1136,7 +1136,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1144,7 +1144,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1152,7 +1152,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1162,7 +1162,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1180,7 +1180,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1198,7 +1198,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then/setvisible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1215,7 +1215,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetOne.else/If_SheetNr_One.then/setvisible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1233,7 +1233,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
@@ -1242,7 +1242,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1250,7 +1250,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1258,7 +1258,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1266,7 +1266,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1276,7 +1276,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1294,7 +1294,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1312,7 +1312,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then/setvisible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1329,7 +1329,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.then/setvisible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1347,7 +1347,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -1356,7 +1356,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1364,7 +1364,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1372,7 +1372,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1380,7 +1380,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1390,7 +1390,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1408,7 +1408,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1426,7 +1426,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then/setvisible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1443,7 +1443,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/bubFrame/globalvarchanged/If_SheetTwo.else/If_SheetNr_One.then/setvisible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1461,7 +1461,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 250.000000;
         height : INPUT  SINGLE = 30.000000;
@@ -1472,7 +1472,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/border :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -1490,7 +1490,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/titel :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 5.000000;
         y : INPUT  SINGLE = 15.000000;
@@ -1513,7 +1513,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/titel/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1521,7 +1521,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/titel/onload/setTitel :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1538,7 +1538,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/titel/onload/setTitel.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1556,7 +1556,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -1564,7 +1564,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -1573,7 +1573,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1581,7 +1581,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1589,7 +1589,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1597,7 +1597,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1607,7 +1607,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1625,7 +1625,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1643,7 +1643,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then/setActiveFrame :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1660,7 +1660,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_One.then/setActiveFrame.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1678,7 +1678,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
@@ -1687,7 +1687,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1695,7 +1695,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1703,7 +1703,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1711,7 +1711,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -1721,7 +1721,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1739,7 +1739,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1757,7 +1757,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then/setActiveFrame :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1774,7 +1774,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/statusButton/click/Check_SheetNr_Two.then/setActiveFrame.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1792,7 +1792,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 97.000000;
         height : INPUT  SINGLE = 32.000000;
@@ -1803,7 +1803,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/rect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -1821,7 +1821,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/Text :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 48.500000;
         y : INPUT  SINGLE = 16.000000;
@@ -1844,7 +1844,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/Text/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1852,7 +1852,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/Text/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1869,7 +1869,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/Text/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1887,7 +1887,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -1895,7 +1895,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/onload/setCursorDefault :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -1912,7 +1912,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonBroad/onload/setCursorDefault.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -1930,7 +1930,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 48.000000;
         height : INPUT  SINGLE = 32.000000;
@@ -1941,7 +1941,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/rect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -1959,7 +1959,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/title :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 24.000000;
         y : INPUT  SINGLE = 16.000000;
@@ -1982,7 +1982,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -1990,7 +1990,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/title/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2007,7 +2007,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/title/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2025,7 +2025,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -2033,7 +2033,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/onload/setCursorDefaut :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2050,7 +2050,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/buttonSlim/onload/setCursorDefaut.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2068,7 +2068,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 35.000000;
@@ -2079,7 +2079,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/leftPosition :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.500000;
         y : INPUT  SINGLE = 0.500000;
@@ -2097,7 +2097,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/rightPosition :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 30.500000;
         y : INPUT  SINGLE = 0.500000;
@@ -2115,7 +2115,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/arrow1 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "7.5,0.5 23.5,30 23,25 19.5,26 23.5,30";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -2130,7 +2130,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/arrow2 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "7.5,30.5 23.5,0.5 23,7 18.5,6 23.5,0.5";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -2145,7 +2145,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/arrow3 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "37.5,30.5 37.5,0.5 35,7.5 40,7.5 37.5,0.5 ";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -2160,7 +2160,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2PSymbol/arrow4 :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "53.5,0.5 53.5,30.5 56,23.5 51,23.5 53.5,30.5";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -2175,7 +2175,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 160.000000;
         height : INPUT  SINGLE = 50.000000;
@@ -2186,7 +2186,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/SV2PSymbol";
         x : INPUT  SINGLE = 0.000000;
@@ -2206,7 +2206,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 2.000000;
         zindex : INPUT  UINT = 0;
@@ -2215,7 +2215,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -2224,7 +2224,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2232,7 +2232,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2240,7 +2240,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2248,7 +2248,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -2258,7 +2258,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2276,7 +2276,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/OPSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2294,7 +2294,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -2304,7 +2304,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2322,7 +2322,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2340,7 +2340,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.then/setX60 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2357,7 +2357,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.then/setX60.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2375,7 +2375,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -2384,7 +2384,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2392,7 +2392,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2400,7 +2400,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2408,7 +2408,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/OPSTA_40 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -2418,7 +2418,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/OPSTA_40.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2436,7 +2436,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/OPSTA_40.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2454,7 +2454,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -2464,7 +2464,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2482,7 +2482,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2500,7 +2500,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.then/setX30 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2517,7 +2517,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.then/setX30.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2535,7 +2535,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.else/setX30_BasicState :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2552,7 +2552,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/SV2P/addSymbol/cyclicUpdate/isLeft.else/isRight.else/setX30_BasicState.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2570,7 +2570,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/cylinder :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -2581,7 +2581,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/cylinder/exterior :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 1.000000;
@@ -2599,7 +2599,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/cylinder/damping :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 30.000000;
         y : INPUT  SINGLE = 11.000000;
@@ -2617,7 +2617,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/cylinder/piston :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 35.000000;
         y : INPUT  SINGLE = 1.000000;
@@ -2635,7 +2635,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/cylinder/pistonRod :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 50.000000;
         y : INPUT  SINGLE = 16.000000;
@@ -2653,7 +2653,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -2664,7 +2664,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/Polyline :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "0,0 760,0";
         strokeWidth : INPUT  SINGLE = 3.000000;
@@ -2679,7 +2679,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionRect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 75.000000;
         y : INPUT  SINGLE = -15.000000;
@@ -2697,7 +2697,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionText :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 80.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -2720,7 +2720,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionText/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2728,7 +2728,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionText/onload/setCaption :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2745,7 +2745,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/CaptionText/onload/setCaption.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2763,7 +2763,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/HandValve1 :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
         x : INPUT  SINGLE = 40.000000;
@@ -2783,7 +2783,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/WaterDistrEntry/HandValve2 :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ValveHand";
         x : INPUT  SINGLE = 720.000000;
@@ -2803,7 +2803,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -2814,7 +2814,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -2822,7 +2822,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMax :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2839,7 +2839,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMax.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2857,7 +2857,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMin :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -2874,7 +2874,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveRangeMin.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2892,7 +2892,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope1 :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2908,7 +2908,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope1/addRangeMax :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2926,7 +2926,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope1/subRangeMin :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2944,7 +2944,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope2 :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2960,7 +2960,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope2/addVisMax :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2978,7 +2978,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope2/subVisMin :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -2996,7 +2996,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveSlope2/divSlope :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3014,7 +3014,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveIntercept :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3030,7 +3030,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveIntercept/subSlope :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3048,7 +3048,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveIntercept/mulRangeMin :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3066,7 +3066,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/onload/saveIntercept/addVisMin :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3084,7 +3084,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -3098,7 +3098,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/ElektrodePolyline :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "50,-10 50,-30 150,-30 150,-10 130,0 70,0 50,-10";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -3113,7 +3113,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/correctPosition :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 3.000000;
         zindex : INPUT  UINT = 1;
@@ -3122,7 +3122,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/correctPosition/setY :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -3138,7 +3138,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/correctPosition/setY/addSlope :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3156,7 +3156,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/correctPosition/setY/mulValue :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3174,7 +3174,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/ElektrodeVisualisation/movableGroup/correctPosition/setY/addIntercept :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3192,7 +3192,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HeatExchangerLinear :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3203,7 +3203,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HeatExchangerLinear/rect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = -20.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -3221,7 +3221,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HeatExchangerLinear/lines :
-    CLASS /Libraries/cshmi/Path;
+    CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,0 L0,100  M20,10 h5 v-5 v10  M-20,90 h-5 v-5 v10  M-10,10 H10  m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10 m-20,10 H10";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -3236,7 +3236,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3247,7 +3247,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/circleTop :
-    CLASS /Libraries/cshmi/Circle;
+    CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
         cx : INPUT  SINGLE = 0.000000;
         cy : INPUT  SINGLE = 0.000000;
@@ -3264,7 +3264,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/circleM :
-    CLASS /Libraries/cshmi/Circle;
+    CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
         cx : INPUT  SINGLE = 0.000000;
         cy : INPUT  SINGLE = 50.000000;
@@ -3281,7 +3281,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/lines :
-    CLASS /Libraries/cshmi/Path;
+    CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,20 v20  M-14,-14 L11,-17  M-14,14 L11,17  M-16,0  A17,17 0 0 0 9,-14  A17,17 0 0 0 9,14  A17,17 0 0 0 -16,0";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -3296,7 +3296,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textM :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 50.000000;
@@ -3319,7 +3319,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textPCUname :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 75.000000;
@@ -3342,7 +3342,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textPCUname/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3350,7 +3350,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textPCUname/onload/setName :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3367,7 +3367,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Ventilator/textPCUname/onload/setName.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3385,7 +3385,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3396,7 +3396,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextAddress :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 150.000000;
         y : INPUT  SINGLE = 20.000000;
@@ -3419,7 +3419,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextAddress/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3427,7 +3427,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextAddress/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3444,7 +3444,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextAddress/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3462,7 +3462,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextName :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 150.000000;
         y : INPUT  SINGLE = 50.000000;
@@ -3485,7 +3485,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextName/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3493,7 +3493,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextName/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3510,7 +3510,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextName/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3528,7 +3528,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextOrt :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 150.000000;
         y : INPUT  SINGLE = 80.000000;
@@ -3551,7 +3551,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextOrt/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3559,7 +3559,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextOrt/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3576,7 +3576,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/NetworkItem/TextOrt/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3594,7 +3594,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/CutoffSwitch :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3605,7 +3605,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/CutoffSwitch/rect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = -25.000000;
         y : INPUT  SINGLE = -50.000000;
@@ -3623,7 +3623,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/CutoffSwitch/connectionLines :
-    CLASS /Libraries/cshmi/Path;
+    CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,-50 v25 M0,50 v-25";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -3638,7 +3638,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/CutoffSwitch/SwitchLine :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = 0.000000;
         y1 : INPUT  SINGLE = -25.000000;
@@ -3656,7 +3656,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3667,7 +3667,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/baserect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = -30.000000;
         y : INPUT  SINGLE = -40.000000;
@@ -3685,7 +3685,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/kreis1 :
-    CLASS /Libraries/cshmi/Circle;
+    CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
         cx : INPUT  SINGLE = 0.000000;
         cy : INPUT  SINGLE = -15.000000;
@@ -3702,7 +3702,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/kreis2 :
-    CLASS /Libraries/cshmi/Circle;
+    CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
         cx : INPUT  SINGLE = 0.000000;
         cy : INPUT  SINGLE = 15.000000;
@@ -3719,7 +3719,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text1 :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 35.000000;
         y : INPUT  SINGLE = -20.000000;
@@ -3742,7 +3742,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text1/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3750,7 +3750,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text1/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3767,7 +3767,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text1/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3785,7 +3785,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text2 :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 35.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -3808,7 +3808,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text2/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3816,7 +3816,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text2/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3833,7 +3833,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text2/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3851,7 +3851,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text3 :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 35.000000;
         y : INPUT  SINGLE = 20.000000;
@@ -3874,7 +3874,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text3/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3882,7 +3882,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text3/onload/setContent :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3899,7 +3899,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/GalvanicIsolation/text3/onload/setContent.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -3917,7 +3917,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Thyristor :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -3928,7 +3928,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/Thyristor/visualisation :
-    CLASS /Libraries/cshmi/Path;
+    CLASS /acplt/cshmi/Path;
     VARIABLE_VALUES
         d : INPUT  STRING = "M0,0  v-30  m0,30  m-15,0 h30  m-15,0 l-15,-30 h30 l-15,30  m-8,-15 h-12  m10,15 l-5,8";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -3943,7 +3943,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
@@ -3954,7 +3954,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -3972,7 +3972,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -3980,7 +3980,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/Set_Background :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -3997,7 +3997,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/Set_Background.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4015,7 +4015,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetWidth :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4032,7 +4032,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4050,7 +4050,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetHeight :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4067,7 +4067,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Border/onload/SetHeight.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4085,7 +4085,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 70.000000;
         y : INPUT  SINGLE = 20.000000;
@@ -4108,7 +4108,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -4116,7 +4116,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Y_Pos_Title :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -4132,7 +4132,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Y_Pos_Title/addHeight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4150,7 +4150,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Y_Pos_Title/divtwo :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4168,7 +4168,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Set_title :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4185,7 +4185,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/Set_title.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4203,7 +4203,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/X_Pos_Title :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
@@ -4219,7 +4219,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/X_Pos_Title/addWidth :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4237,7 +4237,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/Title/onload/X_Pos_Title/divtwo :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4255,7 +4255,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -4263,7 +4263,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetLine :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -4279,7 +4279,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetLine/addLine :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4297,7 +4297,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetLine/mulheight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4315,7 +4315,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetColumn :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
@@ -4331,7 +4331,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetColumn/addcolumn :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4349,7 +4349,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell/onload/SetColumn/mulwidth :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4367,7 +4367,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
@@ -4378,7 +4378,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -4396,7 +4396,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -4404,7 +4404,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/Set_Background :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4421,7 +4421,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/Set_Background.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4439,7 +4439,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetWidth :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4456,7 +4456,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetWidth.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4474,7 +4474,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetHeight :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4491,7 +4491,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Border/onload/SetHeight.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4509,7 +4509,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 70.000000;
         y : INPUT  SINGLE = 20.000000;
@@ -4532,7 +4532,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -4540,7 +4540,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Y_Pos_Title :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -4556,7 +4556,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Y_Pos_Title/addHeight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4574,7 +4574,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Y_Pos_Title/divtwo :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4592,7 +4592,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Set_title :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4609,7 +4609,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/Set_title.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4627,7 +4627,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/X_Pos_Title :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
@@ -4643,7 +4643,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/X_Pos_Title/addWidth :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4661,7 +4661,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/Title/onload/X_Pos_Title/divtwo :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4679,7 +4679,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -4687,7 +4687,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetLine :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -4703,7 +4703,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetLine/addLine :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4721,7 +4721,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetLine/mulheight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4739,7 +4739,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetColumn :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "x";
@@ -4755,7 +4755,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetColumn/addcolumn :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4773,7 +4773,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/onload/SetColumn/mulwidth :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4791,7 +4791,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -4799,7 +4799,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/click/Set_activateOMW :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4816,7 +4816,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/click/Set_activateOMW.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4834,7 +4834,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMCell_clickable/OMW :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/OMWindow";
         x : INPUT  SINGLE = 0.000000;
@@ -4854,7 +4854,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
@@ -4865,7 +4865,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -4873,7 +4873,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_xPos :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4890,7 +4890,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_xPos.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4908,7 +4908,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_yPos :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -4925,7 +4925,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/onload/Set_yPos.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -4943,7 +4943,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Border :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -4961,7 +4961,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Headerline :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -4979,7 +4979,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Title :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 20.000000;
         y : INPUT  SINGLE = 10.000000;
@@ -5002,7 +5002,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Title/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5010,7 +5010,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Title/onload/Set_title :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5027,7 +5027,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/Title/onload/Set_title.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5045,7 +5045,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
@@ -5053,7 +5053,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5062,7 +5062,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5070,7 +5070,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5078,7 +5078,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5086,7 +5086,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5096,7 +5096,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5114,7 +5114,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5132,7 +5132,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.then/Set_Visible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5149,7 +5149,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.then/Set_Visible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5167,7 +5167,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.else/Set_Visible_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5184,7 +5184,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OMWindow/globalvarchanged/If_activateOMW.else/Set_Visible_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5202,7 +5202,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
@@ -5213,7 +5213,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow :
-    CLASS /Libraries/cshmi/Polyline;
+    CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
         points : INPUT  STRING = "-30,-10 10,-10 10,-20 30,0 10,20 10,10 -30,10 -30,-10";
         strokeWidth : INPUT  SINGLE = 1.000000;
@@ -5228,7 +5228,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5236,7 +5236,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/onload/SetRotate :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5253,7 +5253,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/onload/SetRotate.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5271,7 +5271,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 2.000000;
         zindex : INPUT  UINT = 1;
@@ -5280,7 +5280,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5289,7 +5289,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5297,7 +5297,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5305,7 +5305,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5313,7 +5313,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.if/GrpControl_True :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5323,7 +5323,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.if/GrpControl_True.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5341,7 +5341,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.if/GrpControl_True.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5359,7 +5359,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5368,7 +5368,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5376,7 +5376,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5384,7 +5384,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5392,7 +5392,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.if/If_Loesen :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5402,7 +5402,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.if/If_Loesen.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5420,7 +5420,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.if/If_Loesen.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5438,7 +5438,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5447,7 +5447,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5455,7 +5455,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5463,7 +5463,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5471,7 +5471,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/OPSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5481,7 +5481,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/OPSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5499,7 +5499,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/OPSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5517,7 +5517,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5527,7 +5527,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5545,7 +5545,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5563,7 +5563,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.then/setRed :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5580,7 +5580,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.then/setRed.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5598,7 +5598,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.else/SetGrey :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5615,7 +5615,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.then/isLeft_Loesen_SetRed.else/SetGrey.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5633,7 +5633,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5642,7 +5642,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5650,7 +5650,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5658,7 +5658,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5666,7 +5666,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/OPSTA_50 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5676,7 +5676,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/OPSTA_50.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5694,7 +5694,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/OPSTA_50.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5712,7 +5712,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/WOSTA_30 :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5722,7 +5722,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/WOSTA_30.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5740,7 +5740,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.if/WOSTA_30.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5758,7 +5758,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.then/setGreen :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5775,7 +5775,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.then/setGreen.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5793,7 +5793,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.else/SetGrey :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5810,7 +5810,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/PolylineArrow/cyclicUpdate/If_GrpControl.else/Check_KlemmenLoesen.else/isRight_Klemmen_SetGreen.else/SetGrey.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5828,7 +5828,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -5851,7 +5851,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5859,7 +5859,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -5868,7 +5868,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5876,7 +5876,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5884,7 +5884,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -5892,7 +5892,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.if/If_GrpControl_True :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -5902,7 +5902,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.if/If_GrpControl_True.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5920,7 +5920,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.if/If_GrpControl_True.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5938,7 +5938,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.else/Set_Title :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -5955,7 +5955,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/HydraulicArrow/ArrowName/onload/If_GrpControl_True.else/Set_Title.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -5973,7 +5973,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 1.000000;
         height : INPUT  SINGLE = 1.000000;
@@ -5984,7 +5984,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Header :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -6002,7 +6002,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Identifier :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 161.000000;
         y : INPUT  SINGLE = 10.000000;
@@ -6025,7 +6025,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Identifier/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6033,7 +6033,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Identifier/onload/Set_Content :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6050,7 +6050,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/Identifier/onload/Set_Content.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6068,7 +6068,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 6.000000;
         y : INPUT  SINGLE = 20.000000;
@@ -6082,7 +6082,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/Header :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -6100,7 +6100,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/VerticalLine :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = 130.000000;
         y1 : INPUT  SINGLE = 0.000000;
@@ -6118,7 +6118,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationName :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6141,7 +6141,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationValue :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 210.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6164,7 +6164,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationValue/cyclicUpdate :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 5.000000;
         zindex : INPUT  UINT = 0;
@@ -6173,7 +6173,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationValue/cyclicUpdate/Set_Value :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6190,7 +6190,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationValue/cyclicUpdate/Set_Value.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6208,7 +6208,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TotalTime/OperationUnit :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 220.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6231,7 +6231,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 6.000000;
         y : INPUT  SINGLE = 46.000000;
@@ -6245,7 +6245,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/Header :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -6263,7 +6263,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/VerticalLine :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = 130.000000;
         y1 : INPUT  SINGLE = 0.000000;
@@ -6281,7 +6281,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationName :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 10.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6304,7 +6304,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationValue :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 210.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6327,7 +6327,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationValue/cyclicUpdate :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 5.000000;
         zindex : INPUT  UINT = 0;
@@ -6336,7 +6336,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationValue/cyclicUpdate/Set_Value :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6353,7 +6353,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationValue/cyclicUpdate/Set_Value.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6371,7 +6371,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/TimeSinceLastSave/OperationUnit :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 220.000000;
         y : INPUT  SINGLE = 13.000000;
@@ -6394,7 +6394,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "Processcontrol/ButtonBreitv1";
         x : INPUT  SINGLE = 236.000000;
@@ -6414,7 +6414,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6422,7 +6422,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6431,7 +6431,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6439,7 +6439,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6447,7 +6447,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6455,7 +6455,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.if/PW_Correct :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -6465,7 +6465,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.if/PW_Correct.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6483,7 +6483,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.if/PW_Correct.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6501,7 +6501,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6510,7 +6510,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6518,7 +6518,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6526,7 +6526,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6534,7 +6534,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.if/If_True :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -6544,7 +6544,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.if/If_True.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6562,7 +6562,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.if/If_True.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6580,7 +6580,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.then/Set_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6597,7 +6597,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.then/Set_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6615,7 +6615,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.else/Set_True :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6632,7 +6632,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.then/If_ToggleReset.else/Set_True.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6650,7 +6650,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6659,7 +6659,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6667,7 +6667,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6675,7 +6675,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6683,7 +6683,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect.if/PW_Incorrect :
-    CLASS /Libraries/cshmi/Confirm;
+    CLASS /acplt/cshmi/Confirm;
     VARIABLE_VALUES
         ignoreError : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6692,7 +6692,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/OperationTimeWindow/ResetButton/click/If_Passwort.else/PW_Incorrect.if/PW_Incorrect.question :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6710,7 +6710,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 400.000000;
         height : INPUT  SINGLE = 15.000000;
@@ -6721,7 +6721,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -6739,7 +6739,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6747,7 +6747,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6756,7 +6756,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6764,7 +6764,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6772,7 +6772,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6780,7 +6780,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -6790,7 +6790,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6808,7 +6808,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6826,7 +6826,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -6835,7 +6835,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6843,7 +6843,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6851,7 +6851,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -6859,7 +6859,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -6869,7 +6869,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6887,7 +6887,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6905,7 +6905,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then/Set_fill :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6922,7 +6922,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.then/Set_fill.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6940,7 +6940,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else/Set_AlarmPulse :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6957,7 +6957,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.then/If_Quit_True.else/Set_AlarmPulse.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -6975,7 +6975,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else/Set_lightgrey :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -6992,7 +6992,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Header/globalvarchanged/If_isAlarm.else/Set_lightgrey.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7010,7 +7010,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/FirstLine :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = 90.000000;
         y1 : INPUT  SINGLE = 0.000000;
@@ -7028,7 +7028,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SecondLine :
-    CLASS /Libraries/cshmi/Line;
+    CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
         x1 : INPUT  SINGLE = 350.000000;
         y1 : INPUT  SINGLE = 0.000000;
@@ -7046,7 +7046,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/TagName :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 5.000000;
         y : INPUT  SINGLE = 8.000000;
@@ -7069,7 +7069,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/TagName/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7077,7 +7077,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/TagName/onload/Set_Content :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7094,7 +7094,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/TagName/onload/Set_Content.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7112,7 +7112,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Description :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 95.000000;
         y : INPUT  SINGLE = 8.000000;
@@ -7135,7 +7135,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Description/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7143,7 +7143,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Description/onload/Set_Content :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7160,7 +7160,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Description/onload/Set_Content.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7178,7 +7178,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 355.000000;
         y : INPUT  SINGLE = 8.000000;
@@ -7201,7 +7201,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7209,7 +7209,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -7218,7 +7218,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7226,7 +7226,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7234,7 +7234,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7242,7 +7242,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -7252,7 +7252,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7270,7 +7270,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7288,7 +7288,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else/Set_Content :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7305,7 +7305,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/SignalType/onload/If_XX.else/Set_Content.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7323,7 +7323,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 6;
         baseKsPath : INPUT  STRING = "";
@@ -7331,7 +7331,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -7340,7 +7340,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7348,7 +7348,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7356,7 +7356,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7364,7 +7364,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -7374,7 +7374,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7392,7 +7392,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7410,7 +7410,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then/Calc_yID :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -7426,7 +7426,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then/Calc_yID/addyID :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7444,7 +7444,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then/Calc_yID/mulHeight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "height";
@@ -7462,7 +7462,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then/Calc_yID/addHeight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "height";
@@ -7480,7 +7480,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.then/Calc_yID/addY :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -7498,7 +7498,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.else/Calc_yID :
-    CLASS /Libraries/cshmi/SetMathValue;
+    CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -7514,7 +7514,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.else/Calc_yID/addyID :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7532,7 +7532,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.else/Calc_yID/mulHeight :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "height";
@@ -7550,7 +7550,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_DoubleOffset.else/Calc_yID/addY :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "y";
@@ -7568,7 +7568,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
@@ -7577,7 +7577,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7585,7 +7585,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7593,7 +7593,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7601,7 +7601,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -7611,7 +7611,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7629,7 +7629,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7647,7 +7647,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then/Set_opacity :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7664,7 +7664,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/onload/If_Fixme.then/Set_opacity.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7682,7 +7682,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 0.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -7696,7 +7696,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rect :
-    CLASS /Libraries/cshmi/Rectangle;
+    CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 380.000000;
         y : INPUT  SINGLE = 0.000000;
@@ -7714,7 +7714,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/Text :
-    CLASS /Libraries/cshmi/Text;
+    CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
         x : INPUT  SINGLE = 387.000000;
         y : INPUT  SINGLE = 8.000000;
@@ -7737,7 +7737,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click :
-    CLASS /Libraries/cshmi/OperatorEvent;
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 2;
         baseKsPath : INPUT  STRING = "";
@@ -7745,7 +7745,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click/Set_Quit :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7762,7 +7762,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/click/Set_Quit.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7780,7 +7780,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick :
-    CLASS /Libraries/cshmi/OperatorEvent;
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 3;
         baseKsPath : INPUT  STRING = "";
@@ -7788,7 +7788,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick/ReQuit :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7805,7 +7805,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/rightclick/ReQuit.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7823,7 +7823,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged :
-    CLASS /Libraries/cshmi/ClientEvent;
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 4;
         baseKsPath : INPUT  STRING = "";
@@ -7831,7 +7831,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -7840,7 +7840,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7848,7 +7848,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7856,7 +7856,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -7864,7 +7864,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -7874,7 +7874,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7892,7 +7892,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7910,7 +7910,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then/set_visible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7927,7 +7927,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.then/set_visible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7945,7 +7945,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else/set_visible :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -7962,7 +7962,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Quit/globalvarchanged/If_Alarm.else/set_visible.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -7980,7 +7980,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm :
-    CLASS /Libraries/cshmi/TimeEvent;
+    CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
         cyctime : INPUT  SINGLE = 3.000000;
         zindex : INPUT  UINT = 8;
@@ -7989,7 +7989,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -7998,7 +7998,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8006,7 +8006,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8014,7 +8014,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8022,7 +8022,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8032,7 +8032,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8050,7 +8050,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8068,7 +8068,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -8077,7 +8077,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8085,7 +8085,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8093,7 +8093,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8101,7 +8101,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8111,7 +8111,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8129,7 +8129,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8147,7 +8147,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_Config_True :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8164,7 +8164,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.then/Set_Config_True.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8182,7 +8182,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_Config_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8199,7 +8199,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_H.then/If_Alarm.else/Set_Config_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8217,7 +8217,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 1;
@@ -8226,7 +8226,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8234,7 +8234,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8242,7 +8242,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8250,7 +8250,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8260,7 +8260,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8278,7 +8278,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8296,7 +8296,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -8305,7 +8305,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8313,7 +8313,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8321,7 +8321,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8329,7 +8329,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8339,7 +8339,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8357,7 +8357,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8375,7 +8375,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_Config_TRUE :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8392,7 +8392,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.then/Set_Config_TRUE.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8410,7 +8410,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_Config_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8427,7 +8427,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_HH.then/If_Alarm.else/Set_Config_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8445,7 +8445,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 2;
@@ -8454,7 +8454,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8462,7 +8462,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8470,7 +8470,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8478,7 +8478,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8488,7 +8488,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8506,7 +8506,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8524,7 +8524,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -8533,7 +8533,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8541,7 +8541,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8549,7 +8549,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8557,7 +8557,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8567,7 +8567,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8585,7 +8585,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8603,7 +8603,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_Config_TRUE :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8620,7 +8620,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.then/Set_Config_TRUE.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8638,7 +8638,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_Config_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8655,7 +8655,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_L.then/If_Alarm.else/Set_Config_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8673,7 +8673,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 3;
@@ -8682,7 +8682,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8690,7 +8690,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8698,7 +8698,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8706,7 +8706,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8716,7 +8716,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8734,7 +8734,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8752,7 +8752,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm :
-    CLASS /Libraries/cshmi/IfThenElse;
+    CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
         anycond : INPUT  BOOL = FALSE;
         zindex : INPUT  UINT = 0;
@@ -8761,7 +8761,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8769,7 +8769,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8777,7 +8777,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else :
-    CLASS /Libraries/cshmi/csContainer;
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
         zindex : INPUT  UINT = 0;
         baseKsPath : INPUT  STRING = "";
@@ -8785,7 +8785,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp :
-    CLASS /Libraries/cshmi/Compare;
+    CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
         comptype : INPUT  STRING = "==";
         ignoreError : INPUT  BOOL = FALSE;
@@ -8795,7 +8795,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value1 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8813,7 +8813,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.if/comp.value2 :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8831,7 +8831,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_Config_TRUE :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8848,7 +8848,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.then/Set_Config_TRUE.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8866,7 +8866,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_Config_False :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
         translationSource : INPUT  STRING = "";
         ksVar : INPUT  STRING = "";
@@ -8883,7 +8883,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/AlarmCell/Get_Alarm/If_SignalType_LL.then/If_Alarm.else/Set_Config_False.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
         ksVar : INPUT  STRING = "";
         elemVar : INPUT  STRING = "";
@@ -8901,7 +8901,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
         width : INPUT  SINGLE = 100.000000;
         height : INPUT  SINGLE = 100.000000;
@@ -8912,7 +8912,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell/FirstCell :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/AlarmCell";
         x : INPUT  SINGLE = 0.000000;
@@ -8932,7 +8932,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/ELBO/DoubleAlarmCell/SecondCell :
-    CLASS /Libraries/cshmi/Template;
+    CLASS /acplt/cshmi/Template;
     VARIABLE_VALUES
         TemplateDefinition : INPUT  STRING = "ELBO/AlarmCell";
         x : INPUT  SINGLE = 0.000000;

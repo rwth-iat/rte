@@ -1,13 +1,13 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2013-11-21 17:09:01
+* Erstellt: 2014-04-29 14:58:27
 * 
-* HOST   : LOCALHOST:7509
-* SERVER : MANAGER
+* HOST   : DEV:7509
+* SERVER : engineering
 ************************************************************/
 
  INSTANCE  /TechUnits/cshmi/engineeringFBSheet :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 0.000000;
@@ -27,5 +27,5 @@
  END_INSTANCE;
 
  LIBRARY
-    cshmi
+    /acplt/cshmi
  END_LIBRARY;

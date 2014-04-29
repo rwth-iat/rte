@@ -7,7 +7,7 @@
 ************************************************************/
 
  INSTANCE  /TechUnits/cshmi/ElboMainSheet :
-    CLASS /Libraries/cshmi/Group;
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       baseKsPath : INPUT STRING = "//427C-AS-RTX/fb_lbo_ProcessControl/";
     END_VARIABLE_VALUES;
