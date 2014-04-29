@@ -205,6 +205,7 @@ void DumpVar(KscVariable &var, int indent)
              << var.getName()
              << "\" for curr. props"
              << endl;
+        return;
     }
 
     Indent(indent);
