@@ -3045,8 +3045,7 @@ cshmi.prototype = {
 			//not visualised right now
 			return false;
 		}
-		if(VisualObject.tagName !== "polyline"){
-			//todo implement für path bezierkurven
+		if(VisualObject.tagName !== "polyline" && VisualObject.tagName !== "path"){
 			HMI.hmi_log_info_onwebsite("RoutePolyline not supported with: "+VisualObject.tagName+"-Objects (path: "+ObjectPath+")");
 			return false;
 		}
@@ -3374,6 +3373,10 @@ cshmi.prototype = {
 				VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
 				VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
 				VisualObject.ResourceList.RoutePolyline.Coords = new Object();
+			}else{
+				VisualObject.ResourceList = new Object();
+				VisualObject.ResourceList.RoutePolyline = new Object();
+				VisualObject.ResourceList.RoutePolyline.Coords = new Object();
 			}
 		}
 		
@@ -3388,7 +3391,11 @@ cshmi.prototype = {
 		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(IteratorObj.getAttribute("display") === "none"){
 				//connection object is invisible, so hide us, too.
-				VisualObject.setAttribute("points", "");
+				if(VisualObject.tagName === "polyline"){
+					VisualObject.setAttribute("points", "");
+				}else if(VisualObject.tagName === "path"){
+					VisualObject.setAttribute("d", "");
+				}
 				return true;
 			}
 		}
@@ -3396,7 +3403,11 @@ cshmi.prototype = {
 		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(IteratorObj.getAttribute("display") === "none"){
 				//connection object is invisible, so hide us, too.
-				VisualObject.setAttribute("points", "");
+				if(VisualObject.tagName === "polyline"){
+					VisualObject.setAttribute("points", "");
+				}else if(VisualObject.tagName === "path"){
+					VisualObject.setAttribute("d", "");
+				}
 				return true;
 			}
 		}
@@ -3550,11 +3561,24 @@ cshmi.prototype = {
 			VisualObject.parentNode.insertBefore(linesArray[0], linesArray[1]);
 			
 			VisualObject.correctAllLines = function(VisualObject){
-				var points = VisualObject.ResourceList.RoutePolyline.Coords.StartX + "," + VisualObject.ResourceList.RoutePolyline.Coords.StartY + " " + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY + " "
-				+ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY + " " + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY + " "
-				+ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY + " "
-				+ VisualObject.ResourceList.RoutePolyline.Coords.EndX + "," + VisualObject.ResourceList.RoutePolyline.Coords.EndY;
-				VisualObject.setAttribute("points", points);
+				if(VisualObject.tagName === "polyline"){
+					var points = VisualObject.ResourceList.RoutePolyline.Coords.StartX + "," + VisualObject.ResourceList.RoutePolyline.Coords.StartY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.EndX + "," + VisualObject.ResourceList.RoutePolyline.Coords.EndY;
+					VisualObject.setAttribute("points", points);
+				}else if(VisualObject.tagName === "path"){
+					points = "M"+VisualObject.ResourceList.RoutePolyline.Coords.StartX + "," + VisualObject.ResourceList.RoutePolyline.Coords.StartY + " "
+					+ "C"+ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX + "," + VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY + " "
+					+ (VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX+VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX)/2 + ","
+						+ (VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY+VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY)/2 + " "
+					+ "S" + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX + "," + VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY + " "
+					+ VisualObject.ResourceList.RoutePolyline.Coords.EndX + "," + VisualObject.ResourceList.RoutePolyline.Coords.EndY;
+					VisualObject.setAttribute("d", points);
+				}
 				
 				var linesArray = VisualObject.ResourceList.linesArray;
 				linesArray[0].setAttribute("x1", VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX);
@@ -3603,7 +3627,8 @@ cshmi.prototype = {
 				EndX !== VisualObject.ResourceList.RoutePolyline.Coords.EndX ||
 				EndY !== VisualObject.ResourceList.RoutePolyline.Coords.EndY ||
 				rotateEnd !== VisualObject.ResourceList.RoutePolyline.Coords.rotateEnd ||
-				VisualObject.getAttribute("points") === "" //we were hidden last time
+				(VisualObject.tagName === "polyline" && VisualObject.getAttribute("points") === "") || //we were hidden last time
+				(VisualObject.tagName === "path" && VisualObject.getAttribute("d") === "") //we were hidden last time
 			) {
 			
 			//the polyline routes in the worst case through those 6 points:
