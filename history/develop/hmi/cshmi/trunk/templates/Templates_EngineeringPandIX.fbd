@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-04-29 14:17:03
+* Erstellt: 2014-04-30 09:39:54
 * 
 * HOST   : DEV:7509
 * SERVER : pandix
@@ -14167,6 +14167,41 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/BlankFlange/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/BlankFlange/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/BlankFlange/Name :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
@@ -15701,6 +15736,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/OpenFlange/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/OpenFlange/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/OpenFlange/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -19540,6 +19610,41 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/PIn :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
@@ -20164,6 +20269,338 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/click/If_ConfigMode.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatExchanger/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -20855,6 +21292,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -21650,6 +22122,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -22250,6 +23054,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -23149,6 +23988,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -23749,6 +24920,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -24648,6 +25854,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 11;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -25317,6 +26855,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -26112,6 +27685,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -26528,6 +28433,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -28489,6 +30429,41 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/aftermove :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
@@ -29294,6 +31269,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -29745,6 +32052,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -30555,6 +32897,338 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -30831,6 +33505,41 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -31637,6 +34346,338 @@
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
       zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RuptureDisk/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -35271,6 +38312,41 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/aftermove :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
@@ -36068,6 +39144,338 @@
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "identifier";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeDNAdapter/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -39344,6 +42752,41 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/onload/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/onload/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/PIn :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
@@ -39928,6 +43371,338 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/globalvarchanged/If_NotNormalMode.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "rightclick";
+      zindex : INPUT UINT = 12;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 270;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Save_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Save_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Set_Rotation :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Set_Rotation.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.then/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Save_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Save_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Save_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Set_Rotation :
+    CLASS /acplt/cshmi/SetMathValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Set_Rotation/add_actualRotation :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "rotate";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Set_Rotation/add_90 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 90;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Is_Rotated :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "RotationDone";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/rightclick/If_Rotation.else/Is_Rotated.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
