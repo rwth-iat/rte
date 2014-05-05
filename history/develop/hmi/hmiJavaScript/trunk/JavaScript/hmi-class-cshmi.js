@@ -3537,7 +3537,7 @@ cshmi.prototype = {
 				}
 				VisualObject.correctAllLines(VisualObject);
 				
-				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled === true){
+				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
 					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), true);
 				}
 				VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
@@ -3767,16 +3767,7 @@ cshmi.prototype = {
 				}
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 90){
 				//to down --> from down
-				if(StartY < EndY){
-					OffsetPointSourceX = StartX;
-					OffsetPointSourceY = StartY + OffsetSource;
-					ContrlPointSourceX = OffsetPointSourceX;
-					ContrlPointSourceY = OffsetPointSourceY;
-					ContrlPointTargetX = ContrlPointSourceX;
-					ContrlPointTargetY = ContrlPointSourceY;
-					OffsetPointTargetX = EndX;
-					OffsetPointTargetY = StartY + OffsetSource;
-				}else{
+				if (StartY + OffsetSource < EndY + OffsetTarget){
 					OffsetPointSourceX = StartX;
 					OffsetPointSourceY = EndY + OffsetSource;
 					ContrlPointSourceX = OffsetPointSourceX;
@@ -3785,6 +3776,15 @@ cshmi.prototype = {
 					ContrlPointTargetY = ContrlPointSourceY;
 					OffsetPointTargetX = EndX;
 					OffsetPointTargetY = EndY + OffsetSource;
+				}else{
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY + OffsetSource;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = StartY + OffsetSource;
 				}
 			}else if (SourceConnectionPointdirection === 270 && TargetConnectionPointdirection === 270){
 				//to up --> from up
@@ -3796,7 +3796,7 @@ cshmi.prototype = {
 					ContrlPointTargetX = ContrlPointSourceX;
 					ContrlPointTargetY = ContrlPointSourceY;
 					OffsetPointTargetX = EndX;
-					OffsetPointTargetY = EndY - OffsetTarget;
+					OffsetPointTargetY = StartY - OffsetSource;
 				}else{
 					OffsetPointSourceX = StartX;
 					OffsetPointSourceY = EndY - OffsetSource;
@@ -3995,7 +3995,7 @@ cshmi.prototype = {
 			
 			VisualObject.correctAllLines(VisualObject);
 			if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated !== false){
-				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled === true){
+				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
 					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", true);
 				}
 			}
