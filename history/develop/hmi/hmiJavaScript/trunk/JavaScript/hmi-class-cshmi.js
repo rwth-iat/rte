@@ -3769,13 +3769,13 @@ cshmi.prototype = {
 				//to down --> from down
 				if (StartY + OffsetSource < EndY + OffsetTarget){
 					OffsetPointSourceX = StartX;
-					OffsetPointSourceY = EndY + OffsetSource;
+					OffsetPointSourceY = EndY + OffsetTarget;
 					ContrlPointSourceX = OffsetPointSourceX;
 					ContrlPointSourceY = OffsetPointSourceY;
 					ContrlPointTargetX = ContrlPointSourceX;
 					ContrlPointTargetY = ContrlPointSourceY;
 					OffsetPointTargetX = EndX;
-					OffsetPointTargetY = EndY + OffsetSource;
+					OffsetPointTargetY = EndY + OffsetTarget;
 				}else{
 					OffsetPointSourceX = StartX;
 					OffsetPointSourceY = StartY + OffsetSource;
@@ -3799,7 +3799,7 @@ cshmi.prototype = {
 					OffsetPointTargetY = StartY - OffsetSource;
 				}else{
 					OffsetPointSourceX = StartX;
-					OffsetPointSourceY = EndY - OffsetSource;
+					OffsetPointSourceY = EndY - OffsetTarget;
 					ContrlPointSourceX = OffsetPointSourceX;
 					ContrlPointSourceY = OffsetPointSourceY;
 					ContrlPointTargetX = ContrlPointSourceX;
