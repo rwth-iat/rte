@@ -3809,7 +3809,7 @@ cshmi.prototype = {
 				}
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 270){
 				//to right --> from up
-				if(StartY > EndY - OffsetTarget){
+				if(StartY > EndY - OffsetTarget || StartX + OffsetSource > EndX){
 					OffsetPointSourceX = StartX + OffsetSource;
 					OffsetPointSourceY = StartY;
 					ContrlPointSourceX = OffsetPointSourceX;
@@ -3851,7 +3851,16 @@ cshmi.prototype = {
 				}
 			}else if (SourceConnectionPointdirection === 0 && TargetConnectionPointdirection === 90){
 				//to right --> from down
-				if (StartX + OffsetSource < EndX){
+				if (StartX + OffsetSource < EndX && StartY > EndY + OffsetTarget){
+					OffsetPointSourceX = StartX;
+					OffsetPointSourceY = StartY;
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = OffsetPointSourceY;
+					ContrlPointTargetX = ContrlPointSourceX;
+					ContrlPointTargetY = ContrlPointSourceY;
+					OffsetPointTargetX = EndX;
+					OffsetPointTargetY = ContrlPointTargetY;
+				}else{
 					OffsetPointSourceX = StartX + OffsetSource;
 					OffsetPointSourceY = StartY;
 					ContrlPointSourceX = OffsetPointSourceX;
@@ -3860,15 +3869,6 @@ cshmi.prototype = {
 					ContrlPointTargetY = ContrlPointSourceY;
 					OffsetPointTargetX = EndX;
 					OffsetPointTargetY = EndY + OffsetTarget;
-				}else{
-					OffsetPointSourceX = StartX;
-					OffsetPointSourceY = StartY;
-					ContrlPointSourceX = OffsetPointSourceX;
-					ContrlPointSourceY = OffsetPointSourceY;
-					ContrlPointTargetX = ContrlPointSourceX;
-					ContrlPointTargetY = ContrlPointSourceY;
-					OffsetPointTargetX = ContrlPointTargetX;
-					OffsetPointTargetY = ContrlPointTargetY;
 				}
 			}else if (SourceConnectionPointdirection === 90 && TargetConnectionPointdirection === 0){
 				//to down --> from right
@@ -4577,7 +4577,8 @@ cshmi.prototype = {
 			VisualChildObject.setAttribute("overflow", "visible");
 			VisualChildObject.setAttribute("x", "0");
 			VisualChildObject.setAttribute("y", "0");
-			VisualChildObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
+			var rotation = ((requestList[ObjectPath]["rotate"]%360)+360)%360;
+			VisualChildObject.setAttribute("transform", "rotate("+rotation.toString()+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
 			VisualChildObject.appendChild(VisualObject);
 			VisualObject.removeAttribute("transform");
 		}else{
@@ -5535,7 +5536,8 @@ cshmi.prototype = {
 		
 		//rotation should be around cx and cy
 		if (requestList[ObjectPath]["rotate"] && requestList[ObjectPath]["rotate"] !== "0"){
-			VisualObject.setAttribute("transform", "rotate("+requestList[ObjectPath]["rotate"]+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
+			var rotation = ((requestList[ObjectPath]["rotate"]%360)+360)%360;
+			VisualObject.setAttribute("transform", "rotate("+rotation.toString()+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
 		}
 		
 		return VisualObject;
@@ -5901,6 +5903,8 @@ cshmi.prototype = {
 		if(rotate === null){
 			rotate = getRotationFromObject(VisualObject);
 		}else if(isNumeric(rotate)){
+			//force numbers between 0 and 360
+			rotate = ((rotate%360)+360)%360;
 			VisualObject.setAttribute("data-rotate", rotate);
 		}else{
 			rotate = 0;
