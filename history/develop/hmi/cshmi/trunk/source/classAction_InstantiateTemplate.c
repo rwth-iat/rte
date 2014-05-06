@@ -78,3 +78,13 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_opacity_set(
 	}
 	return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_rotate_set(
+	OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+	const OV_INT  value
+) {
+	pobj->v_rotate = value;
+	while(pobj->v_rotate > 360.0) pobj->v_rotate -= 360.0;
+	while(pobj->v_rotate < 0.0) pobj->v_rotate += 360.0;
+	return OV_ERR_OK;
+}

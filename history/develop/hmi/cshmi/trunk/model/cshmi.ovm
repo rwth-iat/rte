@@ -126,6 +126,7 @@ LIBRARY cshmi
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			rotate : INT
+			HAS_SET_ACCESSOR
 			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
@@ -193,6 +194,7 @@ LIBRARY cshmi
 			COMMENT = "opacity of the element ([0.0-1.0])"
 			INITIALVALUE = 1.0;
 			rotate : INT
+			HAS_SET_ACCESSOR
 			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;
@@ -625,6 +627,7 @@ LIBRARY cshmi
 			COMMENT = "fill color (CSS color name or hex like #000000)"
 			INITIALVALUE = "none";
 			rotate : INT
+			HAS_SET_ACCESSOR
 			UNIT = "degree"
 			COMMENT = "rotate the Element"
 			INITIALVALUE = 0;

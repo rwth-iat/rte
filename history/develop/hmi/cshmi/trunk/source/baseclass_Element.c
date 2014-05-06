@@ -94,6 +94,15 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_constructor(
 	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_Element_rotate_set(
+	OV_INSTPTR_cshmi_Element          pobj,
+	const OV_INT  value
+) {
+	pobj->v_rotate = value;
+	while(pobj->v_rotate > 360.0) pobj->v_rotate -= 360.0;
+	while(pobj->v_rotate < 0.0) pobj->v_rotate += 360.0;
+	return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
 	OV_INSTPTR_cshmi_Element          pobj,
