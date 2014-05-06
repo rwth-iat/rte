@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-05-05 11:23:12
+* Erstellt: 2014-05-06 12:50:58
 * 
 * HOST   : DEV:7509
 * SERVER : pandix
@@ -3877,6 +3877,92 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_GeneralItem.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 20;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.if/If_ExternalInterface :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_CLASS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.if/If_ExternalInterface.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/Libraries/pandix/ExternalInterface" , "/acplt/pandix/ExternalInterface"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.then/Inst_ExternalInterface :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/ExternalInterface";
+      x : INPUT SINGLE = 100.000000;
+      y : INPUT SINGLE = 200.000000;
+      xOffset : INPUT SINGLE = 100.000000;
+      yOffset : INPUT SINGLE = 0.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:10";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ExternalInterface.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -14866,7 +14952,7 @@
       elemVarPath : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "visuallayout";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -14883,7 +14969,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "visuallayout";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -53612,6 +53698,1656 @@
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface :
+    CLASS /acplt/cshmi/TemplateDefinition;
+    VARIABLE_VALUES
+      width : INPUT SINGLE = 1.000000;
+      height : INPUT SINGLE = 1.000000;
+      comment : INPUT STRING = "";
+      zindex : INPUT UINT = 27;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Name :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      content : INPUT STRING = "loading...";
+      fontSize : INPUT STRING = "medium";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Name/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Name/onload/setname :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Name/onload/setname.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "identifier";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT SINGLE = 0.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.then/Set_X_FromRef :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutex";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.then/Set_X_FromRef.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Xpos_notNull.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT SINGLE = 0.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.then/Set_Y_FromRef :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutey";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.then/Set_Y_FromRef.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/If_Ypos_notNull.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint :
+    CLASS /acplt/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if/comp :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_CLASS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if/comp.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/Libraries/pandix/ProductConnectionPoint" , "/acplt/pandix/ProductConnectionPoint"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1 :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if/comp :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_NAME";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if/comp.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "PE1";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.then/Inst_ConPointLeft :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointLeft";
+      x : INPUT SINGLE = -50.000000;
+      y : INPUT SINGLE = 0.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 5.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:6";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2 :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if/comp :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_NAME";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if/comp.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "PE2";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.then/Inst_ConPointRight :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointRight";
+      x : INPUT SINGLE = 55.000000;
+      y : INPUT SINGLE = 0.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 5.000000;
+      maxTemplatesPerDirection : INPUT STRING = "x:6";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator :
+    CLASS /acplt/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.if/comp :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_CLASS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.if/comp.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/Libraries/pandix/ActuationInputPoint" , "/acplt/pandix/ActuationInputPoint"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.then/Inst_ConPoint :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointUp";
+      x : INPUT SINGLE = -10.000000;
+      y : INPUT SINGLE = -15.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 0.000000;
+      maxTemplatesPerDirection : INPUT STRING = "";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:actuationInputPoint"};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ActuationInputIterator.forEachChild/If_Found.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "aftermove";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_absX :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutex";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_absX.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "mousex";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_refX :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_refX.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutex";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_absY :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutey";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_absY.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "mousey";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_refY :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/aftermove/Set_refY.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutey";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "click";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ModeVar";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "DeleteMode";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.if/Confirm :
+    CLASS /acplt/cshmi/Confirm;
+    VARIABLE_VALUES
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.if/Confirm.question :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "Do you really want to delete this object?";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/DeleteIteratedChildren :
+    CLASS /acplt/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/DeleteIteratedChildren.forEachChild :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/DeleteIteratedChildren.forEachChild/Delete :
+    CLASS /acplt/cshmi/DeleteObject;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/DeleteIteratedChildren.forEachChild/Delete.Path :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/Delete :
+    CLASS /acplt/cshmi/DeleteObject;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/Delete.Path :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/Set_RequestReload :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ReloadRequest";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.then/Set_RequestReload.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.then/Confirm.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_DeleteMode.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ModeVar";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "CreateMode";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.then/Inst_VesselCreateOptions :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/internal/VesselCreateOptions";
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 0.000000;
+      maxTemplatesPerDirection : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_CreateMode.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ModeVar";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "ConfigMode";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.then/Inst_GeneralConfigOptions :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Pandix/internal/GeneralConfigOptions";
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 0.000000;
+      maxTemplatesPerDirection : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/click/If_ConfigMode.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "globalvarchanged";
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ModeVar";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "NormalMode";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.then/set_cursor :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "cursor";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.then/set_cursor.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "move";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NormalMode.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ModeVar";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "NormalMode";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.then/set_cursor :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "cursor";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.then/set_cursor.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "pointer";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_NotNormalMode.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.if/If_Rebuild_True :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ReloadRequestVessel";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.then/Reset :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "ReloadRequestVessel";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.then/Reset.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "empty";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.then/Rebuild :
+    CLASS /acplt/cshmi/RebuildObject;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/globalvarchanged/If_Rebuild.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline :
+    CLASS /acplt/cshmi/Polyline;
+    VARIABLE_VALUES
+      points : INPUT STRING = "-50,-15 35,-15 35,-25 55,0 35,25 35,15 -50,15 -50,-15";
+      strokeWidth : INPUT SINGLE = 2.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
