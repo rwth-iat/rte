@@ -4,10 +4,12 @@
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 # Author: Constantin Wagner <c.wagner@plt.rwth-aachen.de>
+# Author: Holger Jeromin <h.jeromin@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (trunk)
+# Usage: tclsh acplt_build.tcl (release) (compileonly) (trunk)
 set release 0
 set checkout 0 
+set compileonly 0 
 set libsuffix 0
 set exesuffix 0
 set bleedingedge 0
@@ -17,16 +19,16 @@ foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
 		set checkout 1
-		
 	}
 	if {$arg == "release"} {
 		set release 1
 		set checkout 0
-		
 	}
 	if {$arg == "trunk"} {
 		set bleedingedge 1
-	
+	}
+	if {$arg == "compileonly"} {
+		set compileonly 1
 	}
 }
 
@@ -40,27 +42,27 @@ set flag 0;
 set logfile $basedir/acplt_build.log
 
 #if {![info exists env(CVSROOT)]} then {
-#    puts stderr "Please set the environment variable CVSROOT and try again."
-#    exit 1
+#	puts stderr "Please set the environment variable CVSROOT and try again."
+#	exit 1
 #c}
 
 # Determine operating system
 if {$tcl_platform(os) == "Linux"} then { 
-    set os "linux" 
-    set make "make"
+	set os "linux" 
+	set make "make"
 	set libsuffix ".so"
 	set exesuffix ""
 	set batsuffix ".sh"
 } elseif {[lsearch $tcl_platform(os) "Windows"] >= 0} then {
-    set os "nt"
-    set make "mingw32-make"
-    set env(CYGWIN) "nodosfilewarning" 
+	set os "nt"
+	set make "mingw32-make"
+	set env(CYGWIN) "nodosfilewarning" 
 	set libsuffix ".dll"
 	set exesuffix ".exe"
 	set batsuffix ".bat"
 } else {
-    puts stderr "error: unsupported operating system: $tcl_platform(os)"
-    exit 1
+	puts stderr "error: unsupported operating system: $tcl_platform(os)"
+	exit 1
 }
 
 #cygwin stuff
@@ -82,63 +84,63 @@ file delete -force $logfile
 
 proc findDirectories {directory pattern} {
 
-    # Fix the directory name, this ensures the directory name is in the
-    # native format for the platform and contains a final directory seperator
-    set directory [string trimright [file join [file normalize $directory] { }]]
+	# Fix the directory name, this ensures the directory name is in the
+	# native format for the platform and contains a final directory seperator
+	set directory [string trimright [file join [file normalize $directory] { }]]
+	
+	# Starting with the passed in directory, do a breadth first search for
+	# subdirectories. Avoid cycles by normalizing all file paths and checking
+	# for duplicates at each level.
+	
+	set directories [list]
+	set parents $directory
+	while {[llength $parents] > 0} {
 
-    # Starting with the passed in directory, do a breadth first search for
-    # subdirectories. Avoid cycles by normalizing all file paths and checking
-    # for duplicates at each level.
+		# Find all the children at the current level
+		set children [list]
+		foreach parent $parents {
+			set children [concat $children [glob -nocomplain -type {d r} -path $parent *]]
+		}
 
-    set directories [list]
-    set parents $directory
-    while {[llength $parents] > 0} {
+		# Normalize the children
+		set length [llength $children]
+		for {set i 0} {$i < $length} {incr i} {
+			lset children $i [string trimright [file join [file normalize [lindex $children $i]] { }]]
+		}
 
-        # Find all the children at the current level
-        set children [list]
-        foreach parent $parents {
-            set children [concat $children [glob -nocomplain -type {d r} -path $parent *]]
-        }
+		# Make the list of children unique
+		set children [lsort -unique $children]
 
-        # Normalize the children
-        set length [llength $children]
-        for {set i 0} {$i < $length} {incr i} {
-            lset children $i [string trimright [file join [file normalize [lindex $children $i]] { }]]
-        }
+		# Find the children that are not duplicates, use them for the next level
+		set parents [list]
+		foreach child $children {
+			if {[lsearch -sorted $directories $child] == -1} {
+				lappend parents $child
+			}
+		}
 
-        # Make the list of children unique
-        set children [lsort -unique $children]
+	# Append the next level directories to the complete list
+	set directories [lsort -unique [concat $directories $parents]]
+	}
 
-        # Find the children that are not duplicates, use them for the next level
-        set parents [list]
-        foreach child $children {
-            if {[lsearch -sorted $directories $child] == -1} {
-                lappend parents $child
-            }
-        }
+	# Get all the files in the passed in directory and all its subdirectories
+	set result [list]
+	foreach directory $directories {
+		set result [concat $result [glob -nocomplain -type {r d} -path $directory -- $pattern]]
+	}
 
-        # Append the next level directories to the complete list
-        set directories [lsort -unique [concat $directories $parents]]
-    }
+	# Normalize the filenames
+	set length [llength $result]
+	for {set i 0} {$i < $length} {incr i} {
+		lset result $i [file normalize [lindex $result $i]]
+	}
 
-    # Get all the files in the passed in directory and all its subdirectories
-    set result [list]
-    foreach directory $directories {
-        set result [concat $result [glob -nocomplain -type {r d} -path $directory -- $pattern]]
-    }
-
-    # Normalize the filenames
-    set length [llength $result]
-    for {set i 0} {$i < $length} {incr i} {
-        lset result $i [file normalize [lindex $result $i]]
-    }
-
-    # Return only unique filenames
-    return [lsort -unique $result]
+	# Return only unique filenames
+	return [lsort -unique $result]
 }
 
 proc print_msg {msg} {
-    puts stderr "\[$msg\]"
+	puts stderr "\[$msg\]"
 }
 
 # Execute a command
@@ -146,64 +148,64 @@ proc print_msg {msg} {
 # return 1 if fail
 proc execute {args} {
 	set args [join $args]
-    
+	
 	global logfile
-    #set cmd [concat {exec -ignorestderr} $args]
-    set cmd [concat {exec } $args { >>& $logfile}]
-    #puts $cmd
-    if { [catch $cmd msg] } {
-        puts stderr "error: $msg"
-        puts stderr "Consult the file '$logfile'"
-	    exit 1
+	#set cmd [concat {exec -ignorestderr} $args]
+	set cmd [concat {exec } $args { >>& $logfile}]
+	#puts $cmd
+	if { [catch $cmd msg] } {
+		puts stderr "error: $msg"
+		puts stderr "Consult the file '$logfile'"
+		exit 1
 		#return 1
-    }
+	}
 	return 0
 }
 
 # Same as execute, just ignores errors
 proc execute_ignore {args} {
 	set args [join $args]
-    
+	
 	global logfile
-    #set cmd [concat {exec -ignorestderr} $args]
-    set cmd [concat {exec } $args { >>& $logfile}]
-    #puts $cmd
-    if { [catch $cmd msg] } {
+	#set cmd [concat {exec -ignorestderr} $args]
+	set cmd [concat {exec } $args { >>& $logfile}]
+	#puts $cmd
+	if { [catch $cmd msg] } {
 		return 1
-    }
+	}
 	return 0
 }
 
 # Execute a command
 proc execute_ignore {args} {
-    global logfile
-    set cmd [concat {exec } $args { >>& $logfile}]
-    #puts $cmd
-    if { [catch $cmd msg] } {
-    }
+	global logfile
+	set cmd [concat {exec } $args { >>& $logfile}]
+	#puts $cmd
+	if { [catch $cmd msg] } {
+	}
 }
 
 proc copy_wildcard {src target} {
-    set files [concat [glob -nocomplain $src]]
-    foreach file $files {
-        file copy -force $file $target
-    }
+	set files [concat [glob -nocomplain $src]]
+	foreach file $files {
+		file copy -force $file $target
+	}
 }
 proc move_wildcard {src target} {
-    set files [concat [glob -nocomplain $src]]
-    foreach file $files {
-        file copy -force $file $target
+	set files [concat [glob -nocomplain $src]]
+	foreach file $files {
+		file copy -force $file $target
 		file delete -force $file
-    }
+	}
 }
 
 # Create directory structure
 proc create_dirs {} {
-    global builddir
+	global builddir
 	global releasedir
-    global os
-    print_msg "Creating directory structure"
-    file mkdir $builddir $builddir/bin $builddir/user $builddir/user/libs $builddir/database $builddir/lib
+	global os
+	print_msg "Creating directory structure"
+	file mkdir $builddir $builddir/bin $builddir/user $builddir/user/libs $builddir/database $builddir/lib
 	file delete -force $releasedir
 	file mkdir $releasedir
 	file mkdir $releasedir/system
@@ -218,45 +220,44 @@ proc create_dirs {} {
 
 
 proc get_revision {} {
-global logfile
-
-execute svn info
-#set logfile "logfile.txt"
-set in  [open $logfile r]
-set first 0
-while {[gets $in line] != -1} {
-if {[regexp "Ausgecheckt, Revision" $line] } then {
-print_msg $line
-regexp {\s*Ausgecheckt, Revision\s+([0-9]+).*} $line _ first 
-break
-}
-if {[regexp "Revision:" $line] } then {
-print_msg $line
-regexp {\s*Revision:\s+([0-9]+).*} $line _ first 
-break
-}
-}
-close $in
-#file delete -force $logfile
-return $first
-
+	global logfile
+	
+	execute svn info
+	#set logfile "logfile.txt"
+	set in  [open $logfile r]
+	set first 0
+	while {[gets $in line] != -1} {
+		if {[regexp "Ausgecheckt, Revision" $line] } then {
+			print_msg $line
+			regexp {\s*Ausgecheckt, Revision\s+([0-9]+).*} $line _ first 
+			break
+		}
+		if {[regexp "Revision:" $line] } then {
+			print_msg $line
+			regexp {\s*Revision:\s+([0-9]+).*} $line _ first 
+			break
+		}
+	}
+	close $in
+	#file delete -force $logfile
+	return $first
 }
 
 
 # Checkout a CVS module
 
 proc checkout {prefix module {dirname ""} {notrunk ""}} {
-    print_msg "Checking out $module"
-    if {$dirname == ""} then { set dirname $module }
-    #execute cvs checkout -P -d $dirname $module
-    if {$notrunk == ""} then {
-	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module/trunk $dirname	
-    } else {
-	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
-    }
+	print_msg "Checking out $module"
+	if {$dirname == ""} then { set dirname $module }
+	#execute cvs checkout -P -d $dirname $module
+	if {$notrunk == ""} then {
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module/trunk $dirname	
+	} else {
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
+	}
 }
 proc checkout_better {module {notrunk ""}}  {
-    global notrunklist
+	global notrunklist
 	set temp [split $module "/"]
 	foreach x $temp {
 	foreach y $notrunklist {
@@ -267,22 +268,22 @@ proc checkout_better {module {notrunk ""}}  {
 	}
 	set dirname [lindex $temp end]
 	print_msg "Checking out $module"
-    if {$dirname == ""} then { set dirname $module }
-    #execute cvs checkout -P -d $dirname $module
-    if {$notrunk == ""} then {
-	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname	
-    } else {
-	    execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname	
-    }
+	if {$dirname == ""} then { set dirname $module }
+	#execute cvs checkout -P -d $dirname $module
+	if {$notrunk == ""} then {
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname	
+	} else {
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname	
+	}
 }
 
 proc checkout_lib {x} {
 	if { [string equal $x ksbase] } {
 			checkout develop/ks/trunk/ks_revised $x $x notrunk
 	} elseif { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
-	    	checkout develop/ks/trunk $x $x notrunk
+			checkout develop/ks/trunk $x $x notrunk
 	} else {
-	    	checkout develop $x
+			checkout develop $x
 	}
 }
 
@@ -290,27 +291,27 @@ proc checkout_lib {x} {
 
 # Checkout sources
 proc checkout_acplt {} {
-    global builddir
-    global basedir
-    global os
-    global included_libs
+	global builddir
+	global basedir
+	global os
+	global included_libs
 	global releasedir
 	global release
 	global date
-    cd $builddir
-    checkout archive libml
-    #for source release - checkout all
-    #if { $os == "nt" } then { 
-    checkout archive oncrpc
-    #}
-    checkout archive acplt base
-    cd $builddir/base
-    #checkout libmpm
-    checkout archive fbs_dienste "" notrunk
-    checkout develop ov
+	cd $builddir
+	checkout archive libml
+	#for source release - checkout all
+	#if { $os == "nt" } then { 
+	checkout archive oncrpc
+	#}
+	checkout archive acplt base
+	cd $builddir/base
+	#checkout libmpm
+	checkout archive fbs_dienste "" notrunk
+	checkout develop ov
 
 	#get the number of the current release - $date is global
-    cd $basedir
+	cd $basedir
 	set date [get_revision]
 	set date "r$date"
  }
@@ -318,26 +319,26 @@ proc checkout_acplt {} {
 # Build in a directory
 proc build {package args} {
 	global ov_debug
-    print_msg "Building $package"
+	print_msg "Building $package"
 	
-    return [execute $args $ov_debug]
+	return [execute $args $ov_debug]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
 proc build_cygwin {package args} {
 	global bash
 	global ov_debug
-    print_msg "Building $package"
+	print_msg "Building $package"
 	
-    eval [concat "execute" $bash \\\"$args $ov_debug\\\"]
+	eval [concat "execute" $bash \\\"$args $ov_debug\\\"]
 }
 
 proc build_acplt_mingw {} {
 	print_msg "Compiling with mingw32"
-    global base
-    global os
-    global make
-    global basedir
+	global base
+	global os
+	global make
+	global basedir
 	global builddir
 	print_msg "Building oncrpc"
 	cd $builddir/oncrpc/
@@ -348,51 +349,51 @@ proc build_acplt_mingw {} {
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
 	cd $builddir/base/ov/build/cygwin
-    build_cygwin ov make -f makefile
+	build_cygwin ov make -f makefile
 	#cd $builddir/base/acplt_makmak/build/cygwin
-    #build_cygwin acplt_makmak make -f makefile
+	#build_cygwin acplt_makmak make -f makefile
 	#enabling plt and ks just for fb_dbcommands	
 	cd $builddir/base/plt/build/cygwin
-    build_cygwin plt make -f makefile
+	build_cygwin plt make -f makefile
 	cd $builddir/base/ks/build/cygwin
-    build_cygwin ks make -f makefile
+	build_cygwin ks make -f makefile
 	cd $builddir/base/fbs_dienste/build/cygwin
-    build_cygwin fb_dbcommands make -f makefile
+	build_cygwin fb_dbcommands make -f makefile
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
 proc build_acplt {} {
-    global builddir
-    global base
-    global os
-    global make
-    global basedir
+	global builddir
+	global base
+	global os
+	global make
+	global basedir
 
-    if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
-    build libml make -C $builddir/libml -f $makefile
-    if { $os == "nt" } then { 
-        cd $builddir/oncrpc
-        execute make.bat
-        #file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
-        cd $basedir
-    }
-    # build libmpm make -C $builddir/base/libmpm -f $makefile
-    if { $os == "nt" } then {
+	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
+	build libml make -C $builddir/libml -f $makefile
+	if { $os == "nt" } then { 
+		cd $builddir/oncrpc
+		execute make.bat
+		#file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
+		cd $basedir
+	}
+	# build libmpm make -C $builddir/base/libmpm -f $makefile
+	if { $os == "nt" } then {
 		#enabling plt and ks just for fb_dbcommands
-        cd $builddir/base/plt/build/ntvc
-        build plt nmake /f $makefile
-        cd $builddir/base/ks/build/ntvc
-        build ks nmake /f $makefile
-        cd $builddir/base/ov/build/ntvc
-        build ov make -f $makefile -k
-        cd $builddir/base/fb_dbcommands/build/ntvc
-        build fb_dbcommands make -f $makefile -k
-        cd $basedir
-    } else {
+		cd $builddir/base/plt/build/ntvc
+		build plt nmake /f $makefile
+		cd $builddir/base/ks/build/ntvc
+		build ks nmake /f $makefile
+		cd $builddir/base/ov/build/ntvc
+		build ov make -f $makefile -k
+		cd $builddir/base/fb_dbcommands/build/ntvc
+		build fb_dbcommands make -f $makefile -k
+		cd $basedir
+	} else {
 		#enabling plt and ks just for fb_dbcommands
-        build plt make -C $builddir/base/plt/build/$os
-        build ks make -C $builddir/base/ks/build/$os
-        build ov make -C $builddir/base/ov/build/$os
+		build plt make -C $builddir/base/plt/build/$os
+		build ks make -C $builddir/base/ks/build/$os
+		build ov make -C $builddir/base/ov/build/$os
 		build fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
    }
    #if { $os == "nt" } then {
@@ -403,33 +404,33 @@ proc build_acplt {} {
 }
 
 proc install {dir} {
-    global builddir
-    global os
-    print_msg "Installing from $dir"
-    if { $os == "linux" } then {
-        set binfiles [concat [glob -nocomplain $dir/*.so] [glob -nocomplain -type {f x} $dir/*]]
+	global builddir
+	global os
+	print_msg "Installing from $dir"
+	if { $os == "linux" } then {
+		set binfiles [concat [glob -nocomplain $dir/*.so] [glob -nocomplain -type {f x} $dir/*]]
 		set libfiles [concat [glob -nocomplain $dir/*.a]]
-    } 
-    if { $os == "nt" } then {
-        set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
-        set libfiles [concat [glob -nocomplain $dir/*.lib $dir/*.a]]
-    }
-    foreach file $binfiles {
+	} 
+	if { $os == "nt" } then {
+		set binfiles [concat [glob -nocomplain $dir/*.dll $dir/*.exe]]
+		set libfiles [concat [glob -nocomplain $dir/*.lib $dir/*.a]]
+	}
+	foreach file $binfiles {
 	file copy -force $file $builddir/bin
-    }
-    foreach file $libfiles {
+	}
+	foreach file $libfiles {
 	file copy -force $file $builddir/lib
-    }
-    # execute make -C $dir install
+	}
+	# execute make -C $dir install
 } 
 
 proc install_acplt { target } {
-    global builddir
-    install $builddir/oncrpc/bin
-    install $builddir/base/plt/build/$target
-    install $builddir/base/ks/build/$target
-    install $builddir/base/ov/build/$target
-    #install $builddir/base/acplt_makmak/build/$target
+	global builddir
+	install $builddir/oncrpc/bin
+	install $builddir/base/plt/build/$target
+	install $builddir/base/ks/build/$target
+	install $builddir/base/ov/build/$target
+	#install $builddir/base/acplt_makmak/build/$target
 	#install solely fb_dbcommands executable
 	if { $target == "linux" } then {
 		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
@@ -439,59 +440,59 @@ proc install_acplt { target } {
 }
 
 proc makmak {library opts} {
-    global builddir
-    global basedir
-    global os
-    set makmak $builddir/bin/ov_makmak
-    cd $builddir/user/$library/build/$os
-    eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
-    cd $basedir
+	global builddir
+	global basedir
+	global os
+	set makmak $builddir/bin/ov_makmak
+	cd $builddir/user/$library/build/$os
+	eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
+	cd $basedir
 }
 
 proc build_lib {libname deps patch baselibs} {
-    global builddir
-    global os
-    file mkdir $builddir/user/$libname/build/$os
-    set depopts ""
-    foreach dep $deps { append depopts "-d $dep" }
-    makmak $libname $depopts
-    if $patch then {
+	global builddir
+	global os
+	file mkdir $builddir/user/$libname/build/$os
+	set depopts ""
+	foreach dep $deps { append depopts "-d $dep" }
+	makmak $libname $depopts
+	if $patch then {
 	# Temporary solution for ov_library_open problem
 	execute patch $builddir/user/fb/build/generic.mk library-open.patch
-    }
-    if { $os == "nt" } then { 
-        set makefile "msvc.mk"
+	}
+	if { $os == "nt" } then { 
+		set makefile "msvc.mk"
 	set lib $libname.dll
-    } else {
-        set makefile "Makefile"
+	} else {
+		set makefile "Makefile"
 	set lib $libname.so
-    }
-    if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
-    eval [concat "build $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
-    file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
+	}
+	if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
+	eval [concat "build $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
+	file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
 }
 
 proc dbutil {args} {
-    global releasedir
-    global os
-    set dbutil $releasedir/bin/ov_dbutil
-    eval "execute $dbutil $args"
+	global releasedir
+	global os
+	set dbutil $releasedir/bin/ov_dbutil
+	eval "execute $dbutil $args"
 }
 
 #proc start_server {} {
-#    global releasedir
-#    global os
-#    set database $releasedir/database/database.ovd
-#    if [file exists $database] then {
-#    } else {
-#        dbutil -f $database -c [expr 1024 * 1024]
-#    }
-#    execute $releasedir/bin/tmanager.exe &
-#    if { $os == "linux" } then {
-#        global env
-#        set env(LD_LIBRARY_PATH) $releasedir/bin
-#    }
-#    execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
+#	global releasedir
+#	global os
+#	set database $releasedir/database/database.ovd
+#	if [file exists $database] then {
+#	} else {
+#		dbutil -f $database -c [expr 1024 * 1024]
+#	}
+#	execute $releasedir/bin/tmanager.exe &
+#	if { $os == "linux" } then {
+#		global env
+#		set env(LD_LIBRARY_PATH) $releasedir/bin
+#	}
+#	execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 #}
 
 
@@ -640,7 +641,7 @@ proc create_release {} {
 	global env
 	global libsuffix
 
-    #create a release
+	#create a release
 	set env(ACPLT_HOME) $releasedir
 	if { $os == "nt" } then {
 		set env(PATH) $releasedir/system/sysbin/\;$env(PATH)
@@ -774,9 +775,9 @@ proc create_systools_and_servers {} {
 	
 	}
 	set files [glob -nocomplain $releasedir/system/base_serverstarttools/*$batsuffix]
-    foreach f $files {
+	foreach f $files {
 		file copy $f $releasedir/servers/MANAGER/
-    }
+	}
 	
 	file copy $releasedir/system/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
 	file delete -force $releasedir/system/base_serverstarttools/	
@@ -826,7 +827,7 @@ if { $bleedingedge == 1 } then {
 	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc develop/ks/trunk/fbcomlib}
 	print_msg "checking out trunk"
 } else {
-   	print_msg "checking out common"
+	print_msg "checking out common"
 	set addon_libs { common/user }
 	set included_libs {common/core}
 }
@@ -846,7 +847,7 @@ if {$checkout == 1} {
 
 if {$release == 1} {
 	# Create source release
-    print_msg "== CREATING SOURCE RELEASE =="
+	print_msg "== CREATING SOURCE RELEASE =="
 	
 	#backup old checkout (otherwise binaries will be in the source-release)
 	if { [file exists acplt.build_backup] } {
@@ -865,13 +866,13 @@ if {$release == 1} {
 
 
 	file mkdir $builddir/syslibs
-    cd $builddir/syslibs
+	cd $builddir/syslibs
 		foreach x $included_libs {
 		checkout_better $x
 	}
 
 	file mkdir $builddir/addonlibs
-    cd $builddir/addonlibs
+	cd $builddir/addonlibs
 		foreach x $addon_libs {
 		checkout_better $x
 	}
@@ -884,7 +885,7 @@ if {$release == 1} {
 
 	compress "acplt-server-source-$date" "./acplt-source"
 
-    file delete -force "acplt-source"
+	file delete -force "acplt-source"
 	
 	#rename back to save compiling overhead
 	#file delete -force "acplt.build"
@@ -897,7 +898,11 @@ if {$release == 1} {
 }
 
 create_dirs
-checkout_acplt
+if { $compileonly != 1 } then {
+	checkout_acplt
+} else {
+	set date "rXXXX"
+}
 cd $basedir
 
 if {$checkout == 1} {
@@ -918,7 +923,7 @@ if { $os == "nt" } then {
 
 if {$release == 1} {
 # Create develop release
-    print_msg "== CREATING DEVELOP RELEASE =="
+	print_msg "== CREATING DEVELOP RELEASE =="
 }
 
 create_release
@@ -942,7 +947,7 @@ if {$release == 1} {
 
 if {$release == 1} {
 # Create runtime release
-    print_msg "== CREATING RUNTIME RELEASE =="
+	print_msg "== CREATING RUNTIME RELEASE =="
 	set ov_debug ""
 	file delete -force $builddir
 	create_dirs
@@ -966,25 +971,25 @@ if {$release == 1} {
 
 	create_release
 	create_systools_and_servers
-    foreach x $included_libs {
-        release_lib_better $x all
-    }
-    separate
-    foreach x $addon_libs {
-        release_lib_better $x all
-    }
+	foreach x $included_libs {
+		release_lib_better $x all
+	}
+	separate
+	foreach x $addon_libs {
+		release_lib_better $x all
+	}
 	if { [file exists $releasedir/dev/] } then {
 		file delete -force $releasedir/dev/
 	}
 
-    cd $releasedir/system/sysbin
-    file delete -force acplt_makmak$exesuffix
-    file delete -force acplt_builder$exesuffix
-    file delete -force ov_builder$exesuffix
-    file delete -force ov_codegen$exesuffix
-    file delete -force ov_makmak$exesuffix
-    file delete -force $releasedir/system/sysdevbase
-    #file delete -force lib
+	cd $releasedir/system/sysbin
+	file delete -force acplt_makmak$exesuffix
+	file delete -force acplt_builder$exesuffix
+	file delete -force ov_builder$exesuffix
+	file delete -force ov_codegen$exesuffix
+	file delete -force ov_makmak$exesuffix
+	file delete -force $releasedir/system/sysdevbase
+	#file delete -force lib
 	#cd $releasedir/system/ov
 	#file delete -force model
 	cd $basedir
@@ -1001,7 +1006,7 @@ if {$release == 1} {
 	foreach x $stripfiles {
 	  # execute  "strip --strip-debug" $x
 	  execute  "strip" "-g" "-S" "-d" $x
-    }
+	}
 	
 	#restore tclsh.exe so it is not stripped
 	if { [file exists $releasedir/system/tclsh.exe] } then {
