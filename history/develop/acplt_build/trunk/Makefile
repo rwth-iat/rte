@@ -15,3 +15,5 @@ source:
 release:
 	tclsh acplt_build.tcl trunk release
 
+compileonly:
+	tclsh acplt_build.tcl trunk compileonly
