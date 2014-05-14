@@ -31,6 +31,8 @@
 #ifndef OV_OV_H_INCLUDED
 #define OV_OV_H_INCLUDED
 
+#include <stdint.h>
+
 #include "libov/ov_config.h"
 #include "libov/ov_version.h"
 
@@ -149,8 +151,8 @@ typedef OV_ENUM OV_VAR_PROPS;
 *	XDR routines generated for use with ACPLT/KS.
 */
 typedef	bool_t	OV_BOOL;		/* bool value */
-typedef long	OV_INT;			/* integer value */
-typedef u_long	OV_UINT;		/* unsigned integer value */
+typedef int32_t	OV_INT;			/* integer value */
+typedef uint32_t	OV_UINT;		/* unsigned integer value */
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
@@ -434,8 +436,8 @@ typedef OV_ENUM OV_TICKET_TYPE;
 *	limits of values
 *	----------------
 */
-#define OV_VL_MAXINT	(((unsigned long)-1) >> 1)
-#define OV_VL_MAXUINT	((unsigned long)-1)
+#define OV_VL_MAXINT	(((OV_UINT)-1) >> 1)
+#define OV_VL_MAXUINT	((OV_UINT)-1)
 
 /*
 * 	OV_RESULT:
