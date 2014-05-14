@@ -77,7 +77,7 @@
 #define OV_VER_PRODUCTVERSION_CONTROLPANEL		1, 6, 7, 0
 
 #define OV_VER_LICENSE															\
-	"Copyright (C) 1998-2009 "													\
+	"Copyright (C) 1998-2014 "													\
 	"Lehrstuhl fuer Prozessleittechnik, "										\
 	"RWTH Aachen, D-52056 Aachen, Germany. "									\
 	"All rights reserved.\r\n"													\

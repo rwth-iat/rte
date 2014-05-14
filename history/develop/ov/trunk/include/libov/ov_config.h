@@ -295,6 +295,7 @@ char *strdup(const char *s);
 #if OV_SYSTEM_MC164
 #define enum_t long
 #else
+//hopefully no one is manipulating an enum binary, so it is ok to be 32 or 64 bit
 #define enum_t int
 #endif
 #endif
