@@ -58,7 +58,13 @@ extern "C"
 #include <stddef.h>
 #endif
 
-#define __ml_size_t   unsigned long int
+/* long variables are not on all Datamodels / platforms (as an example LLP64 as W64) the same size as a pointer -- Holger
+ * http://www.viva64.com/en/a/0050/ */
+#if _MSC_VER && _MSC_VER <= 1200
+	#define __ml_size_t   unsigned long int
+#else
+	#define __ml_size_t   uintptr_t
+#endif
 #define __ml_byte_t   unsigned char
 #define __ml_ptr      void*
 

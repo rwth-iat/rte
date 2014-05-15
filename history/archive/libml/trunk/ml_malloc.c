@@ -53,7 +53,7 @@ fprintf(stderr, "__morecore returned NULL\n");
     _ml_info_ptr->bytes_used  += size;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "__morecore returned %lu\n", (unsigned long)(__ml_byte_t*)result);
+fprintf(stderr, "__morecore returned %lu\n", (__ml_size_t)(__ml_byte_t*)result);
 #endif
     
     return result;
@@ -297,8 +297,8 @@ fprintf(stderr, "    ==> %lu Bytes: log %lu (anz %lu)\n", size, log, i);
 
 #if DBG_TO_STDERR
 fprintf(stderr, "  ml_malloc %lu (%lu) size %lu\n\n"
-                , (unsigned long)(__ml_byte_t*)result
-                , (unsigned long)(__ml_byte_t*)pResult
+                , (__ml_size_t)(__ml_byte_t*)result
+                , (__ml_size_t)(__ml_byte_t*)pResult
                 , size);
 #endif
   
