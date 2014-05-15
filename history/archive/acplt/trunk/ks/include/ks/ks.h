@@ -34,8 +34,6 @@
 
 #include "ks/rpc.h"
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -296,7 +294,7 @@ ENUMDEF(KS_STRUCTURE_FLAGS)
  * instance, function block system servers might want to indicate that par-
  * ticular variables are input or output ports of function blocks, etc.
  */
-typedef uint32_t KS_SEMANTIC_FLAGS;
+typedef u_long KS_SEMANTIC_FLAGS;
 
 
 /* ----------------------------------------------------------------------------
