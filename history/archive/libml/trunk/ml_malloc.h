@@ -38,6 +38,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdint.h>
 
 #if ML_SYSTEM_UNIX
 #include <unistd.h>
