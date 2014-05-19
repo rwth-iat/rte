@@ -243,6 +243,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <inttypes.h>	//includes stdint.h itself
 
 #if OV_SYSTEM_NT
 #define i386 1
