@@ -31,12 +31,12 @@
 #ifndef OV_OV_H_INCLUDED
 #define OV_OV_H_INCLUDED
 
-#include <stdint.h>
-
 #include "libov/ov_config.h"
 #include "libov/ov_version.h"
 
 #include "ks/ks.h"
+
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
