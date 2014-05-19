@@ -36,8 +36,6 @@
 
 #include "ks/ks.h"
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -149,13 +147,32 @@ typedef OV_ENUM OV_VAR_PROPS;
 *	----------------
 *	Note: most data types are identical with the datatypes used in the
 *	XDR routines generated for use with ACPLT/KS.
+*
+*	Use of C99 fixed width data types of intstd.h and inttypes.h
 */
-typedef	bool_t	OV_BOOL;		/* bool value */
+typedef	int32_t	OV_BOOL;		/* bool value */
 typedef int32_t	OV_INT;			/* integer value */
-typedef uint32_t	OV_UINT;		/* unsigned integer value */
+typedef uint32_t	OV_UINT;	/* unsigned integer value */
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
+
+#if !OV_SYSTEM_UNIX
+	#if OV_SYSTEM_MC164
+		#define	OV_PRINT_BOOL "l";
+	#else
+		#define	OV_PRINT_BOOL "i";
+	#endif
+#else
+	#define	OV_PRINT_BOOL "i";
+#endif
+
+#define	OV_PRINT_INT	PRId32;		/* integer value */
+#define	OV_PRINT_UINT	PRIu32;		/* unsigned integer value */
+#define	OV_PRINT_SINGLE	"f";	/* single precision floating value */
+#define	OV_PRINT_DOUBLE	"lf";	/* double precision floating value */
+#define	OV_PRINT_STRING	"s";	/* string value */
+
 
 typedef struct {				/* time/date value */
 	OV_UINT	secs;

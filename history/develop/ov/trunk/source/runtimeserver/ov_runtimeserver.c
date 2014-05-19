@@ -1299,7 +1299,7 @@ ERRORMSG:
 			tempstr = malloc(strlen(commandline_options)+16); //"PORT=" + max characters in INT + '\0'
 			if(tempstr)
 			{
-				sprintf(tempstr, "PORT=%ld %s", port, commandline_options);
+				sprintf(tempstr, "PORT=%" OV_PRINT_UINT " %s", port, commandline_options);
 				free(commandline_options);
 				commandline_options = tempstr;
 			}
@@ -1309,7 +1309,7 @@ ERRORMSG:
 			commandline_options = malloc(16);
 			if(commandline_options)
 			{
-				sprintf(commandline_options, "PORT=%ld", port);
+				sprintf(commandline_options, "PORT=%" OV_PRINT_UINT, port);
 			}
 		}
 	}

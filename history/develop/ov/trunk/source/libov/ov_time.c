@@ -234,7 +234,7 @@ static OV_STRING ov_time_timetoascii_internal(
 		//POSIX C
 		ptm = gmtime(&secs);
 	}
-	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06lu",
+	sprintf(timestring, "%04d/%02d/%02d %02d:%02d:%02d.%06" OV_PRINT_UINT,
 		ptm->tm_year+1900, ptm->tm_mon+1, ptm->tm_mday, ptm->tm_hour,
 		ptm->tm_min, ptm->tm_sec, ptime->usecs);
 	return timestring;
@@ -292,7 +292,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
 	secs -= minutes * 60;
 	hours = secs / 3600;
 
-	sprintf(timestring, "%04d:%02d:%02d.%06lu",
+	sprintf(timestring, "%04d:%02d:%02d.%06" OV_PRINT_UINT,
 		hours, minutes, seconds, ptimespan->usecs);
 	return timestring;
 }
@@ -352,7 +352,7 @@ static OV_RESULT ov_time_asciitotime_internal(
 	*/
 	memset(&tm, 0, sizeof(tm));
 	usecs = 0;
-	sscanf(timestring, "%d/%d/%d %d:%d:%d.%lu", &tm.tm_year, &tm.tm_mon,
+	sscanf(timestring, "%d/%d/%d %d:%d:%d.%" OV_PRINT_UINT, &tm.tm_year, &tm.tm_mon,
 		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
 	tm.tm_year -= 1900;
 	tm.tm_mon--;
@@ -380,11 +380,17 @@ static OV_RESULT ov_time_asciitotime_internal(
 					secs = _mkgmtime(&tm);
 				#else
 					//there is no clean way for doing this without much code problems
+					#ifdef OV_DEBUG
+						#pragma message "no timegm or _mkgmtime available on this platform"
+					#endif
 					return OV_ERR_NOTIMPLEMENTED;
 				#endif
 			#endif
 
 			#if OV_SYSTEM_UNIX + OV_SYSTEM_NT != 1
+				#ifdef OV_DEBUG
+					#pragma message "no timegm or _mkgmtime available on this platform"
+				#endif
 				return OV_ERR_NOTIMPLEMENTED;
 			#endif
 		#endif
@@ -412,7 +418,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
 
 /*
 *	Convert an ASCII string into a time (UTC)
-*	Warning: this is NOTIMPLEMENTED under windows!
+*	Warning: this is NOTIMPLEMENTED with some compilers on windows!
 */
 OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_utc(
 	OV_TIME				*ptime,
