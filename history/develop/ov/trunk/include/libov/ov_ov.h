@@ -87,7 +87,7 @@ ENUMDEF(OV_STATE)
 */
 ENUMDEF(OV_VAR_TYPE)
 #define OV_VT_VOID           ENUMVAL(OV_VAR_TYPE, 0x00)	/* used with the ANY datatype */
-#define OV_VT_BYTE           ENUMVAL(KS_VAR_TYPE, 0x01)	/*not in KS */
+#define OV_VT_BYTE           ENUMVAL(OV_VAR_TYPE, 0x01)	/*not in KS */
 #define OV_VT_BOOL           ENUMVAL(OV_VAR_TYPE, 0x02)
 #define OV_VT_INT            ENUMVAL(OV_VAR_TYPE, 0x10)
 #define OV_VT_UINT           ENUMVAL(OV_VAR_TYPE, 0x11)
@@ -100,8 +100,8 @@ ENUMDEF(OV_VAR_TYPE)
 #define OV_VT_STRUCT         ENUMVAL(OV_VAR_TYPE, 0x40)
 
 #define OV_VT_CTYPE          ENUMVAL(OV_VAR_TYPE, 0x41)	/*not in KS */
-#define OV_VT_POINTER        ENUMVAL(KS_VAR_TYPE, 0x42)	/*not in KS */
-#define OV_VT_ISVECTOR       ENUMVAL(KS_VAR_TYPE, 0x80)	/*not in KS; OV_VT_type_VEC = (OV_VT_type | OV_VT_ISVECTOR) */
+#define OV_VT_POINTER        ENUMVAL(OV_VAR_TYPE, 0x42)	/*not in KS */
+#define OV_VT_ISVECTOR       ENUMVAL(OV_VAR_TYPE, 0x80)	/*not in KS; OV_VT_type_VEC = (OV_VT_type | OV_VT_ISVECTOR) */
 
 #define OV_VT_BYTE_VEC       ENUMVAL(OV_VAR_TYPE, 0x81)
 #define OV_VT_BOOL_VEC       ENUMVAL(OV_VAR_TYPE, 0x82)
@@ -695,7 +695,6 @@ ENUMDEF(OV_HIST_TYPE)
 
 #define OV_HT_TIME_DRIVEN    ENUMVAL(OV_HIST_TYPE, 0x80000000)
 #define OV_HT_CHANGE_DRIVEN  ENUMVAL(OV_HIST_TYPE, 0x40000000)
-typedef OV_ENUM OV_HIST_TYPE;
 
 /*
 *	OV_INTERPOLATION_MODE:

@@ -253,8 +253,7 @@
 		#include <inttypes.h>	//includes stdint.h itself
 	#endif
 #elif OV_COMPILER_GCC || OV_COMPILER_CYGWIN
-#include <inttypes.h>	//includes stdint.h itself
-#endif
+	#include <inttypes.h>	//includes stdint.h itself
 #endif
 
 #if OV_SYSTEM_NT
@@ -292,25 +291,23 @@ char *strdup(const char *s);
 *	Bool datatype
 *	-------------
 */
-#if !OV_SYSTEM_UNIX
 #if OV_SYSTEM_MC164
 #define bool_t long
-#else
-#define bool_t int
 #endif
+#ifndef bool_t
+#define bool_t int
 #endif
 
 /*
 *	Enum datatype
 *	-------------
 */
-#if !OV_SYSTEM_UNIX
 #if OV_SYSTEM_MC164
 #define enum_t long
-#else
-//hopefully no one is manipulating an enum binary, so it is ok to be 32 or 64 bit
-#define enum_t int
 #endif
+#ifndef enum_t
+	//hopefully no one is manipulating an enum binary, so it is ok to be 32 or 64 bit
+	#define	enum_t	int
 #endif
 
 /*
