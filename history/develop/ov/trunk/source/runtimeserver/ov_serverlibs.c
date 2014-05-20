@@ -14,7 +14,6 @@
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_macros.h"
-#include "ov_ksserver_stripped.h"
 #include "ksbase.h"
 #include "TCPbind.h"
 #include "ksxdr.h"

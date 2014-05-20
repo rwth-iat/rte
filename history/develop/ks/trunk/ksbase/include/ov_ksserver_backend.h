@@ -140,6 +140,7 @@ typedef KS_OBJ_TYPE			OV_OBJ_TYPE;
 typedef KS_LINK_TYPE		OV_LINK_TYPE;
 typedef KS_SEMANTIC_FLAGS	OV_SEMANTIC_FLAGS;
 typedef KS_SVC				OV_SVC;
+typedef KS_EP_FLAGS			OV_EP_FLAGS;
 
 /**************************************************************/
 #endif
@@ -147,10 +148,6 @@ typedef KS_SVC				OV_SVC;
 /*
 *	shared datatypes ACPLT/KS -- ACPLT/OV
 */
-
-
-typedef KS_EP_FLAGS			OV_EP_FLAGS;
-
 typedef OV_TICKET			OV_TICKET_PAR;
 typedef OV_TICKET			OV_TICKET_RES;
 
@@ -953,14 +950,6 @@ void ov_ksserver_gethist(
 	const OV_GETHIST_PAR	*params,
 	OV_GETHIST_RES			*result
 );
-
-OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_startup(void);
-
-OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
-	OV_STRING 	dbname
-);
-
-
 
 #endif
 
