@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-//#include "libovks/ov_ksserver.h"
 #include "libov/ov_database.h"
 #include "libov/ov_object.h"
 #include "libov/ov_result.h"
@@ -12,7 +11,6 @@
 #include "libov/ov_scheduler.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
-#include "ov_ksserver_stripped.h"
 /*	----------------------------------------------------------------------	*/
 /*
 *	Constants
@@ -21,6 +19,27 @@ OV_DLLVARIMPORT OV_BOOL ov_server_run;
 /*	set this to 0 to remove the help output (reduces size for small systems)	*/
 #define OV_SERVER_HELP 1
 
+/*
+*	OV_FNC_SIGHANDLER:
+*	------------------
+*	Signal hander function prototype for server shutdown
+*/
+typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
+	int signal
+);
+
+/*
+*	Flags for installing the signal handler
+*/
+#define OV_SIGHANDLER_DEFAULT	((OV_FNC_SIGHANDLER *)0)
+#define OV_SIGHANDLER_NONE		((OV_FNC_SIGHANDLER *)-1)
+
+
+OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_startup(void);
+
+OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
+	OV_STRING 	dbname
+);
 
 /*	----------------------------------------------------------------------	*/
 /*
