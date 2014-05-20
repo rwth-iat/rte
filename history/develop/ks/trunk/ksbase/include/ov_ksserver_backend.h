@@ -37,13 +37,118 @@
 #include "libov/ov_logfile.h"
 
 
+#ifndef KS_KS_INCLUDED
+/**************************************************************/
+/* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
+
+/* ----------------------------------------------------------------------------
+ * ACPLT/KS error codes defined by the ACPLT/KS core protocol...
+ */
+#define KS_ERR_CANTSYNC                  ENUMVAL(OV_RESULT, 0x0015)
+#define KS_ERR_NOREMOTE                  ENUMVAL(OV_RESULT, 0x0020)
+#define KS_ERR_SERVERUNKNOWN             ENUMVAL(OV_RESULT, 0x0021)
+
+/*
+ * ... and errors which can occur in the client part of the
+ * C++ Communication Library. These error codes have been put into
+ * the range 0x1000-0x1FFF to distinguish them from core protocol
+ * errors.
+ */
+#define KS_ERR_MALFORMEDPATH             ENUMVAL(OV_RESULT, 0x1001)
+#define KS_ERR_NETWORKERROR              ENUMVAL(OV_RESULT, 0x1002)
+#define KS_ERR_TYPEMISMATCH              ENUMVAL(OV_RESULT, 0x1003)
+#define KS_ERR_HOSTUNKNOWN               ENUMVAL(OV_RESULT, 0x1004)
+#define KS_ERR_CANTCONTACT               ENUMVAL(OV_RESULT, 0x1005)
+#define KS_ERR_TIMEOUT                   ENUMVAL(OV_RESULT, 0x1006)
+#define KS_ERR_NOMANAGER                 ENUMVAL(OV_RESULT, 0x1007)
+
+typedef OV_OBJ_TYPE			KS_OBJ_TYPE;
+typedef OV_LINK_TYPE		KS_LINK_TYPE;
+typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
+typedef OV_SVC				KS_SVC;
+
+/*
+ * Please note that although an objects name (identifier) can't be longer than
+ * 255 characters in length, there is no limit on the path to an object. Thus,
+ * a full path and identifier name can be of arbitrary length.
+ */
+#define KS_NAME_MAXLEN 255
+#define KS_COMMENT_MAXLEN 4095
+#define KS_TECHUNIT_MAXLEN 63
+#define KS_SIMPLEID_MAXLEN 255
+
+/* ----------------------------------------------------------------------------
+ * Option flags for the GETEP service.
+ */
+ENUMDEF(KS_EP_FLAGS)
+#define KS_EPF_PARTS     ENUMVAL(KS_EP_FLAGS, 0x80000000)
+#define KS_EPF_CHILDREN  ENUMVAL(KS_EP_FLAGS, 0x40000000)
+#define KS_EPF_FLATTEN   ENUMVAL(KS_EP_FLAGS, 0x00000001)
+#define KS_EPF_DEFAULT   ENUMVAL(KS_EP_FLAGS, KS_EPF_PARTS | KS_EPF_CHILDREN)
+
+typedef KS_EP_FLAGS OV_EP_FLAGS; //needed in xdrClient
+
+/* ----------------------------------------------------------------------------
+ * Service codes. Dial 1-800-ACPLTKS for more information =:)
+ */
+ENUMDEF(KS_SVC)
+#define KS_NULL           ENUMVAL(KS_SVC, 0)
+    /*
+     * Now for the manager part of the KS protocol
+     */
+#define KS_REGISTER       ENUMVAL(KS_SVC, 0x0000FF01)
+#define KS_UNREGISTER     ENUMVAL(KS_SVC, 0x0000FF02)
+#define KS_GETSERVER      ENUMVAL(KS_SVC, 0x0000FF03)
+
+    /*
+     * The GetPP/GetEP services group.
+     */
+#define KS_GETPP          ENUMVAL(KS_SVC, 0x00000001)
+#define KS_GETEP          ENUMVAL(KS_SVC, 0x00000002)
+#define KS_GETCANONICALPATH ENUMVAL(KS_SVC, 0x00000003)
+
+    /*
+     * The variable access service group.
+     */
+#define KS_GETVAR         ENUMVAL(KS_SVC, 0x00000101)
+#define KS_SETVAR         ENUMVAL(KS_SVC, 0x00000102)
+#define KS_EXGDATA        ENUMVAL(KS_SVC, 0x00000103)
+
+    /*
+     * Object management service group.
+     */
+#define KS_CREATEOBJECT   ENUMVAL(KS_SVC, 0x00000201)
+#define KS_DELETEOBJECT   ENUMVAL(KS_SVC, 0x00000202)
+#define KS_RENAMEOBJECT   ENUMVAL(KS_SVC, 0x00000203)
+
+    /*
+     * Structure management service group.
+     */
+#define KS_LINK           ENUMVAL(KS_SVC, 0x00000301)
+#define KS_UNLINK         ENUMVAL(KS_SVC, 0x00000302)
+
+    /*
+     * History access service group.
+     */
+#define KS_GETHIST        ENUMVAL(KS_SVC, 0x00000401)
+
+
+#else
+/**************************************************************/
+//most things are delivered via ks/ks.h but not in OV name space
+typedef KS_OBJ_TYPE			OV_OBJ_TYPE;
+typedef KS_LINK_TYPE		OV_LINK_TYPE;
+typedef KS_SEMANTIC_FLAGS	OV_SEMANTIC_FLAGS;
+typedef KS_SVC				OV_SVC;
+
+/**************************************************************/
+#endif
+
 /*
 *	shared datatypes ACPLT/KS -- ACPLT/OV
 */
-typedef KS_LINK_TYPE		OV_LINK_TYPE;
-typedef KS_OBJ_TYPE			OV_OBJ_TYPE;
-typedef KS_SVC				OV_SVC;
-typedef KS_SEMANTIC_FLAGS	OV_SEMANTIC_FLAGS;
+
+
 typedef KS_EP_FLAGS			OV_EP_FLAGS;
 
 typedef OV_TICKET			OV_TICKET_PAR;

@@ -243,7 +243,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
+#if OV_COMPILER_MSVC
+	#if (OV_COMPILER_MSVC > 1500 && OV_COMPILER_MSVC < 1800)
+		//1500 is VS 2008
+		#include <stdint.h>
+	#endif
+	#if OV_COMPILER_MSVC >= 1800
+		//1800 is VS 2013
+		#include <inttypes.h>	//includes stdint.h itself
+	#endif
+#elif OV_COMPILER_GCC || OV_COMPILER_CYGWIN
 #include <inttypes.h>	//includes stdint.h itself
+#endif
+#endif
 
 #if OV_SYSTEM_NT
 #define i386 1
