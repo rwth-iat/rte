@@ -34,8 +34,6 @@
 #include "libov/ov_config.h"
 #include "libov/ov_version.h"
 
-#include "ks/ks.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,19 +50,34 @@ typedef void*		OV_POINTER;		/* generic pointer */
 typedef enum_t		OV_ENUM;		/* enumeration value */
 typedef unsigned char	OV_BYTE;		/* used with C-type variables */
 
+
+/* ----------------------------------------------------------------------------
+ * When using some brain-damaged C compilers for embedded systems, we need to
+ * circumvent enums being 16bit wide on some plattforms. So we define #defines
+ * as usual and drop clean enum type checking. Sigh. Shit happens. Damn, now
+ * access to this indecent file must be restricted within Australia.
+ */
+#define ENUMDEF(t) typedef enum_t t; typedef enum_t t##_ENUM;
+#ifdef __C166__
+#define ENUMVAL(t,v) ((t)v##ul)
+#else
+#define ENUMVAL(t,v) ((t)v)
+#endif
+
 /*
 *	OV_STATE:
 *	---------
 *   States a value may have.
 *	Note: some codes are identical with the ACPLT/KS codes of KS_STATE.
 */
-#define OV_ST_NOTSUPPORTED	KS_ST_NOTSUPPORTED	/* no state available */
-#define OV_ST_UNKNOWN		KS_ST_UNKNOWN		/* state unknown at this time */
-#define OV_ST_BAD		KS_ST_BAD		/* information is bad */
-#define OV_ST_QUESTIONABLE	KS_ST_QUESTIONABLE	/* information is questionable */
-#define OV_ST_GOOD		KS_ST_GOOD		/* information is good */
+ENUMDEF(OV_STATE)
+#define OV_ST_NOTSUPPORTED  ENUMVAL(OV_STATE, 0) /* no state available          */
+#define OV_ST_UNKNOWN       ENUMVAL(OV_STATE, 1) /* state unknown at this time  */
+#define OV_ST_BAD           ENUMVAL(OV_STATE, 2) /* information is bad          */
+#define OV_ST_QUESTIONABLE  ENUMVAL(OV_STATE, 3) /* information is questionable */
+#define OV_ST_GOOD          ENUMVAL(OV_STATE, 4) /* information is good         */
 
-typedef OV_ENUM OV_STATE;
+
 
 /*
 *	OV_VAR_TYPE:
@@ -72,62 +85,62 @@ typedef OV_ENUM OV_STATE;
 *	Variable types (indicate the datatypes of variables).
 *	Note: some codes are identical with the ACPLT/KS codes of OV_VAR_TYPE.
 */
-#define OV_VT_VOID		KS_VT_VOID			/* used with the ANY datatype */
+ENUMDEF(OV_VAR_TYPE)
+#define OV_VT_VOID           ENUMVAL(OV_VAR_TYPE, 0x00)	/* used with the ANY datatype */
+#define OV_VT_BYTE           ENUMVAL(KS_VAR_TYPE, 0x01)	/*not in KS */
+#define OV_VT_BOOL           ENUMVAL(OV_VAR_TYPE, 0x02)
+#define OV_VT_INT            ENUMVAL(OV_VAR_TYPE, 0x10)
+#define OV_VT_UINT           ENUMVAL(OV_VAR_TYPE, 0x11)
+#define OV_VT_SINGLE         ENUMVAL(OV_VAR_TYPE, 0x20)
+#define OV_VT_DOUBLE         ENUMVAL(OV_VAR_TYPE, 0x21)
+#define OV_VT_STRING         ENUMVAL(OV_VAR_TYPE, 0x30)
+#define OV_VT_TIME           ENUMVAL(OV_VAR_TYPE, 0x31)
+#define OV_VT_TIME_SPAN      ENUMVAL(OV_VAR_TYPE, 0x32)
+#define OV_VT_STATE          ENUMVAL(OV_VAR_TYPE, 0x38)
+#define OV_VT_STRUCT         ENUMVAL(OV_VAR_TYPE, 0x40)
 
-#define OV_VT_BYTE		ENUMVAL(KS_VAR_TYPE, 0x00000001)
-#define OV_VT_BOOL		KS_VT_BOOL
-#define OV_VT_INT		KS_VT_INT
-#define OV_VT_UINT		KS_VT_UINT
-#define OV_VT_SINGLE		KS_VT_SINGLE
-#define OV_VT_DOUBLE		KS_VT_DOUBLE
-#define OV_VT_STRING		KS_VT_STRING
-#define OV_VT_TIME		KS_VT_TIME
-#define OV_VT_TIME_SPAN		KS_VT_TIME_SPAN
-#define OV_VT_STATE		KS_VT_STATE
-#define OV_VT_STRUCT		KS_VT_STRUCT
-#define OV_VT_CTYPE 	        ENUMVAL(KS_VAR_TYPE, 0x41)
-#define OV_VT_POINTER	        ENUMVAL(KS_VAR_TYPE, 0x42)
+#define OV_VT_CTYPE          ENUMVAL(OV_VAR_TYPE, 0x41)	/*not in KS */
+#define OV_VT_POINTER        ENUMVAL(KS_VAR_TYPE, 0x42)	/*not in KS */
+#define OV_VT_ISVECTOR       ENUMVAL(KS_VAR_TYPE, 0x80)	/*not in KS; OV_VT_type_VEC = (OV_VT_type | OV_VT_ISVECTOR) */
 
-#define OV_VT_ISVECTOR		ENUMVAL(KS_VAR_TYPE, 0x80)	// OV_VT_type_VEC = (OV_VT_type | OV_VT_ISVECTOR)
+#define OV_VT_BYTE_VEC       ENUMVAL(OV_VAR_TYPE, 0x81)
+#define OV_VT_BOOL_VEC       ENUMVAL(OV_VAR_TYPE, 0x82)
+#define OV_VT_INT_VEC        ENUMVAL(OV_VAR_TYPE, 0x90)
+#define OV_VT_UINT_VEC       ENUMVAL(OV_VAR_TYPE, 0x91)
+#define OV_VT_SINGLE_VEC     ENUMVAL(OV_VAR_TYPE, 0xA0)
+#define OV_VT_DOUBLE_VEC     ENUMVAL(OV_VAR_TYPE, 0xA1)
+#define OV_VT_STRING_VEC     ENUMVAL(OV_VAR_TYPE, 0xB0)
+#define OV_VT_TIME_VEC       ENUMVAL(OV_VAR_TYPE, 0xB1)
+#define OV_VT_TIME_SPAN_VEC  ENUMVAL(OV_VAR_TYPE, 0xB2)
+#define OV_VT_TIME_SERIES    ENUMVAL(OV_VAR_TYPE, 0xB3)
+#define OV_VT_STATE_VEC      ENUMVAL(OV_VAR_TYPE, 0xB8)
 
-#define OV_VT_BYTE_VEC		KS_VT_BYTE_VEC
-#define OV_VT_BOOL_VEC		KS_VT_BOOL_VEC
-#define OV_VT_INT_VEC		KS_VT_INT_VEC
-#define OV_VT_UINT_VEC		KS_VT_UINT_VEC
-#define OV_VT_SINGLE_VEC	KS_VT_SINGLE_VEC
-#define OV_VT_DOUBLE_VEC	KS_VT_DOUBLE_VEC
-#define OV_VT_STRING_VEC	KS_VT_STRING_VEC
-#define OV_VT_TIME_VEC		KS_VT_TIME_VEC
-#define OV_VT_TIME_SPAN_VEC	KS_VT_TIME_SPAN_VEC
-#define OV_VT_STATE_VEC		KS_VT_STATE_VEC
-#define OV_VT_STRUCT_VEC	ENUMVAL(KS_VAR_TYPE, 0x000000C0)
+#define OV_VT_STRUCT_VEC     ENUMVAL(OV_VAR_TYPE, 0x000000C0)	/*not in KS */
 
+#define OV_VT_HAS_STATE      ENUMVAL(OV_VAR_TYPE, 0x00010000)	/*not in KS */
+#define OV_VT_HAS_TIMESTAMP  ENUMVAL(OV_VAR_TYPE, 0x00020000)	/*not in KS */
+#define OV_VT_KSMASK         ENUMVAL(OV_VAR_TYPE, 0x0000ffff)	/*not in KS */
 
-#define OV_VT_HAS_STATE		ENUMVAL(KS_VAR_TYPE, 0x00010000)
-#define OV_VT_HAS_TIMESTAMP	ENUMVAL(KS_VAR_TYPE, 0x00020000)
-#define OV_VT_KSMASK		ENUMVAL(KS_VAR_TYPE, 0x0000ffff)
+#define OV_VT_BOOL_PV        (OV_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_INT_PV         (OV_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_UINT_PV        (OV_VT_UINT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_SINGLE_PV      (OV_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_DOUBLE_PV      (OV_VT_DOUBLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_STRING_PV      (OV_VT_STRING | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_PV        (OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_SPAN_PV   (OV_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
-#define OV_VT_BOOL_PV		(KS_VT_BOOL | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_INT_PV		(KS_VT_INT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_UINT_PV		(KS_VT_UINT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_SINGLE_PV		(KS_VT_SINGLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_DOUBLE_PV		(KS_VT_DOUBLE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_STRING_PV		(KS_VT_STRING | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_PV		(KS_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_SPAN_PV	(KS_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_BOOL_PV_VEC    (OV_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_INT_PV_VEC     (OV_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_UINT_PV_VEC    (OV_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_SINGLE_PV_VEC  (OV_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_DOUBLE_PV_VEC  (OV_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_STRING_PV_VEC  (OV_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_PV_VEC    (OV_VT_TIME_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_TIME_SPAN_PV_VEC (OV_VT_TIME_SPAN_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
 
-#define OV_VT_BOOL_PV_VEC	(KS_VT_BOOL_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_INT_PV_VEC	(KS_VT_INT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_UINT_PV_VEC	(KS_VT_UINT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_SINGLE_PV_VEC	(KS_VT_SINGLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_DOUBLE_PV_VEC	(KS_VT_DOUBLE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_STRING_PV_VEC	(KS_VT_STRING_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_PV_VEC	(KS_VT_TIME_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
-#define OV_VT_TIME_SPAN_PV_VEC	(KS_VT_TIME_SPAN_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP)
+#define OV_VT_ANY            ENUMVAL(OV_VAR_TYPE, 0x000000ff)
 
-#define OV_VT_ANY		ENUMVAL(KS_VAR_TYPE, 0x000000ff)
-
-typedef OV_ENUM OV_VAR_TYPE;
 
 /*
 *	OV_VAR_PROPS:
@@ -150,9 +163,15 @@ typedef OV_ENUM OV_VAR_PROPS;
 *
 *	Use of C99 fixed width data types of intstd.h and inttypes.h
 */
-typedef	int32_t	OV_BOOL;		/* bool value */
-typedef int32_t	OV_INT;			/* integer value */
-typedef uint32_t	OV_UINT;	/* unsigned integer value */
+#ifdef _STDINT_H
+	typedef	int32_t	OV_BOOL;		/* bool value */
+	typedef int32_t	OV_INT;			/* integer value */
+	typedef uint32_t	OV_UINT;	/* unsigned integer value */
+#else
+	typedef	boot_t	OV_BOOL;		/* bool value */
+	typedef long	OV_INT;			/* integer value */
+	typedef u_long	OV_UINT;	/* unsigned integer value */
+#endif
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
@@ -167,8 +186,13 @@ typedef char*	OV_STRING;		/* string value */
 	#define	OV_PRINT_BOOL "i"
 #endif
 
-#define	OV_PRINT_INT	PRId32		/* integer value */
-#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
+#ifdef PRId32
+	#define	OV_PRINT_INT	PRId32		/* integer value */
+	#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
+#else
+	#define	OV_PRINT_INT	"i"		/* integer value */
+	#define	OV_PRINT_UINT	"lu"		/* unsigned integer value */
+#endif
 #define	OV_PRINT_SINGLE	"f"	/* single precision floating value */
 #define	OV_PRINT_DOUBLE	"lf"	/* double precision floating value */
 #define	OV_PRINT_STRING	"s"	/* string value */
@@ -442,10 +466,11 @@ typedef OV_ENUM OV_OP_PROPS;
 /*
 *	OV_TICKET_TYPE:
 *	---------------
-*	Type of an authentification/verification ticket (see ACPLT/KS)
+*	Type of an authentification/verification ticket (as used in ACPLT/KS)
 */
-#define OV_TT_NONE			KS_AUTH_NONE		/* no ticket */
-#define OV_TT_SIMPLE		KS_AUTH_SIMPLE		/* a simple ticket */
+ENUMDEF(OV_AUTH_TYPE)
+#define OV_TT_NONE    ENUMVAL(OV_AUTH_TYPE, 0) /* NONE-A/V-Module   */
+#define OV_TT_SIMPLE  ENUMVAL(OV_AUTH_TYPE, 1) /* SIMPLE-A/V-Module */
 
 typedef OV_ENUM OV_TICKET_TYPE;
 
@@ -462,28 +487,29 @@ typedef OV_ENUM OV_TICKET_TYPE;
 *	Error codes used in ACPLT/OV.
 *	Note: some codes are identical with the ACPLT/KS codes of KS_RESULT.
 */
-#define OV_ERR_OK			KS_ERR_OK
-#define OV_ERR_GENERIC			KS_ERR_GENERIC
-#define OV_ERR_TARGETGENERIC		KS_ERR_TARGETGENERIC
-#define OV_ERR_BADAUTH			KS_ERR_BADAUTH
-#define OV_ERR_UNKNOWNAUTH		KS_ERR_UNKNOWNAUTH
-#define OV_ERR_NOTIMPLEMENTED		KS_ERR_NOTIMPLEMENTED
-#define OV_ERR_BADPARAM			KS_ERR_BADPARAM
-#define OV_ERR_BADOBJTYPE		KS_ERR_BADOBJTYPE
-   
-#define OV_ERR_BADNAME			KS_ERR_BADNAME
-#define OV_ERR_BADPATH			KS_ERR_BADPATH
-#define OV_ERR_BADMASK			KS_ERR_BADMASK
-#define OV_ERR_NOACCESS			KS_ERR_NOACCESS
-#define OV_ERR_BADTYPE			KS_ERR_BADTYPE
-#define OV_ERR_BADSELECTOR		KS_ERR_BADSELECTOR
-#define OV_ERR_BADVALUE			KS_ERR_BADVALUE
-    
-#define OV_ERR_BADFACTORY		KS_ERR_BADFACTORY
-#define OV_ERR_ALREADYEXISTS		KS_ERR_ALREADYEXISTS
-#define OV_ERR_BADINITPARAM		KS_ERR_BADINITPARAM
-#define OV_ERR_BADPLACEMENT		KS_ERR_BADPLACEMENT
-#define OV_ERR_CANTMOVE			KS_ERR_CANTMOVE
+ENUMDEF(OV_RESULT)
+#define OV_ERR_OK                        ENUMVAL(OV_RESULT, 0x0000)
+#define OV_ERR_GENERIC                   ENUMVAL(OV_RESULT, 0x0001)
+#define OV_ERR_TARGETGENERIC             ENUMVAL(OV_RESULT, 0x0006)
+#define OV_ERR_BADAUTH                   ENUMVAL(OV_RESULT, 0x0002)
+#define OV_ERR_UNKNOWNAUTH               ENUMVAL(OV_RESULT, 0x0005)
+#define OV_ERR_NOTIMPLEMENTED            ENUMVAL(OV_RESULT, 0x0003)
+#define OV_ERR_BADPARAM                  ENUMVAL(OV_RESULT, 0x0004)
+#define OV_ERR_BADOBJTYPE                ENUMVAL(OV_RESULT, 0x0007)
+
+#define OV_ERR_BADNAME                   ENUMVAL(OV_RESULT, 0x0010)
+#define OV_ERR_BADPATH                   ENUMVAL(OV_RESULT, 0x0011)
+#define OV_ERR_BADMASK                   ENUMVAL(OV_RESULT, 0x0012)
+#define OV_ERR_NOACCESS                  ENUMVAL(OV_RESULT, 0x0013)
+#define OV_ERR_BADTYPE                   ENUMVAL(OV_RESULT, 0x0014)
+#define OV_ERR_BADSELECTOR               ENUMVAL(OV_RESULT, 0x0016)
+#define OV_ERR_BADVALUE                  ENUMVAL(OV_RESULT, 0x0017)
+
+#define OV_ERR_BADFACTORY                ENUMVAL(OV_RESULT, 0x0030)
+#define OV_ERR_ALREADYEXISTS             ENUMVAL(OV_RESULT, 0x0031)
+#define OV_ERR_BADINITPARAM              ENUMVAL(OV_RESULT, 0x0032)
+#define OV_ERR_BADPLACEMENT              ENUMVAL(OV_RESULT, 0x0033)
+#define OV_ERR_CANTMOVE                  ENUMVAL(OV_RESULT, 0x0034)
 
 #define OV_ERR_FILEALREADYEXISTS	0x00010000
 #define OV_ERR_CANTCREATEFILE		0x00010001
@@ -513,29 +539,46 @@ typedef OV_ENUM OV_TICKET_TYPE;
 #define OV_ERR_UNKNOWNOPTYPEDEF		0x00010032
 #define OV_ERR_OPTYPEDEFMISMATCH 	0x00010033
 
-typedef OV_ENUM OV_RESULT;
-
-#define Ov_OK(result)	((result) == KS_ERR_OK)
-#define Ov_Fail(result)	((result) != KS_ERR_OK)
+#define Ov_OK(result)	((result) == OV_ERR_OK)
+#define Ov_Fail(result)	((result) != OV_ERR_OK)
 
 /*
 *	OV_ACCESS:
 *	----------
 *	Access modes of objects and their parts.
-*	Note: the codes are identical with the ACPLT/KS codes of KS_ACCESS.
+*	this does not only embrace the "classical" access modes like
+*	read & write, but also accessing parts, instantiability, etc...
 */
-#define OV_AC_NONE		KS_AC_NONE		/* no access at all, element is not visible */
-#define OV_AC_READ		KS_AC_READ		/* read access */
-#define OV_AC_WRITE		KS_AC_WRITE		/* write access */
-#define OV_AC_READWRITE		KS_AC_READWRITE		/* both read and write access */
-#define OV_AC_INSTANTIABLE	KS_AC_INSTANTIABLE	/* object can act as a factory */
-#define OV_AC_PART		KS_AC_PART		/* object is part of another object */
-#define OV_AC_DELETEABLE	KS_AC_DELETEABLE	/* object can be deleted */
-#define OV_AC_RENAMEABLE	KS_AC_RENAMEABLE	/* object can be renamed */
-#define OV_AC_LINKABLE		KS_AC_LINKABLE		/* parent/child can be linked */
-#define OV_AC_UNLINKABLE	KS_AC_UNLINKABLE	/* parent/child can be unlinked */
+ENUMDEF(OV_ACCESS)
+#define OV_AC_NONE          ENUMVAL(OV_ACCESS, 0) /* no access at all, element is not visible */
+#define OV_AC_READ          ENUMVAL(OV_ACCESS, 1) /* read access           */
+#define OV_AC_WRITE         ENUMVAL(OV_ACCESS, 2) /* write access          */
+#define OV_AC_READWRITE     (OV_AC_READ | OV_AC_WRITE) /* both read and write access */
 
-typedef OV_ENUM OV_ACCESS;
+#define OV_AC_DELETEABLE    ENUMVAL(OV_ACCESS, 0x10000000) /* object can be deleted */
+#define OV_AC_RENAMEABLE    ENUMVAL(OV_ACCESS, 0x08000000) /* object can be renamed */
+#define OV_AC_LINKABLE      ENUMVAL(OV_ACCESS, 0x04000000) /* parent/child can be linked */
+#define OV_AC_UNLINKABLE    ENUMVAL(OV_ACCESS, 0x02000000) /* parent/child can be unlinked */
+
+#define OV_AC_INSTANTIABLE  ENUMVAL(OV_ACCESS, 0x20000000) /* object can act as a factory */
+#define OV_AC_PART          ENUMVAL(OV_ACCESS, 0x80000000) /* object is part of another object */
+
+/* ----------------------------------------------------------------------------
+ * Object types (flags). When browsing through the object tree, these flags
+ * can be combined (or-ed) to find any object belonging to one of the types
+ * listed in the flag set.
+ */
+ENUMDEF(OV_OBJ_TYPE)
+#define OV_OT_DOMAIN     ENUMVAL(OV_OBJ_TYPE, 0x0001) /* object is a domain    */
+#define OV_OT_VARIABLE   ENUMVAL(OV_OBJ_TYPE, 0x0002) /* object is a variable  */
+#define OV_OT_HISTORY    ENUMVAL(OV_OBJ_TYPE, 0x0004) /* object is a history   */
+#define OV_OT_LINK       ENUMVAL(OV_OBJ_TYPE, 0x0008) /* object is a link      */
+#define OV_OT_STRUCTURE  ENUMVAL(OV_OBJ_TYPE, 0x0010) /* object is a structure */
+#define OV_OT_ANY        ENUMVAL(OV_OBJ_TYPE, \
+                                     OV_OT_DOMAIN | OV_OT_VARIABLE | \
+                                     OV_OT_HISTORY | \
+                                     OV_OT_LINK) /* | OV_OT_STRUCTURE) */
+/* restricted to the currently implemented types */
 
 /*
 *	OV_ASSOC_TYPE:
@@ -548,19 +591,32 @@ typedef OV_ENUM OV_ACCESS;
 
 typedef OV_ENUM OV_ASSOC_TYPE;
 
+
+/* ----------------------------------------------------------------------------
+ * Link types can be either 1:1, 1:m or m:n and in addition with local scope or
+ * global scope ("global" means currently "within the same ACPLT/KS server").
+ */
+ENUMDEF(OV_LINK_TYPE)
+#define OV_LT_LOCAL_1_1         ENUMVAL(OV_LINK_TYPE, 1)
+#define OV_LT_LOCAL_1_MANY      ENUMVAL(OV_LINK_TYPE, 2)
+#define OV_LT_LOCAL_MANY_MANY   ENUMVAL(OV_LINK_TYPE, 5)
+#define OV_LT_LOCAL_MANY_1      ENUMVAL(OV_LINK_TYPE, 6)
+#define OV_LT_GLOBAL_1_1        ENUMVAL(OV_LINK_TYPE, 3)
+#define OV_LT_GLOBAL_1_MANY     ENUMVAL(OV_LINK_TYPE, 4)
+#define OV_LT_GLOBAL_MANY_MANY  ENUMVAL(OV_LINK_TYPE, 7)
+#define OV_LT_GLOBAL_MANY_1     ENUMVAL(OV_LINK_TYPE, 8)
+
 /*
 *	OV_PLACEMENT_HINT:
 *	------------------
 *	Placement hint used with associations/links.
-*	Note: some codes are identical with the ACPLT/KS codes of KS_PLACEMENT_HINT.
 */
-#define OV_PMH_DEFAULT	KS_PMH_DEFAULT
-#define OV_PMH_BEGIN	KS_PMH_BEGIN
-#define OV_PMH_END	KS_PMH_END
-#define OV_PMH_BEFORE	KS_PMH_BEFORE
-#define OV_PMH_AFTER	KS_PMH_AFTER
-
-typedef OV_ENUM OV_PLACEMENT_HINT;
+ENUMDEF(OV_PLACEMENT_HINT)
+#define OV_PMH_DEFAULT  ENUMVAL(OV_PLACEMENT_HINT, 0)
+#define OV_PMH_BEGIN    ENUMVAL(OV_PLACEMENT_HINT, 1)
+#define OV_PMH_END      ENUMVAL(OV_PLACEMENT_HINT, 2)
+#define OV_PMH_BEFORE   ENUMVAL(OV_PLACEMENT_HINT, 3)
+#define OV_PMH_AFTER    ENUMVAL(OV_PLACEMENT_HINT, 4)
 
 /*
 *	OV_OBJ_STATE:
@@ -575,6 +631,11 @@ typedef OV_ENUM OV_PLACEMENT_HINT;
 
 typedef OV_ENUM OV_OBJ_STATE;
 
+/* ----------------------------------------------------------------------------
+ * Services. Most are used with KS
+ */
+ENUMDEF(OV_SVC)
+
 /*
 *	OV_TIME_TYPE:
 *	-------------
@@ -587,6 +648,16 @@ typedef OV_ENUM OV_OBJ_STATE;
 #define OV_TT_RELATIVE	KS_TT_RELATIVE
 
 typedef OV_ENUM OV_TIME_TYPE;
+
+
+/* ----------------------------------------------------------------------------
+ * The so-called "semantic flags" allow ACPLT/KS servers to indicate server-
+ * specific semantics with individual ACPLT/KS communication objects. For
+ * instance, function block system servers might want to indicate that par-
+ * ticular variables are input or output ports of function blocks, etc.
+ */
+typedef uint32_t OV_SEMANTIC_FLAGS;
+
 
 /*
 *	OV_HSEL_TYPE:
@@ -608,19 +679,22 @@ typedef OV_ENUM OV_HSEL_TYPE;
 *	-------------
 *	History types for use with ACPLT/KS histories
 */
-#define OV_HT_LOG		KS_HT_LOG
-#define OV_HT_BOOL		KS_HT_BOOL
-#define OV_HT_INT		KS_HT_INT
-#define OV_HT_UINT		KS_HT_UINT
-#define OV_HT_SINGLE		KS_HT_SINGLE
-#define OV_HT_DOUBLE		KS_HT_DOUBLE
-#define OV_HT_STRING		KS_HT_STRING
-#define OV_HT_TIME		KS_HT_TIME
-#define OV_HT_TIME_SPAN		KS_HT_TIME_SPAN
-#define OV_HT_TYPE_MASK		KS_HT_TYPE_MASK
-#define OV_HT_TIME_DRIVEN	KS_HT_TIME_DRIVEN
-#define OV_HT_CHANGE_DRIVEN	KS_HT_CHANGE_DRIVEN
+ENUMDEF(OV_HIST_TYPE)
+#define OV_HT_LOG            ENUMVAL(OV_HIST_TYPE, 0x00)
+#define KS_HT_TABLE          ENUMVAL(OV_HIST_TYPE, 0x01) /* only in KS */
+#define OV_HT_BOOL           ENUMVAL(OV_HIST_TYPE, 0x02)
+#define OV_HT_INT            ENUMVAL(OV_HIST_TYPE, 0x10)
+#define OV_HT_UINT           ENUMVAL(OV_HIST_TYPE, 0x11)
+#define OV_HT_SINGLE         ENUMVAL(OV_HIST_TYPE, 0x20)
+#define OV_HT_DOUBLE         ENUMVAL(OV_HIST_TYPE, 0x21)
+#define OV_HT_STRING         ENUMVAL(OV_HIST_TYPE, 0x30)
+#define OV_HT_TIME           ENUMVAL(OV_HIST_TYPE, 0x31)
+#define OV_HT_TIME_SPAN      ENUMVAL(OV_HIST_TYPE, 0x32)
 
+#define OV_HT_TYPE_MASK      ENUMVAL(OV_HIST_TYPE, 0x0000FFFF)
+
+#define OV_HT_TIME_DRIVEN    ENUMVAL(OV_HIST_TYPE, 0x80000000)
+#define OV_HT_CHANGE_DRIVEN  ENUMVAL(OV_HIST_TYPE, 0x40000000)
 typedef OV_ENUM OV_HIST_TYPE;
 
 /*
@@ -628,14 +702,13 @@ typedef OV_ENUM OV_HIST_TYPE;
 *	----------------------
 *	Interpolation modes for use with ACPLT/KS histories
 */
-#define OV_IPM_NONE		KS_IPM_NONE
-#define OV_IPM_LINEAR		KS_IPM_LINEAR
-#define OV_IPM_MIN		KS_IPM_MIN
-#define OV_IPM_MAX		KS_IPM_MAX
-#define OV_IPM_HOLD		KS_IPM_HOLD
-#define OV_IPM_DEFAULT		KS_IPM_DEFAULT
-
-typedef OV_ENUM OV_INTERPOLATION_MODE;
+ENUMDEF(OV_INTERPOLATION_MODE)
+#define OV_IPM_NONE     ENUMVAL(OV_INTERPOLATION_MODE, 0x0000)
+#define OV_IPM_LINEAR   ENUMVAL(OV_INTERPOLATION_MODE, 0x0001)
+#define OV_IPM_MIN      ENUMVAL(OV_INTERPOLATION_MODE, 0x0002)
+#define OV_IPM_MAX      ENUMVAL(OV_INTERPOLATION_MODE, 0x0004)
+#define OV_IPM_HOLD     ENUMVAL(OV_INTERPOLATION_MODE, 0x0008)
+#define OV_IPM_DEFAULT  ENUMVAL(OV_INTERPOLATION_MODE, 0x8000)
 
 /*
 *	OV_TICKET:
