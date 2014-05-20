@@ -31,7 +31,7 @@
 
 #include "libov/ov_time.h"
 #include "libov/ov_database.h"
-#include "libov/ov_config.h"
+#include "libov/ov_ov.h"
 
 #if OV_SYSTEM_MC164
 #include "mc164/time.h"
@@ -279,15 +279,15 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
 	/*
 	*	local variables
 	*/
-        static char 		timestring[]="hhhh:mm:ss.uuuuuu";
-        unsigned int 		seconds, minutes, hours;
-        time_t      		secs = ptimespan->secs;
+	static char 		timestring[]="hhhh:mm:ss.uuuuuu";
+	unsigned int 		seconds, minutes, hours;
+	time_t      		secs = ptimespan->secs;
 
 	/*
 	*	convert the time span to a string
 	*/
-        seconds = secs % 60;
-        secs -= seconds;
+	seconds = secs % 60;
+	secs -= seconds;
 	minutes = (secs % 3600)/60;
 	secs -= minutes * 60;
 	hours = secs / 3600;

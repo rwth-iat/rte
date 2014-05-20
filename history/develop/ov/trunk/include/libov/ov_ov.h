@@ -159,19 +159,19 @@ typedef char*	OV_STRING;		/* string value */
 
 #if !OV_SYSTEM_UNIX
 	#if OV_SYSTEM_MC164
-		#define	OV_PRINT_BOOL "l";
+		#define	OV_PRINT_BOOL "l"
 	#else
-		#define	OV_PRINT_BOOL "i";
+		#define	OV_PRINT_BOOL "i"
 	#endif
 #else
-	#define	OV_PRINT_BOOL "i";
+	#define	OV_PRINT_BOOL "i"
 #endif
 
-#define	OV_PRINT_INT	PRId32;		/* integer value */
-#define	OV_PRINT_UINT	PRIu32;		/* unsigned integer value */
-#define	OV_PRINT_SINGLE	"f";	/* single precision floating value */
-#define	OV_PRINT_DOUBLE	"lf";	/* double precision floating value */
-#define	OV_PRINT_STRING	"s";	/* string value */
+#define	OV_PRINT_INT	PRId32		/* integer value */
+#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
+#define	OV_PRINT_SINGLE	"f"	/* single precision floating value */
+#define	OV_PRINT_DOUBLE	"lf"	/* double precision floating value */
+#define	OV_PRINT_STRING	"s"	/* string value */
 
 
 typedef struct {				/* time/date value */
