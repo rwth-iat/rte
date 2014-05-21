@@ -3026,7 +3026,7 @@ cshmi.prototype = {
 				}
 			}
 		}
-		//reset Objects, after iteration we want to have the same (or non) currentChild as before (cascaded iterators)
+		//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
 		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
 		this.ResourceList.ChildrenIterator.currentCount = 0;
 		savedCurrentChild = null;
@@ -4294,7 +4294,6 @@ cshmi.prototype = {
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		}
 		
-		//fixme VisualObject.id kann auch von einem Iterator kommen.
 		if (VisualParentObject !== null){
 			//id should be the name of the parent plus our identifier
 			var NameList = ObjectPath.split("/");
@@ -4474,17 +4473,15 @@ cshmi.prototype = {
 					VisualObject.ConfigValues[KeyValueEntry[0]] = Value;
 				}
 				//doku
-				if(KeyValueEntry[0] === "Name"){
-					//if an template has the configValue Name:Dieter, this should be the object id
-					if (VisualParentObject.getAttribute("data-NameOrigin") !== "TemplateName"){
-						//if the parent was named, append our name
-						VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[KeyValueEntry[0]];
-						VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
-					}else{
-						//our parent was named with an TemplateName, append our Name
-						VisualObject.id = VisualObject.ConfigValues[KeyValueEntry[0]];
-						VisualObject.setAttribute("data-NameOrigin", "ConfigValue");
-					}
+				if(KeyValueEntry[0].toLowerCase() === "name"){
+					//if an template has the configValue Name:Dieter, this should be the local object id
+					VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[KeyValueEntry[0]];
+					VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
+				}
+				if(KeyValueEntry[0].toLowerCase() === "fullqualifiedname"){
+					//if an template has the configValue fullqualifiedname:Dieter, this should be the global object id
+					VisualObject.id = VisualObject.ConfigValues[KeyValueEntry[0]];
+					VisualObject.setAttribute("data-NameOrigin", "ConfigValueFQN");
 				}
 				lastEntry = KeyValueEntry[0];
 			}else if (KeyValueEntry.length === 1 && lastEntry !== null){
