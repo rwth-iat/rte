@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
+#include "libov/ov_ov.h"
 #include "libov/ov_database.h"
 #include "libov/ov_object.h"
 #include "libov/ov_result.h"
@@ -11,6 +12,14 @@
 #include "libov/ov_scheduler.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
+
+#if !OV_SYSTEM_NT
+#define _POSIX_C_SOURCE	 199309L
+#include <time.h>	//for timespec
+#else
+#include <windows.h>	//for Sleep
+#endif
+
 /*	----------------------------------------------------------------------	*/
 /*
 *	Constants
@@ -24,7 +33,7 @@ OV_DLLVARIMPORT OV_BOOL ov_server_run;
 *	------------------
 *	Signal hander function prototype for server shutdown
 */
-typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
+typedef static void OV_FNC_SIGHANDLER(
 	int signal
 );
 
@@ -46,7 +55,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_supervised_database_map(
  * Helper functions to parse config file
  */
 
-int isWhiteSpace(const char* character)
+static int isWhiteSpace(const char* character)
 {
 	if(*character == ' ' || *character == '\t')
 		return 1;
@@ -54,14 +63,14 @@ int isWhiteSpace(const char* character)
 		return 0;
 }
 
-char* skipWhiteSpace(const char* line)
+static char* skipWhiteSpace(const char* line)
 {
 	while(*line != '\n' && *line!= '\r' && *line != '\0' && isWhiteSpace(line))
 		line++;
 	return ((char*)line);
 }
 
-int isComment(const char* line)
+static int isComment(const char* line)
 {
 	line = skipWhiteSpace(line);
 	if(*line == '#')
@@ -70,7 +79,7 @@ int isComment(const char* line)
 		return 0;
 }
 
-void terminateLine(char* line)
+static void terminateLine(char* line)
 {
 	for(; *line !='\0' && *line!='\n' && *line!='\r' && *line!='#'; line++)
 		;
@@ -78,7 +87,7 @@ void terminateLine(char* line)
 	return;
 }
 
-void stripSpaceAtEnd(char* line)
+static void stripSpaceAtEnd(char* line)
 {
 	char* temp = line;
 	if(line)
@@ -95,7 +104,7 @@ void stripSpaceAtEnd(char* line)
  * returns string containing the value; 0 when out of memory; empty string when no value found
  * allocates memory for value on heap
  */
-char* readValue(char* line)
+static char* readValue(char* line)
 {
 	char* temp;
 	char* value = NULL;
@@ -131,42 +140,38 @@ char* readValue(char* line)
 static void ov_server_sighandler(
 	int signal
 ) {
-	ov_logfile_info("Stopping server...");
-	ov_ksserver_stripped_sighandler(signal);
+	ov_logfile_info("Received signal. Shutting down server...");
+	ov_server_run=FALSE;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ov_ksserver_stripped_create(
+static void ov_ksserver_stripped_delete(void) {
+	//ov_logfile_info("ov_ksserver_stripped_delete");
+	ov_vendortree_setservername(NULL);
+}
+
+
+static OV_RESULT ov_ksserver_stripped_create(
 	OV_STRING			servername,
 	OV_FNC_SIGHANDLER	*sighandler
 ) {
-      //ov_logfile_info("ov_ksserver_stripped_create");
-		if(!ov_object_identifierok(servername)) {
-			return OV_ERR_BADNAME;
-		}
+	//ov_logfile_info("ov_ksserver_stripped_create");
+	if(!ov_object_identifierok(servername)) {
+		return OV_ERR_BADNAME;
+	}
 
-     		if(sighandler) {
-			signal(SIGTERM, sighandler);
-			signal(SIGINT, sighandler);
+	if(sighandler) {
+		signal(SIGTERM, sighandler);
+		signal(SIGINT, sighandler);
 #if !PLT_SYSTEM_NT
-			signal(SIGHUP, sighandler);
+		signal(SIGHUP, sighandler);
 #endif
-         }
-		ov_vendortree_setservername(servername);
-		return OV_ERR_OK;
+	}
+	ov_vendortree_setservername(servername);
+	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void ov_ksserver_stripped_delete(void) {
-   //ov_logfile_info("ov_ksserver_stripped_delete");
-   ov_vendortree_setservername(NULL);
-}
 
-OV_DLLFNCEXPORT void ov_ksserver_stripped_start(void) {
-   //ov_logfile_info("ov_ksserver_stripped_start");
-   ov_vendortree_setstartuptime(NULL);
-   ov_server_run=TRUE;
-}
-
-OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
+static void ov_ksserver_stripped_run(void) {
     OV_TIME_SPAN  *delay;
 #if !OV_SYSTEM_NT
     struct timespec sleepTime;
@@ -199,15 +204,7 @@ OV_DLLFNCEXPORT void ov_ksserver_stripped_run(void) {
 	}
 }
 
-OV_DLLFNCEXPORT void ov_ksserver_stripped_stop(void) {
-   //ov_logfile_info("ov_ksserver_stripped_stop");
-	ov_server_run=FALSE;
-}
 
-OV_DLLFNCEXPORT void ov_ksserver_stripped_sighandler(int signum) {
-   ov_logfile_info("Received signal. Shutting down server...");
-   ov_server_run=FALSE;
-}
 /*
 *	End of file
 */
@@ -1382,7 +1379,8 @@ ERRORMSG:
 		if(Ov_OK(result)) {
 			ov_logfile_info("Server started.");
 			ov_logfile_info("Servername: %s.",servername);
-			ov_ksserver_stripped_start();
+			ov_vendortree_setstartuptime(NULL);
+			ov_server_run=TRUE;
 
 			/*
 			 * If exec option is set execute the demanded task here
@@ -1394,7 +1392,7 @@ ERRORMSG:
 
 			ov_ksserver_stripped_run();
 
-			ov_ksserver_stripped_stop();
+			ov_server_run=FALSE;
 			ov_logfile_info("Server stopped.");
 			if (Ov_Fail(result) && (!ov_backup) && db_backup_filename) {
 				ov_ksserver_stripped_delete();
