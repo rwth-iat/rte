@@ -154,6 +154,7 @@ proc execute {args} {
 	set cmd [concat {exec } $args { >>& $logfile}]
 	#puts $cmd
 	if { [catch $cmd msg] } {
+		puts stderr "error while executing: $cmd"
 		puts stderr "error: $msg"
 		puts stderr "Consult the file '$logfile'"
 		exit 1

@@ -188,13 +188,13 @@ ov_ksclient$(_OBJ) : $(OV_SOURCE_LIBOVKS_DIR)ov_ksclient.c
 #	ACPLT/OV C code generator
 
 $(OV_CODEGEN_EXE) : $(OV_CODEGEN_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
 	strip --strip-debug $(OV_CODEGEN_EXE)
 
 #	ACPLT/OV framework builder
 
 $(OV_BUILDER_EXE) : $(OV_BUILDER_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
 	strip --strip-debug $(OV_BUILDER_EXE)
 
 #	ACPLT/OV database utility
@@ -256,7 +256,7 @@ $(OVXIPARSE_EXE) : $(OVXIPARSE_OBJ)
 #	ACPLT/OV makmak
 
 $(MAKMAK_EXE) : $(MAKMAK_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
 	strip --strip-debug $(MAKMAK_EXE)
 
 #	ACPLT/OV library informations tool
@@ -316,13 +316,13 @@ example.c example.h : $(OV_CODEGEN_EXE)
 #	acplt_builder
 #	------------------------
 $(ACPLT_BUILDER_EXE) : $(ACPLT_BUILDER_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ)
+	$(LINK) -o $@ $^ $(C_LIBS) ov_ovmparser$(_OBJ) ov_ovmscanner$(_OBJ) $(LD_LIB)
 	strip --strip-debug $(ACPLT_BUILDER_EXE)
 
 #	acplt_makmak
 #	------------------------
 $(ACPLT_MAKMAK_EXE) : $(ACPLT_MAKMAK_OBJ)
-	$(LINK) -o $@ $^ $(C_LIBS)
+	$(LINK) -o $@ $^ $(C_LIBS) $(LD_LIB)
 	strip --strip-debug $(ACPLT_MAKMAK_EXE)
 
 
