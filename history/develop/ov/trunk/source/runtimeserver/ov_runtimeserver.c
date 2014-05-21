@@ -33,7 +33,7 @@ OV_DLLVARIMPORT OV_BOOL ov_server_run;
 *	------------------
 *	Signal hander function prototype for server shutdown
 */
-typedef static void OV_FNC_SIGHANDLER(
+typedef OV_DLLFNCEXPORT void OV_FNC_SIGHANDLER(
 	int signal
 );
 
@@ -137,7 +137,7 @@ static char* readValue(char* line)
 *	Signal handler for server shutdown
 */
 
-static void ov_server_sighandler(
+OV_DLLFNCEXPORT void ov_server_sighandler(
 	int signal
 ) {
 	ov_logfile_info("Received signal. Shutting down server...");
