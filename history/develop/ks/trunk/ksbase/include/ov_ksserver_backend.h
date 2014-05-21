@@ -41,41 +41,12 @@
 /**************************************************************/
 /* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
 
-/* ----------------------------------------------------------------------------
- * ACPLT/KS error codes defined by the ACPLT/KS core protocol...
- */
-#define KS_ERR_CANTSYNC                  ENUMVAL(OV_RESULT, 0x0015)
-#define KS_ERR_NOREMOTE                  ENUMVAL(OV_RESULT, 0x0020)
-#define KS_ERR_SERVERUNKNOWN             ENUMVAL(OV_RESULT, 0x0021)
-
-/*
- * ... and errors which can occur in the client part of the
- * C++ Communication Library. These error codes have been put into
- * the range 0x1000-0x1FFF to distinguish them from core protocol
- * errors.
- */
-#define KS_ERR_MALFORMEDPATH             ENUMVAL(OV_RESULT, 0x1001)
-#define KS_ERR_NETWORKERROR              ENUMVAL(OV_RESULT, 0x1002)
-#define KS_ERR_TYPEMISMATCH              ENUMVAL(OV_RESULT, 0x1003)
-#define KS_ERR_HOSTUNKNOWN               ENUMVAL(OV_RESULT, 0x1004)
-#define KS_ERR_CANTCONTACT               ENUMVAL(OV_RESULT, 0x1005)
-#define KS_ERR_TIMEOUT                   ENUMVAL(OV_RESULT, 0x1006)
-#define KS_ERR_NOMANAGER                 ENUMVAL(OV_RESULT, 0x1007)
-
 typedef OV_OBJ_TYPE			KS_OBJ_TYPE;
 typedef OV_LINK_TYPE		KS_LINK_TYPE;
 typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
 typedef OV_SVC				KS_SVC;
 
-/*
- * Please note that although an objects name (identifier) can't be longer than
- * 255 characters in length, there is no limit on the path to an object. Thus,
- * a full path and identifier name can be of arbitrary length.
- */
-#define KS_NAME_MAXLEN 255
-#define KS_COMMENT_MAXLEN 4095
-#define KS_TECHUNIT_MAXLEN 63
-#define KS_SIMPLEID_MAXLEN 255
+
 
 /* ----------------------------------------------------------------------------
  * Option flags for the GETEP service.

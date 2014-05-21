@@ -13,6 +13,68 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength);
 
+#ifndef KS_KS_INCLUDED
+/**************************************************************/
+/* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
+
+/* ----------------------------------------------------------------------------
+ * ACPLT/KS error codes defined by the ACPLT/KS core protocol...
+ */
+#define KS_ERR_OK              OV_ERR_OK
+#define KS_ERR_GENERIC         OV_ERR_GENERIC
+#define KS_ERR_TARGETGENERIC   OV_ERR_TARGETGENERIC
+#define KS_ERR_BADAUTH         OV_ERR_BADAUTH
+#define KS_ERR_UNKNOWNAUTH     OV_ERR_UNKNOWNAUTH
+#define KS_ERR_NOTIMPLEMENTED  OV_ERR_NOTIMPLEMENTED
+#define KS_ERR_BADPARAM        OV_ERR_BADPARAM
+#define KS_ERR_BADOBJTYPE      OV_ERR_BADOBJTYPE
+
+
+#define KS_ERR_BADNAME         OV_ERR_BADNAME
+#define KS_ERR_BADPATH         OV_ERR_BADPATH
+#define KS_ERR_BADMASK         OV_ERR_BADMASK
+#define KS_ERR_NOACCESS        OV_ERR_NOACCESS
+#define KS_ERR_BADTYPE         OV_ERR_BADTYPE
+#define KS_ERR_BADSELECTOR     OV_ERR_BADSELECTOR
+#define KS_ERR_BADVALUE        OV_ERR_BADVALUE
+
+
+#define KS_ERR_BADFACTORY      OV_ERR_BADFACTORY
+#define KS_ERR_ALREADYEXISTS   OV_ERR_ALREADYEXISTS
+#define KS_ERR_BADINITPARAM    OV_ERR_BADINITPARAM
+#define KS_ERR_BADPLACEMENT    OV_ERR_BADPLACEMENT
+#define KS_ERR_CANTMOVE        OV_ERR_CANTMOVE
+
+#define KS_ERR_CANTSYNC                  ENUMVAL(OV_RESULT, 0x0015)
+#define KS_ERR_NOREMOTE                  ENUMVAL(OV_RESULT, 0x0020)
+#define KS_ERR_SERVERUNKNOWN             ENUMVAL(OV_RESULT, 0x0021)
+
+/*
+ * ... and errors which can occur in the client part of the
+ * C++ Communication Library. These error codes have been put into
+ * the range 0x1000-0x1FFF to distinguish them from core protocol
+ * errors.
+ */
+#define KS_ERR_MALFORMEDPATH             ENUMVAL(OV_RESULT, 0x1001)
+#define KS_ERR_NETWORKERROR              ENUMVAL(OV_RESULT, 0x1002)
+#define KS_ERR_TYPEMISMATCH              ENUMVAL(OV_RESULT, 0x1003)
+#define KS_ERR_HOSTUNKNOWN               ENUMVAL(OV_RESULT, 0x1004)
+#define KS_ERR_CANTCONTACT               ENUMVAL(OV_RESULT, 0x1005)
+#define KS_ERR_TIMEOUT                   ENUMVAL(OV_RESULT, 0x1006)
+#define KS_ERR_NOMANAGER                 ENUMVAL(OV_RESULT, 0x1007)
+
+/*
+ * Please note that although an objects name (identifier) can't be longer than
+ * 255 characters in length, there is no limit on the path to an object. Thus,
+ * a full path and identifier name can be of arbitrary length.
+ */
+#define KS_NAME_MAXLEN 255
+#define KS_COMMENT_MAXLEN 4095
+#define KS_TECHUNIT_MAXLEN 63
+#define KS_SIMPLEID_MAXLEN 255
+
+#endif
+
 //association of ClientHandler
 #define KSBASE_CH_NOTNEEDED			0
 #define KSBASE_CH_ASSOCIATED		1

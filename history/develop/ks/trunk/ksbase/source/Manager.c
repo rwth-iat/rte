@@ -161,7 +161,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_register(
 				{//version does not match --> error
 					KS_logfile_info(("register: server with this name but different version already exits."));
 					pExistingSrvRep = NULL;
-					return KS_ERR_BADVALUE;
+					return OV_ERR_BADVALUE;
 				}
 			}
 			else
