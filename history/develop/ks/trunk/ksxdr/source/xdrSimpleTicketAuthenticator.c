@@ -24,6 +24,7 @@
 #include "libov/ov_macros.h"
 #include "KSDATAPACKET_xdrhandling.h"
 #include "NoneTicketAuthenticator.h"
+#include "ksbase_helper.h"
 
 /*
  * global pointer (within this file) to the authenticator itself (this implies no problem since the authenticator is a sigleton)
