@@ -41,8 +41,33 @@
 /**************************************************************/
 /* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
 
-typedef OV_OBJ_TYPE			KS_OBJ_TYPE;
-typedef OV_LINK_TYPE		KS_LINK_TYPE;
+/* ----------------------------------------------------------------------------
+ * Object types (flags). When browsing through the object tree, these flags
+ * can be combined (or-ed) to find any object belonging to one of the types
+ * listed in the flag set.
+ */
+typedef OV_OBJ_TYPE      KS_OBJ_TYPE;
+#define KS_OT_DOMAIN     OV_OT_DOMAIN    /* object is a domain    */
+#define KS_OT_VARIABLE   OV_OT_VARIABLE  /* object is a variable  */
+#define KS_OT_HISTORY    OV_OT_HISTORY   /* object is a history   */
+#define KS_OT_LINK       OV_OT_LINK      /* object is a link      */
+#define KS_OT_STRUCTURE  OV_OT_STRUCTURE /* object is a structure */
+#define KS_OT_ANY        OV_OT_ANY
+
+/* ----------------------------------------------------------------------------
+ * Link types can be either 1:1, 1:m or m:n and in addition with local scope or
+ * global scope ("global" means currently "within the same ACPLT/KS server").
+ */
+typedef OV_LINK_TYPE            KS_LINK_TYPE;
+#define KS_LT_LOCAL_1_1         OV_LT_LOCAL_1_1
+#define KS_LT_LOCAL_1_MANY      OV_LT_LOCAL_1_MANY
+#define KS_LT_LOCAL_MANY_MANY   OV_LT_LOCAL_MANY_MANY
+#define KS_LT_LOCAL_MANY_1      OV_LT_LOCAL_MANY_1
+#define KS_LT_GLOBAL_1_1        OV_LT_GLOBAL_1_1
+#define KS_LT_GLOBAL_1_MANY     OV_LT_GLOBAL_1_MANY
+#define KS_LT_GLOBAL_MANY_MANY  OV_LT_GLOBAL_MANY_MANY
+#define KS_LT_GLOBAL_MANY_1     OV_LT_GLOBAL_MANY_1
+
 typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
 typedef OV_SVC				KS_SVC;
 
