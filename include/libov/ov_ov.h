@@ -681,7 +681,7 @@ typedef OV_ENUM OV_HSEL_TYPE;
 */
 ENUMDEF(OV_HIST_TYPE)
 #define OV_HT_LOG            ENUMVAL(OV_HIST_TYPE, 0x00)
-#define KS_HT_TABLE          ENUMVAL(OV_HIST_TYPE, 0x01) /* only in KS */
+#define KS_HT_TABLE          ENUMVAL(OV_HIST_TYPE, 0x01) /* only in KS !? */
 #define OV_HT_BOOL           ENUMVAL(OV_HIST_TYPE, 0x02)
 #define OV_HT_INT            ENUMVAL(OV_HIST_TYPE, 0x10)
 #define OV_HT_UINT           ENUMVAL(OV_HIST_TYPE, 0x11)
