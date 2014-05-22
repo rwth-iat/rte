@@ -26,6 +26,7 @@
 #include "ksapi_commonFuncs.h"
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
+#include "ov_ksserver_backend.h"
 
 void ksapi_getEPidentifiers_callback(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that);
 
