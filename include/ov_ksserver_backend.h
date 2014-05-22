@@ -211,7 +211,7 @@ typedef KS_EP_FLAGS OV_EP_FLAGS; //needed in xdrClient
  * Service codes. Dial 1-800-ACPLTKS for more information =:)
  */
 ENUMDEF(KS_SVC)
-#define KS_NULL           ENUMVAL(KS_SVC, 0)
+#define KS_NULL           OV_NULL
     /*
      * Now for the manager part of the KS protocol
      */
@@ -229,27 +229,35 @@ ENUMDEF(KS_SVC)
     /*
      * The variable access service group.
      */
-#define KS_GETVAR         ENUMVAL(KS_SVC, 0x00000101)
-#define KS_SETVAR         ENUMVAL(KS_SVC, 0x00000102)
+#ifndef KS_GETVAR
+	#define KS_GETVAR         OV_GETVAR
+	#define KS_SETVAR         OV_SETVAR
+#endif
 #define KS_EXGDATA        ENUMVAL(KS_SVC, 0x00000103)
 
     /*
      * Object management service group.
      */
-#define KS_CREATEOBJECT   ENUMVAL(KS_SVC, 0x00000201)
-#define KS_DELETEOBJECT   ENUMVAL(KS_SVC, 0x00000202)
-#define KS_RENAMEOBJECT   ENUMVAL(KS_SVC, 0x00000203)
+#ifndef KS_CREATEOBJECT
+	#define KS_CREATEOBJECT   OV_CREATEOBJECT
+	#define KS_DELETEOBJECT   OV_DELETEOBJECT
+	#define KS_RENAMEOBJECT   OV_RENAMEOBJECT
+#endif
 
     /*
      * Structure management service group.
      */
-#define KS_LINK           ENUMVAL(KS_SVC, 0x00000301)
-#define KS_UNLINK         ENUMVAL(KS_SVC, 0x00000302)
+#ifndef KS_LINK
+	#define KS_LINK           OV_LINK
+	#define KS_UNLINK         OV_UNLINK
+#endif
 
     /*
      * History access service group.
      */
-#define KS_GETHIST        ENUMVAL(KS_SVC, 0x00000401)
+#ifndef KS_GETHIST
+#define KS_GETHIST        OV_GETHIST
+#endif
 
 
 #else
