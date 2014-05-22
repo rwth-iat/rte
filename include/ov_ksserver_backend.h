@@ -71,7 +71,38 @@ typedef OV_LINK_TYPE            KS_LINK_TYPE;
 typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
 typedef OV_SVC				KS_SVC;
 
+/* ----------------------------------------------------------------------------
+ * Placement hint used with object management systems which support ordered
+ * sets of children/parts.
+ */
+typedef OV_PLACEMENT_HINT KS_PLACEMENT_HINT;
+#define KS_PMH_DEFAULT  OV_PMH_DEFAULT
+#define KS_PMH_BEGIN    OV_PMH_BEGIN
+#define KS_PMH_END      OV_PMH_END
+#define KS_PMH_BEFORE   OV_PMH_BEFORE
+#define KS_PMH_AFTER    OV_PMH_AFTER
 
+/*
+*	KS_HIST_TYPE:
+*	-------------
+*	History types for use with ACPLT/KS histories
+*/
+typedef OV_HIST_TYPE         KS_HIST_TYPE;
+#define KS_HT_LOG            OV_HT_LOG
+//#define KS_HT_TABLE        OV_HT_TABLE	/* already in ov_ov.h */
+#define KS_HT_BOOL           OV_HT_BOOL
+#define KS_HT_INT            OV_HT_INT
+#define KS_HT_UINT           OV_HT_UINT
+#define KS_HT_SINGLE         OV_HT_SINGLE
+#define KS_HT_DOUBLE         OV_HT_DOUBLE
+#define KS_HT_STRING         OV_HT_STRING
+#define KS_HT_TIME           OV_HT_TIME
+#define KS_HT_TIME_SPAN      OV_HT_TIME_SPAN
+
+#define KS_HT_TYPE_MASK      OV_HT_TYPE_MASK
+
+#define KS_HT_TIME_DRIVEN    OV_HT_TIME_DRIVEN
+#define KS_HT_CHANGE_DRIVEN  OV_HT_CHANGE_DRIVEN
 
 /* ----------------------------------------------------------------------------
  * Option flags for the GETEP service.
