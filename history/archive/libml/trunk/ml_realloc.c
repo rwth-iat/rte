@@ -64,20 +64,20 @@ ml_realloc (__ml_ptr ptr, __ml_size_t size) {
   ml_getFragmentData(result, &newsize);
 
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_realloc oldsize %lu Bytes\n", oldsize);
-fprintf(stderr, "  ml_realloc newsize %lu Bytes\n", newsize);
+fprintf(stderr, "  ml_realloc oldsize %" PRIuPTR " Bytes\n", oldsize);
+fprintf(stderr, "  ml_realloc newsize %" PRIuPTR " Bytes\n", newsize);
 #endif
   
   copysize = ((oldsize < newsize) ? oldsize : newsize) - offs;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_realloc copiere %lu Bytes\n", copysize);
+fprintf(stderr, "  ml_realloc copiere %" PRIuPTR " Bytes\n", copysize);
 #endif
   
   memcpy(result, ptr, copysize);
 
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_realloc gebe adresse %lu frei\n", (__ml_size_t)ptr);
+fprintf(stderr, "  ml_realloc gebe adresse %" PRIuPTR " frei\n", (__ml_size_t)ptr);
 #endif
 
   /* Alten Speicher freigeben */

@@ -53,7 +53,7 @@ fprintf(stderr, "__morecore returned NULL\n");
     _ml_info_ptr->bytes_used  += size;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "__morecore returned %lu\n", (__ml_size_t)(__ml_byte_t*)result);
+fprintf(stderr, "__morecore returned %" PRIuPTR "\n", (__ml_size_t)(__ml_byte_t*)result);
 #endif
     
     return result;
@@ -145,7 +145,7 @@ ml_malloc_getfreeblock(__ml_size_t size) {
     struct __ml_list *ret;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "   getfreeblock() suche %lu Byte gross\n", size);
+fprintf(stderr, "   getfreeblock() suche %" PRIuPTR " Byte gross\n", size);
 #endif
     
     /* Freie Bloecke vorhanden? */
@@ -155,12 +155,12 @@ fprintf(stderr, "   getfreeblock() suche %lu Byte gross\n", size);
         while(curr) {
 
 #if DBG_TO_STDERR
-fprintf(stderr, "   getfreeblock(%lu : %lu) suche passend\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "   getfreeblock(%" PRIuPTR " : %" PRIuPTR ") suche passend\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
         
             if(curr->len == size) {
 #if DBG_TO_STDERR
-fprintf(stderr, "   getfreeblock(%lu : %lu) passend gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "   getfreeblock(%" PRIuPTR " : %" PRIuPTR ") passend gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                 curr->prev->next = curr->next;
                 if(curr->next) {
@@ -174,14 +174,14 @@ fprintf(stderr, "   getfreeblock(%lu : %lu) passend gefunden\n", (__ml_size_t)(_
         curr = _ml_info_ptr->free_blocks.next;
         while(curr) {
 #if DBG_TO_STDERR
-fprintf(stderr, "   getfreeblock(%lu : %lu) suche groesseren\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "   getfreeblock(%" PRIuPTR " : %" PRIuPTR ") suche groesseren\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
             if(curr->len > size) {
                 ret = (struct __ml_list *)((__ml_byte_t*)curr + (curr->len - size));
                 curr->len -= size;                
                 
 #if DBG_TO_STDERR
-fprintf(stderr, "   getfreeblock(%lu) vom groesseren abgeschnitten. Rest %lu Bytes\n", (__ml_size_t)(__ml_byte_t*)ret, curr->len);
+fprintf(stderr, "   getfreeblock(%" PRIuPTR ") vom groesseren abgeschnitten. Rest %" PRIuPTR " Bytes\n", (__ml_size_t)(__ml_byte_t*)ret, curr->len);
 #endif
                 return (__ml_ptr)(ret);
             }
@@ -228,7 +228,7 @@ ml_malloc(__ml_size_t size) {
             i++;
             curr = curr->next;
         }
-fprintf(stderr, "    ==> %lu Bytes: log %lu (anz %lu)\n", size, log, i);
+fprintf(stderr, "    ==> %" PRIuPTR " Bytes: log %" PRIuPTR " (anz %" PRIuPTR ")\n", size, log, i);
 #endif
       
         /* Look in the fragment lists for a free fragment of the desired size.*/
@@ -296,7 +296,7 @@ fprintf(stderr, "    ==> %lu Bytes: log %lu (anz %lu)\n", size, log, i);
     result = (__ml_ptr)pc;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_malloc %lu (%lu) size %lu\n\n"
+fprintf(stderr, "  ml_malloc %" PRIuPTR " (%" PRIuPTR ") size %" PRIuPTR "\n\n"
                 , (__ml_size_t)(__ml_byte_t*)result
                 , (__ml_size_t)(__ml_byte_t*)pResult
                 , size);

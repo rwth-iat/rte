@@ -35,12 +35,12 @@ ml_reorde_block(struct __ml_list *ptrLst, __ml_size_t size) {
     __ml_size_t           nextAddr;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block %lu mit %lu Bytes\n", (__ml_size_t)(__ml_byte_t*)ptrLst, size);
+fprintf(stderr, "ml_reorde_block %" PRIuPTR " mit %" PRIuPTR " Bytes\n", (__ml_size_t)(__ml_byte_t*)ptrLst, size);
 #endif
 
 if( (((__ml_size_t)(__ml_byte_t*)ptrLst - ML_STARTADDRESS) % BLOCKSIZE) != 0 ) {
 #if DBG_TO_STDERR
-    fprintf(stderr, "!!! Adresse  %lu nicht an der Block-Ausrichtung (start: %lu) !!!\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ML_STARTADDRESS);
+    fprintf(stderr, "!!! Adresse  %" PRIuPTR " nicht an der Block-Ausrichtung (start: %" PRIuPTR ") !!!\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ML_STARTADDRESS);
 #endif
     return;
 }
@@ -59,7 +59,7 @@ if( (((__ml_size_t)(__ml_byte_t*)ptrLst - ML_STARTADDRESS) % BLOCKSIZE) != 0 ) {
             if(nextAddr == (__ml_size_t)((__ml_byte_t*)curr)) {
                 /* Nachfolger gefunden */
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: nachfolger %lu (%lu Bytes) gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: nachfolger %" PRIuPTR " (%" PRIuPTR " Bytes) gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                 ptrLst->next = curr->next;
                 ptrLst->prev = curr->prev;
@@ -73,7 +73,7 @@ fprintf(stderr, "ml_reorde_block: nachfolger %lu (%lu Bytes) gefunden\n", (__ml_
                 curr->len  = 0;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ptrLst->len);
+fprintf(stderr, "ml_reorde_block: Block %" PRIuPTR " hat nun %" PRIuPTR " Bytes\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ptrLst->len);
 #endif
                 
                 /* Luecke geschlossen? */
@@ -82,7 +82,7 @@ fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(
                     curr = ptrLst->prev;
                     if(firstAddr == (__ml_size_t)((__ml_byte_t*)curr + (curr->len)) ) {
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: Luecke zu %lu (%lu Bytes) geschlossen\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: Luecke zu %" PRIuPTR " (%" PRIuPTR " Bytes) geschlossen\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                         curr->next = ptrLst->next;
                         curr->len += ptrLst->len;
@@ -94,7 +94,7 @@ fprintf(stderr, "ml_reorde_block: Luecke zu %lu (%lu Bytes) geschlossen\n", (__m
                         ptrLst->len  = 0;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: Block %" PRIuPTR " hat nun %" PRIuPTR " Bytes\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                     }
                 }
@@ -108,7 +108,7 @@ fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(
             if((__ml_size_t)((__ml_byte_t*)curr + (curr->len)) == firstAddr) {
                 /* Vorgaenger gefunden */
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: vorgaenger %lu (%lu Bytes) gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: vorgaenger %" PRIuPTR " (%" PRIuPTR " Bytes) gefunden\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                 curr->len += ptrLst->len;
                 ptrLst->next = NULL;
@@ -121,7 +121,7 @@ fprintf(stderr, "ml_reorde_block: vorgaenger %lu (%lu Bytes) gefunden\n", (__ml_
                     if(nextAddr == (__ml_size_t)((__ml_byte_t*)curr->next) ) {
                         ptrLst = curr->next;
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: Luecke zu %lu (%lu Bytes) geschlossen\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ptrLst->len);
+fprintf(stderr, "ml_reorde_block: Luecke zu %" PRIuPTR " (%" PRIuPTR " Bytes) geschlossen\n", (__ml_size_t)(__ml_byte_t*)ptrLst, ptrLst->len);
 #endif
                         if(ptrLst->next) {
                             ptrLst->next->prev = curr;
@@ -136,7 +136,7 @@ fprintf(stderr, "ml_reorde_block: Luecke zu %lu (%lu Bytes) geschlossen\n", (__m
                 }
 
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: Block %" PRIuPTR " hat nun %" PRIuPTR " Bytes\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                 
                 return;
@@ -151,7 +151,7 @@ fprintf(stderr, "ml_reorde_block: Block %lu hat nun %lu Bytes\n", (__ml_size_t)(
         while(curr) {
             if(nextAddr < (__ml_size_t)((__ml_byte_t*)curr)) {
 #if DBG_TO_STDERR
-fprintf(stderr, "ml_reorde_block: haenge vor %lu (%lu Bytes) an\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
+fprintf(stderr, "ml_reorde_block: haenge vor %" PRIuPTR " (%" PRIuPTR " Bytes) an\n", (__ml_size_t)(__ml_byte_t*)curr, curr->len);
 #endif
                 /* Nachfolger gefunden */
                 ptrLst->next = curr;
@@ -293,7 +293,7 @@ ml_free (__ml_ptr ptr) {
     /* Liegt die Adresse in Memory-Pool? */
     if( ((__ml_byte_t*)ptr < _ml_info_ptr->heapbase) || ((__ml_byte_t*)ptr >= _ml_info_ptr->heapend) ) {
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_free Bereich %lu ausserhalb Memory-Pools!\n", (__ml_size_t)(__ml_byte_t*)ptrLst);
+fprintf(stderr, "  ml_free Bereich %" PRIuPTR " ausserhalb Memory-Pools!\n", (__ml_size_t)(__ml_byte_t*)ptrLst);
 #endif
         return;    
     }
@@ -306,7 +306,7 @@ fprintf(stderr, "  ml_free Bereich %lu ausserhalb Memory-Pools!\n", (__ml_size_t
         while(curr) {
             if(ptrLst == curr) {
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_free Bereich %lu bereits freigegeben!\n", (__ml_size_t)(__ml_byte_t*)ptrLst);
+fprintf(stderr, "  ml_free Bereich %" PRIuPTR " bereits freigegeben!\n", (__ml_size_t)(__ml_byte_t*)ptrLst);
 #endif
                 return;
             }
@@ -318,7 +318,7 @@ fprintf(stderr, "  ml_free Bereich %lu bereits freigegeben!\n", (__ml_size_t)(__
     ptrLst->len = size;
 
 #if DBG_TO_STDERR
-fprintf(stderr, "  ml_free %lu size %lu\n", (__ml_size_t)(__ml_byte_t*)ptrLst, size);
+fprintf(stderr, "  ml_free %" PRIuPTR " size %" PRIuPTR "\n", (__ml_size_t)(__ml_byte_t*)ptrLst, size);
 #endif
   
     /* Update the statistics.  */

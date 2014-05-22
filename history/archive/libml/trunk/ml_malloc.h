@@ -38,7 +38,27 @@
 #endif
 
 #include <stdio.h>
-#include <stdint.h>
+
+#if _MSC_VER
+	#if (_MSC_VER > 1500 && _MSC_VER < 1800)
+		//1500 is VS 2008
+		#include <stdint.h>
+	#endif
+	#if _MSC_VER >= 1800
+		//1800 is VS 2013
+		#include <inttypes.h>
+	#endif
+#elif defined(__BORLANDC__)
+	//has nothing for modern us
+#else
+#include <inttypes.h>
+#endif
+#endif
+
+//systems without inttypes.h support needs this
+#ifndef PRIuPTR
+#define PRIuPTR "lu"
+#endif
 
 #if ML_SYSTEM_UNIX
 #include <unistd.h>
@@ -61,7 +81,9 @@ extern "C"
 
 /* long variables are not on all Datamodels / platforms (as an example LLP64 as W64) the same size as a pointer -- Holger
  * http://www.viva64.com/en/a/0050/ */
-#if _MSC_VER && _MSC_VER <= 1200
+#if _MSC_VER && _MSC_VER < 1500
+	#define __ml_size_t   unsigned long int
+#elif defined(__BORLANDC__)
 	#define __ml_size_t   unsigned long int
 #else
 	#define __ml_size_t   uintptr_t
