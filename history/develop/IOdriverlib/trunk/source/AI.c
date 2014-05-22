@@ -85,7 +85,7 @@ OV_DLLFNCEXPORT void IOdriverlib_AI_typemethod(
     			pinst->v_PvPv.value = pinst->v_SimIn * (pinst->v_Max - pinst->v_Min) + pinst->v_Min;
     		}
     		pinst->v_PvPv.time = now;
-    		pinst->v_PvPv.state = KS_ST_NOTSUPPORTED;
+    		pinst->v_PvPv.state = OV_ST_NOTSUPPORTED;
     		pinst->v_TimeStamp = now;
     	}
     }
@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT void IOdriverlib_AI_typemethod(
     			pinst->v_PvPv.value = pinst->v_In * (pinst->v_Max - pinst->v_Min) + pinst->v_Min;
     		}
     		pinst->v_PvPv.time = now;
-    		pinst->v_PvPv.state = KS_ST_NOTSUPPORTED;
+    		pinst->v_PvPv.state = OV_ST_NOTSUPPORTED;
     		pinst->v_TimeStamp = now;
     	}
     }
@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT OV_RESULT IOdriverlib_AI_constructor(
     pinst->v_SimInPv.time.usecs = 0;
     pinst->v_PvPv.time.secs = 0;
     pinst->v_PvPv.time.usecs = 0;
-    pinst->v_PvPv.state = KS_ST_NOTSUPPORTED;
+    pinst->v_PvPv.state = OV_ST_NOTSUPPORTED;
     pinst->v_TimeStamp.secs = 0;
     pinst->v_TimeStamp.usecs = 0;
 
