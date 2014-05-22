@@ -182,7 +182,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_constructor(
 	OV_INSTPTR_MessageSys_Message this = Ov_StaticPtrCast(MessageSys_Message, pobj);
 	OV_UINT ID = 4294967295;
 	OV_STRING servername = NULL;
-	OV_VAR_CURRENT_PROPS srvnameprops;
+	OV_ANY srvnameprops;
 
 	ov_object_constructor(pobj);
 
