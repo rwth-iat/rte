@@ -64,6 +64,9 @@ OV_DLLFNCEXPORT void fb_functionchart_typemethod(
 	intask->v_cyctime.usecs = 0;
 	intask->v_proctime = *pltc;
 
+
+	//Todo: merge with FB code???
+
 	/* Trigger all connections on chart input ports */
 	Ov_ForEachChild (fb_variables, pfc, pvar) {
 		if( IsFlagSet(pvar->v_flags, 'i') ) {
