@@ -121,7 +121,6 @@ typedef OV_VAR_TYPE KS_VAR_TYPE;
 
 
 typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
-typedef OV_SVC				KS_SVC;
 
 /* ----------------------------------------------------------------------------
  * Placement hint used with object management systems which support ordered
