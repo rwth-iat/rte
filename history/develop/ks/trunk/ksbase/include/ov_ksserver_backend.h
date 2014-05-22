@@ -68,6 +68,58 @@ typedef OV_LINK_TYPE            KS_LINK_TYPE;
 #define KS_LT_GLOBAL_MANY_MANY  OV_LT_GLOBAL_MANY_MANY
 #define KS_LT_GLOBAL_MANY_1     OV_LT_GLOBAL_MANY_1
 
+/*
+*	KS_VAR_TYPE:
+*	------------
+*	Variable types (indicate the datatypes of variables).
+*/
+typedef OV_VAR_TYPE KS_VAR_TYPE;
+#define KS_VT_VOID             OV_VT_VOID
+
+#define KS_VT_BOOL             OV_VT_BOOL
+#define KS_VT_INT              OV_VT_INT
+#define KS_VT_UINT             OV_VT_UINT
+#define KS_VT_SINGLE           OV_VT_SINGLE
+#define KS_VT_DOUBLE           OV_VT_DOUBLE
+#define KS_VT_STRING           OV_VT_STRING
+#define KS_VT_TIME             OV_VT_TIME
+#define KS_VT_TIME_SPAN        OV_VT_TIME_SPAN
+#define KS_VT_STATE            OV_VT_STATE
+#define KS_VT_STRUCT           OV_VT_STRUCT
+
+#define KS_VT_BYTE_VEC         OV_VT_BYTE_VEC
+#define KS_VT_BOOL_VEC         OV_VT_BOOL_VEC
+#define KS_VT_INT_VEC          OV_VT_INT_VEC
+#define KS_VT_UINT_VEC         OV_VT_UINT_VEC
+#define KS_VT_SINGLE_VEC       OV_VT_SINGLE_VEC
+#define KS_VT_DOUBLE_VEC       OV_VT_DOUBLE_VEC
+#define KS_VT_STRING_VEC       OV_VT_STRING_VEC
+#define KS_VT_TIME_VEC         OV_VT_TIME_VEC
+#define KS_VT_TIME_SPAN_VEC    OV_VT_TIME_SPAN_VEC
+#define KS_VT_TIME_SERIES      OV_VT_TIME_SERIES
+#define KS_VT_STATE_VEC        OV_VT_STATE_VEC
+
+#define KS_VT_BOOL_PV          OV_VT_BOOL_PV
+#define KS_VT_INT_PV           OV_VT_INT_PV
+#define KS_VT_UINT_PV          OV_VT_UINT_PV
+#define KS_VT_SINGLE_PV        OV_VT_SINGLE_PV
+#define KS_VT_DOUBLE_PV        OV_VT_DOUBLE_PV
+#define KS_VT_STRING_PV        OV_VT_STRING_PV
+#define KS_VT_TIME_PV          OV_VT_TIME_PV
+#define KS_VT_TIME_SPAN_PV     OV_VT_TIME_SPAN_PV
+
+#define KS_VT_BOOL_PV_VEC      OV_VT_BOOL_PV_VEC
+#define KS_VT_INT_PV_VEC       OV_VT_INT_PV_VEC
+#define KS_VT_UINT_PV_VEC      OV_VT_UINT_PV_VEC
+#define KS_VT_SINGLE_PV_VEC    OV_VT_SINGLE_PV_VEC
+#define KS_VT_DOUBLE_PV_VEC    OV_VT_DOUBLE_PV_VEC
+#define KS_VT_STRING_PV_VEC    OV_VT_STRING_PV_VEC
+#define KS_VT_TIME_PV_VEC      OV_VT_TIME_PV_VEC
+#define KS_VT_TIME_SPAN_PV_VEC OV_VT_TIME_SPAN_PV_VEC
+
+#define KS_VT_ANY              OV_VT_ANY
+
+
 typedef OV_SEMANTIC_FLAGS	KS_SEMANTIC_FLAGS;
 typedef OV_SVC				KS_SVC;
 
@@ -103,6 +155,46 @@ typedef OV_HIST_TYPE         KS_HIST_TYPE;
 
 #define KS_HT_TIME_DRIVEN    OV_HT_TIME_DRIVEN
 #define KS_HT_CHANGE_DRIVEN  OV_HT_CHANGE_DRIVEN
+
+/* ----------------------------------------------------------------------------
+ * Authentification & verification (aka A/V) stuff.
+ */
+typedef OV_AUTH_TYPE    KS_AUTH_TYPE;
+#define KS_AUTH_NONE    OV_TT_NONE /* NONE-A/V-Module   */
+#define KS_AUTH_SIMPLE  OV_TT_SIMPLE /* SIMPLE-A/V-Module */
+
+/* ----------------------------------------------------------------------------
+ * Access modes -- this does not only embrace the "classical" access modes like
+ * read & write, but also accessing parts, instantiability, etc...
+ */
+typedef OV_ACCESS KS_ACCESS;
+#define KS_AC_NONE          OV_AC_NONE
+#define KS_AC_READ          OV_AC_READ
+#define KS_AC_WRITE         OV_AC_WRITE
+#define KS_AC_READWRITE     OV_AC_READWRITE
+
+#define KS_AC_DELETEABLE    OV_AC_DELETEABLE
+#define KS_AC_RENAMEABLE    OV_AC_RENAMEABLE
+#define KS_AC_LINKABLE      OV_AC_LINKABLE
+#define KS_AC_UNLINKABLE    OV_AC_UNLINKABLE
+
+    /* object can act as a factory */
+#define KS_AC_INSTANTIABLE  OV_AC_INSTANTIABLE
+    /* object is part of another object */
+#define KS_AC_PART          OV_AC_PART
+
+/*
+*	KS_INTERPOLATION_MODE:
+*	----------------------
+*	Interpolation modes for use with ACPLT/KS histories
+*/
+typedef OV_INTERPOLATION_MODE KS_INTERPOLATION_MODE;
+#define KS_IPM_NONE     OV_IPM_NONE
+#define KS_IPM_LINEAR   OV_IPM_LINEAR
+#define KS_IPM_MIN      OV_IPM_MIN
+#define KS_IPM_MAX      OV_IPM_MAX
+#define KS_IPM_HOLD     OV_IPM_HOLD
+#define KS_IPM_DEFAULT  OV_IPM_DEFAULT
 
 /* ----------------------------------------------------------------------------
  * Option flags for the GETEP service.

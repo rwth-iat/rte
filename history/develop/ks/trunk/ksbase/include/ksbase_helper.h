@@ -73,6 +73,17 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
 #define KS_TECHUNIT_MAXLEN 63
 #define KS_SIMPLEID_MAXLEN 255
 
+/* ----------------------------------------------------------------------------
+ * States a value can have, so clients can decide whether they want to trust
+ * a value.
+ */
+typedef OV_STATE KS_STATE;
+#define KS_ST_NOTSUPPORTED  OV_ST_NOTSUPPORTED /* no state available          */
+#define KS_ST_UNKNOWN       OV_ST_UNKNOWN      /* state unknown at this time  */
+#define KS_ST_BAD           OV_ST_BAD          /* information is bad          */
+#define KS_ST_QUESTIONABLE  OV_ST_QUESTIONABLE /* information is questionable */
+#define KS_ST_GOOD          OV_ST_GOOD         /* information is good         */
+
 #endif
 
 //association of ClientHandler
