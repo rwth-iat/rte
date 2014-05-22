@@ -661,14 +661,16 @@ ENUMDEF(OV_SVC)
      */
 #define OV_GETHIST        ENUMVAL(OV_SVC, 0x00000401)
 
-/* compatibility for fb 8-/ */
-#define KS_GETVAR         OV_GETVAR
-#define KS_SETVAR         OV_SETVAR
-#define KS_CREATEOBJECT   OV_CREATEOBJECT
-#define KS_DELETEOBJECT   OV_DELETEOBJECT
-#define KS_RENAMEOBJECT   OV_RENAMEOBJECT
-#define KS_LINK           OV_LINK
-#define KS_UNLINK         OV_UNLINK
+/* compatibility for fb lib, but could be already set if included from fbs_dienste*/
+#ifndef KS_GETVAR
+	#define KS_GETVAR         OV_GETVAR
+	#define KS_SETVAR         OV_SETVAR
+	#define KS_CREATEOBJECT   OV_CREATEOBJECT
+	#define KS_DELETEOBJECT   OV_DELETEOBJECT
+	#define KS_RENAMEOBJECT   OV_RENAMEOBJECT
+	#define KS_LINK           OV_LINK
+	#define KS_UNLINK         OV_UNLINK
+#endif
 
 /*
 *	OV_TIME_TYPE:
@@ -715,7 +717,9 @@ typedef OV_ENUM OV_HSEL_TYPE;
 */
 ENUMDEF(OV_HIST_TYPE)
 #define OV_HT_LOG            ENUMVAL(OV_HIST_TYPE, 0x00)
-#define KS_HT_TABLE          ENUMVAL(OV_HIST_TYPE, 0x01) /* only in KS !? */
+#ifndef KS_HT_TABLE
+	#define KS_HT_TABLE          ENUMVAL(OV_HIST_TYPE, 0x01) /* only in KS !? */
+#endif
 #define OV_HT_BOOL           ENUMVAL(OV_HIST_TYPE, 0x02)
 #define OV_HT_INT            ENUMVAL(OV_HIST_TYPE, 0x10)
 #define OV_HT_UINT           ENUMVAL(OV_HIST_TYPE, 0x11)
