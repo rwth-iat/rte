@@ -635,6 +635,40 @@ typedef OV_ENUM OV_OBJ_STATE;
  * Services. Most are used with KS
  */
 ENUMDEF(OV_SVC)
+#define OV_NULL           ENUMVAL(OV_SVC, 0)
+
+    /*
+     * The variable access service group.
+     */
+#define OV_GETVAR         ENUMVAL(OV_SVC, 0x00000101)
+#define OV_SETVAR         ENUMVAL(OV_SVC, 0x00000102)
+
+    /*
+     * Object management service group.
+     */
+#define OV_CREATEOBJECT   ENUMVAL(OV_SVC, 0x00000201)
+#define OV_DELETEOBJECT   ENUMVAL(OV_SVC, 0x00000202)
+#define OV_RENAMEOBJECT   ENUMVAL(OV_SVC, 0x00000203)
+
+    /*
+     * Structure management service group.
+     */
+#define OV_LINK           ENUMVAL(OV_SVC, 0x00000301)
+#define OV_UNLINK         ENUMVAL(OV_SVC, 0x00000302)
+
+    /*
+     * History access service group.
+     */
+#define OV_GETHIST        ENUMVAL(OV_SVC, 0x00000401)
+
+/* compatibility for fb 8-/ */
+#define KS_GETVAR         OV_GETVAR
+#define KS_SETVAR         OV_SETVAR
+#define KS_CREATEOBJECT   OV_CREATEOBJECT
+#define KS_DELETEOBJECT   OV_DELETEOBJECT
+#define KS_RENAMEOBJECT   OV_RENAMEOBJECT
+#define KS_LINK           OV_LINK
+#define KS_UNLINK         OV_UNLINK
 
 /*
 *	OV_TIME_TYPE:
