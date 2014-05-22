@@ -30,11 +30,11 @@
 ******************************************************************************/
 
 #if defined(_LIBC) || defined(STDC_HEADERS) || defined(USG) || (defined(__STDC__) && __STDC__) 
-#include <string.h>
+	#include <string.h>
 #endif
 
 #if defined (__GNU_LIBRARY__) || (defined (__STDC__) && __STDC__)
-#include <limits.h>
+	#include <limits.h>
 #endif
 
 #include <stdio.h>
@@ -51,8 +51,7 @@
 #elif defined(__BORLANDC__)
 	//has nothing for modern us
 #else
-#include <inttypes.h>
-#endif
+	#include <inttypes.h>
 #endif
 
 //systems without inttypes.h support needs this
@@ -72,11 +71,11 @@ extern "C"
 
 
 #ifndef NULL
-#define NULL 0
+	#define NULL 0
 #endif
 
 #if defined (__STDC__) && __STDC__
-#include <stddef.h>
+	#include <stddef.h>
 #endif
 
 /* long variables are not on all Datamodels / platforms (as an example LLP64 as W64) the same size as a pointer -- Holger
@@ -97,7 +96,7 @@ extern "C"
    and all fragments of a block are the same size.  When all the
    fragments in a block have been freed, the block itself is freed.  */
 #ifdef  CHAR_BIT
-#undef  CHAR_BIT
+	#undef  CHAR_BIT
 #endif
 #define CHAR_BIT        8
 
