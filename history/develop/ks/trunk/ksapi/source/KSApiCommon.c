@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT OV_RESULT ksapi_KSApiCommon_Submit_set(OV_INSTPTR_ksapi_KSApiCom
 	}
 
 	pobj->v_Submit = value;
-	return OV_ERR_OK;;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT void ksapi_KSApiCommon_submit(
