@@ -149,8 +149,9 @@ static OV_VTBL_ov_object nostartupvtable = {
 
 /*
 *	Helper macro: Round up the size to the next n*BLOCKSIZE
+*	TODO_ADJUST_WHEN_LARGE_DB
 */
-#define Ov_Roundup(size) (((long)(size)+BLOCKSIZE-1)&~(BLOCKSIZE-1))
+#define Ov_Roundup(size) (((OV_UINT)(size)+BLOCKSIZE-1)&~(BLOCKSIZE-1))
 
 /*	----------------------------------------------------------------------	*/
 
@@ -208,6 +209,7 @@ __ml_ptr ov_database_morecore(
 		*/
 		if(SetFilePointer(hfile, pdb->size+size, NULL, FILE_BEGIN) 
 			== 0xFFFFFFFF
+			// TODO_ADJUST_WHEN_LARGE_DB
 		) {
 			return NULL;
 		}
@@ -243,7 +245,7 @@ __ml_ptr ov_database_morecore(
 
 OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	OV_STRING	filename,
-	OV_UINT		size
+	OV_UINT		size /* TODO_ADJUST_WHEN_LARGE_DB */
 ) {
 	/*
 	*	local variables
@@ -267,6 +269,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	if(pdb) {
 		return OV_ERR_GENERIC;
 	}
+	// TODO_ADJUST_WHEN_LARGE_DB
 	if(!size || (size > (OV_UINT) OV_DATABASE_MAXSIZE) || !filename) {
 		return OV_ERR_BADPARAM;
 	}
@@ -307,6 +310,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 #endif
 	/*
 	*	make the file "size" bytes long (rounded up)
+	*	TODO_ADJUST_WHEN_LARGE_DB
 	*/
 	if(lseek(fd, size-sizeof(char), SEEK_SET) < 0) {
 		close(fd);
@@ -318,17 +322,18 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	}
 	/*
 	*	map the file to memory
+	*	TODO_ADJUST_WHEN_LARGE_DB
 	*/
 #if OV_ARCH_NOMMU
 	pdb = (OV_DATABASE_INFO*) mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
 #else
-#if OV_DATABASE_FLASH
-	pdb = (OV_DATABASE_INFO*)mmap(0, size,
-		PROT_READ | PROT_WRITE,	MAP_PRIVATE, fd, 0);
-#else
-	pdb = (OV_DATABASE_INFO*)mmap(0, size,
-		PROT_READ | PROT_WRITE,	MAP_SHARED, fd, 0);
-#endif
+	#if OV_DATABASE_FLASH
+		pdb = (OV_DATABASE_INFO*)mmap(0, size,
+			PROT_READ | PROT_WRITE,	MAP_PRIVATE, fd, 0);
+	#else
+		pdb = (OV_DATABASE_INFO*)mmap(0, size,
+			PROT_READ | PROT_WRITE,	MAP_SHARED, fd, 0);
+	#endif
 #endif
 	if(pdb == (OV_DATABASE_INFO*)-1) {
 		pdb = NULL;
@@ -341,11 +346,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	/*
 	*	check file size
 	*/
-	if(size > OV_DATABASE_MAXSIZE) {
+	if(size > (OV_UINT) OV_DATABASE_MAXSIZE) {
 		return OV_ERR_CANTCREATEFILE;
 	}
 	/*
 	*	create the new database file
+	*	TODO_ADJUST_WHEN_LARGE_DB
 	*/
 	hfile = CreateFile(filename, GENERIC_READ | GENERIC_WRITE,
 		0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -357,6 +363,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*/
 	if(SetFilePointer(hfile, size, NULL, FILE_BEGIN) 
 		== 0xFFFFFFFF
+		// TODO_ADJUST_WHEN_LARGE_DB
 	) {
 		CloseHandle(hfile);
 		return OV_ERR_CANTWRITETOFILE;
@@ -367,6 +374,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	}
 	/*
 	*	create a file mapping object
+	*	TODO_ADJUST_WHEN_LARGE_DB
 	*/
 #if OV_DYNAMIC_DATABASE
 	hmap = CreateFileMapping(hfile, NULL, PAGE_READWRITE,
@@ -475,7 +483,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	    
 	*/	
 	if(!ml_initialize(pmpinfo, pdb->pstart, ov_database_morecore)) {
-    	ov_database_unmap();
+		ov_database_unmap();
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	/*
@@ -1164,11 +1172,11 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 ) {
 #ifdef OV_VALGRIND
 	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL){
-		if(!((unsigned int long)ptr >= (unsigned int long)pdb->baseaddr && (unsigned int long)ptr <= (unsigned int long)pdb->baseaddr+(unsigned int long)pdb->size)){
+		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)){
 			printf("realloc missed database, install a breakpoint here\n");
 		}
 	}
-    if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
 		if(ptr != 0 && pdb && ptr >= pdb->baseaddr && ptr <= pdb->baseaddr+pdb->size){
 			return ml_realloc(ptr, size);
 		}else{
@@ -1228,7 +1236,17 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getsize(void) {
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 	if(pdb) {
-		return (OV_UINT)pdb->pend - (OV_UINT)pdb->pcurr + (OV_UINT)pmpinfo->bytes_free;
+		#ifdef _STDINT_H
+			uintptr_t free;
+		#else
+			OV_UINT free;
+			#define uintptr_t OV_UINT
+		#endif
+		free = (uintptr_t)pdb->pend - (uintptr_t)pdb->pcurr + (uintptr_t)pmpinfo->bytes_free;
+		if(free > OV_VL_MAXUINT){
+			return OV_VL_MAXUINT;
+		}
+		return (OV_UINT)(free);
 	}
 	return 0;
 }
@@ -1239,8 +1257,17 @@ OV_DLLFNCEXPORT OV_UINT ov_database_getfree(void) {
 *	Get used storage in the database
 */
 OV_DLLFNCEXPORT OV_UINT ov_database_getused(void) {
+	#ifdef _STDINT_H
+		uintptr_t used;
+	#else
+		OV_UINT used;
+	#endif
 	if(pdb) {
-		return (OV_UINT)pdb->pstart - (OV_UINT)pdb->baseaddr + (OV_UINT)pmpinfo->bytes_used - (OV_UINT)pmpinfo->bytes_free;
+		used = (uintptr_t)pdb->pstart - (uintptr_t)pdb->baseaddr + (uintptr_t)pmpinfo->bytes_used - (uintptr_t)pmpinfo->bytes_free;
+		if(used > OV_VL_MAXUINT){
+			return OV_VL_MAXUINT;
+		}
+		return (OV_UINT)(used);
 	}
 	return 0;
 }

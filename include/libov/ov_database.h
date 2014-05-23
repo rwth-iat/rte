@@ -68,7 +68,7 @@ extern "C" {
 */
 typedef struct {
 	OV_POINTER			baseaddr;	/* base address of the filemapping */
-	OV_UINT				size;		/* size of the filemapping */
+	OV_UINT				size;		/* size of the filemapping TODO_ADJUST_WHEN_LARGE_DB */
 	OV_BYTE OV_MEMSPEC		*pstart;	/* beginning of the database memory */
 	OV_BYTE OV_MEMSPEC		*pend;		/* end of the database memory */
 	OV_BYTE OV_MEMSPEC		*pcurr;		/* current position of the core pointer */
