@@ -144,7 +144,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
-    printf("%s/%s\n", pSSC->v_identifier, pinst->v_identifier);
+ //   printf("%s/%s\n", pSSC->v_identifier, pinst->v_identifier);
 
     // execute transition condition
     if (pTransCond != NULL)

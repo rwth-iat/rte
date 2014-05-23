@@ -12,11 +12,92 @@
 #include "ov.h"
 #include "ssc.h"
 #include "ssclib.h"
-
+//#include "string.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
 
+static void extractBehindSeperator(OV_STRING *string, OV_STRING *end,char sep)
+
+{ 	OV_STRING old=NULL;
+	OV_STRING secondhalf=NULL;
+	//OV_STRING firsthalf=NULL;
+//
+
+	ov_string_setvalue(&old,*string);
+	//ov_logfile_debug("string %s", old);
+	OV_UINT len=ov_string_getlength(old);
+	for(int i =0;i<len-1;i++){
+			//ov_logfile_debug("string %c", old[len-i]);
+		if(old[len-i]==sep){
+			//firsthalf=ov_malloc((len-i));
+			//secondhalf=ov_malloc((i+2));
+			//memcpy(firsthalf,string,len-i);
+			//memcpy(secondhalf,old[len-i],i+1);
+			ov_string_setvalue(&secondhalf,&old[len-i+1]);
+			old[len-i] = '\0';
+
+//			ov_realloc(old,(len-i+2));
+			//memcpy(old,&secondhalf[i+1],1);
+			break;
+		}
+	}
+
+//	OV_INSTPTR_Merkmalserver_Merkmal MerkmalTemp = NULL;
+//	OV_INSTPTR_Merkmalserver_Auspraegungsaussage AusTemp = NULL;
+//	OV_STRING Wert = NULL;
+//	MerkmalTemp =
+//			(OV_INSTPTR_Merkmalserver_Merkmal) Ov_SearchChild(ov_containment,Signal,name);
+//	if (MerkmalTemp == NULL)
+//		return Wert;
+//	AusTemp =
+//			(OV_INSTPTR_Merkmalserver_Auspraegungsaussage) Ov_SearchChild(ov_containment,MerkmalTemp,"Auspraegungsaussage");
+//	if (AusTemp == NULL)
+//		return Wert;
+//	Wert = AusTemp->v_Wert;
+//	 ov_logfile_debug("string %s", *string);
+	ov_string_setvalue(string,old);
+	ov_string_setvalue(&old, NULL);
+	ov_string_setvalue(end,secondhalf);
+	ov_string_setvalue(&secondhalf, NULL);
+}
+
+OV_DLLFNCEXPORT OV_INSTPTR_ov_object getrelativeobjectpointer(
+    	const OV_STRING			startPoint,
+    	const OV_STRING			pathname,
+    	const OV_UINT			version
+     ) {
+    	/*
+    	*	local variables
+    	*/
+   	OV_PATH		path;
+    OV_ELEMENT	element;
+    OV_PATH     startPointPath;
+    ov_memstack_lock();
+    ov_path_resolve(&startPointPath, NULL, startPoint, version);
+
+   	/*
+    	*	instructions
+     	*/
+
+     	if(Ov_Fail(ov_path_resolve(&path, &startPointPath, pathname, version))) {
+    		/*
+     		*	bad path
+    		*/
+     		ov_memstack_unlock();
+   		return NULL;
+     	}
+   	element = path.elements[path.size-1];
+
+     	 ov_memstack_unlock();
+     	if(element.elemtype == OV_ET_OBJECT) {
+   		return element.pobj;
+     	}
+    	/*
+    	*	not an object path
+    	*/
+     	return NULL;
+}
 OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
     OV_INSTPTR_ssc_setVariable          pinst,
     const OV_STRING  value
@@ -58,7 +139,11 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     //OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
     OV_RESULT    result = OV_ERR_OK;
     OV_UINT stringCount;
-    OV_STRING* pathToVariable;
+    OV_STRING pathToVariable=NULL;
+    OV_STRING *pathToObject;
+    OV_STRING temp =NULL;
+    OV_STRING temp2=NULL;
+    OV_STRING temp3=NULL;
     OV_INSTPTR_ov_object pObj = NULL;
     OV_ELEMENT element;
     OV_ELEMENT varElement;
@@ -81,6 +166,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 		return;
 	}
 
+
     // check input
     if (ov_string_compare(pinst->v_variable, NULL)==0)
     {
@@ -96,16 +182,51 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 
 // Extension to set any Port at any Variable
     //split the input at dot
-    pathToVariable =  ov_string_split(pinst->v_variable,".", &stringCount);
-    pObj = ov_path_getobjectpointer(pathToVariable[0],2);
+   // pathToVariable =  ov_string_split(pinst->v_variable,".", &stringCount);
+    ov_string_setvalue(&pathToVariable,pinst->v_variable);
+
+    extractBehindSeperator(&pathToVariable,&temp2,'.');
+
+   // ov_logfile_debug("path to variable %s", pathToVariable);
+// for(int i=1;i<stringCount-1;i++)
+// {
+//	 ov_string_append( &(pathToVariable[0]),".");
+//	 ov_string_append( &(pathToVariable[0]),pathToVariable[i]);
+// }
+
+   if((pinst->v_variable)[0]!='/'){
+	   ov_memstack_lock();
+	   ov_string_setvalue(&temp,ov_path_getcanonicalpath(Ov_DynamicPtrCast(ov_object,pinst), 2));
+	   ov_memstack_unlock();
+
+	  // ov_string_append(&temp,"/");
+
+
+
+
+	 pathToObject=ov_string_split(pathToVariable,"/",&stringCount);
+
+	   //result =ov_string_append(&temp,pathToVariable);
+
+	  // ov_logfile_debug("result %s", ov_result_getresulttext(result));
+	   //ov_logfile_debug("path %s", temp);
+	   pObj = getrelativeobjectpointer(temp,pathToVariable ,2);
+	//   ov_logfile_debug("path %s", pObj);
+
+   }else{
+	   pObj = ov_path_getobjectpointer(pathToVariable,2);
+   }
+   ov_string_setvalue(&pathToVariable,temp2);
+
+    //pObj = ov_path_getobjectpointer(pathToVariable[0],2);
 
     if(pObj != NULL && pathToVariable != NULL)
     {
-    	if (Ov_CanCastTo(fb_functionblock,pObj))
+    	if (Ov_CanCastTo(fb_functionchart,pObj))
     	{
     		//set variable in a functionchart
 
-    		result = fb_functionchart_setport((OV_INSTPTR_fb_functionchart)pObj, pathToVariable[1], &(pinst->v_value));
+    		result = fb_functionchart_setport((OV_INSTPTR_fb_functionchart)pObj, pathToVariable, &(pinst->v_value));
     	}
     	else
     	{
@@ -120,7 +241,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 			{
 				if(varElement.elemunion.pvar)
 				{
-					if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable[1]) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
+					if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
 					{
 						//port found, use the setter to write the value
 						Ov_GetVTablePtr(ov_object, pVtblObj, pObj);
@@ -152,7 +273,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     		 const OV_STRING varname,
     		 OV_ANY *pvarcurrprops)
 */
-
+    ov_string_setvalue(&temp,NULL);
     return;
 }
 
