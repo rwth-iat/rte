@@ -74,8 +74,10 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     ov_memstack_lock();
 
     msgIdentifier = ov_memstack_alloc(sizeof(msgPrefix) + 12);
-    if(!msgIdentifier)
+    if(!msgIdentifier){
+    	ov_memstack_unlock();
     	return OV_ERR_HEAPOUTOFMEMORY;
+    }
 
     snprintf(msgIdentifier, sizeof(msgPrefix) + 11, "%s%lu", msgPrefix, pobj->v_msgsInQueue);
     result = Ov_CreateObject(MessageSys_Message, pMsg, pobj, msgIdentifier);
