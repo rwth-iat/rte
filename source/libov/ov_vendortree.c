@@ -681,7 +681,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getksversion(
  *	Set ks version
  */
 OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setksversion(
-		OV_STRING	version
+		OV_STRING	version,
+		const OV_TICKET	*pticket
 ) {
 	if(ksVersion) {
 		Ov_HeapFree(ksVersion);
