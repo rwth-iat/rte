@@ -1871,9 +1871,25 @@ cshmi.prototype = {
 					}
 				this._setXYRotate(VisualObject, null, null, NewValue);
 			}else if (ParameterValue === "transform"){
-				VisualObject.setAttribute("transform", NewValue);
-				//we want to have offset parameter on all visual elements
-				HMI.saveAbsolutePosition(VisualObject);
+				//this is a best efford approach. Not garanteed to work, as a rotation will overwrite this! "scale(0.2)" as an example
+				
+				//svg are not transformable, so the rotation/transform is in the objects parent
+				if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+					//object has already an g parent
+					var rotationObject = VisualObject.parentNode;
+				}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
+					//element has to be shifted into an g element
+					rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+					rotationObject.setAttribute("overflow", "visible");
+					rotationObject.setAttribute("x", "0");
+					rotationObject.setAttribute("y", "0");
+					VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
+					rotationObject.appendChild(VisualObject);
+				}else{
+					//normal visual element
+					rotationObject = VisualObject;
+				}
+				rotationObject.setAttribute("transform", NewValue);
 			}else if (ParameterValue === "absolutex"){
 				var relativeX = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
@@ -1885,6 +1901,8 @@ cshmi.prototype = {
 					this._setXYRotate(VisualObject, NewValue - parseFloat(VisualObject.parentNode.getAttribute("absolutex")) - relativeX, null, null);
 					VisualObject.setAttribute("absolutex", NewValue - relativeX);
 				}
+				//we want to have offset parameter on all visual elements
+				HMI.saveAbsolutePosition(VisualObject);
 			}else if (ParameterValue === "absolutey"){
 				var relativeY = 0;
 				if (this.ResourceList.EventInfos.mouseRelativePosition !== null){
@@ -1896,6 +1914,8 @@ cshmi.prototype = {
 					this._setXYRotate(VisualObject, null, NewValue - parseFloat(VisualObject.parentNode.getAttribute("absolutey")) - relativeY, null);
 					VisualObject.setAttribute("absolutey", NewValue - relativeY);
 				}
+				//we want to have offset parameter on all visual elements
+				HMI.saveAbsolutePosition(VisualObject);
 			}else if (ParameterValue === "absoluterotate"){
 				if(VisualObject.parentNode !== null && VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					//absoluterotate is calculated from the offset of the parentNode
