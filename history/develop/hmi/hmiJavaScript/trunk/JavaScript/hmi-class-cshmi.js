@@ -5556,7 +5556,7 @@ cshmi.prototype = {
 		
 		//rotation should be around cx and cy
 		if (requestList[ObjectPath]["rotate"] && requestList[ObjectPath]["rotate"] !== "0"){
-			var rotation = ((requestList[ObjectPath]["rotate"]%360)+360)%360;
+			var rotation = ((parseFloat(configArray["rotate"], 10)%360)+360)%360;
 			VisualObject.setAttribute("transform", "rotate("+rotation.toString()+","+requestList[ObjectPath]["cx"]+","+requestList[ObjectPath]["cy"]+")");
 		}
 		
@@ -5833,8 +5833,10 @@ cshmi.prototype = {
 			//the attribute should be "rotate(deg, x, y)"
 			VisualObject.setAttribute("x", configArray["x"]);
 			VisualObject.setAttribute("y", configArray["y"]);
-			if (configArray["rotate"] && configArray["rotate"] !== "0" && VisualObject.tagName === "svg" && VisualObject.parentNode && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.id === ""){
-				VisualObject.setAttribute("transform", "rotate("+configArray["rotate"]+","+configArray["x"]+","+configArray["y"]+")");
+			if (configArray["rotate"] && configArray["rotate"] !== "0"){
+				//rotation should be around x and y
+				var rotation = ((parseFloat(configArray["rotate"], 10)%360)+360)%360;
+				VisualObject.setAttribute("transform", "rotate("+rotation.toString()+","+configArray["x"]+","+configArray["y"]+")");
 			}
 		}
 		if(configArray["width"] !== undefined && configArray["width"] !== ""){
@@ -5865,23 +5867,18 @@ cshmi.prototype = {
 	/** set x, y and/or rotate of an object. Parameters as null will be skipped
 	 */
 	_setXYRotate: function(VisualObject, x, y, rotate){
-		if(rotate !== null){
-			//svg are not transformable, so the rotation/transform is in the objects parent
-			if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
-				//object has already an g parent
-				var rotationObject = VisualObject.parentNode;
-			}else if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
-				//element has to be shifted into an g element
-				rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
-				rotationObject.setAttribute("overflow", "visible");
-				rotationObject.setAttribute("x", "0");
-				rotationObject.setAttribute("y", "0");
-				VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
-				rotationObject.appendChild(VisualObject);
-			}else{
-				//normal visual element
-				rotationObject = VisualObject;
-			}
+		//svg are not transformable, so the rotation/transform is in the objects parent
+		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
+			//object has already an g parent
+			var rotationObject = VisualObject.parentNode;
+		}else if (rotate !== null && VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
+			//element has to be shifted into an g element, as we change rotation
+			rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
+			rotationObject.setAttribute("overflow", "visible");
+			rotationObject.setAttribute("x", "0");
+			rotationObject.setAttribute("y", "0");
+			VisualObject.parentNode.replaceChild(rotationObject, VisualObject);
+			rotationObject.appendChild(VisualObject);
 		}else{
 			//normal visual element
 			rotationObject = VisualObject;
