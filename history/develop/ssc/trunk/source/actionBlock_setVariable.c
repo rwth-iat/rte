@@ -274,6 +274,13 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     		 OV_ANY *pvarcurrprops)
 */
     ov_string_setvalue(&temp,NULL);
+    ov_string_setvalue(&pathToVariable,NULL);
+    ov_string_setvalue(pathToObject,NULL);
+    ov_string_setvalue(&temp2,NULL);
+    ov_string_setvalue(&temp3,NULL);
+
+
+
     return;
 }
 
