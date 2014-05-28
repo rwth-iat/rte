@@ -87,8 +87,11 @@ typedef struct {
 	}	elemunion;
 }	OV_ELEMENT;
 
-/*
-*	Search child of an element ("parent/child" in a path)
+/**
+*	Search child of an element ("parent/child" in a path) with a special name
+*	@param pparent Element to search children in it
+*	@param pchild resulting Element
+*	@param identifier name of interesting element
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_searchchild(
 	const OV_ELEMENT	*pparent,
@@ -96,8 +99,12 @@ OV_DLLFNCEXPORT OV_RESULT ov_element_searchchild(
 	OV_STRING			identifier
 );
 
-/*
-*	Search part of an element ("parent.part" in a path)
+/**
+*	Search part of an element ("parent.part" in a path) with a special name
+*	@param pparent Element to search parts in it
+*	@param ppart resulting Element
+*	@param mask filter of interesting objects. For example variables and parts: (OV_ET_VARIABLE | OV_ET_OBJECT)
+*	@param identifier name of interesting element
 */
 OV_DLLFNCEXPORT OV_RESULT ov_element_searchpart(
 	OV_ELEMENT	*pparent,
