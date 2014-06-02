@@ -271,19 +271,19 @@ void ov_basevalueoutput(
 		break;
 	case OV_VT_INT:
 		i = *(OV_INT*)(pvalue);
-		fprintf(handle, "%li", i);
+		fprintf(handle, "%" OV_PRINT_INT, i);
 		break;
 	case OV_VT_UINT:
 		u = *(OV_UINT*)(pvalue);
-		fprintf(handle, "%lu", u);
+		fprintf(handle, "%" OV_PRINT_UINT, u);
 		break;
 	case OV_VT_SINGLE:
 		s = *(OV_SINGLE*)(pvalue);
-		fprintf(handle, "%f", s);
+		fprintf(handle, "%" OV_PRINT_SINGLE, s);
 		break;
 	case OV_VT_DOUBLE:
 		d = *(OV_DOUBLE*)(pvalue);
-		fprintf(handle, "%f", d);
+		fprintf(handle, "%" OV_PRINT_DOUBLE, d);
 		break;
 	case OV_VT_BYTE:
 		byte =*(OV_BYTE*)(pvalue);

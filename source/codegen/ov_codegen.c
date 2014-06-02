@@ -527,28 +527,28 @@ void ov_codegen_printinitvalueelemdefobj(
 	if (!plib || !pclass || !pvar || !fp) exit(-1);
 	switch (pvalue->vartype) {
 		case OV_VT_SINGLE:
-			if (pvalue) fprintf(fp, " %f ", (OV_SINGLE) pvalue->valueunion.val_double);
+			if (pvalue) fprintf(fp, " %" OV_PRINT_SINGLE " ", (OV_SINGLE) pvalue->valueunion.val_double);
 			break;
 		case OV_VT_DOUBLE:
 			if (pvalue) fprintf(fp, " %e ", pvalue->valueunion.val_double);
 			break;
 		case OV_VT_INT:
-			if (pvalue) fprintf(fp, " %ld ", pvalue->valueunion.val_int);
+			if (pvalue) fprintf(fp, " %" OV_PRINT_INT " ", pvalue->valueunion.val_int);
 			break;
 		case OV_VT_UINT:
-			if (pvalue) fprintf(fp, " %lu ", pvalue->valueunion.val_uint);
+			if (pvalue) fprintf(fp, " %" OV_PRINT_UINT " ", pvalue->valueunion.val_uint);
 			break;
 		case OV_VT_BOOL:
 			if (pvalue) fprintf(fp, pvalue->valueunion.val_bool ? " 1 " : " 0 ");
 			break;
 		case OV_VT_TIME:
-			if (pvalue) fprintf(fp, " { %lu , %lu } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
+			if (pvalue) fprintf(fp, " { %" OV_PRINT_UINT " , %" OV_PRINT_UINT " } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
 			break;
 		case OV_VT_TIME_SPAN:
-			if (pvalue) fprintf(fp, " { %ld , %ld } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
+			if (pvalue) fprintf(fp, " { %" OV_PRINT_INT " , %" OV_PRINT_INT " } ", pvalue->valueunion.val_time.secs,pvalue->valueunion.val_time.usecs);
 			break;
 		case OV_VT_STRING:
-			fprintf(fp, " OV_INITSTRING_DEF_%s_%s_%s_%ld ", plib->identifier,
+			fprintf(fp, " OV_INITSTRING_DEF_%s_%s_%s_%" OV_PRINT_UINT " ", plib->identifier,
 				pclass->identifier, pvar->identifier, num);
 			break;
 		default:
@@ -574,18 +574,18 @@ void ov_codegen_printinitvaluedef(
 		pstruct = ov_codegen_getstructdef(plib, pvar->structurename);
 		fprintf(fp, "            pvar->v_initialvalue.value.vartype = OV_VT_STRUCT;\n");
 		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.veclen = sizeof(OV_STRUCT_%s_%s);\n", pstruct->libname, pstruct->identifier);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%lu;\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_byte_vec.value  = &OV_INITSTRUCT_DEF_%s_%s_%s_%" OV_PRINT_UINT ";\n",plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else if (pvar->pinitvalue->pvectorelem) {
 		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %s;\n", ov_codegen_getfulltypetext( (pvar->vartype & OV_VT_KSMASK) ) );
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %lu;\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
-		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%ld;\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.veclen = %" OV_PRINT_UINT ";\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ), pvar->pinitvalue->value.valueunion.val_generic_vec.veclen);
+		fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.value  = OV_INITVECTOR_DEF_%s_%s_%s_%" OV_PRINT_UINT ";\n", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),plib->identifier, pclass->identifier, pvar->identifier, pvar->pinitvalue->num);
 	}
 	else {
 		fprintf(fp, "            pvar->v_initialvalue.value.vartype = %s;\n", ov_codegen_getfulltypetext( (pvar->vartype & OV_VT_KSMASK) ) );
 		if( (pvar->pinitvalue->value.vartype == OV_VT_TIME)||(pvar->pinitvalue->value.vartype == OV_VT_TIME_SPAN)) {
-			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %ld;\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ),pvar->pinitvalue->value.valueunion.val_time.secs );
-			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.usecs = %ld", ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.usecs );
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.secs = %" OV_PRINT_UINT ";\n", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ),pvar->pinitvalue->value.valueunion.val_time.secs );
+			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s.usecs = %" OV_PRINT_UINT, ov_codegen_getvartypetextsmall(pvar->pinitvalue->value.vartype),pvar->pinitvalue->value.valueunion.val_time.usecs );
 		}
 		else {
 			fprintf(fp, "            pvar->v_initialvalue.value.valueunion.val_%s =", ov_codegen_getvartypetextsmall( (pvar->vartype & OV_VT_KSMASK) ) );
@@ -902,7 +902,7 @@ void ov_codegen_printstructtypedef(
 				break;
 			}
 			if(pvar->veclen > 1) {
-				fprintf(fp, "[%lu]", pvar->veclen);
+				fprintf(fp, "[%" OV_PRINT_UINT "]", pvar->veclen);
 			}
 			fprintf(fp, ";\n");
 		} else {
@@ -994,7 +994,7 @@ void ov_codegen_printclassinstdefines(
 					break;
 				}
 				if(pvar->veclen > 1) {
-					fprintf(fp, "[%lu]", pvar->veclen);
+					fprintf(fp, "[%" OV_PRINT_UINT "]", pvar->veclen);
 				}
 				fprintf(fp,";");
 			} else {
@@ -1051,7 +1051,7 @@ void ov_codegen_printclassinstdefines(
 					break;
 				}
 				if(pvar->veclen > 1) {
-					fprintf(fp, "[%lu]", pvar->veclen);
+					fprintf(fp, "[%" OV_PRINT_UINT "]", pvar->veclen);
 				}
 				fprintf(fp,";");
 			} else {
@@ -1442,7 +1442,7 @@ void ov_codegen_printclassdefobjs(
 		fprintf(fp, "    (OV_STRING)NULL,\n");
 	}
 	fprintf(fp, "    %d,\n", pclass->classprops);
-	fprintf(fp, "    %lu,\n", pclass->flags);
+	fprintf(fp, "    %" OV_PRINT_UINT ",\n", pclass->flags);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(pclass->comment));
 	fprintf(fp, "    Ov_GetInstSize(%s_%s),\n", plib->identifier,
 		pclass->identifier);
@@ -1500,8 +1500,8 @@ void ov_codegen_printassocdefobj(
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(passoc->childcomment));
 	fprintf(fp, "    0,\n");
 	fprintf(fp, "    0,\n");
-	fprintf(fp, "    %lu,\n", passoc->parentflags);
-	fprintf(fp, "    %lu,\n", passoc->childflags);
+	fprintf(fp, "    %" OV_PRINT_UINT ",\n", passoc->parentflags);
+	fprintf(fp, "    %" OV_PRINT_UINT ",\n", passoc->childflags);
 	fprintf(fp, "    (OV_FNCPTR_LINK)%s_%s_link,\n", plib->identifier,
 		passoc->identifier);
 	fprintf(fp, "    (OV_FNCPTR_UNLINK)%s_%s_unlink,\n", plib->identifier,
@@ -1524,26 +1524,26 @@ void ov_codegen_printmemberdefobj(
 	FILE					*fp
 ) {
 	if(pvar->pnext) {
-		fprintf(fp, "    &OV_VARIABLE_DEF_%s_%s[%lu],\n", plib->identifier,
+		fprintf(fp, "    &OV_VARIABLE_DEF_%s_%s[%" OV_PRINT_UINT "],\n", plib->identifier,
 			pstruct->identifier, i);
 	} else {
 		fprintf(fp, "    (OV_VARIABLE_DEF*)0,\n");
 	}
 	fprintf(fp ,"    \"%s\",\n", pvar->identifier);
-	fprintf(fp ,"    %lu,\n", pvar->veclen);
+	fprintf(fp ,"    %" OV_PRINT_UINT ",\n", pvar->veclen);
 	fprintf(fp ,"    %d,\n", pvar->varprops);
 	fprintf(fp ,"    %d,\n", pvar->vartype);
 	switch(pvar->vartype) {
 	case OV_VT_STRUCT:
 		fprintf(fp, "    (OV_STRING)NULL,\n");
 		fprintf(fp, "    \"%s\",\n", pvar->structurename);
-		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
+		fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
 			ov_codegen_replace(pvar->structurename));
 		break;
 	case OV_VT_CTYPE:
 		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
 		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
+		fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
 		break;
 	default:
 		if (pvar->veclen == 0) {
@@ -1555,14 +1555,14 @@ void ov_codegen_printmemberdefobj(
 		else {
 			fprintf(fp, "    (OV_STRING)NULL,\n");
 			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+			fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(%s),\n", pvar->veclen,
 				ov_codegen_getvartypetext(pvar->vartype));
 		}
 		break;
 	}
 	fprintf(fp, "    offsetof(OV_STRUCT_%s_%s, v_%s),\n", plib->identifier,
 		pstruct->identifier, pvar->identifier);
-	fprintf(fp, "    %lu,\n", pvar->flags);
+	fprintf(fp, "    %" OV_PRINT_UINT ",\n", pvar->flags);
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(pvar->tech_unit));
 	fprintf(fp, "    %s,\n", ov_codegen_getstringtext(pvar->comment));
 	fprintf(fp, "    NULL,\n");
@@ -1584,7 +1584,7 @@ void ov_codegen_iterate_strings(
 ) {
 	while (pval) {
 		if (pval->value.vartype == OV_VT_STRING) {
-			fprintf(fp, "char OV_INITSTRING_DEF_%s_%s_%s_%lu[] = %s;\n", plib->identifier,
+			fprintf(fp, "char OV_INITSTRING_DEF_%s_%s_%s_%" OV_PRINT_UINT "[] = %s;\n", plib->identifier,
 				pclass->identifier, pvar->identifier, *num, pval->value.valueunion.val_string);
 			pval->num = *num;
 			(*num)++;
@@ -1628,7 +1628,7 @@ void ov_codegen_iterate_vectors(
 
 	while (pval) {
 		if (pval->pvectorelem) {
-			fprintf(fp, "%s OV_INITVECTOR_DEF_%s_%s_%s_%lu [] = {\n", ov_codegen_getvartypetext(pval->value.vartype) ,plib->identifier,
+			fprintf(fp, "%s OV_INITVECTOR_DEF_%s_%s_%s_%" OV_PRINT_UINT " [] = {\n", ov_codegen_getvartypetext(pval->value.vartype) ,plib->identifier,
 				pclass->identifier, pvar->identifier, *num);
 			pval->num = *num;
 			(*num)++;
@@ -1683,7 +1683,7 @@ void ov_codegen_iterate_structs (
 
 	while (pval) {
 		if (pval->pstructelem) {
-			fprintf(fp, "OV_STRUCT_%s_%s OV_INITSTRUCT_DEF_%s_%s_%s_%lu\n", pstruct->libname, pstruct->identifier,
+			fprintf(fp, "OV_STRUCT_%s_%s OV_INITSTRUCT_DEF_%s_%s_%s_%" OV_PRINT_UINT "\n", pstruct->libname, pstruct->identifier,
 				plib->identifier, pclass->identifier, pvar->identifier, *num);
 			pval->num = *num;
 			(*num)++;
@@ -1698,8 +1698,8 @@ void ov_codegen_iterate_structs (
 							ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pvec->value, 0, fp);
 					}
 					else 	{
-							fprintf(fp, "    { %lu , ", pstr->value.valueunion.val_generic_vec.veclen);
-							fprintf(fp, "OV_INITVECTOR_DEF_%s_%s_%s_%lu }", plib->identifier, pclass->identifier, pvar->identifier, pstr->num);
+							fprintf(fp, "    { %" OV_PRINT_UINT " , ", pstr->value.valueunion.val_generic_vec.veclen);
+							fprintf(fp, "OV_INITVECTOR_DEF_%s_%s_%s_%" OV_PRINT_UINT " }", plib->identifier, pclass->identifier, pvar->identifier, pstr->num);
 						}
 				     }
 				else ov_codegen_printinitvalueelemdefobj(plib, pclass, pvar, &pstr->value, 0, fp);
@@ -1751,26 +1751,26 @@ void ov_codegen_printvardefobj(
 	FILE				*fp
 ) {
 	if(pvar->pnext) {
-		fprintf(fp, "    &OV_VARIABLE_DEF_%s_%s[%lu],\n", plib->identifier,
+		fprintf(fp, "    &OV_VARIABLE_DEF_%s_%s[%" OV_PRINT_UINT "],\n", plib->identifier,
 			pclass->identifier, i);
 	} else {
 		fprintf(fp, "    (OV_VARIABLE_DEF*)0,\n");
 	}
 	fprintf(fp ,"    \"%s\",\n", pvar->identifier);
-	fprintf(fp ,"    %lu,\n", pvar->veclen);
+	fprintf(fp ,"    %" OV_PRINT_UINT ",\n", pvar->veclen);
 	fprintf(fp ,"    %d,\n", pvar->varprops);
 	fprintf(fp ,"    %d,\n", pvar->vartype);
 	switch(pvar->vartype) {
 	case OV_VT_STRUCT:
 		fprintf(fp, "    (OV_STRING)NULL,\n");
 		fprintf(fp, "    \"%s\",\n", pvar->structurename);
-		fprintf(fp, "    %lu*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
+		fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(OV_STRUCT_%s),\n", pvar->veclen,
 			ov_codegen_replace(pvar->structurename));
 		break;
 	case OV_VT_CTYPE:
 		fprintf(fp, "    \"%s\",\n", pvar->ctypename);
 		fprintf(fp, "    (OV_STRING)NULL,\n");
-		fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
+		fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(%s),\n", pvar->veclen, pvar->ctypename);
 		break;
 	default:
 		if (pvar->veclen == 0) {
@@ -1782,7 +1782,7 @@ void ov_codegen_printvardefobj(
 		else {
 			fprintf(fp, "    (OV_STRING)NULL,\n");
 			fprintf(fp, "    (OV_STRING)NULL,\n");
-			fprintf(fp, "    %lu*sizeof(%s),\n", pvar->veclen,
+			fprintf(fp, "    %" OV_PRINT_UINT "*sizeof(%s),\n", pvar->veclen,
 				ov_codegen_getvartypetext(pvar->vartype));
 		}
 		break;
@@ -1796,7 +1796,7 @@ void ov_codegen_printvardefobj(
 		fprintf(fp ,"    offsetof(OV_INST_%s_%s, v_%s),\n", plib->identifier,
 			pclass->identifier, pvar->identifier);
 	}
-	fprintf(fp, "    %lu,\n", pvar->flags);
+	fprintf(fp, "    %" OV_PRINT_UINT ",\n", pvar->flags);
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->tech_unit));
 	fprintf(fp ,"    %s,\n", ov_codegen_getstringtext(pvar->comment));
 	if(pvar->varprops & OV_VP_GETACCESSOR) {
@@ -1826,14 +1826,14 @@ void ov_codegen_printpartdefobj(
 	FILE				*fp
 ) {
 	if(ppart->pnext) {
-		fprintf(fp, "    &OV_PART_DEF_%s_%s[%lu],\n", plib->identifier,
+		fprintf(fp, "    &OV_PART_DEF_%s_%s[%" OV_PRINT_UINT "],\n", plib->identifier,
 			pclass->identifier, i);
 	} else {
 		fprintf(fp, "    (OV_PART_DEF*)0,\n");
 	}
 	fprintf(fp ,"    \"%s\",\n", ppart->identifier);
 	fprintf(fp ,"    \"%s\",\n", ppart->partclassname);
-	fprintf(fp ,"     %lu,\n", ppart->flags);
+	fprintf(fp ,"     %" OV_PRINT_UINT ",\n", ppart->flags);
 	fprintf(fp ,"    offsetof(OV_INST_%s_%s, p_%s)\n", plib->identifier,
 		pclass->identifier, ppart->identifier);
 }
@@ -1851,7 +1851,7 @@ void ov_codegen_printopdefobj(
 	FILE					*fp
 ) {
 	if(pop->pnext) {
-		fprintf(fp, "    &OV_OPERATION_DEF_%s_%s[%lu],\n", plib->identifier,
+		fprintf(fp, "    &OV_OPERATION_DEF_%s_%s[%" OV_PRINT_UINT "],\n", plib->identifier,
 			pclass->identifier, i);
 	} else {
 		fprintf(fp, "    (OV_OPERATION_DEF*)0,\n");
