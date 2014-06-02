@@ -90,7 +90,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "database_started",		NULL,	ov_vendortree_getdatabasestarted, NULL },
 		{ "database_used",			"Byte",	ov_vendortree_getdatabaseused, NULL },
 		{ "name", 					NULL,	ov_vendortree_getname, NULL },
-		{ "ks_version",				NULL,	ov_vendortree_getksversion, ov_vendortree_setksversion },
+		{ "ks_version",				NULL,	ov_vendortree_getksversion, NULL },
 		{ "libov_version",			NULL,	ov_vendortree_getlibovversion, NULL },
 		{ "semantic_flags",			NULL,	ov_vendortree_getsemanticflags, NULL },
 		{ "server_description",		NULL,	ov_vendortree_getserverdescription, NULL },
