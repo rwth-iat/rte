@@ -792,7 +792,7 @@ int fb_builder_createsourcefiles(
     					} else {
     					    /* Static vector */
     						if (pvar->veclen > 1) {
-    							fprintf(fp,"    *pveclen = %lu;\n",pvar->veclen);
+    							fprintf(fp,"    *pveclen = %" OV_PRINT_UINT ";\n",pvar->veclen);
     							fprintf(fp,"    return pobj->v_%s;\n",pvar->identifier);
     							fprintf(fp,"}\n\n");
     							

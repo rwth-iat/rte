@@ -1023,7 +1023,7 @@ int yyerror(char *msg)
 		}
 	}
 	
-	fprintf(stderr, "%s:%ld: %s", filename, current_line, msg);
+	fprintf(stderr, "%s:%" OV_PRINT_INT ": %s", filename, current_line, msg);
 #if OV_SYSTEM_LINUX
 	if(current_line == 1 && strcmp(msg,"syntax error")==0){
 		fprintf(stderr, ". It might help to convert line endings to UNIX format");

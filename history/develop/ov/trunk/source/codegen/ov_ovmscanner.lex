@@ -220,7 +220,7 @@ CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT
 
 	memset(&tm, 0, sizeof(tm));
 	usecs = 0;
-	sscanf(yytext, "%d/%d/%d %d:%d:%d.%lu", &tm.tm_year, &tm.tm_mon,
+	sscanf(yytext, "%d/%d/%d %d:%d:%d.%" OV_PRINT_UINT, &tm.tm_year, &tm.tm_mon,
 		&tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
 	tm.tm_year -= 1900;
 	tm.tm_mon--;
@@ -334,7 +334,7 @@ CPP_DIRECTIVE		\#{SPACE}{DIGIT}+{SPACE}\"[^ \t\n]+\"({SPACE}{DIGIT}+)?{SPACE_OPT
 		OV_UINT 	line = 0;
 		OV_UINT 	flag = 0;
 		cpp_used = TRUE;
-		sscanf(yytext, "#%ld%s%ld", &line, fname, &flag);
+		sscanf(yytext, "#%" OV_PRINT_UINT "%s%" OV_PRINT_UINT, &line, fname, &flag);
 		switch(flag) {
 			case 1:
 				if(include_stack_ptr >= MAX_INCLUDE_DEPTH) {
