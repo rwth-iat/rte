@@ -30,7 +30,7 @@
 # Use this on System V.
 #CPPFLAGS = -DUSG
 
-CFLAGS = -Wall -O2 -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0
+CFLAGS = -Wall -O2 -DML_SYSTEM_UNIX -DDBG_TO_STDERR=0 -fPIC
 
 
 CC = gcc

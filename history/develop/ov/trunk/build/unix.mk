@@ -72,7 +72,7 @@ CC			= gcc
 #!warning! always compile libov with -O0, otherwise there are problem with the database on ARM
 # -fvisibility=hidden gets unix inline with the windows linking http://gcc.gnu.org/wiki/Visibility
 # -Wno-attributes hide warnings for OV structs
-CC_FLAGS		= -g -Wall -O0 -shared -std=c99 -fno-strict-aliasing -fvisibility=hidden -Winit-self -Wno-attributes
+CC_FLAGS		= -g -Wall -O0 -shared -std=c99 -fno-strict-aliasing -fvisibility=hidden -Winit-self -Wno-attributes -fPIC
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
 LINK			= $(CC)
