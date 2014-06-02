@@ -1200,16 +1200,17 @@ OV_DLLFNCEXPORT void ov_database_free(
 ) {
 #ifdef OV_VALGRIND
 	if(pdb && ptr != 0 && ov_path_getobjectpointer("/acplt/malloc", 2)==NULL){
-		if(!((unsigned int long)ptr >= (unsigned int long)pdb->baseaddr && (unsigned int long)ptr <= (unsigned int long)pdb->baseaddr+(unsigned int long)pdb->size)){
+		if(!((uintptr_t)ptr >= (uintptr_t)pdb->baseaddr && (uintptr_t)ptr <= (uintptr_t)pdb->baseaddr+(uintptr_t)pdb->size)){
 			printf("free missed database, install a breakpoint here\n");
 		}
 	}
-    if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
+	if (ov_path_getobjectpointer("/acplt/malloc", 2)) {
 		if(ptr != 0 && pdb && ptr >= pdb->baseaddr && ptr <= pdb->baseaddr+pdb->size){
-			return ml_free(ptr);
+			ml_free(ptr);
 		}else{
-			return free(ptr);
+			free(ptr);
 		}
+		return;
 	}
 #endif
 	if(pdb) {
