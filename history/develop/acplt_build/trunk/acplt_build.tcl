@@ -1,6 +1,6 @@
 
 # ACPLT Build Script
-# (c) 2011 Chair of Process Control Engineering, RWTH Aachen University
+# (c) 2014 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 # Author: Constantin Wagner <c.wagner@plt.rwth-aachen.de>
@@ -8,8 +8,8 @@
 #
 # Usage: tclsh acplt_build.tcl (release) (compileonly) (trunk)
 set release 0
-set checkout 0 
-set compileonly 0 
+set checkout 0
+set compileonly 0
 set libsuffix 0
 set exesuffix 0
 set bleedingedge 0
@@ -246,8 +246,7 @@ proc get_revision {} {
 
 
 # Checkout a CVS module
-
-proc checkout {prefix module {dirname ""} {notrunk ""}} {
+proc checkout_dir {prefix module {dirname ""} {notrunk ""}} {
 	print_msg "Checking out $module"
 	if {$dirname == ""} then { set dirname $module }
 	#execute cvs checkout -P -d $dirname $module
@@ -300,16 +299,16 @@ proc checkout_acplt {} {
 	global release
 	global date
 	cd $builddir
-	checkout archive libml
+	checkout_dir archive libml
 	#for source release - checkout all
 	#if { $os == "nt" } then { 
-	checkout archive oncrpc
+	checkout_dir archive oncrpc
 	#}
 	checkout archive acplt base
 	cd $builddir/base
 	#checkout libmpm
-	checkout archive fbs_dienste "" notrunk
-	checkout develop ov
+	checkout_dir archive fbs_dienste "" notrunk
+	checkout_dir develop ov
 
 	#get the number of the current release - $date is global
 	cd $basedir
@@ -318,7 +317,7 @@ proc checkout_acplt {} {
  }
 
 # Build in a directory
-proc build {package args} {
+proc build_package {package args} {
 	global ov_debug
 	print_msg "Building $package"
 	
@@ -371,7 +370,7 @@ proc build_acplt {} {
 	global basedir
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
-	build libml make -C $builddir/libml -f $makefile
+	build_package libml make -C $builddir/libml -f $makefile
 	if { $os == "nt" } then { 
 		cd $builddir/oncrpc
 		execute make.bat
@@ -382,29 +381,29 @@ proc build_acplt {} {
 	if { $os == "nt" } then {
 		#enabling plt and ks just for fb_dbcommands
 		cd $builddir/base/plt/build/ntvc
-		build plt nmake /f $makefile
+		build_package plt nmake /f $makefile
 		cd $builddir/base/ks/build/ntvc
-		build ks nmake /f $makefile
+		build_package ks nmake /f $makefile
 		cd $builddir/base/ov/build/ntvc
-		build ov make -f $makefile -k
+		build_package ov make -f $makefile -k
 		cd $builddir/base/fb_dbcommands/build/ntvc
-		build fb_dbcommands make -f $makefile -k
+		build_package fb_dbcommands make -f $makefile -k
 		cd $basedir
 	} else {
 		#enabling plt and ks just for fb_dbcommands
-		build plt make -C $builddir/base/plt/build/$os
-		build ks make -C $builddir/base/ks/build/$os
-		build ov make -C $builddir/base/ov/build/$os
-		build fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
+		build_package plt make -C $builddir/base/plt/build/$os
+		build_package ks make -C $builddir/base/ks/build/$os
+		build_package ov make -C $builddir/base/ov/build/$os
+		build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
    }
    #if { $os == "nt" } then {
-   #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
+   #	build_package acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
    #} else {
-   #	build acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
+   #	build_package acplt_makmak $make -C $builddir/base/acplt_makmak/build/linux
    #}
 }
 
-proc install {dir} {
+proc install_dir {dir} {
 	global builddir
 	global os
 	print_msg "Installing from $dir"
@@ -427,12 +426,12 @@ proc install {dir} {
 
 proc install_acplt { target } {
 	global builddir
-	install $builddir/oncrpc/bin
-	install $builddir/base/plt/build/$target
-	install $builddir/base/ks/build/$target
-	install $builddir/base/ov/build/$target
-	#install $builddir/base/acplt_makmak/build/$target
-	#install solely fb_dbcommands executable
+	install_dir $builddir/oncrpc/bin
+	install_dir $builddir/base/plt/build/$target
+	install_dir $builddir/base/ks/build/$target
+	install_dir $builddir/base/ov/build/$target
+	#install_dir $builddir/base/acplt_makmak/build/$target
+	#install_dir solely fb_dbcommands executable
 	if { $target == "linux" } then {
 		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
 	} else {
@@ -440,45 +439,45 @@ proc install_acplt { target } {
 	}
 }
 
-proc makmak {library opts} {
-	global builddir
-	global basedir
-	global os
-	set makmak $builddir/bin/ov_makmak
-	cd $builddir/user/$library/build/$os
-	eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
-	cd $basedir
-}
+#proc makmak {library opts} {
+#	global builddir
+#	global basedir
+#	global os
+#	set makmak $builddir/bin/ov_makmak
+#	cd $builddir/user/$library/build/$os
+#	eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
+#	cd $basedir
+#}
 
-proc build_lib {libname deps patch baselibs} {
-	global builddir
-	global os
-	file mkdir $builddir/user/$libname/build/$os
-	set depopts ""
-	foreach dep $deps { append depopts "-d $dep" }
-	makmak $libname $depopts
-	if $patch then {
-	# Temporary solution for ov_library_open problem
-	execute patch $builddir/user/fb/build/generic.mk library-open.patch
-	}
-	if { $os == "nt" } then { 
-		set makefile "msvc.mk"
-	set lib $libname.dll
-	} else {
-		set makefile "Makefile"
-	set lib $libname.so
-	}
-	if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
-	eval [concat "build $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
-	file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
-}
+#proc build_lib {libname deps patch baselibs} {
+#	global builddir
+#	global os
+#	file mkdir $builddir/user/$libname/build/$os
+#	set depopts ""
+#	foreach dep $deps { append depopts "-d $dep" }
+#	makmak $libname $depopts
+#	if $patch then {
+#	# Temporary solution for ov_library_open problem
+#	execute patch $builddir/user/fb/build/generic.mk library-open.patch
+#	}
+#	if { $os == "nt" } then { 
+#		set makefile "msvc.mk"
+#	set lib $libname.dll
+#	} else {
+#		set makefile "Makefile"
+#	set lib $libname.so
+#	}
+#	if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
+#	eval [concat "build_package $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
+#	file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
+#}
 
-proc dbutil {args} {
-	global releasedir
-	global os
-	set dbutil $releasedir/bin/ov_dbutil
-	eval "execute $dbutil $args"
-}
+#proc dbutil {args} {
+#	global releasedir
+#	global os
+#	set dbutil $releasedir/bin/ov_dbutil
+#	eval "execute $dbutil $args"
+#}
 
 #proc start_server {} {
 #	global releasedir
@@ -501,9 +500,13 @@ proc release_lib_better {libname option} {
 	global releasedir
 	global os
 	global make
+	global compileonly
+	
 	cd $releasedir/dev/
-	file delete -force $releasedir/dev/$libname/
-	checkout_better $libname
+	if { $compileonly != 1 } then {
+		file delete -force $releasedir/dev/$libname/
+		checkout_better $libname
+	}
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
 	set libnamepraefix [lindex $temp end-1]
@@ -516,18 +519,18 @@ proc release_lib_better {libname option} {
 	print_msg "$libnametemp"
 	#lib contains the list of the libs to build
 	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
-	#correct the paths... lifing libraries up fomr the "core"	dir
+	#correct the paths... lifing libraries up from the "core" dir
 	foreach lib $libs {
 		#set libname $lib
 		if { [file exists $releasedir/dev/$libnametemp/$lib] && $lib != "ov" } {
-			
 			file copy -force $releasedir/dev/$libnametemp/$lib $releasedir/dev/$lib
 			file delete -force $releasedir/dev/$libnametemp/$lib
 		}
 	}
 
-	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp 
-	#print_msg "BÄÄÄHM"
+	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } {
+		file delete -force $releasedir/dev/$libnametemp
+		#print_msg "BÄÄÄHM"
 	}
 	
 	set not_yet_build $libs
@@ -545,7 +548,7 @@ proc release_lib_better {libname option} {
 			if { $option == "all" } then {
 				print_msg "Note: no debug symbols will be created"
 			}
-			set success [build $libname $make $option]
+			set success [build_package $libname $make $option]
 			
 			if { $success == 0 } {
 				#iterate once more
@@ -559,7 +562,7 @@ proc release_lib_better {libname option} {
 				#deploying
 				print_msg "Deploying $libname"
 				if {$option == "debug"} {
-					#OLD CODE follows - we did not release source than				
+					#OLD CODE follows - we did not release source than
 					#file delete -force $releasedir/dev/$libname.build/
 					#file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
 					#file delete -force $releasedir/dev/$libname/
@@ -578,7 +581,7 @@ proc release_lib_better {libname option} {
 					#NEW CODE: release everything: just make sure to clean up .svn information
 					remove_svn_dirs "$releasedir/dev/$libname"
 				} else {
-					#No need to anything here - dev will be deleted entierly by the runtime release
+					#No need to anything here - dev will be deleted entirely by the runtime release
 				}
 			} else {
 				print_msg "$libname may have unmet dependencies, retrying next iteration"
@@ -600,7 +603,7 @@ proc release_lib_better {libname option} {
 	#	if { $option == "all" } then {
 	#		print_msg "Note: no debug symbols will be created"
 	#	}
-	#	build $libname $make $option
+	#	build_package $libname $make $option
 	#	print_msg "Deploying $libname"
 	#	file delete -force $releasedir/dev/$libname.build/
 	#	file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
@@ -714,33 +717,33 @@ proc create_release {} {
 }
 
 #switch ov file structure
-proc separate {} {
- global included_libs
- global releasedir
- global builddir
- global addon_libs
- global libsuffix
- global	exesuffix
- global flag
- global os
- 
- set libs [glob -types d -tails -nocomplain -directory $releasedir/dev "*"]
- 
- #move system libs
-#print_msg "$libs" 
- foreach x $libs {
- set temp [split $x "/"]
-	set x [lindex $temp end]
-	if { [file exists $releasedir/dev/$x] } then {
-		file copy $releasedir/dev/$x  $releasedir/system/sysdevbase/$x 
-		file delete -force $releasedir/dev/$x 
+proc separate_dev {} {
+	global included_libs
+	global releasedir
+	global builddir
+	global addon_libs
+	global libsuffix
+	global	exesuffix
+	global flag
+	global os
+	
+	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev "*"]
+	
+	#move system libs
+	#print_msg "$libs" 
+	foreach x $libs {
+		set temp [split $x "/"]
+		set x [lindex $temp end]
+		if { [file exists $releasedir/dev/$x] } then {
+			file copy $releasedir/dev/$x  $releasedir/system/sysdevbase/$x 
+			file delete -force $releasedir/dev/$x 
+		}
+		if { [file exists $releasedir/system/addonlibs/${x}$libsuffix] } then {
+			file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/syslibs/${x}$libsuffix 
+			file delete -force $releasedir/system/addonlibs/${x}$libsuffix
+		}
 	}
-	if { [file exists $releasedir/system/addonlibs/${x}$libsuffix] } then {
-		file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/syslibs/${x}$libsuffix 
-		file delete -force $releasedir/system/addonlibs/${x}$libsuffix
-	}
- }
-if { [file exists $releasedir/system/sysbin/tmanager.exe] } then {
+	if { [file exists $releasedir/system/sysbin/tmanager.exe] } then {
 		file delete -force $releasedir/system/sysbin/tmanager.exe 
 	}
 	cd $releasedir
@@ -861,14 +864,14 @@ if {$release == 1} {
 		file delete -force acplt-source
 	}
 	
-	#cheking out a fresh copy
+	#checking out a fresh copy
 	create_dirs
 	checkout_acplt
 
 
 	file mkdir $builddir/syslibs
 	cd $builddir/syslibs
-		foreach x $included_libs {
+	foreach x $included_libs {
 		checkout_better $x
 	}
 
@@ -934,7 +937,7 @@ foreach x $included_libs {
 	release_lib_better $x debug
 }
 #move included_libs to system
-separate
+separate_dev
 foreach x $addon_libs {
 	release_lib_better $x debug
 }
@@ -975,7 +978,7 @@ if {$release == 1} {
 	foreach x $included_libs {
 		release_lib_better $x all
 	}
-	separate
+	separate_dev
 	foreach x $addon_libs {
 		release_lib_better $x all
 	}
@@ -1005,8 +1008,8 @@ if {$release == 1} {
 	set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 
 	foreach x $stripfiles {
-	  # execute  "strip --strip-debug" $x
-	  execute  "strip" "-g" "-S" "-d" $x
+		# execute  "strip --strip-debug" $x
+		execute  "strip" "-g" "-S" "-d" $x
 	}
 	
 	#restore tclsh.exe so it is not stripped
