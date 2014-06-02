@@ -279,11 +279,11 @@ proc checkout_better {module {notrunk ""}}  {
 
 proc checkout_lib {x} {
 	if { [string equal $x ksbase] } {
-			checkout develop/ks/trunk/ks_revised $x $x notrunk
+		checkout_dir develop/ks/trunk/ks_revised $x $x notrunk
 	} elseif { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
-			checkout develop/ks/trunk $x $x notrunk
+		checkout_dir develop/ks/trunk $x $x notrunk
 	} else {
-			checkout develop $x
+		checkout_dir develop $x
 	}
 }
 
@@ -304,7 +304,7 @@ proc checkout_acplt {} {
 	#if { $os == "nt" } then { 
 	checkout_dir archive oncrpc
 	#}
-	checkout archive acplt base
+	checkout_dir archive acplt base
 	cd $builddir/base
 	#checkout libmpm
 	checkout_dir archive fbs_dienste "" notrunk
@@ -495,7 +495,6 @@ proc install_acplt { target } {
 #	execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
 #}
 
-
 proc release_lib_better {libname option} {
 	global releasedir
 	global os
@@ -636,7 +635,6 @@ proc release_lib_better {libname option} {
 	#}
 	#if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
 }	
-
 
 proc create_release {} {
 	global os
