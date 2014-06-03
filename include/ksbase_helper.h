@@ -84,6 +84,20 @@ typedef OV_STATE KS_STATE;
 #define KS_ST_QUESTIONABLE  OV_ST_QUESTIONABLE /* information is questionable */
 #define KS_ST_GOOD          OV_ST_GOOD         /* information is good         */
 
+
+#else
+//these new defines are not available on old compile environments as the ks.h separation was at the same time
+#ifdef PRId32
+	#define	OV_PRINT_INT	PRId32		/* integer value */
+	#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
+#else
+	#define	OV_PRINT_INT	"i"		/* integer value */
+	#define	OV_PRINT_UINT	"lu"		/* unsigned integer value */
+#endif
+#define	OV_PRINT_SINGLE	"f"	/* single precision floating value */
+#define	OV_PRINT_DOUBLE	"lf"	/* double precision floating value */
+#define	OV_PRINT_STRING	"s"	/* string value */
+
 #endif
 
 //association of ClientHandler
