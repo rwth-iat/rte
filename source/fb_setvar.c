@@ -5247,7 +5247,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
     OV_BOOL                     *changed
 ) {
 	OV_STRING           *pval;
-    OV_UINT             i,veclen;
+    OV_UINT             i,veclen = 0;
     OV_RESULT           res;
 	OV_UINT     ksTyp;
 
