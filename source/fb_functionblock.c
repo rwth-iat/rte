@@ -232,14 +232,14 @@ OV_DLLFNCEXPORT void fb_functionblock_execute(
 		return;
 	}
 
-    /* Logging */
-    FbSvcLog_incrIndent();
-    sprintf(help, "executing (method counter %lu)", pfb->v_methcount);
-    FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, help);
+	/* Logging */
+	FbSvcLog_incrIndent();
+	sprintf(help, "executing (method counter %" OV_PRINT_UINT ")", pfb->v_methcount);
+	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, help);
 
 	/* trigger input get connections */
-    fb_functionblock_triggerInpGetConnections(pfb);
-    
+	fb_functionblock_triggerInpGetConnections(pfb);
+
 	/* test if we need to calculate new outputs */
 	if(pfb->v_iexreq || pfb->v_eexreq) {
 		

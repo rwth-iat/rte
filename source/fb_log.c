@@ -43,6 +43,7 @@
 #include "fb.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_memstack.h"
+#include "libov/ov_ov.h"
 #include "fb_log.h"
 
 /*

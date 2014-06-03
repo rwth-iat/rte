@@ -46,6 +46,7 @@
 #include "libov/ov_path.h"
 #include "libov/ov_variable.h"
 #include "fb.h"
+#include "fb_namedef.h"
 
 #include <limits.h>
 #include <float.h>
@@ -143,7 +144,7 @@ void fb_time2ascii(const OV_TIME *ptim, char *out) {
     if(!t) {
         strcpy(out, "1970-01-01 00:00:00.000");
     } else {
-        sprintf(out, "%4d-%02d-%02d %02d:%02d:%02d.%06ld",
+        sprintf(out, "%4d-%02d-%02d %02d:%02d:%02d.%06" OV_PRINT_UINT,
                 t->tm_year+1900, t->tm_mon+1, t->tm_mday, t->tm_hour, t->tm_min,
                 t->tm_sec, ptim->usecs);
     }
@@ -222,7 +223,7 @@ OV_RESULT fb_ascii2timespan(const OV_STRING timeStr, OV_TIME_SPAN* ptime) {
         ph++;
         mul = -1;
     }
-	anz = sscanf(ph, "%d:%d:%d.%lu", &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
+	anz = sscanf(ph, "%d:%d:%d.%" OV_PRINT_INT, &tm.tm_hour, &tm.tm_min, &tm.tm_sec, &usecs);
 	if(anz >= 3) {
         ptime->secs = mul * (tm.tm_hour*60*60 + tm.tm_min*60 + tm.tm_sec);
         ptime->usecs = mul * usecs;
@@ -251,7 +252,7 @@ void fb_timespan2ascii(const OV_TIME_SPAN* pts, OV_STRING out) {
             ts.usecs *= -1;
         }
     }
-    sprintf(out, "%s%ld.%06ld", vorz, ts.secs, ts.usecs);
+    sprintf(out, "%s%" OV_PRINT_INT ".%06" OV_PRINT_INT, vorz, ts.secs, ts.usecs);
 }
 
 
@@ -2041,16 +2042,16 @@ OV_RESULT fb_set_scalar_string_varvalue(
             }
             break;
         case OV_VT_INT:
-            sprintf(val, "%ld", pvarcurrprops->value.valueunion.val_int);
+            sprintf(val, "%" OV_PRINT_INT, pvarcurrprops->value.valueunion.val_int);
             break;
         case OV_VT_UINT:
-            sprintf(val, "%lu", pvarcurrprops->value.valueunion.val_uint);
+            sprintf(val, "%" OV_PRINT_UINT, pvarcurrprops->value.valueunion.val_uint);
             break;
         case OV_VT_SINGLE:
-            sprintf(val, "%f", pvarcurrprops->value.valueunion.val_single);
+            sprintf(val, "%" OV_PRINT_SINGLE, pvarcurrprops->value.valueunion.val_single);
             break;
         case OV_VT_DOUBLE:
-            sprintf(val, "%f", pvarcurrprops->value.valueunion.val_double);
+            sprintf(val, "%" OV_PRINT_DOUBLE, pvarcurrprops->value.valueunion.val_double);
             break;
         case OV_VT_TIME: {
                 fb_time2ascii(&(pvarcurrprops->value.valueunion.val_time), val);
@@ -2083,25 +2084,25 @@ OV_RESULT fb_set_scalar_string_varvalue(
             break;
         case OV_VT_INT_VEC: {
                 if(pvarcurrprops->value.valueunion.val_int_vec.veclen > 0) {
-                    sprintf(val, "%ld", ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[0] );
+                    sprintf(val, "%" OV_PRINT_INT, ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[0] );
                 }
             }
             break;
         case OV_VT_UINT_VEC: {
                 if(pvarcurrprops->value.valueunion.val_uint_vec.veclen > 0) {
-                    sprintf(val, "%lu", ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[0] );
+                    sprintf(val, "%" OV_PRINT_UINT, ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[0] );
                 }
             }
             break;
         case OV_VT_SINGLE_VEC: {
                 if(pvarcurrprops->value.valueunion.val_single_vec.veclen > 0) {
-                    sprintf(val, "%f", ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[0] );
+                    sprintf(val, "%" OV_PRINT_SINGLE, ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[0] );
                 }
             }
             break;
         case OV_VT_DOUBLE_VEC: {
                 if(pvarcurrprops->value.valueunion.val_double_vec.veclen > 0) {
-                    sprintf(val, "%f", ((OV_DOUBLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[0] );
+                    sprintf(val, "%" OV_PRINT_DOUBLE, ((OV_DOUBLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[0] );
                 }
             }
             break;
@@ -2184,7 +2185,7 @@ fprintf(stderr, "ANY: BOOL_VAL %d != %d\n",pany->value.valueunion.val_bool , pva
         case OV_VT_INT:
             if(	pany->value.valueunion.val_int != pvarcurrprops->value.valueunion.val_int) {
 #if SETVAR_DEBUG
-fprintf(stderr, "ANY: INT_VAL %ld != %ld\n",pany->value.valueunion.val_int , pvarcurrprops->value.valueunion.val_int);
+fprintf(stderr, "ANY: INT_VAL %" OV_PRINT_INT " != %" OV_PRINT_INT "\n",pany->value.valueunion.val_int , pvarcurrprops->value.valueunion.val_int);
 #endif
                 *changed = TRUE;
     	        return ov_object_setvar(pobj, pelem, pvarcurrprops);
@@ -5306,7 +5307,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%ld", pvarcurrprops->value.valueunion.val_int);
+                sprintf(pval[0], "%" OV_PRINT_INT, pvarcurrprops->value.valueunion.val_int);
             }
             break;
         case OV_VT_UINT: {
@@ -5320,7 +5321,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%lu", pvarcurrprops->value.valueunion.val_uint);
+                sprintf(pval[0], "%" OV_PRINT_UINT, pvarcurrprops->value.valueunion.val_uint);
             }
             break;
         case OV_VT_SINGLE: {
@@ -5334,7 +5335,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%f", pvarcurrprops->value.valueunion.val_single);
+                sprintf(pval[0], "%" OV_PRINT_SINGLE, pvarcurrprops->value.valueunion.val_single);
             }
             break;
         case OV_VT_DOUBLE: {
@@ -5348,7 +5349,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%f", pvarcurrprops->value.valueunion.val_double);
+                sprintf(pval[0], "%" OV_PRINT_DOUBLE, pvarcurrprops->value.valueunion.val_double);
             }
             break;
         case OV_VT_TIME: {
@@ -5466,7 +5467,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                             fb_free_string_struct(pval, veclen);
                             return OV_ERR_DBOUTOFMEMORY;
                         }
-                        sprintf(pval[i] , "%ld", ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[i]);
+                        sprintf(pval[i] , "%" OV_PRINT_INT, ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[i]);
                     }
                 }
             }
@@ -5487,7 +5488,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                             fb_free_string_struct(pval, veclen);
                             return OV_ERR_DBOUTOFMEMORY;
                         }
-                        sprintf(pval[i] , "%lu", ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[i]);
+                        sprintf(pval[i] , "%" OV_PRINT_UINT, ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[i]);
                     }
                 }
             }
@@ -5508,7 +5509,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                             fb_free_string_struct(pval, veclen);
                             return OV_ERR_DBOUTOFMEMORY;
                         }
-                        sprintf(pval[i] , "%f", ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[i]);
+                        sprintf(pval[i] , "%" OV_PRINT_SINGLE, ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[i]);
                     }
                 }
             }
@@ -5529,7 +5530,7 @@ OV_RESULT fb_set_dynvec_string_varvalue(
                             fb_free_string_struct(pval, veclen);
                             return OV_ERR_DBOUTOFMEMORY;
                         }
-                        sprintf(pval[i] , "%f", ((OV_DOUBLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[i]);
+                        sprintf(pval[i] , "%" OV_PRINT_DOUBLE, ((OV_DOUBLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[i]);
                     }
                 }
             }
@@ -7927,7 +7928,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%ld", pvarcurrprops->value.valueunion.val_int);
+                sprintf(pval[0], "%" OV_PRINT_INT, pvarcurrprops->value.valueunion.val_int);
             }
             break;
         case OV_VT_UINT: {
@@ -7936,7 +7937,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%lu", pvarcurrprops->value.valueunion.val_uint);
+                sprintf(pval[0], "%" OV_PRINT_UINT, pvarcurrprops->value.valueunion.val_uint);
             }
             break;
         case OV_VT_SINGLE: {
@@ -7945,7 +7946,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%f", pvarcurrprops->value.valueunion.val_single);
+                sprintf(pval[0], "%" OV_PRINT_SINGLE, pvarcurrprops->value.valueunion.val_single);
             }
             break;
         case OV_VT_DOUBLE: {
@@ -7954,7 +7955,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                     fb_free_string_struct(pval, veclen);
                     return OV_ERR_DBOUTOFMEMORY;
                 }            
-                sprintf(pval[0], "%f", pvarcurrprops->value.valueunion.val_single);
+                sprintf(pval[0], "%" OV_PRINT_DOUBLE, pvarcurrprops->value.valueunion.val_single);
             }
             break;
         case OV_VT_TIME: {
@@ -8038,7 +8039,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                         fb_free_string_struct(pval, veclen);
                         return OV_ERR_DBOUTOFMEMORY;
                     }            
-                    sprintf(pval[i], "%ld", ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[i]);
+                    sprintf(pval[i], "%" OV_PRINT_INT, ((OV_INT*)(pvarcurrprops->value.valueunion.val_int_vec.value))[i]);
                 }
             }
             break;
@@ -8053,7 +8054,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                         fb_free_string_struct(pval, veclen);
                         return OV_ERR_DBOUTOFMEMORY;
                     }            
-                    sprintf(pval[i], "%ld", ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[i]);
+                    sprintf(pval[i], "%" OV_PRINT_UINT, ((OV_UINT*)(pvarcurrprops->value.valueunion.val_uint_vec.value))[i]);
                 }
             }
             break;
@@ -8068,7 +8069,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                         fb_free_string_struct(pval, veclen);
                         return OV_ERR_DBOUTOFMEMORY;
                     }            
-                    sprintf(pval[i], "%f", ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[i]);
+                    sprintf(pval[i], "%" OV_PRINT_SINGLE, ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_single_vec.value))[i]);
                 }
             }
             break;
@@ -8083,7 +8084,7 @@ OV_RESULT fb_set_vec_string_varvalue(
                         fb_free_string_struct(pval, veclen);
                         return OV_ERR_DBOUTOFMEMORY;
                     }            
-                    sprintf(pval[i], "%f", ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[i]);
+                    sprintf(pval[i], "%" OV_PRINT_DOUBLE, ((OV_SINGLE*)(pvarcurrprops->value.valueunion.val_double_vec.value))[i]);
                 }
             }
             break;
