@@ -23,12 +23,13 @@ static void extractBehindSeperator(OV_STRING *string, OV_STRING *end,char sep)
 	OV_STRING secondhalf=NULL;
 	//OV_STRING firsthalf=NULL;
 //
+	OV_UINT len = 0;
 
 	ov_string_setvalue(&old,*string);
 	//ov_logfile_debug("string %s", old);
-	OV_UINT len=ov_string_getlength(old);
+	len=ov_string_getlength(old);
 	for(int i =0;i<len-1;i++){
-			//ov_logfile_debug("string %c", old[len-i]);
+		//ov_logfile_debug("string %c", old[len-i]);
 		if(old[len-i]==sep){
 			//firsthalf=ov_malloc((len-i));
 			//secondhalf=ov_malloc((i+2));
