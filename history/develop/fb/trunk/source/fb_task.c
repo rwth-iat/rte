@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void fb_task_setNextProcTime(
 			if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
 				do {
 					ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
-				} while(ov_time_compare(&ptask->v_proctime, pltc) <= 0);
+				} while(ov_time_compare(&ptask->v_proctime, pltc) == OV_TIMECMP_BEFORE);
 			}
 			break;
 		case FB_AM_UNLINK:

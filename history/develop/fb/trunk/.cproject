@@ -37,10 +37,10 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/ks&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/libov&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../include/plt&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/ks&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/plt&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/nt&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.58217498" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
@@ -109,9 +109,9 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/fb/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/model/&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../base/include/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/include/fb/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/model/&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/base/include/&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.61499652" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="OV_SYSTEM_LINUX=1"/>

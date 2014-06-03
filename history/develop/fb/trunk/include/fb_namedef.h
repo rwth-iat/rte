@@ -97,6 +97,22 @@
 /* Init output value */
 #define IFBS_INIT_VALUE     -989898
 
+
+#ifdef KS_KS_INCLUDED
+//these new defines are not available on old compile environments as the ks.h separation was at the same time
+#ifdef PRId32
+	#define	OV_PRINT_INT	PRId32		/* integer value */
+	#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
+#else
+	#define	OV_PRINT_INT	"i"		/* integer value */
+	#define	OV_PRINT_UINT	"lu"		/* unsigned integer value */
+#endif
+#define	OV_PRINT_SINGLE	"f"	/* single precision floating value */
+#define	OV_PRINT_DOUBLE	"lf"	/* double precision floating value */
+#define	OV_PRINT_STRING	"s"	/* string value */
+
+#endif
+
 #ifndef IFBS_INC_NAMES_ONLY
 #include "fb.h"
 
