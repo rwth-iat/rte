@@ -162,7 +162,7 @@ int ov_string_match_joker(
 *	ov_string_split("a",";",&len) => len is 1
 *	ov_string_split(NULL,";",&len) => len is 0
 *	---------------
-*	OV_STRING *plist;
+*	OV_STRING *plist = NULL;
 *	OV_UINT    i,len;
 *	
 *	plist = ov_string_split("a;b;c",";",&len);
