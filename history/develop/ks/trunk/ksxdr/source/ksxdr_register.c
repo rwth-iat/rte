@@ -50,7 +50,7 @@ OV_RESULT ksxdr_register(const OV_UINT version, const OV_TICKET* pticket, KS_DAT
 			return OV_ERR_OK;
 		}
 
-		sprintf(portstr, "%lu", serverport);
+		sprintf(portstr, "%" OV_PRINT_UINT, serverport);
 		if(Ov_Fail(ksbase_Manager_register(servername, serverversion, KSXDR_IDENTIFIER, portstr, serverttl)))
 		{
 			KS_logfile_info(("ksxdr_register: could not register server %s with port %s at manager. Sending answer: SYSTEM_ERR.", servername, portstr));

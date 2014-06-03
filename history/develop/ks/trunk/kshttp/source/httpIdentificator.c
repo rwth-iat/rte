@@ -76,7 +76,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_createClientHandler (
 	do {
 		pClientHandler = NULL;
 		namecounter++;
-		sprintf(CHNameBuffer, "httpClientHandler%lu", namecounter);
+		sprintf(CHNameBuffer, "httpClientHandler%" OV_PRINT_UINT, namecounter);
 		pClientHandler	= (OV_INSTPTR_kshttp_httpclienthandler) Ov_SearchChild(ov_containment, Ov_PtrUpCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 

@@ -8,7 +8,7 @@ typedef OV_DLLFNCEXPORT OV_BOOL KSBASE_FNC_CALCEXEC (
 	OV_INSTPTR_ksbase_ComTask	this
 );
 
-//needs to be implemted by inherrited classes
+//needs to be implemented by inherited classes
 typedef OV_DLLFNCEXPORT void KSBASE_FNC_TYPEMETHOD (
 	OV_INSTPTR_ksbase_ComTask	this
 );

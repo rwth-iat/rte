@@ -167,10 +167,10 @@ OV_DLLFNCEXPORT OV_ACCESS ksbase_ComTask_getaccess(
 	switch(pelem->elemtype) {
 		case OV_ET_VARIABLE:
 			if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			  if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-				  return OV_AC_NONE;
-			  else
-				  return OV_AC_READWRITE;
+				if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+					return OV_AC_NONE;
+				else
+					return OV_AC_READWRITE;
 			}
 			break;
 		default:

@@ -374,7 +374,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetServer(
 	*port = ov_memstack_alloc(12 * sizeof(char));
 	if(!(*port))
 		return OV_ERR_HEAPOUTOFMEMORY;
-	sprintf(*port, "%lu", xdr_port);
+	sprintf(*port, "%" OV_PRINT_UINT, xdr_port);
 
 	/*	Expiration Time	*/
 	fncresult = KS_DATAPACKET_read_xdr_uint(&(thisCl->v_dataReceived), &(expirationTime->secs));

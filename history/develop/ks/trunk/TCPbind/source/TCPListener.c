@@ -245,11 +245,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			if(TCPbind_TCPListener_port_get(thisLi) != -1){
-				snprintf(portbuf, NI_MAXSERV, "%ld", TCPbind_TCPListener_port_get(thisLi));
+				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, TCPbind_TCPListener_port_get(thisLi));
 			}
 			else if(portbuf[0] == '\0')
 			{
-				snprintf(portbuf, NI_MAXSERV, "%ld", 0l);
+				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, 0);
 			}
 			else
 			{
@@ -448,7 +448,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					do {
 						pNewChannel = NULL;
 						namecounter++;
-						sprintf(ChannelNameBuffer, "TCPChannel%lu", namecounter);
+						sprintf(ChannelNameBuffer, "TCPChannel%" OV_PRINT_UINT, namecounter);
 						pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
 					} while (pNewChannel);
 

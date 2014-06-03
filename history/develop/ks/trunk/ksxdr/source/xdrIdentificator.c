@@ -26,7 +26,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
 #include "ksxdr_config.h"
-
+#include "ksbase_helper.h"
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -98,7 +98,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
 	do {
 		pClientHandler = NULL;
 		namecounter++;
-		sprintf(CHNameBuffer, "XDRClientHandler%lu", namecounter);
+		sprintf(CHNameBuffer, "XDRClientHandler%" OV_PRINT_UINT, namecounter);
 		pClientHandler	= (OV_INSTPTR_ksxdr_xdrClientHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 

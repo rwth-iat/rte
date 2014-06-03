@@ -220,7 +220,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 								OptValTemp = ov_memstack_alloc(12);	/*	this way prevent us from NULL-pointer exceptions in ov_string_print	*/
 								if(OptValTemp)
 								{
-									sprintf(OptValTemp, "%ld", port);
+									sprintf(OptValTemp, "%" OV_PRINT_INT, port);
 									ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
 								}
 								else
@@ -241,7 +241,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				else
 				{
 					OptValTemp = ov_memstack_alloc(12);
-					sprintf(OptValTemp, "%ld", port);
+					sprintf(OptValTemp, "%" OV_PRINT_INT, port);
 					ov_string_setvalue(&thisMngCom->v_OwnPort, OptValTemp);
 				}
 				ov_memstack_unlock();
