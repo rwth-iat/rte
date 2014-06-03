@@ -104,9 +104,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	OV_UINT count = 0; // count of end step strings
 	int i = 0; // loop variable
 	int n = 1;
-	OV_STRING *pEndStepList = ov_string_split(value,",",&count);
+	OV_STRING *pEndStepList = NULL;
 	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
 
+	pEndStepList = ov_string_split(value,",",&count);
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//allow old INITIAL_VALUE for loading an backup
 		return OV_ERR_OK;
@@ -127,6 +128,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 			}
 		}
 	}
+	ov_string_freelist(pEndStepList);
 	if(n < count)
 	{
 		pinst->v_error = TRUE;

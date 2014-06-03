@@ -141,7 +141,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
     OV_RESULT    result = OV_ERR_OK;
     OV_UINT stringCount;
     OV_STRING pathToVariable=NULL;
-    OV_STRING *pathToObject;
+    OV_STRING *pathToObject = NULL;
     OV_STRING temp =NULL;
     OV_STRING temp2=NULL;
     OV_STRING temp3=NULL;
@@ -276,7 +276,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 */
     ov_string_setvalue(&temp,NULL);
     ov_string_setvalue(&pathToVariable,NULL);
-    ov_string_setvalue(pathToObject,NULL);
+    ov_string_freelist(pathToObject);
     ov_string_setvalue(&temp2,NULL);
     ov_string_setvalue(&temp3,NULL);
 
