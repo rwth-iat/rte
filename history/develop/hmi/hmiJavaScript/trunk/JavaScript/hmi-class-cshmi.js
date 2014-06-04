@@ -885,7 +885,7 @@ cshmi.prototype = {
 	 * detect all Actions and triggers them
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param CyctimeObject
+	 * @param CyctimeObject object for fetching values as a bunch or null
 	 * @return returnValue returnValue from the last Action
 	 */
 	_interpreteAction: function(VisualObject, ObjectPath, CyctimeObject){
@@ -949,11 +949,12 @@ cshmi.prototype = {
 	 * get a Value from multiple Sources
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
-	 * @param callerObserver Object which hold info for the callback
-	 * @param CyctimeObject
+	 * @param callerObserver Object which hold info for the callback or null
+	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param forceNetworkrequest if true a value is requested from the network even if the object is not visible right now
 	 * @return {bool} false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
-	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject){
+	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject, forceNetworkrequest){
 		var ParameterName = "";
 		var ParameterValue = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -1000,19 +1001,21 @@ cshmi.prototype = {
 			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 		}
 		
-		var iterationObject = VisualObject;
 		var preventNetworkRequest = false;
-		do{
-			//skip eventhandling if the object is not visible and the initstage is active
-			if(iterationObject.getAttribute("display") === "none" && this.initStage === false){
-				preventNetworkRequest = true;
-				
-				//doku unsichtbare objekte koennen nicht per ks getriggert sichtbar werden
-				
-				break;
-			}
-		}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
-		iterationObject = null;
+		if(forceNetworkrequest !== true){
+			var iterationObject = VisualObject;
+			do{
+				//skip eventhandling if the object is not visible and the initstage is active
+				if(iterationObject.getAttribute("display") === "none" && this.initStage === false){
+					preventNetworkRequest = true;
+					
+					//doku unsichtbare objekte koennen nicht per ks getriggert sichtbar werden
+					
+					break;
+				}
+			}while( (iterationObject = iterationObject.parentNode) && iterationObject !== null && iterationObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);
+			iterationObject = null;
+		}
 		
 		if(this.initStage === true){
 			//force sync request in the init stage. The order of actions have to be fixed in the loading
@@ -1237,7 +1240,7 @@ cshmi.prototype = {
 						this.ResourceList.Actions["tempPath"] = new Object();
 						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
 						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
-						var defaultValue = this._getValue(VisualObject, "tempPath");
+						var defaultValue = this._getValue(VisualObject, "tempPath", null, null, true);
 						if (defaultValue !== false && defaultValue !== null){
 							input = window.prompt(textinputHint, defaultValue);
 						}else{
@@ -1440,7 +1443,7 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
-	 * @param CyctimeObject
+	 * @param CyctimeObject object for fetching values as a bunch or null
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject){
@@ -2136,8 +2139,8 @@ cshmi.prototype = {
 	 */
 	_interpreteRenameObject: function(VisualObject, ObjectPath){
 		//via getValue-part of RenameObject object
-		var OldName = this._getValue(VisualObject, ObjectPath+".OldName");
-		var NewName = this._getValue(VisualObject, ObjectPath+".NewName");
+		var OldName = this._getValue(VisualObject, ObjectPath+".OldName", null, null, true);
+		var NewName = this._getValue(VisualObject, ObjectPath+".NewName", null, null, true);
 		
 		if (OldName === false || NewName === false){
 			//getValue had an error
@@ -2201,10 +2204,10 @@ cshmi.prototype = {
 		var autoRenameIfExists = requestList[ObjectPath]["autoRenameIfExists"];
 		
 		//via getValue-part of CreateObject object
-		var targetName = this._getValue(VisualObject, ObjectPath+".Name");
-		var targetPlace = this._getValue(VisualObject, ObjectPath+".Place");
-		var targetLibrary = this._getValue(VisualObject, ObjectPath+".Library");
-		var targetClass = this._getValue(VisualObject, ObjectPath+".Class");
+		var targetName = this._getValue(VisualObject, ObjectPath+".Name", null, null, true);
+		var targetPlace = this._getValue(VisualObject, ObjectPath+".Place", null, null, true);
+		var targetLibrary = this._getValue(VisualObject, ObjectPath+".Library", null, null, true);
+		var targetClass = this._getValue(VisualObject, ObjectPath+".Class", null, null, true);
 		
 		if (targetName === false || targetPlace === false || targetLibrary === false || targetClass === false){
 			//getValue had an error
@@ -2262,7 +2265,7 @@ cshmi.prototype = {
 	 */
 	_interpreteDeleteObject: function(VisualObject, ObjectPath){
 		//via getValue-part of DeleteObject object
-		var targetName = this._getValue(VisualObject, ObjectPath+".Path");
+		var targetName = this._getValue(VisualObject, ObjectPath+".Path", null, null, true);
 		
 		if (targetName === false){
 			//getValue had an error
@@ -2306,9 +2309,9 @@ cshmi.prototype = {
 	 */
 	_interpreteLinkObjects: function(VisualObject, ObjectPath){
 		//via getValue-part of LinkObjects object
-		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
-		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
+		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, true);
+		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, true);
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association", null, null, true);
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
 			//getValue had an error
@@ -2356,9 +2359,9 @@ cshmi.prototype = {
 	 */
 	_interpreteUnlinkObjects: function(VisualObject, ObjectPath){
 		//via getValue-part of UnlinkObjects object
-		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA");
-		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB");
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association");
+		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, true);
+		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, true);
+		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association", null, null, true);
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
 			//getValue had an error
@@ -2519,6 +2522,7 @@ cshmi.prototype = {
 	 * calls conditions below the if PART and triggers actions in then or else PART
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param CyctimeObject object for fetching values as a bunch or null
 	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
 	_interpreteIfThenElse: function(VisualObject, ObjectPath, CyctimeObject){
@@ -2624,6 +2628,8 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} CompareIteratedChild is the object a CompareIteratedChild?
+	 * @param IfThenElseObserver
+	 * @param CyctimeObject object for fetching values as a bunch or null
 	 * @return {Boolean} true if condition matched, false if not matched, null on error, undefined if callback is in charge
 	 */
 	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver, CyctimeObject){
@@ -2888,7 +2894,7 @@ cshmi.prototype = {
 		
 		var thisObserverEntry = new ObserverEntry("question", ".");
 		checkConfirmObserver.ObserverEntryArray[0] = thisObserverEntry;
-		question = this._getValue(VisualObject, ObjectPath+".question", checkConfirmObserver);
+		question = this._getValue(VisualObject, ObjectPath+".question", checkConfirmObserver, null, null, true);
 		if(question === true){
 			//the setVar is handled via a callback
 		}else{
@@ -4830,7 +4836,7 @@ cshmi.prototype = {
 				}
 			}
 			
-			function myVariable(VisualObject, ObjectPath, varName) {
+			function cshmimodelVariable(VisualObject, ObjectPath, varName) {
 				this.VisualObject = VisualObject;
 				this.ObjectPath = ObjectPath;
 				this.varName = varName;
@@ -4851,7 +4857,7 @@ cshmi.prototype = {
 			cshmimodel.variables = new Object();
 
 			for(var i = 0; i < varNames.length; ++i){
-				cshmimodel.variables[varNames[i]] = new myVariable(VisualObject, ObjectPath, varNames[i]);
+				cshmimodel.variables[varNames[i]] = new cshmimodelVariable(VisualObject, ObjectPath, varNames[i]);
 			}
 			
 			cshmimodel.instantiateTemplate = function(x, y, rotate, hideable, PathOfTemplateDefinition, FBReference, FBVariableReference, ConfigValues) {
