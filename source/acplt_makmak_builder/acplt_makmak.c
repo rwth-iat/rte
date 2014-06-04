@@ -97,6 +97,13 @@ int main(int argc, char **argv) {
 	int 	    addOpenLib = 0;
 	int	    	force = 0;
 
+	//default to the own bitwidth
+#ifdef __x86_64
+	int	    	archBitwidth = 64;
+#else
+	int	    	archBitwidth = 32;
+#endif
+
 #if OV_SYSTEM_NT
 	//char        *ph;
 	char        *builddir = "nt";
@@ -144,6 +151,19 @@ int main(int argc, char **argv) {
 			force = 1;
 		}
 		/*
+		 *	'-m32' option
+		 */
+		else if( !strcmp(argv[i], "-m32")) {
+			archBitwidth = 32;
+		}
+		/*
+		 *	'-m32' option
+		 */
+		else if( !strcmp(argv[i], "-m64")) {
+			archBitwidth = 64;
+		}
+
+		/*
 		 *	display help option
 		 */
 		else if( !strcmp(argv[i], "-h") || !strcmp(argv[i], "--help") ) {
@@ -163,6 +183,7 @@ int main(int argc, char **argv) {
 					"-o   OR --userdefined-open  Add user defined 'openlib' option\n"
 					"-h   OR --help              Display this help message and exit\n"
 					"-f   OR --force             Force overwriting Makefile (project settings), note that .tcl scripts will never be overwritten\n"
+					"-m32 OR -m64                Force bit width of the library (default is the same as this executable)\n"
 					"\n\n");
 			return 1;
 		} else {
@@ -436,7 +457,7 @@ if(new == 0){
 	}
 
 
-	/* Meta makefile contating the configuration and the call of pre and postbuild scripts */
+	/* Meta makefile containing the configuration and the call of pre and postbuild scripts */
 	/* Makefile */
 	sprintf(help, "%s/build/%s/Makefile", libPath, builddir);
 	compatiblePath(help);
@@ -583,7 +604,13 @@ if(new == 0){
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
 	fprintf(fd,"endif\n");
-	fprintf(fd,"CC_FLAGS	= -g -std=c99 -m32 -fPIC -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd,"CC_FLAGS	= -g -std=c99");
+	if(archBitwidth == 32){
+		fprintf(fd," -m32");
+	}else if(archBitwidth == 64){
+		fprintf(fd," -m64");
+	}
+	fprintf(fd," -fPIC -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 #else	
@@ -594,9 +621,21 @@ if(new == 0){
 	fprintf(fd,"COMPILE_C	= $(CC) $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) -c\n");
 
 #if OV_SYSTEM_NT
-	fprintf(fd,"LD		= $(CC) -shared -m32 -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
+	fprintf(fd,"LD		= $(CC) -shared");
+	if(archBitwidth == 32){
+		fprintf(fd," -m32");
+	}else if(archBitwidth == 64){
+		fprintf(fd," -m64");
+	}
+	fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
 #else
-	fprintf(fd,"LD		= $(CC) -shared -m32\n");
+	fprintf(fd,"LD		= $(CC) -shared\n");
+	if(archBitwidth == 32){
+		fprintf(fd," -m32");
+	}else if(archBitwidth == 64){
+		fprintf(fd," -m64");
+	}
+	fprintf(fd,"\n");
 #endif
 
 	fprintf(fd,"AR			= $(GCC_BIN_PREFIX)ar\n");
@@ -613,7 +652,7 @@ if(new == 0){
 	fprintf(fd,"\t-@rm ../../source/sourcetemplates/*$(_C)\n");
 #endif
 	fprintf(fd,"\tacplt_builder -l $(LIBRARY) $(MAKMAKOPTIONS)\n");
-	//todo: refector: join with with [1]
+	//todo: refactor: join with with [1]
 #if OV_SYSTEM_LINUX
 	fprintf(fd,"\tsed -i -e 's/\r//' $(MODEL_DIR)$(LIBRARY).ovm\n");
 #endif
