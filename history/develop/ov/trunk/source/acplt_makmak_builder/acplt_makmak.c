@@ -183,8 +183,14 @@ int main(int argc, char **argv) {
 					"-o   OR --userdefined-open  Add user defined 'openlib' option\n"
 					"-h   OR --help              Display this help message and exit\n"
 					"-f   OR --force             Force overwriting Makefile (project settings), note that .tcl scripts will never be overwritten\n"
-					"-m32 OR -m64                Force bit width of the library (default is the same as this executable)\n"
-					"\n\n");
+					"-m32 OR -m64                Force bit width of the library (default is the same as this executable: ");
+#ifdef __x86_64
+			fprintf(stderr, "64");
+#else
+			fprintf(stderr, "32");
+#endif
+			fprintf(stderr, " detected)\n"
+					"\n");
 			return 1;
 		} else {
 			goto HELP;
@@ -629,7 +635,7 @@ if(new == 0){
 	}
 	fprintf(fd," -Wl,--output-def,%s.def,--out-implib,%s.a\n", libname, libname);
 #else
-	fprintf(fd,"LD		= $(CC) -shared\n");
+	fprintf(fd,"LD		= $(CC) -shared");
 	if(archBitwidth == 32){
 		fprintf(fd," -m32");
 	}else if(archBitwidth == 64){
