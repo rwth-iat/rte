@@ -1289,7 +1289,7 @@ cshmi.prototype = {
 				if(PathArray.length < 2){
 					return "";
 				}
-				return "//"+PathArray[0]+"/"+PathArray[1];
+				return "//"+PathArray[2]+"/"+PathArray[3];
 			}else if (ParameterValue === "fullqualifiedparentname" || ParameterValue === "CSHMIfullqualifiedparentname"){
 				// is //dev:7509/server1/TechUnits
 				var PathArray = FBRef.split("/");
