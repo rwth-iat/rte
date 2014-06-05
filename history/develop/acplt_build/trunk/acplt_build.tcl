@@ -15,6 +15,7 @@ set exesuffix 0
 set bleedingedge 0
 set notbuildedlibs 0
 set ov_debug "OV_DEBUG=1"
+set ov_arch_bitwidth "OV_ARCH_BITWIDTH=32"
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -319,18 +320,20 @@ proc checkout_acplt {} {
 # Build in a directory
 proc build_package {package args} {
 	global ov_debug
+	global ov_arch_bitwidth
 	print_msg "Building $package"
 	
-	return [execute $args $ov_debug]
+	return [execute $args $ov_debug $ov_arch_bitwidth]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
 proc build_cygwin {package args} {
 	global bash
 	global ov_debug
+	global ov_arch_bitwidth
 	print_msg "Building $package"
 	
-	eval [concat "execute" $bash \\\"$args $ov_debug\\\"]
+	eval [concat "execute" $bash \\\"$args $ov_debug $ov_arch_bitwidth\\\"]
 }
 
 proc build_acplt_mingw {} {
@@ -721,7 +724,7 @@ proc separate_dev {} {
 	global builddir
 	global addon_libs
 	global libsuffix
-	global	exesuffix
+	global exesuffix
 	global flag
 	global os
 	
@@ -875,7 +878,7 @@ if {$release == 1} {
 
 	file mkdir $builddir/addonlibs
 	cd $builddir/addonlibs
-		foreach x $addon_libs {
+	foreach x $addon_libs {
 		checkout_better $x
 	}
 
