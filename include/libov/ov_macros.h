@@ -39,6 +39,14 @@
 #include "libov/ov_memstack.h"
 #include "libov/ov_malloc.h"
 
+//for Ov_HeapStrdup
+#ifdef OV_COMPILE_LIBOV
+#if !(OV_SYSTEM_MC164 || OV_SYSTEM_RMOS)
+#include <string.h>
+#endif
+#endif
+
+
 /*
 *	Upcast of an instance pointer of the parent class
 */

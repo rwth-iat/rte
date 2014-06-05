@@ -618,8 +618,9 @@ NOPART:
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Get the identifier of an element
+*	@param pelem Element to check for the name
 */
 OV_DLLFNCEXPORT OV_STRING ov_element_getidentifier(
 	const OV_ELEMENT			*pelem
