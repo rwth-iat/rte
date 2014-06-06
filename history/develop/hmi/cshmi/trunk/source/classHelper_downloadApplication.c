@@ -22,15 +22,22 @@
 
 #include "cshmilib.h"
 
+//#define CSHMI_TIMING_DEBUG 1
+//#define CSHMI_CHILDLIST_DEBUG 1
+
+#ifdef CSHMI_TIMING_DEBUG
+	OV_UINT functioncounter = 0;
+#endif
+
 /**
  * returns a list of ov_containment
  * embedment/OV_PART is known to the visualisation system
- * @param pObj
+ * @param pObj object to start childlist
  * @param strResult Pointer to the result String
  * @param isFirstEntry if FALSE the function adds an "," as a separator
  * @return
  */
-OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV_STRING*strResult, OV_BOOL isFirstEntry){
+static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV_STRING*strResult, OV_BOOL isFirstEntry){
 	OV_INSTPTR_ov_object pChildObj = NULL;
 	OV_INSTPTR_cshmi_IfThenElse pIfThenElse = NULL;
 	OV_INSTPTR_cshmi_ChildrenIterator pChildrenIterator = NULL;
@@ -39,9 +46,35 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 	OV_STRING strChildList = NULL;
 	OV_RESULT result = OV_ERR_OK;
 
+#ifdef CSHMI_TIMING_DEBUG
+	functioncounter++;
+#endif
+
+	/* builds something like this (without the whitespaces):
+	%22/TechUnits/cshmi%22:%7B
+		%22ChildListParameters%22:%5B
+			%22turbo /acplt/cshmi/downloadApplication%22,
+			%22Templates /acplt/ov/domain%22
+		%5D
+	%7D,
+	%22/TechUnits/cshmi/Templates%22:%7B
+		%22ChildListParameters%22:%5B
+		%5D
+	%7D,
+	%22/TechUnits/sheet%22:
+	%7B
+		%22ChildListParameters%22:%5B
+		%5D
+	%7D
+	*/
 	if(!Ov_CanCastTo(ov_domain, pObj)){
 		return OV_ERR_OK;
 	}
+#ifdef CSHMI_CHILDLIST_DEBUG
+	ov_logfile_debug("Childlist: listing children for %s", pObj->v_identifier);
+#endif
+
+
 	if(isFirstEntry == FALSE){
 		ov_string_setvalue(&strChildList, ",%22");
 	}else{
@@ -75,39 +108,49 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
 		return result;
 	}
 
-	//interesting ov_containment childrens are domains or cshmi objects
-	if(		Ov_CanCastTo(cshmi_Object, pObj)
-			|| Ov_GetParent(ov_instantiation, pObj)==pclass_ov_domain
+	//some of our children should list their children, too
+	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChildObj){
+		//interesting children are domains or some cshmi objects
+		if(	Ov_GetParent(ov_instantiation, pChildObj) == pclass_ov_domain
+			|| Ov_CanCastTo(cshmi_ContainerElement, pChildObj)
+			|| Ov_CanCastTo(cshmi_Element, pChildObj)
+			|| Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_SetConcatValue
+			|| Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_SetMathValue
+			|| Ov_CanCastTo(cshmi_Event, pChildObj)
 			){
-		Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChildObj){
 			result = cshmi_downloadApplication_buildChildList(pChildObj, strResult, FALSE);
 			if(Ov_Fail(result)){
 				return result;
 			}
+		}else
+		//some children have no containment but their parts have interesting containments
+		if(Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_IfThenElse){
+			pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pChildObj);
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_if), strResult, FALSE);
+			if(Ov_Fail(result)){
+				return result;
+			}
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_then), strResult, FALSE);
+			if(Ov_Fail(result)){
+				return result;
+			}
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_else), strResult, FALSE);
+			if(Ov_Fail(result)){
+				return result;
+			}
+		}else if(Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_ChildrenIterator){
+			pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pChildObj);
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pChildrenIterator->p_forEachChild), strResult, FALSE);
+			if(Ov_Fail(result)){
+				return result;
+			}
+#ifdef CSHMI_CHILDLIST_DEBUG
+		}else{
+			ov_logfile_debug("Childlist: skipped childrenlist for %s", pChildObj->v_identifier);
+#endif
 		}
 	}
-	//some ov_embedment childrens
-	if(Ov_CanCastTo(cshmi_IfThenElse, pObj)){
-		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
-		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_if), strResult, FALSE);
-		if(Ov_Fail(result)){
-			return result;
-		}
-		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_then), strResult, FALSE);
-		if(Ov_Fail(result)){
-			return result;
-		}
-		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pIfThenElse->p_else), strResult, FALSE);
-		if(Ov_Fail(result)){
-			return result;
-		}
-	}else if(Ov_CanCastTo(cshmi_ChildrenIterator, pObj)){
-		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
-		result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, &pChildrenIterator->p_forEachChild), strResult, FALSE);
-		if(Ov_Fail(result)){
-			return result;
-		}
-	}
+
 	return OV_ERR_OK;
 }
 
@@ -117,7 +160,7 @@ OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object pObj, OV
  * @param strIn
  * @return
  */
-OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
+static OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 	OV_STRING	pcIn;
 	OV_STRING	pcOut = 0;
 	OV_STRING	strOut;
@@ -203,7 +246,7 @@ OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
  * @param pElement
  * @return
  */
-OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
+static OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
 	ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, (pElement->v_visible==TRUE?"TRUE":"FALSE"));
 	ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pElement->v_stroke==NULL?"":pElement->v_stroke);
 	ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pElement->v_fill==NULL?"":pElement->v_fill);
@@ -216,7 +259,7 @@ OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, 
  * @param strResult
  * @return
  */
-OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
+static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_cshmi_InstantiateTemplate pInstantiateTemplate = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
@@ -244,6 +287,29 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
 	OV_BOOL elementIsfirst = TRUE;
 	OV_RESULT result = OV_ERR_OK;
 	ov_string_setvalue(&ResultFormat, "%s");
+
+#ifdef CSHMI_TIMING_DEBUG
+	functioncounter++;
+#endif
+
+	/* builds something like this (without the whitespaces):
+	%22/TechUnits/sheet%22:%7B
+		%22Parameters%22:%7B
+			%22x%22:%220.000000%22,
+			%22y%22:%220.000000%22,
+			%22width%22:%221000.000000%22,
+			%22height%22:%22900.000000%22,
+			%22opacity%22:%221.000000%22,
+			%22rotate%22:%220%22,
+			%22hideable%22:%22FALSE%22,
+			%22visible%22:%22TRUE%22,
+			%22TemplateDefinition%22:%22%22,
+			%22FBReference%22:%22%22,
+			%22FBVariableReference%22:%22%22,
+			%22ConfigValues%22:%22%22
+		%7D
+	%7D
+	 */
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Group, pObj){
@@ -707,7 +773,7 @@ OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
  * @param strResult
  * @return
  */
-OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
+static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_INSTPTR_ov_object pObj = NULL;
 	OV_INSTPTR_cshmi_SetValue pSetValue = NULL;
 	OV_INSTPTR_cshmi_SetConcatValue pSetConcatValue = NULL;
@@ -737,6 +803,28 @@ OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	OV_UINT i = 0;
 	OV_RESULT result = OV_ERR_OK;
 	ov_string_setvalue(&ResultFormat, "%s");
+
+#ifdef CSHMI_TIMING_DEBUG
+	functioncounter++;
+#endif
+	/* builds something like this (without the whitespaces):
+	%22/TechUnits/sheet/onload/set%22:%7B
+		%22translationSource%22:%22%22,
+		%22ParameterName%22:%22elemVar%22,
+		%22ParameterValue%22:%22fill%22,
+		%22translationSource%22:%22%22
+	%7D,
+	%22/TechUnits/sheet/onload/set.value%22:%7B
+		%22ParameterName%22:%22value%22,
+		%22ParameterValue%22:%22red%22%
+	%7D
+	%22/TechUnits/sheet/onload/if.if/conditionA%22:%7B
+		%22Parameters%22:%7B
+			%22comptype%22:%22==%22,
+			%22ignoreError%22:%22FALSE%22
+		%7D
+	%7D
+	*/
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetValue, pObj){
@@ -1373,6 +1461,11 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_UINT lenChildList;
 	OV_RESULT result = OV_ERR_OK;
 
+#ifdef CSHMI_TIMING_DEBUG
+	OV_TIME lasttime;
+	OV_TIME thistime;
+	OV_TIME_SPAN diff;
+#endif
 
 	/**
 	 * Umsetzungstabelle für decodeURI
@@ -1394,6 +1487,12 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	//todo
 	//some static baseKsPath settings
 	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:%5B%5D,%22/TechUnits/cshmi/Templates%22:%5B%5D%7D,");
+	lenBaseKsPath = ov_string_getlength(strBaseKsPath);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+#endif
 
 	//Elements is a list of configured elements
 	ov_string_setvalue(&strElements, "%22Elements%22:%7B");
@@ -1406,6 +1505,16 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	}else{
 		ov_string_append(&strElements, "%7D,");
 	}
+	lenElements = ov_string_getlength(strElements);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Time: %s", ov_time_timetoascii_local(&thistime));
+	ov_logfile_debug("Elements : %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenElements, functioncounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+#endif
 
 	//Actions is a list of events/actions/conditions, set/get stores the result only
 	ov_string_setvalue(&strActions, "%22Actions%22:%7B");
@@ -1420,6 +1529,15 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	}else{
 		ov_string_append(&strActions, "%7D,");
 	}
+	lenActions = ov_string_getlength(strActions);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Actions  : %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenActions, functioncounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+#endif
 
 	//ChildList is a list of ov_containment
 	ov_string_setvalue(&strChildList, "%22ChildList%22:%7B");
@@ -1452,12 +1570,17 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		}
 		ov_string_append(&strChildList, "%7D");
 	}
+	lenChildList = ov_string_getlength(strChildList);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Childlist: %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenChildList, functioncounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+#endif
 
 	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
-	lenBaseKsPath = ov_string_getlength(strBaseKsPath);
-	lenElements = ov_string_getlength(strElements);
-	lenActions = ov_string_getlength(strActions);
-	lenChildList = ov_string_getlength(strChildList);
 	pJSON = (OV_STRING) ov_memstack_alloc(lenBaseKsPath+lenElements+lenActions+lenChildList+7);
 
 	if (!pJSON){
@@ -1488,5 +1611,13 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_string_setvalue(&strActions, NULL);
 	ov_string_setvalue(&strChildList, NULL);
 	ov_string_setvalue(&strElements, NULL);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("strconcat: %s", ov_time_timespantoascii(&diff));
+	ov_time_gettime(&lasttime);
+#endif
+
 	return returnString;
 }
