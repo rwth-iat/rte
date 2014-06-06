@@ -27,6 +27,9 @@
 
 #ifdef CSHMI_TIMING_DEBUG
 	OV_UINT functioncounter = 0;
+	OV_UINT iterationcounter = 0;
+	OV_UINT cntPrepareURIencode = 0;
+	OV_DOUBLE sumTimePrepareURIencode = 0;
 #endif
 
 /**
@@ -165,6 +168,14 @@ static OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 	OV_STRING	pcOut = 0;
 	OV_STRING	strOut;
 
+#ifdef CSHMI_TIMING_DEBUG
+	OV_TIME startTime;
+	OV_TIME endTime;
+	OV_TIME_SPAN runTime;
+	OV_DOUBLE runTimeDouble;
+	ov_time_gettime(&startTime);
+	cntPrepareURIencode++;
+#endif
 	if(!strIn){
 		strOut = (OV_STRING)ov_memstack_alloc(1);
 		strOut = '\0';
@@ -236,6 +247,14 @@ static OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
 		pcOut++;
 	}
 	*pcOut = '\0';		/*append terminating '\0'*/
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&endTime);
+	ov_time_diff(&runTime, &endTime, &startTime);
+	Ov_TimeSpanToDouble(runTime, runTimeDouble);
+	sumTimePrepareURIencode += runTimeDouble;
+#endif
+
 	return strOut;
 }
 
@@ -313,6 +332,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Group, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pGroup = Ov_StaticPtrCast(cshmi_Group, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -384,6 +406,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TemplateDefinition, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pTemplateDefinition = Ov_StaticPtrCast(cshmi_TemplateDefinition, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -413,6 +438,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_InstantiateTemplate, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pInstantiateTemplate = Ov_StaticPtrCast(cshmi_InstantiateTemplate, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -482,6 +510,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Rectangle, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pRectangle = Ov_StaticPtrCast(cshmi_Rectangle, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -516,6 +547,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Circle, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pCircle = Ov_StaticPtrCast(cshmi_Circle, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -549,6 +583,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Text, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pText = Ov_StaticPtrCast(cshmi_Text, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -589,6 +626,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Line, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pLine = Ov_StaticPtrCast(cshmi_Line, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -623,6 +663,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polyline, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pPolyline = Ov_StaticPtrCast(cshmi_Polyline, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -656,6 +699,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polygon, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pPolygon = Ov_StaticPtrCast(cshmi_Polygon, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -689,6 +735,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Path, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pPath = Ov_StaticPtrCast(cshmi_Path, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -722,6 +771,9 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Ellipse, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pEllipse = Ov_StaticPtrCast(cshmi_Ellipse, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -828,6 +880,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetValue, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pSetValue = Ov_StaticPtrCast(cshmi_SetValue, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -898,6 +953,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetConcatValue, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pSetConcatValue = Ov_StaticPtrCast(cshmi_SetConcatValue, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -962,6 +1020,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetMathValue, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pSetMathValue = Ov_StaticPtrCast(cshmi_SetMathValue, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1026,6 +1087,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_GetValue, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pGetValue = Ov_StaticPtrCast(cshmi_GetValue, pObj);
 		if(ov_string_compare(pGetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
@@ -1129,6 +1193,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_ChildrenIterator, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1155,6 +1222,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_IfThenElse, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1181,6 +1251,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Compare, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pCompare = Ov_StaticPtrCast(cshmi_Compare, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1211,6 +1284,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_CompareIteratedChild, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pCompareIteratedChild = Ov_StaticPtrCast(cshmi_CompareIteratedChild, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1243,6 +1319,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TimeEvent, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pTimeEvent = Ov_StaticPtrCast(cshmi_TimeEvent, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1271,6 +1350,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_RoutePolyline, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pRoutePolyline = Ov_StaticPtrCast(cshmi_RoutePolyline, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1300,6 +1382,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TranslationSource, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pTranslationSource = Ov_StaticPtrCast(cshmi_TranslationSource, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1345,6 +1430,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_CreateObject, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pCreateObject = Ov_StaticPtrCast(cshmi_CreateObject, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1374,6 +1462,9 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 
 	elementInstantiated = FALSE;
 	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Vibrate, pObj){
+#ifdef CSHMI_TIMING_DEBUG
+		iterationcounter++;
+#endif
 		elementInstantiated = TRUE;
 		pVibrate = Ov_StaticPtrCast(cshmi_Vibrate, pObj);
 		ov_string_setvalue(&strIterate, "%22");
@@ -1455,16 +1546,22 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_STRING strActions = NULL;
 	OV_STRING strChildList = NULL;
 	OV_STRING pJSON;
-	OV_UINT lenBaseKsPath;
-	OV_UINT lenElements;
-	OV_UINT lenActions;
-	OV_UINT lenChildList;
+	OV_UINT lenBaseKsPath = 0;
+	OV_UINT lenElements = 0;
+	OV_UINT lenActions = 0;
+	OV_UINT lenChildList = 0;
 	OV_RESULT result = OV_ERR_OK;
 
 #ifdef CSHMI_TIMING_DEBUG
+	OV_UINT lenSubChildList = 0;
 	OV_TIME lasttime;
 	OV_TIME thistime;
 	OV_TIME_SPAN diff;
+
+	functioncounter = 0;
+	iterationcounter = 0;
+	cntPrepareURIencode = 0;
+	sumTimePrepareURIencode = 0;
 #endif
 
 	/**
@@ -1491,7 +1588,6 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 #ifdef CSHMI_TIMING_DEBUG
 	ov_time_gettime(&lasttime);
-	functioncounter = 0;
 #endif
 
 	//Elements is a list of configured elements
@@ -1511,9 +1607,10 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	ov_time_gettime(&thistime);
 	ov_time_diff(&diff, &thistime, &lasttime);
 	ov_logfile_debug("Time: %s", ov_time_timetoascii_local(&thistime));
-	ov_logfile_debug("Elements : %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenElements, functioncounter);
+	ov_logfile_debug("Elements    : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenElements, functioncounter, iterationcounter);
 	ov_time_gettime(&lasttime);
 	functioncounter = 0;
+	iterationcounter = 0;
 #endif
 
 	//Actions is a list of events/actions/conditions, set/get stores the result only
@@ -1534,14 +1631,26 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 #ifdef CSHMI_TIMING_DEBUG
 	ov_time_gettime(&thistime);
 	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Actions  : %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenActions, functioncounter);
+	ov_logfile_debug("Actions     : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenActions, functioncounter, iterationcounter);
 	ov_time_gettime(&lasttime);
 	functioncounter = 0;
+	iterationcounter = 0;
 #endif
 
 	//ChildList is a list of ov_containment
 	ov_string_setvalue(&strChildList, "%22ChildList%22:%7B");
 	result = cshmi_downloadApplication_buildChildList(pTUcshmi, &strChildList, TRUE);
+
+#ifdef CSHMI_TIMING_DEBUG
+	lenSubChildList = ov_string_getlength(strChildList);
+
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Childlist CS: %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenSubChildList, functioncounter, iterationcounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+	iterationcounter = 0;
+#endif
 
 	//todo 2mbyte mb scheint für den engineering testcase zu klein. also vergrößern
 	//ändern in memstack, also heap
@@ -1552,32 +1661,33 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		ov_string_setvalue(&strActions, NULL);
 		ov_string_setvalue(&strChildList, NULL);
 		return (OV_STRING) 0;
-	}else{
-		//check for other groups outside of /TechUnits/cshmi
-		Ov_ForEachChildEx(ov_instantiation, pclass_cshmi_Group, pGroup, cshmi_Group){
-			pGroupParent = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pGroup));
-			if(!Ov_CanCastTo(cshmi_Object, pGroupParent) && pGroupParent != pTUcshmi){
-				result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, pGroup), &strChildList, FALSE);
-				if(Ov_Fail(result)){
-					ov_logfile_debug("%d:%s Error building Childlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
-					ov_string_setvalue(&strBaseKsPath, NULL);
-					ov_string_setvalue(&strElements, NULL);
-					ov_string_setvalue(&strActions, NULL);
-					ov_string_setvalue(&strChildList, NULL);
-					return (OV_STRING) 0;
-				}
+	}
+	//check for other groups outside of /TechUnits/cshmi
+	Ov_ForEachChildEx(ov_instantiation, pclass_cshmi_Group, pGroup, cshmi_Group){
+		pGroupParent = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pGroup));
+		if(!Ov_CanCastTo(cshmi_Object, pGroupParent) && pGroupParent != pTUcshmi){
+			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, pGroup), &strChildList, FALSE);
+			if(Ov_Fail(result)){
+				ov_logfile_debug("%d:%s Error building Childlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+				ov_string_setvalue(&strBaseKsPath, NULL);
+				ov_string_setvalue(&strElements, NULL);
+				ov_string_setvalue(&strActions, NULL);
+				ov_string_setvalue(&strChildList, NULL);
+				return (OV_STRING) 0;
 			}
 		}
-		ov_string_append(&strChildList, "%7D");
 	}
+	ov_string_append(&strChildList, "%7D");
+
 	lenChildList = ov_string_getlength(strChildList);
 
 #ifdef CSHMI_TIMING_DEBUG
 	ov_time_gettime(&thistime);
 	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Childlist: %s (%u Bytes, %u function calls)", ov_time_timespantoascii(&diff), lenChildList, functioncounter);
+	ov_logfile_debug("Childlist TU: %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenChildList-lenSubChildList, functioncounter, iterationcounter);
 	ov_time_gettime(&lasttime);
 	functioncounter = 0;
+	iterationcounter = 0;
 #endif
 
 	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
@@ -1590,7 +1700,6 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		ov_string_setvalue(&strChildList, NULL);
 		ov_string_setvalue(&strElements, NULL);
 		return (OV_STRING) 0;
-
 	}
 
 	returnString = pJSON;
@@ -1615,7 +1724,12 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 #ifdef CSHMI_TIMING_DEBUG
 	ov_time_gettime(&thistime);
 	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("strconcat: %s", ov_time_timespantoascii(&diff));
+	ov_logfile_debug("strconcat   : %s", ov_time_timespantoascii(&diff));
+	Ov_DoubleToTimeSpan(sumTimePrepareURIencode, diff);
+	ov_logfile_debug("prepURIencd : %s", ov_time_timespantoascii(&diff));
+	ov_logfile_debug("count prepareURIencode: %u", cntPrepareURIencode);
+	cntPrepareURIencode = 0;
+
 	ov_time_gettime(&lasttime);
 #endif
 
