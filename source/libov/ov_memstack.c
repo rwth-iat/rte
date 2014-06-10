@@ -63,12 +63,16 @@ static OV_MEMSTACK	*pmemstack = &memstack;
 static OV_BYTE		*pmem = (OV_BYTE*)&memstack.memory;
 static OV_INT		refcount = 0;
 
+
 /*	----------------------------------------------------------------------	*/
 
 /*
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
+/* TODO add with new libov release! and remove old function name
+ *	OV_DLLFNCEXPORT void _F_ov_memstack_lock(void) {
+ */ 
 OV_DLLFNCEXPORT void ov_memstack_lock(void) {
 	/*
 	*	initialize if necessary
@@ -143,6 +147,9 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
+/* TODO add with new libov release!  and remove old function name
+ *	OV_DLLFNCEXPORT void _F_ov_memstack_unlock(void) {
+ */ 
 OV_DLLFNCEXPORT void ov_memstack_unlock(void) {
 	/*
 	*	decrement the reference count
@@ -172,6 +179,9 @@ OV_DLLFNCEXPORT void ov_memstack_unlock(void) {
 		pmemstack = &memstack;
 		pmemstack->memalignunion.pnext = NULL;
 		pmem = (OV_BYTE*)&memstack.memory;
+#if MEMSTACK_LOG
+		printf("memstack freed\n");
+#endif
 	}
 }
 
