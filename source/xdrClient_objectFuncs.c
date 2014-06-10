@@ -158,12 +158,24 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processCreateObject(
 
 	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), result);
 	if(Ov_Fail(fncresult))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 		return fncresult;
+	}
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_CREATEOBJECTITEM_RES), items_length,
+	{
+		fncresult = KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_val, sizeof(OV_CREATEOBJECTITEM_RES), items_length,
 				(xdr_readfncptr) &xdr_read_OV_CREATEOBJECTITEM_RES);
+	}
 	else
-		return OV_ERR_OK;
+	{
+		fncresult = OV_ERR_OK;
+	}
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
+	}
+	return fncresult;
 }
 
 /*******************************************************************************************************************************************************************************
@@ -301,12 +313,24 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processDeleteObject(
 
 	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), result);
 	if(Ov_Fail(fncresult))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 		return fncresult;
+	}
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
+	{
+		fncresult = KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
+	}
 	else
-		return OV_ERR_OK;
+	{
+		fncresult = OV_ERR_OK;
+	}
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
+	}
+	return fncresult;
 }
 
 /*******************************************************************************************************************************************************************************
@@ -444,12 +468,24 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRenameObject(
 
 	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), result);
 	if(Ov_Fail(fncresult))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 		return fncresult;
+	}
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
+	{
+		fncresult = KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
+	}
 	else
-		return OV_ERR_OK;
+	{
+		fncresult = OV_ERR_OK;
+	}
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
+	}
+	return fncresult;
 }
 
 /*******************************************************************************************************************************************************************************
@@ -587,12 +623,24 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processLink(
 
 	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), result);
 	if(Ov_Fail(fncresult))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 		return fncresult;
+	}
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
+	{
+		fncresult = KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
+	}
 	else
-		return OV_ERR_OK;
+	{
+		fncresult = OV_ERR_OK;
+	}
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
+	}
+	return fncresult;
 }
 
 /*******************************************************************************************************************************************************************************
@@ -730,11 +778,22 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnLink(
 
 	fncresult = KS_DATAPACKET_read_xdr_OV_RESULT(&(thisCl->v_dataReceived), result);
 	if(Ov_Fail(fncresult))
+	{
 		return fncresult;
+	}
 	if(Ov_OK(*result))
-		return KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
+	{
+		fncresult = KS_DATAPACKET_read_xdr_array_tomemstack(&(thisCl->v_dataReceived), (void**) items_results, sizeof(OV_RESULT), items_length,
 				(xdr_readfncptr) &KS_DATAPACKET_read_xdr_int);
+	}
 	else
-		return OV_ERR_OK;
+	{
+		fncresult = OV_ERR_OK;
+	}
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	{
+		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
+	}
+	return fncresult;
 }
 
