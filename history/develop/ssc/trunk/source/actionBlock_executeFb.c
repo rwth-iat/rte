@@ -212,7 +212,8 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_executeFb_getaccess(
 		case OV_ET_OBJECT:
 			if(!activeHeader){
 				//skip handling
-			}else if(	activeHeader->v_workingState == WOST_INIT ||
+			}else if(	activeHeader->v_error == TRUE ||
+						activeHeader->v_workingState == WOST_INIT ||
 						activeHeader->v_workingState == WOST_STOP ||
 						activeHeader->v_workingState == WOST_TERMINATE)
 			{
