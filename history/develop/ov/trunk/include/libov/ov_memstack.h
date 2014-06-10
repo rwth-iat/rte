@@ -62,6 +62,51 @@ extern "C" {
 *	Size of a stack memory page
 */
 #define OV_MEMSTACK_SIZE	4096	/* should be a power of two */
+ /* TODO add with new libov release! 
+  *
+  */ 
+///*
+//*	Defines to use the logger if wanted
+//*/
+//#if defined MEMSTACK_LOG && MEMSTACK_LOG != 0
+///*	yes, this variable will cause warnings when memstack.h is included and lock / unlock is not used in that file	*/
+//static OV_INT localRefCount = 0;
+//#if MEMSTACK_LOG >= 2
+///*	high loglevel: log locks and unlocks, print out if refcount is 0	*/
+///*	use do{}while(0) to make the statement one block with the need of a ; at the end	*/
+//#define ov_memstack_lock() 																			\
+//do{																									\
+//	localRefCount++;																				\
+//	printf("memstack_lock: %s line %i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);	\
+//	_F_ov_memstack_lock();																			\
+//}while(0)
+//
+//#define ov_memstack_unlock()																			\
+//do{																										\
+//	localRefCount--;																					\
+//	printf("memstack_unlock: %s line %i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);	\
+//	if(!localRefCount)																					\
+//		printf("localRefCount is 0\n");																	\
+//	_F_ov_memstack_unlock();																			\
+//}while(0)
+//#else
+///*	low loglevel: print out if refcount is 0	*/
+//#define ov_memstack_lock() _F_ov_memstack_lock()
+//#define ov_memstack_unlock()																			\
+//do{																										\
+//	localRefCount--;																					\
+//	if(!localRefCount)																					\
+//		printf("localRefCount is 0: %s line %i\n", __FILE__, __LINE__);									\
+//	_F_ov_memstack_unlock();																			\
+//}while(0)
+//#endif
+///*	no logging	*/
+//#define ov_memstack_lock() _F_ov_memstack_lock()
+//#define ov_memstack_unlock() _F_ov_memstack_unlock()
+//#endif
+/* end of TODO add with new libov release! 
+  *
+  */ 
 
 /*
 *	OV_MEMSTACK:
@@ -81,6 +126,9 @@ typedef struct OV_MEMSTACK OV_MEMSTACK;
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
+/* TODO add with new libov release! and remove old function
+ *	OV_DLLFNCEXPORT void _F_ov_memstack_lock(void);
+ */
 OV_DLLFNCEXPORT void ov_memstack_lock(void);
 
 /*
@@ -94,6 +142,9 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
+/* TODO add with new libov release! and remove old function
+ *	OV_DLLFNCEXPORT void _F_ov_memstack_unlock(void);
+ */
 OV_DLLFNCEXPORT void ov_memstack_unlock(void);
 
 #ifdef __cplusplus
