@@ -325,7 +325,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_HandleData(
 			return result;
 		ksbase_free_KSDATAPACKET(dataReceived);
 	/*
-	 * we need to differentiate if we're doing a regualr request here or if we're getting the port (GETSERVER) for another ks-service
+	 * we need to differentiate if we're doing a regular request here or if we're getting the port (GETSERVER) for another ks-service
 	 */
 		if(((!thisCl->v_serverPort) || !(*thisCl->v_serverPort)) && ((thisCl->v_sentProcID != KS_GETSERVER) && (thisCl->v_sentProcID != KS_REGISTER) && (thisCl->v_sentProcID != KS_UNREGISTER)))
 		{	/*	port unknown and not working on getserver, register or unregister --> we're getting a port for another ks-service --> set state to COMPLETED | WAITINGFORPORT	*/
