@@ -94,7 +94,12 @@ extern "C" {
 //	#elif MEMSTACK_LOG == 1
 		/*	low loglevel: print out if refcount is 0	*/
 /*
-		#define ov_memstack_lock() _F_ov_memstack_lock()
+		#define ov_memstack_lock() 																			\
+		do{																									\
+			localRefCount++;																				\
+			_F_ov_memstack_lock();																			\
+		}while(0)
+
 		#define ov_memstack_unlock()																			\
 		do{																										\
 			localRefCount--;																					\
