@@ -65,10 +65,136 @@
 
 #include "cshmilib.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_TemplateDefinition_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_x_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_x = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_y_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_y = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_xOffset_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_xOffset = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_yOffset_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_yOffset = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_maxTemplatesPerDirection_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_maxTemplatesPerDirection,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_FBReference_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING*  value,
+		const OV_UINT veclen
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return Ov_SetDynamicVectorValue(&pobj->v_FBReference,value,veclen,STRING);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_FBVariableReference_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING*  value,
+		const OV_UINT veclen
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return Ov_SetDynamicVectorValue(&pobj->v_FBVariableReference,value,veclen,STRING);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_ConfigValues_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING*  value,
+		const OV_UINT veclen
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return Ov_SetDynamicVectorValue(&pobj->v_ConfigValues,value,veclen,STRING);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_preventClone_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_preventClone = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_visible_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_visible = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_stroke_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_stroke,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_fill_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_fill,value);
+}
+
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_hideable_set(
+		OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_hideable = value;
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_opacity_set(
 	OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
 	const OV_SINGLE  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	if(value > 1.0){
 		pobj->v_opacity = 1;
 	}else if(value < 0.0){
@@ -83,6 +209,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_InstantiateTemplate_rotate_set(
 	OV_INSTPTR_cshmi_InstantiateTemplate          pobj,
 	const OV_INT  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	pobj->v_rotate = value;
 	while(pobj->v_rotate > 360.0) pobj->v_rotate -= 360.0;
 	while(pobj->v_rotate < 0.0) pobj->v_rotate += 360.0;

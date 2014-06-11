@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,10 +65,40 @@
 
 #include "cshmilib.h"
 
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_x_set(
+		OV_INSTPTR_cshmi_Text          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_x = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_y_set(
+		OV_INSTPTR_cshmi_Text          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_y = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_content_set(
+		OV_INSTPTR_cshmi_Text          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_content,value);
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	if(ov_string_compare(value, "normal") == OV_STRCMP_EQUAL){
 		//fixing common typo
 		return ov_string_setvalue(&pobj->v_fontSize,"medium");
@@ -81,6 +111,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -98,6 +129,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -112,10 +144,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	}
 }
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontFamily_set(
+		OV_INSTPTR_cshmi_Text          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_fontFamily,value);
+}
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -136,6 +177,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -150,6 +192,16 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	}else{
 		return OV_ERR_BADPARAM;
 	}
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Text_trimToLength_set(
+		OV_INSTPTR_cshmi_Text          pobj,
+		const OV_INT  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_trimToLength = value;
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_constructor(

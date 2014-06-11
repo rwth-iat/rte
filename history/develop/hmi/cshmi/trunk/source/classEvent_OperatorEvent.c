@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2011
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -114,6 +114,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_OperatorEvent_type_set(
 	OV_INSTPTR_cshmi_OperatorEvent          pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	return cshmi_OperatorEvent_typeSetAndCheck(pobj, value, FALSE);
 }
 

@@ -69,8 +69,33 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_childValue_set(
 	OV_INSTPTR_cshmi_CompareIteratedChild          pobj,
 	const OV_STRING  value
 ) {
-	//todo force keywords
-	return ov_string_setvalue(&pobj->v_childValue,value);
+	OV_STRING erroroutput;
+	//force our keywords
+	if (	ov_string_compare(value, "OP_NAME") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_TYPE") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_COMMENT") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_ACCESS") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_SEMANTICS") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_CREATIONTIME") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_CLASS") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_CREATIONTIME") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_TECHUNIT") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_ASSOCIDENT") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_ROLEIDENT") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_DEFAULTINTERP") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_SUPPORTEDINTERP") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "OP_TYPEIDENT") == OV_STRCMP_EQUAL
+	){
+		pobj->v_ConfigCache.cacheDirty = TRUE;
+		return ov_string_setvalue(&pobj->v_childValue,value);
+	}else{
+		ov_memstack_lock();
+		ov_string_print(&erroroutput, "object %s had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
+		ov_memstack_unlock();
+		ov_logfile_warning(erroroutput);
+		ov_string_setvalue(&erroroutput, NULL);
+		return OV_ERR_BADPARAM;
+	}
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_comptype_set(
@@ -78,13 +103,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_comptype_set(
 	const OV_STRING  value
 ) {
 	OV_STRING erroroutput;
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//force our keywords
 	if (	ov_string_compare(value, "<") == OV_STRCMP_EQUAL
-		||		ov_string_compare(value, "<=") == OV_STRCMP_EQUAL
-		||		ov_string_compare(value, "==") == OV_STRCMP_EQUAL
-		||		ov_string_compare(value, "!=") == OV_STRCMP_EQUAL
-		||		ov_string_compare(value, ">=") == OV_STRCMP_EQUAL
-		||		ov_string_compare(value, ">") == OV_STRCMP_EQUAL){
+		||	ov_string_compare(value, "<=") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "==") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, "!=") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, ">=") == OV_STRCMP_EQUAL
+		||	ov_string_compare(value, ">") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_comptype,value);
 	}else{
 		ov_memstack_lock();

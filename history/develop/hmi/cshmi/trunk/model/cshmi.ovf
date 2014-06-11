@@ -1,0 +1,9 @@
+#ifndef cshmi_OVF_INCLUDED
+#define cshmi_OVF_INCLUDED
+
+//needs to be implemented by inherrited classes
+typedef OV_STRING CSHMI_FNC_GETCONFIGASJSON (
+	OV_INSTPTR_cshmi_Object	pobj
+);
+
+#endif

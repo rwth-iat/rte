@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -63,7 +63,7 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
-#define cshmi_Object_ERROR 0
+//#define cshmi_Object_ERROR 1
 //#define ZINDEX_DEBUG 1
 
 #include "cshmilib.h"
@@ -196,6 +196,45 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
 	return result;
 }
 
+OV_DLLFNCEXPORT void cshmi_Object_startup(
+	OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pobj);
+
+	/* do what the base class does first */
+	ov_object_startup(pobj);
+
+	//this is a pointer to heap memory, so clean
+	pinst->v_ConfigCache.asJSON = NULL;
+	pinst->v_ConfigCache.cacheDirty = TRUE;
+	pinst->v_ConfigCache.parentObject = NULL;
+
+	return;
+}
+
+OV_DLLFNCEXPORT void cshmi_Object_shutdown(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pobj);
+
+	//this is a pointer to heap memory, so free the memory
+	Ov_HeapFree(pinst->v_ConfigCache.asJSON);
+	pinst->v_ConfigCache.asJSON = NULL;
+	pinst->v_ConfigCache.cacheDirty = TRUE;
+
+	/* set the object's state to "shut down" */
+	ov_object_shutdown(pobj);
+
+	return;
+}
+
+
 /***********************************************************************
 	getAccess
 ***********************************************************************/
@@ -210,9 +249,12 @@ OV_DLLFNCEXPORT OV_ACCESS cshmi_Object_getaccess(
 	switch (pelem->elemtype){
 		case OV_ET_VARIABLE :
 			//prevent "special variables" from being read/write
-			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo))
-			{
-				return OV_AC_READWRITE;
+			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo)){
+				if (pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE || pelem->elemunion.pvar->v_vartype == OV_VT_POINTER){
+					return OV_AC_NONE;
+				}else{
+					return OV_AC_READWRITE;
+				}
 			}
 			break;
 		default:

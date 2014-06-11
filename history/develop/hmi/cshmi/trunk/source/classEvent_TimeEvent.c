@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -69,9 +69,10 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
 	OV_INSTPTR_cshmi_TimeEvent          pobj,
 	const OV_SINGLE  value
 ) {
-	if(value < 0){
+	if (value < 0){
 		return OV_ERR_BADVALUE;
 	}
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	pobj->v_cyctime = value;
 	return OV_ERR_OK;
 }

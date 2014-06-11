@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,3 +64,39 @@
 #endif
 
 #include "cshmilib.h"
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cx_set(
+		OV_INSTPTR_cshmi_Circle          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_cx = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cy_set(
+		OV_INSTPTR_cshmi_Circle          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_cy = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_r_set(
+		OV_INSTPTR_cshmi_Circle          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_r = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_strokeWidth_set(
+		OV_INSTPTR_cshmi_Circle          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_strokeWidth = value;
+	return OV_ERR_OK;
+}

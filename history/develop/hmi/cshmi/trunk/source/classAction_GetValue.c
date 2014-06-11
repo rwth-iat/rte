@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -137,6 +137,64 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 	return OV_ERR_OK;
 }
 
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_ksVar_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_ksVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVar_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_elemVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_globalVar_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_globalVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_persistentGlobalVar_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_persistentGlobalVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBVariableReferenceName_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateFBVariableReferenceName,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateConfigValues_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateConfigValues,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_value_set(
+		OV_INSTPTR_cshmi_GetValue          pobj,
+		const OV_ANY*  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_variable_setanyvalue(&pobj->v_value, value);
+}
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_OperatorInput_set(
 	OV_INSTPTR_cshmi_GetValue          pobj,
 	const OV_STRING  value
@@ -146,11 +204,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_OperatorInput_set(
 		||	ov_string_compare(value, "mousey") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "textinput") == OV_STRCMP_EQUAL
 		||	ov_string_match(value, "textinput:*")){
+		pobj->v_ConfigCache.cacheDirty = TRUE;
 		return ov_string_setvalue(&pobj->v_OperatorInput,value);
 	}
 	ov_logfile_warning("Wrong OperatorInput set on: '%s', requested value was: '%s'. Only mousex, mousey and textinput* is allowed.", pobj->v_identifier, value);
 	return OV_ERR_BADPARAM;
-
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVarPath_set(
@@ -167,6 +225,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBReferenceVariable_set(
 	OV_INSTPTR_cshmi_GetValue          pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	if(ov_string_compare(value, "fullqualifiedparentname") == OV_STRCMP_EQUAL){
 			return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIfullqualifiedparentname");
 	}else if(ov_string_compare(value, "fullqualifiedname") == OV_STRCMP_EQUAL){

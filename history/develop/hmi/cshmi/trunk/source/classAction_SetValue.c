@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,12 +65,90 @@
 
 #include "cshmilib.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_ksVar_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_ksVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_elemVar_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_elemVar,value);
+}
+
 OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_elemVarPath_set(
-	OV_INSTPTR_cshmi_SetConcatValue          pobj,
-	const OV_STRING  value
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
 ) {
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		return ov_string_setvalue(&pobj->v_elemVarPath, NULL);
 	}
 	return OV_ERR_NOTIMPLEMENTED;
 }
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_globalVar_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_globalVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_persistentGlobalVar_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_persistentGlobalVar,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_TemplateFBReferenceVariable_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_TemplateFBVariableReferenceName_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateFBVariableReferenceName,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetConcatValue_TemplateConfigValues_set(
+		OV_INSTPTR_cshmi_SetConcatValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_TemplateConfigValues,value);
+}
+
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_SetValue_translationSource_set(
+		OV_INSTPTR_cshmi_SetValue          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_translationSource,value);
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_TranslationSource_translationMapping_set(
+		OV_INSTPTR_cshmi_TranslationSource          pobj,
+		const OV_STRING*  value,
+		const OV_UINT veclen
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return Ov_SetDynamicVectorValue(&pobj->v_translationMapping,value,veclen,STRING);
+}
+

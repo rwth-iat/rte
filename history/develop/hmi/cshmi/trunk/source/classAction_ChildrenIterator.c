@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -69,8 +69,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ChildrenIterator_ChildrenType_set(
 	OV_INSTPTR_cshmi_ChildrenIterator          pobj,
 	const OV_STRING  value
 ) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
 	//could be OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY
 	//or an variable name, so no check is possible
 	return ov_string_setvalue(&pobj->v_ChildrenType,value);
 }
-

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -91,5 +91,15 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Condition_constructor(
 		ov_logfile_warning("An Condition is not allowed below this parent. Condition: %s, parent: %s", pobj->v_identifier, pParent->v_identifier);
 		return OV_ERR_BADPLACEMENT;
 	}
+	return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Condition_ignoreError_set(
+		OV_INSTPTR_cshmi_Condition          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_ignoreError = value;
 	return OV_ERR_OK;
 }

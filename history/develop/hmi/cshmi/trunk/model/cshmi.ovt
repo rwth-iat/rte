@@ -1,0 +1,14 @@
+#ifndef cshmi_OVT_INCLUDED
+#define cshmi_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+typedef struct{
+	OV_BOOL cacheDirty;
+	OV_STRING asJSON;	//we operate in heap
+	OV_POINTER parentObject;
+} CSHMI_CACHEOBJECT;
+ 
+#endif //cshmi_OVT_INCLUDED
+ 	

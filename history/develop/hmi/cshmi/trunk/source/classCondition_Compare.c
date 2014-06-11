@@ -77,6 +77,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
 		||		ov_string_compare(value, "!=") == OV_STRCMP_EQUAL
 		||		ov_string_compare(value, ">=") == OV_STRCMP_EQUAL
 		||		ov_string_compare(value, ">") == OV_STRCMP_EQUAL){
+		pobj->v_ConfigCache.cacheDirty = TRUE;
 		return ov_string_setvalue(&pobj->v_comptype,value);
 	}else{
 		ov_memstack_lock();

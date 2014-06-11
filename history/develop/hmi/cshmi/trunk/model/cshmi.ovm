@@ -71,22 +71,27 @@ LIBRARY cshmi
 
 	VERSION		= "0.3";
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
-	COPYRIGHT	= "Copyright (C) 2012 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT	= "Copyright (C) 2014 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
 
 	CLASS Object : CLASS ov/domain
 		COMMENT = "base class for CSHMI objects";
 		VARIABLES
 			zindex	: UINT
-			HAS_ACCESSORS
-			IS_DERIVED
-			COMMENT = "z-index of the visuals, sequence-index for actions: 0 is least visible (i.e. bottom) or executed first";
-			baseKsPath : STRING 
-			COMMENT = "base KS path for resolution of relative KS paths, used in References and direct ksVar";
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT = "z-index of the visuals, sequence-index for actions: 0 is least visible (i.e. bottom) or executed first";
+			baseKsPath : STRING
+				COMMENT = "base KS path for resolution of relative KS paths (not starting with /), used in References and direct ksVar";
+			ConfigCache	:	C_TYPE	<CSHMI_CACHEOBJECT>
+				COMMENT	=	"cached information for downloadApplication (Strings in the heap mem)";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			startup						:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown					:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
+			getConfigAsJSON				:	C_FUNCTION	<CSHMI_FNC_GETCONFIGASJSON>;
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -100,70 +105,79 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS Group : CLASS cshmi/ContainerElement
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a grouping of elements";
 		VARIABLES
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the group"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the group"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the group"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the group"
+				INITIALVALUE = 0.0;
 			width : SINGLE
-			HAS_SET_ACCESSOR
-			UNIT = "pixel"
-			COMMENT = "width of the group"
-			INITIALVALUE = 1000.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "width of the group"
+				INITIALVALUE = 1000.0;
 			height : SINGLE
-			HAS_SET_ACCESSOR
-			UNIT = "pixel"
-			COMMENT = "height of the group"
-			INITIALVALUE = 900.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "height of the group"
+				INITIALVALUE = 900.0;
 			opacity : SINGLE
-			HAS_SET_ACCESSOR
-			COMMENT = "opacity of the element ([0.0-1.0])"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				COMMENT = "opacity of the element ([0.0-1.0])"
+				INITIALVALUE = 1.0;
 			rotate : INT
-			HAS_SET_ACCESSOR
-			UNIT = "degree"
-			COMMENT = "rotate the Element"
-			INITIALVALUE = 0;
+				HAS_SET_ACCESSOR
+				UNIT = "degree"
+				COMMENT = "rotate the Element"
+				INITIALVALUE = 0;
 			hideable : BOOL
-			COMMENT = "should this object be hidden if clicked on parent?"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "should this object be hidden if clicked on parent?"
+				INITIALVALUE = FALSE;
 			visible : BOOL
-			COMMENT = "the element is visible"
-			INITIALVALUE = TRUE;
+				HAS_SET_ACCESSOR
+				COMMENT = "the element is visible"
+				INITIALVALUE = TRUE;
 			TemplateDefinition : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
+				HAS_SET_ACCESSOR
+				COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			FBReference[] : STRING
-			COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef";
+				HAS_SET_ACCESSOR
+				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef";
 			FBVariableReference[] : STRING
-			COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
+				HAS_SET_ACCESSOR
+				COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
 			ConfigValues[] : STRING
-			COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
+				HAS_SET_ACCESSOR
+				COMMENT = "Free text value for TemplateDefinition; example 'myText:halloWelt'; multiple key1:value1 possible)";
 		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS TemplateDefinition : CLASS cshmi/ContainerElement
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a referenced group";
 		VARIABLES
 			width : SINGLE
-			HAS_SET_ACCESSOR
-			UNIT = "pixel"
-			COMMENT = "width of the Template"
-			INITIALVALUE = 100.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "width of the Template"
+				INITIALVALUE = 100.0;
 			height : SINGLE
-			HAS_SET_ACCESSOR
-			UNIT = "pixel"
-			COMMENT = "height of the Template"
-			INITIALVALUE = 100.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "height of the Template"
+				INITIALVALUE = 100.0;
 			comment : STRING
-			COMMENT = "describes the use of the Definition (including parameters)";
+				COMMENT = "describes the use of the Definition (including parameters)";
 		END_VARIABLES;
 		OPERATIONS
 			getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;
@@ -171,6 +185,7 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS csContainer : CLASS cshmi/ContainerElement
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "internal class for container elements as parts of ifThenElse";
 	END_CLASS;
@@ -181,45 +196,48 @@ LIBRARY cshmi
 		COMMENT = "base class for graphical elements";
 		VARIABLES
 			visible : BOOL
-			COMMENT = "the element is visible"
-			INITIALVALUE = TRUE;
+				HAS_SET_ACCESSOR
+				COMMENT = "the element is visible"
+				INITIALVALUE = TRUE;
 			stroke : STRING
-			COMMENT = "line stroke color (CSS color name or hex like #000000)"
-			INITIALVALUE = "black";
+				HAS_SET_ACCESSOR
+				COMMENT = "line stroke color (CSS color name or hex like #000000)"
+				INITIALVALUE = "black";
 			fill : STRING
-			COMMENT = "fill color (CSS color name or hex like #000000)"
-			INITIALVALUE = "none";
+				HAS_SET_ACCESSOR
+				COMMENT = "fill color (CSS color name or hex like #000000)"
+				INITIALVALUE = "none";
 			opacity : SINGLE
-			HAS_SET_ACCESSOR
-			COMMENT = "opacity of the element ([0.0-1.0])"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				COMMENT = "opacity of the element ([0.0-1.0])"
+				INITIALVALUE = 1.0;
 			rotate : INT
-			HAS_SET_ACCESSOR
-			UNIT = "degree"
-			COMMENT = "rotate the Element"
-			INITIALVALUE = 0;
+				HAS_SET_ACCESSOR
+				UNIT = "degree"
+				COMMENT = "rotate the Element"
+				INITIALVALUE = 0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 		END_OPERATIONS;
 	END_CLASS;
 	
-	/* no comments to save a little bit space in the database */
+	/* no comments on this transitional object to save a little bit space in the database */
 	CLASS Template : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a transitional dummy object. Will change itself to a group on startup";
 		VARIABLES
-			TemplateDefinition : STRING
-			HAS_SET_ACCESSOR;
+			TemplateDefinition : STRING;
 			x : SINGLE
-			INITIALVALUE = 0.0;
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			INITIALVALUE = 0.0;
+				INITIALVALUE = 0.0;
 			FBReference[] : STRING;
 			FBVariableReference[] : STRING;
 			ConfigValues[] : STRING;
 			hideable : BOOL
-			INITIALVALUE = FALSE;
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		OPERATIONS
 			startup					:	C_FUNCTION	<OV_FNC_STARTUP>;
@@ -227,114 +245,145 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS Line : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a line";
 		VARIABLES
 			x1 : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of starting point"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of starting point"
+				INITIALVALUE = 0.0;
 			y1 : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of starting point"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of starting point"
+				INITIALVALUE = 0.0;
 			x2 : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of ending point"
-			INITIALVALUE = 10.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of ending point"
+				INITIALVALUE = 10.0;
 			y2 : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of ending point"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of ending point"
+				INITIALVALUE = 0.0;
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Rectangle : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a rectangle";
 		VARIABLES
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the rectangle"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the rectangle"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the rectangle"
+				INITIALVALUE = 0.0;
 			width : SINGLE
-			UNIT = "pixel"
-			COMMENT = "width of the rectangle"
-			INITIALVALUE = 100.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "width of the rectangle"
+				INITIALVALUE = 100.0;
 			height : SINGLE
-			UNIT = "pixel"
-			COMMENT = "height of the rectangle"
-			INITIALVALUE = 100.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "height of the rectangle"
+				INITIALVALUE = 100.0;
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Circle : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a circle";
 		VARIABLES
 			cx : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the center of the circle"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the center of the circle"
+				INITIALVALUE = 0.0;
 			cy : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the center of the circle"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the center of the circle"
+				INITIALVALUE = 0.0;
 			r : SINGLE
-			UNIT = "pixel"
-			COMMENT = "radius of the circle"
-			INITIALVALUE = 10.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "radius of the circle"
+				INITIALVALUE = 10.0;
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Ellipse : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "an ellipse";
 		VARIABLES
 			cx : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the center of the ellipse"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the center of the ellipse"
+				INITIALVALUE = 0.0;
 			cy : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the center of the ellipse"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the center of the ellipse"
+				INITIALVALUE = 0.0;
 			rx : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis radius of the ellipse"
-			INITIALVALUE = 5.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis radius of the ellipse"
+				INITIALVALUE = 5.0;
 			ry : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis radius of the ellipse"
-			INITIALVALUE = 10.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis radius of the ellipse"
+				INITIALVALUE = 10.0;
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Path : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a path";
 		VARIABLES
 			d : STRING
-			COMMENT = "definition of the outline of a shape";
+				HAS_SET_ACCESSOR
+				COMMENT = "definition of the outline of a shape";
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
@@ -343,58 +392,68 @@ LIBRARY cshmi
 		COMMENT = "a polyline";
 		VARIABLES
 			points : STRING
-			COMMENT = "points that make up the visual object (alternating x and y position, split with comma and spaces, for example '0,0 10,10 20,20')";
+				HAS_SET_ACCESSOR
+				COMMENT = "points that make up the visual object (alternating x and y position, split with comma and spaces, for example '0,0 10,10 20,20')";
 			strokeWidth : SINGLE
-			COMMENT = "stroke width of the line"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Polygon : CLASS cshmi/Polyline
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a polygon";
 	END_CLASS;
 
 	CLASS Text : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "text";
 		VARIABLES
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the text starting position"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the text starting position"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the text starting position"
-			INITIALVALUE = 10.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the text starting position"
+				INITIALVALUE = 10.0;
 			content : STRING
-			COMMENT = "text content";
+				HAS_SET_ACCESSOR
+				COMMENT = "text content";
 			fontSize : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "font size (keyword or 12px)"
-			INITIALVALUE = "medium";
+				HAS_SET_ACCESSOR
+				COMMENT = "font size (keyword or 12px)"
+				INITIALVALUE = "medium";
 			fontStyle : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "font style ('normal','italic','oblique')"
-			INITIALVALUE = "normal";
+				HAS_SET_ACCESSOR
+				COMMENT = "font style ('normal','italic','oblique')"
+				INITIALVALUE = "normal";
 			fontWeight : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "font weight (keyword: 'normal','bold','lighter','bolder')"
-			INITIALVALUE = "normal";
+				HAS_SET_ACCESSOR
+				COMMENT = "font weight (keyword: 'normal','bold','lighter','bolder')"
+				INITIALVALUE = "normal";
 			fontFamily : STRING
-			COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')"
-			INITIALVALUE = "'Times New Roman',Times,serif";
+				HAS_SET_ACCESSOR
+				COMMENT = "font family (family name or keyword: 'serif','sans-serif','monospace')"
+				INITIALVALUE = "'Times New Roman',Times,serif";
 			horAlignment : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')"
-			INITIALVALUE = "start";
+				HAS_SET_ACCESSOR
+				COMMENT = "text anchor (horizontal alignment; keyword: 'start','middle','end')"
+				INITIALVALUE = "start";
 			verAlignment : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "dominant baseline (vertical alignment; keyword: 'auto','middle','hanging')"
-			INITIALVALUE = "auto";
+				HAS_SET_ACCESSOR
+				COMMENT = "dominant baseline (vertical alignment; keyword: 'auto','middle','hanging')"
+				INITIALVALUE = "auto";
 			trimToLength : INT
-			COMMENT = "Trim text (0 deactivate, negative values trims left)"
-			INITIALVALUE = 0;
+				HAS_SET_ACCESSOR
+				COMMENT = "Trim text (0 deactivate, negative values trims left)"
+				INITIALVALUE = 0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -402,29 +461,30 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS Image : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "an image, bitmap or vector";
 		VARIABLES
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the image"
-			INITIALVALUE = 0.0;
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the image"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the image"
-			INITIALVALUE = 0.0;
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the image"
+				INITIALVALUE = 0.0;
 			width : SINGLE
-			UNIT = "pixel"
-			COMMENT = "width of the image (aspect ratio is not preserved!)"
-			INITIALVALUE = 100.0;
+				UNIT = "pixel"
+				COMMENT = "width of the image (aspect ratio is not preserved!)"
+				INITIALVALUE = 100.0;
 			height : SINGLE
-			UNIT = "pixel"
-			COMMENT = "height of the image (aspect ratio is not preserved!)"
-			INITIALVALUE = 100.0;
+				UNIT = "pixel"
+				COMMENT = "height of the image (aspect ratio is not preserved!)"
+				INITIALVALUE = 100.0;
 			SVGcontent : STRING
-			COMMENT = "direct SVG content; example: <rect width='10' height='20' /> or <svg:rect width='10' height='20' />";
+				COMMENT = "direct SVG content; example: <rect width='10' height='20' /> or <svg:rect width='10' height='20' />";
 			Bitmapcontent : STRING
-			COMMENT = "Bitmap content as DataURI (base64 encoded); example 'data:image/png;base64,iVBORw0...'";
+				COMMENT = "Bitmap content as DataURI (base64 encoded); example 'data:image/png;base64,iVBORw0...'";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -432,36 +492,37 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS Blackbox : CLASS cshmi/Element
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "allows HTML content and/or native JS code";
 		VARIABLES
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the Blackbox"
-			INITIALVALUE = 0.0;
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the Blackbox"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the Blackbox"
-			INITIALVALUE = 0.0;
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the Blackbox"
+				INITIALVALUE = 0.0;
 			width : SINGLE
-			UNIT = "pixel"
-			COMMENT = "width of the Blackbox"
-			INITIALVALUE = 100.0;
+				UNIT = "pixel"
+				COMMENT = "width of the Blackbox"
+				INITIALVALUE = 100.0;
 			height : SINGLE
-			UNIT = "pixel"
-			COMMENT = "height of the Blackbox"
-			INITIALVALUE = 100.0;
+				UNIT = "pixel"
+				COMMENT = "height of the Blackbox"
+				INITIALVALUE = 100.0;
 			sourceOfLibrary[] : STRING
-			COMMENT = "exact link of the libraries";
+				COMMENT = "exact link of the libraries";
 			HTMLcontent : STRING
-			COMMENT = "insert your HTML-Code here"
-			INITIALVALUE = "";
+				COMMENT = "insert your HTML-Code here"
+				INITIALVALUE = "";
 			jsOnload : STRING
-			COMMENT = "insert your JavaScript-Code here; interpretation while loading"
-			INITIALVALUE = "";
+				COMMENT = "insert your JavaScript-Code here; interpretation while loading"
+				INITIALVALUE = "";
 			jsOnglobalvarchanged : STRING
-			COMMENT = "insert your JavaScript-Code here; interpretation while changing globalvar"
-			INITIALVALUE = "";
+				COMMENT = "insert your JavaScript-Code here; interpretation while changing globalvar"
+				INITIALVALUE = "";
 		END_VARIABLES;
 	END_CLASS;
 
@@ -475,31 +536,40 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS GetValue : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "get a value, either constant or from a variable";
 		VARIABLES
 			ksVar : STRING
-			COMMENT = "path of a remote KS variable";
+				HAS_SET_ACCESSOR
+				COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'previousTemplateCount')";
+				HAS_SET_ACCESSOR
+				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'previousTemplateCount')";
 			elemVarPath : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
+				HAS_SET_ACCESSOR
+				COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
 			globalVar : STRING
-			COMMENT = "name of the global variable (is resetted on reloading)";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the global variable (is resetted on reloading)";
 			persistentGlobalVar : STRING
-			COMMENT = "name of the persistent global variable (survives reloading)";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the persistent global variable (survives reloading)";
 			OperatorInput : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
+				HAS_SET_ACCESSOR
+				COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
 			TemplateFBReferenceVariable : STRING HAS_SET_ACCESSOR
-			COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'CSHMIfullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'CSHMIfullqualifiedparentname', 'CSHMIabsolutepathname' and 'CSHMIabsoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'CSHMIfullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'CSHMIfullqualifiedparentname', 'CSHMIabsolutepathname' and 'CSHMIabsoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
 			TemplateFBVariableReferenceName : STRING
-			COMMENT = "named referenced variable, see Template; example: 'myVar')";
+				HAS_SET_ACCESSOR
+				COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
-			COMMENT = "name of the key of a ConfigValue";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the key of a ConfigValue";
 			value : ANY
-			COMMENT = "value";
+				HAS_SET_ACCESSOR
+				COMMENT = "value";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -511,36 +581,46 @@ LIBRARY cshmi
 		COMMENT = "set a variable with a concatenated value";
 		VARIABLES
 			ksVar : STRING
-			COMMENT = "path of a remote KS variable";
+				HAS_SET_ACCESSOR
+				COMMENT = "path of a remote KS variable";
 			elemVar : STRING
-			COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex')";
+				HAS_SET_ACCESSOR
+				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex')";
 			elemVarPath : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
+				HAS_SET_ACCESSOR
+				COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
 			globalVar : STRING
-			COMMENT = "name of the global variable (is resetted on reloading)";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the global variable (is resetted on reloading)";
 			persistentGlobalVar : STRING
-			COMMENT = "name of the persistent global variable (survives reloading)";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the persistent global variable (survives reloading)";
 			TemplateFBReferenceVariable : STRING
-			COMMENT = "name of a variable of a referenced FB object; example 'IN1' or setting a new FBRef with 'fullqualifiedname' for the full name of the FBref";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of a variable of a referenced FB object; example 'IN1' or setting a new FBRef with 'fullqualifiedname' for the full name of the FBref";
 			TemplateFBVariableReferenceName : STRING
-			COMMENT = "named referenced variable, see Template; example: 'myVar')";
+				HAS_SET_ACCESSOR
+				COMMENT = "named referenced variable, see Template; example: 'myVar')";
 			TemplateConfigValues : STRING
-			COMMENT = "name of the key of a ConfigValue";
+				HAS_SET_ACCESSOR
+				COMMENT = "name of the key of a ConfigValue";
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS SetMathValue : CLASS cshmi/SetConcatValue
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a calculated value, add getValues with correct prefixed name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue";
 	END_CLASS;
 
 	CLASS SetValue : CLASS cshmi/SetConcatValue
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a (perhaps translated) value";
 		VARIABLES
 			translationSource : STRING
-			COMMENT = "Path to translation source";
+				HAS_SET_ACCESSOR
+				COMMENT = "Path to translation source";
 		END_VARIABLES;
 		PARTS
 			value : CLASS cshmi/GetValue;
@@ -548,21 +628,25 @@ LIBRARY cshmi
 	END_CLASS;
 
 	CLASS TranslationSource : CLASS cshmi/Object
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a translated value";
 		VARIABLES
 			translationMapping[] : STRING
-			COMMENT = "OPEN:OFFEN and other things, each in one row";
+				HAS_SET_ACCESSOR
+				COMMENT = "OPEN:OFFEN and other things, each in one row";
 		END_VARIABLES;
 	END_CLASS;
 
 	CLASS IfThenElse : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a conditional action (if <conditions> then <actions> else <actions>)";
 		VARIABLES
 			anycond : BOOL
-			COMMENT = "then-actions are executed if any condition is true (logical or)"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "then-actions are executed if any condition is true (logical or)"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		PARTS
 			if : CLASS cshmi/csContainer;
@@ -572,12 +656,13 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS ChildrenIterator : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "get children and handle them";
 		VARIABLES
 			ChildrenType : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or name (association or vector)";
+				HAS_SET_ACCESSOR
+				COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or name (association or vector)";
 		END_VARIABLES;
 		PARTS
 			forEachChild : CLASS cshmi/csContainer;
@@ -585,63 +670,79 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS InstantiateTemplate : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "instantiate Template from TemplateDefinition";
 		VARIABLES
 			TemplateDefinition : STRING
-			COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
+				HAS_SET_ACCESSOR
+				COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			x : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis coordinate of the first Template"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis coordinate of the first Template"
+				INITIALVALUE = 0.0;
 			y : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis coordinate of the first Template"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis coordinate of the first Template"
+				INITIALVALUE = 0.0;
 			xOffset : SINGLE
-			UNIT = "pixel"
-			COMMENT = "x-axis offset to previously instantiated Template"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "x-axis offset to previously instantiated Template"
+				INITIALVALUE = 0.0;
 			yOffset : SINGLE
-			UNIT = "pixel"
-			COMMENT = "y-axis offset to previously instantiated Template"
-			INITIALVALUE = 0.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "y-axis offset to previously instantiated Template"
+				INITIALVALUE = 0.0;
 			maxTemplatesPerDirection : STRING
-			COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset; same for y:3";
+				HAS_SET_ACCESSOR
+				COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset; same for y:3";
 			FBReference[] : STRING
-			COMMENT = "Probably 'OP_NAME'' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+				HAS_SET_ACCESSOR
+				COMMENT = "Probably 'OP_NAME'' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
 			FBVariableReference[] : STRING
-			COMMENT = "Probably 'myVar:OP_NAME', path of a named reference variable object";
+				HAS_SET_ACCESSOR
+				COMMENT = "Probably 'myVar:OP_NAME', path of a named reference variable object";
 			ConfigValues[] : STRING
-			COMMENT = "Perhaps 'myText:OP_CLASS' if you want to use this info later";
+				HAS_SET_ACCESSOR
+				COMMENT = "Perhaps 'myText:OP_CLASS' if you want to use this info later";
 			preventClone : BOOL
-			COMMENT = "do not instanciate duplicate identical objects"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "do not instanciate duplicate identical objects"
+				INITIALVALUE = FALSE;
 			visible : BOOL
-			COMMENT = "the element is visible"
-			INITIALVALUE = TRUE;
+				HAS_SET_ACCESSOR
+				COMMENT = "the element is visible"
+				INITIALVALUE = TRUE;
 			stroke : STRING
-			COMMENT = "line stroke color (CSS color name or hex like #000000)"
-			INITIALVALUE = "black";
+				HAS_SET_ACCESSOR
+				COMMENT = "line stroke color (CSS color name or hex like #000000)"
+				INITIALVALUE = "black";
 			fill : STRING
-			COMMENT = "fill color (CSS color name or hex like #000000)"
-			INITIALVALUE = "none";
+				HAS_SET_ACCESSOR
+				COMMENT = "fill color (CSS color name or hex like #000000)"
+				INITIALVALUE = "none";
 			rotate : INT
-			HAS_SET_ACCESSOR
-			UNIT = "degree"
-			COMMENT = "rotate the Element"
-			INITIALVALUE = 0;
+				HAS_SET_ACCESSOR
+				UNIT = "degree"
+				COMMENT = "rotate the Element"
+				INITIALVALUE = 0;
 			opacity : SINGLE
-			HAS_SET_ACCESSOR
-			COMMENT = "opacity of the element ([0.0-1.0])"
-			INITIALVALUE = 1.0;
+				HAS_SET_ACCESSOR
+				COMMENT = "opacity of the element ([0.0-1.0])"
+				INITIALVALUE = 1.0;
 			hideable : BOOL
-			COMMENT = "should this object be hidden if clicked on parent?"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "should this object be hidden if clicked on parent?"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS RenameObject : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "Rename an Object via KS";
 		PARTS
@@ -651,12 +752,14 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS CreateObject : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "Create an Object via KS";
 		VARIABLES
 			autoRenameIfExists : BOOL
-			COMMENT = "Choose a different Name if Object already exists"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "Choose a different Name if Object already exists"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		PARTS
 			Name : CLASS cshmi/GetValue;
@@ -667,6 +770,7 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS DeleteObject : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "Delete an Object via KS";
 		PARTS
@@ -675,6 +779,7 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS LinkObjects : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "link two Objects with an association. Association is the 'varname' of object A in KS.";
 		PARTS
@@ -685,6 +790,7 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS UnlinkObjects : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "unlink two Objects with an association. Association is the 'varname' of object A in KS.";
 		PARTS
@@ -695,17 +801,20 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS RoutePolyline : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a multi purpose connection between two objects";
 		VARIABLES
 			offset : SINGLE
-			UNIT = "pixel"
-			COMMENT = "minimum pixel distance from Object till 1st direction change of polyline"
-			INITIALVALUE = 40.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "minimum pixel distance from Object till 1st direction change of polyline"
+				INITIALVALUE = 40.0;
 			gridWidth : SINGLE
-			UNIT = "pixel"
-			COMMENT = "Pixel offset between polylines from same Object"
-			INITIALVALUE = 3.0;
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "Pixel offset between polylines from same Object"
+				INITIALVALUE = 3.0;
 		END_VARIABLES;
 		PARTS
 			SourceBasename : CLASS cshmi/GetValue;
@@ -717,22 +826,26 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS RebuildObject : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "rebuild the visual object from event";
 	END_CLASS;
 	
 	CLASS Vibrate : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "Vibrate the display component";
 		VARIABLES
 			pattern[] : UINT
-			UNIT = "millisecond"
-			COMMENT = "Vibration pattern for example vib, pause, vib [50, 100, 150]"
-			INITIALVALUE = {1000};
+				HAS_SET_ACCESSOR
+				UNIT = "millisecond"
+				COMMENT = "Vibration pattern for example vib, pause, vib [50, 100, 150]"
+				INITIALVALUE = {1000};
 		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS debuggingbreakpoint : CLASS cshmi/Action
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "break point in the execution";
 		OPERATIONS
@@ -747,8 +860,9 @@ LIBRARY cshmi
 		COMMENT = "base class for conditions";
 		VARIABLES
 			ignoreError : BOOL
-			COMMENT = "ignore communication or other errors. They will be equal to an empty string ''"
-			INITIALVALUE = FALSE;
+				HAS_SET_ACCESSOR
+				COMMENT = "ignore communication or other errors. They will be equal to an empty string ''"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -756,13 +870,14 @@ LIBRARY cshmi
 	END_CLASS;
 
 	CLASS Compare : CLASS cshmi/Condition
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a comparison condition (<value1> <comptype> <value2>)";
 		VARIABLES
 			comptype : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
-			INITIALVALUE = "==";
+				HAS_SET_ACCESSOR
+				COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
+				INITIALVALUE = "==";
 		END_VARIABLES;
 		PARTS
 			value1 : CLASS cshmi/GetValue;
@@ -771,16 +886,17 @@ LIBRARY cshmi
 	END_CLASS;
 
 	CLASS CompareIteratedChild : CLASS cshmi/Condition
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a comparison condition for the ChildIterator (<childValue> <comptype> <withValue>)";
 		VARIABLES
 			childValue : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "(OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT)";
+				HAS_SET_ACCESSOR
+				COMMENT = "(OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT)";
 			comptype : STRING
-			HAS_SET_ACCESSOR
-			COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
-			INITIALVALUE = "==";
+				HAS_SET_ACCESSOR
+				COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
+				INITIALVALUE = "==";
 		END_VARIABLES;
 		PARTS
 			withValue : CLASS cshmi/GetValue;
@@ -788,6 +904,7 @@ LIBRARY cshmi
 	END_CLASS;
 
 	CLASS Confirm : CLASS cshmi/Condition
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a yes/no question to the operator";
 		PARTS
@@ -805,12 +922,14 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS ClientEvent : CLASS cshmi/Event
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "client triggered actions";
 		VARIABLES
-			type : STRING IS_DERIVED
-			HAS_ACCESSORS
-			COMMENT = "type of ClientEvent; could be onload or globalvarchanged";
+			type : STRING
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT = "type of ClientEvent; could be onload or globalvarchanged";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -818,12 +937,14 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS OperatorEvent : CLASS cshmi/Event
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "an event from the operator";
 		VARIABLES
-			type : STRING IS_DERIVED
-			HAS_ACCESSORS
-			COMMENT = "type of ClientEvent; could be click, doubleclick, rightclick, aftermove, mouseover, mouseout";
+			type : STRING
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT = "type of ClientEvent; could be click, doubleclick, rightclick, aftermove, mouseover, mouseout";
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -836,26 +957,28 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS TimeEvent : CLASS cshmi/Event
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "time triggered actions";
 		VARIABLES
 			cyctime : SINGLE
-			HAS_SET_ACCESSOR
-			UNIT = "second"
-			COMMENT = "the cycle time for the execution of the action, zero disables the event"
-			INITIALVALUE = 10.0;
+				HAS_SET_ACCESSOR
+				UNIT = "second"
+				COMMENT = "the cycle time for the execution of the action, zero disables the event"
+				INITIALVALUE = 10.0;
 		END_VARIABLES;
 	END_CLASS;
 	
 	CLASS downloadApplication : CLASS ov/object
+		IS_FINAL;
 		IS_INSTANTIABLE;
 		FLAGS	=	"v";
 		COMMENT = "Model turbo";
 		VARIABLES
 			asJSON	: STRING
-			HAS_GET_ACCESSOR
-			IS_DERIVED
-			COMMENT = "get the application as JSON";
+				IS_DERIVED
+				HAS_GET_ACCESSOR
+				COMMENT = "get the application as JSON";
 		END_VARIABLES;
 	END_CLASS;
 

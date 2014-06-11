@@ -40,22 +40,16 @@
 *
 *	File:
 *	------
-*	classContainer_TemplateDefinition.c
+*	classAction_CreateObject.c.c
 *
 *	Editors:
 *	--------
 *	Je							Holger Jeromin <jeromin@plt.rwth-aachen.de>
-*	GQ							Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 *
 *	SVN:
 *	----
-*	$Revision$
-*	$Date$
-*
-*	History:
-*	--------
-*	18-October-2011			Je		V0.1.0
-*		-	File created
+*	$Revision: 8707 $
+*	$Date: 2014-05-06 16:02:33 +0200 (Di, 06 Mai 2014) $
 *
 ***********************************************************************/
 
@@ -63,55 +57,14 @@
 #define OV_COMPILE_LIBRARY_cshmi
 #endif
 
+
 #include "cshmilib.h"
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_width_set(
-	OV_INSTPTR_cshmi_TemplateDefinition          pobj,
-	const OV_SINGLE  value
+OV_DLLFNCEXPORT OV_RESULT cshmi_CreateObject_autoRenameIfExists_set(
+		OV_INSTPTR_cshmi_CreateObject          pobj,
+		const OV_BOOL  value
 ) {
-	if (value <= 0){
-		return OV_ERR_BADPARAM;
-	}
 	pobj->v_ConfigCache.cacheDirty = TRUE;
-	pobj->v_width = value;
+	pobj->v_autoRenameIfExists = value;
 	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_height_set(
-	OV_INSTPTR_cshmi_TemplateDefinition          pobj,
-	const OV_SINGLE  value
-) {
-	if (value <= 0){
-		return OV_ERR_BADPARAM;
-	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
-	pobj->v_height = value;
-	return OV_ERR_OK;
-}
-
-
-OV_DLLFNCEXPORT OV_STRING cshmi_TemplateDefinition_getcomment(
-	OV_INSTPTR_ov_object 	pobj,
-	const OV_ELEMENT		*pelem
-) {
-	OV_INSTPTR_cshmi_TemplateDefinition pinst = Ov_StaticPtrCast(cshmi_TemplateDefinition, pobj);
-	OV_INSTPTR_ov_class pClass = Ov_GetParent(ov_instantiation, pobj);
-	OV_STRING temp = NULL;
-	OV_UINT classcommentlength = 0;
-	OV_UINT length = 0;
-	switch(pelem->elemtype) {
-	case OV_ET_OBJECT:
-		classcommentlength = ov_string_getlength(pClass->v_comment);
-		length = classcommentlength + ov_string_getlength(pinst->v_comment)+3;
-		temp = ov_memstack_alloc(length);
-		//strcpy adds the terminator
-		strcpy(temp, pClass->v_comment);
-		if(pinst->v_comment != NULL){
-			*(temp+classcommentlength) = ':';
-			*(temp+classcommentlength+1) = ' ';
-			strcpy((temp+classcommentlength+2), pinst->v_comment);
-		}
-		return temp;
-	}
-	return ov_object_getcomment(pobj, pelem);
 }

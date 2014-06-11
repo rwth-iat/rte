@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,3 +64,13 @@
 #endif
 
 #include "cshmilib.h"
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_IfThenElse_anycond_set(
+		OV_INSTPTR_cshmi_IfThenElse          pobj,
+		const OV_BOOL  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_anycond = value;
+	return OV_ERR_OK;
+}

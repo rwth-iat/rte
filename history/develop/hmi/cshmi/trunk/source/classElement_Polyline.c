@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,3 +64,22 @@
 #endif
 
 #include "cshmilib.h"
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Polyline_points_set(
+		OV_INSTPTR_cshmi_Polyline          pobj,
+		const OV_STRING  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	return ov_string_setvalue(&pobj->v_points,value);
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Polyline_strokeWidth_set(
+		OV_INSTPTR_cshmi_Polyline          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_strokeWidth = value;
+	return OV_ERR_OK;
+}
+

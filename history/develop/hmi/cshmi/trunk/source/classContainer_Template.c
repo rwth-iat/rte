@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -65,31 +65,6 @@
 
 
 #include "cshmilib.h"
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Template_TemplateDefinition_set(
-	OV_INSTPTR_cshmi_Template          pobj,
-	const OV_STRING  value
-) {
-	OV_STRING fullpath = NULL;
-	OV_STRING mask = NULL;
-
-	ov_memstack_lock();
-	ov_string_setvalue(&fullpath, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
-	ov_memstack_unlock();
-	
-	//the path to the templates is hardcoded in the visualisation system
-	ov_string_print(&mask, "/TechUnits/cshmi/Templates/%s/*", value);
-	if (ov_string_match(fullpath, mask)){
-		//avoid recursive template usage
-		ov_string_setvalue(&fullpath, NULL);
-		ov_string_setvalue(&mask, NULL);
-		return OV_ERR_BADPARAM;
-	}
-	ov_string_setvalue(&fullpath, NULL);
-	ov_string_setvalue(&mask, NULL);
-
-	return ov_string_setvalue(&pobj->v_TemplateDefinition,value);
-}
 
 /**
  * change itself to an group on startup

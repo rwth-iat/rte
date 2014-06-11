@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2012
+*	Copyright (C) 2014
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,3 +64,50 @@
 #endif
 
 #include "cshmilib.h"
+
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x1_set(
+		OV_INSTPTR_cshmi_Line          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_x1 = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y1_set(
+		OV_INSTPTR_cshmi_Line          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_y1 = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x2_set(
+		OV_INSTPTR_cshmi_Line          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_x2 = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y2_set(
+		OV_INSTPTR_cshmi_Line          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_y2 = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Line_strokeWidth_set(
+		OV_INSTPTR_cshmi_Line          pobj,
+		const OV_SINGLE  value
+) {
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+	pobj->v_strokeWidth = value;
+	return OV_ERR_OK;
+}
+
