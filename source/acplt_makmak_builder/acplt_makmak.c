@@ -609,6 +609,8 @@ if(new == 0){
 	fprintf(fd,"CC		= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
+	fprintf(fd,"else\n");
+	fprintf(fd,"\tOPT = -fno-omit-frame-pointer\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
 	if(archBitwidth == 32){
@@ -616,7 +618,7 @@ if(new == 0){
 	}else if(archBitwidth == 64){
 		fprintf(fd," -m64");
 	}
-	fprintf(fd," -fPIC -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) -shared $(EXTRA_CC_FLAGS)\n");
+	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes -fPIC $(OPT) $(EXTRA_CC_FLAGS)\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 #else	
