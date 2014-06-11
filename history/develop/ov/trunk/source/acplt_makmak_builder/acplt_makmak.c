@@ -618,7 +618,10 @@ if(new == 0){
 	}else if(archBitwidth == 64){
 		fprintf(fd," -m64");
 	}
-	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes -fPIC $(OPT) $(EXTRA_CC_FLAGS)\n");
+#if !OV_SYSTEM_NT
+	fprintf(fd," -fPIC");	// all code is position independent on windows
+#endif
+	fprintf(fd," -shared -Wdeclaration-after-statement -Wall -Wno-attributes $(OPT) $(EXTRA_CC_FLAGS)\n");
 #if OV_SYSTEM_NT
 	fprintf(fd,"CC_DEFINES	= $(DEFINES) -D__NT__=1 \n");
 #else	
