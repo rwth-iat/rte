@@ -699,12 +699,22 @@ HMI.prototype = {
 		}catch(e){/* nothing to do*/}
 		
 		//append html5 datalist if supported and provided
-		if(this.InputHost.list !== undefined & UrlParameterList !== null && UrlParameterList.hostlist !== undefined){
+		if(this.InputHost.list !== undefined){
 			this.InputHost.setAttribute("list", "InputHost");
 			var datalistNode = document.createElement("datalist");
 			datalistNode.setAttribute("id", "InputHost");
-			
-			var hostlist = UrlParameterList.hostlist.split(",");
+			if(UrlParameterList !== null && UrlParameterList.hostlist !== undefined){
+				var hostlist = UrlParameterList.hostlist.split(",");
+			}else if(	window.location.hostname.toLowerCase() === "localhost"
+					||	window.location.hostname.toLowerCase() === "127.0.0.1"
+					||	window.location.hostname.toLowerCase() === "::1"
+					||	window.location.protocol === "file:"
+					||	window.location.hostname.toLowerCase() === "" // should not be the case...
+					){
+				hostlist = new Array("localhost");
+			}else{
+				hostlist = new Array("localhost", window.location.hostname.toLowerCase());
+			}
 			for (var i=0;i < hostlist.length;i++){
 				var optionNode = document.createElement("option");
 				optionNode.setAttribute("value", hostlist[i]);
@@ -968,7 +978,8 @@ HMI.prototype = {
 		//get rid of spaces in the textinput
 		HMI.InputHost.value = HMI.InputHost.value.trim();
 		if (HMI.InputHost.value.length === 0){
-			if(window.location.hostname !== 0){
+			if(window.location.hostname === ""){
+				//transported via file://
 				HMI.InputHost.value = "localhost";
 			}else{
 				HMI.InputHost.value = window.location.hostname;
