@@ -93,7 +93,7 @@
 #define OV_COMPILER_GCC 0
 #endif
 
-#if defined(__CYGWIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#if defined(__CYGWIN32__) || defined(__CYGWIN__) || defined(__MINGW32__) || defined(__MINGW__)
 #define OV_COMPILER_CYGWIN 1
 #endif
 
