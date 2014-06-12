@@ -108,7 +108,6 @@ int main(int argc, char **argv) {
 	//char        *ph;
 	char        *builddir = "nt";
 	char        *buildsys = "NT";
-	int 		j;
 #else
 #if OV_SYSTEM_LINUX
 	char        *builddir = "linux";
