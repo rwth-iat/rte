@@ -1985,7 +1985,9 @@ cshmi.prototype = {
 				var requestList = new Object();
 				
 				requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-				this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "globalVar");
+				if(requestList[blackboxObjectpath]["jsOnglobalvarchanged"] !== ""){
+					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "globalVar");
+				}
 			}
 			return true;
 		}else if (ParameterName === "persistentGlobalVar"){
@@ -2019,7 +2021,9 @@ cshmi.prototype = {
 				var requestList = new Object();
 				
 				requestList[blackboxObjectpath] = this.ResourceList.Elements[blackboxObjectpath].Parameters;
-				this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "persistentGlobalVar");
+				if(requestList[blackboxObjectpath]["jsOnglobalvarchanged"] !== ""){
+					this._executeScript(VisualObject, blackboxObjectpath, requestList[blackboxObjectpath]["jsOnglobalvarchanged"], "persistentGlobalVar");
+				}
 			}
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
@@ -2405,8 +2409,6 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} PartialPath The path which should get potentially expanded via baseKsPath
 	 * @return {String} returnValue String of the baseKSPath as seen from the ObjectPath; could be ""
-	 * 
-	 * sollte gef�llt werden von den containern, die sowieso abfragen machen
 	 */
 	_generateFullKsPath: function(VisualObject, ObjectPath, PartialPath){
 		var returnValue = "";
@@ -4717,13 +4719,18 @@ cshmi.prototype = {
 
 			//slice braces '{}' if any
 			var jsOnglobalvarchanged_braces = HMI.KSClient.getVar(ObjectPath+".jsOnglobalvarchanged", "OP_VALUE", null);
-			var j = 0;
-			while(jsOnglobalvarchanged_braces.charAt(0) === '{') {
-				jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(1);
-				j++;
+			if (jsOnglobalvarchanged_braces.indexOf("KS_ERR_BADPATH") !== -1){
+				var j = 0;
+				while(jsOnglobalvarchanged_braces.charAt(0) === '{') {
+					jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(1);
+					j++;
+				}
+				jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(0, jsOnglobalvarchanged_braces.length - j);
+				requestList[ObjectPath]["jsOnglobalvarchanged"] = jsOnglobalvarchanged_braces;
+			}else{
+				//we had an old version (pre svn 8224) of the cshmi where this variable was named jsOnglobalvarchange
+				requestList[ObjectPath]["jsOnglobalvarchanged"] = "";
 			}
-			jsOnglobalvarchanged_braces = jsOnglobalvarchanged_braces.substr(0, jsOnglobalvarchanged_braces.length - j);
-			requestList[ObjectPath]["jsOnglobalvarchanged"] = jsOnglobalvarchanged_braces;
 			
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Elements[ObjectPath] = new Object();
@@ -4966,7 +4973,7 @@ cshmi.prototype = {
 			jsloadObserver.checkAndTrigger();
 		}
 		
-		if(jsOnload  !== ""){
+		if(jsOnload !== ""){
 			var retrytime = 4000;
 			if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
 				retrytime = 100;
