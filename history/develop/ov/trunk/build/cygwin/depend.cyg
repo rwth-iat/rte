@@ -1,94 +1,40 @@
 ov_ovmparser.o: ov_ovmparser.c ../../source/codegen/ov_codegen.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h
 ov_ovmscanner.o: ov_ovmscanner.c ../../source/codegen/ov_codegen.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ov_ovmparser.h
 ov_codegen.o: ../../source/codegen/ov_codegen.c \
  ../../source/codegen/ov_codegen.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_debug.h
 ov_builder.o: ../../source/builder/ov_builder.c \
  ../../source/builder/ov_builder.h \
  ../../source/builder/../codegen/ov_codegen.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_debug.h
 ov.o: ov.c ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 ov_association.o: ../../source/libov/ov_association.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -96,42 +42,23 @@ ov_association.o: ../../source/libov/ov_association.c \
 ov_childrelationship.o: ../../source/libov/ov_childrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_class.o: ../../source/libov/ov_class.c ../../include/libov/ov_class.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_element.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
@@ -140,210 +67,114 @@ ov_class.o: ../../source/libov/ov_class.c ../../include/libov/ov_class.h \
 ov_construction.o: ../../source/libov/ov_construction.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_containment.o: ../../source/libov/ov_containment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_database.o: ../../source/libov/ov_database.c \
  ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_object.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
+ ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_object.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_logfile.h \
  ../../../../libml/ml_malloc.h
 ov_debug.o: ../../source/libov/ov_debug.c ../../include/libov/ov_debug.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_version.h
 ov_element.o: ../../source/libov/ov_element.c \
  ../../include/libov/ov_element.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_embedment.o: ../../source/libov/ov_embedment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_inheritance.o: ../../source/libov/ov_inheritance.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_instantiation.o: ../../source/libov/ov_instantiation.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_library.o: ../../source/libov/ov_library.c \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 ov_logfile.o: ../../source/libov/ov_logfile.c \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_time.h ov.h ../../include/libov/ov_library.h \
- ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
- ../../include/libov/ov_association.h ../../model/ov.ovt \
- ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
- ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_time.h ov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -351,79 +182,41 @@ ov_logfile.o: ../../source/libov/ov_logfile.c \
 ov_malloc.o: ../../source/libov/ov_malloc.c \
  ../../include/libov/ov_malloc.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_debug.h
 ov_memstack.o: ../../source/libov/ov_memstack.c \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_malloc.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_malloc.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h
+ ../../include/libov/ov_element.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h
 ov_object.o: ../../source/libov/ov_object.c \
  ../../include/libov/ov_object.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_scheduler.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_operation.o: ../../source/libov/ov_operation.c \
  ../../include/libov/ov_operation.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -431,42 +224,23 @@ ov_operation.o: ../../source/libov/ov_operation.c \
 ov_parentrelationship.o: ../../source/libov/ov_parentrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_part.o: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
+ ../../include/libov/ov_element.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
@@ -474,105 +248,59 @@ ov_part.o: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
 ov_path.o: ../../source/libov/ov_path.c ../../include/libov/ov_path.h \
  ov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_malloc.h
 ov_result.o: ../../source/libov/ov_result.c \
  ../../include/libov/ov_result.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h
+ ../../include/libov/ov_element.h
 ov_scheduler.o: ../../source/libov/ov_scheduler.c \
  ../../include/libov/ov_scheduler.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-ov_string.o: ../../source/libov/ov_string.c \
- ../../include/libov/ov_string.h ov.h ../../include/libov/ov_library.h \
- ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
- ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
- ../../include/libov/ov_association.h ../../model/ov.ovt \
- ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
- ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_element.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h
-ov_structure.o: ../../source/libov/ov_structure.c \
- ../../include/libov/ov_structure.h ../../include/libov/ov_ov.h \
+ov_string.o: ../../source/libov/ov_string.c \
+ ../../include/libov/ov_string.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_database.h ov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h
+ov_structure.o: ../../source/libov/ov_structure.c \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -580,53 +308,25 @@ ov_structure.o: ../../source/libov/ov_structure.c \
 ov_supervise.o: ../../source/libov/ov_supervise.c \
  ../../include/libov/ov_supervise.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_debug.h
 ov_time.o: ../../source/libov/ov_time.c ../../include/libov/ov_time.h \
  ov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h
 ov_variable.o: ../../source/libov/ov_variable.c \
  ../../include/libov/ov_variable.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../model/ov.ovt ov.h \
+ ../../include/libov/ov_debug.h ../../model/ov.ovt ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
@@ -634,22 +334,12 @@ ov_variable.o: ../../source/libov/ov_variable.c \
 ov_vector.o: ../../source/libov/ov_vector.c \
  ../../include/libov/ov_vector.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_database.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_database.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
@@ -657,44 +347,25 @@ ov_vendortree.o: ../../source/libov/ov_vendortree.c \
  ../../include/libov/ov_vendortree.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../include/libov/ov_path.h
+ ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_path.h
 ov_dbutil.o: ../../source/dbutil/ov_dbutil.c \
  ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_result.h \
+ ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_result.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
@@ -971,7 +642,8 @@ ov_ksclient.o: ../../source/libovks/ov_ksclient.c \
  ../../include/libovks/ov_ksclient_xdr.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../include/libov/ov_debug.h ../../../ks/include/ks/interserver.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
  ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
@@ -979,14 +651,12 @@ ov_ksclient.o: ../../source/libovks/ov_ksclient.c \
  ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
  ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
  ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../../ks/include/ks/interserver.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
- ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
- ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
- ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
- ../../../ks/include/ks/time.h ../../../plt/include/plt/time.h \
- ../../../plt/include/plt/comparable.h \
+ ../../../../oncrpc/rpc/pmap_cln.h ../../../ks/include/ks/avticket.h \
+ ../../../ks/include/ks/ks.h ../../../ks/include/ks/xdr.h \
+ ../../../plt/include/plt/rtti.h ../../../ks/include/ks/string.h \
+ ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
+ ../../../ks/include/ks/event.h ../../../ks/include/ks/time.h \
+ ../../../plt/include/plt/time.h ../../../plt/include/plt/comparable.h \
  ../../../plt/include/plt/priorityqueue.h \
  ../../../plt/include/plt/container.h ../../../plt/include/plt/handle.h \
  ../../../ks/include/ks/svrtransport.h ../../../ks/include/ks/result.h \
@@ -1007,37 +677,28 @@ ov_ksclient_xdr.o: ../../source/libovks/ov_ksclient_xdr.c \
  ../../include/libovks/ov_ksclient_xdr.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_debug.h
 ov_ksserver.o: ../../source/libovks/ov_ksserver.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1060,23 +721,23 @@ ov_ksserver_createobject.o: \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1097,23 +758,23 @@ ov_ksserver_deleteobject.o: \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1133,23 +794,23 @@ ov_ksserver_exgdata.o: ../../source/libovks/ov_ksserver_exgdata.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1170,23 +831,23 @@ ov_ksserver_getcanonicalpath.o: \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1206,23 +867,23 @@ ov_ksserver_getep.o: ../../source/libovks/ov_ksserver_getep.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1242,23 +903,23 @@ ov_ksserver_gethist.o: ../../source/libovks/ov_ksserver_gethist.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1278,23 +939,23 @@ ov_ksserver_getpp.o: ../../source/libovks/ov_ksserver_getpp.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1314,23 +975,23 @@ ov_ksserver_getvar.o: ../../source/libovks/ov_ksserver_getvar.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1350,23 +1011,23 @@ ov_ksserver_link.o: ../../source/libovks/ov_ksserver_link.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1387,23 +1048,23 @@ ov_ksserver_renameobject.o: \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1423,23 +1084,23 @@ ov_ksserver_setvar.o: ../../source/libovks/ov_ksserver_setvar.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1459,23 +1120,23 @@ ov_ksserver_unlink.o: ../../source/libovks/ov_ksserver_unlink.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../../plt/include/plt/log.h ../../../ks/include/ks/server.h \
- ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/avticket.h \
+ ../../include/libov/ov_logfile.h ../../../plt/include/plt/log.h \
+ ../../../plt/include/plt/config.h ../../../ks/include/ks/server.h \
+ ../../../ks/include/ks/svrbase.h ../../../ks/include/ks/rpc.h \
+ ../../../plt/include/plt/debug.h ../../../../oncrpc/rpc/rpc.h \
+ ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
+ ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
+ ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
+ ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
+ ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
+ ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
+ ../../../ks/include/ks/avticket.h ../../../ks/include/ks/ks.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../plt/include/plt/alloc.h ../../../ks/include/ks/event.h \
@@ -1494,834 +1155,506 @@ ov_ksserver_unlink.o: ../../source/libovks/ov_ksserver_unlink.c \
 ov_ksserver_xdr.o: ../../source/libovks/ov_ksserver_xdr.c \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_memstack.h
+ ../../include/libov/ov_debug.h ../../include/libov/ov_memstack.h
 ov_server.o: ../../source/server/ov_server.c \
  ../../include/libovks/ov_ksserver.h \
  ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_element.h ov.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_element.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_result.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_malloc.h
-kshist.o: kshist.c kshist.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_result.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_malloc.h
+ov_runtimeserver.o: ../../source/runtimeserver/ov_runtimeserver.c \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ov.h ../../model/kshist.ovf ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_object.h ../../include/libov/ov_result.h \
+ ../../include/libov/ov_logfile.h ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ov_serverlibs.o: ../../source/runtimeserver/ov_serverlibs.c \
+ ../../include/libov/ov_config.h
+ovksxdr.o: ../../source/runtimeserver/ovksxdr.c
+kshist.o: kshist.c kshist.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h ov.h ../../model/kshist.ovf \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 historytrackcontainment.o: ../../source/kshist/historytrackcontainment.c \
  kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 istimetrackof.o: ../../source/kshist/istimetrackof.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kshistoryro.o: ../../source/kshist/kshistoryro.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplehistoryeo.o: ../../source/kshist/kssimplehistoryeo.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplehistoryro.o: ../../source/kshist/kssimplehistoryro.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplehistorytrack.o: ../../source/kshist/kssimplehistorytrack.c \
  kshist.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplemsgtrack.o: ../../source/kshist/kssimplemsgtrack.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplesingletrack.o: ../../source/kshist/kssimplesingletrack.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplestatetrack.o: ../../source/kshist/kssimplestatetrack.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimpletimetrack.o: ../../source/kshist/kssimpletimetrack.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 kssimplevaluetrack.o: ../../source/kshist/kssimplevaluetrack.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 ovmsglog.o: ../../source/kshist/ovmsglog.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 representation.o: ../../source/kshist/representation.c kshist.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/kshist.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynov.o: dynov.c dynov.h ../../include/libov/ov_library.h \
- ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
- ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
- ../../include/libov/ov_association.h ../../model/ov.ovt \
- ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
- ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ov.h ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/kshist.ovf ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h
+dynov.o: dynov.c dynov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h ov.h ../../model/dynov.ovf \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 assocaccess.o: ../../source/dynov/assocaccess.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynassociation.o: ../../source/dynov/dynassociation.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynchildrelationship.o: ../../source/dynov/dynchildrelationship.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynclass.o: ../../source/dynov/dynclass.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynconstruction.o: ../../source/dynov/dynconstruction.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynembedment.o: ../../source/dynov/dynembedment.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dyninheritance.o: ../../source/dynov/dyninheritance.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynobject.o: ../../source/dynov/dynobject.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../include/libov/ov_object.h
-dynoperation.o: ../../source/dynov/dynoperation.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynparentrelationship.o: ../../source/dynov/dynparentrelationship.c \
- dynov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynpart.o: ../../source/dynov/dynpart.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynstructure.o: ../../source/dynov/dynstructure.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-dynvariable.o: ../../source/dynov/dynvariable.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-isgetaccessor.o: ../../source/dynov/isgetaccessor.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-islinkfnc.o: ../../source/dynov/islinkfnc.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-issetaccessor.o: ../../source/dynov/issetaccessor.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-isunlinkfnc.o: ../../source/dynov/isunlinkfnc.c dynov.h \
- ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
- ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
- ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
- ../../model/ov.ovt ../../include/libov/ov_variable.h \
- ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/dynov.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
-tasklib.o: tasklib.c tasklib.h ../../include/libov/ov_library.h \
- ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
- ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
- ../../include/libov/ov_association.h ../../model/ov.ovt \
- ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
- ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ov.h ../../model/tasklib.ovf ../../include/libov/ov_macros.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h
-SchedulerTask.o: ../../source/tasklib/SchedulerTask.c tasklib.h \
+dynassociation.o: ../../source/dynov/dynassociation.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/tasklib.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../include/libov/ov_scheduler.h ../../include/libov/ov_supervise.h
-Task.o: ../../source/tasklib/Task.c tasklib.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynchildrelationship.o: ../../source/dynov/dynchildrelationship.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/tasklib.ovf \
- ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
- ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../include/libov/ov_scheduler.h ../../include/libov/ov_supervise.h
-tasklist.o: ../../source/tasklib/tasklist.c tasklib.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynclass.o: ../../source/dynov/dynclass.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h ../../model/tasklib.ovf \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynconstruction.o: ../../source/dynov/dynconstruction.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynembedment.o: ../../source/dynov/dynembedment.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dyninheritance.o: ../../source/dynov/dyninheritance.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynobject.o: ../../source/dynov/dynobject.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_object.h
+dynoperation.o: ../../source/dynov/dynoperation.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynparentrelationship.o: ../../source/dynov/dynparentrelationship.c \
+ dynov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynpart.o: ../../source/dynov/dynpart.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynstructure.o: ../../source/dynov/dynstructure.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+dynvariable.o: ../../source/dynov/dynvariable.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+isgetaccessor.o: ../../source/dynov/isgetaccessor.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+islinkfnc.o: ../../source/dynov/islinkfnc.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+issetaccessor.o: ../../source/dynov/issetaccessor.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+isunlinkfnc.o: ../../source/dynov/isunlinkfnc.c dynov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/dynov.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
+tasklib.o: tasklib.c tasklib.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h ov.h ../../model/tasklib.ovf \
  ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+SchedulerTask.o: ../../source/tasklib/SchedulerTask.c tasklib.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/tasklib.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_supervise.h
+Task.o: ../../source/tasklib/Task.c tasklib.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/tasklib.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h ../../include/libov/ov_scheduler.h \
+ ../../include/libov/ov_supervise.h
+tasklist.o: ../../source/tasklib/tasklist.c tasklib.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
+ ../../model/ov.ovt ../../include/libov/ov_variable.h \
+ ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
+ ../../model/tasklib.ovf ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 dbdump.o: ../../source/dbdump/dbdump.cpp ../../source/dbdump/dbdump.h \
  ../../../ks/include/ks/client.h ../../../plt/include/plt/hashtable.h \
  ../../../plt/include/plt/dictionary.h \
@@ -2352,7 +1685,15 @@ dbdump.o: ../../source/dbdump/dbdump.cpp ../../source/dbdump/dbdump.h \
  ../../../plt/include/plt/list_impl.h \
  ../../../plt/include/plt/priorityqueue_impl.h \
  ../../../plt/include/plt/priorityqueue.h ../../source/dbdump/fnmatch.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/conversions.h
+ ../../include/libov/ov_version.h ../../include/libov/ov_database.h ov.h \
+ ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
+ ../../include/libov/ov_config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
+ ../../../ks/include/ks/conversions.h
 dbdump_templ.o: ../../source/dbdump/dbdump_templ.cpp \
  ../../../plt/include/plt/config.h ../../../ks/include/ks/register.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
@@ -2506,7 +1847,13 @@ dbparse1.o: ../../source/dbparse/dbparse1.cpp \
  ../../../ks/include/ks/path.h ../../include/libov/ov_version.h \
  ../../../ks/include/ks/conversions.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h db_y.h
+ ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
+ ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
+ ../../include/libov/ov_association.h ../../model/ov.ovt \
+ ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
+ ../../include/libov/ov_operation.h ../../model/ov.ovf \
+ ../../include/libov/ov_element.h ../../include/libov/ov_vendortree.h \
+ db_y.h
 ovxiparse.o: ../../source/ovxiparse/ovxiparse.cpp \
  ../../source/dbparse/dbparse.h ../../../ks/include/ks/commobject.h \
  ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
@@ -2539,87 +1886,49 @@ ov_makmak.o: ../../source/makmak/ov_makmak.c \
 ov_libinfo.o: ../../source/libinfo/ov_libinfo.c \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_expression_parser.o: ../../source/example/ov_expression_parser.c \
  ../../include/libov/ov_time.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ../../include/libov/ov_macros.h ../../include/libov/ov_string.h \
- ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
- ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
- ../../include/libov/ov_malloc.h ../../source/example/ov_expression.h
+ ../../include/libov/ov_element.h ../../include/libov/ov_macros.h \
+ ../../include/libov/ov_string.h ../../include/libov/ov_vector.h \
+ ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
+ ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
+ ../../source/example/ov_expression.h
 ov_expression_scanner.o: ../../source/example/ov_expression_scanner.c \
  ../../source/example/ov_expression.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
  ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression_parser.h
 example.o: example.c example.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../../../oncrpc/rpc/rpc.h \
- ../../../../oncrpc/rpc/types.h ../../../../oncrpc/rpc/bcopy.h \
- ../../../../oncrpc/rpc/xdr.h ../../../../oncrpc/rpc/auth.h \
- ../../../../oncrpc/rpc/clnt.h ../../../../oncrpc/rpc/rpc_msg.h \
- ../../../../oncrpc/rpc/auth_uni.h ../../../../oncrpc/rpc/svc.h \
- ../../../../oncrpc/rpc/svc_auth.h ../../../../oncrpc/rpc/netdb.h \
- ../../../../oncrpc/rpc/pmap_pro.h ../../../../oncrpc/rpc/pmap_cln.h \
- ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
+ ../../include/libov/ov_version.h ../../include/libov/ov_debug.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
  ../../include/libov/ov_variable.h ../../include/libov/ov_part.h \
  ../../include/libov/ov_operation.h ../../model/ov.ovf \
- ../../include/libov/ov_element.h ../../include/libovks/ov_ksserver_xdr.h \
- ov.h ../../source/example/example.ovt \
+ ../../include/libov/ov_element.h ov.h ../../source/example/example.ovt \
  ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -2628,23 +1937,14 @@ example.o: example.c example.h ../../include/libov/ov_library.h \
 example_fnc.o: ../../source/example/example_fnc.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
  ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -2654,49 +1954,32 @@ example_getvarclient.o: ../../source/example/example_getvarclient.c \
  ../../source/example/example_getvarclient.h example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
  ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_scheduler.h \
  ../../include/libov/ov_string.h ../../include/libov/ov_result.h \
- ../../include/libov/ov_path.h ../../include/libov/ov_macros.h \
- ../../include/libov/ov_time.h ../../include/libov/ov_vector.h \
- ../../include/libov/ov_database.h ../../include/libov/ov_vendortree.h \
- ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
+ ../../include/libov/ov_path.h ../../include/libov/ov_logfile.h \
+ ../../include/libov/ov_macros.h ../../include/libov/ov_time.h \
+ ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
+ ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
+ ../../include/libov/ov_malloc.h
 example_testassoc.o: ../../source/example/example_testassoc.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
  ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
@@ -2705,25 +1988,22 @@ example_testassoc.o: ../../source/example/example_testassoc.c example.h \
 example_testclass.o: ../../source/example/example_testclass.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
- ../../../../oncrpc/rpc/rpc.h ../../../../oncrpc/rpc/types.h \
- ../../../../oncrpc/rpc/bcopy.h ../../../../oncrpc/rpc/xdr.h \
- ../../../../oncrpc/rpc/auth.h ../../../../oncrpc/rpc/clnt.h \
- ../../../../oncrpc/rpc/rpc_msg.h ../../../../oncrpc/rpc/auth_uni.h \
- ../../../../oncrpc/rpc/svc.h ../../../../oncrpc/rpc/svc_auth.h \
- ../../../../oncrpc/rpc/netdb.h ../../../../oncrpc/rpc/pmap_pro.h \
- ../../../../oncrpc/rpc/pmap_cln.h ../../include/libov/ov_debug.h \
- ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
+ ../../include/libov/ov_debug.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
  ../../include/libov/ov_part.h ../../include/libov/ov_operation.h \
- ../../model/ov.ovf ../../include/libov/ov_element.h \
- ../../include/libovks/ov_ksserver_xdr.h ov.h \
+ ../../model/ov.ovf ../../include/libov/ov_element.h ov.h \
  ../../source/example/example.ovt ../../include/libovks/ov_ksclient.h \
  ../../include/libovks/ov_ksclient_xdr.h \
+ ../../include/libovks/ov_ksserver_xdr.h \
  ../../source/example/ov_expression.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_time.h ../../include/libov/ov_string.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_database.h \
  ../../include/libov/ov_vendortree.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h
+acplt_makmak.o: ../../source/acplt_makmak_builder/acplt_makmak.c \
+ ../../source/acplt_makmak_builder/definitions.h \
+ ../../source/acplt_makmak_builder/common.h
+common.o: ../../source/acplt_makmak_builder/common.c \
+ ../../source/acplt_makmak_builder/definitions.h \
+ ../../source/acplt_makmak_builder/common.h
