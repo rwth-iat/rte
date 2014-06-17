@@ -58,11 +58,13 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	OV_INSTPTR_ov_object	pMsgObj = NULL;
 	OV_INSTPTR_ov_object	pNextMsgObj = NULL;
 	OV_INSTPTR_ov_domain	pParentDomain = NULL;
+	OV_INSTPTR_fb_functionchart pParentChart = NULL;
 	OV_INSTPTR_cmdlib_processcontrol pProcessControl = NULL;
+	OV_BOOL parentIsPC = FALSE;
 	OV_UINT waitingMsgs = 0;
 	OV_RESULT result;
 
-	OV_INSTPTR_fb_port		temp = NULL;
+	OV_INSTPTR_fb_port		commandPort = NULL;
 	OV_ANY tempany = {{OV_VT_STRING, {0}}, 0, {0, 0}};
 	OV_STRING MsgBody = NULL;
 	OV_STRING command = NULL;
@@ -77,7 +79,15 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	/*	check if we are in the containment of a process control object	*/
 	pParentDomain = Ov_GetParent(ov_containment, this);
 	if(Ov_CanCastTo(fb_functionchart, pParentDomain))
-		pProcessControl = Ov_StaticPtrCast(fb_functionchart, pParentDomain);
+	{
+		parentIsPC = FALSE;
+		pParentChart = Ov_StaticPtrCast(fb_functionchart, pParentDomain);
+	}
+	else if(Ov_CanCastTo(cmdlib_processcontrol, pParentDomain))
+	{
+		parentIsPC = TRUE;
+		pProcessControl = Ov_StaticPtrCast(cmdlib_processcontrol, pParentDomain);
+	}
 	else
 	{
 		ov_logfile_error("PCInbox %s not in the containment of a process control unit. deactivating.", this->v_identifier);
@@ -219,41 +229,48 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				return;
 			}
 			sprintf(order, "%s;%s;%s", values.value[0], command, value);
-			tempany.value.valueunion.val_string = order;
-			/*	ov_logfile_debug("order:\n\n\t%s\n\n", order);	*/
-			//cmdlib_processcontrol_order_set(pProcessControl, order);
-			temp=Ov_DynamicPtrCast(fb_port, Ov_SearchChild(ov_containment,pProcessControl,"CMD"));
-			if(temp)
+			if(parentIsPC == TRUE)
 			{
-				if(IsFlagSet(temp->v_flags, 'i'))
+				/*	ov_logfile_debug("order:\n\n\t%s\n\n", order);	*/
+				cmdlib_processcontrol_order_set(pProcessControl, order);
+				ov_memstack_unlock();
+			}
+			else
+			{
+				tempany.value.valueunion.val_string = order;
+				commandPort=Ov_DynamicPtrCast(fb_port, Ov_SearchChild(ov_containment,pParentChart,"CMD"));
+				if(commandPort)
 				{
-					if(Ov_CanCastTo(fb_stringport, temp))
+					if(IsFlagSet(commandPort->v_flags, 'i'))
 					{
-						ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
-						ov_string_setvalue(&((Ov_StaticPtrCast(fb_stringport, temp))->v_value), order);
-					}
-					else if(Ov_CanCastTo(fb_anyport, temp))
-					{
-						ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
-						Ov_SetAnyValue(&((Ov_StaticPtrCast(fb_anyport, temp))->v_value), &tempany);
+						if(Ov_CanCastTo(fb_stringport, commandPort))
+						{
+							ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
+							ov_string_setvalue(&((Ov_StaticPtrCast(fb_stringport, commandPort))->v_value), order);
+						}
+						else if(Ov_CanCastTo(fb_anyport, commandPort))
+						{
+							ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
+							Ov_SetAnyValue(&((Ov_StaticPtrCast(fb_anyport, commandPort))->v_value), &tempany);
+						}
+						else
+						{
+							ov_logfile_error("Port \"CMD\" is of wrong type.");
+						}
 					}
 					else
 					{
-						ov_logfile_error("Port \"CMD\" is of wrong type.");
+						ov_logfile_error("Port \"CMD\" not an input.");
 					}
 				}
 				else
 				{
-					ov_logfile_error("Port \"CMD\" not an input.");
+					ov_logfile_error("Port \"CMD\" not found.");
 				}
+				/*	delete parsed message	*/
+				Ov_DeleteObject(pMsg);
+				ov_memstack_unlock();
 			}
-			else
-			{
-				ov_logfile_error("Port \"CMD\" not found.");
-			}
-			/*	delete parsed message	*/
-			Ov_DeleteObject(pMsg);
-			ov_memstack_unlock();
 		}
 
 	}
