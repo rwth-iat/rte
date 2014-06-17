@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-05-26 10:59:21
+* Erstellt: 2014-06-17 17:12:15
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -12827,147 +12827,6 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine :
-    CLASS /acplt/cshmi/Polyline;
-    VARIABLE_VALUES
-      points : INPUT STRING = "";
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = FALSE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 8;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection :
-    CLASS /acplt/cshmi/TimeEvent;
-    VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 0.500000;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine :
-    CLASS /acplt/cshmi/RoutePolyline;
-    VARIABLE_VALUES
-      offset : INPUT SINGLE = 5.000000;
-      gridWidth : INPUT SINGLE = 0.000000;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.SourceBasename :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.TargetBasename :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedparentname";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.SourceVariablename :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "Node/ConnectionPointLeft";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.TargetVariablename :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "Node/ConnectionPointDown";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.RoutingString :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/PolyLine/cyclicRouteConnection/RouteLine.RoutingString.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      elemVarPath : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/AdditionalFBInfo :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
@@ -17445,7 +17304,7 @@
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 700.000000;
+      width : INPUT SINGLE = 640.000000;
       height : INPUT SINGLE = 20.000000;
       strokeWidth : INPUT SINGLE = 1.500000;
       visible : INPUT BOOL = TRUE;
@@ -17736,11 +17595,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 640.000000;
-      y : INPUT SINGLE = 0.000000;
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -21.000000;
       width : INPUT SINGLE = 60.000000;
       height : INPUT SINGLE = 20.000000;
       opacity : INPUT SINGLE = 1.000000;
@@ -17756,12 +17615,30 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/Rect :
+    CLASS /acplt/cshmi/Rectangle;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 70.000000;
+      height : INPUT SINGLE = 20.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "lightgrey";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 30.000000;
+      x : INPUT SINGLE = 35.000000;
       y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "New Quali";
+      content : INPUT STRING = "New Action";
       fontSize : INPUT STRING = "11px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "normal";
@@ -17774,16 +17651,16 @@
       fill : INPUT STRING = "black";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = -35.000000;
+      x : INPUT SINGLE = 70.000000;
+      y : INPUT SINGLE = 0.000000;
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       opacity : INPUT SINGLE = 1.000000;
@@ -17794,18 +17671,18 @@
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
-      zindex : INPUT UINT = 1;
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 70.000000;
-      height : INPUT SINGLE = 30.000000;
+      width : INPUT SINGLE = 210.000000;
+      height : INPUT SINGLE = 15.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -17817,7 +17694,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -17837,7 +17714,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 5.000000;
@@ -17860,13 +17737,13 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/Line :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/Line :
     CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
-      x1 : INPUT SINGLE = 0.000000;
-      y1 : INPUT SINGLE = 10.000000;
+      x1 : INPUT SINGLE = 70.000000;
+      y1 : INPUT SINGLE = 0.000000;
       x2 : INPUT SINGLE = 70.000000;
-      y2 : INPUT SINGLE = 10.000000;
+      y2 : INPUT SINGLE = 15.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -17878,7 +17755,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -17887,7 +17764,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Create_SetVal :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Create_SetVal :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
       autoRenameIfExists : INPUT BOOL = FALSE;
@@ -17896,7 +17773,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Create_SetVal.Name :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Create_SetVal.Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17914,7 +17791,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Create_SetVal.Place :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Create_SetVal.Place :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17932,7 +17809,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Create_SetVal.Library :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Create_SetVal.Library :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17950,7 +17827,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Create_SetVal.Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Create_SetVal.Class :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17968,7 +17845,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Set_ReloadStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Set_ReloadStep :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17985,7 +17862,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/SetVariable/click/Set_ReloadStep.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/SetVariable/click/Set_ReloadStep.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18003,11 +17880,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 10.000000;
+      x : INPUT SINGLE = 70.000000;
+      y : INPUT SINGLE = 0.000000;
       width : INPUT SINGLE = 70.000000;
       height : INPUT SINGLE = 10.000000;
       opacity : INPUT SINGLE = 1.000000;
@@ -18023,7 +17900,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 5.000000;
@@ -18046,13 +17923,13 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/Line :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/Line :
     CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
-      x1 : INPUT SINGLE = 0.000000;
-      y1 : INPUT SINGLE = 10.000000;
+      x1 : INPUT SINGLE = 70.000000;
+      y1 : INPUT SINGLE = 0.000000;
       x2 : INPUT SINGLE = 70.000000;
-      y2 : INPUT SINGLE = 10.000000;
+      y2 : INPUT SINGLE = 15.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -18064,7 +17941,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -18073,7 +17950,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Create_SetVal :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Create_SetVal :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
       autoRenameIfExists : INPUT BOOL = FALSE;
@@ -18082,7 +17959,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Create_SetVal.Name :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Create_SetVal.Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18100,7 +17977,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Create_SetVal.Place :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Create_SetVal.Place :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18118,7 +17995,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Create_SetVal.Library :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Create_SetVal.Library :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18136,7 +18013,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Create_SetVal.Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Create_SetVal.Class :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18154,7 +18031,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Set_ReloadStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Set_ReloadStep :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -18171,7 +18048,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteFB/click/Set_ReloadStep.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteFB/click/Set_ReloadStep.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18189,11 +18066,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 20.000000;
+      x : INPUT SINGLE = 140.000000;
+      y : INPUT SINGLE = 0.000000;
       width : INPUT SINGLE = 70.000000;
       height : INPUT SINGLE = 10.000000;
       opacity : INPUT SINGLE = 1.000000;
@@ -18209,7 +18086,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 5.000000;
@@ -18232,34 +18109,16 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/Line :
-    CLASS /acplt/cshmi/Line;
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click :
+    CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
-      x1 : INPUT SINGLE = 0.000000;
-      y1 : INPUT SINGLE = 10.000000;
-      x2 : INPUT SINGLE = 70.000000;
-      y2 : INPUT SINGLE = 10.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
+      type : INPUT STRING = "click";
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click :
-    CLASS /acplt/cshmi/OperatorEvent;
-    VARIABLE_VALUES
-      type : INPUT STRING = "click";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Create_SetVal :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Create_SetVal :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
       autoRenameIfExists : INPUT BOOL = FALSE;
@@ -18268,7 +18127,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Name :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18286,7 +18145,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Place :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Place :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18304,7 +18163,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Library :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Library :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18322,7 +18181,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Create_SetVal.Class :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18340,7 +18199,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Set_ReloadStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Set_ReloadStep :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -18357,7 +18216,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewQuali/AuswahlGrp/ExecuteSsc/click/Set_ReloadStep.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoQualifier/InfoWindow/CreateNewAction/AuswahlGrp/ExecuteSsc/click/Set_ReloadStep.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";

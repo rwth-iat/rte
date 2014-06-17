@@ -1793,9 +1793,7 @@ cshmi.prototype = {
 				var response = HMI.KSClient.unescapeString(req.responseText);
 				if (response.indexOf("KS_ERR_BADPARAM") !== -1){
 					HMI.hmi_log_onwebsite('Setting "'+NewValue+'" at '+path+' not successfull: Bad Parameter ');
-				}else if (response.indexOf("KS_ERR") !== -1){
-					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+response+' (configured here: '+ObjectPath+').');
-				}else if (response.indexOf("KS_VT_VOID") !== -1 || response.status === 412){
+				}else if (response.indexOf("KS_VT_VOID") !== -1 || req.status === 412){
 					//we are setting a value for a void variable:
 					
 					//tcl response: "TksS-0146::TKS_NOTIMPLEMENTED variable type KS_VT_VOID not implemented"
@@ -1809,6 +1807,8 @@ cshmi.prototype = {
 					}else{
 						HMI.KSClient.setVar(path, NewValue, "KS_VT_INT", null, false);
 					}
+				}else if (response.indexOf("KS_ERR") !== -1){
+					HMI.hmi_log_info('Setting "'+NewValue+'" at variable '+path+' not successfull: '+response+' (configured here: '+ObjectPath+').');
 				}else{
 					HMI.hmi_log_info('Setting a variable failed.');
 				}
