@@ -10,6 +10,8 @@
 set release 0
 set checkout 0
 set compileonly 0
+#build and fb_dbcommands and therefor c++ ks
+set build_dbcommands 1
 set libsuffix 0
 set exesuffix 0
 set bleedingedge 0
@@ -30,6 +32,9 @@ foreach arg $argv {
 	}
 	if {$arg == "compileonly"} {
 		set compileonly 1
+	}
+	if {$arg == "no_dbcommands"} {
+		set build_dbcommands 0
 	}
 }
 
@@ -207,7 +212,7 @@ proc create_dirs {} {
 	global releasedir
 	global os
 	print_msg "Creating directory structure"
-	file mkdir $builddir $builddir/bin $builddir/user $builddir/user/libs $builddir/database $builddir/lib
+	file mkdir $builddir $builddir/bin $builddir/lib
 	file delete -force $releasedir
 	file mkdir $releasedir
 	file mkdir $releasedir/system
@@ -248,7 +253,7 @@ proc get_revision {} {
 
 # Checkout a CVS module
 proc checkout_dir {prefix module {dirname ""} {notrunk ""}} {
-	print_msg "Checking out $module"
+	print_msg "Checking out $module via checkout_dir"
 	if {$dirname == ""} then { set dirname $module }
 	#execute cvs checkout -P -d $dirname $module
 	if {$notrunk == ""} then {
@@ -268,7 +273,7 @@ proc checkout_better {module {notrunk ""}}  {
 		}
 	}
 	set dirname [lindex $temp end]
-	print_msg "Checking out $module"
+	print_msg "Checking out $module via checkout_better"
 	if {$dirname == ""} then { set dirname $module }
 	#execute cvs checkout -P -d $dirname $module
 	if {$notrunk == ""} then {
@@ -299,16 +304,25 @@ proc checkout_acplt {} {
 	global releasedir
 	global release
 	global date
+	global build_dbcommands
+	
 	cd $builddir
 	checkout_dir archive libml
 	#for source release - checkout all
 	#if { $os == "nt" } then { 
-	checkout_dir archive oncrpc
+	if {$build_dbcommands == 1} {
+		checkout_dir archive oncrpc
+	}
 	#}
-	checkout_dir archive acplt base
-	cd $builddir/base
-	#checkout libmpm
-	checkout_dir archive fbs_dienste "" notrunk
+	if {$build_dbcommands == 1} {
+		checkout_dir archive acplt base
+		cd $builddir/base
+		#checkout libmpm
+		checkout_dir archive fbs_dienste "" notrunk
+	} else {
+		file mkdir $builddir/base
+		cd $builddir/base
+	}
 	checkout_dir develop ov
 
 	#get the number of the current release - $date is global
@@ -343,10 +357,14 @@ proc build_acplt_mingw {} {
 	global make
 	global basedir
 	global builddir
-	print_msg "Building oncrpc"
-	cd $builddir/oncrpc/
-	execute makemingw.bat
-	#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
+	global build_dbcommands
+	
+	if {$build_dbcommands == 1} {
+		print_msg "Building oncrpc"
+		cd $builddir/oncrpc/
+		execute makemingw.bat
+		#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
+	}
 	cd $builddir/libml
 	build_cygwin libml make -f mingw.mk
 	#cd $builddir/base/libmpm 
@@ -356,12 +374,14 @@ proc build_acplt_mingw {} {
 	#cd $builddir/base/acplt_makmak/build/cygwin
 	#build_cygwin acplt_makmak make -f makefile
 	#enabling plt and ks just for fb_dbcommands	
-	cd $builddir/base/plt/build/cygwin
-	build_cygwin plt make -f makefile
-	cd $builddir/base/ks/build/cygwin
-	build_cygwin ks make -f makefile
-	cd $builddir/base/fbs_dienste/build/cygwin
-	build_cygwin fb_dbcommands make -f makefile
+	if {$build_dbcommands == 1} {
+		cd $builddir/base/plt/build/cygwin
+		build_cygwin plt make -f makefile
+		cd $builddir/base/ks/build/cygwin
+		build_cygwin ks make -f makefile
+		cd $builddir/base/fbs_dienste/build/cygwin
+		build_cygwin fb_dbcommands make -f makefile
+	}
 }
 
 # Build ACPLT (msvc in windows [depricated] and gcc in linux)
@@ -371,10 +391,11 @@ proc build_acplt {} {
 	global os
 	global make
 	global basedir
+	global build_dbcommands
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
 	build_package libml make -C $builddir/libml -f $makefile
-	if { $os == "nt" } then { 
+	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
 		execute make.bat
 		#file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
@@ -382,22 +403,26 @@ proc build_acplt {} {
 	}
 	# build libmpm make -C $builddir/base/libmpm -f $makefile
 	if { $os == "nt" } then {
-		#enabling plt and ks just for fb_dbcommands
-		cd $builddir/base/plt/build/ntvc
-		build_package plt nmake /f $makefile
-		cd $builddir/base/ks/build/ntvc
-		build_package ks nmake /f $makefile
+		if {$build_dbcommands == 1} {
+			#enabling plt and ks just for fb_dbcommands
+			cd $builddir/base/plt/build/ntvc
+			build_package plt nmake /f $makefile
+			cd $builddir/base/ks/build/ntvc
+			build_package ks nmake /f $makefile
+			cd $builddir/base/fb_dbcommands/build/ntvc
+			build_package fb_dbcommands make -f $makefile -k
+		}
 		cd $builddir/base/ov/build/ntvc
 		build_package ov make -f $makefile -k
-		cd $builddir/base/fb_dbcommands/build/ntvc
-		build_package fb_dbcommands make -f $makefile -k
 		cd $basedir
 	} else {
-		#enabling plt and ks just for fb_dbcommands
-		build_package plt make -C $builddir/base/plt/build/$os
-		build_package ks make -C $builddir/base/ks/build/$os
+		if {$build_dbcommands == 1} {
+			#enabling plt and ks just for fb_dbcommands
+			build_package plt make -C $builddir/base/plt/build/$os
+			build_package ks make -C $builddir/base/ks/build/$os
+			build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
+		}
 		build_package ov make -C $builddir/base/ov/build/$os
-		build_package fbs_dienste make -C $builddir/base/fbs_dienste/build/$os
    }
    #if { $os == "nt" } then {
    #	build_package acplt_makmak $make -C $builddir/base/acplt_makmak/build/ntvc
@@ -429,17 +454,21 @@ proc install_dir {dir} {
 
 proc install_acplt { target } {
 	global builddir
-	install_dir $builddir/oncrpc/bin
-	install_dir $builddir/base/plt/build/$target
-	install_dir $builddir/base/ks/build/$target
+	global build_dbcommands
+	
+	if {$build_dbcommands == 1} {
+		install_dir $builddir/oncrpc/bin
+		install_dir $builddir/base/plt/build/$target
+		install_dir $builddir/base/ks/build/$target
+		#install solely fb_dbcommands executable
+		if { $target == "linux" } then {
+			file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
+		} else {
+			file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands.exe $builddir/bin
+		}
+	}
 	install_dir $builddir/base/ov/build/$target
 	#install_dir $builddir/base/acplt_makmak/build/$target
-	#install_dir solely fb_dbcommands executable
-	if { $target == "linux" } then {
-		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
-	} else {
-		file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands.exe $builddir/bin
-	}
 }
 
 #proc makmak {library opts} {
@@ -645,6 +674,7 @@ proc create_release {} {
 	global builddir
 	global env
 	global libsuffix
+	global build_dbcommands
 
 	#create a release
 	set env(ACPLT_HOME) $releasedir
@@ -678,9 +708,8 @@ proc create_release {} {
 	foreach file $libfiles {
 		file copy -force $file $releasedir/system/sysdevbase/ov/lib/
 	}
-	if { $os == "nt" } then {
+	if { $os == "nt" && $build_dbcommands == 1 } then {
 		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/system/sysdevbase/ov/lib/
-	#	file copy -force "$builddir/lib/oncrpcms$lib" $releasedir/lib/
 	}
 	#model dir
 	file mkdir $releasedir/system/sysdevbase/ov/model
@@ -692,18 +721,20 @@ proc create_release {} {
 	#file mkdir $releasedir/database
 	#include dir
 	file mkdir $releasedir/system/sysdevbase/ov/include
-	file mkdir $releasedir/system/sysdevbase/ov/include/ks
-	copy_wildcard $builddir/base/ks/include/ks/*.h $releasedir/system/sysdevbase/ov/include/ks
+	if {$build_dbcommands == 1} {
+		file mkdir $releasedir/system/sysdevbase/ov/include/ks
+		copy_wildcard $builddir/base/ks/include/ks/*.h $releasedir/system/sysdevbase/ov/include/ks
+		file mkdir $releasedir/system/sysdevbase/ov/include/plt
+		copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/system/sysdevbase/ov/include/plt
+		if { $os == "nt" } then {
+			file mkdir $releasedir/system/sysdevbase/ov/include/rpc
+			copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/system/sysdevbase/ov/include/rpc
+		}
+		file mkdir $releasedir/system/sysdevbase/ov/include/libovks
+		copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/system/sysdevbase/ov/include/libovks
+	}
 	file mkdir $releasedir/system/sysdevbase/ov/include/libov
 	copy_wildcard $builddir/base/ov/include/libov/*.h $releasedir/system/sysdevbase/ov/include/libov
-	file mkdir $releasedir/system/sysdevbase/ov/include/libovks
-	copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/system/sysdevbase/ov/include/libovks
-	file mkdir $releasedir/system/sysdevbase/ov/include/plt
-	copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/system/sysdevbase/ov/include/plt
-	if { $os == "nt" } then {
-		file mkdir $releasedir/system/sysdevbase/ov/include/rpc
-		copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/system/sysdevbase/ov/include/rpc
-	}
 	#user dir
 	file mkdir $releasedir/dev
 	#file mkdir $releasedir/user/libs
@@ -830,9 +861,9 @@ proc compress {archivename dir} {
 if { $bleedingedge == 1 } then {
 	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
 	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc develop/ks/trunk/fbcomlib}
-	print_msg "checking out trunk"
+	print_msg "checking out trunk of acplt system"
 } else {
-	print_msg "checking out common"
+	print_msg "checking out common of acplt system"
 	set addon_libs { common/user }
 	set included_libs {common/core}
 }
