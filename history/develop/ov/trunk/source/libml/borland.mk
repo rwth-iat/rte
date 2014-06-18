@@ -32,7 +32,7 @@ CFLAGS = -w -pc -a8 -d -O2 -D__STDC__=1 -DML_SYSTEM_WIN -DDBG_TO_STDERR=0
 
 all: libml.lib
 
-HEADERS = ml_malloc.h
+HEADERS = ../../include/libml/ml_malloc.h
 
 SOURCES_LIBML = ml_malloc.c ml_free.c ml_realloc.c
 

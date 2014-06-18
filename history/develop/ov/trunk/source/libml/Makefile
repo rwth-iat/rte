@@ -45,7 +45,7 @@ CC = gcc
 
 all: libml.a
 
-HEADERS = ml_malloc.h
+HEADERS = ../../include/libml/ml_malloc.h
 
 SOURCES_LIBML = ml_malloc.c ml_free.c ml_realloc.c
 

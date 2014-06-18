@@ -23,7 +23,7 @@
 *   2008-04-30 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen
 *
 ******************************************************************************/
-#include "ml_malloc.h"
+#include "../../include/libml/ml_malloc.h"
 
 
 /* Freie Segmente (um)ordnen. */

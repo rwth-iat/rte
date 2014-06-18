@@ -307,7 +307,6 @@ proc checkout_acplt {} {
 	global build_dbcommands
 	
 	cd $builddir
-	checkout_dir archive libml
 	#for source release - checkout all
 	#if { $os == "nt" } then { 
 	if {$build_dbcommands == 1} {
@@ -365,7 +364,7 @@ proc build_acplt_mingw {} {
 		execute makemingw.bat
 		#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	}
-	cd $builddir/libml
+	cd $builddir/base/ov/source/libml
 	build_cygwin libml make -f mingw.mk
 	#cd $builddir/base/libmpm 
 	#build_cygwin libmpm make -f Makefile
@@ -394,7 +393,7 @@ proc build_acplt {} {
 	global build_dbcommands
 
 	if { $os == "nt" } then { set makefile "msvc.mk" } else { set makefile "Makefile" }
-	build_package libml make -C $builddir/libml -f $makefile
+	build_package libml make -C $builddir/base/ov/source/libml -f $makefile
 	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
 		execute make.bat
