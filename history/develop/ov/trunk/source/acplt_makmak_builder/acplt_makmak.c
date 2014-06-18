@@ -568,7 +568,7 @@ if(new == 0){
 	fprintf(fd,"# Libraries\n");
 	fprintf(fd,"# ---------\n\n");
 #if OV_SYSTEM_NT
-	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB) $(BASE_LIB_DIR)\n");
+	fprintf(fd,"OVLIBS = $(BASE_LIB_DIR)libov$(_LIB)\n");
 	if(numDevLibs+numSysLibs > 0) {
 		fprintf(fd,"ADD_LIBS =");
 		for(i=0; i<numDevLibs; i++) {
