@@ -127,7 +127,7 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libml$(_LIB)
+LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libml$(_LIB)
 
 LIBRPC_LIB			= $(ONCRPC_BIN_DIR)oncrpc$(_LIB)
 

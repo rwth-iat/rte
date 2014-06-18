@@ -101,7 +101,7 @@ ov_database.o: ../../source/libov/ov_database.c \
  ../../include/libov/ov_time.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_vector.h ../../include/libov/ov_memstack.h \
  ../../include/libov/ov_malloc.h ../../include/libov/ov_logfile.h \
- ../../../../libml/ml_malloc.h
+ ../../include/libml/ml_malloc.h
 ov_debug.o: ../../source/libov/ov_debug.c ../../include/libov/ov_debug.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
  ../../include/libov/ov_version.h

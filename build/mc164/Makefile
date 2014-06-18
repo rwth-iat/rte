@@ -109,7 +109,7 @@ OV_INCLUDES = $(OV_INCLUDES) \
 	-I$(KEIL_INCLUDE_DIR) \
 	-I$(OV_INCLUDE_DIR) \
 	-I$(OV_MODEL_DIR) \
-	-I$(LIBMPM_DIR)
+	-I$(LIBMPM_INCLUDE_DIR)
 
 #	all defines and includes together
 #	---------------------------------
@@ -120,7 +120,7 @@ INCLUDES = $(C_INCLUDES) $(LIBRPC_INCLUDES) $(ACPLTKS_INCLUDES) $(OV_INCLUDES)
 #	presupposed libraries
 #	---------------------
 
-LIBMPM_LIB			= $(LIBMPM_DIR)libmpm$(LIB)
+LIBMPM_LIB			= $(LIBMPM_SOURCE_DIR)libmpm$(LIB)
 
 ACPLTKS_LIBS			= $(ACPLT_PLT_BUILD_DIR)libplt$(LIB) $(LIBRPC_LIB)
 

@@ -23,7 +23,7 @@
 *   2008-04-30 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen
 *   
 ******************************************************************************/
-#include "ml_malloc.h"
+#include "../../include/libml/ml_malloc.h"
 #ifdef ML_SYSTEM_WIN
 #include <windows.h>
 #include <winbase.h>

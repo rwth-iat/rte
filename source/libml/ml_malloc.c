@@ -24,7 +24,7 @@
 *
 ******************************************************************************/
 
-#include "ml_malloc.h"
+#include "../../include/libml/ml_malloc.h"
 
 /* Memory pool info. */
 ml_info *_ml_info_ptr;
