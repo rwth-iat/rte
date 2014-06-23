@@ -14,6 +14,7 @@
 #include "ssclib.h"
 //#include "string.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_string.h"
 #include "libov/ov_path.h"
 
 
@@ -169,10 +170,10 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 
 
     // check input
-    if (ov_string_compare(pinst->v_variable, NULL)==0)
+    if (ov_string_compare(pinst->v_variable, NULL)== OV_STRCMP_EQUAL)
     {
-    	pinst->v_error=TRUE;
-       	ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
+       pinst->v_error=TRUE;
+       ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
     };
 
 
@@ -197,7 +198,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 
    if((pinst->v_variable)[0]!='/'){
 	   ov_memstack_lock();
-	   ov_string_setvalue(&temp,ov_path_getcanonicalpath(Ov_DynamicPtrCast(ov_object,pinst), 2));
+	   ov_string_setvalue(&temp,ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pinst), 2));
 	   ov_memstack_unlock();
 
 	  // ov_string_append(&temp,"/");

@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 					if(foundStep == Ov_StaticPtrCast(ssc_step, pstep))
 					{
 						Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 0;
-						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = 1;
+						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = FB_AM_ON;
 					}
 					else //deactivate all non init steps and set the correct id
 					{
@@ -192,12 +192,13 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
     // create INIT- & END-step
     result = Ov_CreateObject(ssc_step, pInitStep, pinst, "INIT");
     pInitStep->v_internalID=0;
-    pInitStep->v_actimode=1;
+    pInitStep->v_actimode = FB_AM_ON;
     result = Ov_CreateObject(ssc_step, pEndStep, pinst, "END");
     pEndStep->v_internalID=999;
 
     //init variables
     pinst->v_workingState= WOST_INIT;
+    pinst->v_actimode = FB_AM_ON;
     pinst->v_iexreq = TRUE;
 
     return OV_ERR_OK;
@@ -224,7 +225,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     // init variables
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
-    intask->v_actimode = 1;
+    intask->v_actimode = FB_AM_ON;
     intask->v_cyctime.secs = 0;
     intask->v_cyctime.usecs = 0;
 
@@ -240,7 +241,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     Ov_GetFirstChildEx(fb_tasklist, intask, pActiveStep, ssc_step);
     if (pActiveStep != NULL)
     {
-    	pActiveStep->v_actimode=0;
+    	pActiveStep->v_actimode = FB_AM_OFF;
    		ov_string_setvalue(&pinst->v_activeStep, pActiveStep->v_identifier);
     }
 
@@ -320,7 +321,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
        			// activate active step
        			if (pActiveStep != NULL)
        			{
-       				pActiveStep->v_actimode=1;
+       				pActiveStep->v_actimode = FB_AM_ON;
        			}
 
        			// generic part
@@ -364,7 +365,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
            			// activate active step
            			if (pActiveStep != NULL)
            			{
-           				pActiveStep->v_actimode=1;
+           				pActiveStep->v_actimode = FB_AM_ON;
            			}
 
            			ov_string_setvalue(&pinst->v_woStText, "BREAK");
@@ -379,7 +380,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
            		// activate active step
            		if (pActiveStep != NULL)
            		{
-           			pActiveStep->v_actimode=0;
+           			pActiveStep->v_actimode = FB_AM_OFF;
            			pActiveStep->v_phase=1;
            			pActiveStep->v_X=FALSE;
            		}
@@ -533,7 +534,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 		  if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pFbAction);
 
 		  // reset parameters
-		  pFbAction->v_actimode=0;
+		  pFbAction->v_actimode = FB_AM_OFF;
 		  pFbAction->v_cyctime.secs = 0;
 		  pFbAction->v_cyctime.usecs = 0;
 		  pFbAction->v_iexreq = TRUE;
@@ -542,11 +543,11 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 		  pSscAction=Ov_DynamicPtrCast(ssc_sscHeader,pFbAction);
 		  if (pSscAction != NULL)
 		  {
-			  pSscAction->v_actimode=1;
+			  pSscAction->v_actimode = FB_AM_ON;
 			  pSscAction->v_EN=SSCCMD_STOP;
 			  //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSscAction), execute, &pTime);
 			  Ov_Call0 (ssc_sscHeader, pSscAction, resetSsc);
-			  pSscAction->v_actimode=0;
+			  pSscAction->v_actimode = FB_AM_OFF;
 		  }
 	  }
 
@@ -558,7 +559,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 	  		  if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pFbAction);
 
 	  		  // reset parameters
-	  		  pFbAction->v_actimode=0;
+	  		  pFbAction->v_actimode = FB_AM_OFF;
 	  		  pFbAction->v_cyctime.secs = 0;
 	  		  pFbAction->v_cyctime.usecs = 0;
 	  		  pFbAction->v_iexreq = TRUE;

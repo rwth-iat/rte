@@ -62,6 +62,8 @@
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
 
+#include "fb_namedef.h"
+
 #include "ov_call_macros_10.h"
 
 // TODO:  Cmd mapping

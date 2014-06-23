@@ -60,7 +60,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 	result=Ov_Link(fb_tasklist, &pparent->p_trans, pchild);
 
 	// activate transition
-	pTrans->v_actimode=1;
+	pTrans->v_actimode = FB_AM_ON;
 	pTrans->v_iexreq=TRUE;
 
 	// link association

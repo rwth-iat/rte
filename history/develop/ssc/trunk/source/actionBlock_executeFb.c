@@ -70,9 +70,9 @@ OV_DLLFNCEXPORT void ssc_executeFb_typemethod(
 		pTask=&pStep->p_trans;
 		if (pSscAction->v_workingState == WOST_TERMINATE)
 		{
-			pTask->v_actimode=1;
+			pTask->v_actimode = FB_AM_ON;
 		} else {
-			pTask->v_actimode=0;
+			pTask->v_actimode = FB_AM_OFF;
 		}
 
 
@@ -110,7 +110,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_executeFb_checkAction(
     if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pAction);
 
     // init parameters
-	pAction->v_actimode = 1;
+	pAction->v_actimode = FB_AM_ON;
 	pAction->v_cyctime.secs = 0;
 	pAction->v_cyctime.usecs = 0;
 	pAction->v_iexreq = TRUE;

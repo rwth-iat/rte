@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 
 
     // activate itself
-    pinst->v_actimode = 1;
+    pinst->v_actimode = FB_AM_ON;
 
     return OV_ERR_OK;
 }

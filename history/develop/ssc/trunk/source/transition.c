@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     			Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
 
     		// init transition condition
-    		pTransCond->v_actimode = 1;
+    		pTransCond->v_actimode = FB_AM_ON;
     		pTransCond->v_cyctime.secs = 0;
     		pTransCond->v_cyctime.usecs = 0;
     		pTransCond->v_iexreq = TRUE;
@@ -186,7 +186,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
        		pPreStep->v_evTransTrigger=TRUE;
 
         	// deactivate transition condition
-        	if (pTransCond !=NULL) pTransCond->v_actimode = 0;
+        	if (pTransCond !=NULL) pTransCond->v_actimode = FB_AM_OFF;
 
         	// execute exit-actions of subSSCs
 
@@ -194,12 +194,12 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
         	// link next-step to ssc-tasklist
         	//result=Ov_LinkPlaced(fb_tasklist, &pSSC->p_intask, pNextStep, OV_PMH_END);
         	result=Ov_Link(fb_tasklist, &pSSC->p_intask, pNextStep);
-        	pNextStep->v_actimode=1;
+        	pNextStep->v_actimode = FB_AM_ON;
         	pNextStep->v_phase=1;
         	pNextStep->v_qualifier=1;
 
         	// deactivate transition condition
-        	if (pTransCond != NULL) pTransCond->v_actimode = 0;
+        	if (pTransCond != NULL) pTransCond->v_actimode = FB_AM_OFF;
         }
     }
 

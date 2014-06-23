@@ -59,13 +59,13 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
 
     // local tasklist
     //result=Ov_Link(fb_tasklist, pinst, pEntry);
-    pEntry->v_actimode=1;
+    pEntry->v_actimode = FB_AM_ON;
     //result=Ov_Link(fb_tasklist, pinst, pDo);
-    pDo->v_actimode=1;
+    pDo->v_actimode = FB_AM_ON;
     //result=Ov_Link(fb_tasklist, pinst, pTrans);
-    pTrans->v_actimode=1;
+    pTrans->v_actimode = FB_AM_ON;
     //result=Ov_Link(fb_tasklist, pinst, pExit);
-    pExit->v_actimode=1;
+    pExit->v_actimode = FB_AM_ON;
 
     //activate
     pinst->v_iexreq=TRUE;
@@ -150,14 +150,14 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     			if (pinst->v_hasSubSsc )
     			{
     				if (pinst->v_subSscTerminated)
-    					pTrans->v_actimode=1;
+    					pTrans->v_actimode = FB_AM_ON;
     				else
-    					pTrans->v_actimode=0;
+    					pTrans->v_actimode = FB_AM_OFF;
     			}
 
     		// if stopping SSC, do not check transitions
     		if (pSSC->v_workingState==WOST_STOP)
-    			pTrans->v_actimode=0;
+    			pTrans->v_actimode = FB_AM_OFF;
 
     		/* transitions */
     		Ov_Call1 (fb_task, pTrans, execute, pltc);
@@ -185,7 +185,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 				}
 
 				if (pSSC->v_workingState==WOST_STOP)
-					pExit->v_actimode=3;
+					pExit->v_actimode = FB_AM_ONCE;
 
 
     			/* exit */
@@ -240,7 +240,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
 
 
     //reset parameters
-    pinst->v_actimode=0;
+    pinst->v_actimode = FB_AM_OFF;
     pinst->v_cyctime.secs = 0;
     pinst->v_cyctime.usecs = 0;
     pinst->v_iexreq = TRUE;
@@ -257,17 +257,17 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
 	}
 
     //reset subtasks
-    pEntry->v_actimode=1;
-    pDo->v_actimode=1;
-    pTrans->v_actimode=1;
-    pExit->v_actimode=0;
+    pEntry->v_actimode = FB_AM_ON;
+    pDo->v_actimode = FB_AM_ON;
+    pTrans->v_actimode = FB_AM_ON;
+    pExit->v_actimode = FB_AM_OFF;
 
     // TODO: reset all action blocks
 
     //activate all action blocks
 	  Ov_ForEachChildEx(ov_containment, pinst, pActionBlock, ssc_actionBlock)
 	  {
-		  pActionBlock->v_actimode=1;
+		  pActionBlock->v_actimode = FB_AM_ON;
 		  pActionBlock->v_cyctime.secs = 0;
 		  pActionBlock->v_cyctime.usecs = 0;
 		  pActionBlock->v_iexreq = TRUE;

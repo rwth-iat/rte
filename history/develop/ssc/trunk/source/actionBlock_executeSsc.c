@@ -71,9 +71,9 @@ OV_DLLFNCEXPORT void ssc_executeSsc_typemethod(
 		pTask=&pStep->p_trans;
 		if (pSscAction->v_workingState == WOST_STOP)
 		{
-			pTask->v_actimode=1;
+			pTask->v_actimode= FB_AM_ON;
 		} else {
-			pTask->v_actimode=0;
+			pTask->v_actimode = FB_AM_OFF;
 		}
 
 
