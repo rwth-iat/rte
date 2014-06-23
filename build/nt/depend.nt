@@ -140,7 +140,7 @@ ov_database.obj: ../../source/libov/ov_database.c \
  ../../include/libov/ov_string.h ../../include/libov/ov_time.h \
  ../../include/libov/ov_macros.h ../../include/libov/ov_vector.h \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h \
- ../../../../libml/ml_malloc.h
+ ../../include/libml/ml_malloc.h
 
 ov_debug.obj: ../../source/libov/ov_debug.c ../../include/libov/ov_debug.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
