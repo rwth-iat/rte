@@ -131,7 +131,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
 	
 	Ov_GetVTablePtr(fb_functionblock, pfbvtable, pfb);
 	if(!pfbvtable) {
-		pfb->v_actimode = 0;	/* FIXME! */
+		pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
 		pfb->v_ErrState = 1;	/* FIXME! */
 		
 		/* Logging */
@@ -150,7 +150,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
                 /* pfbvtable->m_typemethod(pfb, pltc); */
 				if(fb_functionblock_wraptypemethod(pfbvtable,pfb,pltc) != OV_ERR_OK) {
 				
-    			  pfb->v_actimode = 0;	/* FIXME! */
+				  pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     			  pfb->v_ErrState = 1;	/* FIXME! */
     			  ret = FALSE;
     			  
@@ -162,7 +162,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
                 /* pfbvtable->m_typemethod(pfb, pltc); */
 				if(fb_functionblock_wraptypemethod(pfbvtable,pfb,pltc) != OV_ERR_OK) {
 				
-    			  pfb->v_actimode = 0;	/* FIXME! */
+				  pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     			  pfb->v_ErrState = 1;	/* FIXME! */
     			  ret = FALSE;
     			  
@@ -178,7 +178,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
 				ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pfb), KS_VERSION));
 			ov_memstack_unlock();
 			
-			pfb->v_actimode = 0;	/* FIXME! */
+			pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
 			pfb->v_ErrState = 1;	/* FIXME! */
 
 			ret = FALSE;
@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
 	    /* Not supervised */
 		if(fb_functionblock_wraptypemethod(pfbvtable,pfb,pltc) != OV_ERR_OK) {
 		
-		  pfb->v_actimode = 0;	/* FIXME! */
+		  pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
 		  pfb->v_ErrState = 1;	/* FIXME! */
 		  ret = FALSE;
 		  
@@ -228,7 +228,7 @@ OV_DLLFNCEXPORT void fb_functionblock_execute(
 	/*
 	*	is otc >= ltc or function off?
 	*/
-	if((ov_time_compare(&pfb->v_proctime, pltc) > 0) || (pfb->v_actimode == 0)) {
+	if((ov_time_compare(&pfb->v_proctime, pltc) == OV_TIMECMP_AFTER) || (pfb->v_actimode == FB_AM_OFF)) {
 		return;
 	}
 
@@ -302,7 +302,7 @@ OV_DLLFNCEXPORT void fb_functionblock_startup(
 
 	ov_object_startup(pobj);
 
-    if(	pfb->v_actimode == 1) {
+    if(	pfb->v_actimode == FB_AM_ON) {
         fb_set_proctime( Ov_StaticPtrCast(fb_task, pobj) );
     }
     

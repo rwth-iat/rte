@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_connection_checkelements(
 	if(!psourcefbvtable) {
 	    pfb = Ov_DynamicPtrCast(fb_functionblock, psourcefb);
 	    if(pfb) {
-    		pfb->v_actimode = 0;	/* FIXME! */
+	    	pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     		pfb->v_ErrState = 1;	/* FIXME! */
     	}
 		ov_logfile_error("Object %s: method table not found.", 
@@ -143,7 +143,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_connection_checkelements(
 	if(!ptargetfbvtable) {
 	    pfb = Ov_DynamicPtrCast(fb_functionblock, ptargetfb);
 	    if(pfb) {
-    		pfb->v_actimode = 0;	/* FIXME! */
+	    	pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     		pfb->v_ErrState = 1;	/* FIXME! */
     	}
 		ov_logfile_error("Object %s: method table not found.", 
@@ -456,7 +456,7 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
 	if(!psourcefbvtable) {
 		pfb = Ov_DynamicPtrCast(fb_functionblock, psourcefb);
 		if(pfb) {
-    		pfb->v_actimode = 0;	/* FIXME! */
+			pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     		pfb->v_ErrState = 1;	/* FIXME! */
         }
 		
@@ -472,7 +472,7 @@ OV_DLLFNCEXPORT void fb_connection_trigger(
 	if(!ptargetfbvtable) {
 		pfb = Ov_DynamicPtrCast(fb_functionblock, ptargetfb);
 		if(pfb) {
-    		pfb->v_actimode = 0;	/* FIXME! */
+			pfb->v_actimode = FB_AM_OFF;	/* FIXME! */
     		pfb->v_ErrState = 1;	/* FIXME! */
         }
         

@@ -100,13 +100,13 @@ LIBRARY fb
 		IS_INSTANTIABLE;
 		COMMENT = "FB Task";
 		VARIABLES
-			actimode    : INT       HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object activity mode";
+			actimode    : INT       HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object activity mode (OFF: 0; ON: 1; UNLINK 2; ONCE 3; CATCHUP 10)";
 			proctime    : TIME      HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object time counter";
 			cyctime     : TIME_SPAN HAS_SET_ACCESSOR  FLAGS = "hi" UNIT = "sec" COMMENT = "object cycle time";
 			ErrState    : INT                         FLAGS = "ho"              COMMENT = "object state";
 			calctime    : TIME_SPAN                   FLAGS = "ho" UNIT = "sec" COMMENT = "calculation time";
-			Xpos        : INT                         FLAGS = "hp"              COMMENT = "X-position";
-			Ypos        : INT                         FLAGS = "hp"              COMMENT = "Y-position";
+			Xpos        : INT                         FLAGS = "hp"              COMMENT = "X-position for visualisation";
+			Ypos        : INT                         FLAGS = "hp"              COMMENT = "Y-position for visualisation";
 		END_VARIABLES;
 		OPERATIONS
 			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -191,6 +191,7 @@ LIBRARY fb
           comment : STRING                   FLAGS = "p" COMMENT = "comment that describes the variable";
         END_VARIABLES;
         OPERATIONS
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             setvar : C_FUNCTION <OV_FNC_SETVAR>;
         END_OPERATIONS;
     END_CLASS;

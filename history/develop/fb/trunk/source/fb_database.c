@@ -397,7 +397,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_database_checkstruct(void) {
     	pUrTask->v_cyctime.secs = 1;
         pUrTask->v_cyctime.usecs = 0;
 #endif
-        pUrTask->v_actimode = 1;
+        pUrTask->v_actimode = FB_AM_ON;
 
 	}
 	/*
