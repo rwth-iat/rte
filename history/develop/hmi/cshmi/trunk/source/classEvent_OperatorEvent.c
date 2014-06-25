@@ -92,6 +92,10 @@ OV_RESULT cshmi_OperatorEvent_typeSetAndCheck(
 		if(ov_string_match(newvalue, "*move*") == TRUE ||
 				ov_string_match(newvalue, "*drag*") == TRUE ){
 			ov_string_setvalue(&newvalue, "aftermove");
+		}else if(ov_string_match(newvalue, "*over*") == TRUE ){
+			ov_string_setvalue(&newvalue, "mouseover");
+		}else if(ov_string_match(newvalue, "*out*") == TRUE ){
+			ov_string_setvalue(&newvalue, "mouseout");
 		}else if(ov_string_compare(value, "") == OV_STRCMP_EQUAL || calledFromConstructor == TRUE){
 			//allow resetting and initial wrong EventType
 			ov_string_setvalue(&newvalue, "unconfigured");

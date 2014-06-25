@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-06-17 17:12:15
+* Erstellt: 2014-06-25 19:15:07
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -555,7 +555,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT SINGLE = 3.000000;
+      value : INPUT SINGLE = 5.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -7411,6 +7411,94 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseover :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "mouseover";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseover/setTrim :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "trimToLength";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseover/setTrim.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseout :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "mouseout";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseout/setTrim :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "trimToLength";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/ButtonBreitLib/Text/mouseout/setTrim.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      elemVarPath : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 7;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
