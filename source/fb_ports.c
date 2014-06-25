@@ -93,3 +93,26 @@ OV_DLLFNCEXPORT OV_RESULT fb_port_setvar(
 	}
 	return OV_ERR_BADPARAM;
 }
+
+OV_DLLFNCEXPORT OV_RESULT fb_port_constructor(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_fb_port pinst = Ov_StaticPtrCast(fb_port, pobj);
+	OV_INSTPTR_ov_object pParent = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	OV_RESULT    result;
+
+	/* do what the base class does first */
+	result = fb_object_constructor(pobj);
+	if(Ov_Fail(result)){
+		return result;
+	}
+
+	if(!Ov_CanCastTo(fb_functionchart, pParent)){
+		return OV_ERR_BADPLACEMENT;
+	}
+
+	return OV_ERR_OK;
+}

@@ -167,7 +167,7 @@ OV_DLLFNCEXPORT void fb_task_setNextProcTime(
 			break;
 		case FB_AM_ONCE:
 		default :
-			ptask->v_actimode = 0;
+			ptask->v_actimode = FB_AM_OFF;
 			break;
 	}
 	return;
@@ -319,7 +319,7 @@ OV_DLLFNCEXPORT void fb_task_startup(
 
 	ov_object_startup(pobj);
 	
-    if(ptask->v_actimode == 1) {
+    if(ptask->v_actimode == FB_AM_ON) {
         fb_set_proctime(ptask);
     }
     
@@ -395,7 +395,7 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 		    }
 		    
 		    /* Ist Task eingeschaltet, darf Task nicht geloescht werden */
-		    if(ptask->v_actimode == 0) {
+		    if(ptask->v_actimode == FB_AM_OFF) {
     		    if(!ptaskchild) {
         		    /* Keine Unterobjekte. Dann ist Task loeschbar. Auch UrTask */
         		    acces |= OV_AC_DELETEABLE;
@@ -435,7 +435,7 @@ OV_DLLFNCEXPORT void fb_task_execChildObjects(
     
 		if(!pvtable) {
 
-			ptaskchild->v_actimode = 0;	/* FIXME! */
+			ptaskchild->v_actimode = FB_AM_OFF;	/* FIXME! */
 			ptaskchild->v_ErrState = 1;	/* FIXME! */
 			
 			/* Logging */

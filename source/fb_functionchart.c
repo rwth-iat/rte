@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT void fb_functionchart_typemethod(
 
 	/* Init intask */
 	intask = &pfc->p_intask;
-	intask->v_actimode = 1;
+	intask->v_actimode = FB_AM_ON;
 	intask->v_cyctime.secs = 0;
 	intask->v_cyctime.usecs = 0;
 	intask->v_proctime = *pltc;
