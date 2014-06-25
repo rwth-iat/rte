@@ -233,7 +233,6 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			{
 				/*	ov_logfile_debug("order:\n\n\t%s\n\n", order);	*/
 				cmdlib_processcontrol_order_set(pProcessControl, order);
-				ov_memstack_unlock();
 			}
 			else
 			{
@@ -267,15 +266,12 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 				{
 					ov_logfile_error("Port \"CMD\" not found.");
 				}
-				/*	delete parsed message	*/
-				Ov_DeleteObject(pMsg);
-				ov_memstack_unlock();
 			}
+			/*	delete parsed message	*/
+			Ov_DeleteObject(pMsg);
+			ov_memstack_unlock();
 		}
-
 	}
-
-
 	return;
 }
 
