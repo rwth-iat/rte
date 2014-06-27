@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>introduction</title>
+</head>
+<body>
+<h2>1 Introduction<br>
+</h2>
+The generic object management system ACPLT/OV enables an easy use of
+object management functionality in process control components. This
+functionality can be devided into the following groups:
+<br>
+<h3>1.1 Management of objects and their relationships<br>
+</h3>
+<p>Objects and their relationships are stored in a persistent database.
+At run time, objects and their relationsships (which are described by
+links) may be created or deleted and attributes or objects may be read
+or modified. Rather than just storing data, objects own operations
+encapsulating their functionality. Objects may even be active objects,
+which means that they are actively process data. The complete contents
+of a database can always be exported to the generic human-readable
+ACPLT/OV instance desription language which may be modified and be
+reimported to an existing or new database.
+<br>
+</p>
+<h3>1.2 Implementation of objects and their relationships</h3>
+<p>Objects are classified by (object) classes, relationships are
+classified by associations. The implementation of classes is carried
+out in ANSI C which provides a high portability - ACPLT/OV not only
+runs on a workstation but also on a microcontroller! While ANSI C
+lacks a support for object oriented programming, the ACPLT/OV C code
+generator automatically creates virtual function tables and the
+ACPLT/OV library helps out with many functions and macros supporting
+the object oriented programming style. The input for the C code
+generator is the ACPLT/OV modelling language (see below).
+Implementations of classes and associations are grouped to libraries,
+which may be DLLs or shared libraries and can be loaded into the
+system at run time.<br>
+</p>
+<h3>1.3 Information about information: meta information<br>
+</h3>
+<p>The class and association definitions provided by the ACPLT/OV
+modelling language do not only support the implementation; rather they
+are converted into meta objects, which are instances of the ACPLT/OV
+meta model. If a library is loaded, these meta objects are instantiated
+in the database. The benefits are:
+- Reflection: Objects may explore the meta information about themselves
+or other objects (of which class they are, which variables they own or
+the like).
+- Introspection: Clients may explore the database, which is -- due to
+the meta information -- self descriptive. This means, that you do NOT
+have to configure anything to access any information (see the following
+topic).
+<br>
+</p>
+<h3>1.4 Information access at run time<br>
+</h3>
+<p>The information stored in the attributes of the managed objects as
+well
+as structural information about the objects and their relationships can
+be accessed over the network through an integrated ACPLT/KS server.
+<br>
+</p>
+<h3>1.5 Engineering functionality at run time<br>
+</h3>
+<p>ACPLT/OV does not only show "a picture of the world inside" but also
+allows to modify the (engineered) structure of the object system
+through
+the CreateObject, DeleteObject, Link and Unlink services provided by
+the integrated ACPLT/KS server.<br>
+<br>
+</p>
+</body>
+</html>
