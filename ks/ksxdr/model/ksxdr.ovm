@@ -1,0 +1,181 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+
+LIBRARY ksxdr
+	VERSION   = "V0.1 (28-Jan-2013)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik, RWTH Aachen University";
+	COMMENT   = "Library for handling ks-requests in XDR-format";
+	
+	/**
+	 *	Checks whether received data is conforming to the ks-xdr protocol
+	 *	Criteria are: first byte equals 0x00 (not finished stream-fragment) or 0x80 (last stream-fragment) and program number equals ks program number
+	 *	ks-program number is 0x49678 (obtained from Sun)		
+	 */
+	CLASS xdrIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing xdr-ks communication";
+		VARIABLES
+			ksProgramnumber	: UINT	
+				COMMENT	=	"identification number of ks requests (obtained from Sun). KS RPC program number is 0x49678 (DEC: 300664)"
+				INITIALVALUE	=	300664;				/*	0x49678	*/
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			identify		:	C_FUNCTION	<KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS xdrClientHandler	:	CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for XDR-ks clients. Processes XDR-messages and calls the respective operations (GETEP, GETVAR, etc.)";
+	VARIABLES
+		connectionTimeout	:	UINT
+			COMMENT	=	"Timeout in s for idle connections"
+			INITIALVALUE	=	300;
+		timeoutIncomplete	:	UINT
+			COMMENT	=	"Time in s to wait for the next part of an incomplete xdr-frame"
+			INITIALVALUE	=	2;
+	END_VARIABLES;
+	OPERATIONS
+		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
+	
+		
+	CLASS xdrSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	IS_INSTANTIABLE;
+	COMMENT	=	"Authenticator for simple tickets transportes via ks-xdr";
+	OPERATIONS
+		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/*
+ 		*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 		*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 		*/
+ 		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	
+	CLASS xdrManagerCom	:	CLASS ksbase/ComTask
+	IS_INSTANTIABLE;
+	COMMENT	=	"Instances of this class register the server at the ks-Manager periodically. If not specified otherwise as commandline option a TCPChannel is used. If the server is Manager itself a direct ov shortcut is used.";
+	VARIABLES
+		ManagerPort	:	STRING
+			COMMENT	=	"Port part of Manager address"
+			INITIALVALUE = "7509";
+		OwnPort		:	STRING
+			COMMENT	=	"Port this server listens on"
+			INITIALVALUE	=	"";
+		UseShortCut	:	BOOL
+			COMMENT	=	"use the ov-shortcut (do not create a channel)"
+			INITIALVALUE = FALSE;
+		RegisterState	:	UINT
+			COMMENT	=	"State of registration: 0 not registered, 1 waiting for answer, 2 registered, 128 register error"
+			INITIALVALUE = 0;
+		ErrCode		:	INT
+			COMMENT	=	"Error Code returned by register command"
+			INITIALVALUE = 0;
+		Tries		:	UINT
+			COMMENT	=	"Tries before successfull register. 5 is maximum"
+			INITIALVALUE = 0;
+	END_VARIABLES;	
+	OPERATIONS
+		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+		shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		typemethod  :	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;	
+	END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS	xdrClient	:	CLASS	ksbase/ClientBase
+		IS_INSTANTIABLE;
+		COMMENT	=	"message generation and reply processing for xdr protocol";
+		VARIABLES
+			ManagerPort	:	STRING
+				COMMENT	=	"Port of MANAGER on remote server. Default is 7509 (IANA service acplt)"
+				INITIALVALUE	=	"7509";
+			msgAccepted	:	INT
+				COMMENT	=	"0 = message Accepted by server; otherwise: errorcode"
+				INITIALVALUE = 0;
+			msgStatus	:	INT
+				COMMENT	=	"0 = message could be processed; otherwise: errorcode"
+				INITIALVALUE = 0;
+			rpcErrCode	:	INT
+				COMMENT	=	"reasons for denial"
+				INITIALVALUE = 0;
+			sentProcID	:	UINT
+				COMMENT	=	"KS-Servicenumber of the last requested service"
+				INITIALVALUE	=	0;
+			sentXID	:	UINT
+				COMMENT	=	"XID sent with the last request"
+				INITIALVALUE	=	0;
+			timeLastEvent	:	TIME
+				COMMENT	=	"Timestamp of last state change.";
+			timeout		:	UINT
+				COMMENT	=	"Timeout for network operations in seconds"
+				INITIALVALUE	=	30;
+			dataToSend	:	C_TYPE	<KS_DATAPACKET>
+				COMMENT	=	"Data to be send (request XDR).";
+			tempXID	:	UINT
+				COMMENT	=	"XID saved temporarily (while a getserver is running)"
+				INITIALVALUE	=	0;
+			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
+				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
+			dataReceived	:	C_TYPE	<KS_DATAPACKET>
+				COMMENT	=	"Data received (answer XDR).";
+		END_VARIABLES;
+		OPERATIONS
+			/**
+			*	For each ks-service there is a generate function that generates the request message and a process function that processes the server's answer
+			*/
+			reset				:	C_FUNCTION	<KSBASE_FNC_RESET>;
+			requestRegister		:	C_FUNCTION	<KSBASE_FNC_REQREG>;
+			processRegister		:	C_FUNCTION	<KSBASE_FNC_PROCREG>;
+			requestUnRegister	:	C_FUNCTION	<KSBASE_FNC_REQUNREG>;
+			processUnRegister	:	C_FUNCTION	<KSBASE_FNC_PROCUNREG>;
+			requestGetServer	:	C_FUNCTION	<KSBASE_FNC_REQGETSRV>;
+			processGetServer	:	C_FUNCTION	<KSBASE_FNC_PROCGETSRV>;
+			requestGetPP		:	C_FUNCTION	<KSBASE_FNC_REQGETPP>;
+			processGetPP		:	C_FUNCTION	<KSBASE_FNC_PROCGETPP>;
+			requestGetEP		:	C_FUNCTION	<KSBASE_FNC_REQGETEP>;
+			processGetEP		:	C_FUNCTION	<KSBASE_FNC_PROCGETEP>;
+			requestGetVar		:	C_FUNCTION	<KSBASE_FNC_REQGETVAR>;
+			processGetVar		:	C_FUNCTION	<KSBASE_FNC_PROCGETVAR>;
+			requestSetVar		:	C_FUNCTION	<KSBASE_FNC_REQSETVAR>;
+			processSetVar		:	C_FUNCTION	<KSBASE_FNC_PROCSETVAR>;
+			requestGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_REQGETCANONPATH>;
+			processGetCanonicalPath		:	C_FUNCTION	<KSBASE_FNC_PROCGECANONPATH>;
+			requestCreateObject	:	C_FUNCTION	<KSBASE_FNC_REQCREATEOBJ>;
+			processCreateObject	:	C_FUNCTION	<KSBASE_FNC_PROCCREATEOBJ>;
+			requestDeleteObject	:	C_FUNCTION	<KSBASE_FNC_REQDELOBJ>;
+			processDeleteObject	:	C_FUNCTION	<KSBASE_FNC_PROCDELOBJ>;
+			requestRenameObject	:	C_FUNCTION	<KSBASE_FNC_REQRENAMEOBJ>;
+			processRenameObject	:	C_FUNCTION	<KSBASE_FNC_PROCRENAMEOBJ>;
+			requestLink			:	C_FUNCTION	<KSBASE_FNC_REQLINK>;
+			processLink			:	C_FUNCTION	<KSBASE_FNC_PROCLINK>;
+			requestUnLink		:	C_FUNCTION	<KSBASE_FNC_REQUNLINK>;
+			processUnLink		:	C_FUNCTION	<KSBASE_FNC_PROCUNLINK>;
+			typemethod 			: 	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+END_LIBRARY;
