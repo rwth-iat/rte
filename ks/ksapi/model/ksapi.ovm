@@ -1,0 +1,303 @@
+#include "ksbase.ovm"
+
+LIBRARY	ksapi
+
+	VERSION		=	"0.2";
+	AUTHOR		=	"Lars Evertz";
+	COPYRIGHT	=	"Copyright (C) 2013 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT		=	"KS 3rd: ksapi, client-side communication API";
+	
+	CLASS	KSApiCommon					:	CLASS	ov/domain
+		COMMENT	=	"baseclass for KSApi objects";
+		VARIABLES
+			/* Input *************************************************/
+			serverHost	:	STRING	
+				COMMENT			=	"Host (or IP Address or whatever type of address) of target machine."
+				INITIALVALUE	=	"";
+			serverName	:	STRING
+				COMMENT			=	"KS-Name of the target ks-server. (This may not be necessarry for all types of communication.)"
+				INITIALVALUE	=	"";	
+			path		:	STRING
+				COMMENT			=	"Target Path"
+				INITIALVALUE	=	"";
+			status		:	INT
+				COMMENT			= "status of KS obj: 0: initial; 1: request sent, waiting for answer; 2: completed; 128: internal error, see result for error code; 64: request failed, see result for error code"
+				INITIALVALUE	=	0;
+			result		:	UINT
+				COMMENT	=	"Result of last Operation in KS_ERR Codes"
+				INITIALVALUE	=	0;
+			holdConnection	:	BOOL
+				COMMENT			=	"Tell client not to close the connection after each request"
+				INITIALVALUE	=	FALSE;
+			Reset		:	BOOL	HAS_SET_ACCESSOR
+				COMMENT	=	"Rising edge triggers reset of Client object and sets status and result to 0"
+				INITIALVALUE	= FALSE;
+			Submit		:	BOOL	HAS_SET_ACCESSOR
+				COMMENT	=	"Rising edge triggers submit function"
+				INITIALVALUE	= FALSE;	
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+			prepareSubmit		:	C_FUNCTION <KSAPI_FNC_PREPSUBMIT>;
+			genSetForSubmit		:	C_FUNCTION <KSAPI_FNC_GENSETFSUBMIT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	createObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to create an object";
+		VARIABLES
+			/* Input *************************************************/
+			classPath			:	STRING
+				COMMENT			=	"path of the object type"
+				INITIALVALUE	=	"";
+			position			:	INT
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			element				:	STRING
+				COMMENT			=	"element postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_CREATEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	deleteObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to delete an object";
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			// sending functions:
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_DELETEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	variableOperation	:	CLASS	ksapi/KSApiCommon
+		COMMENT	=	"Baseclass for Set/GetVar. Used as anchor for associations between get/setVar objects and Variables.";
+		VARIABLES
+			varValue			:	ANY
+				COMMENT			=	"Variable which will be received from the client";
+			varRes				:	UINT
+				COMMENT			=	"Result of Operation on this variable"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+		END_OPERATIONS;
+	END_CLASS;	
+
+
+	CLASS	getVar				:	CLASS	ksapi/variableOperation
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to get a variable";
+		OPERATIONS
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_GETVAR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	setVar				:	CLASS	ksapi/variableOperation
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to set a Variable";
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_SETVAR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	getEPidentifiers	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"get Identifiers of contained objects via getEP";
+		VARIABLES
+			/* Output *************************************************/
+			identifierList[]	:	STRING
+				COMMENT			=	"A list containing the names of the elements inside the Object named in path";
+			namemask			:	STRING
+				COMMENT			=	"A regular expression to filter the Objects, * takes everything"
+				INITIALVALUE	=	"*";
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_EP_GETID>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	getEP				:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"get engineered properties of contained objects";
+		VARIABLES
+			/* Output *************************************************/
+			typemask			:	UINT
+				COMMENT			=	"Filter types: Domain 1; Variable 2; History 4; Link 8; Structure 16. Use bitwise or to combine. e.g. all of them: 31"
+				INITIALVALUE	=	15;
+			namemask			:	STRING
+				COMMENT			=	"A regular expression to filter the Objects, * takes everything"
+				INITIALVALUE	=	"*";
+			scopeFlags			:	UINT
+				COMMENT			=	"Flags defining what to find: Parts: 2147483648 (0x80000000); Children 1073741824 (0x40000000); Flatten 1."
+				INITIALVALUE	=	3221225472;
+			identifiers[]		:	STRING
+				COMMENT			=	"A list containing the names of the elements inside the Object named in path";
+			objectTypes[]		:	UINT
+				COMMENT			=	"A list containing the object types of the elements inside the Object named in path";
+			objectTypesStr[]	:	STRING
+				COMMENT			=	"A list containing the object types of the elements inside the Object named in path as strings";
+			creationTimes[]		:	TIME
+				COMMENT			=	"A list containing the creation times of the elements inside the Object named in path";
+			comments[]			:	STRING
+				COMMENT			=	"A list containing the comments of the elements inside the Object named in path";
+			accessRights[]		:	UINT
+				COMMENT			=	"A list containing the access rights of the elements inside the Object named in path";
+			accessRightsStr[]	:	STRING
+				COMMENT			=	"A list containing the access rights of the elements inside the Object named in path as strings";
+			semanticFlags[]		:	UINT
+				COMMENT			=	"A list containing the semantic flags of the elements inside the Object named in path";
+			DOMclassIdents[]	:	STRING
+				COMMENT			=	"A list containing the class identifiers of the domains inside the Object named in path";
+			STRUCTtypeIdents[]	:	STRING
+				COMMENT			=	"A list containing the type identifiers of the structs inside the Object named in path";
+			VARtechUnits[]		:	STRING
+				COMMENT			=	"A list containing the TechUnits of the Variables inside the Object named in path";
+			VARtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the vartypes of the Variables inside the Object named in path as strings";
+			VARtypes[]			:	UINT
+				COMMENT			=	"A list containing the vartypes of the Variables inside the Object named in path";
+			LINKtypes[]			:	UINT
+				COMMENT			=	"A list containing the types of the Links inside the Object named in path";
+			LINKtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the types of the Links inside the Object named in path as strings";
+			LINKoppositeRoles[]	:	STRING
+				COMMENT			=	"A list containing the opposite role identifiers of the links inside the Object named in path";
+			LINKassociations[]	:	STRING
+				COMMENT			=	"A list containing the associations of the links inside the Object named in path";
+			HISTtypes[]			:	UINT
+				COMMENT			=	"A list containing the types of the histories inside the Object named in path";
+			HISTtypesStr[]		:	STRING
+				COMMENT			=	"A list containing the types of the histories inside the Object named in path";
+			HISTdefaultInts[]	:	UINT
+				COMMENT			=	"A list containing the default interpolation of the histories inside the Object named in path";
+			HISTsupportedINTs[]	:	UINT
+				COMMENT			=	"A list containing the supported interpolations of the histories inside the Object named in path";
+			HISTtypeIdents[]	:	STRING
+				COMMENT			=	"A list containing the type identifiers of the histories inside the Object named in path";	
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_GETEP>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	Variable				:	CLASS	ov/object
+		IS_INSTANTIABLE;
+		IS_FINAL;
+		COMMENT	=	"ov_object, representing a variable (to be put in the containment of a get/setVar to get/set more than one variable on the same server)";
+		VARIABLES
+			path		:	STRING
+				COMMENT			=	"Target Path"
+				INITIALVALUE	=	"";
+			varValue				:	ANY
+				COMMENT			=	"The Variable value";
+			varRes		:	UINT
+				COMMENT			=	"Result of ks-operation"
+				INITIALVALUE	=	0;
+			order		:	UINT
+				COMMENT			=	"Place of variable in package"
+				INITIALVALUE	=	0;
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			constructor			: 	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;		/*	just to make all variables visible on KS	*/
+		END_OPERATIONS;
+	END_CLASS;
+
+	
+	CLASS	renameObject	:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to rename an object";
+		VARIABLES
+			/* Input *************************************************/
+			newpath				:	STRING
+				COMMENT			=	"new path of the object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_RENAMEOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;		
+	
+	CLASS	linkObject			:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to link an object";
+		VARIABLES
+			/* Input *************************************************/
+			elementPath			:	STRING
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+			position			:	INT
+				COMMENT			=	"0=default,1=begin,2=end,3=before,4=after"
+				INITIALVALUE	=	0;
+			placePath			:	STRING
+				COMMENT			=	"place postion points to"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_LINKOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS	unlinkObject			:	CLASS	ksapi/KSApiCommon
+		IS_INSTANTIABLE;
+		COMMENT	=	"ov_object, which gets the information and tries to unlink an object";
+		VARIABLES
+			/* Input *************************************************/
+			elementPath			:	STRING
+				COMMENT			=	"path of the linked object"
+				INITIALVALUE	=	"";
+		END_VARIABLES;
+		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			submit				:	C_FUNCTION <KSAPI_FNC_SUBMIT>;
+			setandsubmit		:	C_FUNCTION <KSAPI_FNC_SETANDSUBMIT_UNLINKOBJECT>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	ASSOCIATION operationToVariable	: ONE_TO_MANY
+		PARENT parVarOperation	:	CLASS ksapi/variableOperation;
+		CHILD  chVariable 		:	CLASS ksapi/Variable;
+	END_ASSOCIATION;
+END_LIBRARY;
