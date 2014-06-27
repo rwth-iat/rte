@@ -1,0 +1,16 @@
+#ifndef TCPbind_OVF_INCLUDED
+#define TCPbind_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+
+typedef OV_DLLFNCEXPORT OV_RESULT TCPBIND_FNC_ASSOCIATECLIENTHANDLER(
+	OV_INSTPTR_TCPbind_TCPChannel this
+);
+
+#endif

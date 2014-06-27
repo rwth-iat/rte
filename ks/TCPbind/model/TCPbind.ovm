@@ -1,0 +1,74 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+
+LIBRARY TCPbind
+	VERSION   = "V0.1 (17-01n-2013)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "Lehrstuhl für Prozessleittechnik 2013";
+	COMMENT   = "TCP binding for generic communications. Includes a TCPListener and a TCPChannel.";
+	
+	/**
+	*	The TCPChannel is a Channel object for Communication over TCP networks.
+	*	Working on the server-side it uses a socket which is opened by the TCPListener (see below) to receive and send data over.
+	*	It can open a socket to another server and then send and receive data. This is used when acting on the client-side. To open a socket the OpenConnection function is used. 
+	*	There is no processing of data implemented. Just plain receiving and sending. 
+	*/
+	CLASS TCPChannel : CLASS ksbase/Channel
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		VARIABLES
+			socket	:	INT	HAS_ACCESSORS
+				COMMENT	=	"Socket to receive and send data"
+				INITIALVALUE	=	-1;
+		END_VARIABLES;
+		OPERATIONS
+			//real sending of data
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			//receive data and hand it over
+			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			/*	open a local connection (needed for communication with manager)	*/
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
+			AssociateClientHandler	:	C_FUNCTION	<TCPBIND_FNC_ASSOCIATECLIENTHANDLER>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+	*	The TCPListener is only used on the server-side.
+	*	it listens on a given TCP port. On incoming conenctions it creates a new socket. Then it creates a new TCPChannel using the just created socket so handle the incoming data.
+	*	 
+	*/
+	CLASS TCPListener : CLASS ksbase/ComTask
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		VARIABLES
+			socket [2]	:	INT	
+				COMMENT	=	"listening on socket(s) (IPv4 and IPv6)";
+			SocketState	:	UINT
+				COMMENT	=	"State of the socket: 0 - closed; 1 - opening; 2 - open; 4 - closing; 128 - indicates error; 255 generic error"
+				INITIALVALUE	=	0;
+			port	:	INT	HAS_ACCESSORS
+				COMMENT	=	"port listening on"
+				INITIALVALUE	=	-1;
+			ChannelNeedsClientHandler	:	BOOL
+				COMMENT	=	"TRUE: TCPChannels created by this TCPListener need ClientHandlers"
+				INITIALVALUE = TRUE;
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/* 
+ 	 * This Association is used on a TCPListener to make it create Channels with a specific ClientsHandler 
+ 	 */
+	ASSOCIATION AssocSpecificClientHandler : ONE_TO_ONE
+		PARENT Listener : CLASS TCPbind/TCPListener;
+		CHILD  Identificator  : CLASS ksbase/ProtocolIdentificator;
+	END_ASSOCIATION;	
+END_LIBRARY;
