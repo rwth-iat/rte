@@ -201,7 +201,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				}
 				else if(pChannel->v_ConnectionState > 128)
 				{	/*	connection error	*/
-					ov_logfile_info("MessageDelivery/typeMethod: An channel indicates error in connection, CurrentMessage wasn't sent");
+					ov_logfile_info("MessageDelivery/typeMethod: Channel indicates error in connection, CurrentMessage wasn't sent");
 					Ov_DeleteObject(msg);
 				}
 				else
@@ -418,7 +418,9 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 
 				}
 				else
+				{
 					pChannel->v_CloseAfterSend = TRUE;
+				}
 
 
 				KS_logfile_debug(("msgDelivery: pChannel->v_ConnectionState is: %u", pChannel->v_ConnectionState));
