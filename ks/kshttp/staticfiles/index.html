@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="windows-1252">
+		<title>OV-http Server</title>
+		<style type="text/css">
+			code{
+				background-color: #DDDDFF;
+				border: 1px solid #8080FF;
+				color: #000080;
+			}
+			#idPlaygroundOutput, #idUrldisplay{
+				background-color: lightgrey;
+				border: 1px solid #8080FF;
+				color: #000080;
+				width:500px;
+			}
+			#idPlaygroundOutput{
+				display:block;
+			}
+			input{
+				transition: background-color 0.5s;
+			}
+			#idOutputformatSelect{
+				width:90px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>The Webserver is running!</h1>
+		<p>Powered by ACPLT/OV. This server <!--  has some static files as a <a href="sse.html">demo</a> and--> supports KS commands. This page is only a quick reference.</p>
+		<span id="idServices"></span>
+		<form id="idCommandPlayground" style="display:none;" action="">
+			<h1>Command playground</h1>
+			<div>
+				<span id="idSpanOutputformat">
+					output format: 
+					<select id="idOutputformatSelect">
+						<option value="ksx">KSX 2.1r</option>
+						<option value="tcl">KSTCL (human readable errors)</option>
+						<option value="plain">text plain (no structure)</option>
+					</select>
+				</span>
+				<select id="idServicelist">
+					<option value="none">select type of request</option>
+					<option value="getEP">getEP</option>
+					<option value="getVar">getVar</option>
+					<option value="setVar">setVar</option>
+					<option value="createObject">createObject</option>
+					<option value="deleteObject">deleteObject</option>
+					<option value="renameObject">renameObject</option>
+					<option value="link">link</option>
+					<option value="unlink">unlink</option>
+					<option value="getLogfile">getLogfile</option>
+				</select>
+				path: 
+				<input id="idPathInput" value="" placeholder="full path to the object/variable" style="width:200px;">
+				<span id="idSecondtextSpan" style="display:none;">
+					<span id="idSecondtextLabel">new value: </span>
+					<input id="idSecondtextInput" placeholder="new value to set" style="width:200px;">
+				</span>
+				<span id="idSpanGetepRequestType" style="display:none;">
+					request type: 
+					<select id="idGetepRequestTypeSelect">
+						<option value="OT_DOMAIN">children (OT_DOMAIN)</option>
+						<option value="OT_VARIABLE">variables (OT_VARIABLE)</option>
+						<option value="OT_LINK">associations (OT_LINK)</option>
+						<option value="OT_ANY">all (OT_ANY)</option>
+					</select>
+				</span>
+			</div>
+			<input id="idUrldisplay" value="" placeholder="enter a request right here or use the boxes above">
+			<input type="submit" id="idSubmitbutton" value="send request">
+			<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
+		</form>
+		<h1>Supported KS commands</h1>
+		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
+		It is possible to select KSX with the 
+		<a href="http://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP accept header</a>
+		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=ksx</code>.</p>
+		<h2>GetVar</h2>
+		<p>Gets one or multiple Variables.</p>
+		example: <code>/getVar?format=ksx&amp;path=/vendor/database_free</code><br>
+		example: <code>/getVar?format=ksx&amp;path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
+		<h2>SetVar</h2>
+		<p>Sets one or multiple Variables.</p>
+		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[1]=1</code>
+		<h2>GetEP</h2>
+		<p>Gets the engineering properties of an object. Can give all childrens with the parameter <code>requestType</code>(default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</p>
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code><br>
+		<h2>createObject</h2>
+		<p>Instantiates new objects.</p>
+		example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		<h2>deleteObject</h2>
+		<p>Deletes objects.</p>
+		example: <code>/deleteObject?format=ksx&amp;path=/TechUnits/add1</code><br>
+		example: <code>/deleteObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
+		<h2>renameObject</h2>
+		<p>Renames objects.</p>
+		example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
+		example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
+		<h2>linkObject</h2>
+		<p>Links two pairs of objects with an OV association.</p>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
+		equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
+		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placehint=BEGIN</code><br>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placehint=BEFORE&amp;placepath=/TechUnits/sub1</code><br>
+		<h2>unlinkObject</h2>
+		<p>Unlinks two pairs of objects with an OV association.</p>
+		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
+		example: <code>/unlink?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		<h2>getLogfile</h2>
+		<p>Outputs logfile outputs of the server.</p>
+		example: <code>/getLogfile?format=ksx</code><br>
+		example: <code>/getLogfile?format=ksx&amp;from=2013-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=30</code><br>
+		
+		<script type="text/javascript" >
+		var CommandPlayground = document.getElementById("idCommandPlayground");
+		var OutputformatSelect = document.getElementById("idOutputformatSelect");
+		var Servicelist = document.getElementById("idServicelist");
+		var Submitbutton = document.getElementById("idSubmitbutton");
+		var PathInput = document.getElementById("idPathInput");
+		var SecondtextSpan = document.getElementById("idSecondtextSpan");
+		var SecondtextInput = document.getElementById("idSecondtextInput");
+		var SecondtextLabel = document.getElementById("idSecondtextLabel");
+		var SpanGetepRequestType = document.getElementById("idSpanGetepRequestType");
+		var GetepRequestTypeSelect = document.getElementById("idGetepRequestTypeSelect");
+		var Urldisplay = document.getElementById("idUrldisplay");
+		var PlaygroundOutput = document.getElementById("idPlaygroundOutput");
+		
+		var prepareWebpage = function(){
+			//show playground
+			if (-1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
+				//show playground
+				if(CommandPlayground){
+					CommandPlayground.style.display = "block";
+				}
+				
+				//test HMI and other services if transfered via http
+				var ServicesNode = document.getElementById("idServices");
+				if(ServicesNode && !!window.XMLHttpRequest){
+					var req = new XMLHttpRequest();
+					req.open("HEAD", "/hmi/", false);
+					try{
+						req.send(null);
+						if(req.status == 200){
+							ServicesNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+						}
+					}catch(e){
+						//do nothing
+					};
+				}
+			}
+		};
+		window.onload = prepareWebpage;
+		Servicelist.onchange = function(evt){
+			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
+				PathInput.value = "/TechUnits";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "inline";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
+				PathInput.value = "/TechUnits/add1.IN1";
+				SecondtextInput.value = "42";
+				SecondtextLabel.innerHTML = "new value: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getVar"){
+				PathInput.value = "/TechUnits/add1.IN1";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextInput.value = "/Libraries/iec61131stdfb/add";
+				SecondtextLabel.innerHTML = "factory/class: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "deleteObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "renameObject"){
+				PathInput.value = "/TechUnits/add1";
+				SecondtextInput.value = "/TechUnits/add2";
+				SecondtextLabel.innerHTML = "new name: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "link"){
+				PathInput.value = "/TechUnits/add1.taskparent";
+				SecondtextInput.value = "/Tasks/UrTask";
+				SecondtextLabel.innerHTML = "link partner: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
+				PathInput.value = "/TechUnits/add1.taskparent";
+				SecondtextInput.value = "/Tasks/UrTask";
+				SecondtextLabel.innerHTML = "link partner: ";
+				SecondtextSpan.style.display = "inline";
+				SpanGetepRequestType.style.display = "none";
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
+				PathInput.value = "4";
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}else{
+				SecondtextSpan.style.display = "none";
+				SpanGetepRequestType.style.display = "none";
+			}
+			calculateUrl();
+		};
+		Submitbutton.onclick = document.getElementsByTagName("form")[0].onsubmit = function(evt){
+			var req = new XMLHttpRequest();
+			req.open("GET", Urldisplay.value, true);
+			req.timeout = 10000;
+			req.onreadystatechange = RequestStatehandler;
+			try{
+				req.send();
+			}catch(err){
+				PlaygroundOutput.innerHTML = "transmit error: "+err;
+				PlaygroundOutput.style.borderColor = "red";
+			}
+			return false;
+		};
+		var calculateUrl = function(){
+			var urlstring = "/"+Servicelist.options[Servicelist.options.selectedIndex].value+"?format="+OutputformatSelect.options[OutputformatSelect.options.selectedIndex].value;
+			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
+				//nothing selected
+				return;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
+				urlstring += "&requestType="+GetepRequestTypeSelect.options[GetepRequestTypeSelect.options.selectedIndex].value;
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getVar"){
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
+				urlstring += "&path="+PathInput.value;
+				if(escape){
+					//escape is evil, but we need latin1 support
+					urlstring += "&newvalue="+escape(SecondtextInput.value);
+				}else{
+					urlstring += "&newvalue="+encodeURIComponent(SecondtextInput.value);
+				}
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
+				urlstring += "&factory="+SecondtextInput.value;
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "deleteObject"){
+				urlstring += "&path="+PathInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "renameObject"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&newname="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "link"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&element="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
+				urlstring += "&path="+PathInput.value;
+				urlstring += "&element="+SecondtextInput.value;
+			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
+				urlstring += "&maxentries="+PathInput.value;
+			}else{
+				return;
+			}
+			Urldisplay.value = urlstring;
+			return urlstring;
+		}
+		OutputformatSelect.onchange = calculateUrl;
+		PathInput.onkeyup = PathInput.onchange = calculateUrl;
+		SecondtextInput.onkeyup = SecondtextInput.onchange = calculateUrl;
+		GetepRequestTypeSelect.onchange = calculateUrl;
+		var RequestStatehandler = function(evt){
+			if (!evt){
+				var req = this;
+			}else{
+				req = evt.target;
+			}
+			if( req.readyState == 4 ){
+				if(req.status == 0){
+					PlaygroundOutput.innerHTML = "The request failed. Timeout?";
+				}else{
+					PlaygroundOutput.innerHTML = req.responseText;
+				}
+				//adjust height to the line count
+				var ResponseArray = req.responseText.split(String.fromCharCode(10));
+				var maxlength = 0;
+				for (var i = 0;i<ResponseArray.length;i++){
+					if(ResponseArray[i].length > maxlength){
+						maxlength = ResponseArray[i].length;
+					}
+				}
+				if(maxlength > 30){
+					PlaygroundOutput.cols = maxlength;
+					PlaygroundOutput.style.width = "99%";
+				}
+				if(ResponseArray.length > 3){
+					PlaygroundOutput.rows = ResponseArray.length;
+				}
+				if(req.status == 200){
+					PlaygroundOutput.style.borderColor = "#8080FF";
+					Submitbutton.style.backgroundColor = "limegreen";
+					Submitbutton.value = "response received";
+				}else{
+					PlaygroundOutput.style.borderColor = "red";
+					Submitbutton.style.backgroundColor = "red";
+					Submitbutton.value = "error received";
+				}
+				var timeoutID = window.setTimeout(function(){
+					Submitbutton.value = "send request";
+					Submitbutton.style.backgroundColor = "";
+				},1500);
+			}
+		}
+		//init url
+		calculateUrl();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,33 @@
+/**
+ *	KSHTTP_REQUEST
+ *	This structure is used for decoded transmitted data.
+ */
+typedef struct
+{
+	OV_STRING requestHeader;
+	OV_STRING cmd;
+	OV_STRING_VEC args;
+	OV_STRING version;
+	OV_STRING host;
+	OV_UINT headerLength;
+	OV_UINT contentLength;
+	OV_BYTE* messageBody;
+	OV_STRING requestMethod;
+	OV_BOOL gzipAccepted;
+	OV_BOOL keepAlive;
+} KSHTTP_REQUEST;
+
+/**
+ *	KSHTTP_RESPONSE
+ *	This structure is used for decoded transmitted data.
+ */
+typedef struct
+{
+	OV_STRING version;
+	OV_INT statusCode;
+	OV_UINT headerLength;
+	OV_UINT contentLength;
+	OV_BYTE* contentBinary;
+	OV_STRING contentType;
+	OV_BOOL transferEncodingChunked;
+} KSHTTP_RESPONSE;
