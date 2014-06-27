@@ -1,0 +1,356 @@
+/******************************************************************************
+***                                                                         ***
+***   iFBSpro   -   Funktionsbaustein-Model                                 ***
+***   #####################################                                 ***
+***                                                                         ***
+***   L T S o f t                                                           ***
+***   Agentur für Leittechnik Software GmbH                                 ***
+***   Brabanterstr. 13                                                      ***
+***   D-50171 Kerpen                                                        ***
+***   Tel : 02237/92869-2                                                   ***
+***   Fax : 02237/92869-9                                                   ***
+***   e-Mail   : ltsoft@ltsoft.de                                           ***
+***   Internet : http://www.ltsoft.de                                       ***
+***                                                                         ***
+***   -------------------------------------------------------------------   ***
+***                                                                         ***
+***   Implementierung des Funktionsbausteinsystems IFBSpro                  ***
+***   RWTH,   Aachen                                                        ***
+***   LTSoft, Kerpen                                                        ***
+***                                                                         ***
+*******************************************************************************
+*                                                                             *
+*   Datei                                                                     *
+*   -----                                                                     *
+*   fb.ovm                                                                    *
+*                                                                             *
+*   Historie                                                                  *
+*   --------                                                                  *
+*   1999-07-08 V1.0  Erstellung, LTSoft GmbH, Kerpen            A.Neugebauer  *
+*   1999-10-11       calctime in Task-Objekt                    A.Neugebauer  *
+*   2002-06-26       Command-Port eingefuegt                    A.Neugebauer  *
+*   2006-06-30 V2.0  Ableitung 'Task' von 'ov/domain'           A.Neugebauer  *
+*   2006-09-09       'Connection'-Object: Flag IS_FINAL removed A.Neugebauer  *
+*   2007-01-12       Method 'setProctime' in Tasks              A.Neugebauer  *
+*   2007-01-25       Class 'fileUpload' und 'Logger' impl.      A.Neugebauer  *
+*   2009-01-02       Logging erweitert                          A.Neugebauer  *
+*   2010-11-19       Trennung in FB-Base und FB-Tools           A.Neugebauer  *
+*   2012-07-09       FB/object und Chart's implementiert        A.Neugebauer  *
+*                                                                             *
+*   Beschreibung                                                              *
+*   ------------                                                              *
+*   Klassen-Definitionen des iFBSpro                                          *
+*                                                                             *
+******************************************************************************/
+
+#include "ov.ovm"
+
+#include "ksbase.ovm"
+
+
+LIBRARY fb
+
+	VERSION   = "2.7";
+	AUTHOR    = "Alexander Neugebauer";
+	COPYRIGHT = "Copyright © 1999-2013 LTSoft, Kerpen";
+	COMMENT   = "iFBSpro Model";
+
+	/*
+	*	Datenbasisinformation
+	*/
+
+	CLASS dbinfoclass : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "DB-INFO";
+		VARIABLES
+			flush        : INT     HAS_ACCESSORS     FLAGS = "i"  COMMENT = "Sicherung der DB beim Setzen der Variable";
+			command      : STRING  HAS_ACCESSORS     FLAGS = "i"  COMMENT = "Command-Port";
+			connnumber   : INT                       FLAGS = "o"  COMMENT = "Anzahl der Verbindungsobjekten in DB";
+			instnumber   : INT                       FLAGS = "o"  COMMENT = "Anzahl der FB-Instanzen in DB";
+			tasknumber   : INT                       FLAGS = "o"  COMMENT = "Anzahl der Task in DB";
+			serversystem : STRING                    FLAGS = "o"  COMMENT = "Server-Plattform";
+			version      : STRING  HAS_GET_ACCESSOR  FLAGS = "o"  COMMENT = "Lizensierungsart";
+			licinfo      : STRING  HAS_GET_ACCESSOR  FLAGS = "o"  COMMENT = "Lizenz-Info";
+			ticket       : STRING  HAS_ACCESSORS     FLAGS = "i";
+		END_VARIABLES;
+		OPERATIONS
+			constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor   : C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup      : C_FUNCTION <OV_FNC_STARTUP>;
+    		shutdown     : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			getaccess    : C_FUNCTION <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	/*
+	*	Aufbau der FB-Klassendeklarationen
+	*/
+	
+	CLASS object : CLASS ov/domain
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			getflags    : C_FUNCTION <OV_FNC_GETFLAGS>;
+			getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+			setvar      : C_FUNCTION <OV_FNC_SETVAR>;
+			getvar      : C_FUNCTION <OV_FNC_GETVAR>;
+		END_OPERATIONS;
+	END_CLASS;
+
+	CLASS task : CLASS fb/object
+		IS_INSTANTIABLE;
+		COMMENT = "FB Task";
+		VARIABLES
+			actimode    : INT       HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object activity mode (OFF: 0; ON: 1; UNLINK 2; ONCE 3; CATCHUP 10)";
+			proctime    : TIME      HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object time counter";
+			cyctime     : TIME_SPAN HAS_SET_ACCESSOR  FLAGS = "hi" UNIT = "sec" COMMENT = "object cycle time";
+			ErrState    : INT                         FLAGS = "ho"              COMMENT = "object state";
+			calctime    : TIME_SPAN                   FLAGS = "ho" UNIT = "sec" COMMENT = "calculation time";
+			Xpos        : INT                         FLAGS = "hp"              COMMENT = "X-position for visualisation";
+			Ypos        : INT                         FLAGS = "hp"              COMMENT = "Y-position for visualisation";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup     : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+			execute     : C_FUNCTION <FB_FNC_EXECUTE>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	CLASS functionblock : CLASS fb/task
+		VARIABLES
+			iexreq      : BOOL      FLAGS = "hp"              COMMENT = "internal execution request";
+			eexreq      : BOOL      FLAGS = "hn"              COMMENT = "external execution request";
+			maxcalctime : TIME_SPAN FLAGS = "hp" UNIT = "sec" COMMENT = "maximum calculation time";
+			methcount   : UINT      FLAGS = "hn"              COMMENT = "method counter";
+		END_VARIABLES;
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			checkinit   : C_FUNCTION <OV_FNC_CHECKINIT>;
+			destructor  : C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			setvar      : C_FUNCTION <OV_FNC_SETVAR>;
+			getvar      : C_FUNCTION <OV_FNC_GETVAR>;
+			startup     : C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown    : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			getflags    : C_FUNCTION <OV_FNC_GETFLAGS>;
+			getaccess   : C_FUNCTION <OV_FNC_GETACCESS>;
+			execute     : C_FUNCTION <FB_FNC_EXECUTE>;
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD> IS_ABSTRACT;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	CLASS connection : CLASS ov/object
+		IS_INSTANTIABLE;
+		COMMENT = "FB Connection";
+		VARIABLES
+			on           : BOOL   HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "true, if connection is active";
+			sourceport   : STRING HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "identifier of the source port";
+			targetport   : STRING HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "identifier of the target port";
+			sourcetrig   : BOOL                    FLAGS = "p" COMMENT = "connection mode (get/send)";
+			visuallayout : STRING                  FLAGS = "p" COMMENT = "visual layout information for HMI";
+			sourceelem   : C_TYPE <OV_ELEMENT>;
+			targetelem   : C_TYPE <OV_ELEMENT>;
+		END_VARIABLES;
+		OPERATIONS
+			constructor  : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			checkinit    : C_FUNCTION <OV_FNC_CHECKINIT>;
+			destructor   : C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup      : C_FUNCTION <OV_FNC_STARTUP>;
+			getaccess    : C_FUNCTION <OV_FNC_GETACCESS>;
+			trigger      : C_FUNCTION <FB_FNC_TRIGGER>;
+			checkelements: C_FUNCTION <FB_FNC_CHECKELEMENTS>;
+		END_OPERATIONS;
+	END_CLASS;
+
+    /* Function Charts */
+    
+    CLASS functionchart : CLASS fb/functionblock
+        IS_INSTANTIABLE;
+        FLAGS = "i";
+    	COMMENT = "function chart";
+        PARTS
+            intask : CLASS fb/task;
+        END_PARTS;
+        OPERATIONS
+    		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+    		getport    : C_FUNCTION <FB_FNC_GETPORT>;
+			setport    : C_FUNCTION <FB_FNC_SETPORT>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    /* Variables */
+    
+    CLASS port : CLASS fb/object
+        COMMENT = "variable for function charts";
+        VARIABLES
+          flags   : UINT    HAS_SET_ACCESSOR FLAGS = "p" COMMENT = "semantic flags of the variable";
+          unit    : STRING                   FLAGS = "p" COMMENT = "physical unit of the variable";
+          comment : STRING                   FLAGS = "p" COMMENT = "comment that describes the variable";
+        END_VARIABLES;
+        OPERATIONS
+            constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+            setvar : C_FUNCTION <OV_FNC_SETVAR>;
+        END_OPERATIONS;
+    END_CLASS;
+    
+    CLASS boolport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "BOOL variable for function charts";
+        VARIABLES
+          value : BOOL FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS intport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "INT variable for function charts";
+        VARIABLES
+          value : INT FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS uintport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "UINT variable for function charts";
+        VARIABLES
+          value : UINT FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS singleport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "SINGLE variable for function charts";
+        VARIABLES
+          value : SINGLE FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS doubleport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "DOUBLE variable for function charts";
+        VARIABLES
+          value : DOUBLE FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS timeport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "TIME variable for function charts";
+        VARIABLES
+          value : TIME  FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS timespanport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "TIME_SPAN variable for function charts";
+        VARIABLES
+          value : TIME_SPAN FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS stringport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "STRING variable for function charts";
+        VARIABLES
+          value : STRING FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS anyport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "ANY variable for function charts";
+        VARIABLES
+          value : ANY FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS boolvecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "BOOL_VEC variable for function charts";
+        VARIABLES
+          value [] : BOOL FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS intvecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "INT_VEC variable for function charts";
+        VARIABLES
+          value [] : INT FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS uintvecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "UINT_VEC variable for function charts";
+        VARIABLES
+          value [] : UINT FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS singlevecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "SINGLE_VEC variable for function charts";
+        VARIABLES
+          value [] : SINGLE  FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS doublevecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "DOUBLE_VEC variable for function charts";
+        VARIABLES
+          value [] : DOUBLE FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS timevecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "TIME_VEC variable for function charts";
+        VARIABLES
+          value [] : TIME FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS timespanvecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "TIME_SPAN_VEC variable for function charts";
+        VARIABLES
+          value [] : TIME_SPAN FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    CLASS stringvecport : CLASS fb/port
+    	IS_INSTANTIABLE;
+        COMMENT = "STRING_VEC variable for function charts";
+        VARIABLES
+          value [] : STRING FLAGS = "i" COMMENT = "current value of the variable";
+        END_VARIABLES;
+    END_CLASS;
+    
+    
+    ASSOCIATION variables : ONE_TO_MANY
+        PARENT funchart  : CLASS fb/functionchart;
+        CHILD  ports : CLASS fb/port;
+    END_ASSOCIATION;
+
+
+	ASSOCIATION tasklist : ONE_TO_MANY
+		PARENT taskparent : CLASS fb/task;
+		CHILD  taskchild  : CLASS fb/task;
+	END_ASSOCIATION;
+	
+	ASSOCIATION inputconnections : ONE_TO_MANY
+		PARENT targetfb   : CLASS fb/object;
+		CHILD  inputcon   : CLASS fb/connection;
+	END_ASSOCIATION;
+
+	ASSOCIATION outputconnections : ONE_TO_MANY
+		PARENT sourcefb   : CLASS fb/object;
+		CHILD  outputcon  : CLASS fb/connection;
+	END_ASSOCIATION;
+END_LIBRARY;
