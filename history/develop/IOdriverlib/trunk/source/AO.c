@@ -45,7 +45,7 @@ OV_DLLFNCEXPORT void IOdriverlib_AO_typemethod(
     	else if (pinst->v_Sp < pinst->v_Min)
     		pinst->v_SimOut = 0.0;
     	else
-    		pinst->v_SimOut = pinst->v_Sp / (pinst->v_Max - pinst->v_Min) - pinst->v_Min;
+    		pinst->v_SimOut = (pinst->v_Sp - pinst->v_Min) / (pinst->v_Max - pinst->v_Min) ;
     }
     else
     {
@@ -54,7 +54,7 @@ OV_DLLFNCEXPORT void IOdriverlib_AO_typemethod(
     	else if (pinst->v_Sp < pinst->v_Min)
     		pinst->v_Out = 0.0;
     	else
-    		pinst->v_Out = pinst->v_Sp / (pinst->v_Max - pinst->v_Min) - pinst->v_Min;
+    		pinst->v_Out = (pinst->v_Sp - pinst->v_Min) / (pinst->v_Max - pinst->v_Min);
     }
     return;
 }
