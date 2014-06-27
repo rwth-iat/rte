@@ -1,0 +1,5 @@
+LIBRARY     OV_CONTROLPANEL.CPL
+
+EXPORTS
+    CPlApplet=CPlApplet@16
+
