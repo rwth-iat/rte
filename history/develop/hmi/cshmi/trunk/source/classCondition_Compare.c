@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
     OV_INSTPTR_cshmi_Compare          pobj,
     const OV_STRING  value
 ) {
-	OV_STRING erroroutput;
+	OV_STRING erroroutput = NULL;
 	//force our keywords
 	if (	ov_string_compare(value, "<") == OV_STRCMP_EQUAL
 		||		ov_string_compare(value, "<=") == OV_STRCMP_EQUAL
@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
 		return ov_string_setvalue(&pobj->v_comptype,value);
 	}else{
 		ov_memstack_lock();
-		ov_string_print(&erroroutput, "object %s had wrong comptype. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2));
+		ov_string_print(&erroroutput, "object %s had wrong comptype '%s'. Rejecting Variable change.", ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pobj), 2), value);
 		ov_memstack_unlock();
 		ov_logfile_warning(erroroutput);
 		ov_string_setvalue(&erroroutput, NULL);

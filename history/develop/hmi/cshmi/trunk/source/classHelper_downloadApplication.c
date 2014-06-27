@@ -838,12 +838,12 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	OV_INSTPTR_ov_object pTUcshmi = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
 	OV_INSTPTR_ov_object pGroupParent = NULL;
-	OV_STRING returnString;
+	OV_STRING returnString = NULL;
 	OV_STRING strBaseKsPath = NULL;
 	OV_STRING strElements = NULL;
 	OV_STRING strActions = NULL;
 	OV_STRING strChildList = NULL;
-	OV_STRING pJSON;
+	OV_STRING pJSON = NULL;
 	OV_UINT lenBaseKsPath = 0;
 	OV_UINT lenElements = 0;
 	OV_UINT lenActions = 0;
