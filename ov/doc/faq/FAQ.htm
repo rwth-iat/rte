@@ -1,0 +1,2229 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns="http://www.w3.org/TR/REC-html40"
+ xmlns:w="urn:schemas-microsoft-com:office:word"
+ xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta content="text/html; charset=windows-1252"
+ http-equiv="Content-Type">
+  <meta content="Word.Document" name="ProgId">
+  <meta content="Microsoft Word 9" name="Generator">
+  <meta content="Microsoft Word 9" name="Originator">
+  <link href="./FAQ-Dateien/filelist.xml" rel="File-List">
+  <title>FAQ – Objektverwaltung ACPLT/OV</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>PLT</o:Author>
+  <o:LastAuthor>Administrator</o:LastAuthor>
+  <o:Revision>2</o:Revision>
+  <o:Created>2004-10-29T12:26:00Z</o:Created>
+  <o:LastSaved>2004-10-29T12:26:00Z</o:LastSaved>
+  <o:Pages>8</o:Pages>
+  <o:Words>2343</o:Words>
+  <o:Characters>13359</o:Characters>
+  <o:Company>PLT</o:Company>
+  <o:Lines>111</o:Lines>
+  <o:Paragraphs>26</o:Paragraphs>
+  <o:CharactersWithSpaces>16405</o:CharactersWithSpaces>
+  <o:Version>9.6926</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:ActiveWritingStyle Lang="DE" VendorID="9" DLLVersion="512" NLCheck="0">1</w:ActiveWritingStyle>
+  <w:HyphenationZone>21</w:HyphenationZone>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEvery>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:UseMarginsForDrawingGridOrigin/>
+  <w:Compatibility>
+   <w:WW6BorderRules/>
+   <w:FootnoteLayoutLikeWW8/>
+   <w:ShapeLayoutLikeWW8/>
+   <w:AlignTablesRowByRow/>
+   <w:ForgetLastTabAlignment/>
+   <w:LayoutRawTableWidth/>
+   <w:LayoutTableRowsApart/>
+  </w:Compatibility>
+  <w:DocumentVariables>
+   <w:Benutzername>Heeg</w:Benutzername>
+  </w:DocumentVariables>
+ </w:WordDocument>
+</xml><![endif]-->
+  <style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:553679495 -2147483648 8 0 66047 0;}
+@font-face
+	{font-family:"Arial Unicode MS";
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:128;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-1 -369098753 63 0 4129023 0;}
+@font-face
+	{font-family:"\@Arial Unicode MS";
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:128;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-1 -369098753 63 0 4129023 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Standard;
+	margin-top:48.0pt;
+	margin-right:0cm;
+	margin-bottom:24.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	mso-list:l0 level1 lfo1;
+	font-size:24.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	mso-bidi-font-weight:normal;}
+h2
+	{mso-style-next:Standard;
+	margin-top:36.0pt;
+	margin-right:0cm;
+	margin-bottom:18.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	mso-list:l0 level2 lfo1;
+	font-size:18.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-bidi-font-weight:normal;}
+h3
+	{mso-style-next:Standard;
+	margin-top:28.0pt;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	mso-list:l0 level3 lfo1;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-bidi-font-weight:normal;}
+h4
+	{mso-style-next:Standard;
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:12.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	mso-list:l0 level4 lfo1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-bidi-font-weight:normal;}
+h5
+	{mso-style-next:Standard;
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:12.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:5;
+	mso-list:l0 level5 lfo1;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+h6
+	{mso-style-next:Standard;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	mso-outline-level:6;
+	mso-list:l0 level6 lfo1;
+	font-size:11.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	font-weight:normal;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-next:Standard;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	mso-outline-level:7;
+	mso-list:l0 level7 lfo1;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-next:Standard;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	mso-outline-level:8;
+	mso-list:l0 level8 lfo1;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoHeading9, li.MsoHeading9, div.MsoHeading9
+	{mso-style-next:Standard;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	mso-outline-level:9;
+	mso-list:l0 level9 lfo1;
+	font-size:9.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-next:Standard;
+	margin-top:18.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	text-transform:uppercase;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-next:Standard;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:48.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:60.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:84.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-next:Standard;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:96.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	tab-stops:right 16.0cm;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-next:Standard;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+span.MsoFootnoteReference
+	{vertical-align:super;}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	font-size:16.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:14.2pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-14.2pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextIndent2, li.MsoBodyTextIndent2, div.MsoBodyTextIndent2
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:14.2pt;
+	margin-bottom:.0001pt;
+	text-indent:-14.2pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextIndent3, li.MsoBodyTextIndent3, div.MsoBodyTextIndent3
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:14.2pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.MsoDocumentMap, li.MsoDocumentMap, div.MsoDocumentMap
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	background:navy;
+	font-size:10.0pt;
+	font-family:Tahoma;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+pre
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Arial Unicode MS";}
+p.Optischberschrift1, li.Optischberschrift1, div.Optischberschrift1
+	{mso-style-name:"Optisch Überschrift 1";
+	mso-style-parent:"Überschrift 1";
+	mso-style-next:Standard;
+	margin-top:48.0pt;
+	margin-right:0cm;
+	margin-bottom:24.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:24.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.TODO, li.TODO, div.TODO
+	{mso-style-name:"TO DO";
+	mso-style-next:Standard;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	background:yellow;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.Optischberschrift2, li.Optischberschrift2, div.Optischberschrift2
+	{mso-style-name:"Optisch Überschrift 2";
+	mso-style-parent:"Überschrift 2";
+	mso-style-next:Standard;
+	margin-top:36.0pt;
+	margin-right:0cm;
+	margin-bottom:18.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:18.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Optischberschrift3, li.Optischberschrift3, div.Optischberschrift3
+	{mso-style-name:"Optisch Überschrift 3";
+	mso-style-parent:"Überschrift 3";
+	mso-style-next:Standard;
+	margin-top:28.0pt;
+	margin-right:0cm;
+	margin-bottom:14.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Optischberschrift4, li.Optischberschrift4, div.Optischberschrift4
+	{mso-style-name:"Optisch Überschrift 4";
+	mso-style-parent:"Überschrift 4";
+	mso-style-next:Standard;
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:12.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-weight:bold;
+	mso-bidi-font-weight:normal;}
+p.Optischberschrift5, li.Optischberschrift5, div.Optischberschrift5
+	{mso-style-name:"Optisch Überschrift 5";
+	mso-style-parent:"Überschrift 5";
+	mso-style-next:Standard;
+	margin-top:24.0pt;
+	margin-right:0cm;
+	margin-bottom:12.0pt;
+	margin-left:0cm;
+	text-indent:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	font-size:12.0pt;
+	mso-bidi-font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+span.Quellcode
+	{mso-style-name:Quellcode;
+	mso-ascii-font-family:"Courier New";
+	mso-hansi-font-family:"Courier New";}
+span.StandardZeichen
+	{mso-style-name:"Standard \(Zeichen\)";}
+p.Quelltext, li.Quelltext, div.Quelltext
+	{mso-style-name:Quelltext;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:14.2pt;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:-14.2pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 70.85pt 2.0cm 70.85pt;
+	mso-header-margin:36.0pt;
+	mso-footer-margin:36.0pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:-5;
+	mso-list-template-ids:-1;}
+@list l0:level1
+	{mso-level-style-link:"Überschrift 1";
+	mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level2
+	{mso-level-style-link:"Überschrift 2";
+	mso-level-text:"%1\.%2";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level3
+	{mso-level-style-link:"Überschrift 3";
+	mso-level-text:"%1\.%2\.%3";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level4
+	{mso-level-style-link:"Überschrift 4";
+	mso-level-text:"%1\.%2\.%3\.%4";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level5
+	{mso-level-style-link:"Überschrift 5";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level6
+	{mso-level-style-link:"Überschrift 6";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level7
+	{mso-level-style-link:"Überschrift 7";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level8
+	{mso-level-style-link:"Überschrift 8";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+@list l0:level9
+	{mso-level-style-link:"Überschrift 9";
+	mso-level-text:"%1\.%2\.%3\.%4\.%5\.%6\.%7\.%8\.%9";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:0cm;
+	mso-level-legacy-space:7.2pt;
+	margin-left:0cm;
+	text-indent:0cm;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+  </style>
+</head>
+<body style="" lang="DE">
+<div class="Section1">
+<div style="text-align: center;"></div>
+<div style="text-align: center;"><big><big><big><big><big><big><big><big><big><big><big><b
+ style=""><span style="font-size: 14pt;"><big><big>FAQs</big></big><br>
+</span></b></big></big></big></big></big></big></big></big></big></big></big></div>
+<ul id="mozToc">
+<!--mozToc h3 1 h6 2--><li><a href="#mozTocId747527">OV-Programmierung</a>
+    <ul>
+      <li><a href="#mozTocId288073">Wie
+definiere ich in einer OVM-Datei eine Stringvariable und wie greife ich
+im
+C-Quelltext darauf zu?</a></li>
+      <li><a href="#mozTocId286639">Wie
+definiere ich in einer OVM-Datei eine dynamische Vektorvariable und wie
+greife
+ich im C-Quelltext auf dessen Elemente zu?</a></li>
+      <li><a href="#mozTocId837221">Ich
+schreibe einen Get-Accessor für eine Variable, dessen Wert ich
+dynamisch
+zusammenbauen muß. Wie bekomme ich den notwendigen Speicher und wer
+gibt ihn
+wieder frei?</a></li>
+      <li><a href="#mozTocId557123">Ich
+rufe eine Get-Accessor-Funktion eines Objekts auf. Muß ich irgendetwas
+beachten?</a></li>
+      <li><a href="#mozTocId755273">Ich
+schreibe einen Set-Accessor für eine Variable oder rufe einen solchen
+auf. Muß
+ich nun etwas beachten?</a></li>
+      <li><a href="#mozTocId130693">Ich
+möchte während der Laufzeit von
+einer Instanzvariable den Typ, Kommentar etc. bekommen.</a></li>
+      <li><a href="#mozTocId979500">Ist die
+Datenbasis
+auf 16 MB beschränkt ? Wie kann die Datenbasis dynamisch
+vergrößert werden?</a></li>
+      <li><a href="#mozTocId69925">Der
+ov_builder hat Probleme beim Erzeugen
+der c-Dateien, wenn die Funktionsdefinitionen ohne Zeilenwechsel in der
+*.ovf
+Datei eingetragen sind !</a></li>
+      <li><a href="#mozTocId445801">Der
+OV-Builder hat noch einen kleinen
+Fehler. Der destructor muss als void-Funktion erstellt werden, nicht
+als
+OV_RESULT</a></li>
+      <li><a href="#mozTocId177461">Können
+von Strukturen statische bzw.
+dynamische Vekoren definiert werden?</a></li>
+      <li><a href="#mozTocId429016">Ich möchte direkt beim Laden meiner
+OV Lib Objekte erzeugen. Wie
+kann ich denn die Startup Funktion für eine Library definieren?</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId934002">OV-Compilieren </a>
+    <ul>
+      <li><a href="#mozTocId582394"> Bei
+dem Erzeugen einer ov-Bibliothek mit dem Cygwin Compiler tritt ein
+seltsamer
+Fehler auf. Das Lesen einer OV_TIME_SPAN Variable über das KS liefert
+völlig
+falsche Werte, die sich auch nicht ändern lassen.</a></li>
+      <li><a href="#mozTocId996287"> Das
+erzeugen einer OV-Bibliothek unter Windows mittels „make“ funktioniert
+nicht.</a></li>
+      <li><a href="#mozTocId696885">Der
+ov_codegen stürzt ab, wenn in einer
+Assoziationdefinition die referenzierte Klasse nicht exstiert!</a></li>
+    </ul>
+  </li>
+  <li><a href="#mozTocId92759">OV zur Laufzeit</a>
+    <ul>
+      <li><a href="#mozTocId960488"> In
+einer von mir erstellten OV-Bibliothek verwende ich eine Assoziation
+zwischen
+zwei Klassen. Der Compile-Vorgang läuft einwandfrei durch, aber wenn
+ich zu
+Laufzeiten einen Link über den Magellan anlegen möchte, stürzt der
+OV-Server
+ab.</a></li>
+      <li><a href="#mozTocId912334"> Eine
+OV- Bibliothek lässt sich im OV-Server nicht instantiieren.</a></li>
+      <li><a href="#mozTocId735470"> Die
+Assoziationen
+„instantiation“ und „containment“ sollten auch im KS explizit sichtbar
+sein !</a></li>
+      <li><a href="#mozTocId832796"> Beim
+textuellen dumpen einzelner Instanzen mit ov_dbdump werden vorhandene
+Links nicht wiedergegeben.</a></li>
+      <li><a href="#mozTocId783160"> Die
+startup Methode eines Objektes wird
+beim Erzeugen zweimal Aufgerufen. Ist dies gewollt?</a></li>
+    </ul>
+  </li>
+</ul>
+<p style="text-align: left;" align="left" class="MsoNormal"><br>
+</p>
+<h3><a name="mozTocId747527" class="mozTocH5"></a>OV-Programmierung</h3>
+<!--[endif]--><o:p></o:p>
+<h6><a name="mozTocId288073" class="mozTocH6"></a><b style=""><span
+ style=""></span>Wie
+definiere ich in einer OVM-Datei eine Stringvariable und wie greife ich
+im
+C-Quelltext darauf zu?<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp; </span>Definition
+in der
+OVM-Datei (Beispiel):</p>
+<span style="font-family: &quot;arial unicode ms&quot;;"></span><span
+ style="font-family: &quot;arial unicode ms&quot;;"></span><span style="">&nbsp; </span>
+<table
+ style="text-align: left; background-color: rgb(255, 204, 102); width: 60%; margin-left: 40px;"
+ border="0" cellspacing="2" cellpadding="2">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; background-color: rgb(255, 204, 102);">myString
+: STRING;</td>
+    </tr>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style=""></span><br>
+</p>
+<p style="text-align: left; text-indent: -14.2pt; margin-left: 43.96pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Lesender Zugriff
+im C-Quelltext:</p>
+<span style="font-family: Arial;"><span style="">&nbsp;&nbsp; </span></span><br>
+<table
+ style="text-align: left; background-color: rgb(255, 204, 102); width: 60%; height: 183px; margin-left: 40px;"
+ border="0" cellspacing="2" cellpadding="2">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; background-color: rgb(255, 204, 102);"><span
+ lang="EN-GB" style="font-family: Arial;">OV_UINT i;<o:p></o:p></span>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* myString als
+ganzes ausgeben */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt; margin-left: 14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ lang="EN-GB" style="font-family: Arial;">printf("myString = %s\n",
+pobj-&gt;v_myString);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* myString in
+einzelnen Zeichen
+ausgeben */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt; margin-left: 14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>if(pobj-&gt;v_myString)
+{ /* Achtung, Zeiger könnte NULL sein (leerer String)! </span><span
+ lang="EN-GB" style="font-family: Arial;">*/<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>for(i=0; pc[i]; i++) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ style="font-family: Arial;">printf("%ld.
+Zeichen von myString = ‚%c'\n", pc[i]);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>}<o:p></o:p></span></p>
+      <span style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>}</span></td>
+    </tr>
+  </tbody>
+</table>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="font-family: Arial;"><span
+ style=""></span></span><span style="font-family: Arial;"><br>
+<!--[endif]--><o:p></o:p></span></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style=""><br>
+</span>Vergleich mit
+einem anderen String:<br>
+<br>
+</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<span style="font-family: Arial;"><span style=""></span></span><br>
+</p>
+<table cellpadding="2" cellspacing="2" border="0"
+ style="text-align: left; background-color: rgb(255, 204, 102); width: 60%; height: 183px; margin-left: 40px;">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; background-color: rgb(255, 204, 102);"><span
+ style="font-family: Arial;"><span style="font-family: Arial;"><span
+ style="">&nbsp; </span></span><span lang="EN-GB"
+ style="font-family: Arial;">#include "libov/ov_string.h"<o:p></o:p></span>
+      </span>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_INT
+vgl;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>/*
+vergleiche Strings */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ lang="EN-GB" style="font-family: Arial;">vgl =
+ov_string_compare(pobj-&gt;v_myString, "VW
+Bulli");<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>if(vgl ==
+0) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>/* identisch */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>} else
+if(vgl &gt; 0) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* myString ist
+"größer" als
+"VW Bulli", z.B. "VW Kaefer"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>}
+else {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>/*
+myString ist "kleiner" als "VW Bulli", z.B. "Opel
+Astra"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+      <span style="font-family: Arial;"></span></td>
+    </tr>
+  </tbody>
+</table>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="font-family: Arial;"><span
+ style="">&nbsp;&nbsp; </span><o:p></o:p></span></p>
+<p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"><!--[if !supportEmptyParas]--> <o:p></o:p></span></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Schreibender
+Zugriff:</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="font-family: Arial;"><span
+ style="">&nbsp;&nbsp;&nbsp; </span></span><span
+ style="font-family: Arial;"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><br>
+</span></span></p>
+<table cellpadding="2" cellspacing="2" border="0"
+ style="text-align: left; background-color: rgb(255, 204, 102); width: 60%; height: 183px; margin-left: 40px;">
+  <tbody>
+    <tr>
+      <td
+ style="vertical-align: top; background-color: rgb(255, 204, 102);"><span
+ style="font-family: Arial;"><span style="font-family: Arial;">#include
+"libov/ov_string.h"<o:p></o:p></span> </span>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ lang="EN-GB" style="font-family: Arial;">#include
+"libov/ov_macros.h"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_RESULT
+result;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>result
+=
+ov_string_setvalue(&amp;pobj-&gt;v_myString, "Mitsubishi");<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>if(Ov_Fail(result))
+{<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* konnte String
+nicht
+setzen */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+      <span style="font-family: Arial;"></span></td>
+    </tr>
+  </tbody>
+</table>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ style="font-family: Arial;"><br>
+<!--[endif]--><o:p></o:p></span></p>
+<span style="font-family: Arial;"><o:p></o:p></span>
+<p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+<h6><a name="mozTocId286639" class="mozTocH6"></a><b style=""><span
+ style=""></span>Wie
+definiere ich in einer OVM-Datei eine dynamische Vektorvariable und wie
+greife
+ich im C-Quelltext auf dessen Elemente zu?<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal">&nbsp;
+&nbsp;<span style=""> </span>Definition
+in der
+OVM-Datei (Beispiel: Integer und String):</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style="">&nbsp;</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""
+ lang="FR">dynIntVec[] : INT;<o:p></o:p><br>
+dynStringVec[]
+: STRING;</span></td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" style="width: 60%; margin-left: 80px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 80px;" align="left"
+ class="Quelltext"><span style=""></span></p>
+<p style="text-align: left; text-indent: -14.2pt; margin-left: 73.72pt;"
+ align="left" class="MsoNormal"><span style="" lang="FR"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="" lang="FR"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Lesender Zugriff im C-Quelltext:</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 40px;"><span style="">&nbsp;</span></p>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 40px;" border="0">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ lang="EN-GB" style="font-family: Arial;">OV_UINT i;<o:p></o:p></span> </span>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style=""></span>/*
+dynIntVec ausgeben */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style=""></span>for(i=0;
+i&lt;pobj-&gt;v_dynIntVec.veclen;
+i++) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style=""></span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>printf("dynIntVec[%ld]
+= %ld\n", i, pobj-&gt;v_dynIntVec.value[i]);<o:p></o:p><br>
+}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style=""></span>/*
+dynStringVec ausgeben */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style=""></span>for(i=0;
+i&lt;pobj-&gt;v_dynStringVec.veclen; i++) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ lang="EN-GB" style="font-family: Arial;"><span style=""></span><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>printf("dynStringVec[%ld]
+= %s\n", i, pobj-&gt;v_dynStringVec.value[i]);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      <span style="font-family: Arial;"><!--[if !supportEmptyParas]--></span></td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 80px;" border="0">
+  <tbody>
+  </tbody>
+</table>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 80px;"><span style=""></span></p>
+<span lang="FR" style=""><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span><br>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;"></span>Schreibender
+Zugriff im C-Quelltext (Zugriff auf einzelne Elemente):</p>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><!--[if !supportEmptyParas]--></p>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style=""><br>
+</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);">
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">#include
+"libov/ov_macros.h"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_UINT
+len, i;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_RESULT
+result;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">/* dynIntVec einen
+Vektor mit 13 (unterschiedlichen)
+Elementen zuweisen */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">len =
+13;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">result
+=
+Ov_SetDynamicVectorLength(&amp;pobj-&gt;v_dynIntVec, len, INT);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">if(Ov_OK(result))
+{<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>for(i=0;
+i&lt;len; i++) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>pobj-&gt;v_dynIntVec.value
+[i] = 3*i+15;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: 21.25pt;"><span
+ lang="EN-GB" style="font-family: Arial;">}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">}
+else {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ style="font-family: Arial;">/* konnte
+neuen Wert nicht setzen (Speichermangel) */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">/* dynStringVec
+einen Vektor mit 5 (gleichen) Elementen
+zuweisen */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">len =
+5;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">result
+=
+Ov_SetDynamicVectorLength(&amp;pobj-&gt;v_dynStringVec, len, STRING);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">if(Ov_OK(result))
+{<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>for(i=0;
+i&lt;len; i++) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>Ov_SetStringValue(&amp;pobj-&gt;v_dynIntVec.value[i],
+"Ein String");<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: 21.25pt;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">} else {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>/*
+konnte neuen
+Wert nicht setzen (Speichermangel) */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">/* dynIntVec und
+dynStringVec "löschen" (je 0
+Elemente) */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">Ov_SetDynamicVectorLength(&amp;pobj-&gt;v_dynIntVec,
+0,
+INT);<o:p></o:p></span></p>
+&nbsp;&nbsp;&nbsp;&nbsp; <span lang="EN-GB" style="font-family: Arial;">Ov_SetDynamicVectorLength(&amp;pobj-&gt;v_dynStringVec,
+0, STRING);</span><span style=""><span style="font-family: Arial;"></span></span>
+      <p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;"><o:p></o:p></span></p>
+      <span style="font-family: Arial;"><!--[if !supportEmptyParas]--></span></td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" style="width: 60%; margin-left: 80px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 80px;" align="left"
+ class="Quelltext"><span style=""></span></p>
+<span style="" lang="FR"><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"
+ lang="EN-GB"><!--[if !supportEmptyParas]--><!--[endif]--><o:p></o:p></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><br>
+Schreibender
+Zugriff im C-Quelltext (Vektor als ganzes setzen):</p>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style="">&nbsp;</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span lang="EN-GB"
+ style="font-family: Arial;">&nbsp;&nbsp;&nbsp; #include
+"libov/ov_macros.h"<o:p></o:p></span> </span></span>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_INT
+myIntValue[] = { 0, 8, 15, 4711 };<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_UINT
+myIntLen =
+sizeof(myIntValue)/sizeof(myIntValue[0]); /* = 4 */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_STRING
+myStringValue[] = { "Ich",
+"mag", "ACPLT/OV" };<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_UINT
+myStringLen =
+sizeof(myStringValue)/sizeof(myStringValue[0]); /* = 3 */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_RESULT
+result;<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">/* dynIntVec
+auf Wert in myIntValue setzen */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">result
+=
+Ov_SetDynamicVectorValue(&amp;pobj-&gt;v_dynIntVec, myIntLen, INT);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">if(Ov_Fail(result))
+{<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* konnte Wert
+nicht setzen (Speichermangel) */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">/*
+dynStringVec auf Wert in myStringValue setzen */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">result
+= Ov_SetDynamicVectorValue(&amp;pobj-&gt;v_dynStringVec, <o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: 21.25pt;"><span
+ lang="EN-GB" style="font-family: Arial;">myStringLen, STRING);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;">if(Ov_Fail(result))
+{<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="font-family: Arial;">/* konnte Wert
+nicht setzen (Speichermangel) */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p style="text-align: left;" align="left" class="MsoNormal"><br>
+<!--[endif]--><o:p></o:p></p>
+<h6><a name="mozTocId837221" class="mozTocH6"></a><b style=""><span
+ style=""></span>Ich
+schreibe einen Get-Accessor für eine Variable, dessen Wert ich
+dynamisch
+zusammenbauen muß. Wie bekomme ich den notwendigen Speicher und wer
+gibt ihn
+wieder frei?<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp; </span>Der
+Speicher wird
+auf einem sog. <span style="" lang="EN-GB">Memory Stack
+reserviert. </span>Der Aufrufende des Get-Accessors muß den Stack
+vorher
+„blockieren“ und später wieder freigeben. In der Get-Accessor-Routine
+selbst
+wird nur der Speicher vom Stack angefordert. <span style=""
+ lang="EN-GB">Beispiel:<o:p></o:p></span></p>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style="">&nbsp;</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ style="font-family: Arial;" lang="EN-GB"></span></span>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">#include
+"libov/ov_memstack.h"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">#include
+"libov/ov_string.h"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">OV_STRING
+mylib_myclass_myvariable_get(<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: 21.25pt;"><span
+ lang="EN-GB" style="font-family: Arial;">OV_INSTPTR_mylib_myclass pobj<br>
+      </span></p>
+      <span lang="EN-GB" style="font-family: Arial;">) {<o:p></o:p></span>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: 21.25pt;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_STRING
+pstr =
+(OV_STRING)ov_memstack_alloc(18);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: 21.25pt;"><span
+ style="font-family: Arial;">ov_string_print(&amp;pstr,
+"x ist gleich %d"; 4711);<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="text-align: left; text-indent: 21.25pt;"><span
+ style="font-family: Arial;">return
+pstr;<o:p></o:p></span></p>
+      <span style="font-family: Arial;">}</span> <span
+ style="font-family: Arial;"><!--[if !supportEmptyParas]--></span><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" style="width: 60%; margin-left: 80px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 80px;" align="left"
+ class="Quelltext"><span style=""></span></p>
+<span style="" lang="FR"><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style=""></span></p>
+<br>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;"><o:p></o:p></span></p>
+<p style="text-align: left;" align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<h6><a name="mozTocId557123" class="mozTocH6"></a><b style=""><span
+ style=""></span>Ich
+rufe eine Get-Accessor-Funktion eines Objekts auf. Muß ich irgendetwas
+beachten?<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp; </span>Ja!
+Unbedingt vor
+dem Aufruf den Memory Stack „blockieren“ und hinterher wieder
+freigeben! Der
+Memory Stack dient der aufgerufenen Accessor-Routine als Quelle für
+dynamischen
+Speicher (vgl. vorherige Frage). Beispiel:</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 40px;"><span style="">&nbsp;</span></p>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 40px;" border="0">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ lang="EN-GB" style="font-family: Arial;"></span></span>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;">#include
+"libov/ov_memstack.h"<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">/*
+Stapelspeicher blockieren */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">ov_memstack_lock(); <o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">/* Wert via
+get-Accessor holen und ausgeben */<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ lang="EN-GB" style="font-family: Arial;">printf("myvariable
+= %s\n“,
+mylib_myclass_myvariable_get(pobj));<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">/*
+Stapelspeicher wieder freigeben */<o:p></o:p></span></p>
+      <span lang="EN-GB" style="font-family: Arial;">ov_memstack_unlock();</span><span
+ style="font-family: Arial;"><!--[if !supportEmptyParas]--></span><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 80px;" border="0">
+  <tbody>
+  </tbody>
+</table>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 80px;"><span style=""></span></p>
+<span lang="FR" style=""><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;" lang="EN-GB"><o:p></o:p></span></p>
+<p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+<p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+<h6><a name="mozTocId755273" class="mozTocH6"></a><b style=""><span
+ style=""></span>Ich
+schreibe einen Set-Accessor für eine Variable oder rufe einen solchen
+auf. Muß
+ich nun etwas beachten?<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p class="MsoBodyTextIndent2"><span style="">&nbsp;&nbsp;&nbsp; </span>So
+gut wie
+nicht ist zu beachten. Der evtl. notwendige dynamische Speicher gehört
+immer
+dem Aufrufer. Er darf in der Set-Accessor-Funktion nicht verändert,
+sondern nur
+gelesen werden. Dies kommt aber eigentlich schon im Funktionsprototyp
+zum
+Ausdruck (const):</p>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><!--[if !supportEmptyParas]-->
+<o:p></o:p></p>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style="">&nbsp;</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ style="font-family: Arial;" lang="EN-GB"></span></span>
+      <p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"></span></p>
+      <span style="font-family: Arial;"><span lang="EN-GB"
+ style="font-family: Arial;">OV_DLLFNCEXPORT
+OV_RESULT mylib_myclass_myvariable_set(<o:p></o:p></span> </span>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>OV_INSTPTR_mylib_myclass<span style="">&nbsp;&nbsp; </span>ptest,<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><b style="">const</b>
+OV_XXX<span style="">&nbsp;&nbsp; </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>value<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">) {<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;">}<o:p></o:p></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" style="width: 60%; margin-left: 80px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 80px;" align="left"
+ class="Quelltext"><span style=""></span></p>
+<span style="" lang="FR"><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><o:p></o:p></span></p>
+<span lang="EN-GB" style="font-family: Arial;"><!--[if !supportEmptyParas]--></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;"></span><span
+ style="font-family: Arial;" lang="EN-GB"></span><br>
+Wer
+nicht auf Compiler-Warnungen achtet ist selber schuld!<br>
+</p>
+<h6><a class="mozTocH6" name="mozTocId130693"></a><b style="">Ich
+möchte während der Laufzeit von
+einer Instanzvariable den Typ, Kommentar etc. bekommen.<o:p></o:p></b></h6>
+<p class="MsoNormal" style="margin-left: 14.2pt; text-indent: -14.2pt;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"><span
+ style="">&nbsp;&nbsp;&nbsp; </span>Diese
+Informationen kann man über das entsprechende Klassenobjekt der Instanz
+erhalten.</p>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;">Über
+die Beziehung „instantiation“ erhält man eine Objektreferenz auf das
+zugehörige
+Klassenobjekt. Dieses beinhaltet (Beziehung „containment“) wiederum die
+einzelnen Variablen-Beschreibungsobjekte deren Attribute gerade die
+Definitionen aus der ovm-Datei widerspiegeln (z.B. vartype oder
+comment):</p>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="">ovm-Datei:<br>
+<br>
+</span></p>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style=""><!--[if !supportEmptyParas]-->
+</span></p>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 40px;" border="0">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);">
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">CLASS Test : CLASS ....<br>
+      </span></p>
+      <div style="margin-left: 40px;"><span style="" lang="EN-GB"><o:p></o:p><span
+ style=""> </span>...<o:p></o:p></span></div>
+      <div style="margin-left: 40px;"><span style="" lang="EN-GB">VARIABLES<o:p></o:p></span></div>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style=""><br>
+      </span></span></p>
+      <div style="margin-left: 40px;"><span style="" lang="EN-GB"><span
+ style="">&nbsp;</span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>TestVar:<span style="">&nbsp; </span>BOOL<span style="">&nbsp;
+      </span>COMMENT =
+".....";<o:p></o:p></span></div>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style=""><br>
+      </span></span></p>
+      <div style="margin-left: 40px;"><span style="" lang="EN-GB">END_VARIABLES;<o:p></o:p></span></div>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>...<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp; END_CLASS;<o:p></o:p></span></p>
+      <span style="" lang="EN-GB"><!--[if !supportEmptyParas]--></span>
+      <p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 80px;" border="0">
+  <tbody>
+  </tbody>
+</table>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 80px;"><span style=""></span></p>
+<span lang="FR" style=""><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;" lang="EN-GB"><o:p></o:p></span></p>
+<span style="font-family: Arial;" lang="EN-GB"><!--[if !supportEmptyParas]--></span><span
+ style="font-family: Arial;"></span><span lang="EN-GB"
+ style="font-family: Arial;"></span><span lang="EN-GB" style=""><!--[endif]-->
+<o:p></o:p></span>
+<p class="MsoNormal" style="text-indent: 14.2pt;"><span lang="EN-GB"
+ style="">C-Datei:<o:p></o:p></span></p>
+<p class="MsoNormal" style="text-indent: 14.2pt;"><span style=""><span
+ style="" lang="EN-GB"><br>
+</span>
+</span></p>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="" lang="EN-GB"><!--[if !supportEmptyParas]-->
+</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);">
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">OV_DLLFNCEXPORT void myLib_Test_execute(<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_INSTPTR_ov_object
+      <span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>pobj<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">) {<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>/*<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*<span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>local variables<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*/<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">OV_INSTPTR_ov_variable pvar;<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_INSTPTR_myLib_Test<span
+ style="">&nbsp;&nbsp; </span>pgvc;<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>OV_INSTPTR_ov_class pclass;<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>OV_INSTPTR_ov_object pobj2;<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">pgvc = Ov_StaticPtrCast(myLib_Test, pobj);<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">pclass = Ov_GetParent(ov_instantiation, pobj);<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">pobj2 = Ov_GetFirstChild(ov_containment,
+pclass);<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">pvar = NULL;<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>while (pobj2) {<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>if
+(ov_string_compare(pobj2-&gt;v_identifier, "TestVar")==0) {<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>pvar = Ov_StaticPtrCast (ov_variable, pobj2);<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>break;<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>}<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>pobj2
+= Ov_GetNextChild(ov_containment, pobj2);<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">}<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB">if (pvar) {<o:p></o:p></span></p>
+      <p style="text-indent: 35.45pt;" class="MsoNormal"><span style=""
+ lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>....
+pvar-&gt;v_vartype ...<o:p></o:p></span></p>
+      <p class="MsoNormal"><span style="" lang="EN-GB"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="" lang="FR">.... pvar-&gt;v_comment ...<o:p></o:p></span></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><span style=""
+ lang="FR"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span>}</p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+      <p style="text-indent: 14.2pt;" class="MsoNormal">}<br>
+      </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h6><a class="mozTocH6" name="mozTocId979500"></a><b style="">Ist die
+Datenbasis
+auf 16 MB beschränkt ? Wie kann die Datenbasis dynamisch<span style="">
+</span>vergrößert werden?<o:p></o:p></b></h6>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 0cm; text-align: left; text-indent: 0cm;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 15pt; text-align: left; text-indent: 0cm;">Seit
+der libov - Version 1.6.2<span style="">&nbsp; </span>beträgt die
+maximale Datenbasisgröße 2GB. Eine dynamische
+Vergrößerung soll prinzipiell bei einer OV-Compilierung mit dem Makro
+OV_DYNAMIC_DATABASE ermöglicht werden, ist aber zum gegenwärtigen
+Zeitpunkt
+nicht hinreichend ausgereift. Problem ist hier das Memory-Map-File für
+die
+Persistenz der Datenbasis. Eine dynamische Änderung dieses Files wird
+nicht von
+allen Betriebssystemen unterstützt.</p>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 15pt; text-align: left; text-indent: 0cm;"><b
+ style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<br>
+</span></b></p>
+<h6><a class="mozTocH6" name="mozTocId69925"></a><b style="">Der
+ov_builder hat Probleme beim Erzeugen
+der c-Dateien, wenn die Funktionsdefinitionen ohne Zeilenwechsel in der
+*.ovf
+Datei eingetragen sind !<o:p></o:p></b></h6>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></b>In
+der ov-builder-Version 1.0.2 (OV-Produktversion 1.6.3) konnte dieser
+Fehler
+behoben werden.</p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<h6><a class="mozTocH6" name="mozTocId445801"></a><b style="">Der
+OV-Builder hat noch einen kleinen
+Fehler. Der destructor muss als void-Funktion erstellt werden, nicht
+als
+OV_RESULT<o:p></o:p></b></h6>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></b>Wird
+er, zumindest ab der ov-builder Version 1.0.1<span style="">&nbsp;
+</span>(OV-Produktversion 1.6.3).</p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]--> </b><span style=""><br>
+</span></p>
+<h6><a class="mozTocH6" name="mozTocId177461"></a><b style="">Können
+von Strukturen statische bzw.
+dynamische Vekoren definiert werden?<o:p></o:p></b></h6>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></b>Bis
+einschließlich libov-version 1.6.3 ist dies nicht möglich.</p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<h6><a class="mozTocH6" name="mozTocId429016"></a><b style=""><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><span style=""></span>Ich
+möchte direkt beim Laden meiner OV Lib Objekte erzeugen. </span></b><b
+ style=""><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Wie
+kann ich denn die Startup Funktion für eine Library definieren?<o:p></o:p></span></b></h6>
+<pre><b style=""><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></b></pre>
+<pre><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Da die Definition einer Library in einer ovm-Datei dem Anlegen einer Instanz einer Library-Klasse entspricht, kann deren startup-Methode auch nicht überladen werden. Dennoch ist das Ausführen von Aktionen beim Laden einer Bibliothek über einen Umweg möglich. Dazu muss in der Makedatei generik.mk ein zusätzliches define eingeführt werden:<o:p></o:p></span></pre>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 40px;"><span style="">&nbsp;</span></p>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 40px;" border="0">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ lang="EN-GB" style="font-family: Arial;"></span></span>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"></span></p>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">MYLIB_DEFINES = \<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>-DOV_DEBUG \<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB">-DOV_COMPILE_LIBRARY_$(MYLIB_NAME) \<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>-Dov_library_open_$(MYLIB_NAME)= ov_library_open_$(MYLIB_NAME)_old<o:p></o:p></span></pre>
+      <span style="font-family: Arial;"><span
+ style="font-family: Arial;"></span></span>
+      <p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"><o:p></o:p></span></p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 80px;" border="0">
+  <tbody>
+  </tbody>
+</table>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 80px;"><span style=""></span></p>
+<span lang="FR" style=""><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;" lang="EN-GB"><o:p></o:p></span></p>
+<span style="font-family: Arial;" lang="EN-GB"><!--[if !supportEmptyParas]--></span><span
+ style="font-family: Arial;"></span><span lang="EN-GB"
+ style="font-family: Arial;"></span>
+<pre><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"></span><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><br></span></pre>
+<pre><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">Dadurch wird beim Compilieren der vom Codegenerator erzeugten Datei &lt;libname&gt;.c die Funktion ov_library_open_&lt;libane&gt; in ov_library_open_&lt;libname&gt;_old umbenannt. Anstelle des Platzhalters &lt;libname&gt; muss der jeweilige Name der zu erzeugenden Bibliothek eingesetzt werden. In einer der C-Dateien der Bibliothek muss dann eine eigene ov_library_open_&lt;libname&gt; Funktion geschrieben werden, die das folgende Aussehen hat:<o:p></o:p></span></pre>
+<pre><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></pre>
+<p style="text-align: left; margin-left: 40px;" align="left"
+ class="Quelltext"><span style="">&nbsp;</span></p>
+<table border="0" style="width: 60%; margin-left: 40px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ style="font-family: Arial;" lang="EN-GB"></span></span>
+      <p style="text-align: left;" align="left" class="MsoNormal"><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"></span></p>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB">#undef ov_library_open_$(MYLIB_NAME) <o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB">OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_&lt;libname&gt;(void) {<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>static OV_LIBRARY_DEF OV_LIBRARY_DEF_&lt;libname&gt;_new;<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_LIBRARY_DEF_&lt;libname&gt;_new = *ov_library_open_&lt;libname&gt;_old();<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OV_LIBRARY_DEF_&lt;libname&gt;_new.setglobalvarsfnc = <o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ov_library_setglobalvars_&lt;libname&gt;_new;<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>return &amp;OV_LIBRARY_DEF_&lt;libname&gt;_new;<o:p></o:p></span></pre>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">}<o:p></o:p></span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table border="0" style="width: 60%; margin-left: 80px;" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+  </tbody>
+</table>
+<p style="text-align: left; margin-left: 80px;" align="left"
+ class="Quelltext"><span style=""></span></p>
+<span style="" lang="FR"><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p class="MsoNormal" align="left"
+ style="margin-left: 14.2pt; text-align: left;"><span lang="EN-GB"
+ style="font-family: Arial;"><o:p></o:p></span></p>
+<span lang="EN-GB" style="font-family: Arial;"><!--[if !supportEmptyParas]--></span><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"
+ lang="EN-GB"></span><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"></span><b
+ style=""><!--[endif]--> <o:p></o:p></b>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 0cm; text-align: left; text-indent: 0cm;"><span
+ style="">Das undefine ist
+notwendig, damit das global im makefile gesetzte define nicht auch auf
+die eigene
+ov_library_open Funktion angewendet wird. In dieser Funktion wird die
+Initialisierungsfunktion der Bibliothek setglobalvarsfnc umgebogen auf
+die
+eigene Funktion ov_library_setglobalvars_&lt;libname&gt;_new. Diese
+Funktion
+muss in der gleichen C-Datei <u>vor</u> der
+ov_library_open_&lt;libname&gt;
+Funktion definiert sein:<o:p></o:p></span></p>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 40px;"><span style="">&nbsp;</span></p>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 40px;" border="0">
+  <tbody>
+    <tr>
+      <td style="background-color: rgb(255, 204, 102);"><span style=""><span
+ style="font-family: Arial;"><span style=""></span></span><span
+ lang="EN-GB" style="font-family: Arial;"></span></span>
+      <p class="MsoNormal" align="left" style="text-align: left;"><span
+ style="font-family: Arial;"></span><span style="font-family: Arial;"></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB">OV_RESULT
+ov_library_setglobalvars_&lt;libname&gt;_new(void) {<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>OV_RESULT result;<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>result =
+ov_library_setglobalvars_&lt;libname&gt;(void);<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>if(Ov_OK(result)) {<span style="">&nbsp;&nbsp; </span><o:p></o:p></span></p>
+      <p
+ style="margin-left: 35.45pt; text-align: left; text-indent: 35.45pt;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB">…<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="" lang="EN-GB"><span
+ style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="">// eigene
+Aktionen wie z.B. das Erzeugen von default-Objekten<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>...<o:p></o:p></span></p>
+      <p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span>}<o:p></o:p></span></p>
+      <p style="text-align: left; text-indent: 0cm;" align="left"
+ class="MsoBodyTextIndent"><span style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </span></span><span style="" lang="EN-GB">return result;</span><br>
+}</p>
+      <span style="" lang="EN-GB"></span>
+      <pre><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"><o:p></o:p></span></pre>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<table cellspacing="2" cellpadding="2"
+ style="width: 60%; margin-left: 80px;" border="0">
+  <tbody>
+  </tbody>
+</table>
+<p class="Quelltext" align="left"
+ style="text-align: left; margin-left: 80px;"><span style=""></span></p>
+<span lang="FR" style=""><span style=""></span></span><span
+ style="font-family: Arial;"><span style=""></span></span>
+<p style="margin-left: 14.2pt; text-align: left;" align="left"
+ class="MsoNormal"><span style="font-family: Arial;" lang="EN-GB"><o:p></o:p></span></p>
+<span style="font-family: Arial;" lang="EN-GB"><!--[if !supportEmptyParas]--></span><span
+ style="font-family: Arial;"></span><span lang="EN-GB"
+ style="font-family: Arial;"></span><span
+ style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"></span><b
+ style=""><!--[endif]--> <o:p></o:p></b>
+<span style=""></span>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 0cm; text-align: left; text-indent: 0cm;"><span
+ lang="EN-GB" style=""><o:p></o:p></span></p>
+<p class="MsoBodyTextIndent" align="left"
+ style="margin-left: 0cm; text-align: left; text-indent: 0cm;"><span
+ lang="EN-GB" style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></span></p>
+<span style="">In dieser Funktion
+wird zuerst die eigentliche Intitialisierungsfunktion der Bibliothek
+ov_library_setglobalvars_&lt;libname&gt; aufgerufen und bei
+erfolgreicher
+Durchführung können anschließend eigene Aktionen zur Intitialisierung
+des
+Systems nach dem Laden der Bibliothek ausgeführt werden.</span>
+<!--[if !supportEmptyParas]-->
+<h3><a name="mozTocId934002" class="mozTocH5"></a>OV-Compilieren<br>
+</h3>
+<h6><a name="mozTocId582394" class="mozTocH6"></a><b style=""><span
+ style=""> </span>Bei
+dem Erzeugen einer ov-Bibliothek mit dem Cygwin Compiler tritt ein
+seltsamer
+Fehler auf. Das Lesen einer OV_TIME_SPAN Variable über das KS liefert
+völlig
+falsche Werte, die sich auch nicht ändern lassen.<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><span style="">&nbsp;&nbsp;&nbsp; </span>Dieses
+Problem
+taucht dann auf, wenn lediglich die ov-Bibliothek mit dem
+Cygwin-Compiler
+erzeugt wurde. Für einen korrekten Ablauf ist es aber erforderlich das
+gesamte
+OV (und damit auch die Bibliotheken libplt.a, libks.a, libkscln.a,
+libkssvr.a
+und libmpm.a im plt-Verzeichnis) mit dem Cygwin-Compiler zu übersetzen
+(und
+linken).</p>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]--></p>
+<h6><a class="mozTocH6" name="mozTocId996287"></a><b style=""><span
+ style=""> </span>Das
+erzeugen einer OV-Bibliothek unter Windows mittels „make“ funktioniert
+nicht.<o:p></o:p></b></h6>
+<p class="MsoBodyTextIndent" align="left" style="text-align: left;"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoNormal">&nbsp;&nbsp;&nbsp; Verwenden Sie das richtige
+make? Die Standard-Makefiles
+von OV sind GNU-</p>
+<p class="MsoNormal" style="text-indent: 14.2pt;">Makefiles und es muss
+das
+entsprechende GNU-Make-Programm verwendet werden. </p>
+<p class="MsoNormal" style="margin-left: 14.2pt;">Dieses finden Sie in
+den
+OV-Entwicklungstools, die standardmäßig unter c:\tools\bin zu finden
+sind.
+Verweist Ihre Path-Umgebungsvariable (Eingeben von „path“ in der
+Kommandozeile
+liefert die aktuelle Einstellung) nicht auf c:\tools\bin oder befindet
+sich
+diese Pfadangabe in der Reihenfolge hinter dem Borland-Compiler-Pfad
+(c:\bc5\bin), so wird das make-Programm nicht gefunden bzw. das
+Borland-make
+ausgeführt. In beiden Fällen kann dann das OV-Makefile nicht korrekt
+abgearbeitet werden. Abhilfe schafft entweder das explizite Ausführen
+des
+gnu-makes (c:\tools\bin\make) in dem build\nt-Verzeichnis ihrer
+Bibliothek oder
+das Eintragen der geänderten Path-Umgebungsvariable über die
+Systemsteuerung.
+Eine weitere Alternative stellt das Umbenennen des make-Programms z.B.
+in gmake
+(für GNU-make) dar. (Prüfen Sie evtl. auf Ihrem System, ob dies nicht
+bereits
+geschehen ist, und Sie deshalb mit make Ihre Bibliothek nicht
+übersetzen
+konnten).</p>
+<p class="MsoNormal" style="margin-left: 14.2pt;"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<h6><a name="mozTocId696885" class="mozTocH6"></a><b style="">Der
+ov_codegen stürzt ab, wenn in einer
+Assoziationdefinition die referenzierte Klasse nicht exstiert!<o:p></o:p></b></h6>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span></b>Dieser
+Fehler ist in der codegen- Version 1.6.1 behoben (OV-Produktversion
+1.6.3).</p>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]--> <o:p></o:p></b></p>
+<h3><a name="mozTocId92759" class="mozTocH5"></a>OV zur Laufzeit</h3>
+<h6><a name="mozTocId960488" class="mozTocH6"></a><b style=""><span
+ style=""> </span>In
+einer von mir erstellten OV-Bibliothek verwende ich eine Assoziation
+zwischen
+zwei Klassen. Der Compile-Vorgang läuft einwandfrei durch, aber wenn
+ich zu
+Laufzeiten einen Link über den Magellan anlegen möchte, stürzt der
+OV-Server
+ab.<o:p></o:p></b></h6>
+<p style="margin-left: 14.2pt; text-align: left; text-indent: -14.2pt;"
+ align="left" class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<p class="MsoNormal">&nbsp;&nbsp;&nbsp; Dieses Problem kann dadurch
+verursacht werden, wenn Sie
+entweder in Ihrem Makefile </p>
+<p style="margin-left: 14.2pt;" class="MsoNormal">oder in den C-Dateien
+nicht<span style="">&nbsp; </span>mit der Compileroption
+OV_COMPILE_LIBRARY_libname den Quellcode übersetzt haben. Die vom
+ov-codegen
+erzeugten Funktionen werden ohne diese Option nicht mit dem „extern“
+Attribut
+versehen, so dass der Verweis auf die entsprechenden Link-Funktionen
+nicht in
+der Externsektion der DLL eingetragen ist. Gleiches gilt übrigens auch
+für
+sämtliche C-Funktionen einer ov-Bibliothek.</p>
+<p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+<h6><a name="mozTocId912334" class="mozTocH6"></a><b style=""><span
+ style=""> </span>Eine
+OV- Bibliothek lässt sich im OV-Server nicht instantiieren.<o:p></o:p></b></h6>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent">&nbsp;&nbsp;&nbsp; Die Ursache hierfür
+kann unterschiedlicher Art
+sein. Entweder kann das Betriebssystem die zugehörige dll (Windows)
+bzw. das
+Shared-Object .so (Linux) nicht finden oder die Objektverwaltung kann
+die
+Bibliothek nicht als eine gültige OV-Bibliothek erkennen. Letzteres
+kann
+vorkommen, wenn die Bibliothek mit einer anderen OV-Version erzeugt
+wurde als
+der Server (Die Versionsnummern unterscheiden sich dann mindestens in
+der
+zweiten Stelle - z.B. wäre eine Bibliothek mit OV-1.3.0 übersetzt in
+einem
+OV-Server 1.5.1 nicht ausführbar, aber eine Bibliothek mit OV-1.5.0
+durchaus -
+und kennzeichnet eine Änderung des OV-Datenmodells, was eine Ausführung
+prinzipiell
+verbietet). In solchen Inkompatibilitätsfällen muss entweder das OV
+selbst
+(also in ov/build/nt bzw. ov/build/linux „make install“ ausführen) oder
+die
+eigene Bibliothek neu übersetzt werden. Der Fall, dass das
+Betriebssystem die
+dynamische Bibliothek nicht finden kann liegt an der fehlenden oder
+fehlerhaften Umgebungsvariable OV_LIBRARY_PATH. Die hier eingetragenen
+Pfade
+teilt das OV dem Betriebssystem mit, wenn versucht wird, eine
+Bibliothek zu
+instantiieren. Ist diese Umgebungsvariable nicht gesetzt, so versucht
+das
+Betriebssystem die dynamischen Bibliotheken in dem Verzeichnis zu
+finden, in
+dem der OV-Server gestartet wurde oder in den Standard-Pfaden des
+jeweiligen
+Betriebssystems (bei WindowsNT z.B. winnt/system32).<span style="">&nbsp;
+</span>Unter Linux können die Standard-Pfade über die Umgebungsvariable
+LD_LIBRARY_PATH eingestellt werden. Eine Erweiterung der darin
+eingetragenen
+Pfade auf das Verzeichnis, das die Dateien libov.so und libovks.so
+enthält, ist
+für den Start des OV-Servers ohnehin notwendig.</p>
+<p class="MsoBodyTextIndent"><span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>Die
+für
+die Kompatibilität zu beachtende Version des OVs findet sich in einem
+laufenden
+OV-Server in /vendor/libov_version oder in der Headerdatei
+ov/include/libov/
+ov_version.h. <b style=""><o:p></o:p></b></p>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p style="margin-left: 15pt; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><b style=""><span style=""> </span><o:p></o:p></b></p>
+<h6><a name="mozTocId735470" class="mozTocH6"></a><b style=""> Die
+Assoziationen
+„instantiation“ und „containment“ sollten auch im KS explizit sichtbar
+sein !<o:p></o:p></b></h6>
+<p style="text-align: left; text-indent: 0cm;" align="left"
+ class="MsoBodyTextIndent"><b style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p style="text-align: left; text-indent: 0cm;" align="left"
+ class="MsoBodyTextIndent">Seit
+der libov-Version 1.6.3 gibt es ein zusätzliches Compiler-Makro
+OV_EXPLAIN, das
+dazu dient zur Veranschaulichung von OV auch die Assoziationen
+„instantiation“
+und „cotainment“ als Links über KS darzustellen. Ab der Version 1.6.4
+besteht auch die Möglichkeit die KS Darstellung zur Laufzeit zu
+verändern. Dazu muss in der Server Variable /vendor/serverconfiguration
+der zweite Bool-Eintrag auf True bzw. False gesetzt werden.<br>
+</p>
+<p style="text-align: left; text-indent: 0cm;" align="left"
+ class="MsoBodyTextIndent"><b style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<h6><a name="mozTocId832796" class="mozTocH6"></a><b style=""> Beim
+textuellen dumpen einzelner Instanzen mit ov_dbdump werden vorhandene
+Links nicht wiedergegeben.<o:p></o:p></b></h6>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><span
+ style=""><!--[if !supportEmptyParas]--> &nbsp;&nbsp;&nbsp; Mit der
+OV-Version 1.6.5 wurde dieses Problem behoben.</span><b style=""><br>
+</b></p>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><br>
+<b style=""><!--[endif]--><o:p></o:p></b></p>
+<h6><a name="mozTocId783160" class="mozTocH6"></a><b style=""> Die
+startup Methode eines Objektes wird
+beim Erzeugen zweimal Aufgerufen. Ist dies gewollt?<o:p></o:p></b></h6>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<p class="MsoBodyTextIndent">&nbsp;&nbsp;&nbsp; Normalerweise ist dies
+nicht der Fall. Beim
+Erzeugen eines Objektes werden die Methoden constructor, checkinit und
+startup
+genau einmal aufgerufen. Allerdings kann dies dann passieren, wenn die
+Objekterzeugung im constructor eines Objektes durchgeführt wird und das
+erzeugte Objekt gleichzeitig Kind (containment-Beziehung zwischen
+domain und
+object) des erzeugenden Objektes ist (oder in einer tieferen
+Hierarchieebene
+zum erzeugenden Objekt in Beziehung steht). Dann wird nämlich die
+startup
+Methode einmal direkt bei der Erzeugung ausgeführt und ein zweites Mal,
+wenn
+die auf den constructor folgende startup-Methode des erzeugenden
+Objektes
+ausgeführt wird, da in der Standardimplementierung ov_object_startup
+nicht nur
+die startup-Methoden aller parts (embedment), sonder auch aller childs
+(containment) ausgeführt werden. Abhilfe schafft hier die Abfrage des
+objectstate auf OV_OS_STARTED, der in der startup-Methode
+ov_object_startup
+gesetzt wird. Denkbar wäre auch, diese Abfrage in den OV-Kern des
+Objektes zu
+übernehmen. Dies ist zum Zeitpunkt der Version 1.6.2 nicht der Fall.</p>
+<p style="text-align: left;" align="left" class="MsoBodyTextIndent"><b
+ style=""><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></b></p>
+<br>
+<p style="margin-left: 0cm; text-align: left; text-indent: 0cm;"
+ align="left" class="MsoBodyTextIndent"><span style="">&nbsp;</span></p>
+</div>
+</body>
+</html>
