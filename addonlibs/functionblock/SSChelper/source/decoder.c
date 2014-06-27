@@ -31,32 +31,42 @@ OV_DLLFNCEXPORT OV_RESULT SSChelper_decoder_CMD_set(
 ) {
 	OV_UINT len=0;
 	OV_STRING* temp=NULL;
+	OV_RESULT result;
 
-	temp=ov_string_split(value,";",&len);
-
-	if(len ==2){
-		ov_string_setvalue(&pobj->v_user,temp[0]);
-		ov_string_setvalue(&pobj->v_order,temp[1]);
+	if(!value)
+	{
+		return OV_ERR_OK;
 	}
-		if(len ==3){
-			ov_string_setvalue(&pobj->v_user,temp[0]);
-			ov_string_setvalue(&pobj->v_order,temp[1]);
-			ov_string_setvalue(&pobj->v_parameter,temp[2]);
-		}
-		ov_string_setvalue(temp,NULL);
-		ov_string_setvalue(&pobj->v_CMD,"");
-		return 0;
-	 //0;
+	temp=ov_string_split(value,";",&len);
+	if(len ==2){
+		result = ov_string_setvalue(&pobj->v_user,temp[0]);
+		if(Ov_Fail(result))
+			return result;
+		result = ov_string_setvalue(&pobj->v_order,temp[1]);
+		if(Ov_Fail(result))
+			return result;
+	}
+	if(len ==3){
+		result = ov_string_setvalue(&pobj->v_user,temp[0]);
+		if(Ov_Fail(result))
+			return result;
+		result = ov_string_setvalue(&pobj->v_order,temp[1]);
+		if(Ov_Fail(result))
+			return result;
+		result = ov_string_setvalue(&pobj->v_parameter,temp[2]);
+		if(Ov_Fail(result))
+			return result;
+	}
+	ov_string_setvalue(temp,NULL);
+	ov_string_setvalue(&pobj->v_CMD,"");
+	return OV_ERR_OK;
+
 }
 
 OV_DLLFNCEXPORT void SSChelper_decoder_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_SSChelper_decoder pinst = Ov_StaticPtrCast(SSChelper_decoder, pfb);
 
     return;
 }

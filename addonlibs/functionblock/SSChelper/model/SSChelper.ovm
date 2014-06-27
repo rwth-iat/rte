@@ -62,6 +62,7 @@ LIBRARY SSChelper
 			
 			result : BOOL FLAGS = "o" COMMENT = "order is given by the allowed user";
 			occupiedby : STRING FLAGS = "o" COMMENT = "id of the occupying user";
+			lastOccupier : STRING FLAGS = "o" COMMENT = "id of last occupying user if overridden by OP";
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
 			// Example:

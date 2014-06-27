@@ -34,22 +34,27 @@ OV_DLLFNCEXPORT void SSChelper_usercheck_typemethod(
     */
     OV_INSTPTR_SSChelper_usercheck pinst = Ov_StaticPtrCast(SSChelper_usercheck, pfb);
 
-    if(ov_string_compare(pinst->v_order,"OCCUPY")==OV_STRCMP_EQUAL||ov_string_compare(pinst->v_order,"free")==OV_STRCMP_EQUAL){
-    	 ov_string_setvalue(&pinst->v_occupiedby,pinst->v_user);
-    	 if(ov_string_compare(pinst->v_order,"FREE")==OV_STRCMP_EQUAL){
-    		 ov_string_setvalue(&pinst->v_occupiedby,"");
-    	 }
-    	 pinst->v_result=TRUE;
-
+    if(ov_string_compare(pinst->v_user,pinst->v_occupiedby)==OV_STRCMP_EQUAL){
+    	pinst->v_result=TRUE;
+    	if(ov_string_compare(pinst->v_order,"FREE")==OV_STRCMP_EQUAL){
+    		if(pinst->v_lastOccupier && *pinst->v_lastOccupier){
+    			ov_string_setvalue(&pinst->v_occupiedby,pinst->v_lastOccupier);
+    		}
+    		else{
+    			ov_string_setvalue(&pinst->v_occupiedby,"");
+    		}
+    	}
     }else{
-    	if(ov_string_compare(pinst->v_user,pinst->v_occupiedby)==OV_STRCMP_EQUAL){
-    		 pinst->v_result=TRUE;
+    	/*	OP overrides all, otherwise do occupy if free	*/
+    	if(ov_string_compare(pinst->v_order,"OCCUPY")==OV_STRCMP_EQUAL
+    			&& (ov_string_compare(pinst->v_user,"OP")==OV_STRCMP_EQUAL
+    					|| !pinst->v_occupiedby || !(*pinst->v_occupiedby))){
+    		ov_string_setvalue(&pinst->v_occupiedby,pinst->v_user);
+    		pinst->v_result=TRUE;
     	}else{
     		pinst->v_result=FALSE;
     	}
-
     }
-
     return;
 }
 
