@@ -41,7 +41,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_RoutePolyline_gridWidth_set(
 		OV_INSTPTR_cshmi_RoutePolyline          pobj,
 		const OV_SINGLE  value
 ) {
-	if (value <= 0){
+	if (value < 0){
 		return OV_ERR_BADPARAM;
 	}
 	pobj->v_ConfigCache.cacheDirty = TRUE;
