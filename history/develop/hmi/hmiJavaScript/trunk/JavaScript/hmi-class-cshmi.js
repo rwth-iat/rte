@@ -4870,9 +4870,10 @@ cshmi.prototype = {
 			cshmimodel.variables = new Object();
 			
 			if(foreignObjectNode !== null){
-				cshmimodel.HtmlElement = foreignObjectNode.firstChild.firstElementChild;
+			//this is the html body node of the foreignObject
+				cshmimodel.HtmlBody = foreignObjectNode.firstChild.firstElementChild;
 			}else{
-				cshmimodel.HtmlElement = null;
+				cshmimodel.HtmlBody = null;
 			}
 
 			for(var i = 0; i < varNames.length; ++i){
