@@ -122,6 +122,7 @@ function cshmi() {
 
 /*#########################################################################################################################
 TODO: 
+js maximize svg to window size
 
 JavaScript:
 - check return value of gethandleid
@@ -638,7 +639,7 @@ cshmi.prototype = {
 			//mouseleave is far better, than mouseout
 			var Eventname = "mouseout";
 			if ('onmouseleave' in HMI.svgDocument.documentElement){
-				//mouseenter is far better, than mouseover
+				//mouseleave is far better, than mouseout
 				Eventname = "mouseleave";
 			}
 			
@@ -4779,19 +4780,21 @@ cshmi.prototype = {
 		var sourceList = requestList[ObjectPath]["sourceOfLibrary"];
 		var jsOnload = requestList[ObjectPath]["jsOnload"];
 		
+		var foreignObjectNode = null;
 		if(HTMLcontent !== ""){
 			//create foreignObject in <SVG>-Element
 			var SVGWidth = VisualObject.getAttribute("width");
 			var SVGLength = VisualObject.getAttribute("height");
-			var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'><body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
+			var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'>"+
+				"<body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
 			var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
 			+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
 			+HTML
 			+"</svg:svg>";
 			
 			//append foreignObject to VisualObject
-			var newNode = HMI.HMIDOMParser.parse(svgContent);
-			VisualObject.appendChild(newNode);
+			foreignObjectNode = HMI.HMIDOMParser.parse(svgContent);
+			VisualObject.appendChild(foreignObjectNode);
 			
 			
 			//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
@@ -4857,11 +4860,20 @@ cshmi.prototype = {
 				};
 			};
 			
+			/**
+			 * js code in the blackbox should only use the object cshmimodel
+			 */
 			var cshmimodel = new Object();
-			cshmimodel.VisualObject = null;
+			cshmimodel.SvgElement = VisualObject;
 			cshmimodel.document = HMI.svgDocument;
 			cshmimodel.window = window;
 			cshmimodel.variables = new Object();
+			
+			if(foreignObjectNode !== null){
+				cshmimodel.HtmlElement = foreignObjectNode.firstChild.firstElementChild;
+			}else{
+				cshmimodel.HtmlElement = null;
+			}
 
 			for(var i = 0; i < varNames.length; ++i){
 				cshmimodel.variables[varNames[i]] = new cshmimodelVariable(VisualObject, ObjectPath, varNames[i]);
