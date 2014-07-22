@@ -36,14 +36,14 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_unlinkObject_doReset_set(
 		OV_INSTPTR_fbcomlib_unlinkObject          pobj,
 		const OV_BOOL  value
 ) {
-	if(value && ! pobj->v_doReset)
+	if(value)
 	{
 		if(pobj->p_apiUnlink.v_Reset)
 			ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiUnlink), FALSE);
 		ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiUnlink), TRUE);
 		fbcomlib_FBComCommon_resetAbstract(Ov_StaticPtrCast(fbcomlib_FBComCommon, pobj));
 	}
-	pobj->v_doReset = value;
+
 	return OV_ERR_OK;
 }
 

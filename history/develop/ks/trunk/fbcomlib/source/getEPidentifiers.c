@@ -37,14 +37,14 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getEPidentifiers_doReset_set(
 		OV_INSTPTR_fbcomlib_getEPidentifiers          pobj,
 		const OV_BOOL  value
 ) {
-	if(value && ! pobj->v_doReset)
+	if(value)
 	{
 		if(pobj->p_apiGetEPid.v_Reset)
 			ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiGetEPid), FALSE);
 		ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiGetEPid), TRUE);
 		fbcomlib_FBComCommon_resetAbstract(Ov_StaticPtrCast(fbcomlib_FBComCommon, pobj));
 	}
-	pobj->v_doReset = value;
+
 	return OV_ERR_OK;
 }
 

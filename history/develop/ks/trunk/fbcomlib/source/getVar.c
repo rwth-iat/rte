@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getVar_doReset_set(
     const OV_BOOL  value
 ) {
 	OV_INSTPTR_fbcomlib_pkgGetVariable fbcomlibVar = NULL;
-	if(value && ! pobj->v_doReset)
+	if(value)
 	{
 		if(pobj->p_apiGet.v_Reset)
 			ksapi_KSApiCommon_Reset_set((OV_INSTPTR_ksapi_KSApiCommon) &(pobj->p_apiGet), FALSE);
@@ -52,7 +52,7 @@ OV_DLLFNCEXPORT OV_RESULT fbcomlib_getVar_doReset_set(
 			fbcomlibVar->p_apiVar.v_order = 0;
 		}
 	}
-    pobj->v_doReset = value;
+
     return OV_ERR_OK;
 }
 
