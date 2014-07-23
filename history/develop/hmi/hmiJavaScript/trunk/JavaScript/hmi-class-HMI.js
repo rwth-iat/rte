@@ -318,6 +318,13 @@ HMI.prototype = {
 				}
 			});
 		
+		if(window.addEventListener){
+			//we need a modern browser inside, so no code for ie < 9
+			window.addEventListener("resize", HMI.optimizeSheetSize, false);
+			//the feature is not important enough to be supported on browsers with a prefix on the event
+			HMI.HideableHeader.addEventListener("transitionend", HMI.optimizeSheetSize, false);
+		}
+		
 		var allowLocalRequests = true;
 		//detect if the file is called from http or https, but not from filesystem
 		if (window.location.protocol === "file:"){
@@ -854,7 +861,7 @@ HMI.prototype = {
 			
 			//if there is support for CSS transition use it
 			//transition from an height="auto" is not supported, so we change maxHeight
-			//never used with ms prefix
+			//internet explorer never used this with a prefix
 			if(HMI.HideableHeader.style.transitionDuration !== undefined){
 				HMI.HideableHeader.style.transitionProperty = "all";
 				HMI.HideableHeader.style.transitionTimingFunction = "ease-in-out";
@@ -899,6 +906,8 @@ HMI.prototype = {
 			//show menu
 			HMI.HeaderIsVisible = true;
 			
+			HMI.optimizeSheetSize();
+			
 			//repaint header
 			HMI.HideableHeader.style.maxHeight = "300px";
 			
@@ -924,6 +933,8 @@ HMI.prototype = {
 			//
 			HMI.HideableHeader.style.maxHeight = '1px';	// ie < v8 renders 0px like fully visible
 			HMI.HeaderIsVisible = false;
+
+			HMI.optimizeSheetSize();
 		}else{
 			//adjust header height and call us in a few milli seconds again
 			HeaderActualheight -= 30;
@@ -1170,6 +1181,8 @@ HMI.prototype = {
 				HMI.hideHeader(true);
 			}
 		}
+		//we are ready for now, so maximize the dimension of the main sheet
+		this.optimizeSheetSize();
 		
 		//update the "deep link" to the state
 		this.updateDeepLink();
@@ -1254,6 +1267,8 @@ HMI.prototype = {
 			}
 			SVGRequestURI = null;
 			
+			HMI.cyclicRequestNeeded = false;
+			
 			//check if we have an cshmi target, no hmimanager at all or an error
 			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR") !== -1)){
 				//save for later use
@@ -1264,7 +1279,6 @@ HMI.prototype = {
 				
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(Host, Server, Sheet);
-				HMI.cyclicRequestNeeded = false;
 			}else{
 				//hmi target
 				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
@@ -1279,15 +1293,16 @@ HMI.prototype = {
 				
 				if (Component != null){
 					this._showComponent(Host, Server, Component);
+					HMI.cyclicRequestNeeded = true;
+					//maximize the dimension of the new main sheet
+					this.optimizeSheetSize();
 				}
-				
-				HMI.cyclicRequestNeeded = true;
 				
 				//reload scroll setting
 				//wheelsupport is not supported by the HMI Team and probably firefox only
 				if(this.scrollComponent)
 				{
-					var Component;
+					var Component = null;
 					if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
 						Component = document.getElementById(this.scrollComponent);
 					} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
@@ -1299,6 +1314,12 @@ HMI.prototype = {
 			}
 			ComponentText = null;
 		}
+		if(this.Playground.firstChild !== null){
+			//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
+			this.Playground.firstChild.setAttribute('x', 0);
+			this.Playground.firstChild.setAttribute('y', 0);
+		}
+		
 		if(HMI.cyclicRequestNeeded == true){
 			//the Host, Server and Path has to be cached for use in an eventhandler
 			HMI.KSClient.ResourceList.Host = Host;
@@ -1310,6 +1331,40 @@ HMI.prototype = {
 		}
 		
 		this.hmi_log_trace("HMI.prototype.refreshSheet - End");
+	},
+	
+	/**
+	 * resizes the sheet to the maximum size
+	 */
+	optimizeSheetSize: function () {
+		if(HMI.Playground.firstChild && window.getComputedStyle){
+			if(!HMI.Playground.firstChild.getAttribute('data-originalModelWidth')){
+				HMI.Playground.firstChild.setAttribute('data-originalModelWidth', HMI.Playground.firstChild.getAttribute('width'));
+				HMI.Playground.firstChild.setAttribute('data-originalModelHeight', HMI.Playground.firstChild.getAttribute('height'));
+			}
+			var originalModelWidth = parseFloat(HMI.Playground.firstChild.getAttribute('data-originalModelWidth'));
+			var originalModelHeight = parseFloat(HMI.Playground.firstChild.getAttribute('data-originalModelHeight'));
+			var windowHeight = window.innerHeight;
+			var windowWidth = window.innerWidth;
+			
+			var playgroundStyle = window.getComputedStyle(HMI.Playground);
+			var playgroundMarginRight = parseFloat(playgroundStyle.marginRight);
+			var playgroundMarginBottom = parseFloat(playgroundStyle.marginBottom);
+			
+			if(windowWidth > originalModelWidth + HMI.Playground.offsetLeft + playgroundMarginRight){
+				HMI.Playground.firstChild.setAttribute('width', windowWidth - HMI.Playground.offsetLeft - playgroundMarginRight);
+			}
+			if(windowHeight > originalModelHeight + HMI.Playground.offsetTop + playgroundMarginBottom){
+				HMI.Playground.firstChild.setAttribute('height', windowHeight - HMI.Playground.offsetTop - playgroundMarginBottom);
+			}
+			
+			if(HMI.PlaygroundContainerNode){
+				//fix the dimension of an embed or object node (as in deprecated Adobe SVG Plugin!)
+				//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
+				HMI.PlaygroundContainerNode.setAttribute('height', HMI.Playground.firstChild.getAttribute('height'));
+				HMI.PlaygroundContainerNode.setAttribute('width', HMI.Playground.firstChild.getAttribute('width'));
+			}
+		}
 	},
 	
 	/**
@@ -1431,13 +1486,6 @@ HMI.prototype = {
 			return;
 		}
 		
-		//if this will be the Sheet (first viewed sheet or comoponent is same as active view)
-		if(this.Playground.firstChild === null || this.Playground.firstChild.id === Component.id){
-			//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)
-			Component.setAttribute('x', 0);
-			Component.setAttribute('y', 0);
-		}
-		
 		this.initGestures(Component);
 		//Adobe does not fire mousemove event if there is no rect around the mouse. Build a invisible rect around everything 
 		if (this.AdobeMoveFixNeeded){
@@ -1453,17 +1501,7 @@ HMI.prototype = {
 		}
 		this.hmi_log_trace("HMI.prototype._showComponent: now Playground.append/replaceChild");
 		
-		if(this.PlaygroundContainerNode){
-			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
-			this.PlaygroundContainerNode.setAttribute('height', Component.getAttribute('height'));
-			this.PlaygroundContainerNode.setAttribute('width', Component.getAttribute('width'));
-		}
-		
 		if(this.Playground.firstChild === null){
-			//save for later use
-			this.KSClient.ResourceList.ModelHost = Host;
-			this.KSClient.ResourceList.ModelServer = Server;
-			
 			//we have no display => append
 			this.Playground.appendChild(Component);
 		}else if(this.Playground.firstChild !== null){

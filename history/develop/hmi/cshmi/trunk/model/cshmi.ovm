@@ -122,13 +122,13 @@ LIBRARY cshmi
 			width : SINGLE
 				HAS_SET_ACCESSOR
 				UNIT = "pixel"
-				COMMENT = "width of the group"
-				INITIALVALUE = 1000.0;
+				COMMENT = "width of the group (default ignored if this is not sheet where the value is the minimal size)"
+				INITIALVALUE = 200.0;
 			height : SINGLE
 				HAS_SET_ACCESSOR
 				UNIT = "pixel"
-				COMMENT = "height of the group"
-				INITIALVALUE = 900.0;
+				COMMENT = "height of the group (default ignored if this is not sheet where the value is the minimal size)"
+				INITIALVALUE = 200.0;
 			opacity : SINGLE
 				HAS_SET_ACCESSOR
 				COMMENT = "opacity of the element ([0.0-1.0])"
@@ -151,7 +151,7 @@ LIBRARY cshmi
 				COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
 			FBReference[] : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef";
+				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef;(//localhost is replaced with the hostname of the hmi model)";
 			FBVariableReference[] : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
@@ -513,15 +513,15 @@ LIBRARY cshmi
 				COMMENT = "height of the Blackbox"
 				INITIALVALUE = 100.0;
 			sourceOfLibrary[] : STRING
-				COMMENT = "exact link of the libraries";
+				COMMENT = "exact link of the libraries (optional)";
 			HTMLcontent : STRING
-				COMMENT = "insert your HTML-Code here"
+				COMMENT = "insert your HTML-Code here (optional)"
 				INITIALVALUE = "";
 			jsOnload : STRING
-				COMMENT = "insert your JavaScript-Code here; interpretation while loading"
+				COMMENT = "insert your JavaScript-Code here (optional); interpretation while loading"
 				INITIALVALUE = "";
 			jsOnglobalvarchanged : STRING
-				COMMENT = "insert your JavaScript-Code here; interpretation while changing globalvar"
+				COMMENT = "insert your JavaScript-Code here (optional); interpretation while changing globalvar"
 				INITIALVALUE = "";
 		END_VARIABLES;
 	END_CLASS;

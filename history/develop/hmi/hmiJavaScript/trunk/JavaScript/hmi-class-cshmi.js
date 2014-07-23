@@ -198,11 +198,6 @@ cshmi.prototype = {
 			}
 			return;
 		}
-		if(HMI.PlaygroundContainerNode){
-			//the displayed size is calculated from the Container-Node in the html, so we correct the dimension of it
-			HMI.PlaygroundContainerNode.setAttribute('height', VisualObject.getAttribute('height'));
-			HMI.PlaygroundContainerNode.setAttribute('width', VisualObject.getAttribute('width'));
-		}
 		
 		//build predefined gradients
 		//they are used in the fill attributes like this
