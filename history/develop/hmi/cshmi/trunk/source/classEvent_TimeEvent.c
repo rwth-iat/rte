@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TimeEvent_cyctime_set(
 	if (value < 0){
 		return OV_ERR_BADVALUE;
 	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_cyctime = value;
 	return OV_ERR_OK;
 }

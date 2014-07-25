@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cx_set(
 		OV_INSTPTR_cshmi_Circle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_cx = value;
 	return OV_ERR_OK;
 }
@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_cy_set(
 		OV_INSTPTR_cshmi_Circle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_cy = value;
 	return OV_ERR_OK;
 }
@@ -87,7 +87,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_r_set(
 		OV_INSTPTR_cshmi_Circle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_r = value;
 	return OV_ERR_OK;
 }
@@ -96,7 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_strokeWidth_set(
 		OV_INSTPTR_cshmi_Circle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_strokeWidth = value;
 	return OV_ERR_OK;
 }

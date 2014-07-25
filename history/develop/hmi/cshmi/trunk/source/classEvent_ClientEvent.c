@@ -105,7 +105,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ClientEvent_type_set(
 	OV_INSTPTR_cshmi_ClientEvent          pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return cshmi_ClientEvent_typeSetAndCheck(pobj, value, FALSE);
 }
 

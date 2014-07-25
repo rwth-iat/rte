@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_visible_set(
 		OV_INSTPTR_cshmi_Element          pobj,
 		const OV_BOOL  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_visible = value;
 	return OV_ERR_OK;
 }
@@ -108,7 +108,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_stroke_set(
 		OV_INSTPTR_cshmi_Element          pobj,
 		const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_stroke,value);
 }
 
@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_fill_set(
 		OV_INSTPTR_cshmi_Element          pobj,
 		const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_fill,value);
 }
 
@@ -125,7 +125,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_rotate_set(
 	OV_INSTPTR_cshmi_Element          pobj,
 	const OV_INT  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_rotate = value;
 	while(pobj->v_rotate > 360.0) pobj->v_rotate -= 360.0;
 	while(pobj->v_rotate < 0.0) pobj->v_rotate += 360.0;
@@ -136,7 +136,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
 	OV_INSTPTR_cshmi_Element          pobj,
 	const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	if(value > 1.0){
 		pobj->v_opacity = 1;
 	}else if(value < 0.0){

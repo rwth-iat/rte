@@ -69,7 +69,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_ChildrenIterator_ChildrenType_set(
 	OV_INSTPTR_cshmi_ChildrenIterator          pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//could be OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY
 	//or an variable name, so no check is possible
 	return ov_string_setvalue(&pobj->v_ChildrenType,value);

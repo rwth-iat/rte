@@ -31,7 +31,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_RoutePolyline_offset_set(
 	if (value <= 0){
 		return OV_ERR_BADPARAM;
 	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_offset = value;
 
 	return OV_ERR_OK;
@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_RoutePolyline_gridWidth_set(
 	if (value < 0){
 		return OV_ERR_BADPARAM;
 	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_gridWidth = value;
 	return OV_ERR_OK;
 }

@@ -1,8 +1,17 @@
 #ifndef cshmi_OVF_INCLUDED
 #define cshmi_OVF_INCLUDED
 
-//needs to be implemented by inherrited classes
+/**
+ *	returns the config of the instance and caches it
+*/
 typedef OV_STRING CSHMI_FNC_GETCONFIGASJSON (
+	OV_INSTPTR_cshmi_Object	pobj
+);
+
+/**
+ *	marks own and class cache dirty
+*/
+typedef OV_RESULT CSHMI_FNC_RESETCACHE (
 	OV_INSTPTR_cshmi_Object	pobj
 );
 

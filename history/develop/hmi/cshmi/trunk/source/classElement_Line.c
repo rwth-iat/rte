@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x1_set(
 		OV_INSTPTR_cshmi_Line          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_x1 = value;
 	return OV_ERR_OK;
 }
@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y1_set(
 		OV_INSTPTR_cshmi_Line          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_y1 = value;
 	return OV_ERR_OK;
 }
@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Line_x2_set(
 		OV_INSTPTR_cshmi_Line          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_x2 = value;
 	return OV_ERR_OK;
 }
@@ -97,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Line_y2_set(
 		OV_INSTPTR_cshmi_Line          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_y2 = value;
 	return OV_ERR_OK;
 }
@@ -106,7 +106,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Line_strokeWidth_set(
 		OV_INSTPTR_cshmi_Line          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_strokeWidth = value;
 	return OV_ERR_OK;
 }

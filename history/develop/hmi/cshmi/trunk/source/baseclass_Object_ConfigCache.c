@@ -66,11 +66,11 @@
 
 /**
  * encodes the string in a percent encoding
- * call ov_memstack_allow arround this!
+ * call ov_memstack_allow around this!
  * @param strIn
  * @return
  */
-static OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
+static OV_STRING cshmi_Object_prepareURIencode(OV_STRING strIn){
 	OV_STRING	pcIn;
 	OV_STRING	pcOut = 0;
 	OV_STRING	strOut;
@@ -155,7 +155,7 @@ static OV_STRING cshmi_downloadApplication_prepareURIencode(OV_STRING strIn){
  * @param pElement
  * @return
  */
-static OV_RESULT cshmi_downloadApplication_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
+static OV_RESULT cshmi_Object_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
 	ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, (pElement->v_visible==TRUE?"TRUE":"FALSE"));
 	ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pElement->v_stroke==NULL?"":pElement->v_stroke);
 	ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pElement->v_fill==NULL?"":pElement->v_fill);
@@ -283,15 +283,15 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 			ov_string_setvalue(&temp, "%22%22");
 		}else if(pGroup->v_ConfigValues.veclen == 1){
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pGroup->v_ConfigValues.value[0]));
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pGroup->v_ConfigValues.value[0]));
 			ov_memstack_unlock();
 		}else{
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s", cshmi_downloadApplication_prepareURIencode(pGroup->v_ConfigValues.value[0]));
+			ov_string_print(&temp, "%%22%s", cshmi_Object_prepareURIencode(pGroup->v_ConfigValues.value[0]));
 			ov_memstack_unlock();
 			for(i = 1; i < pGroup->v_ConfigValues.veclen;i++){
 				ov_memstack_lock();
-				ov_string_print(&temp, "%s %s", temp, cshmi_downloadApplication_prepareURIencode(pGroup->v_ConfigValues.value[i]));
+				ov_string_print(&temp, "%s %s", temp, cshmi_Object_prepareURIencode(pGroup->v_ConfigValues.value[i]));
 				ov_memstack_unlock();
 			}
 			ov_string_append(&temp, "%22");
@@ -353,7 +353,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_Rectangle){
 		pRectangle = Ov_StaticPtrCast(cshmi_Rectangle, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pRectangle));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pRectangle));
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pRectangle->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pRectangle->v_y);
 		ov_string_print(&strIterate, "%s%%22width%%22:%%22%f%%22,", strIterate, pRectangle->v_width);
@@ -363,7 +363,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_Circle){
 		pCircle = Ov_StaticPtrCast(cshmi_Circle, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pCircle));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pCircle));
 		ov_string_print(&strIterate, "%s%%22cx%%22:%%22%f%%22,", strIterate, pCircle->v_cx);
 		ov_string_print(&strIterate, "%s%%22cy%%22:%%22%f%%22,", strIterate, pCircle->v_cy);
 		ov_string_print(&strIterate, "%s%%22r%%22:%%22%f%%22,", strIterate, pCircle->v_r);
@@ -372,11 +372,11 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_Text){
 		pText = Ov_StaticPtrCast(cshmi_Text, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pText));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pText));
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pText->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pText->v_y);
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, (pText->v_content==NULL?"":cshmi_downloadApplication_prepareURIencode(pText->v_content)));
+		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, (pText->v_content==NULL?"":cshmi_Object_prepareURIencode(pText->v_content)));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22fontSize%%22:%%22%s%%22,", strIterate, pText->v_fontSize==NULL?"":pText->v_fontSize);
 		ov_string_print(&strIterate, "%s%%22fontStyle%%22:%%22%s%%22,", strIterate, pText->v_fontStyle==NULL?"":pText->v_fontStyle);
@@ -389,7 +389,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_Line){
 		pLine = Ov_StaticPtrCast(cshmi_Line, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pLine));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pLine));
 		ov_string_print(&strIterate, "%s%%22x1%%22:%%22%f%%22,", strIterate, pLine->v_x1);
 		ov_string_print(&strIterate, "%s%%22y1%%22:%%22%f%%22,", strIterate, pLine->v_y1);
 		ov_string_print(&strIterate, "%s%%22x2%%22:%%22%f%%22,", strIterate, pLine->v_x2);
@@ -399,34 +399,34 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_Polyline){
 		pPolyline = Ov_StaticPtrCast(cshmi_Polyline, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolyline));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolyline));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolyline->v_points==NULL?"":cshmi_downloadApplication_prepareURIencode(pPolyline->v_points)));
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolyline->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolyline->v_points)));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolyline->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Polygon){
 		pPolygon = Ov_StaticPtrCast(cshmi_Polygon, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolygon));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolygon));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolygon->v_points==NULL?"":cshmi_downloadApplication_prepareURIencode(pPolygon->v_points)));
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolygon->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolygon->v_points)));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolygon->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Path){
 		pPath = Ov_StaticPtrCast(cshmi_Path, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPath));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPath));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, (pPath->v_d==NULL?"":cshmi_downloadApplication_prepareURIencode(pPath->v_d)));
+		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, (pPath->v_d==NULL?"":cshmi_Object_prepareURIencode(pPath->v_d)));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPath->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Ellipse){
 		pEllipse = Ov_StaticPtrCast(cshmi_Ellipse, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		cshmi_downloadApplication_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pEllipse));
+		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pEllipse));
 		ov_string_print(&strIterate, "%s%%22cx%%22:%%22%f%%22,", strIterate, pEllipse->v_cx);
 		ov_string_print(&strIterate, "%s%%22cy%%22:%%22%f%%22,", strIterate, pEllipse->v_cy);
 		ov_string_print(&strIterate, "%s%%22rx%%22:%%22%f%%22,", strIterate, pEllipse->v_rx);
@@ -472,7 +472,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
@@ -516,7 +516,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
@@ -555,7 +555,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
@@ -628,6 +628,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 					pObj->v_ConfigCache.asJSON = NULL;
 					pObj->v_ConfigCache.cacheDirty = FALSE;
 					pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
+					ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
 
 					ov_string_setvalue(&ParameterName, NULL);
 					ov_string_setvalue(&ParameterValue, NULL);
@@ -643,7 +644,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
-			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_downloadApplication_prepareURIencode(ParameterValue));
+			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
 			ov_memstack_unlock();
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22", strIterate);
@@ -686,15 +687,15 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 			ov_string_setvalue(&temp, " ");
 		}else if(pTranslationSource->v_translationMapping.veclen == 1){
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
 			ov_memstack_unlock();
 		}else{
 			ov_memstack_lock();
-			ov_string_print(&temp, "%%22%s%%22", cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pTranslationSource->v_translationMapping.value[0]));
 			ov_memstack_unlock();
 			for(i = 1; i < pTranslationSource->v_translationMapping.veclen;i++){
 				ov_memstack_lock();
-				ov_string_print(&temp, "%s,%%22%s%%22", temp, cshmi_downloadApplication_prepareURIencode(pTranslationSource->v_translationMapping.value[i]));
+				ov_string_print(&temp, "%s,%%22%s%%22", temp, cshmi_Object_prepareURIencode(pTranslationSource->v_translationMapping.value[i]));
 				ov_memstack_unlock();
 			}
 		}
@@ -734,6 +735,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		pObj->v_ConfigCache.asJSON = NULL;
 		pObj->v_ConfigCache.cacheDirty = FALSE;
 		pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
+		ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
 
 		ov_string_setvalue(&ParameterName, NULL);
 		ov_string_setvalue(&ParameterValue, NULL);
@@ -757,6 +759,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}
 	pObj->v_ConfigCache.cacheDirty = FALSE;
 	pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
+	ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
 	ov_string_setvalue(&ParameterName, NULL);
 	ov_string_setvalue(&ParameterValue, NULL);
 	ov_string_setvalue(&temp, NULL);
@@ -772,8 +775,68 @@ OV_DLLFNCEXPORT OV_STRING cshmi_Object_getConfigAsJSON(
 	//parent is different (the object was moved)
 	if(		pObj->v_ConfigCache.cacheDirty == TRUE
 		||	pObj->v_ConfigCache.parentObject != Ov_GetParent(ov_containment, pObj)
+		||	ov_string_compare(pObj->v_ConfigCache.identifier, pObj->v_identifier) != OV_STRCMP_EQUAL
 	){
 		cshmi_Object_updateConfigAsJSON(pObj);
 	}
 	return pObj->v_ConfigCache.asJSON;
+}
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Object_resetCache(
+	OV_INSTPTR_cshmi_Object          pobj
+) {
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+
+	//mark our cache dirty
+	pobj->v_ConfigCache.cacheDirty = TRUE;
+
+	if(Ov_CanCastTo(cshmi_Group, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Group);
+	}else if(Ov_CanCastTo(cshmi_TemplateDefinition, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(TemplateDefinition);
+	}else if(Ov_CanCastTo(cshmi_InstantiateTemplate, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(InstantiateTemplate);
+	}else if(Ov_CanCastTo(cshmi_Rectangle, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Rectangle);
+	}else if(Ov_CanCastTo(cshmi_Text, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Text);
+	}else if(Ov_CanCastTo(cshmi_Line, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Line);
+	}else if(Ov_CanCastTo(cshmi_Polyline, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Polyline);
+	}else if(Ov_CanCastTo(cshmi_Polygon, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Polygon);
+	}else if(Ov_CanCastTo(cshmi_Path, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Path);
+	}else if(Ov_CanCastTo(cshmi_Ellipse, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Ellipse);
+	}else if(Ov_CanCastTo(cshmi_SetValue, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(SetValue);
+	}else if(Ov_CanCastTo(cshmi_SetConcatValue, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(SetConcatValue);
+	}else if(Ov_CanCastTo(cshmi_SetMathValue, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(SetMathValue);
+	}else if(Ov_CanCastTo(cshmi_GetValue, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(GetValue);
+	}else if(Ov_CanCastTo(cshmi_ChildrenIterator, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(ChildrenIterator);
+	}else if(Ov_CanCastTo(cshmi_IfThenElse, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(IfThenElse);
+	}else if(Ov_CanCastTo(cshmi_Compare, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Compare);
+	}else if(Ov_CanCastTo(cshmi_CompareIteratedChild, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(CompareIteratedChild);
+	}else if(Ov_CanCastTo(cshmi_TimeEvent, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(TimeEvent);
+	}else if(Ov_CanCastTo(cshmi_RoutePolyline, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(RoutePolyline);
+	}else if(Ov_CanCastTo(cshmi_TranslationSource, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(TranslationSource);
+	}else if(Ov_CanCastTo(cshmi_CreateObject, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(CreateObject);
+	}else if(Ov_CanCastTo(cshmi_Vibrate, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Vibrate);
+	}
+
+	return OV_ERR_OK;
 }

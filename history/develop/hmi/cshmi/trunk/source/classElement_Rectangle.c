@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_x_set(
 		OV_INSTPTR_cshmi_Rectangle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_x = value;
 	return OV_ERR_OK;
 }
@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_y_set(
 		OV_INSTPTR_cshmi_Rectangle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_y = value;
 	return OV_ERR_OK;
 }
@@ -93,7 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_width_set(
 	if (value <= 0){
 		return OV_ERR_BADPARAM;
 	}else{
-		pobj->v_ConfigCache.cacheDirty = TRUE;
+		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 		pobj->v_width = value;
 	}
 	return OV_ERR_OK;
@@ -106,7 +106,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_height_set(
 	if (value <= 0){
 		return OV_ERR_BADPARAM;
 	}else{
-		pobj->v_ConfigCache.cacheDirty = TRUE;
+		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 		pobj->v_height = value;
 	}
 	return OV_ERR_OK;
@@ -116,7 +116,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_strokeWidth_set(
 		OV_INSTPTR_cshmi_Rectangle          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_strokeWidth = value;
 	return OV_ERR_OK;
 }

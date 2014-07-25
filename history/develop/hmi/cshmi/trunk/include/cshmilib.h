@@ -78,10 +78,6 @@
 #define  FB_INSTANZ_CONTAINER_PATH   "/TechUnits"
 #endif
 
-/***********************************************************************
-	z-index
-***********************************************************************/
-
 #define CSHMI_ZINDEX_BOTTOM	0
 #define CSHMI_ZINDEX_TOP		ULONG_MAX
 #define CSHMI_ZINDEX_DEFAULT	CSHMI_ZINDEX_TOP
@@ -92,5 +88,9 @@
 #define UNUSED
 #endif
 
+#define CSHMI_EMPTYCLASSCACHEENTRY(classname)	\
+	Ov_HeapFree(pDownloadApplication->v_ApplicationCache.str##classname);	\
+	pDownloadApplication->v_ApplicationCache.str##classname = NULL;	\
+	pDownloadApplication->v_ApplicationCache.cache##classname##Dirty = TRUE
 
 #endif

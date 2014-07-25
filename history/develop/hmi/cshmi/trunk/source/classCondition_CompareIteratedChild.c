@@ -87,11 +87,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_childValue_set(
 		||	ov_string_compare(value, "OP_TYPEIDENT") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "OP_VALUE") == OV_STRCMP_EQUAL
 	){
-		pobj->v_ConfigCache.cacheDirty = TRUE;
+		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 		return ov_string_setvalue(&pobj->v_childValue,value);
 	} else if (	ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//unconfigured must be allowed
-		pobj->v_ConfigCache.cacheDirty = TRUE;
+		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 		return ov_string_setvalue(&pobj->v_childValue,value);
 	}else{
 		ov_memstack_lock();
@@ -108,7 +108,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CompareIteratedChild_comptype_set(
 	const OV_STRING  value
 ) {
 	OV_STRING erroroutput = NULL;
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//force our keywords
 	if (	ov_string_compare(value, "<") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "<=") == OV_STRCMP_EQUAL

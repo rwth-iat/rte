@@ -92,6 +92,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		#endif
 		return OV_ERR_OK;
 	}
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pObj));
 
 	//iterate over all siblings to find target position
 	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
@@ -180,8 +181,36 @@ OV_DLLFNCEXPORT OV_UINT cshmi_Object_zindex_get(
 	return SiblingNumber;
 }
 
+
+/***********************************************************************
+	getAccess
+***********************************************************************/
+
+OV_DLLFNCEXPORT OV_ACCESS cshmi_Object_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET		*pticket
+)	{
+	//we have nothing to hide, so all our normal variables can be read and written
+
+	switch (pelem->elemtype){
+		case OV_ET_VARIABLE :
+			//prevent "special variables" from being read/write
+			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo)){
+				if (pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE || pelem->elemunion.pvar->v_vartype == OV_VT_POINTER){
+					return OV_AC_NONE;
+				}else{
+					return OV_AC_READWRITE;
+				}
+			}
+			break;
+		default:
+			break;
+	};
+	return ov_object_getaccess(pobj, pelem, pticket);
+};
+
 /**
- * dummy function with no own logic (anymore)
  * @param pObj Object to create
  */
 OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
@@ -190,9 +219,14 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
 	// local variables
 	//
 	OV_RESULT    result;
+	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pObj);
 
 	/* do what the base class does first */
 	result = ov_object_constructor(pObj);
+
+	//reset own and mark class cache entry invalid
+	cshmi_Object_resetCache(pinst);
+
 	return result;
 }
 
@@ -211,6 +245,7 @@ OV_DLLFNCEXPORT void cshmi_Object_startup(
 	pinst->v_ConfigCache.asJSON = NULL;
 	pinst->v_ConfigCache.cacheDirty = TRUE;
 	pinst->v_ConfigCache.parentObject = NULL;
+	pinst->v_ConfigCache.identifier = NULL;
 
 	return;
 }
@@ -227,6 +262,7 @@ OV_DLLFNCEXPORT void cshmi_Object_shutdown(
 	Ov_HeapFree(pinst->v_ConfigCache.asJSON);
 	pinst->v_ConfigCache.asJSON = NULL;
 	pinst->v_ConfigCache.cacheDirty = TRUE;
+	ov_string_setvalue(&pinst->v_ConfigCache.identifier, NULL);
 
 	/* set the object's state to "shut down" */
 	ov_object_shutdown(pobj);
@@ -235,30 +271,20 @@ OV_DLLFNCEXPORT void cshmi_Object_shutdown(
 }
 
 
-/***********************************************************************
-	getAccess
-***********************************************************************/
+OV_DLLFNCEXPORT void cshmi_Object_destructor(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pobj);
 
-OV_DLLFNCEXPORT OV_ACCESS cshmi_Object_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET		*pticket
-)	{
-	//we have nothing to hide, so all our variables can be read and written
+	//reset own and mark class cache entry invalid
+	cshmi_Object_resetCache(pinst);
 
-	switch (pelem->elemtype){
-		case OV_ET_VARIABLE :
-			//prevent "special variables" from being read/write
-			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo)){
-				if (pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE || pelem->elemunion.pvar->v_vartype == OV_VT_POINTER){
-					return OV_AC_NONE;
-				}else{
-					return OV_AC_READWRITE;
-				}
-			}
-			break;
-		default:
-			break;
-	};
-	return ov_object_getaccess(pobj, pelem, pticket);
-};
+	/* destroy object */
+	ov_object_destructor(pobj);
+
+	return;
+}
+

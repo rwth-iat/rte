@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Ellipse_cx_set(
 		OV_INSTPTR_cshmi_Ellipse          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_cx = value;
 	return OV_ERR_OK;
 }
@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Ellipse_cy_set(
 		OV_INSTPTR_cshmi_Ellipse          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_cy = value;
 	return OV_ERR_OK;
 }
@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Ellipse_rx_set(
 		OV_INSTPTR_cshmi_Ellipse          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_rx = value;
 	return OV_ERR_OK;
 }
@@ -97,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Ellipse_ry_set(
 		OV_INSTPTR_cshmi_Ellipse          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_ry = value;
 	return OV_ERR_OK;
 }
@@ -106,7 +106,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Ellipse_strokeWidth_set(
 		OV_INSTPTR_cshmi_Ellipse          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_strokeWidth = value;
 	return OV_ERR_OK;
 }

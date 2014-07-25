@@ -70,7 +70,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Path_d_set(
 		OV_INSTPTR_cshmi_Path          pobj,
 		const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_d,value);
 }
 
@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Path_strokeWidth_set(
 		OV_INSTPTR_cshmi_Path          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_strokeWidth = value;
 	return OV_ERR_OK;
 }

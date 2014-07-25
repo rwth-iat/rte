@@ -82,15 +82,17 @@ LIBRARY cshmi
 				HAS_ACCESSORS
 				COMMENT = "z-index of the visuals, sequence-index for actions: 0 is least visible (i.e. bottom) or executed first";
 			baseKsPath : STRING
-				COMMENT = "base KS path for resolution of relative KS paths (not starting with /), used in References and direct ksVar";
-			ConfigCache	:	C_TYPE	<CSHMI_CACHEOBJECT>
+				COMMENT = "base KS path for resolution of relative KS paths (not starting with /), used in References and direct ksVar (//localhost is replaced with the hostname of the hmi model)";
+			ConfigCache	:	C_TYPE	<CSHMI_INSTANCECACHE>
 				COMMENT	=	"cached information for downloadApplication (Strings in the heap mem)";
 		END_VARIABLES;
 		OPERATIONS
+			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
 			startup						:	C_FUNCTION	<OV_FNC_STARTUP>;
 			shutdown					:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
-			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
+			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
+			resetCache					:	C_FUNCTION	<CSHMI_FNC_RESETCACHE>;	//marks own cache dirty
 			getConfigAsJSON				:	C_FUNCTION	<CSHMI_FNC_GETCONFIGASJSON>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -979,7 +981,13 @@ LIBRARY cshmi
 				IS_DERIVED
 				HAS_GET_ACCESSOR
 				COMMENT = "get the application as JSON";
+			ApplicationCache	:	C_TYPE	<CSHMI_CLASSCACHE>
+				COMMENT	=	"cached information (Strings in the heap mem)";
 		END_VARIABLES;
+		OPERATIONS
+			startup						:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown					:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
 	END_CLASS;
 
 END_LIBRARY;

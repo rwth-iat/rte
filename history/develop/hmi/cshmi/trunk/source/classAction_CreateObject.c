@@ -64,7 +64,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_CreateObject_autoRenameIfExists_set(
 		OV_INSTPTR_cshmi_CreateObject          pobj,
 		const OV_BOOL  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_autoRenameIfExists = value;
 	return OV_ERR_OK;
 }

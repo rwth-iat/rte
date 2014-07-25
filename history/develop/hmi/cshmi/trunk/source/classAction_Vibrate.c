@@ -30,7 +30,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Vibrate_pattern_set(
 		const OV_UINT*  value,
 		const OV_UINT veclen
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return Ov_SetDynamicVectorValue(&pobj->v_pattern,value,veclen,UINT);
 }
 

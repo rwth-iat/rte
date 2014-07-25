@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_x_set(
 		OV_INSTPTR_cshmi_Text          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_x = value;
 	return OV_ERR_OK;
 }
@@ -80,7 +80,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_y_set(
 		OV_INSTPTR_cshmi_Text          pobj,
 		const OV_SINGLE  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_y = value;
 	return OV_ERR_OK;
 }
@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_content_set(
 		OV_INSTPTR_cshmi_Text          pobj,
 		const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_content,value);
 }
 
@@ -98,20 +98,29 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	OV_STRING p;
+	OV_RESULT fr = OV_ERR_OK;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	if(ov_string_compare(value, "normal") == OV_STRCMP_EQUAL){
 		//fixing common typo
 		return ov_string_setvalue(&pobj->v_fontSize,"medium");
 	}
-	//todo check numeric => change to numeric+"px"
-	return ov_string_setvalue(&pobj->v_fontSize,value);
+	fr = ov_string_setvalue(&pobj->v_fontSize,value);
+	if(Ov_OK(fr) && value != NULL){
+		strtod (value, &p);
+		if(*p == '\0'){
+			//we had a numeric input
+			fr = ov_string_append(&pobj->v_fontSize, "px");
+		}
+	}
+	return fr;
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontStyle_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -129,7 +138,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontWeight_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -148,7 +157,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontFamily_set(
 		OV_INSTPTR_cshmi_Text          pobj,
 		const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_fontFamily,value);
 }
 
@@ -156,7 +165,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_horAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -177,7 +186,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_verAlignment_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	//force our keywords
 	if (ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//setting default
@@ -199,7 +208,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_trimToLength_set(
 		OV_INSTPTR_cshmi_Text          pobj,
 		const OV_INT  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_trimToLength = value;
 	return OV_ERR_OK;
 }

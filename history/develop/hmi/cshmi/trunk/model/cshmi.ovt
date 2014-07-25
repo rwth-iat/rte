@@ -1,14 +1,69 @@
 #ifndef cshmi_OVT_INCLUDED
 #define cshmi_OVT_INCLUDED
 
-/* 
-	Define your data types here. 
+/**
+	Cache information for every single object
 */
 typedef struct{
 	OV_BOOL cacheDirty;
 	OV_STRING asJSON;	//we operate in heap
+	OV_STRING identifier;
 	OV_POINTER parentObject;
-} CSHMI_CACHEOBJECT;
+} CSHMI_INSTANCECACHE;
+
+/**
+	Cache information for every single object in heap memory
+*/
+typedef struct{
+	OV_BOOL cacheGroupDirty;
+	OV_STRING strGroup;
+	OV_BOOL cacheTemplateDefinitionDirty;
+	OV_STRING strTemplateDefinition;
+	OV_BOOL cacheInstantiateTemplateDirty;
+	OV_STRING strInstantiateTemplate;
+	OV_BOOL cacheRectangleDirty;
+	OV_STRING strRectangle;
+	OV_BOOL cacheCircleDirty;
+	OV_STRING strCircle;
+	OV_BOOL cacheTextDirty;
+	OV_STRING strText;
+	OV_BOOL cacheLineDirty;
+	OV_STRING strLine;
+	OV_BOOL cachePolylineDirty;
+	OV_STRING strPolyline;
+	OV_BOOL cachePolygonDirty;
+	OV_STRING strPolygon;
+	OV_BOOL cachePathDirty;
+	OV_STRING strPath;
+	OV_BOOL cacheEllipseDirty;
+	OV_STRING strEllipse;
+	OV_BOOL cacheSetValueDirty;
+	OV_STRING strSetValue;
+	OV_BOOL cacheSetConcatValueDirty;
+	OV_STRING strSetConcatValue;
+	OV_BOOL cacheSetMathValueDirty;
+	OV_STRING strSetMathValue;
+	OV_BOOL cacheGetValueDirty;
+	OV_STRING strGetValue;
+	OV_BOOL cacheChildrenIteratorDirty;
+	OV_STRING strChildrenIterator;
+	OV_BOOL cacheIfThenElseDirty;
+	OV_STRING strIfThenElse;
+	OV_BOOL cacheCompareDirty;
+	OV_STRING strCompare;
+	OV_BOOL cacheCompareIteratedChildDirty;
+	OV_STRING strCompareIteratedChild;
+	OV_BOOL cacheTimeEventDirty;
+	OV_STRING strTimeEvent;
+	OV_BOOL cacheRoutePolylineDirty;
+	OV_STRING strRoutePolyline;
+	OV_BOOL cacheTranslationSourceDirty;
+	OV_STRING strTranslationSource;
+	OV_BOOL cacheCreateObjectDirty;
+	OV_STRING strCreateObject;
+	OV_BOOL cacheVibrateDirty;
+	OV_STRING strVibrate;
+} CSHMI_CLASSCACHE;
  
 #endif //cshmi_OVT_INCLUDED
  	

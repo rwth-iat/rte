@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_width_set(
 	if (value <= 0){
 		return OV_ERR_BADPARAM;
 	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_width = value;
 	return OV_ERR_OK;
 }
@@ -84,7 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TemplateDefinition_height_set(
 	if (value <= 0){
 		return OV_ERR_BADPARAM;
 	}
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_height = value;
 	return OV_ERR_OK;
 }

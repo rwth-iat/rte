@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Condition_ignoreError_set(
 		OV_INSTPTR_cshmi_Condition          pobj,
 		const OV_BOOL  value
 ) {
-	pobj->v_ConfigCache.cacheDirty = TRUE;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	pobj->v_ignoreError = value;
 	return OV_ERR_OK;
 }
