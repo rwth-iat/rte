@@ -169,7 +169,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	
 /**
 *	Create an instance of the class
-*	if the class is known to the library and you want default placing you could use the macro Ov_CreateObject
+*	if the class is known to the library and you want default placing you should use the macro Ov_CreateObject
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	const OV_INSTPTR_ov_class	pclass,
@@ -182,15 +182,20 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	OV_INSTPTR_ov_object		*ppobj
 );
 
-/*
+/**
 *	Delete an instance of the class
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(
 	const OV_INSTPTR_ov_object	pobj
 );
 
-/*
-*	Rename an instance of the class
+/**
+*	Rename or move an instance of the class
+*	@param pobj	object to rename
+*	@param pparent pointer to the (new?) parent domain (right now NOT optional)
+*	@param identifier new name for the object (could be NULL if no change is requested)
+*	@param hint placement hint for a new parent domain
+*	@param prelobj placement partner if needed for the placement hint
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	const OV_INSTPTR_ov_object	pobj,

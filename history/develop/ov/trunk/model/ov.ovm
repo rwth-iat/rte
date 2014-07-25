@@ -41,16 +41,16 @@ LIBRARY ov
 		VARIABLES
 			identifier : STRING;
 			creationtime : TIME;
-			pouterobject : C_TYPE <OV_INSTPTR>;
-			objectstate : INT;
+			pouterobject : C_TYPE <OV_INSTPTR>;	//if this is a OV Part
+			objectstate : INT;	//OV_OS_NONE, OV_OS_INIT, OV_OS_STARTED or OV_OS_ACTIVE
 			linktable : C_TYPE <OV_ATBLPTR>;
 		END_VARIABLES;
 		OPERATIONS
-			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-			checkinit : C_FUNCTION <OV_FNC_CHECKINIT>;
-			destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;
-			startup : C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;	//creation of object
+			checkinit : C_FUNCTION <OV_FNC_CHECKINIT>;	//is called once after construction
+			destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;	//deletion of object
+			startup : C_FUNCTION <OV_FNC_STARTUP>;	//startup could be after creation or after restarting db
+			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;	//could be before destructor or before shuting down db
 			getaccess : C_FUNCTION <OV_FNC_GETACCESS>;
 			getflags : C_FUNCTION <OV_FNC_GETFLAGS>;
 			getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;
@@ -88,7 +88,7 @@ LIBRARY ov
 	END_CLASS;
 
 	/*
-	*	structure: a structure definition
+	*	structure: a structure definition (superseeded by parts)
 	*	---------------------------------
 	*/
 	CLASS structure : CLASS ov/domain
@@ -107,7 +107,7 @@ LIBRARY ov
 		VARIABLES
 			comment : STRING HAS_GET_ACCESSOR;
 			flags : UINT HAS_GET_ACCESSOR;
-			classprops : INT HAS_GET_ACCESSOR;
+			classprops : INT HAS_GET_ACCESSOR;	//could be OV_CP_INSTANTIABLE or OV_CP_FINAL
 			size : UINT HAS_GET_ACCESSOR UNIT = "Byte";
 			staticsize : UINT HAS_GET_ACCESSOR UNIT = "Byte";
 			linktablesize : UINT HAS_GET_ACCESSOR UNIT = "Byte";
