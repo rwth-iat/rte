@@ -152,3 +152,22 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_TranslationSource_translationMapping_set(
 	return Ov_SetDynamicVectorValue(&pobj->v_translationMapping,value,veclen,STRING);
 }
 
+OV_DLLFNCEXPORT OV_ACCESS cshmi_SetConcatValue_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+	switch (pelem->elemtype){
+		case OV_ET_VARIABLE :
+			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo)){
+				if (ov_string_compare(pelem->elemunion.pvar->v_identifier, "elemVarPath") == OV_STRCMP_EQUAL){
+					//allow restoring an old backup, but prevent display and export of the old variable
+					return OV_AC_WRITE;
+				}
+			}
+			break;
+		default:
+			break;
+	};
+	return cshmi_Object_getaccess(pobj, pelem, pticket);
+}

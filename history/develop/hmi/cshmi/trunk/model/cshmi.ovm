@@ -550,7 +550,7 @@ LIBRARY cshmi
 				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'previousTemplateCount')";
 			elemVarPath : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "NOT IMPLEMENTED! The (relative) path to the element"; //Name support like routePolyline
+				COMMENT = "NOT IMPLEMENTED and hidden! the (relative) path to the element"; //Name support like routePolyline
 			globalVar : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "name of the global variable (is resetted on reloading)";
@@ -575,6 +575,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 		OPERATIONS
 			constructor					:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -590,7 +591,7 @@ LIBRARY cshmi
 				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex')";
 			elemVarPath : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "NOT IMPLEMENTED! the (relative) path to the element";
+				COMMENT = "NOT IMPLEMENTED and hidden! the (relative) path to the element";
 			globalVar : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "name of the global variable (is resetted on reloading)";
@@ -607,6 +608,9 @@ LIBRARY cshmi
 				HAS_SET_ACCESSOR
 				COMMENT = "name of the key of a ConfigValue";
 		END_VARIABLES;
+		OPERATIONS
+			getaccess 					:	C_FUNCTION	<OV_FNC_GETACCESS>;
+		END_OPERATIONS;
 	END_CLASS;
 
 	CLASS SetMathValue : CLASS cshmi/SetConcatValue
@@ -953,10 +957,11 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
+	/*
 	CLASS ServerEvent : CLASS cshmi/Event
-/*		IS_INSTANTIABLE;*/
-		COMMENT = "NOT IMPLEMENTED, an HMI gesture (i.e. an event from the server)";
+		COMMENT = "NOT IMPLEMENTED right now, an HMI gesture (i.e. an event from the server)";
 	END_CLASS;
+	*/
 	
 	CLASS TimeEvent : CLASS cshmi/Event
 		IS_FINAL;
