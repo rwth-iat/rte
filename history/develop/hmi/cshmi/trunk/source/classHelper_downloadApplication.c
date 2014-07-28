@@ -1,5 +1,40 @@
-
-/******************************************************************************
+/*
+*	Copyright (C) 2014
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+*
+***********************************************************************
 *
 *   FILE
 *   ----
@@ -99,6 +134,7 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object p
 		if(Ov_GetNextChild(ov_containment, pChildObj) != NULL){
 			ov_string_append(&strChildList, ",");
 		}
+		//todo trigger an instance_cache update for renamed objects?
 	};
 	ov_string_append(&strChildList, "%5D%7D");
 
@@ -112,11 +148,11 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object p
 	//some of our children should list their children, too
 	Ov_ForEachChild(ov_containment, Ov_StaticPtrCast(ov_domain, pObj), pChildObj){
 		//interesting children are domains or some cshmi objects
-		if(	Ov_GetParent(ov_instantiation, pChildObj) == pclass_ov_domain
+		if(	Ov_GetClassPtr(pChildObj) == pclass_ov_domain
 			|| Ov_CanCastTo(cshmi_ContainerElement, pChildObj)
 			|| Ov_CanCastTo(cshmi_Element, pChildObj)
-			|| Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_SetConcatValue
-			|| Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_SetMathValue
+			|| Ov_GetClassPtr(pChildObj) == pclass_cshmi_SetConcatValue
+			|| Ov_GetClassPtr(pChildObj) == pclass_cshmi_SetMathValue
 			|| Ov_CanCastTo(cshmi_Event, pChildObj)
 			){
 			result = cshmi_downloadApplication_buildChildList(pChildObj, strResult, FALSE);
@@ -125,7 +161,7 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object p
 			}
 		}else
 		//some children have no containment but their parts have interesting containments
-		if(Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_IfThenElse){
+		if(Ov_GetClassPtr(pChildObj) == pclass_cshmi_IfThenElse){
 			pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pChildObj);
 			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, Ov_GetPartPtr(if, pIfThenElse)), strResult, FALSE);
 			if(Ov_Fail(result)){
@@ -139,7 +175,7 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object p
 			if(Ov_Fail(result)){
 				return result;
 			}
-		}else if(Ov_GetParent(ov_instantiation, pChildObj) == pclass_cshmi_ChildrenIterator){
+		}else if(Ov_GetClassPtr(pChildObj) == pclass_cshmi_ChildrenIterator){
 			pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pChildObj);
 			result = cshmi_downloadApplication_buildChildList(Ov_PtrUpCast(ov_object, Ov_GetPartPtr(forEachChild, pChildrenIterator)), strResult, FALSE);
 			if(Ov_Fail(result)){
@@ -151,16 +187,61 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_object p
 #endif
 		}
 	}
-
 	return OV_ERR_OK;
 }
+
+#ifdef CSHMI_TIMING_DEBUG
+#define INC_ITERATIONCOUNTER iterationcounter++
+#else
+#define INC_ITERATIONCOUNTER
+#endif
+
+#define CSHMI_BUILDSTRINGCLASS(classname)	\
+	if(Ov_GetFirstChild(ov_instantiation, pclass_cshmi_##classname) != NULL){	\
+		if(pDownloadApplication->v_ApplicationCache.cache##classname##Dirty == TRUE){	\
+			Ov_ForEachChild(ov_instantiation, pclass_cshmi_##classname, pObj){	\
+				INC_ITERATIONCOUNTER;	\
+				/*	get config from this instance	*/	\
+				ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); /* from heap mem */	\
+				if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){	\
+					ov_string_append(&strIterate, ",");	\
+				}	\
+				/*	use this iteration result (append is NULL String safe)	*/	\
+				ov_string_append(&ResultListVec[ResultListIndex], strIterate);	\
+			}	\
+			/*	remember class result in the heap	*/	\
+			pDownloadApplication->v_ApplicationCache.cache##classname##Dirty = FALSE;	\
+			strLen = ov_string_getlength(ResultListVec[ResultListIndex]);	\
+			if(strLen != 0){	\
+				pDownloadApplication->v_ApplicationCache.str##classname = Ov_HeapMalloc(strLen+1);	\
+				memcpy(pDownloadApplication->v_ApplicationCache.str##classname, ResultListVec[ResultListIndex], strLen+1);	\
+			}else{	\
+				Ov_HeapFree(pDownloadApplication->v_ApplicationCache.str##classname);	\
+				pDownloadApplication->v_ApplicationCache.str##classname = NULL;	\
+			}	\
+		}else{	\
+			ov_string_setvalue(&ResultListVec[ResultListIndex], pDownloadApplication->v_ApplicationCache.str##classname);	\
+		}	\
+		if(ResultListVec[ResultListIndex] != NULL){	\
+			ResultListIndex++;	\
+			if(elementIsfirst == TRUE){	\
+				ov_string_append(&ResultFormat, "%s");	\
+			}else{	\
+				ov_string_append(&ResultFormat, ",%s");	\
+			}	\
+			elementIsfirst = FALSE;	\
+		}	\
+	}
 
 /**
  *	builds the graphical elements into the cache
  * @param strResult
  * @return
  */
-static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult){
+static OV_RESULT cshmi_downloadApplication_buildElementList(
+		OV_INSTPTR_cshmi_downloadApplication        pDownloadApplication,
+		OV_STRING	*strResult
+){
 	OV_INSTPTR_ov_object pObj = NULL;
 
 	//be careful to adjust the ov_string_print at the end of the function
@@ -168,13 +249,13 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 	OV_STRING ResultListVec[MAXELEMENTENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	//Note: we do not precache blackbox or image! To risky with the encoding of the Strings.
 	OV_STRING strIterate = NULL;
+	OV_UINT strLen = 0;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
+	OV_BOOL elementIsfirst = TRUE;
 
 	OV_STRING temp = NULL;
 	OV_UINT i = 0;
-	OV_BOOL elementInstantiated = FALSE;
-	OV_BOOL elementIsfirst = TRUE;
 	OV_RESULT result = OV_ERR_OK;
 	ov_string_setvalue(&ResultFormat, "%s");
 
@@ -201,241 +282,17 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 	%7D
 	 */
 
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Group, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
 
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TemplateDefinition, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_InstantiateTemplate, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Rectangle, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Text, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Line, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polyline, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Polygon, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Path, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Ellipse, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
+	CSHMI_BUILDSTRINGCLASS(Group);
+	CSHMI_BUILDSTRINGCLASS(TemplateDefinition);
+	CSHMI_BUILDSTRINGCLASS(InstantiateTemplate);
+	CSHMI_BUILDSTRINGCLASS(Rectangle);
+	CSHMI_BUILDSTRINGCLASS(Text);
+	CSHMI_BUILDSTRINGCLASS(Line);
+	CSHMI_BUILDSTRINGCLASS(Polyline);
+	CSHMI_BUILDSTRINGCLASS(Polygon);
+	CSHMI_BUILDSTRINGCLASS(Path);
+	CSHMI_BUILDSTRINGCLASS(Ellipse);
 
 	//concat the result, in one batch for performance reasons (append is not cheap)
 	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10]);
@@ -451,25 +308,31 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(OV_STRING*strResult)
 	return result;
 }
 
+//todo automagic determination if cache is used???
+
+
 /**
  *	builds the interactive elements (events/actions/conditions)
  * @param strResult
  * @return
  */
-static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
+static OV_RESULT cshmi_downloadApplication_buildActionList(
+		OV_INSTPTR_cshmi_downloadApplication        pDownloadApplication,
+		OV_STRING	*strResult
+){
 	OV_INSTPTR_ov_object pObj = NULL;
 
 	//be careful to adjust the ov_string_print at the end of the function
 	#define MAXACTIONENTRIES 13
 	OV_STRING ResultListVec[MAXACTIONENTRIES] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 	OV_STRING strIterate = NULL;
+	OV_UINT strLen = 0;
 	OV_UINT ResultListIndex = 0;
 	OV_STRING ResultFormat = NULL;
+	OV_BOOL elementIsfirst = TRUE;
 	OV_STRING ParameterName = NULL;
 	OV_STRING ParameterValue = NULL;
 	OV_STRING temp = NULL;
-	OV_BOOL elementInstantiated = FALSE;
-	OV_BOOL elementIsfirst = TRUE;
 	OV_UINT i = 0;
 	OV_RESULT result = OV_ERR_OK;
 	ov_string_setvalue(&ResultFormat, "%s");
@@ -506,305 +369,20 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
 	}
 	*/
 
+	CSHMI_BUILDSTRINGCLASS(SetValue);
+	CSHMI_BUILDSTRINGCLASS(SetConcatValue);
+	CSHMI_BUILDSTRINGCLASS(SetMathValue);
+	CSHMI_BUILDSTRINGCLASS(GetValue);
+	CSHMI_BUILDSTRINGCLASS(ChildrenIterator);
+	CSHMI_BUILDSTRINGCLASS(IfThenElse);
+	CSHMI_BUILDSTRINGCLASS(Compare);
+	CSHMI_BUILDSTRINGCLASS(CompareIteratedChild);
+	CSHMI_BUILDSTRINGCLASS(TimeEvent);
+	CSHMI_BUILDSTRINGCLASS(RoutePolyline);
+	CSHMI_BUILDSTRINGCLASS(TranslationSource);
+	CSHMI_BUILDSTRINGCLASS(CreateObject);
+	CSHMI_BUILDSTRINGCLASS(Vibrate);
 
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetValue, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetConcatValue, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_SetMathValue, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_GetValue, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_ChildrenIterator, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_IfThenElse, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Compare, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_CompareIteratedChild, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TimeEvent, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_RoutePolyline, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_TranslationSource, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_CreateObject, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
-
-	elementInstantiated = FALSE;
-	Ov_ForEachChild(ov_instantiation, pclass_cshmi_Vibrate, pObj){
-#ifdef CSHMI_TIMING_DEBUG
-		iterationcounter++;
-#endif
-		elementInstantiated = TRUE;
-		ov_string_setvalue(&strIterate, cshmi_Object_getConfigAsJSON(Ov_StaticPtrCast(cshmi_Object, pObj))); //from heap mem
-		if(strIterate && Ov_GetNextChild(ov_instantiation, pObj) != NULL){
-			ov_string_append(&strIterate, ",");
-		}
-		//append does nothing when appending a NULL String
-		ov_string_append(&ResultListVec[ResultListIndex], strIterate);
-	}
-	if(elementInstantiated == TRUE){
-		ResultListIndex++;
-		if(elementIsfirst == TRUE){
-			ov_string_append(&ResultFormat, "%s");
-		}else{
-			ov_string_append(&ResultFormat, ",%s");
-		}
-		elementIsfirst = FALSE;
-	}
 
 	//concat the result, manual for performance reasons (append is not cheap)
 	result = ov_string_print(strResult, ResultFormat, *strResult, ResultListVec[0], ResultListVec[1], ResultListVec[2], ResultListVec[3], ResultListVec[4], ResultListVec[5], ResultListVec[6], ResultListVec[7], ResultListVec[8], ResultListVec[9], ResultListVec[10], ResultListVec[11], ResultListVec[12]);
@@ -833,7 +411,7 @@ static OV_RESULT cshmi_downloadApplication_buildActionList(OV_STRING*strResult){
  *
  */
 OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
-		OV_INSTPTR_cshmi_downloadApplication        UNUSED pThis
+		OV_INSTPTR_cshmi_downloadApplication        pDownloadApplication
 ) {
 	OV_INSTPTR_ov_object pTUcshmi = NULL;
 	OV_INSTPTR_cshmi_Group pGroup = NULL;
@@ -877,60 +455,13 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 		return (OV_STRING) 0;
 	}
 
-	//todo
+	//todo add more or all
 	//some static baseKsPath settings
-	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/TechUnits/cshmi%22:%5B%5D,%22/TechUnits/cshmi/Templates%22:%5B%5D%7D,");
+	result = ov_string_setvalue(&strBaseKsPath, "%22baseKsPath%22:%7B%22/%22:%5B%5D,%22/TechUnits%22:%5B%5D,%22/TechUnits/cshmi%22:%5B%5D,%22/TechUnits/cshmi/Templates%22:%5B%5D%7D,");
 	lenBaseKsPath = ov_string_getlength(strBaseKsPath);
 
 #ifdef CSHMI_TIMING_DEBUG
 	ov_time_gettime(&lasttime);
-#endif
-
-	//Elements is a list of configured elements
-	ov_string_setvalue(&strElements, "%22Elements%22:%7B");
-	result = cshmi_downloadApplication_buildElementList(&strElements);
-	if(Ov_Fail(result)){
-		ov_logfile_debug("%d:%s Error building Elementlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
-		ov_string_setvalue(&strBaseKsPath, NULL);
-		ov_string_setvalue(&strElements, NULL);
-		return (OV_STRING) 0;
-	}else{
-		ov_string_append(&strElements, "%7D,");
-	}
-	lenElements = ov_string_getlength(strElements);
-
-#ifdef CSHMI_TIMING_DEBUG
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Time: %s", ov_time_timetoascii_local(&thistime));
-	ov_logfile_debug("Elements    : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenElements, functioncounter, iterationcounter);
-	ov_time_gettime(&lasttime);
-	functioncounter = 0;
-	iterationcounter = 0;
-#endif
-
-	//Actions is a list of events/actions/conditions, set/get stores the result only
-	ov_string_setvalue(&strActions, "%22Actions%22:%7B");
-	result = cshmi_downloadApplication_buildActionList(&strActions);
-
-	if(Ov_Fail(result)){
-		ov_logfile_debug("%d:%s Error building Actionlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
-		ov_string_setvalue(&strBaseKsPath, NULL);
-		ov_string_setvalue(&strElements, NULL);
-		ov_string_setvalue(&strActions, NULL);
-		return (OV_STRING) 0;
-	}else{
-		ov_string_append(&strActions, "%7D,");
-	}
-	lenActions = ov_string_getlength(strActions);
-
-#ifdef CSHMI_TIMING_DEBUG
-	ov_time_gettime(&thistime);
-	ov_time_diff(&diff, &thistime, &lasttime);
-	ov_logfile_debug("Actions     : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenActions, functioncounter, iterationcounter);
-	ov_time_gettime(&lasttime);
-	functioncounter = 0;
-	iterationcounter = 0;
 #endif
 
 	//ChildList is a list of ov_containment
@@ -942,6 +473,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 	ov_time_gettime(&thistime);
 	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Time: %s", ov_time_timetoascii_local(&thistime));
 	ov_logfile_debug("Childlist CS: %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenSubChildList, functioncounter, iterationcounter);
 	ov_time_gettime(&lasttime);
 	functioncounter = 0;
@@ -973,7 +505,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 			}
 		}
 	}
-	ov_string_append(&strChildList, "%7D");
+	ov_string_append(&strChildList, "%7D,");
 
 	lenChildList = ov_string_getlength(strChildList);
 
@@ -986,8 +518,57 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	iterationcounter = 0;
 #endif
 
+	//Elements is a list of configured elements
+	ov_string_setvalue(&strElements, "%22Elements%22:%7B");
+	result = cshmi_downloadApplication_buildElementList(pDownloadApplication, &strElements);
+	if(Ov_Fail(result)){
+		ov_logfile_debug("%d:%s Error building Elementlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+		ov_string_setvalue(&strBaseKsPath, NULL);
+		ov_string_setvalue(&strElements, NULL);
+		ov_string_setvalue(&strActions, NULL);
+		ov_string_setvalue(&strChildList, NULL);
+		return (OV_STRING) 0;
+	}else{
+		ov_string_append(&strElements, "%7D,");
+	}
+	lenElements = ov_string_getlength(strElements);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Elements    : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenElements, functioncounter, iterationcounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+	iterationcounter = 0;
+#endif
+
+	//Actions is a list of events/actions/conditions, set/get stores the result only
+	ov_string_setvalue(&strActions, "%22Actions%22:%7B");
+	result = cshmi_downloadApplication_buildActionList(pDownloadApplication, &strActions);
+
+	if(Ov_Fail(result)){
+		ov_logfile_debug("%d:%s Error building Actionlist: %s", __LINE__, __FILE__, ov_result_getresulttext(result));
+		ov_string_setvalue(&strBaseKsPath, NULL);
+		ov_string_setvalue(&strElements, NULL);
+		ov_string_setvalue(&strActions, NULL);
+		ov_string_setvalue(&strChildList, NULL);
+		return (OV_STRING) 0;
+	}else{
+		ov_string_append(&strActions, "%7D");
+	}
+	lenActions = ov_string_getlength(strActions);
+
+#ifdef CSHMI_TIMING_DEBUG
+	ov_time_gettime(&thistime);
+	ov_time_diff(&diff, &thistime, &lasttime);
+	ov_logfile_debug("Actions     : %s (%u Bytes, %u function calls, %u iterations)", ov_time_timespantoascii(&diff), lenActions, functioncounter, iterationcounter);
+	ov_time_gettime(&lasttime);
+	functioncounter = 0;
+	iterationcounter = 0;
+#endif
+
 	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
-	pJSON = (OV_STRING) ov_memstack_alloc(lenBaseKsPath+lenElements+lenActions+lenChildList+7);
+	pJSON = (OV_STRING) ov_memstack_alloc(lenChildList+lenBaseKsPath+lenElements+lenActions+7);
 
 	if (!pJSON){
 		ov_logfile_debug("%d:%s Error reserving memory for concatting result: MEMSTACK full", __LINE__, __FILE__);
@@ -1000,17 +581,17 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 	returnString = pJSON;
 	//open JSON Element, concat Strings and close JSON Element
-	strncpy(pJSON, "%7B", 3);
+	memcpy(pJSON, "%7B", 3);
 	pJSON = pJSON + 3;
-	strncpy(pJSON, strBaseKsPath, lenBaseKsPath);
+	memcpy(pJSON, strBaseKsPath, lenBaseKsPath);
 	pJSON = pJSON + lenBaseKsPath;
-	strncpy(pJSON, strElements, lenElements);
-	pJSON = pJSON + lenElements;
-	strncpy(pJSON, strActions, lenActions);
-	pJSON = pJSON + lenActions;
-	strncpy(pJSON, strChildList, lenChildList);
+	memcpy(pJSON, strChildList, lenChildList);
 	pJSON = pJSON + lenChildList;
-	strncpy(pJSON, "%7D", 4);
+	memcpy(pJSON, strElements, lenElements);
+	pJSON = pJSON + lenElements;
+	memcpy(pJSON, strActions, lenActions);
+	pJSON = pJSON + lenActions;
+	memcpy(pJSON, "%7D", 4);
 
 	ov_string_setvalue(&strBaseKsPath, NULL);
 	ov_string_setvalue(&strActions, NULL);
@@ -1025,4 +606,84 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 #endif
 
 	return returnString;
+}
+
+
+OV_DLLFNCEXPORT void cshmi_downloadApplication_startup(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = Ov_StaticPtrCast(cshmi_downloadApplication, pobj);
+
+
+	/* do what the base class does first */
+	ov_object_startup(pobj);
+
+	pDownloadApplication->v_ApplicationCache.strGroup = NULL;
+	pDownloadApplication->v_ApplicationCache.strTemplateDefinition = NULL;
+	pDownloadApplication->v_ApplicationCache.strInstantiateTemplate = NULL;
+	pDownloadApplication->v_ApplicationCache.strRectangle = NULL;
+	pDownloadApplication->v_ApplicationCache.strText = NULL;
+	pDownloadApplication->v_ApplicationCache.strLine = NULL;
+	pDownloadApplication->v_ApplicationCache.strPolyline = NULL;
+	pDownloadApplication->v_ApplicationCache.strPolygon = NULL;
+	pDownloadApplication->v_ApplicationCache.strPath = NULL;
+	pDownloadApplication->v_ApplicationCache.strEllipse = NULL;
+
+	pDownloadApplication->v_ApplicationCache.strSetValue = NULL;
+	pDownloadApplication->v_ApplicationCache.strSetConcatValue = NULL;
+	pDownloadApplication->v_ApplicationCache.strSetMathValue = NULL;
+	pDownloadApplication->v_ApplicationCache.strGetValue = NULL;
+	pDownloadApplication->v_ApplicationCache.strChildrenIterator = NULL;
+	pDownloadApplication->v_ApplicationCache.strIfThenElse = NULL;
+	pDownloadApplication->v_ApplicationCache.strCompare = NULL;
+	pDownloadApplication->v_ApplicationCache.strCompareIteratedChild = NULL;
+	pDownloadApplication->v_ApplicationCache.strTimeEvent = NULL;
+	pDownloadApplication->v_ApplicationCache.strRoutePolyline = NULL;
+	pDownloadApplication->v_ApplicationCache.strTranslationSource = NULL;
+	pDownloadApplication->v_ApplicationCache.strCreateObject = NULL;
+	pDownloadApplication->v_ApplicationCache.strVibrate = NULL;
+
+	return;
+}
+
+OV_DLLFNCEXPORT void cshmi_downloadApplication_shutdown(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = Ov_StaticPtrCast(cshmi_downloadApplication, pobj);
+
+	CSHMI_EMPTYCLASSCACHEENTRY(Group);
+	CSHMI_EMPTYCLASSCACHEENTRY(TemplateDefinition);
+	CSHMI_EMPTYCLASSCACHEENTRY(InstantiateTemplate);
+	CSHMI_EMPTYCLASSCACHEENTRY(Rectangle);
+	CSHMI_EMPTYCLASSCACHEENTRY(Text);
+	CSHMI_EMPTYCLASSCACHEENTRY(Line);
+	CSHMI_EMPTYCLASSCACHEENTRY(Polyline);
+	CSHMI_EMPTYCLASSCACHEENTRY(Polygon);
+	CSHMI_EMPTYCLASSCACHEENTRY(Path);
+	CSHMI_EMPTYCLASSCACHEENTRY(Ellipse);
+
+	CSHMI_EMPTYCLASSCACHEENTRY(SetValue);
+	CSHMI_EMPTYCLASSCACHEENTRY(SetConcatValue);
+	CSHMI_EMPTYCLASSCACHEENTRY(SetMathValue);
+	CSHMI_EMPTYCLASSCACHEENTRY(GetValue);
+	CSHMI_EMPTYCLASSCACHEENTRY(ChildrenIterator);
+	CSHMI_EMPTYCLASSCACHEENTRY(IfThenElse);
+	CSHMI_EMPTYCLASSCACHEENTRY(Compare);
+	CSHMI_EMPTYCLASSCACHEENTRY(CompareIteratedChild);
+	CSHMI_EMPTYCLASSCACHEENTRY(TimeEvent);
+	CSHMI_EMPTYCLASSCACHEENTRY(RoutePolyline);
+	CSHMI_EMPTYCLASSCACHEENTRY(TranslationSource);
+	CSHMI_EMPTYCLASSCACHEENTRY(CreateObject);
+	CSHMI_EMPTYCLASSCACHEENTRY(Vibrate);
+
+	/* set the object's state to "shut down" */
+	ov_object_shutdown(pobj);
+
+	return;
 }
