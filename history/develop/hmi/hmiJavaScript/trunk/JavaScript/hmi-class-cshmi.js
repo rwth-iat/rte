@@ -4900,42 +4900,107 @@ cshmi.prototype = {
 				}
 			};
 			
-			cshmimodel.getEP = function(path, requestType, requestOutput) {
-				return HMI.KSClient.getEP(path, requestType, requestOutput);
+			//KS functions
+			
+			/**
+			 * @param path of object to query
+			 * @param requestType = OT_DOMAIN type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
+			 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS or OT_ANY)
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
+			 */
+			cshmimodel.getEP = function(path, requestType, requestOutput, cbfnc, responseFormat) {
+				return HMI.KSClient.getEP(path, requestType, requestOutput, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
-			cshmimodel.getVar = function(path, requestOutput){
-				return HMI.KSClient.getVar(path, requestOutput);
+			/**
+			 * @param path of the variable to fetch, multiple path possible via an Array
+			 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_VALUE, OP_TIMESTAMP or OP_STATE)
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
+			 */
+			cshmimodel.getVar = function(path, requestOutput, cbfnc, responseFormat){
+				return HMI.KSClient.getVar(path, requestOutput, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
-			cshmimodel.setVar = function(path, value, type){
-				return HMI.KSClient.setVar(path, value, type);
+			/**
+			 * @param path of the variable to set
+			 * @param {String} value to set (StringVec are Arrays)
+			 * @param {String} type variable type (for example "KS_VT_STRING") to set, null if no change
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.setVar = function(path, value, type, cbfnc, responseFormat){
+				return HMI.KSClient.setVar(path, value, type, cbfnc, !!cbfnc?true:false, responseFormat);
+			};
+			/**
+			 * @param path of the object to rename
+			 * @param newname (optional with full path) of the object
+			 * @param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.renameObjects = function(oldName, newName, cbfnc, responseFormat) {
+				return HMI.KSClient.renameObject(oldName, newName, cbfnc, !!cbfnc?true:false, responseFormat);
+			};
+			/**
+			 * @param path of the object to create
+			 * @param classname full class name of the new object
+			 * @@param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.createObject = function(path, classname, cbfnc, responseFormat) {
+				return HMI.KSClient.createObject(path, classname, cbfnc, !!cbfnc?true:false, responseFormat);
+			};
+			/**
+			 * @param path ob the object to delete
+			 * @@param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.deleteObject = function(path, cbfnc, responseFormat) {
+				return HMI.KSClient.deleteObject(path, cbfnc, !!cbfnc?true:false, responseFormat);
+			};
+			/**
+			 * @param path of the object to create
+			 * @param classname full class name of the new object
+			 * @@param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.linkObjects = function(pathA, pathB, portnameA, cbfnc, responseFormat) {
+				return HMI.KSClient.linkObjects(pathA, pathB, portnameA, cbfnc, !!cbfnc?true:false, responseFormat);
+			};
+			/**
+			 * @param path of the object to create
+			 * @param classname full class name of the new object
+			 * @@param cbfnc callback function for a async request
+			 * @param responseFormat Mime-Type of requested response
+			 * @return true, "" or null
+			 */
+			cshmimodel.unlinkObjects = function(pathA, pathB, portnameA, cbfnc, responseFormat) {
+				return HMI.KSClient.unlinkObjects(pathA, pathB, portnameA, cbfnc, !!cbfnc?true:false, responseFormat);
 			};
 			
-			cshmimodel.createObject = function(path, classname) {
-				return HMI.KSClient.createObject(path, classname);
-			};
-			
-			cshmimodel.deleteObject = function(path) {
-				return HMI.KSClient.deleteObject(path);
-			};
-			
-			cshmimodel.linkObjects = function(pathA, pathB, portnameA) {
-				return HMI.KSClient.linkObjects(pathA, pathB, portnameA);
-			};
-			
-			cshmimodel.unlinkObjects = function(pathA, pathB, portnameA) {
-				return HMI.KSClient.unlinkObjects(pathA, pathB, portnameA);
-			};
-			
-			cshmimodel.renameObjects = function(oldName, newName) {
-				return HMI.KSClient.renameObject(oldName, newName);
-			};
-			
+			//hmi functions
 			cshmimodel.log_info_onwebsite = function(text) {
 				HMI.hmi_log_info_onwebsite(text);
 			};
 			cshmimodel.log_error_onwebsite = function(text) {
 				HMI.hmi_log_onwebsite(text);
 			};
+			
+			//helper functions
+			/**
+			 * returns the KS Response as an Array, or an empty Array
+			 * if the optional argument recursionDepth is > 0,  
+			 */
+			cshmimodel.splitKsResponse = function(response, recursionDepth) {
+				return HMI.KSClient.splitKsResponse(response, recursionDepth);
+			};
+			
 			
 			VisualObject.ResourceList = new Object();
 			VisualObject.ResourceList.cshmimodel = cshmimodel;
