@@ -80,7 +80,7 @@ CLASS Message : CLASS ov/object
 		sendBy	:	UINT
 			HAS_SET_ACCESSOR
 			COMMENT	=	"Determines sending behaviour: 0: directly; 1: http POST; 2: ks-setvar"
-			INITIALVALUE	=	0;
+			INITIALVALUE	=	2;
 		expectAnswer	:	BOOL
 			COMMENT	=	"TRUE tells MsgDelivery to expect an answer message (keep connection open if possible with protocol)"
 			INITIALVALUE	=	FALSE;
