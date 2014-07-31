@@ -5084,6 +5084,7 @@ cshmi.prototype = {
 			eval(evalcode);
 		} catch (e) {
 			HMI.hmi_log_onwebsite("JS Code in "+locationidentifier+" of "+ObjectPath+" is not valid.");
+			HMI.ErrorOutput.setAttribute("title", e.message);
 		}
 		
 		cshmimodel.VisualObject = null;

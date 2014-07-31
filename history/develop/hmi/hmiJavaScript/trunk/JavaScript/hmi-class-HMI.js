@@ -1976,6 +1976,9 @@ HMI.prototype = {
 			//if we have an error, the warning is not interesting anymore
 			deleteChilds(HMI.InfoOutput);
 		}
+		if(HMI.ErrorOutput.hasAttribute("title")){
+			HMI.ErrorOutput.removeAttribute("title");
+		}
 		HMI.ErrorOutput.appendChild(ErrorTextNode);
 		//show header
 		HMI.hideHeader(false);
