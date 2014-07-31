@@ -88,6 +88,8 @@ function cshmi() {
 	this.ResourceList.newRebuildObject = Object();
 	this.ResourceList.cyclicEventList = Object();
 	
+	this.ResourceList.externaljsList = Array();
+	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
 		//todo this magic prevents garbage collection!?
@@ -121,9 +123,7 @@ function cshmi() {
 
 
 /*#########################################################################################################################
-TODO: 
-js maximize svg to window size
-
+TODO:
 JavaScript:
 - check return value of gethandleid
 
@@ -5007,7 +5007,6 @@ cshmi.prototype = {
 		}
 		
 		var sourceListSplitted = sourceList.split(" ");
-		jsloadObserver = new cshmiObserver(VisualObject, ObjectPath, sourceListSplitted.length);
 		
 		loadLibrary:
 		//externe (via http erreichbare) Bibliotheken in head anhaengen
@@ -5015,9 +5014,6 @@ cshmi.prototype = {
 			if(sourceListSplitted[i] === ""){
 				continue;
 			}
-			var thisEntry = new ObserverEntry(sourceListSplitted[i]);
-			jsloadObserver.ObserverEntryArray[i] = thisEntry;
-
 			//append only if same JS-library is not already loaded
 			var scripts = document.getElementsByTagName('script');
 			
@@ -5027,33 +5023,36 @@ cshmi.prototype = {
 				}
 			}
 			
+			this.ResourceList.externaljsList.push(sourceListSplitted[i]);
 			var node = document.createElement("script");
 			node.type = "text/javascript";
 			node.src = sourceListSplitted[i];
 			node.async = false;
-//			node.onload = node.onerror = function(evt){
-//				//todo hier sauber insertvalue oder so nutzen. parameter muss man rausfinden
-//				thisEntry.requirementsFulfilled = true;
-//				if(evt.type !== "load"){
-//				};
-//				HMI.hmi_log_info("loading script: event type: "+evt.type+": "+thisEntry.ObjectName);
-//				jsloadObserver.checkAndTrigger();
-//				//jsonload muss auch gestartet werden, wenn wir keine Bib laden!
-//			};
+			node.onload = node.onerror = function(evt){
+				if(evt.type !== "load"){
+					HMI.hmi_log_onwebsite("loading "+evt.target.src+" requested from "+ObjectPath+" failed.");
+				}else{
+					HMI.hmi_log_info("success in loading script: event type: "+evt.type+": "+evt.target.src);
+				}
+				var idx = HMI.cshmi.ResourceList.externaljsList.indexOf(evt.target.getAttribute("src"));
+				if(idx >= 0){
+					//we found our entry, so remove from the loadlist
+					HMI.cshmi.ResourceList.externaljsList.splice(idx, 1);
+				}
+				
+				if(HMI.cshmi.ResourceList.externaljsList.length === 0 && jsOnload !== ""){
+					// we have everything, so execute the jsOnload
+					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+				}
+			};
 
 			var head = document.head || document.getElementsByTagName('head')[0];
 			head.appendChild(node);
-			jsloadObserver.checkAndTrigger();
 		}
 		
-		if(jsOnload !== ""){
-			var retrytime = 4000;
-			if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
-				retrytime = 100;
-			}
-			//we have to wait for the libraries or DOMTree to load
+		if(jsOnload !== "" && sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
+			//we have to wait for the DOMTree to load and had no libraries
 			
-			//"onload" - TODO: sauber starten, wenn alles geladen ist
 			var preserveThis = this;
 			window.setTimeout(function(){
 				if (HMI.cshmi !== preserveThis){
@@ -5061,7 +5060,7 @@ cshmi.prototype = {
 					return true;
 				}
 				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-			}, retrytime);
+			}, 100);
 		}
 		
 		return VisualObject;
@@ -5072,7 +5071,7 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject visual Object which is active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} evalcode JavaScript-Code to be executed via eval()
-	 * @param {String} locationidentifier
+	 * @param {String} locationidentifier (could be jsOnload, or onglobalvarchanged)
 	 */
 	_executeScript: function(VisualObject, ObjectPath, evalcode, locationidentifier){
 		//declare object 'cshmimodel' for further use [usage e.g.: 'cshmimodel.variables.<VARNAME>.getValue();']
