@@ -136,7 +136,6 @@ varName[1] evtl nicht verf�gbar!
 - Auch das laden sollte asyncrone requests nutzen. 
 	Daf�r muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
 - Nur einige wenige cycTimes (enum like?) erlauben
-- ks befehle konsolidieren bei zyklischer abarbeitung
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -506,7 +505,6 @@ cshmi.prototype = {
 					thisTime.getVarCollection[objectname][variablename] = null;
 				}
 			}
-			//todo there could be more variables one request can handle...
 			this._requestVariablesArray(thisTime.getVarCollection, true);
 			
 			for (var i = 0; i < thisTime.triggeredObjectList.length;){
@@ -514,7 +512,6 @@ cshmi.prototype = {
 				if(EventObjItem["VisualObject"].ownerDocument === this.trashDocument){
 					//this Object was replaced with rebuildObject, so remove from callstack
 					
-					//todo, kann man teile der collection retten?
 					thisTime.getVarCollection = Object();
 					
 					thisTime.triggeredObjectList.splice(i, 1);
@@ -674,9 +671,6 @@ cshmi.prototype = {
 				//stop the propagation
 				HMI.cshmi._moveHandleClick(VisualObject, ObjectPath, evt);
 			};
-			
-			//todo: try to implement via HTML5 drag&drop
-			//http://blogs.msdn.com/b/ie/archive/2011/10/19/handling-multi-touch-and-mouse-input-in-all-browsers.aspx
 			
 			//try both, mousedown and mousetouch. mousetouch will fire first, there we will kill mousedown
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
@@ -924,9 +918,7 @@ cshmi.prototype = {
 				returnValue = this._interpreteRebuildObject(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/Vibrate") !== -1){
 				returnValue = this._interpreteVibrate(VisualObject, ObjectPath+"/"+varName[0]);
-			}else if (varName[1].indexOf("/cshmi/debugger") !== -1 || varName[1].indexOf("/cshmi/debuggingbreakpoint") !== -1){
-				//fixme remove old name in summer 2014
-				
+			}else if (varName[1].indexOf("/cshmi/debuggingbreakpoint") !== -1){
 				//breakpoint requested
 				returnValue = true;
 				debugger;
@@ -1092,9 +1084,7 @@ cshmi.prototype = {
 				}
 			}
 		}else if (ParameterName === "elemVar"){
-			//todo interprete elemVarPath
-			
-			//some elemVars are special, as they are different in OVM and SVG
+			//some elemVars are special, as they are different in Model and SVG
 			if (ParameterValue === "strokeWidth"){
 				return VisualObject.getAttribute("stroke-width");
 			}else if (ParameterValue === "content"){
@@ -1103,7 +1093,7 @@ cshmi.prototype = {
 				}else if (typeof VisualObject.innerText != "undefined"){
 					return VisualObject.innerText;
 				}else{
-					//todo asv compatibility
+					//asv compatibility broken
 					return "";
 				}
 			}else if (ParameterValue === "title"){
@@ -1443,8 +1433,6 @@ cshmi.prototype = {
 	 * @return false on error, true on success
 	 */
 	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject){
-		//todo get config for setvalue and getvalue combined in one request, ergebnis per requestList �bergeben...?
-		
 		//get Value to set
 		if (GetType === "static"){
 			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1, this);
@@ -1707,19 +1695,6 @@ cshmi.prototype = {
 				TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
 			}
 		}
-		if (GetType === "static" && TranslationSourcePath === undefined){
-			//todo remove me if available in all turbos
-			var XXrequestList = new Object();
-			XXrequestList[ObjectPath] = new Object();
-			XXrequestList[ObjectPath]["translationSource"] = null;
-			var successCode = this._requestVariablesArray(XXrequestList, true);
-			if(XXrequestList[ObjectPath]["translationSource"] !== null){
-				TranslationSourcePath = XXrequestList[ObjectPath]["translationSource"];
-			}else{
-				TranslationSourcePath = "";
-			}
-			this.ResourceList.Actions[ObjectPath].translationSource = TranslationSourcePath;
-		}
 		//translate if needed
 		if (TranslationSourcePath !== ""){
 			var TranslationMapping = new Object();
@@ -1823,9 +1798,7 @@ cshmi.prototype = {
 			}
 			return true;
 		}else if (ParameterName === "elemVar"){
-			//todo interprete elemVarPath
-			
-			//some elemVars are special, as they are different in OVM and SVG
+			//some elemVars are special, as they are different in Model and SVG
 			if (ParameterValue === "strokeWidth"){
 				VisualObject.setAttribute("stroke-width", NewValue);
 			}else if (ParameterValue === "content"){
@@ -3215,7 +3188,6 @@ cshmi.prototype = {
 					}
 				}
 				if(SourceConnectionPoint !== null){
-					//asv problem due to ie bug for substr. Solved in ie9
 					if(SourceConnectionPoint.id.toLowerCase().substr(-4) === "left"){
 						SourceConnectionPointdirection = 180;
 					}else if(SourceConnectionPoint.id.toLowerCase().substr(-2) === "up"){
