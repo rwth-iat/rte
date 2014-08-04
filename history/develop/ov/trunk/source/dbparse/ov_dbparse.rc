@@ -51,13 +51,14 @@ FILETYPE		VFT_DLL
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
+   VALUE "CompanyName", OV_VER_COMPANYNAME "\000"
    VALUE "FileDescription", "ACPLT/OV Database Text File Parser Utility\000"
-   VALUE "FileVersion", OV_VER_DBPARSE "\000\000"
-   VALUE "InternalName", "ov_dbparse.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2000\000\000"
+   VALUE "FileVersion", OV_VER_DBPARSE "\000"
+   VALUE "InternalName", "ov_dbparse\000"
+   VALUE "LegalCopyright", OV_VER_LEGALCOPYRIGHT "\000"
    VALUE "OriginalFilename", "ov_dbparse.exe\000"
-   VALUE "Author", "Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
+   VALUE "ProductName", OV_VER_PRODUCTNAME "\000"
+   VALUE "ProductVersion", OV_VER_LIBOV "\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 

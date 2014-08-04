@@ -51,13 +51,14 @@ FILETYPE		VFT_DLL
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
+   VALUE "CompanyName", OV_VER_COMPANYNAME "\000"
    VALUE "FileDescription", "ACPLT/OV Database Utility\000"
-   VALUE "FileVersion", OV_VER_DBUTIL "\000\000"
-   VALUE "InternalName", "ov_dbutil.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2004\000\000"
+   VALUE "FileVersion", OV_VER_DBUTIL "\000"
+   VALUE "InternalName", "ov_dbutil\000"
+   VALUE "LegalCopyright", OV_VER_LEGALCOPYRIGHT "\000"
    VALUE "OriginalFilename", "ov_dbutil.exe\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>, Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
+   VALUE "ProductName", OV_VER_PRODUCTNAME "\000"
+   VALUE "ProductVersion", OV_VER_LIBOV "\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 

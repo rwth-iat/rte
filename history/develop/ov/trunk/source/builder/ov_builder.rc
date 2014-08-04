@@ -49,13 +49,14 @@ FILETYPE		VFT_DLL
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
+   VALUE "CompanyName", OV_VER_COMPANYNAME "\000"
    VALUE "FileDescription", "ACPLT/OV C-Code Framework Generator\000"
-   VALUE "FileVersion", OV_VER_BUILDER "\000\000"
-   VALUE "InternalName", "ov_builder.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-1999\000\000"
+   VALUE "FileVersion", OV_VER_BUILDER "\000"
+   VALUE "InternalName", "ov_builder\000"
    VALUE "OriginalFilename", "ov_builder.exe\000"
-   VALUE "Author", "Ansgar Münnemann <ansgar@plt.rwth-aachen.de>\000"
+   VALUE "LegalCopyright", OV_VER_LEGALCOPYRIGHT "\000"
+   VALUE "ProductName", OV_VER_PRODUCTNAME "\000"
+   VALUE "ProductVersion", OV_VER_LIBOV "\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 

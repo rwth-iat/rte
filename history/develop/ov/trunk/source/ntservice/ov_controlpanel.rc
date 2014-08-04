@@ -103,13 +103,14 @@ FILETYPE		VFT_DLL
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
+   VALUE "CompanyName", OV_VER_COMPANYNAME "\000"
    VALUE "FileDescription", "Control Panel for the ACPLT/OV NT Service\000"
-   VALUE "FileVersion", OV_VER_CONTROLPANEL "\000\000"
-   VALUE "InternalName", "ov_controlpanel.cpl\000"
-   VALUE "LegalCopyright", "Copyright © PLT 2000\000\000"
+   VALUE "FileVersion", OV_VER_CONTROLPANEL "\000"
+   VALUE "InternalName", "ov_controlpanel\000"
+   VALUE "LegalCopyright", OV_VER_LEGALCOPYRIGHT "\000"
    VALUE "OriginalFilename", "ov_controlpanel.cpl\000"
-   VALUE "Author", "Dirk Meyer <dirk@plt.rwth-aachen.de>\000"
+   VALUE "ProductName", OV_VER_PRODUCTNAME "\000"
+   VALUE "ProductVersion", OV_VER_LIBOV "\000"
    VALUE "License", OV_VER_LICENSE "\000"
   }
 

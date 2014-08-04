@@ -41,13 +41,14 @@ FILETYPE		VFT_DLL
  {
   BLOCK "040904E4"
   {
-   VALUE "CompanyName", "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany\000\000"
+   VALUE "CompanyName", OV_VER_COMPANYNAME "\000"
    VALUE "FileDescription", "ACPLT/OV Server\000"
-   VALUE "FileVersion", "1.0.0\000\000"
-   VALUE "InternalName", "ov_runtimeserver.exe\000"
-   VALUE "LegalCopyright", "Copyright © PLT 1998-2014\000\000"
+   VALUE "FileVersion", "1.0.0\000"
+   VALUE "InternalName", "ov_runtimeserver\000"
+   VALUE "LegalCopyright", OV_VER_LEGALCOPYRIGHT "\000"
    VALUE "OriginalFilename", "ov_runtimeserver.exe\000"
-   VALUE "Author", "Henning Mersch <h.mersch@plt.rwth-aachen.de>\000"
+   VALUE "ProductName", OV_VER_PRODUCTNAME "\000"
+   VALUE "ProductVersion", OV_VER_LIBOV "\000"
   }
 
  }

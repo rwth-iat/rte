@@ -76,8 +76,12 @@
 #define OV_VER_PRODUCTVERSION_NTSERVICE			1, 6, 7, 0
 #define OV_VER_PRODUCTVERSION_CONTROLPANEL		1, 6, 7, 0
 
+#define OV_VER_LEGALCOPYRIGHT "Copyright © PLT 1998-2014"
+#define OV_VER_PRODUCTNAME "ACPLT runtime environment"
+#define OV_VER_COMPANYNAME "Lehrstuhl fuer Prozessleittechnik, RWTH Aachen, D-52056 Aachen, Germany"
+
 #define OV_VER_LICENSE															\
-	"Copyright (C) 1998-2014 "													\
+	OV_VER_LEGALCOPYRIGHT 														\
 	"Lehrstuhl fuer Prozessleittechnik, "										\
 	"RWTH Aachen, D-52056 Aachen, Germany. "									\
 	"All rights reserved.\r\n"													\
