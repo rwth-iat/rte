@@ -202,15 +202,15 @@ $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
 	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
 
 #dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
-#if defined OV_ARCH_BITWIDTH && OV_ARCH_BITWIDTH == 64
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+ifeq ($(OV_ARCH_BITWIDTH),64)
 	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
-#else
+else
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 	@echo EXPORTS > $(basename $@).def
 	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
-#endif
+endif
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
