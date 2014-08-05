@@ -54,6 +54,15 @@ OV_DODEBUG	=	-DOV_DEBUG
 else
 OV_DODEBUG	=
 endif
+
+ifdef OV_ARCH_BITWIDTH
+OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m$(OV_ARCH_BITWIDTH)
+else
+OV_ARCH_BITWIDTH_CFLAGS		=	-m32
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
+endif
+
 #Sten increasing mscvrt default version to get mkgmtime supported
 OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DMSVCRT_VERSION=800
 
@@ -72,7 +81,7 @@ CPP 			= cpp
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
 CC				= gcc 
 #-I$(MINGWINCLUDEPATH)
-CC_FLAGS		= -g -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -fno-omit-frame-pointer -O0
+CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -fno-omit-frame-pointer -O0
 #-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
@@ -95,6 +104,9 @@ CXX_LIBS		= $(C_LIBS) -lwsock32
 
 AR				= ar
 RANLIB			= ranlib
+
+LD				= $(CC) -shared
+LD_LIB			= 
 
 DLLTOOL			= dlltool
 #DLLWRAP			= dllwrap --entry _DllMainCRTStartup@12 --driver-flags -mno-cygwin -mdll -L$(MINGWLIBPATH)
@@ -185,12 +197,20 @@ depend : $(SOURCES)
 #	ACPLT/OV library
 
 $(OV_LIBOV_LIB) : $(OV_LIBOV_DLL)
+	$(AR) rv $@ $?
+	$(RANLIB) $@
 	$(DLLTOOL) --def $(basename $@).def --dllname $^ --output-lib $@
 
+#dllwrap have problems on 64bit, but holger is 2014 not brave enough to change 32 bit build
+#if defined OV_ARCH_BITWIDTH && OV_ARCH_BITWIDTH == 64
+$(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
+	$(LD) -o $@ -Wl,--output-def,$(basename $@).def $^ $(LD_LIB)
+#else
 $(OV_LIBOV_DLL) : $(OV_LIBOV_OBJ) $(LIBMPM_LIB) $(OV_LIBOV_RES)
 	@echo EXPORTS > $(basename $@).def
 	@nm $(filter %$(_OBJ), $^) | grep ' [CDT] _' | sed 's/[[:xdigit:]]* [CDT] _/	/' >> $(basename $@).def
 	$(DLLWRAP) -mwindows --def $(basename $@).def -o $@ $^
+#endif
 
 ov.c ov.h : $(OV_CODEGEN_EXE)
 
