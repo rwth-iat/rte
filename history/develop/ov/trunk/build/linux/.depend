@@ -1,33 +1,26 @@
 ov_ovmparser.o: ov_ovmparser.c ../../source/codegen/ov_codegen.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h
 ov_ovmscanner.o: ov_ovmscanner.c ../../source/codegen/ov_codegen.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov_ovmparser.h
 ov_codegen.o: ../../source/codegen/ov_codegen.c \
  ../../source/codegen/ov_codegen.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 ov_builder.o: ../../source/builder/ov_builder.c \
  ../../source/builder/ov_builder.h \
  ../../source/builder/../codegen/ov_codegen.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 ov.o: ov.c ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -41,8 +34,6 @@ ov.o: ov.c ov.h ../../include/libov/ov_library.h \
 ov_association.o: ../../source/libov/ov_association.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -56,8 +47,6 @@ ov_association.o: ../../source/libov/ov_association.c \
 ov_childrelationship.o: ../../source/libov/ov_childrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -70,9 +59,8 @@ ov_childrelationship.o: ../../source/libov/ov_childrelationship.c \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_class.o: ../../source/libov/ov_class.c ../../include/libov/ov_class.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -87,8 +75,6 @@ ov_class.o: ../../source/libov/ov_class.c ../../include/libov/ov_class.h \
 ov_construction.o: ../../source/libov/ov_construction.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -102,8 +88,6 @@ ov_construction.o: ../../source/libov/ov_construction.c \
 ov_containment.o: ../../source/libov/ov_containment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -117,9 +101,8 @@ ov_containment.o: ../../source/libov/ov_containment.c \
 ov_database.o: ../../source/libov/ov_database.c \
  ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -133,14 +116,11 @@ ov_database.o: ../../source/libov/ov_database.c \
  ../../include/libml/ml_malloc.h
 ov_debug.o: ../../source/libov/ov_debug.c ../../include/libov/ov_debug.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_logfile.h
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_logfile.h
 ov_element.o: ../../source/libov/ov_element.c \
  ../../include/libov/ov_element.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
@@ -154,8 +134,6 @@ ov_element.o: ../../source/libov/ov_element.c \
 ov_embedment.o: ../../source/libov/ov_embedment.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -169,8 +147,6 @@ ov_embedment.o: ../../source/libov/ov_embedment.c \
 ov_inheritance.o: ../../source/libov/ov_inheritance.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -184,8 +160,6 @@ ov_inheritance.o: ../../source/libov/ov_inheritance.c \
 ov_instantiation.o: ../../source/libov/ov_instantiation.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -199,8 +173,6 @@ ov_instantiation.o: ../../source/libov/ov_instantiation.c \
 ov_library.o: ../../source/libov/ov_library.c \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -214,8 +186,6 @@ ov_library.o: ../../source/libov/ov_library.c \
 ov_logfile.o: ../../source/libov/ov_logfile.c \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_time.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
@@ -229,14 +199,10 @@ ov_logfile.o: ../../source/libov/ov_logfile.c \
 ov_malloc.o: ../../source/libov/ov_malloc.c \
  ../../include/libov/ov_malloc.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 ov_memstack.o: ../../source/libov/ov_memstack.c \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_malloc.h ../../include/libov/ov_macros.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt ov.h \
@@ -250,9 +216,8 @@ ov_memstack.o: ../../source/libov/ov_memstack.c \
 ov_object.o: ../../source/libov/ov_object.c \
  ../../include/libov/ov_object.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -266,8 +231,6 @@ ov_object.o: ../../source/libov/ov_object.c \
 ov_operation.o: ../../source/libov/ov_operation.c \
  ../../include/libov/ov_operation.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
@@ -281,8 +244,6 @@ ov_operation.o: ../../source/libov/ov_operation.c \
 ov_parentrelationship.o: ../../source/libov/ov_parentrelationship.c \
  ../../include/libov/ov_association.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -295,9 +256,8 @@ ov_parentrelationship.o: ../../source/libov/ov_parentrelationship.c \
  ../../include/libov/ov_memstack.h ../../include/libov/ov_malloc.h
 ov_part.o: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -311,8 +271,6 @@ ov_part.o: ../../source/libov/ov_part.c ../../include/libov/ov_part.h \
 ov_path.o: ../../source/libov/ov_path.c ../../include/libov/ov_path.h \
  ov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -326,9 +284,8 @@ ov_path.o: ../../source/libov/ov_path.c ../../include/libov/ov_path.h \
 ov_result.o: ../../source/libov/ov_result.c \
  ../../include/libov/ov_result.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -338,9 +295,8 @@ ov_result.o: ../../source/libov/ov_result.c \
 ov_scheduler.o: ../../source/libov/ov_scheduler.c \
  ../../include/libov/ov_scheduler.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -354,9 +310,8 @@ ov_scheduler.o: ../../source/libov/ov_scheduler.c \
 ov_string.o: ../../source/libov/ov_string.c \
  ../../include/libov/ov_string.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -370,8 +325,6 @@ ov_string.o: ../../source/libov/ov_string.c \
 ov_structure.o: ../../source/libov/ov_structure.c \
  ../../include/libov/ov_structure.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -385,14 +338,10 @@ ov_structure.o: ../../source/libov/ov_structure.c \
 ov_supervise.o: ../../source/libov/ov_supervise.c \
  ../../include/libov/ov_supervise.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h
 ov_time.o: ../../source/libov/ov_time.c ../../include/libov/ov_time.h \
  ov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -403,8 +352,6 @@ ov_time.o: ../../source/libov/ov_time.c ../../include/libov/ov_time.h \
 ov_variable.o: ../../source/libov/ov_variable.c \
  ../../include/libov/ov_variable.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../model/ov.ovt ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -418,8 +365,6 @@ ov_variable.o: ../../source/libov/ov_variable.c \
 ov_vector.o: ../../source/libov/ov_vector.c \
  ../../include/libov/ov_vector.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
@@ -434,8 +379,6 @@ ov_vendortree.o: ../../source/libov/ov_vendortree.c \
  ../../include/libov/ov_vendortree.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -449,9 +392,8 @@ ov_vendortree.o: ../../source/libov/ov_vendortree.c \
 ov_dbutil.o: ../../source/dbutil/ov_dbutil.c \
  ../../include/libov/ov_database.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -1273,9 +1215,8 @@ representation.o: ../../source/kshist/representation.c kshist.h \
  ../../include/libov/ov_malloc.h
 dynov.o: dynov.c dynov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -1289,8 +1230,6 @@ dynov.o: dynov.c dynov.h ../../include/libov/ov_library.h \
 assocaccess.o: ../../source/dynov/assocaccess.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1305,8 +1244,6 @@ assocaccess.o: ../../source/dynov/assocaccess.c dynov.h \
 dynassociation.o: ../../source/dynov/dynassociation.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1321,8 +1258,6 @@ dynassociation.o: ../../source/dynov/dynassociation.c dynov.h \
 dynchildrelationship.o: ../../source/dynov/dynchildrelationship.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1337,8 +1272,6 @@ dynchildrelationship.o: ../../source/dynov/dynchildrelationship.c dynov.h \
 dynclass.o: ../../source/dynov/dynclass.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1353,8 +1286,6 @@ dynclass.o: ../../source/dynov/dynclass.c dynov.h \
 dynconstruction.o: ../../source/dynov/dynconstruction.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1369,8 +1300,6 @@ dynconstruction.o: ../../source/dynov/dynconstruction.c dynov.h \
 dynembedment.o: ../../source/dynov/dynembedment.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1385,8 +1314,6 @@ dynembedment.o: ../../source/dynov/dynembedment.c dynov.h \
 dyninheritance.o: ../../source/dynov/dyninheritance.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1401,8 +1328,6 @@ dyninheritance.o: ../../source/dynov/dyninheritance.c dynov.h \
 dynobject.o: ../../source/dynov/dynobject.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1417,8 +1342,6 @@ dynobject.o: ../../source/dynov/dynobject.c dynov.h \
 dynoperation.o: ../../source/dynov/dynoperation.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1433,8 +1356,6 @@ dynoperation.o: ../../source/dynov/dynoperation.c dynov.h \
 dynparentrelationship.o: ../../source/dynov/dynparentrelationship.c \
  dynov.h ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1449,8 +1370,6 @@ dynparentrelationship.o: ../../source/dynov/dynparentrelationship.c \
 dynpart.o: ../../source/dynov/dynpart.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1465,8 +1384,6 @@ dynpart.o: ../../source/dynov/dynpart.c dynov.h \
 dynstructure.o: ../../source/dynov/dynstructure.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1481,8 +1398,6 @@ dynstructure.o: ../../source/dynov/dynstructure.c dynov.h \
 dynvariable.o: ../../source/dynov/dynvariable.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1497,8 +1412,6 @@ dynvariable.o: ../../source/dynov/dynvariable.c dynov.h \
 isgetaccessor.o: ../../source/dynov/isgetaccessor.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1513,8 +1426,6 @@ isgetaccessor.o: ../../source/dynov/isgetaccessor.c dynov.h \
 islinkfnc.o: ../../source/dynov/islinkfnc.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1529,8 +1440,6 @@ islinkfnc.o: ../../source/dynov/islinkfnc.c dynov.h \
 issetaccessor.o: ../../source/dynov/issetaccessor.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1545,8 +1454,6 @@ issetaccessor.o: ../../source/dynov/issetaccessor.c dynov.h \
 isunlinkfnc.o: ../../source/dynov/isunlinkfnc.c dynov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1560,9 +1467,8 @@ isunlinkfnc.o: ../../source/dynov/isunlinkfnc.c dynov.h \
  ../../include/libov/ov_malloc.h
 tasklib.o: tasklib.c tasklib.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -1576,8 +1482,6 @@ tasklib.o: tasklib.c tasklib.h ../../include/libov/ov_library.h \
 SchedulerTask.o: ../../source/tasklib/SchedulerTask.c tasklib.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1593,8 +1497,6 @@ SchedulerTask.o: ../../source/tasklib/SchedulerTask.c tasklib.h \
 Task.o: ../../source/tasklib/Task.c tasklib.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1610,8 +1512,6 @@ Task.o: ../../source/tasklib/Task.c tasklib.h \
 tasklist.o: ../../source/tasklib/tasklist.c tasklib.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1631,7 +1531,7 @@ dbdump.o: ../../source/dbdump/dbdump.cpp ../../source/dbdump/dbdump.h \
  ../../../plt/include/plt/config.h ../../../ks/include/ks/rpc.h \
  ../../../ks/include/ks/hostent.h ../../../plt/include/plt/array.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
- ../../../ks/include/ks/register.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/register.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../ks/include/ks/time.h ../../../plt/include/plt/time.h \
  ../../../ks/include/ks/result.h ../../../ks/include/ks/serviceparams.h \
@@ -1652,7 +1552,7 @@ dbdump_templ.o: ../../source/dbdump/dbdump_templ.cpp \
  ../../../plt/include/plt/config.h ../../../ks/include/ks/register.h \
  ../../../ks/include/ks/xdr.h ../../../plt/include/plt/rtti.h \
  ../../../plt/include/plt/debug.h ../../../ks/include/ks/rpc.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/string.h \
+ ../../../ks/include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../plt/include/plt/alloc.h \
  ../../../ks/include/ks/time.h ../../../plt/include/plt/time.h \
  ../../../ks/include/ks/result.h ../../../ks/include/ks/objmgrparams.h \
@@ -1685,7 +1585,7 @@ db_y.o: db_y.c ../../source/dbparse/dbparse.h \
  ../../../plt/include/plt/config.h ../../../plt/include/plt/rtti.h \
  ../../../plt/include/plt/handle.h ../../../plt/include/plt/alloc.h \
  ../../../plt/include/plt/list.h ../../../plt/include/plt/container.h \
- ../../../ks/include/ks/props.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/props.h \
  ../../../ks/include/ks/rpc.h ../../../ks/include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../ks/include/ks/xdr.h \
  ../../../ks/include/ks/handle.h ../../../ks/include/ks/value.h \
@@ -1705,7 +1605,7 @@ db_lex.o: db_lex.c ../../source/dbparse/dbparse.h \
  ../../../plt/include/plt/config.h ../../../plt/include/plt/rtti.h \
  ../../../plt/include/plt/handle.h ../../../plt/include/plt/alloc.h \
  ../../../plt/include/plt/list.h ../../../plt/include/plt/container.h \
- ../../../ks/include/ks/props.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/props.h \
  ../../../ks/include/ks/rpc.h ../../../ks/include/ks/string.h \
  ../../../plt/include/plt/string.h ../../../ks/include/ks/xdr.h \
  ../../../ks/include/ks/handle.h ../../../ks/include/ks/value.h \
@@ -1728,7 +1628,7 @@ dbparse.o: ../../source/dbparse/dbparse.cpp \
  ../../../plt/include/plt/rtti.h ../../../ks/include/ks/rpc.h \
  ../../../ks/include/ks/client.h ../../../plt/include/plt/hashtable.h \
  ../../../plt/include/plt/dictionary.h ../../../ks/include/ks/hostent.h \
- ../../../ks/include/ks/register.h ../../../ks/include/ks/ks.h \
+ ../../../ks/include/ks/register.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../ks/include/ks/time.h ../../../plt/include/plt/time.h \
  ../../../ks/include/ks/result.h ../../../ks/include/ks/serviceparams.h \
@@ -1751,7 +1651,7 @@ dbparse1.o: ../../source/dbparse/dbparse1.cpp \
  ../../../plt/include/plt/rtti.h ../../../plt/include/plt/handle.h \
  ../../../plt/include/plt/alloc.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/container.h ../../../ks/include/ks/props.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../ks/include/ks/rpc.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../ks/include/ks/xdr.h ../../../ks/include/ks/handle.h \
  ../../../ks/include/ks/value.h ../../../ks/include/ks/array.h \
@@ -1775,7 +1675,7 @@ ovxiparse.o: ../../source/ovxiparse/ovxiparse.cpp \
  ../../../plt/include/plt/rtti.h ../../../plt/include/plt/handle.h \
  ../../../plt/include/plt/alloc.h ../../../plt/include/plt/list.h \
  ../../../plt/include/plt/container.h ../../../ks/include/ks/props.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
+ ../../../ks/include/ks/rpc.h \
  ../../../ks/include/ks/string.h ../../../plt/include/plt/string.h \
  ../../../ks/include/ks/xdr.h ../../../ks/include/ks/handle.h \
  ../../../ks/include/ks/value.h ../../../ks/include/ks/array.h \
@@ -1795,8 +1695,6 @@ ov_makmak.o: ../../source/makmak/ov_makmak.c \
 ov_libinfo.o: ../../source/libinfo/ov_libinfo.c \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1810,9 +1708,8 @@ ov_libinfo.o: ../../source/libinfo/ov_libinfo.c \
 ov_expression_parser.o: ov_expression_parser.c \
  ../../include/libov/ov_time.h ov.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -1827,8 +1724,6 @@ ov_expression_scanner.o: ov_expression_scanner.c \
  ../../source/example/ov_expression.h ov.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1838,9 +1733,8 @@ ov_expression_scanner.o: ov_expression_scanner.c \
  ov_expression_parser.h
 example.o: example.c example.h ../../include/libov/ov_library.h \
  ../../include/libov/ov_ov.h ../../include/libov/ov_config.h \
- ../../include/libov/ov_version.h ../../../ks/include/ks/ks.h \
- ../../../ks/include/ks/rpc.h ../../../plt/include/plt/debug.h \
- ../../../plt/include/plt/config.h ../../include/libov/ov_debug.h \
+ ../../include/libov/ov_version.h \
+ ../../include/libov/ov_debug.h \
  ../../include/libov/ov_logfile.h ov.h ../../include/libov/ov_structure.h \
  ../../include/libov/ov_class.h ../../include/libov/ov_association.h \
  ../../model/ov.ovt ../../include/libov/ov_variable.h \
@@ -1857,8 +1751,6 @@ example.o: example.c example.h ../../include/libov/ov_library.h \
 example_fnc.o: ../../source/example/example_fnc.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1877,8 +1769,6 @@ example_getvarclient.o: ../../source/example/example_getvarclient.c \
  ../../source/example/example_getvarclient.h example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1897,8 +1787,6 @@ example_getvarclient.o: ../../source/example/example_getvarclient.c \
 example_testassoc.o: ../../source/example/example_testassoc.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
@@ -1916,8 +1804,6 @@ example_testassoc.o: ../../source/example/example_testassoc.c example.h \
 example_testclass.o: ../../source/example/example_testclass.c example.h \
  ../../include/libov/ov_library.h ../../include/libov/ov_ov.h \
  ../../include/libov/ov_config.h ../../include/libov/ov_version.h \
- ../../../ks/include/ks/ks.h ../../../ks/include/ks/rpc.h \
- ../../../plt/include/plt/debug.h ../../../plt/include/plt/config.h \
  ../../include/libov/ov_debug.h ../../include/libov/ov_logfile.h ov.h \
  ../../include/libov/ov_structure.h ../../include/libov/ov_class.h \
  ../../include/libov/ov_association.h ../../model/ov.ovt \
