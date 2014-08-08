@@ -213,7 +213,11 @@ proc create_dirs {} {
 	global os
 	print_msg "Creating directory structure"
 	file mkdir $builddir $builddir/bin $builddir/lib
-	file delete -force $releasedir
+	if {[file exists $releasedir] == 1} then {
+		#on windows the mkdir of a fresh deleted file often gives a permission denied
+		file rename -force $releasedir tempdelete
+		file delete -force tempdelete
+	}
 	file mkdir $releasedir
 	file mkdir $releasedir/system
 	file mkdir $releasedir/system/sysdevbase
