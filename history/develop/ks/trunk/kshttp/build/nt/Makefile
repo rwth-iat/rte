@@ -12,13 +12,8 @@ MAKMAKOPTIONS = -o
 EXTRA_CC_FLAGS = -DLOG_KS=0 -Wextra
 
 EXTRA_LIBS = 
-ifeq ($(PROCESSOR_ARCHITECTURE), x86)
-	LD_FLAGS = ../../lib/nt/libz.a -lwsock32
-#else ifeq ($(PROCESSOR_ARCHITECTURE), AMD64)
-else
-	LD_FLAGS = -lwsock32
-	EXTRA_CC_FLAGS += -DKSHTTP_DISABLE_GZIP
-endif
+LD_FLAGS = -lwsock32
+#	EXTRA_CC_FLAGS += -DKSHTTP_DISABLE_GZIP
 
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
