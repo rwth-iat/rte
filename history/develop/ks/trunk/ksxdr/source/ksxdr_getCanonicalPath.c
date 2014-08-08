@@ -34,7 +34,7 @@ OV_RESULT xdr_write_OV_GETCANONICALPATHITEM(KS_DATAPACKET* datapacket, OV_GETCAN
 {
 	OV_RESULT result;
 
-	result = KS_DATAPACKET_write_xdr_OV_RESULT(datapacket, pitem->result);
+	result = KS_DATAPACKET_write_xdr_OV_RESULT(datapacket, &pitem->result);
 	if(Ov_Fail(result))
 		return result;
 

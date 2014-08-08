@@ -30,7 +30,7 @@ OV_DLLFNCEXPORT OV_RESULT KS_DATAPACKET_read_xdr_uint(KS_DATAPACKET* datapacket,
 			&& (datapacket->readPT >= datapacket->data)
 			&& (datapacket->readPT <= (datapacket->data + datapacket->length)))
 	{
-		/*	shift left is defined als multiplication with powers of 2
+		/*	shift left is defined as multiplication with powers of 2
 		 * so it does the same independent of endianess of host system	*/
 		*value = (OV_UINT)(((datapacket->readPT[0]) << 24)
 		                 | ((datapacket->readPT[1]) << 16)
