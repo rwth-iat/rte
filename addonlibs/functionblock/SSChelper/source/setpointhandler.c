@@ -33,6 +33,9 @@ OV_DLLFNCEXPORT void SSChelper_setpointhandler_typemethod(
     *   local variables
     */
     OV_INSTPTR_SSChelper_setpointhandler pinst = Ov_StaticPtrCast(SSChelper_setpointhandler, pfb);
+if(pinst->v_userok && (ov_string_compare(pinst->v_order,"STARTD1")==OV_STRCMP_EQUAL ||
+		ov_string_compare(pinst->v_order,"STARTD2")==OV_STRCMP_EQUAL||ov_string_compare(pinst->v_order,"SETSETPOINT")==OV_STRCMP_EQUAL)){
+	pinst->v_value=atof(pinst->v_param);
 if(pinst->v_userok && pinst->v_order &&  (ov_string_compare(pinst->v_order,"STARTD1")==OV_STRCMP_EQUAL ||
 		ov_string_compare(pinst->v_order,"STARTD2")==OV_STRCMP_EQUAL||ov_string_compare(pinst->v_order,"SETSETPOINT")==OV_STRCMP_EQUAL||ov_string_compare(pinst->v_order,"SETPOINT")==OV_STRCMP_EQUAL)){
 	if(pinst->v_param)
