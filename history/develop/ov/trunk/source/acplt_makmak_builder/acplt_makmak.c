@@ -612,11 +612,13 @@ if(new == 0){
 	fprintf(fd,"\tOPT = -fno-omit-frame-pointer\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
+#if !__arm__
 	if(archBitwidth == 32){
 		fprintf(fd," -m32");
 	}else if(archBitwidth == 64){
 		fprintf(fd," -m64");
 	}
+#endif
 #if !OV_SYSTEM_NT
 	fprintf(fd," -fPIC");	// all code is position independent on windows
 #endif
