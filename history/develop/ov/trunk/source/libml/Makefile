@@ -30,7 +30,11 @@
 # Use this on System V.
 #CPPFLAGS = -DUSG
 
-ifdef OV_ARCH_BITWIDTH
+UNAME_M := $(shell uname -m)
+ifneq ($(filter arm%,$(UNAME_M)),)
+OV_ARCH_BITWIDTH_CFLAGS         =       
+OV_ARCH_BITWIDTH_LDFLAGS        =       
+else ifdef OV_ARCH_BITWIDTH
 OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m$(OV_ARCH_BITWIDTH)
 else
