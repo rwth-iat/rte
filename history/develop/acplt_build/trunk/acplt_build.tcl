@@ -17,7 +17,8 @@ set exesuffix 0
 set bleedingedge 0
 set notbuildedlibs 0
 set ov_debug "OV_DEBUG=1"
-set ov_arch_bitwidth "OV_ARCH_BITWIDTH=32"
+set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
+set ov_arch_bitwidth_int 32
 foreach arg $argv {
 	if {$arg == "checkout"} {
 		set release 0
@@ -37,10 +38,12 @@ foreach arg $argv {
 		set build_dbcommands 0
 	}
 	if {$arg == "32"} {
-		set ov_arch_bitwidth "OV_ARCH_BITWIDTH=32"
+		set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
+		set ov_arch_bitwidth_int 32
 	}
 	if {$arg == "64"} {
-		set ov_arch_bitwidth "OV_ARCH_BITWIDTH=64"
+		set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=64"
+		set ov_arch_bitwidth_int 64
 	}
 }
 
@@ -343,24 +346,24 @@ proc checkout_acplt {} {
 # Build in a directory
 proc build_package {package args} {
 	global ov_debug
-	global ov_arch_bitwidth
-	print_msg "Building $package"
+	global ov_arch_bitwidth_str
+	print_msg "Building $package via build_package"
 	
-	return [execute $args $ov_debug $ov_arch_bitwidth]
+	return [execute $args $ov_debug $ov_arch_bitwidth_str]
 }
 
 # Build in a directory using cygwin bash and ignoring errors
 proc build_cygwin {package args} {
 	global bash
 	global ov_debug
-	global ov_arch_bitwidth
-	print_msg "Building $package"
+	global ov_arch_bitwidth_str
+	print_msg "Building $package via build_cygwin"
 	
-	eval [concat "execute" $bash \\\"$args $ov_debug $ov_arch_bitwidth\\\"]
+	eval [concat "execute" $bash \\\"$args $ov_debug $ov_arch_bitwidth_str\\\"]
 }
 
 proc build_acplt_mingw {} {
-	print_msg "Compiling with mingw32"
+	print_msg "Compiling acplt with mingw32"
 	global base
 	global os
 	global make
@@ -858,11 +861,12 @@ proc remove_svn_dirs {dir} {
 
 proc compress {archivename dir} {
 	global os
+	global ov_arch_bitwidth_int
 	print_msg "Compressing"
 	if { $os == "linux" } then {
-		execute "zip -r $archivename-linux $dir"
+		execute "zip -r $archivename-linux$ov_arch_bitwidth_int $dir"
 } else {
-		execute "7z a $archivename-win.zip $dir"
+		execute "7z a $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
 }
 
