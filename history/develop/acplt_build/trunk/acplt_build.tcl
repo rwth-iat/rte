@@ -36,6 +36,12 @@ foreach arg $argv {
 	if {$arg == "no_dbcommands"} {
 		set build_dbcommands 0
 	}
+	if {$arg == "32"} {
+		set ov_arch_bitwidth "OV_ARCH_BITWIDTH=32"
+	}
+	if {$arg == "64"} {
+		set ov_arch_bitwidth "OV_ARCH_BITWIDTH=64"
+	}
 }
 
 
