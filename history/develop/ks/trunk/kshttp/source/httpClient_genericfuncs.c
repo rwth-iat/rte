@@ -148,7 +148,7 @@ static OV_RESULT initiateConnection(OV_INSTPTR_kshttp_httpClientBase UNUSED this
 
 		if(Ov_Fail(result))
 		{
-			KS_logfile_error(("%s: initiateConnection: could not open connection", this->v_identifier));
+			KS_logfile_error(("%s: initiateConnection: could not open connection to %s:%s", this->v_identifier, host, port));
 			return result;
 		}
 	}

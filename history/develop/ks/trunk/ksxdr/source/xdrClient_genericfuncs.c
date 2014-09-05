@@ -132,7 +132,7 @@ OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_k
 
 		if(Ov_Fail(result))
 		{
-			KS_logfile_error(("%s: initiateConnection: could not open connection", this->v_identifier));
+			KS_logfile_error(("%s: initiateConnection: could not open connection to %s:%s", this->v_identifier, host, port));
 			return result;
 		}
 		ov_time_gettime(&(this->v_timeLastEvent));
