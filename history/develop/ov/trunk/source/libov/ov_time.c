@@ -43,7 +43,12 @@
 #include <sys/time.h>
 #endif
 
-#if OV_SYSTEM_NT || OV_SYSTEM_OPENVMS
+#if OV_SYSTEM_NT
+#include <sys/timeb.h>
+#include "windows.h"	//for GetTimeZoneInformation
+#endif
+
+#if OV_SYSTEM_OPENVMS
 #include <sys/timeb.h>
 #endif
 
@@ -315,6 +320,10 @@ static OV_RESULT ov_time_asciitotime_internal(
 	time_t				secs;
 	OV_UINT				usecs;
 	OV_STRING			pc1, pc2;
+	#if OV_SYSTEM_NT
+	TIME_ZONE_INFORMATION tzinfo;
+	#endif
+
 	/*
 	*	check the format of the given string, which must be either
 	*	YYYY/MM/DD, YYYY/MM/DD hh:mm:ss or YYYY/MM/DD hh:mm:ss.uuuuuu
@@ -361,9 +370,9 @@ static OV_RESULT ov_time_asciitotime_internal(
 		//time_t mktime (struct tm*);
 		secs = mktime(&tm);
 	}else{
-		//POSIX forgot the utc version of mktime
+		//POSIX forgot the UTC version of mktime
 		#if OV_ARCH_NOMMU
-			// uclibc does not always know timegm or similar
+			// uclibc does not always know timegm or similar (uclibc has the L_timegm define)
 			return OV_ERR_NOTIMPLEMENTED;
 		#else
 			#if OV_SYSTEM_UNIX
@@ -373,17 +382,34 @@ static OV_RESULT ov_time_asciitotime_internal(
 			#endif
 
 			#if OV_SYSTEM_NT
-				#if OV_COMPILER_CYGWIN && __MSVCRT_VERSION__ >= 0x0800
-					//Microsoft invented _mkgmtime (but this is only available in minGW with MSVCRT_VERSION>=800
-					secs = _mkgmtime(&tm);
-				#elif OV_COMPILER_MSVC
+				//POSIX forgot the utc version of mktime
+				//Microsoft invented _mkgmtime (but this is not always available in minGW)
+				#if OV_COMPILER_MSVC
 					secs = _mkgmtime(&tm);
 				#else
-					//there is no clean way for doing this without much code problems
-					#ifdef OV_DEBUG
-						#pragma message "no timegm or _mkgmtime available on this platform"
-					#endif
-					return OV_ERR_NOTIMPLEMENTED;
+					//so we have to use the localtime version and calculate the offset by hand
+					secs = mktime(&tm);
+
+					// Obtain timezone information from operating system.
+					memset(&tzinfo, 0, sizeof(tzinfo));
+					if (GetTimeZoneInformation(&tzinfo) == TIME_ZONE_ID_INVALID) {
+						// If we cannot get timezone information we fall back to Central European Time.
+						tzinfo.Bias = -60;
+						tzinfo.StandardDate.wMonth = 10;
+						tzinfo.StandardDate.wDay = 5;
+						tzinfo.StandardDate.wHour = 3;
+						tzinfo.StandardBias = 0;
+						tzinfo.DaylightDate.wMonth = 3;
+						tzinfo.DaylightDate.wDay = 5;
+						tzinfo.DaylightDate.wHour = 2;
+						tzinfo.DaylightBias = -60;
+					}
+					//UTC = local time + bias
+					if(tm.tm_isdst == 1){
+						secs += (tzinfo.Bias + tzinfo.DaylightBias)*60;
+					}else{
+						secs += (tzinfo.Bias)*60;
+					}
 				#endif
 			#endif
 

@@ -63,8 +63,7 @@ OV_ARCH_BITWIDTH_CFLAGS		=	-m32
 OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
 endif
 
-#Sten increasing mscvrt default version to get mkgmtime supported
-OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER -DMSVCRT_VERSION=800
+OV_PLATFORM_DEFINES			= $(OV_DODEBUG) -DOV_V2SERVER
 
 #	Compiler
 #	--------
