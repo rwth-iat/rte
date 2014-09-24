@@ -104,7 +104,7 @@ OV_DLLFNCEXPORT void fbcomlib_getEPidentifiers_typemethod(
 		if(pinst->p_apiGetEPid.v_status == KSAPI_COMMON_REQUESTCOMPLETED)
 		{	/*	ksapi-request completed --> get answer	*/
 			pinst->v_opResult = pinst->p_apiGetEPid.v_result;
-			result = Ov_SetDynamicVectorValue(&(pinst->v_identifierList), &(pinst->p_apiGetEPid.v_identifierList.value), pinst->p_apiGetEPid.v_identifierList.veclen, STRING);
+			result = Ov_SetDynamicVectorValue(&(pinst->v_identifierList), pinst->p_apiGetEPid.v_identifierList.value, pinst->p_apiGetEPid.v_identifierList.veclen, STRING);
 			if(Ov_Fail(result))
 			{
 				fbcomlib_FBComCommon_state_set(Ov_StaticPtrCast(fbcomlib_FBComCommon, pinst), FBCOMLIB_STATE_INTERNAL_ERROR);
