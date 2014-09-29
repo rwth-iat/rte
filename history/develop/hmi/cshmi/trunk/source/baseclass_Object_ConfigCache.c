@@ -790,7 +790,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_resetCache(
 	//mark our cache dirty
 	pobj->v_ConfigCache.cacheDirty = TRUE;
 
-	if(Ov_CanCastTo(cshmi_Group, pobj)){
+	if(pDownloadApplication == NULL){
+		//we have no turbo, so nothing to do
+	}else if(Ov_CanCastTo(cshmi_Group, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(Group);
 	}else if(Ov_CanCastTo(cshmi_TemplateDefinition, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(TemplateDefinition);
