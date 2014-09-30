@@ -88,7 +88,7 @@ function cshmi() {
 	this.ResourceList.newRebuildObject = Object();
 	this.ResourceList.cyclicEventList = Object();
 	
-	this.ResourceList.externaljsList = Array();
+	this.ResourceList.externaljsList = null;
 	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
@@ -4979,6 +4979,7 @@ cshmi.prototype = {
 		}
 		
 		var sourceListSplitted = sourceList.split(" ");
+		this.ResourceList.externaljsList = Array();
 		
 		loadLibrary:
 		//externe (via http erreichbare) Bibliotheken in head anhaengen
@@ -5003,18 +5004,22 @@ cshmi.prototype = {
 			node.onload = node.onerror = function(evt){
 				if(evt.type !== "load"){
 					HMI.hmi_log_onwebsite("loading "+evt.target.src+" requested from "+ObjectPath+" failed.");
+					//disabling execution of onload code
+					HMI.cshmi.ResourceList.externaljsList = null;
 				}else{
 					HMI.hmi_log_info("success in loading script: event type: "+evt.type+": "+evt.target.src);
 				}
-				var idx = HMI.cshmi.ResourceList.externaljsList.indexOf(evt.target.getAttribute("src"));
-				if(idx >= 0){
-					//we found our entry, so remove from the loadlist
-					HMI.cshmi.ResourceList.externaljsList.splice(idx, 1);
-				}
-				
-				if(HMI.cshmi.ResourceList.externaljsList.length === 0 && jsOnload !== ""){
-					// we have everything, so execute the jsOnload
-					HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+				if(HMI.cshmi.ResourceList.externaljsList !== null){
+					var idx = HMI.cshmi.ResourceList.externaljsList.indexOf(evt.target.getAttribute("src"));
+					if(idx >= 0){
+						//we found our entry, so remove from the loadlist
+						HMI.cshmi.ResourceList.externaljsList.splice(idx, 1);
+					}
+					
+					if(HMI.cshmi.ResourceList.externaljsList.length === 0 && jsOnload !== ""){
+						// we have everything, so execute the jsOnload
+						HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
+					}
 				}
 			};
 
