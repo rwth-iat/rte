@@ -28,7 +28,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_RoutePolyline_offset_set(
 		OV_INSTPTR_cshmi_RoutePolyline          pobj,
 		const OV_SINGLE  value
 ) {
-	if (value <= 0){
+	if (value < 0){
 		return OV_ERR_BADPARAM;
 	}
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));

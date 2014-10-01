@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_width_set(
 		OV_INSTPTR_cshmi_Rectangle          pobj,
 		const OV_SINGLE  value
 ) {
-	if (value <= 0){
+	if (value < 0){
 		return OV_ERR_BADPARAM;
 	}else{
 		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Rectangle_height_set(
 		OV_INSTPTR_cshmi_Rectangle          pobj,
 		const OV_SINGLE  value
 ) {
-	if (value <= 0){
+	if (value < 0){
 		return OV_ERR_BADPARAM;
 	}else{
 		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
