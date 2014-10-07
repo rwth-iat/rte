@@ -76,7 +76,7 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 
 	//MsgDelivery
 	domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(COMPATH, 2);
-	MsgSysDelivery=Ov_SearchChild(ov_containment,domain,"MessageSys");
+	MsgSysDelivery=Ov_DynamicPtrCast(MessageSys_MsgDelivery, Ov_SearchChild(ov_containment,domain,"MessageSys"));
 	if(MsgSysDelivery==NULL){
 	result = Ov_CreateObject(MessageSys_MsgDelivery, MsgSysDelivery, domain, "MessageSys");
 	if(Ov_Fail(result) && (result != OV_ERR_ALREADYEXISTS)){
