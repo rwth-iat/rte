@@ -173,8 +173,8 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 	int    incFound;
 	char   *ph;
 	int    i;
-
 	int    dev = 1;
+	FILE   *fdreadtest;
 
 	/* OV library? -- already included */
 	if( !strcmp(curlib, "ov") ) {
@@ -226,11 +226,10 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 		/* If model exists - parse it */
 
 		if(fd) {
-
-			while( fgets(help, 511, fd) ) { /** 511 huh? **/
-
+			//read the file line by line with the maximum line length 511 (as our helper string is not much longer)
+			while( fgets(help, 511, fd) ) {
 				incFound = 0;
-				ph = strstr(help, "#include");
+				ph = strstr(help, "#include");	//FIXME this prevents use of line or block comments!
 				/* locate # and 'include' in a line, # must come before 'include' */
 				if(ph) {
 					/* skip include */
@@ -249,6 +248,7 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 							}
 							break;
 						case '.':
+							//remove the file extension
 							*ph = '\0';
 							incFound = 1;
 							break;
@@ -268,6 +268,14 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 						ph++;
 					}
 					if(incFound) {
+						//it is possible to have the variables in a separate OVM in the same directory (for example simblocks)
+						sprintf(help, "%s/%s/model/%s.ovm", devModelPath, curlib, incFile);
+						fdreadtest = fopen(help, "r");
+						if(fdreadtest != NULL){
+							fclose(fdreadtest);
+							//skip this ovm file
+							continue;
+						}
 						ph = (char*)malloc(strlen(incFile) + 1);
 						if(!ph) {
 							fprintf(stderr, "Out of memory\n");
