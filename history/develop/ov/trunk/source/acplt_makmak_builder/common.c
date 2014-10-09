@@ -268,20 +268,23 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 						ph++;
 					}
 					if(incFound) {
-						//it is possible to have the variables in a separate OVM in the same directory (for example simblocks)
-						sprintf(help, "%s/%s/model/%s.ovm", devModelPath, curlib, incFile);
-						fdreadtest = fopen(help, "r");
-						if(fdreadtest != NULL){
-							fclose(fdreadtest);
-							//skip this ovm file
-							continue;
-						}
 						ph = (char*)malloc(strlen(incFile) + 1);
 						if(!ph) {
 							fprintf(stderr, "Out of memory\n");
 							exit(0);
 						}
 						strcpy(ph, incFile);
+
+						//it is possible to have the variables in a separate OVM in the same directory (for example simblocks)
+						sprintf(help, "%s/%s/model/%s.ovm", devModelPath, curlib, ph);
+						compatiblePath(help);
+						fdreadtest = fopen(help, "r");
+						if(fdreadtest != NULL){
+							fclose(fdreadtest);
+							free(ph);
+							//skip this ovm file
+							continue;
+						}
 						/** recursive deepining - search for ph **/
 						makmak_searchbaselibs_worker(originallib, ph, devModelPath, sysModelPath, devLibs, numDevLibs, sysLibs, numSysLibs);
 						free(ph);
