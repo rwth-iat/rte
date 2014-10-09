@@ -8,7 +8,7 @@
  *   Historie                                                                  *
  *   --------                                                                  *
  *   2007-04-08 Alexander Neugebauer: Erstellung, LTSoft GmbH, Kerpen          *
- *   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	           *
+ *   2011-06-21 Sten Gruener: Anpassung an MinGW, bugfixes, ACPLT	       *
  *   2013-04-24 Sten Gruener: Adoption to the new directory strucure           *
  *                            deep refactoring                                 *
  *                                                                             *

@@ -229,9 +229,10 @@ void makmak_searchbaselibs_worker(const char *originallib, const char *curlib, c
 			//read the file line by line with the maximum line length 511 (as our helper string is not much longer)
 			while( fgets(help, 511, fd) ) {
 				incFound = 0;
-				ph = strstr(help, "#include");	//FIXME this prevents use of line or block comments!
+				ph = strstr(help, "#include");
 				/* locate # and 'include' in a line, # must come before 'include' */
-				if(ph) {
+				/* make sure the line really starts with "#include" to allow commenting includes out */
+				if(ph && ph==help) {
 					/* skip include */
 					ph += 8;
 					incFile = NULL;
