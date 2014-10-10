@@ -96,12 +96,7 @@
       TemplateDefinition : INPUT STRING = "xtdiagram";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[1] : INPUT STRING = {"data1:/TechUnits/TU/rampe.OutS"};
-      ConfigValues[1] : INPUT STRING = {"minValue:-1
-maxValue:20
-velocity:0.02
-labelColor:white
-cyctime:0.05
-verticalSections:TRUE"};
+      ConfigValues[6] : INPUT STRING = {"minValue:-1" , "maxValue:20" , "velocity:10" , "labelColor:white" , "cycTime:0.05" , "verticalSections:TRUE"};
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;

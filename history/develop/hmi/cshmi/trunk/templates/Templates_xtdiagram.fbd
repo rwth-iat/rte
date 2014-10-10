@@ -1,8 +1,8 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-09-30 15:51:06
+* Erstellt: 2014-10-10 13:35:23
 * 
-* HOST   : 134.130.125.43:7509
+* HOST   : 192.168.1.99:7509
 * SERVER : MANAGER
 ************************************************************/
 
@@ -798,7 +798,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram :
-    CLASS /Libraries/cshmi/TemplateDefinition;
+    CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 100.000000;
       height : INPUT SINGLE = 100.000000;
@@ -809,7 +809,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic :
-    CLASS /Libraries/cshmi/Blackbox;
+    CLASS /acplt/cshmi/Blackbox;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 0.000000;
@@ -817,107 +817,81 @@
       height : INPUT SINGLE = 300.000000;
       sourceOfLibrary[1] : INPUT STRING = {"/smoothie.js"};
       HTMLcontent : INPUT STRING = "<canvas id='mycanvas' class='autosize'></canvas>";
-      jsOnload : INPUT STRING = "var j = 0;
+      jsOnload : INPUT STRING = "
+var minValue = 0;
+if(cshmimodel.variables.minValue){
+	var minValue = parseFloat(cshmimodel.variables.minValue.getValue());
+}
+var maxValue = 100;
+if(cshmimodel.variables.maxValue){
+	maxValue = parseFloat(cshmimodel.variables.maxValue.getValue());
+}
+var labelColor = 'white';
+if(cshmimodel.variables.labelColor){
+	labelColor = cshmimodel.variables.labelColor.getValue();
+}
+var velocity = 0.1;
+if(cshmimodel.variables.velocity){
+	//the config value is in pixel per second
+	velocity = parseFloat(1 / (cshmimodel.variables.velocity.getValue()));
+}
+var verticalSections = true;
+if(cshmimodel.variables.verticalSections){
+	if(cshmimodel.variables.verticalSections.getValue().toLowerCase() == 'false'){
+		verticalSections = false;
+	}
+}
+var cycTime = 1;
+if(cshmimodel.variables.cycTime){
+	cycTime = parseFloat(cshmimodel.variables.cycTime.getValue());
+}
+
+var linestyle = [	'rgb(30, 200, 30)',
+									'rgb(255, 0, 0)',
+									'rgb(255, 255, 0)',
+									'rgb(0, 165, 255)',
+									'rgb(255, 255, 255)',
+									'rgb(255, 0, 255)',
+									'rgb(255, 80, 0)',
+									'rgb(160, 60, 60)',
+									'rgb(120, 120, 120)',
+									'rgb(100, 0, 255)'];
+
 var smoothie = new SmoothieChart({
-	minValue: cshmimodel.variables.minValue.getValue(),
-	maxValue: cshmimodel.variables.maxValue.getValue(),
+	minValue: minValue,
+	maxValue: maxValue,
 	interpolation: 'line',
 	labels: {
-		fillStyle: cshmimodel.variables.labelColor.getValue()
+		fillStyle: labelColor
 	},
-	millisPerPixel: cshmimodel.variables.velocity.getValue() * 1000,
+	millisPerPixel: velocity * 1000,
 	grid: {
 		fillStyle: '#000000',
 		strokeStyle: 'rgb(60, 0, 0)',
 		lineWidth: 1,
 		millisPerLine: 1000,
-		verticalSections: cshmimodel.variables.verticalSections.getValue()
+		verticalSections: verticalSections
 	}
 });
 smoothie.streamTo(VisualObject.getElementById('mycanvas'), 1000);
 var lines = new Array;
-for (var i = 1; i <= 10; i++){
-	if (cshmimodel.variables['data' + i] !== undefined){
-		lines[i] = new TimeSeries;
+for (var i = 0; i < 10; i++){
+	if (cshmimodel.variables['data' + (i + 1)] !== undefined){
+		if(cshmimodel.variables['data' + (i + 1)].getValue() !== ''){
+			lines[i] = new TimeSeries;
+			smoothie.addTimeSeries(lines[i], {
+				strokeStyle: linestyle[i],
+				lineWidth: 2
+			});
+		}
 	}
 }
 setInterval(function() {
-	var scaling = 0.1;
-	j++;
-	for (var i = 1; i < lines.length; i++){
-		lines[i].append((new Date).getTime(), cshmimodel.variables['data' + i].getValue());
+	for (var i = 0; i < lines.length; i++){
+		lines[i].append((new Date).getTime(), cshmimodel.variables['data' + (i + 1)].getValue());
 	}
-}, cshmimodel.variables.cycTime.getValue() * 1000);
-if (cshmimodel.variables['data1'] !== undefined){
-	smoothie.addTimeSeries(lines[1], {
-		strokeStyle: 'rgb(30, 200, 30)',
-		fillStyle: 'rgba(30, 200, 30, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data2'] !== undefined){
-	smoothie.addTimeSeries(lines[2], {
-		strokeStyle: 'rgb(255, 0, 0)',
-		fillStyle: 'rgba(255, 0, 0, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data3'] !== undefined){
-	smoothie.addTimeSeries(lines[3], {
-		strokeStyle: 'rgb(255, 255, 0)',
-		fillStyle: 'rgba(255, 255, 0, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data4'] !== undefined){
-	smoothie.addTimeSeries(lines[4], {
-		strokeStyle: 'rgb(0, 165, 255)',
-		fillStyle: 'rgba(0, 165, 255, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data5'] !== undefined){
-	smoothie.addTimeSeries(lines[5], {
-		strokeStyle: 'rgb(255, 255, 255)',
-		fillStyle: 'rgba(255, 255, 255, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data6'] !== undefined){
-	smoothie.addTimeSeries(lines[6], {
-		strokeStyle: 'rgb(255, 0, 255)',
-		fillStyle: 'rgba(255, 0, 255, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data7'] !== undefined){
-	smoothie.addTimeSeries(lines[7], {
-		strokeStyle: 'rgb(255, 80, 0)',
-		fillStyle: 'rgba(255, 80, 0, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data8'] !== undefined){
-	smoothie.addTimeSeries(lines[8], {
-		strokeStyle: 'rgb(160, 60, 60)',
-		fillStyle: 'rgba(160, 60, 60, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data9'] !== undefined){
-	smoothie.addTimeSeries(lines[9], {
-		strokeStyle: 'rgb(120, 120, 120)',
-		fillStyle: 'rgba(120, 120, 120, 0.0)',
-		lineWidth: 2
-	});
-}
-if (cshmimodel.variables['data10'] !== undefined){
-	smoothie.addTimeSeries(lines[10], {
-		strokeStyle: 'rgb(100, 0, 255)',
-		fillStyle: 'rgba(100, 0, 255, 0.0)',
-		lineWidth: 2
-	});
-}";
+}, cycTime * 1000);
+";
       jsOnglobalvarchanged : INPUT STRING = "";
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -930,7 +904,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data1 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -946,7 +920,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data1.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -963,7 +937,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data2 :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -979,7 +953,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data2.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -995,8 +969,8 @@ if (cshmimodel.variables['data10'] !== undefined){
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/minValue :
-    CLASS /Libraries/cshmi/SetValue;
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data3 :
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1011,8 +985,272 @@ if (cshmimodel.variables['data10'] !== undefined){
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data3.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data3";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data4 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data4.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data4";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data5 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data5.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data5";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data6 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data6.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data6";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data7 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data7.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data7";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data8 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data8.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data8";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data9 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 8;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data9.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data9";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data10 :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 9;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/data10.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "data10";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/minValue :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 10;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/minValue.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1029,7 +1267,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/maxValue :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1039,13 +1277,13 @@ if (cshmimodel.variables['data10'] !== undefined){
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/maxValue.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1062,7 +1300,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/velocity :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1072,13 +1310,13 @@ if (cshmimodel.variables['data10'] !== undefined){
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 4;
+      zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/velocity.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1095,7 +1333,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/labelColor :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1105,13 +1343,13 @@ if (cshmimodel.variables['data10'] !== undefined){
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 5;
+      zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/labelColor.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1128,7 +1366,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/cycTime :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1138,13 +1376,13 @@ if (cshmimodel.variables['data10'] !== undefined){
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 6;
+      zindex : INPUT UINT = 14;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/cycTime.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1161,7 +1399,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/verticalSections :
-    CLASS /Libraries/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
@@ -1171,13 +1409,13 @@ if (cshmimodel.variables['data10'] !== undefined){
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 7;
+      zindex : INPUT UINT = 15;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/xtdiagram/diagrammagic/verticalSections.value :
-    CLASS /Libraries/cshmi/GetValue;
+    CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
@@ -1194,7 +1432,7 @@ if (cshmimodel.variables['data10'] !== undefined){
  END_INSTANCE;
 
  LIBRARY
-    /Libraries/cshmi
+    /acplt/cshmi
  END_LIBRARY;
 
  LIBRARY
