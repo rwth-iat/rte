@@ -8,13 +8,25 @@ LIBRARY iec62541
 	COMMENT   = "";
 	
 	/**
-	 *	Checks whether received data 		
+	 *	Checks whether received data complies with a OPC UA opening of a connection
+	 *	criteria are:	1.	"HEL" in first three byets of message
+	 *					2.	ProtocolVersion is not larger than the highes specified version number of iec62541 				
+	 *					3.	Message size (starting in byte 5) is larger than 32
+	 *					4.	Message size equals 32 + plus the given size in the EndpointUrl length field	
 	 */
 	CLASS uaIdentificator : CLASS ksbase/ProtocolIdentificator
 		IS_INSTANTIABLE;
 		COMMENT = "class for identifing ua communication";
 		VARIABLES
-			
+			ident				:	STRING
+				COMMENT			= "first bytes of initial package"
+				INITIALVALUE	= "HEL";
+			msgMinSize			:	UINT
+				COMMENT			= "Minimum size of a valid message"
+				INITIALVALUE	= 32;
+			highestOPCVersion	: UINT
+				COMMENT			= "Highest specified OPC uA Version number"
+				INITIALVALUE	= 0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -29,12 +41,41 @@ LIBRARY iec62541
 	CLASS uaClientHandler : CLASS ksbase/ClientHandler
 		IS_INSTANTIABLE;
 		VARIABLES
-			// Add variables here. The syntax is:
-			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
-			// Example:
-			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
-			// Example for a fb/functionblock based class
-			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+			serverProtocolVersion	:	UINT
+				COMMENT			= "Latest version of OPC UA TCP protocol supported by this server"
+				INITIALVALUE	= 0;
+			serverReceiveBufferSize	:	UINT
+				COMMENT			= "Largest message (chunk) this server can receive"
+				INITIALVALUE	= 65536;
+			serverSendBufferSize	: UINT
+				COMMENT			= "Largest message (chunk) this server will send"
+				INITIALVALUE	= 65536;
+			serverMaxMessageSize	: UINT
+				COMMENT			= "Maximum size for any response message sent to this server"
+				INITIALVALUE	= 65536;
+			serverMaxChunkCount		: UINT
+				COMMENT			= "Maximum number of chunks this server can handle"
+				INITIALVALUE	= 1;
+			serverEndpointUrl []	: STRING
+				COMMENT			= "URL this clients wants to connect to";			
+			clientProtocolVersion	:	UINT
+				COMMENT			= "Latest version of OPC UA TCP protocol supported by tjhe client"
+				INITIALVALUE	= 0;
+			clientReceiveBufferSize	:	UINT
+				COMMENT			= "Largest message (chunk) the client can receive"
+				INITIALVALUE	= 0;
+			clientSendBufferSize	: UINT
+				COMMENT			= "Largest message (chunk) the client will send"
+				INITIALVALUE	= 0;
+			clientMaxMessageSize	: UINT
+				COMMENT			= "Maximum size for any response message sent to this client"
+				INITIALVALUE	= 0;
+			clientMaxChunkCount		: UINT
+				COMMENT			= "Maximum number of chunks this client can handle"
+				INITIALVALUE	= 0;
+			clientEndpointUrl		: STRING
+				COMMENT			= "URL this clients wants to connect to"
+				INITIALVALUE	= "";
 		END_VARIABLES;
 		OPERATIONS
 			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -53,7 +94,7 @@ LIBRARY iec62541
 	
 	CLASS uaSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
 	IS_INSTANTIABLE;
-	COMMENT	=	"Authenticator for simple tickets transportes via ks-xdr";
+	COMMENT	=	"Authenticator for simple tickets transportes via upc ua";
 	OPERATIONS
 		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
  		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
