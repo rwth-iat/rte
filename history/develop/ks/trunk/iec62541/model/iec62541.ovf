@@ -1,0 +1,10 @@
+#ifndef iec62541_OVF_INCLUDED
+#define iec62541_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/

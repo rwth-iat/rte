@@ -1,0 +1,81 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+
+LIBRARY iec62541
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+	/**
+	 *	Checks whether received data 		
+	 */
+	CLASS uaIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing ua communication";
+		VARIABLES
+			
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			identify		:	C_FUNCTION	<KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Documentation of uaClientHandler.
+	*/
+	CLASS uaClientHandler : CLASS ksbase/ClientHandler
+		IS_INSTANTIABLE;
+		VARIABLES
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			/**
+			 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+			 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+			 *		1. If the input data could be processed or if it is invalid it should be freed.
+			 *		2. The Writeptr of the received data may not be altered.
+			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+			 *		4. The readptr of the answer data may not be altered.
+			 */
+			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS xdrSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	IS_INSTANTIABLE;
+	COMMENT	=	"Authenticator for simple tickets transportes via ks-xdr";
+	OPERATIONS
+		constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+ 		startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+ 		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/*
+ 		*	These functions conform to the prototypes in a OV_TICKET_VTBL they are linked to the ticket itself to conform to ov-standards.
+ 		*	The functions do NOT get a this-pointer. Hence TicketAuthenticators have to be Singletons!!! 
+ 		*/
+ 		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
+ 		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
+		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
+		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	/**
+		Add associations and their documentation here.
+		Association syntax is:
+	*/
+	//ASSOCIATION assocName : ONE_TO_MANY
+	//	PARENT parentVarName : CLASS ov/object;
+	//	CHILD  childVarName : CLASS ov/object;
+	//END_ASSOCIATION;
+	
+END_LIBRARY;

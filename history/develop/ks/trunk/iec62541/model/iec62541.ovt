@@ -1,0 +1,6 @@
+#ifndef iec62541_OVT_INCLUDED
+#define iec62541_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
