@@ -51,7 +51,7 @@ LIBRARY iec62541
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS xdrSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
+	CLASS uaSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
 	IS_INSTANTIABLE;
 	COMMENT	=	"Authenticator for simple tickets transportes via ks-xdr";
 	OPERATIONS
