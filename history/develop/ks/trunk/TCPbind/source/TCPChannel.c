@@ -765,9 +765,9 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 			else
 			{
 				//check if protocol is recognized by this Identificator
-				if(pVTBLProtIdent->m_identify(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this)))
+				if(pVTBLProtIdent->m_identify(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this)) == TRUE)
 				{	//if so, create ClientHandler
-					KS_logfile_debug(("Protocol identified by %s. Creating Clienthandler", pProtIdent->v_identifier));
+					KS_logfile_debug(("Protocol identified by %s (Class %s). Creating Clienthandler", pProtIdent->v_identifier, Ov_GetParent(ov_instantiation, pProtIdent)->v_identifier));
 					result = pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this));
 					if(Ov_Fail(result))
 					{

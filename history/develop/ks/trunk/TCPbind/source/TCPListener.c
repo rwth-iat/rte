@@ -484,6 +484,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 									if(Ov_Fail(pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, pNewChannel))))
 									{
 										KS_logfile_error(("%s: error creating ClientHandler for %s. (ProtocolIdentificator %s)", this->v_identifier, pNewChannel->v_identifier, pProtIdent->v_identifier));
+									} else {
+										pNewChannel->v_ClientHandlerAssociated = KSBASE_CH_ASSOCIATED;
 									}
 								}
 							}
