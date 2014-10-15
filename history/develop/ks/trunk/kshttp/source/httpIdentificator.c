@@ -56,6 +56,8 @@ OV_DLLFNCEXPORT OV_BOOL kshttp_httpIdentificator_identify (
 	return FALSE;
 }
 
+static OV_UINT httpClientHandlerNamecounter = 0;
+
 /**
 *	functions to create the ClientHandler corresponding to the protocol. This is calles after a successfull identification. The function has to create the ClientHandler
 *	and Link it to the Channel calling it with AssocChannelClientHandler.
@@ -68,15 +70,15 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpIdentificator_createClientHandler (
     *   local variables
     */
 	OV_INSTPTR_kshttp_httpclienthandler pClientHandler = NULL;
-	OV_UINT namecounter = 0;
+
 	char CHNameBuffer[29]; //"httpClientHandler" + length MAXINT + '\0'
 	OV_RESULT result;
 
 	//get first free "httpClientHandler"-name
 	do {
 		pClientHandler = NULL;
-		namecounter++;
-		sprintf(CHNameBuffer, "httpClientHandler%" OV_PRINT_UINT, namecounter);
+		httpClientHandlerNamecounter++;
+		sprintf(CHNameBuffer, "httpClientHandler%" OV_PRINT_UINT, httpClientHandlerNamecounter);
 		pClientHandler	= (OV_INSTPTR_kshttp_httpclienthandler) Ov_SearchChild(ov_containment, Ov_PtrUpCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 

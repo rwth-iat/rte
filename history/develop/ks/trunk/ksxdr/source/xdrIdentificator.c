@@ -82,6 +82,8 @@ OV_DLLFNCEXPORT OV_BOOL ksxdr_xdrIdentificator_identify (
     return FALSE;
 }
 
+static OV_UINT xdrClientHandlerNamecounter = 0;
+
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
@@ -90,15 +92,15 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
     *   local variables
     */
 	OV_INSTPTR_ksxdr_xdrClientHandler pClientHandler = NULL;
-	OV_UINT namecounter = 0;
+
 	char CHNameBuffer[28]; //"XDRClientHandler + length MAXINT + '\0'
 	OV_RESULT result;
 
 	//get first free "XDRClientHandler"-name
 	do {
 		pClientHandler = NULL;
-		namecounter++;
-		sprintf(CHNameBuffer, "XDRClientHandler%" OV_PRINT_UINT, namecounter);
+		xdrClientHandlerNamecounter++;
+		sprintf(CHNameBuffer, "XDRClientHandler%" OV_PRINT_UINT, xdrClientHandlerNamecounter);
 		pClientHandler	= (OV_INSTPTR_ksxdr_xdrClientHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
 	} while (pClientHandler);
 
