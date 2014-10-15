@@ -1,10 +1,73 @@
 #ifndef iec62541_OVF_INCLUDED
 #define iec62541_OVF_INCLUDED
 
-/* 
-	Declare your C functions here. 
-	Example:
-	typedef OV_DLLFNCEXPORT void MY_FUNC(
-		OV_STRING varName
-	);
-*/
+#include "iec62541.ovt"
+
+	typedef OV_DLLFNCEXPORT void INITSERVICEIMPLEMENTATIONS();
+
+#define PROTOTYPE(TYPE, type)	\
+	typedef OV_DLLFNCEXPORT void UA_##TYPE##_SERVICE( \
+		UA_Server						*server,	\
+		const UA_##type##Request		*request,	\
+		UA_##type##Response				*response)
+	
+	/*	Discovery Service Set	*/
+	PROTOTYPE(FINDSERVERS, FindServers);
+	PROTOTYPE(GETENDPOINTS, GetEndpoints);
+	PROTOTYPE(REGISTERSERVER, RegisterServer);
+	
+	/*	SecureChannel Service Set	*/
+	PROTOTYPE(OPENSECURECHANNEL, OpenSecureChannel);
+	PROTOTYPE(CLOSESECURECHANNEL, CloseSecureChannel);
+	
+	/*	Session Service Set	*/
+	PROTOTYPE(CREATESESSION, CreateSession);
+	PROTOTYPE(ACTIVATESESSION, ActivateSession);
+	PROTOTYPE(CLOSESESSION, CloseSession);
+	PROTOTYPE(CANCEL, Cancel);
+	
+	/*	NodeManagement Service Set	*/
+	PROTOTYPE(ADDNODES, AddNodes);
+	PROTOTYPE(ADDREFERENCES, AddReferences);
+	PROTOTYPE(DELETENODES, DeleteNodes);
+	PROTOTYPE(DELETEREFERENCES, DeleteReferences);
+	
+	/*	View Service Set	*/
+	PROTOTYPE(BROWSE, Browse);
+	PROTOTYPE(BROWSENEXT, BrowseNext);
+	PROTOTYPE(TRANSLATEBROWSEPATHSTONODEIDS, TranslateBrowsePathsToNodeIds);
+	PROTOTYPE(REGISTERNODES, RegisterNodes);
+	PROTOTYPE(UNREGISTERNODES, UnregisterNodes);
+	
+	/*	Query Service Set	*/
+	PROTOTYPE(QUERYFIRST, QueryFirst);
+	PROTOTYPE(QUERYNEXT, QueryNext);
+	
+	/*	Attribute Service Set	*/
+	PROTOTYPE(READ, Read);
+	PROTOTYPE(HISTORYREAD, HistoryRead);
+	PROTOTYPE(WRITE, Write);
+	PROTOTYPE(HISTORYUPDATE, HistoryUpdate);
+	
+	/*	Method Service Set	*/
+	PROTOTYPE(CALL, Call);
+	
+	/*	MonitoredItem Service Set	*/
+	PROTOTYPE(CREATEMONITOREDITEMS, CreateMonitoredItems);
+	PROTOTYPE(MODIFYMONITOREDITEMS, ModifyMonitoredItems);
+	PROTOTYPE(SETMONITORINGMODE, SetMonitoringMode);
+	PROTOTYPE(SETTRIGGERING, SetTriggering);
+	PROTOTYPE(DELETEMONITOREDITEMS, DeleteMonitoredItems);
+	
+	/*	Subscription Service Set	*/
+	PROTOTYPE(CREATESUBSCRIPTION, CreateSubscription);
+	PROTOTYPE(MODIFYSUBSCRIPTION, ModifySubscription);
+	PROTOTYPE(SETPUBLISHINGMODE, SetPublishingMode);
+	PROTOTYPE(PUBLISH, Publish);
+	PROTOTYPE(REPUBLISH, Republish);
+	PROTOTYPE(TRANSFERSUBSCRIPTIONS, TransferSubscriptions);
+	PROTOTYPE(DELETESUBSCRIPTIONS, DeleteSubscriptions);
+	
+	
+#endif
+

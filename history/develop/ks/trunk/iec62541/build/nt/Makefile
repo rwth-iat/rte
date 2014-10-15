@@ -8,10 +8,10 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 #Project config parameters that are accessed by Eclipse
 SERVERSTARTKEYS = -w ksbase -w iec62541
 #/Project config parameters that are accessed by Eclipse
-MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS = 
+MAKMAKOPTIONS = -o
+EXTRA_CC_FLAGS = -I../../open62541/include -I../../open62541/src -I../../open62541/src_generated -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1
 EXTRA_LIBS = 
-LD_FLAGS = 
+LD_FLAGS = ../../open62541/CMakeFiles/open62541.dir/objects.a
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
@@ -20,6 +20,9 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
+	
+	cd ../../open62541 && cmake -G "MinGW Makefiles" && $(MAKE) all && $(MAKE) open62541-objects
+	
 	acplt_makmak -l iec62541 $(MAKMAKOPTIONS)
 	tclsh $(PREBUILD) iec62541 $(MAKMAKOPTIONS)
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*

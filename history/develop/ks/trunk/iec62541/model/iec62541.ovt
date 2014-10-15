@@ -1,6 +1,25 @@
 #ifndef iec62541_OVT_INCLUDED
 #define iec62541_OVT_INCLUDED
 
+
+/*	Needed to prevent redefined warnings :-S	*/
+#ifdef WIN32
+#undef WIN32
+#endif
+
+#include "../open62541/include/ua_connection.h"
+#include "../open62541/include/ua_server.h"
+#include "../open62541/src/ua_session.h"
+#include "../open62541/src_generated/ua_types_generated.h"
+
+/*	restore pre-anti-warning state	*/
+#ifndef WIN32
+#define WIN32
+#endif
+
 /* 
 	Define your data types here. 
 */
+
+
+#endif

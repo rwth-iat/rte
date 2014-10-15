@@ -7,9 +7,29 @@ LIBRARY iec62541
 	COPYRIGHT = "";
 	COMMENT   = "";
 	
+	CLASS uaServer		:	CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "Holds all necessarry data for a server - singleton. can only be instantiated once";
+		VARIABLES
+			endpointName		:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT			=	"Name of the endpoint this server represents"
+				INITIALVALUE	=	"OV_UA";
+			endpointUrl			:	C_TYPE	<UA_String>;
+			serverData			:	C_TYPE	<UA_Server>
+				COMMENT	=	"Stack-specific representation of server data";	
+		END_VARIABLES;	
+		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
+			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	/**
 	 *	Checks whether received data complies with a OPC UA opening of a connection
-	 *	criteria are:	1.	"HEL" in first three byets of message
+	 *	criteria are:	1.	"HEL" in first three bytes of message
 	 *					2.	ProtocolVersion is not larger than the highes specified version number of iec62541 				
 	 *					3.	Message size (starting in byte 5) is larger than 32
 	 *					4.	Message size equals 32 + plus the given size in the EndpointUrl length field	
@@ -42,42 +62,55 @@ LIBRARY iec62541
 		IS_INSTANTIABLE;
 		VARIABLES
 			serverProtocolVersion	:	UINT
-				COMMENT			= "Latest version of OPC UA TCP protocol supported by this server"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Latest version of OPC UA TCP protocol supported by this server";
 			serverReceiveBufferSize	:	UINT
-				COMMENT			= "Largest message (chunk) this server can receive"
-				INITIALVALUE	= 65536;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Largest message (chunk) this server can receive";
 			serverSendBufferSize	: UINT
-				COMMENT			= "Largest message (chunk) this server will send"
-				INITIALVALUE	= 65536;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Largest message (chunk) this server will send";
 			serverMaxMessageSize	: UINT
-				COMMENT			= "Maximum size for any response message sent to this server"
-				INITIALVALUE	= 65536;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Maximum size for any response message sent to this server";
 			serverMaxChunkCount		: UINT
-				COMMENT			= "Maximum number of chunks this server can handle"
-				INITIALVALUE	= 1;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Maximum number of chunks this server can handle";
 			serverEndpointUrl []	: STRING
 				COMMENT			= "URL this clients wants to connect to";			
 			clientProtocolVersion	:	UINT
-				COMMENT			= "Latest version of OPC UA TCP protocol supported by tjhe client"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Latest version of OPC UA TCP protocol supported by the client";
 			clientReceiveBufferSize	:	UINT
-				COMMENT			= "Largest message (chunk) the client can receive"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Largest message (chunk) the client can receive";
 			clientSendBufferSize	: UINT
-				COMMENT			= "Largest message (chunk) the client will send"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Largest message (chunk) the client will send";
 			clientMaxMessageSize	: UINT
-				COMMENT			= "Maximum size for any response message sent to this client"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Maximum size for any response message sent to this client";
 			clientMaxChunkCount		: UINT
-				COMMENT			= "Maximum number of chunks this client can handle"
-				INITIALVALUE	= 0;
+				IS_DERIVED
+				HAS_ACCESSORS
+				COMMENT			= "Maximum number of chunks this client can handle";
 			clientEndpointUrl		: STRING
 				COMMENT			= "URL this clients wants to connect to"
 				INITIALVALUE	= "";
+			connectionData		:	C_TYPE <UA_Connection>;
 		END_VARIABLES;
 		OPERATIONS
+			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
 			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			/**
@@ -107,6 +140,113 @@ LIBRARY iec62541
  		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
 		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
 		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaDiscoveryServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of DiscoveryServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		FindServers				:	C_FUNCTION <UA_FINDSERVERS_SERVICE>;
+		GetEndpoints			:	C_FUNCTION <UA_GETENDPOINTS_SERVICE>;
+		RegisterServer			:	C_FUNCTION <UA_REGISTERSERVER_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaSecureChannelServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of SecureChannelServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		OpenSecureChannel		:	C_FUNCTION <UA_OPENSECURECHANNEL_SERVICE>;
+		CloseSecureChannel		:	C_FUNCTION <UA_CLOSESECURECHANNEL_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaSessionServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of SessionServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		CreateSession			:	C_FUNCTION <UA_CREATESESSION_SERVICE>;
+		ActivateSession			:	C_FUNCTION <UA_ACTIVATESESSION_SERVICE>;
+		CloseSession			:	C_FUNCTION <UA_CLOSESESSION_SERVICE>;
+		Cancel					:	C_FUNCTION <UA_CANCEL_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaNodeManagementServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of NodeManagementServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		AddNodes				:	C_FUNCTION <UA_ADDNODES_SERVICE>;
+		AddReferences			:	C_FUNCTION <UA_ADDREFERENCES_SERVICE>;
+		DeleteNodes				:	C_FUNCTION <UA_DELETENODES_SERVICE>;
+		DeleteReferences		:	C_FUNCTION <UA_DELETEREFERENCES_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaViewServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of ViewServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		Browse					:	C_FUNCTION <UA_BROWSE_SERVICE>;
+		BrowseNext				:	C_FUNCTION <UA_BROWSENEXT_SERVICE>;
+		TranslateBrowsePathsToNodeIds				:	C_FUNCTION <UA_TRANSLATEBROWSEPATHSTONODEIDS_SERVICE>;
+		RegisterNodes			:	C_FUNCTION <UA_REGISTERNODES_SERVICE>;
+		UnregisterNodes			:	C_FUNCTION <UA_UNREGISTERNODES_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaQueryServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of QueryServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		QueryFirst				:	C_FUNCTION <UA_QUERYFIRST_SERVICE>;
+		QueryNext				:	C_FUNCTION <UA_QUERYNEXT_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaAttributeServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of AttributeServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		Read					:	C_FUNCTION <UA_READ_SERVICE>;
+		HistoryRead				:	C_FUNCTION <UA_HISTORYREAD_SERVICE>;
+		Write					:	C_FUNCTION <UA_WRITE_SERVICE>;
+		HistoryUpdate			:	C_FUNCTION <UA_HISTORYUPDATE_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaMethodServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of MethodServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		Call					:	C_FUNCTION <UA_CALL_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaMonitoredItemsServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of MonitoredItemsServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		CreateMonitoredItems	:	C_FUNCTION <UA_CREATEMONITOREDITEMS_SERVICE>;
+		ModifyMonitoredItems	:	C_FUNCTION <UA_MODIFYMONITOREDITEMS_SERVICE>;
+		SetMonitoringMode		:	C_FUNCTION <UA_SETMONITORINGMODE_SERVICE>;
+		SetTriggering			:	C_FUNCTION <UA_SETTRIGGERING_SERVICE>;
+		DeleteMonitoredItems	:	C_FUNCTION <UA_DELETEMONITOREDITEMS_SERVICE>;
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	CLASS uaSubscriptionServiceImplementations	:	CLASS ov/object
+	COMMENT	=	"Implementations of SubscriptionServiceSet services";
+	OPERATIONS
+		initImplementations		:	C_FUNCTION <INITSERVICEIMPLEMENTATIONS>;
+		CreateSubscription		:	C_FUNCTION <UA_CREATESUBSCRIPTION_SERVICE>;
+		ModifySubscription		:	C_FUNCTION <UA_MODIFYSUBSCRIPTION_SERVICE>;
+		SetPublishingMode		:	C_FUNCTION <UA_SETPUBLISHINGMODE_SERVICE>;
+		Publish					:	C_FUNCTION <UA_PUBLISH_SERVICE>;
+		Republish				:	C_FUNCTION <UA_REPUBLISH_SERVICE>;
+		TransferSubscriptions	:	C_FUNCTION <UA_TRANSFERSUBSCRIPTIONS_SERVICE>;
+		DeleteSubscriptions		:	C_FUNCTION <UA_DELETESUBSCRIPTIONS_SERVICE>;
 	END_OPERATIONS;	
 	END_CLASS;
 	
