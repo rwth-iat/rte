@@ -70,29 +70,31 @@ OV_EXTERN OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS];
 
 /*	----------------------------------------------------------------------	*/
 
-OV_DLLFNCEXPORT OV_UINT ov_object_id1_get(
+OV_DLLFNCEXPORT OV_UINT ov_object_idH_get(
 	OV_INSTPTR_ov_object 		pobj
 ) {
-	return pobj->v_id1;
+	return pobj->v_idH;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ov_object_id1_set(
+OV_DLLFNCEXPORT OV_RESULT ov_object_idH_set(
 	OV_INSTPTR_ov_object 		pobj,
 	OV_UINT						value
 ) {
+	/*	write may never happen --> this accessor fakes successfull accessses for db-dumps etc.	*/
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_UINT ov_object_id0_get(
+OV_DLLFNCEXPORT OV_UINT ov_object_idL_get(
 	OV_INSTPTR_ov_object 		pobj
 ) {
-	return pobj->v_id0;
+	return pobj->v_idL;
 }
 
-OV_DLLFNCEXPORT OV_RESULT ov_object_id0_set(
+OV_DLLFNCEXPORT OV_RESULT ov_object_idL_set(
 	OV_INSTPTR_ov_object 		pobj,
 	OV_UINT						value
 ) {
+	/*	write may never happen --> this accessor fakes successfull accessses for db-dumps etc.	*/
 	return OV_ERR_OK;
 }
 

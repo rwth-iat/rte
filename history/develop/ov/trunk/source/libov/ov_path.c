@@ -123,7 +123,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 		*/
 		id = strtoull(&(pc[2]), &pcTemp, 10);
 		pc = pcTemp;
-		if(id){	/*	0 is root domain	*/
+		if(id == 0){	/*	0 is root domain	*/
+			relsize = 0;
+			size = 1;
+			if((*pc == '/') || (*pc == '.')){
+				del = *pc;
+				pc++;
+			}
+		} else {
 			result = ov_path_getObjectById(id >> 32, id & 0x00000000FFFFFFFF, &pobj);
 			if(Ov_Fail(result)){
 				return result;
@@ -144,12 +151,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 			pathByIdSize = size;
 			relsize = 0;
 			del = '/';
-		} else {
-			relsize = 0;
-			size = 1;
-			pc++;
-			del = '/';
-		}		
+			if((*pc == '/') || (*pc == '.')){
+				del = *pc;
+				pc++;
+			}
+		}	
 	} else if(*pc == '/') {
 		/*
 		*	path is absolute

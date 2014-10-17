@@ -134,8 +134,8 @@ OV_RESULT ov_vendortree_init(void) {
 	if(!pdb->vendordom.v_linktable) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
-	pdb->vendordom.v_id1 = 0;
-	pdb->vendordom.v_id0 = 1;
+	pdb->vendordom.v_idH = 0;
+	pdb->vendordom.v_idL = 1;
 	
 	memset(pdb->vendordom.v_linktable, 0, pclass_ov_domain->v_linktablesize);
 	DoLink(ov_containment, &pdb->root, &pdb->vendordom);

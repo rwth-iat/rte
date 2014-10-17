@@ -40,10 +40,12 @@ LIBRARY ov
 	CLASS object
 		VARIABLES
 			identifier : STRING;
-			id1			:	UINT
-				HAS_ACCESSORS;
-			id0			:	UINT
-				HAS_ACCESSORS;
+			idH			:	UINT
+				HAS_ACCESSORS
+				COMMENT	= "high dword of this object's unique id within the server (as long as it exists)";
+			idL			:	UINT
+				HAS_ACCESSORS
+				COMMENT	= "low dword of this object's unique id within the server (as long as it exists)";
 			creationtime : TIME;
 			pouterobject : C_TYPE <OV_INSTPTR>;	//if this is a OV Part
 			objectstate : INT;	//OV_OS_NONE, OV_OS_INIT, OV_OS_STARTED or OV_OS_ACTIVE

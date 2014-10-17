@@ -797,10 +797,10 @@ OV_RESULT ov_class_createobject_preinit(
 	/*
 	*	getId and insert it in linked list
 	*/
-	if(!ov_database_getId(&(pobj->v_id1), &(pobj->v_id0))){
+	if(!ov_database_getId(&(pobj->v_idH), &(pobj->v_idL))){
 		return OV_ERR_DBOUTOFMEMORY;
 	}
-	result = ov_database_idListInsert(pobj->v_id1, pobj->v_id0, pobj);
+	result = ov_database_idListInsert(pobj->v_idH, pobj->v_idL, pobj);
 	if(Ov_Fail(result)) {
 		return result;
 	}
@@ -911,10 +911,10 @@ void ov_class_deleteobject_cleanupinst(
 		/*
 		*	release objects id
 		*/
-		result = ov_database_idListRelease(pobj->v_id1, pobj->v_id0);
+		result = ov_database_idListRelease(pobj->v_idH, pobj->v_idL);
 		if(Ov_Fail(result)){
 			ov_memstack_lock();
-			ov_logfile_error("could not release objects id %#X%08X of instance %s. reason %s", pobj->v_id1, pobj->v_id0, pobj->v_identifier, ov_result_getresulttext(result));
+			ov_logfile_error("could not release objects id %#X%08X of instance %s. reason %s", pobj->v_idH, pobj->v_idL, pobj->v_identifier, ov_result_getresulttext(result));
 			ov_memstack_unlock();
 		}
 		/*

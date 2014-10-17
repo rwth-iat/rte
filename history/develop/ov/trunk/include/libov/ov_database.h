@@ -149,30 +149,30 @@ OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN
 
-/*	
+/**	
  *	Get a numeric id and increment the internal counter
  */
 OV_DLLFNCEXPORT OV_BOOL ov_database_getId(OV_UINT *idH, OV_UINT *idL);
 
-/*	
+/**	
  *	Relate an object pointer  with an id (creates a new entry in the idList relating object pointer and id)
  *	is called on every object creation
  */
 OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_UINT idL, const OV_INSTPTR_ov_object pInstance);
 
-/*	
- *	Releases an id (deltes it from the list)
+/**	
+ *	Releases an id (deletes it from the list)
  *	is called on every objet deletion
  */
 OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_UINT idL);
 
-/*	get the node (chunk) an id is in
+/**	get the node (chunk) an id is in
  *	walk along the nodes and check if id is between min and max for this node
  *	if id > idList->maxId / 2 walk from the end, otherwise walkl from the beginning
  */
 OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL);
 
-/*	get the index of a relation within a node (chunk) by its id
+/**	get the index of a relation within a node (chunk) by its id
  *	use bisection to find it
  *	returns OV_ERR_GENERIC if it was not found
  */
