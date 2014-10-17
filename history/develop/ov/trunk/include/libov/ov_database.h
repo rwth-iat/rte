@@ -61,6 +61,41 @@ extern "C" {
 	sprintf(helpname, "%s%s%s", getenv("ACPLT_HOME"), FOLDER_DELIMITER, varname); \
 	varname = helpname
 
+/*		
+ *	List structure for objectId -> object-pointer relation
+ */
+typedef struct {
+	OV_UINT						idLow;	/*	low dWord of id	*/
+	OV_UINT						idHigh;	/*	high dWord of id	*/
+	OV_INSTPTR_ov_object		pobj;	/* address of object in db */
+}	OV_ID_POINTER_RELATION;
+
+#define OV_IDLIST_RELATIONSPERCHUNK	1024
+
+typedef struct OV_IDLIST_NODE{
+	OV_UINT						minIdLow;	/*	low dWord of id	*/
+	OV_UINT						minIdHigh;	/*	high dWord of id	*/
+	OV_UINT						maxIdLow;	/*	low dWord of id	*/
+	OV_UINT						maxIdHigh;	/*	high dWord of id	*/
+	struct OV_IDLIST_NODE				*pPrevious;	/*	pointer to previous node	*/
+	struct OV_IDLIST_NODE				*pNext;		/*	pointer to next node	*/
+	OV_UINT						nodeNumberLow;	/*	low dWord of this node's number	*/
+	OV_UINT						nodeNumberHigh;	/*	high dWord of this node's number	*/
+	OV_UINT						relationCount;	/*	number of relations currently filled	*/
+	OV_ID_POINTER_RELATION		relations [OV_IDLIST_RELATIONSPERCHUNK];	/* chunk of relations */
+}	OV_IDLIST_NODE;	
+
+typedef struct {
+	OV_UINT						minIdLow;	/*	low dWord of id	*/
+	OV_UINT						minIdHigh;	/*	high dWord of id	*/
+	OV_UINT						maxIdLow;	/*	low dWord of id	*/
+	OV_UINT						maxIdHigh;	/*	high dWord of id	*/
+	OV_IDLIST_NODE				*pFirst;	/*	pointer to first node	*/
+	OV_IDLIST_NODE				*pLast;		/*	pointer to last node	*/
+	OV_UINT						nodeCountLow;	/*	low dWord of this node's number	*/
+	OV_UINT						nodeCountHigh;	/*	high dWord of this node's number	*/
+}	OV_IDLIST_HEADNODE;	
+	
 /*
 *	OV_DATABASE_INFO:
 *	-----------------
@@ -82,6 +117,11 @@ typedef struct {
 	OV_STRING			serverpassword;	/* password for server access */
 	OV_TIME_SPAN			timeoffset;	/* time offset of servertime to systemtime */
 	OV_BOOL				started;	/* true, if database is started up */
+	OV_UINT				idCounter1;	/*	high dword of idCounter (is incremtented with each new instance)
+									 *	--> numeric id of newest instance in db	*/
+	OV_UINT				idCounter0;	/*	low dword of idCounter (is incremtented with each new instance)
+									 *	--> numeric id of newest instance in db	*/
+	OV_IDLIST_HEADNODE	*idList;		/*	starting point for id -> pointer relations	*/
 }	OV_DATABASE_INFO;
 
 /*
@@ -108,6 +148,35 @@ extern OV_DATABASE_INFO OV_MEMSPEC	*pdbmem;
 OV_EXTERN OV_DATABASE_INFO OV_MEMSPEC	*pdb;
 OV_EXTERN OV_STRING db_backup_filename;
 #undef OV_EXTERN
+
+/*	
+ *	Get a numeric id and increment the internal counter
+ */
+OV_DLLFNCEXPORT OV_BOOL ov_database_getId(OV_UINT *idH, OV_UINT *idL);
+
+/*	
+ *	Relate an object pointer  with an id (creates a new entry in the idList relating object pointer and id)
+ *	is called on every object creation
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_UINT idL, const OV_INSTPTR_ov_object pInstance);
+
+/*	
+ *	Releases an id (deltes it from the list)
+ *	is called on every objet deletion
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_UINT idL);
+
+/*	get the node (chunk) an id is in
+ *	walk along the nodes and check if id is between min and max for this node
+ *	if id > idList->maxId / 2 walk from the end, otherwise walkl from the beginning
+ */
+OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL);
+
+/*	get the index of a relation within a node (chunk) by its id
+ *	use bisection to find it
+ *	returns OV_ERR_GENERIC if it was not found
+ */
+OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT idL, const struct OV_IDLIST_NODE const* node, OV_UINT* index);
 
 /*
 *	Create a new database

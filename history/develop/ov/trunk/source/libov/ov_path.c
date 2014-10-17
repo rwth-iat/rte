@@ -41,6 +41,35 @@
 
 /*	----------------------------------------------------------------------	*/
 
+OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById(
+	const OV_UINT			idHigh,
+	const OV_UINT			idLow,
+	OV_INSTPTR_ov_object	*ppobj
+) {
+	OV_IDLIST_NODE* node = NULL;
+	OV_UINT index;
+	OV_RESULT result;
+	
+	if(!ppobj){
+		return OV_ERR_BADPARAM;
+	}
+	*ppobj = NULL;
+	node = ov_database_idListGetNode(idHigh, idLow);
+	if(!node){
+		return OV_ERR_BADPATH;
+	}
+	result = ov_database_idListGetRelationIndex(idHigh, idLow, node, &index);
+	if(Ov_Fail(result)){
+		return result;
+	}
+	*ppobj = node->relations[index].pobj;
+	if(!*ppobj){
+		return OV_ERR_BADPATH;
+	} else {
+		return OV_ERR_OK;
+	}
+}
+
 /*
 *	Resolve a path using a given path name
 *	Note: the memory for the path elements is allocated on the memory
@@ -56,7 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	*	local variables
 	*/
 	OV_UINT		size, relsize;
-	OV_STRING	pc;
+	OV_STRING	pc, pcTemp;
 	OV_STRING       pathcopy;
 	char		del, nextdel;
 	OV_UINT		i;
@@ -65,6 +94,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	OV_RESULT	result;
 	OV_STRING	pcundo;
 	char		cundo;
+	OV_INSTPTR_ov_object pobj = NULL;
+	OV_INSTPTR_ov_domain pparent = NULL;
+	uint64_t	id = 0;
+	OV_UINT pathByIdSize = 0;
 	/*
 	*	check parameters
 	*/
@@ -84,7 +117,40 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 	*	determine the count of path elements needed (relative part)
 	*/
 	pc = pathcopy;
-	if(*pc == '/') {
+	if((pc[0] == '/') && (pc[1] == '.') && (pc[2] >= '0') && (pc[2] <= '9')){
+		/*
+		*	path is a numeric id
+		*/
+		id = strtoull(&(pc[2]), &pcTemp, 10);
+		pc = pcTemp;
+		if(id){	/*	0 is root domain	*/
+			result = ov_path_getObjectById(id >> 32, id & 0x00000000FFFFFFFF, &pobj);
+			if(Ov_Fail(result)){
+				return result;
+			}
+			if(!pobj->v_pouterobject){
+				pparent = Ov_GetParent(ov_containment, pobj);
+			} else {
+				pparent = (OV_INSTPTR_ov_domain)pobj->v_pouterobject;
+			}
+			for(i = 2; pparent != &(pdb->root); i++){
+				if(!pparent->v_pouterobject){
+				pparent = Ov_GetParent(ov_containment, pparent);
+				} else {
+					pparent = (OV_INSTPTR_ov_domain)pparent->v_pouterobject;
+				}
+			}
+			size = i;
+			pathByIdSize = size;
+			relsize = 0;
+			del = '/';
+		} else {
+			relsize = 0;
+			size = 1;
+			pc++;
+			del = '/';
+		}		
+	} else if(*pc == '/') {
 		/*
 		*	path is absolute
 		*/
@@ -213,9 +279,27 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_resolve(
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 	/*
-	*	copy relative part or create root element
+	*	set path by object id or copy relative part or create root element
 	*/
-	if(relsize) {
+	if(pobj){
+		ppath->size = pathByIdSize;
+		ppath->elements[pathByIdSize-1].elemtype = OV_ET_OBJECT;
+		ppath->elements[pathByIdSize-1].pobj = pobj;
+		if(!pobj->v_pouterobject){
+			pparent = Ov_GetParent(ov_containment, pobj);
+		} else {
+			pparent = (OV_INSTPTR_ov_domain)pobj->v_pouterobject;
+		}
+		for(i=pathByIdSize-2; (i >= 0) && pparent; i--){
+			ppath->elements[i].elemtype = OV_ET_OBJECT;
+			ppath->elements[i].pobj = Ov_StaticPtrCast(ov_object, pparent);
+			if(!pparent->v_pouterobject){
+				pparent = Ov_GetParent(ov_containment, pparent);
+			} else {
+				pparent = (OV_INSTPTR_ov_domain)pparent->v_pouterobject;
+			}
+		}
+	} else if(relsize) {
 		memcpy(ppath->elements, prelpath->elements, relsize*sizeof(OV_ELEMENT));
 		ppath->size = relsize;
 	} else {

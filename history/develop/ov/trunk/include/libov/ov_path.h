@@ -48,6 +48,15 @@ typedef struct {
 }	OV_PATH;
 
 /**
+*	Get an object pointer from the object's id (unique in ov-server instance)
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById(
+	const OV_UINT			idHigh,
+	const OV_UINT			idLow,
+	OV_INSTPTR_ov_object	*ppobj
+);
+
+/**
 *	Resolve a path using a given path name
 *	Note: the memory for the path elements is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function

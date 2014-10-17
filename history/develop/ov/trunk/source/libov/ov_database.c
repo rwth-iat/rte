@@ -232,6 +232,243 @@ __ml_ptr ov_database_morecore(
 
 /*	----------------------------------------------------------------------	*/
 
+/*	
+ *	Get a numeric id and increment the internal counter
+ */
+
+ OV_DLLFNCEXPORT OV_BOOL ov_database_getId(OV_UINT *idH, OV_UINT *idL){
+	if(idH){
+		*idH = pdb->idCounter1;
+	}
+	if(idL){
+		*idL = pdb->idCounter0;
+	}
+	
+	if(pdb->idCounter0 < OV_VL_MAXUINT){
+		pdb->idCounter0++;
+		return TRUE;
+	} else {
+		pdb->idCounter0 = 0;
+		if(pdb->idCounter1 < OV_VL_MAXUINT){
+			pdb->idCounter1++;
+			return TRUE;
+		} else {
+		/*	error --> too many objects, I wonder if this will ever happen^^	*/
+			return FALSE;
+		}
+	}
+ }
+ 
+ /*	compare 2 ids returns -1 if id1 < id2, 1 if id1 > id2 and else 0	*/
+ OV_INT ov_database_compareIds(const OV_UINT id1H, const OV_UINT id1L, const OV_UINT id2H, const OV_UINT id2L){
+	if(id1H > id2H){
+		return 1;
+	} else if(id1H < id2H){
+		return -1;
+	} else {
+		if(id1L > id2L){
+			return 1;
+		} else if(id1L < id2L){
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+ }
+ 
+ /*	get the node (chunk) an id is in
+ *	walk along the nodes and check if id is between min and max for this node
+ *	if id > idList->maxId / 2 walk from the end, otherwise walkl from the beginning
+ */
+OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL){
+	OV_IDLIST_NODE* node = NULL;
+	uint64_t id64;
+	uint64_t maxId64;
+	
+	id64 = (uint64_t)idH << 32;
+	id64 += idL;
+	maxId64 = (uint64_t)pdb->idList->maxIdHigh << 32;
+	maxId64 += pdb->idList->maxIdLow;
+	if(id64 > maxId64){
+		return NULL;
+	} 
+
+	if(id64 < (maxId64 / 2)){
+		/*	id < idList->maxId / 2 --> start at the beginning	*/
+		node = pdb->idList->pFirst;
+		while(ov_database_compareIds(idH, idL, node->maxIdHigh, node->maxIdLow) > 0){
+			node = node->pNext;
+		}
+	} else {
+		/*	id > idList->maxId / 2 --> start at the end	*/
+		node = pdb->idList->pLast;
+		while(ov_database_compareIds(idH, idL, node->minIdHigh, node->minIdLow) < 0){
+			node = node->pPrevious;
+		}
+	}
+	return node;
+}
+ 
+ /*	get the index of a relation within a node (chunk) by its id
+ *	use bisection to find it
+ *	returns OV_ERR_GENERIC if it was not found
+ */
+OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT idL, const struct OV_IDLIST_NODE const* node, OV_UINT* index){
+	OV_UINT currMin = 0;
+	OV_UINT currMax;
+	OV_INT cmpRes;
+	
+	if(!index){
+		return OV_ERR_BADPARAM;
+	}
+	
+	if((ov_database_compareIds(idH, idL, node->maxIdHigh, node->maxIdLow) > 0) || (ov_database_compareIds(idH, idL, node->minIdHigh, node->minIdLow) < 0)){
+		return OV_ERR_BADVALUE;
+	}
+	currMax = node->relationCount - 1;
+	do{
+		*index = (currMax - currMin) / 2 + currMin;
+		cmpRes = ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow);
+		if(cmpRes > 0){
+			currMin = *index;
+		} else if(cmpRes < 0){
+			currMax = * index;
+		} else {
+			return OV_ERR_OK;
+		}
+	}while((currMax - currMin) > 1);
+	*index = currMax;
+	if(ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow) == 0){
+		return OV_ERR_OK;
+	} else {
+		(*index)++;
+		if(ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow) == 0){
+			return OV_ERR_OK;
+		} else {
+			return OV_ERR_GENERIC;
+		}
+	}
+}
+ 
+ /*	
+ *	Relate an object pointer  with an id (creates a new entry in the idList relating object pointer and id)
+ *	is called on every object creation
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_UINT idL, const OV_INSTPTR_ov_object pInstance){
+	/*	as this function is called on object creation and ids are counted up, a look at the very last element in the list should suffice
+	 *	and if not throw an error
+	 */
+	OV_UINT iterator;
+	 
+	if(!pInstance){
+		return OV_ERR_BADPARAM;
+	}	/*	check if id is lager than the largest id in the list or if it ist the very first object	*/
+	if((ov_database_compareIds(idH, idL, pdb->idList->maxIdHigh, pdb->idList->maxIdLow) > 0) || ((!idH) && (!idL) && (!pdb->idList->maxIdHigh) && (!pdb->idList->maxIdLow))){
+		/*	expected case --> append to the end	*/
+		if(pdb->idList->pFirst->relationCount >= OV_IDLIST_RELATIONSPERCHUNK){
+			/*	chunk is full, create e new one	*/
+			pdb->idList->pLast->pNext = ov_database_malloc(sizeof(OV_IDLIST_NODE));
+			if(!pdb->idList->pLast->pNext){
+				return OV_ERR_DBOUTOFMEMORY;
+			}
+			pdb->idList->pLast->pNext->pPrevious = pdb->idList->pLast;
+			pdb->idList->pLast = pdb->idList->pLast->pNext;
+			pdb->idList->pFirst->pNext = NULL;
+			if(pdb->idList->pLast->pPrevious->nodeNumberLow == OV_VL_MAXUINT){
+				if(pdb->idList->pLast->pPrevious->nodeNumberHigh == OV_VL_MAXUINT){
+					return OV_ERR_DBOUTOFMEMORY;
+				}
+				pdb->idList->pLast->nodeNumberLow = 0;
+				pdb->idList->pLast->nodeNumberHigh = pdb->idList->pLast->pPrevious->nodeNumberHigh + 1;
+			} else {
+				pdb->idList->pLast->nodeNumberLow = pdb->idList->pLast->pPrevious->nodeNumberLow + 1;
+				pdb->idList->pLast->nodeNumberHigh = pdb->idList->pLast->pPrevious->nodeNumberHigh;
+			}
+			pdb->idList->nodeCountHigh = pdb->idList->pLast->nodeNumberHigh;
+			pdb->idList->nodeCountLow = pdb->idList->pLast->nodeNumberLow;
+			
+			for(iterator = 0; iterator < OV_IDLIST_RELATIONSPERCHUNK; iterator++){
+				pdb->idList->pLast->relations[iterator].idLow = 0;
+				pdb->idList->pLast->relations[iterator].idHigh = 0;
+				pdb->idList->pLast->relations[iterator].pobj = NULL;
+			}
+			pdb->idList->pLast->minIdLow = idL;
+			pdb->idList->pLast->minIdHigh = idH;
+			pdb->idList->pLast->relationCount = 0;
+		}
+		/*	here pLast is surely the chunk we need --> insert 	*/
+		pdb->idList->pLast->relations[pdb->idList->pLast->relationCount].idLow = idL;
+		pdb->idList->pLast->relations[pdb->idList->pLast->relationCount].idHigh = idH;
+		pdb->idList->pLast->relations[pdb->idList->pLast->relationCount].pobj = pInstance;
+		pdb->idList->pLast->relationCount++;
+		pdb->idList->pLast->maxIdLow = idL;
+		pdb->idList->pLast->maxIdHigh = idH;
+		pdb->idList->maxIdLow = idL;
+		pdb->idList->maxIdHigh = idH;
+		return OV_ERR_OK;
+	} else {
+		return OV_ERR_BADVALUE;
+	}
+	
+}
+
+/*	
+ *	Releases an id (deltes it from the list)
+ *	is called on every objet deletion
+ *	succeeding list elements are moved backwards
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_UINT idL){
+	OV_IDLIST_NODE* node = NULL;
+	OV_UINT index;
+	OV_RESULT result;
+	OV_UINT iterator;
+	/*	find relation	*/
+	node = ov_database_idListGetNode(idH, idL);
+	if(!node){
+		return OV_ERR_GENERIC;
+	}
+	result = ov_database_idListGetRelationIndex(idH, idL, node, &index);
+	if(Ov_Fail(result)){
+		return result;
+	}
+	/*	move all relations one step backwards	*/
+	while(node){
+		for(iterator = index + 1; iterator < node->relationCount; iterator++, index++){
+			node->relations[index].idLow = node->relations[iterator].idLow;
+			node->relations[index].idHigh = node->relations[iterator].idHigh;
+			node->relations[index].pobj = node->relations[iterator].pobj;
+		}
+		if(node->pNext){
+			node->relations[index].idLow = node->pNext->relations[0].idLow;
+			node->relations[index].idHigh = node->pNext->relations[0].idHigh;
+			node->relations[index].pobj = node->pNext->relations[0].pobj;
+			node->maxIdHigh = node->pNext->minIdHigh;
+			node->maxIdLow = node->pNext->minIdLow;
+		} else {
+			node->relations[index].idLow = 0;
+			node->relations[index].idHigh = 0;
+			node->relations[index].pobj = NULL;
+			node->relationCount--;
+		}
+		node->minIdHigh = node->relations[0].idHigh;
+		node->minIdLow = node->relations[0].idLow;
+		
+		node = node->pNext;
+	}
+	if(!pdb->idList->pLast->relationCount){
+		pdb->idList->pLast = pdb->idList->pLast->pPrevious;
+		ov_database_free(pdb->idList->pLast->pNext);
+		if(pdb->idList->nodeCountLow){
+			pdb->idList->nodeCountLow--;
+		} else {
+			pdb->idList->nodeCountHigh--;
+			pdb->idList->nodeCountLow = OV_VL_MAXUINT;
+		}
+	}
+	return OV_ERR_OK;
+}
+
+ 
 /*
 *	Create a new database
 *	
@@ -251,6 +488,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	*	local variables
 	*/
 	OV_RESULT		result;
+	OV_UINT			iterator;
 	
 #if !OV_SYSTEM_MC164
 	FILE			*fp;
@@ -477,7 +715,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 
 	pdb->pend = (OV_BYTE*)((OV_BYTE*)pdb+size);
 	pdb->started = FALSE;
-
+		
 	/*
 	*	initialize the database memory pool
 	*	    
@@ -486,24 +724,70 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 		ov_database_unmap();
 		return OV_ERR_DBOUTOFMEMORY;
 	}
+	
+	/*
+	 *	initialize idCounter
+	 */
+	pdb->idCounter0 = 0;
+	pdb->idCounter1 = 0;
+
+	/*
+	 *	initialize the idLIst
+	 */
+	pdb->idList = ov_database_malloc(sizeof(OV_IDLIST_HEADNODE));
+	Ov_AbortIfNot(pdb->idList);
+	pdb->idList->minIdLow = 0;
+	pdb->idList->minIdHigh = 0;
+	pdb->idList->maxIdLow = 0;
+	pdb->idList->maxIdHigh = 0;
+	pdb->idList->pFirst = ov_database_malloc(sizeof(OV_IDLIST_NODE));
+	Ov_AbortIfNot(pdb->idList->pFirst);
+	pdb->idList->pLast = pdb->idList->pFirst;
+	pdb->idList->nodeCountLow = 1;
+	pdb->idList->nodeCountHigh = 0;
+	pdb->idList->pFirst->minIdLow = 0;
+	pdb->idList->pFirst->minIdHigh = 0;
+	pdb->idList->pFirst->maxIdLow = 0;
+	pdb->idList->pFirst->maxIdHigh = 0;
+	pdb->idList->pFirst->pPrevious = NULL;
+	pdb->idList->pFirst->pNext = NULL;
+	pdb->idList->pFirst->nodeNumberLow = 1;
+	pdb->idList->pFirst->nodeNumberHigh = 0;
+	pdb->idList->pFirst->relationCount = 0;
+	for(iterator = 0; iterator < OV_IDLIST_RELATIONSPERCHUNK; iterator++){
+		pdb->idList->pFirst->relations[iterator].idLow = 0;
+		pdb->idList->pFirst->relations[iterator].idHigh = 0;
+		pdb->idList->pFirst->relations[iterator].pobj = NULL;
+	}
+	
 	/*
 	*	initialize the root domain object
 	*/
 	Ov_AbortIfNot(Ov_OK(ov_string_setvalue(&pdb->root.v_identifier, 
 		OV_OBJNAME_ROOT)));
 	ov_time_gettime(&pdb->root.v_creationtime);
+	/*	as this is the first getId call for this database it will return 0 0	*/
+	ov_database_getId(&(pdb->root.v_id1), &(pdb->root.v_id0));
+	ov_database_idListInsert(pdb->root.v_id1, pdb->root.v_id0, &(pdb->root));
+	/*	call get id once more to reserve 0 1 for the vendortree (has to be set hard coded as it is not stored in the database)	*/
+	ov_database_getId(NULL, NULL);	// call with NULL-pointers just increments the counter
+	ov_database_idListInsert(0, 1, &(pdb->vendordom));
 	/*
 	*	initialize the acplt domain object
 	*/
 	Ov_AbortIfNot(Ov_OK(ov_string_setvalue(&pdb->acplt.v_identifier, 
 		OV_OBJNAME_ACPLT)));
 	ov_time_gettime(&pdb->acplt.v_creationtime);
+	ov_database_getId(&(pdb->acplt.v_id1), &(pdb->acplt.v_id0));
+	ov_database_idListInsert(pdb->acplt.v_id1, pdb->acplt.v_id0, &(pdb->acplt));
 	/*
 	*	initialize the OV library object
 	*/
 	Ov_AbortIfNot(Ov_OK(ov_string_setvalue(&pdb->ov.v_identifier, 
 		OV_OBJNAME_OV)));
 	ov_time_gettime(&pdb->ov.v_creationtime);
+	ov_database_getId(&(pdb->ov.v_id1), &(pdb->ov.v_id0));
+	ov_database_idListInsert(pdb->ov.v_id1, pdb->ov.v_id0, &(pdb->ov));
 	/*
 	*	load the OV library
 	*/
@@ -1355,6 +1639,8 @@ OV_RESULT ov_database_move(
 	OV_INST_ov_association 		assoc_inheritance;
 	OV_INST_ov_association 		assoc_childrelationship;
 	OV_INST_ov_association 		assoc_parentrelationship;
+	OV_IDLIST_NODE				*pCurrNode = NULL;
+	OV_UINT						iterator;
 	/*
 	*	search inheritance, childrelationship, parentrelationship association
 	*/
@@ -1405,6 +1691,33 @@ OV_RESULT ov_database_move(
 	Ov_Adjust(OV_BYTE*, pdb->pend);
 	Ov_Adjust(OV_BYTE*, pdb->pcurr);
 	Ov_Adjust(OV_STRING, pdb->serverpassword);
+	Ov_Adjust(OV_IDLIST_HEADNODE*, pdb->idList);
+	if(pdb->idList->pFirst){
+		Ov_Adjust(OV_IDLIST_NODE*, pdb->idList->pFirst);
+	}
+	if(pdb->idList->pLast){
+		Ov_Adjust(OV_IDLIST_NODE*, pdb->idList->pLast);
+	}
+	pCurrNode = pdb->idList->pFirst;
+	while(pCurrNode){
+		if(pCurrNode->pNext){
+			Ov_Adjust(OV_IDLIST_NODE*, pCurrNode->pNext);
+		}
+		if(pCurrNode->pPrevious){
+			Ov_Adjust(OV_IDLIST_NODE*, pCurrNode->pPrevious);
+		}
+		for(iterator = 0; iterator < pCurrNode->relationCount; iterator++){
+			Ov_Adjust(OV_INSTPTR_ov_object, pCurrNode->relations[iterator].pobj);
+			if((((OV_BYTE*)pCurrNode->relations[iterator].pobj) < pdb->pstart) || (((OV_BYTE*)pCurrNode->relations[iterator].pobj) > pdb->pend)){
+				pCurrNode->relations[iterator].pobj = NULL;
+				if(pCurrNode->relations[iterator].idLow != 1 || pCurrNode->relations[iterator].idHigh != 0){ /*	exception for vendortree	*/
+					ov_logfile_warning("Pointer in id --> pointer relation points outside database. id: %#X%08X", pCurrNode->relations[iterator].idHigh, pCurrNode->relations[iterator].idLow);
+				}
+			}
+		}
+		pCurrNode = pCurrNode->pNext;
+	}
+	
 	/*
 	*	adjust pointers of the memory pool
 	*/

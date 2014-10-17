@@ -67,7 +67,35 @@
 OV_EXTERN OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS];
 #undef OV_EXTERN
 
+
 /*	----------------------------------------------------------------------	*/
+
+OV_DLLFNCEXPORT OV_UINT ov_object_id1_get(
+	OV_INSTPTR_ov_object 		pobj
+) {
+	return pobj->v_id1;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_object_id1_set(
+	OV_INSTPTR_ov_object 		pobj,
+	OV_UINT						value
+) {
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_object_id0_get(
+	OV_INSTPTR_ov_object 		pobj
+) {
+	return pobj->v_id0;
+}
+
+OV_DLLFNCEXPORT OV_RESULT ov_object_id0_set(
+	OV_INSTPTR_ov_object 		pobj,
+	OV_UINT						value
+) {
+	return OV_ERR_OK;
+}
+
 
 /*
 *	Default constructor of an object

@@ -42,7 +42,9 @@
 #include "libov/ov_scheduler.h"
 #include "libov/ov_library.h"
 #include "libov/ov_string.h"
-
+#include "libov/ov_memstack.h"
+#include "libov/ov_result.h"
+ 
 #if OV_SYSTEM_MC164
 #define memset xmemset
 #endif
@@ -526,6 +528,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 	memset(pobj, 0, size);
+	
 	/*
 	*	preinitialize the object
 	*/
@@ -790,6 +793,18 @@ OV_RESULT ov_class_createobject_preinit(
 	pobj->v_creationtime = *ptime;
 	pobj->v_pouterobject = pouterobj;
 	pobj->v_objectstate = OV_OS_NONE;
+	
+	/*
+	*	getId and insert it in linked list
+	*/
+	if(!ov_database_getId(&(pobj->v_id1), &(pobj->v_id0))){
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+	result = ov_database_idListInsert(pobj->v_id1, pobj->v_id0, pobj);
+	if(Ov_Fail(result)) {
+		return result;
+	}
+	
 	/*
 	*	link with class object
 	*/
@@ -868,6 +883,7 @@ void ov_class_deleteobject_cleanupinst(
 	OV_INSTPTR_ov_class		pchildclass = NULL;
 	OV_ELEMENT			parent, child;
 	Ov_Association_DefineIteratorNM(pit);
+	OV_RESULT result;
 	/*
 	*	initialize
 	*/
@@ -891,6 +907,15 @@ void ov_class_deleteobject_cleanupinst(
 		if(passoc) {
 			pparentclass = Ov_GetParent(ov_parentrelationship, passoc);
 			pchildclass = Ov_GetParent(ov_childrelationship, passoc);
+		}
+		/*
+		*	release objects id
+		*/
+		result = ov_database_idListRelease(pobj->v_id1, pobj->v_id0);
+		if(Ov_Fail(result)){
+			ov_memstack_lock();
+			ov_logfile_error("could not release objects id %#X%08X of instance %s. reason %s", pobj->v_id1, pobj->v_id0, pobj->v_identifier, ov_result_getresulttext(result));
+			ov_memstack_unlock();
 		}
 		/*
 		*	iterate over class elements and free strings, unlink links

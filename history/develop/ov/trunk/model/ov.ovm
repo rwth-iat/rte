@@ -40,6 +40,10 @@ LIBRARY ov
 	CLASS object
 		VARIABLES
 			identifier : STRING;
+			id1			:	UINT
+				HAS_ACCESSORS;
+			id0			:	UINT
+				HAS_ACCESSORS;
 			creationtime : TIME;
 			pouterobject : C_TYPE <OV_INSTPTR>;	//if this is a OV Part
 			objectstate : INT;	//OV_OS_NONE, OV_OS_INIT, OV_OS_STARTED or OV_OS_ACTIVE
