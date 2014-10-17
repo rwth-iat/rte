@@ -167,10 +167,14 @@ typedef OV_ENUM OV_VAR_PROPS;
 	typedef	int32_t	OV_BOOL;		/* bool value */
 	typedef int32_t	OV_INT;			/* integer value */
 	typedef uint32_t	OV_UINT;	/* unsigned integer value */
+	typedef int64_t		OV_INT64;			/* 64bit integer value -- internal use only -- */
+	typedef uint64_t	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
 #else
 	typedef	boot_t	OV_BOOL;		/* bool value */
 	typedef long	OV_INT;			/* integer value */
 	typedef u_long	OV_UINT;	/* unsigned integer value */
+	typedef __int64		OV_INT64;			/* 64bit integer value -- internal use only -- */
+	typedef __uint64	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
 #endif
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
@@ -480,6 +484,9 @@ typedef OV_ENUM OV_TICKET_TYPE;
 */
 #define OV_VL_MAXINT	(((OV_UINT)-1) >> 1)
 #define OV_VL_MAXUINT	((OV_UINT)-1)
+
+#define OV_VL_MAXINT64	(((OV_UINT64)-1) >> 1)
+#define OV_VL_MAXUINT64	((OV_UINT64)-1)
 
 /*
 * 	OV_RESULT:

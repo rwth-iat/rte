@@ -65,35 +65,33 @@ extern "C" {
  *	List structure for objectId -> object-pointer relation
  */
 typedef struct {
-	OV_UINT						idLow;	/*	low dWord of id	*/
 	OV_UINT						idHigh;	/*	high dWord of id	*/
+	OV_UINT						idLow;	/*	low dWord of id	*/
 	OV_INSTPTR_ov_object		pobj;	/* address of object in db */
 }	OV_ID_POINTER_RELATION;
 
-#define OV_IDLIST_RELATIONSPERCHUNK	1024
+#define OV_IDLIST_RELATIONSPERCHUNK	1024		/*	relations stored in one node	*/
+#define OV_IDLIST_NODELISTCHUNKSIZE	32			/*	size of the chunks in which 
+													the nodes-array in headNode is allocated	*/
 
 typedef struct OV_IDLIST_NODE{
-	OV_UINT						minIdLow;	/*	low dWord of id	*/
-	OV_UINT						minIdHigh;	/*	high dWord of id	*/
-	OV_UINT						maxIdLow;	/*	low dWord of id	*/
-	OV_UINT						maxIdHigh;	/*	high dWord of id	*/
-	struct OV_IDLIST_NODE				*pPrevious;	/*	pointer to previous node	*/
-	struct OV_IDLIST_NODE				*pNext;		/*	pointer to next node	*/
-	OV_UINT						nodeNumberLow;	/*	low dWord of this node's number	*/
-	OV_UINT						nodeNumberHigh;	/*	high dWord of this node's number	*/
+	OV_UINT64					minId;		/*	smallest id in this node	*/
+	OV_UINT64					maxId;		/*	largest id in this node	*/
+	struct OV_IDLIST_NODE		*pPrevious;	/*	pointer to previous node	*/
+	struct OV_IDLIST_NODE		*pNext;		/*	pointer to next node	*/
+	OV_UINT64					nodeNumber;	/*	this node's number	*/
 	OV_UINT						relationCount;	/*	number of relations currently filled	*/
 	OV_ID_POINTER_RELATION		relations [OV_IDLIST_RELATIONSPERCHUNK];	/* chunk of relations */
 }	OV_IDLIST_NODE;	
 
 typedef struct {
-	OV_UINT						minIdLow;	/*	low dWord of id	*/
-	OV_UINT						minIdHigh;	/*	high dWord of id	*/
-	OV_UINT						maxIdLow;	/*	low dWord of id	*/
-	OV_UINT						maxIdHigh;	/*	high dWord of id	*/
+	OV_UINT64					minId;		/*	smallest id	*/
+	OV_UINT64					maxId;		/*	largest id	*/
 	OV_IDLIST_NODE				*pFirst;	/*	pointer to first node	*/
 	OV_IDLIST_NODE				*pLast;		/*	pointer to last node	*/
-	OV_UINT						nodeCountLow;	/*	low dWord of this node's number	*/
-	OV_UINT						nodeCountHigh;	/*	high dWord of this node's number	*/
+	OV_IDLIST_NODE				**pNodes;	/*	array of pointers to nodes	*/
+	OV_UINT64					nodeCount;	/*	number of nodes	*/
+	OV_UINT64					relationCount;	/*	number of relations	*/
 }	OV_IDLIST_HEADNODE;	
 	
 /*
