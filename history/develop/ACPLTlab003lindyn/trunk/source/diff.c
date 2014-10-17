@@ -8,6 +8,7 @@
 *   History
 *   -------
 *   2014-06-03   File created
+*   author  : Constantin Wagner, Chair of Process Control Engineering, RWTH Aachen
 *
 *******************************************************************************
 *
