@@ -48,6 +48,8 @@
 *   -------
 *   created : 23.04.2013
 *   author  : Ulrich Epple, Chair of Process Control Engineering, RWTH Aachen
+*    modified : 17.10.2014
+*   author  : Constantin Wagner, Chair of Process Control Engineering, RWTH Aachen
 */
 /*
 *   description

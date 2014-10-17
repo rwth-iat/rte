@@ -48,6 +48,9 @@
  *   -------
  *   created : 23.04.2013
  *   author  : Ulrich Epple, Chair of Process Control Engineering, RWTH Aachen
+ *
+ *   modified : 17.10.2014
+ *   author  : Constantin Wagner, Chair of Process Control Engineering, RWTH Aachen
  */
 /*
  *   description
@@ -139,6 +142,7 @@ void OV_DLLFNCEXPORT ACPLTlab003lindyn_pi_typemethod(OV_INSTPTR_fb_functionblock
 	/* in these cases the algorithm will not be executed   */
 	if (port->v_ENO == 0 || port->v_EN == 0) {
 		port->v_Y = port->v_YTR;
+		port->v_YI = 0;
 		goto finish;
 	}
 	/* controler is on */

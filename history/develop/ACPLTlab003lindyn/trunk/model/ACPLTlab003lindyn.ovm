@@ -143,7 +143,22 @@ CLASS pt1 : CLASS fb/functionblock
 	END_OPERATIONS;
 END_CLASS;
 
+CLASS diff : CLASS fb/functionblock
+	IS_INSTANTIABLE;
+	VARIABLES
+		EN : INT FLAGS = "i" COMMENT = "enables Run-Modus";
+		ENO : INT FLAGS = "o" COMMENT = "shows run-modus";
+		XIN : SINGLE FLAGS = "i" COMMENT = "input value";
+		XOUT : SINGLE FLAGS = "o" COMMENT = "output value";
+		timeold : TIME FLAGS = "n" COMMENT = "output value";
+		xold : SINGLE FLAGS = "n" COMMENT = "input value";
+		END_VARIABLES;
+	OPERATIONS
+		constructor: C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+	END_OPERATIONS;
+END_CLASS;
 
-
+ 
 
 END_LIBRARY;
