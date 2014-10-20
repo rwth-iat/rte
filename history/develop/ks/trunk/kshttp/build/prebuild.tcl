@@ -43,6 +43,8 @@ proc processDir {dirname} {
 			set mimetype "text/javascript"
 		} elseif { $extension == ".css" } {
 			set mimetype "text/css"
+		} elseif { $extension == ".xhtml" } {
+			set mimetype "application/xhtml+xml"
 		} elseif { $extension == ".svg" } {
 			set mimetype "image/svg+xml"
 		} elseif { $extension == ".jpg" || $extension == ".jpeg" || $extension == ".png" || $extension == ".ico" || $extension == ".gif" || $extension == ".log" || $extension == ".php"} {

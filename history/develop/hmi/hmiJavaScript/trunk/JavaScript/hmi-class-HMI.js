@@ -1337,7 +1337,7 @@ HMI.prototype = {
 	 * resizes the sheet to the maximum size
 	 */
 	optimizeSheetSize: function () {
-		if(HMI.Playground.firstChild && window.getComputedStyle){
+		if(window.getComputedStyle && HMI.Playground.firstChild && HMI.Playground.firstChild.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(!HMI.Playground.firstChild.getAttribute('data-originalModelWidth')){
 				HMI.Playground.firstChild.setAttribute('data-originalModelWidth', HMI.Playground.firstChild.getAttribute('width'));
 				HMI.Playground.firstChild.setAttribute('data-originalModelHeight', HMI.Playground.firstChild.getAttribute('height'));

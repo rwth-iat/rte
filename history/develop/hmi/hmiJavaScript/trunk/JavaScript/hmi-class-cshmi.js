@@ -135,7 +135,6 @@ varName[1] evtl nicht verf�gbar!
 
 - Auch das laden sollte asyncrone requests nutzen. 
 	Daf�r muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
-- Nur einige wenige cycTimes (enum like?) erlauben
 #########################################################################################################################*/
 
 /***********************************************************************
