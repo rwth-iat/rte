@@ -292,7 +292,9 @@ OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL){
 	OV_UINT64	id64;
 	OV_DOUBLE	idFraction;
 	OV_UINT64	nodeNumber;
-	
+#if OV_IDLIST_PERFORMANCEPRINTS
+	OV_UINT cycleCounter = 0;
+#endif
 	id64 = ov_database_convertId(idH, idL);
 	if(id64 > pdb->idList->maxId){
 		return NULL;
@@ -303,17 +305,30 @@ OV_IDLIST_NODE* ov_database_idListGetNode(const OV_UINT idH, const OV_UINT idL){
 		the result with the number of nodes to get the starting point
 		if this one does not match directly walk along the list*/
 	idFraction = id64 / pdb->idList->maxId;
-	nodeNumber = (OV_UINT64)(idFraction * pdb->idList->nodeCount);
+	nodeNumber = (OV_UINT64)(idFraction * (pdb->idList->nodeCount - 1));
 
 	node = pdb->idList->pNodes[nodeNumber];
 	while(node){
 		if(node->maxId < id64){
 			node = node->pNext;
+#if OV_IDLIST_PERFORMANCEPRINTS
+			cycleCounter++;
+#endif
 			continue;
 		} else if(node->minId > id64){
 			node = node->pPrevious;
+#if OV_IDLIST_PERFORMANCEPRINTS
+			cycleCounter++;
+#endif
 			continue;
 		} else {
+#if OV_IDLIST_PERFORMANCEPRINTS
+			if(cycleCounter == 0){
+				ov_logfile_debug("getNode: direct hit! (%llu nodes)", pdb->idList->nodeCount);
+			} else {
+				ov_logfile_debug("getNode: %u cycles needed (%llu nodes)", cycleCounter, pdb->idList->nodeCount);
+			}
+#endif
 			break;
 		}
 	}
@@ -329,12 +344,14 @@ OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT id
 	OV_UINT currMax;
 	OV_INT cmpRes;
 	OV_UINT64 id64 = ov_database_convertId(idH, idL);
-	
+#if OV_IDLIST_PERFORMANCEPRINTS
+	OV_UINT cycleCounter = 0;
+#endif
 	if(!index){
 		return OV_ERR_BADPARAM;
 	}
 	
-	if((id64 > node->maxId) || (id64 < node->minId)){
+	if(!node->relationCount || (id64 > node->maxId) || (id64 < node->minId)){
 		return OV_ERR_BADVALUE;
 	}
 	currMax = node->relationCount - 1;
@@ -343,25 +360,56 @@ OV_RESULT ov_database_idListGetRelationIndex(const OV_UINT idH, const OV_UINT id
 		cmpRes = ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow);
 		if(cmpRes > 0){
 			currMin = *index;
+#if OV_IDLIST_PERFORMANCEPRINTS
+			cycleCounter++;
+#endif
 		} else if(cmpRes < 0){
 			currMax = * index;
+#if OV_IDLIST_PERFORMANCEPRINTS
+			cycleCounter++;
+#endif
 		} else {
+#if OV_IDLIST_PERFORMANCEPRINTS
+			ov_logfile_debug("getIndex: boundary hit after %u cycles", cycleCounter);
+#endif
 			return OV_ERR_OK;
 		}
 	}while((currMax - currMin) > 1);
-	*index = currMax;
+	*index = currMin;
 	if(ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow) == 0){
 		return OV_ERR_OK;
 	} else {
 		(*index)++;
 		if(ov_database_compareIds(idH, idL, node->relations[*index].idHigh, node->relations[*index].idLow) == 0){
+#if OV_IDLIST_PERFORMANCEPRINTS
+			ov_logfile_debug("getIndex: hit after %u cycles", cycleCounter);
+#endif
 			return OV_ERR_OK;
 		} else {
+#if OV_IDLIST_PERFORMANCEPRINTS
+			cycleCounter++;
+			ov_logfile_debug("getIndex: hit after %u cycles", cycleCounter);
+#endif
 			return OV_ERR_GENERIC;
 		}
 	}
 }
- 
+
+#if OV_IDLIST_DEBUG
+void idList_printstats(){
+	OV_UINT64 i;
+
+	ov_logfile_debug("-----------");
+	ov_logfile_debug("basedata:\n\tnodeCount:\t\t%llu\n\tminId:\t\t\t%llu\n\tmaxId:\t\t\t%llu\n\tpFirst:\t\t\t%p\n\tpFirst->nodeNumber:\t%llu\n\tpLast:\t\t\t%p\n\tpLast->nodeNumber:\t%llu",
+			pdb->idList->nodeCount, pdb->idList->minId, pdb->idList->maxId, pdb->idList->pFirst, pdb->idList->pFirst->nodeNumber, pdb->idList->pLast, pdb->idList->pLast->nodeNumber);
+	ov_logfile_debug("-----\nnodes:");
+	for(i=0; i<pdb->idList->nodeCount;i++){
+		ov_logfile_debug("entry %llu:\n\taddress:\t%p\n\tnodeNumber:\t%llu\n\tminId:\t\t%llu\n\tmaxId:\t\t%llu\n\trelationCount:\t%u\n\tpPrevious:\t%p\n\tpNext:\t\t%p\n",
+				i, pdb->idList->pNodes[i], pdb->idList->pNodes[i]->nodeNumber, pdb->idList->pNodes[i]->minId, pdb->idList->pNodes[i]->maxId, pdb->idList->pNodes[i]->relationCount, pdb->idList->pNodes[i]->pPrevious, pdb->idList->pNodes[i]->pNext);
+	}
+
+}
+#endif
  /*	
  *	Relate an object pointer  with an id (creates a new entry in the idList relating object pointer and id)
  *	is called on every object creation
@@ -380,6 +428,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_U
 	if((newId > pdb->idList->maxId) || ((!idH) && (!idL) && (!pdb->idList->maxId))){
 		/*	expected case --> append to the end	*/
 		if(pdb->idList->pLast->relationCount >= OV_IDLIST_RELATIONSPERCHUNK){
+#if OV_IDLIST_DEBUG
+			ov_logfile_debug("insert - line: %u - before", __LINE__);
+			idList_printstats();
+#endif
 			/*	node is full, create e new one	*/
 			pdb->idList->pLast->pNext = ov_database_malloc(sizeof(OV_IDLIST_NODE));
 			if(!pdb->idList->pLast->pNext){
@@ -415,8 +467,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_U
 					pNode = pNode->pNext;
 				}
 			}
-			pdb->idList->nodeCount++;
 			pdb->idList->pNodes[pdb->idList->nodeCount - 1] = pdb->idList->pLast;
+#if OV_IDLIST_DEBUG
+			ov_logfile_debug("insert - line: %u - after", __LINE__);
+			idList_printstats();
+#endif
 		}
 		/*	here pLast is surely the chunk we need --> insert 	*/
 		pdb->idList->pLast->relations[pdb->idList->pLast->relationCount].idLow = idL;
@@ -435,11 +490,11 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListInsert(const OV_UINT idH, const OV_U
 
 /*	
  *	Releases an id (deletes it from the list)
- *	is called on every objet deletion
- *	succeeding list elements are moved backwards
+ *	is called on every object deletion
  */
 OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_UINT idL){
 	OV_IDLIST_NODE* node = NULL;
+	OV_IDLIST_NODE* nextNode = NULL;
 	OV_UINT index;
 	OV_RESULT result;
 	OV_UINT iterator;
@@ -452,38 +507,73 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_
 	if(Ov_Fail(result)){
 		return result;
 	}
-	/*	move all relations one step backwards	*/
-	while(node){
-		for(iterator = index + 1; iterator < node->relationCount; iterator++, index++){
-			node->relations[index].idLow = node->relations[iterator].idLow;
-			node->relations[index].idHigh = node->relations[iterator].idHigh;
-			node->relations[index].pobj = node->relations[iterator].pobj;
-		}
-		if(node->pNext){
-			node->relations[index].idLow = node->pNext->relations[0].idLow;
-			node->relations[index].idHigh = node->pNext->relations[0].idHigh;
-			node->relations[index].pobj = node->pNext->relations[0].pobj;
-			node->maxId = node->pNext->minId;
-		} else {
-			node->relations[index].idLow = 0;
-			node->relations[index].idHigh = 0;
-			node->relations[index].pobj = NULL;
-			if(index > 0){
-				node->maxId = ov_database_convertId(node->relations[index-1].idHigh, node->relations[index-1].idLow);
-			}
-			if(node->relationCount > 0){
-				node->relationCount--;
-			}
+#if OV_IDLIST_DEBUG
+	ov_logfile_debug("release - line: %u - before", __LINE__);
+	idList_printstats();
+#endif
+	/*	move all relations in that node one step backwards	*/
+	
+	for(iterator = index + 1; iterator < node->relationCount; iterator++, index++){
+		node->relations[index].idLow = node->relations[iterator].idLow;
+		node->relations[index].idHigh = node->relations[iterator].idHigh;
+		node->relations[index].pobj = node->relations[iterator].pobj;
+	}
+	node->relationCount--;
+	if(node->relationCount){
+		node->minId = ov_database_convertId(node->relations[0].idHigh, node->relations[0].idLow);
+		node->maxId = ov_database_convertId(node->relations[node->relationCount - 1].idHigh, node->relations[node->relationCount - 1].idLow);
+	}
+	/*	if the node and the next node are less than half full put them together, if not do the same test on the previous node	*/
+	if(node->pNext && ((node->relationCount / (OV_IDLIST_RELATIONSPERCHUNK / 2)) < 1) && ((node->pNext->relationCount / (OV_IDLIST_RELATIONSPERCHUNK / 2)) < 1)){
+		nextNode = node->pNext;
+#if OV_IDLIST_DEBUG
+		ov_logfile_debug("putting together node %llu (min %llu, max %llu, count %lu) and node %llu (next) (min %llu, max %llu, count %lu)", node->nodeNumber, node->minId, node->maxId, node->relationCount, nextNode->nodeNumber, nextNode->minId, nextNode->maxId, nextNode->relationCount);
+#endif
+		for(index = node->relationCount, iterator = 0; (index < OV_IDLIST_RELATIONSPERCHUNK) && (iterator < nextNode->relationCount); iterator++, index++){
+			node->relations[index].idLow = nextNode->relations[iterator].idLow;
+			node->relations[index].idHigh = nextNode->relations[iterator].idHigh;
+			node->relations[index].pobj = nextNode->relations[iterator].pobj;
+			node->relationCount++;
 		}
 		node->minId = ov_database_convertId(node->relations[0].idHigh, node->relations[0].idLow);
-		
-		node = node->pNext;
-		index = 0;
+		node->maxId = ov_database_convertId(node->relations[node->relationCount - 1].idHigh, node->relations[node->relationCount - 1].idLow);
+		nextNode->relationCount = 0;
+	} else if(node->pPrevious && ((node->relationCount / (OV_IDLIST_RELATIONSPERCHUNK / 2)) < 1) && ((node->pPrevious->relationCount / (OV_IDLIST_RELATIONSPERCHUNK / 2)) < 1)){
+		node = node->pPrevious;
+		nextNode = node->pNext;
+#if OV_IDLIST_DEBUG
+		ov_logfile_debug("putting together node %llu (previous) (min %llu, max %llu, count %lu) and node %llu (min %llu, max %llu, count %lu)", nextNode->nodeNumber, nextNode->minId, nextNode->maxId, nextNode->relationCount, node->nodeNumber, node->minId, node->maxId, node->relationCount);
+#endif
+		for(index = node->relationCount, iterator = 0; (index < OV_IDLIST_RELATIONSPERCHUNK) && (iterator < nextNode->relationCount); iterator++, index++){
+			node->relations[index].idLow = nextNode->relations[iterator].idLow;
+			node->relations[index].idHigh = nextNode->relations[iterator].idHigh;
+			node->relations[index].pobj = nextNode->relations[iterator].pobj;
+			node->relationCount++;
+		}
+		node->minId = ov_database_convertId(node->relations[0].idHigh, node->relations[0].idLow);
+		node->maxId = ov_database_convertId(node->relations[node->relationCount - 1].idHigh, node->relations[node->relationCount - 1].idLow);
+		nextNode->relationCount = 0;
+	} else if(node->relationCount == 0){
+		nextNode = node;
 	}
-	if(!pdb->idList->pLast->relationCount){
-		pdb->idList->pLast = pdb->idList->pLast->pPrevious;
-		ov_database_free(pdb->idList->pLast->pNext);
+	
+	if(nextNode && (!nextNode->relationCount)){
+#if OV_IDLIST_DEBUG
+		ov_logfile_debug("deleting node %llu (min %llu, max %llu, count %lu)", nextNode->nodeNumber, nextNode->minId, nextNode->maxId, nextNode->relationCount);
+#endif
+		nextNode->pPrevious->pNext = nextNode->pNext;
+		if(nextNode->pNext){
+			nextNode->pNext->pPrevious = nextNode->pPrevious;
+		}
+		for(iterator = nextNode->nodeNumber; (iterator <  pdb->idList->nodeCount); iterator++){
+			pdb->idList->pNodes[iterator-1] = pdb->idList->pNodes[iterator];
+			pdb->idList->pNodes[iterator-1]->nodeNumber--;
+		}
+		pdb->idList->pNodes[iterator-1] = NULL;
 		pdb->idList->nodeCount--;
+		ov_database_free(nextNode);
+		pdb->idList->pLast = pdb->idList->pNodes[pdb->idList->nodeCount - 1];
+		
 		if((pdb->idList->nodeCount % OV_IDLIST_NODELISTCHUNKSIZE) == 0){
 			/*	a complete chunk is empty now --> release memory	*/
 			pdb->idList->pNodes = ov_database_realloc(pdb->idList->pNodes, pdb->idList->nodeCount * sizeof(OV_IDLIST_NODE*));
@@ -491,9 +581,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_idListRelease(const OV_UINT idH, const OV_
 				return OV_ERR_DBOUTOFMEMORY;
 			}
 		}
-		pdb->idList->pLast->pNext = NULL;
 	}
+	
 	pdb->idList->relationCount--;
+	pdb->idList->maxId = pdb->idList->pLast->maxId;
+#if OV_IDLIST_DEBUG
+	ov_logfile_debug("release - line: %u - after", __LINE__);
+	idList_printstats();
+#endif
 	return OV_ERR_OK;
 }
 

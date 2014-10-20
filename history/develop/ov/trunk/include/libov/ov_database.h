@@ -70,7 +70,18 @@ typedef struct {
 	OV_INSTPTR_ov_object		pobj;	/* address of object in db */
 }	OV_ID_POINTER_RELATION;
 
-#define OV_IDLIST_RELATIONSPERCHUNK	1024		/*	relations stored in one node	*/
+#define OV_IDLIST_DEBUG				0			/*	enable debug prints in idList functions when set to 1	*/
+#define OV_IDLIST_PERFORMANCEPRINTS	0			/*	enable printing of hit / cycle statistics 
+													(to determine performance and optimize CHUNKSIZES)	*/
+
+#define OV_IDLIST_RELATIONSPERCHUNK	512			/*	relations stored in one node
+													powers of 2 enable compiler optimizations --> ludicrous speed
+													512 seem be good enough to have a more or less even 
+													distribution (which gives better performance)
+													for large amounts of data and not so many delete operations
+													increase this number for better performance
+													performance tradeof: higher number --> faster search, slower deletes 
+														(and inserts) and vice versa	*/
 #define OV_IDLIST_NODELISTCHUNKSIZE	32			/*	size of the chunks in which 
 													the nodes-array in headNode is allocated	*/
 
