@@ -231,7 +231,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 				case OV_VT_DOUBLE:
 				case OV_VT_DOUBLE_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "double");
-					ov_string_print(&LoopEntryValue, "%g", Variable.value.valueunion.val_double);
+					ov_string_print(&LoopEntryValue, "%1.15g", Variable.value.valueunion.val_double);
 					break;
 
 				case OV_VT_STRING:
@@ -353,7 +353,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
 						}
 						kshttp_response_part_begin(&LoopEntryValue, response_format, "double");
-						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_double_vec.value[i]);
+						ov_string_print(&singleVecEntry, "%1.15g", Variable.value.valueunion.val_double_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						kshttp_response_part_finalize(&LoopEntryValue, response_format, "double");
 					}
