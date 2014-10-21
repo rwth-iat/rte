@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_endpointName_set(
 	if(Ov_Fail(result)){
 		return result;
 	}
-	if(UA_String_copycstring(value, &(pobj->v_endpointUrl)) != UA_SUCCESS){
+	if(UA_String_copycstring(value, &(pobj->v_endpointUrl)) != UA_STATUSCODE_GOOD){
 		return OV_ERR_GENERIC;
 	}
 	return OV_ERR_OK;

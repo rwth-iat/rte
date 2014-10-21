@@ -3,71 +3,63 @@
 
 #include "iec62541.ovt"
 
-	typedef OV_DLLFNCEXPORT void INITSERVICEIMPLEMENTATIONS();
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDNODES(
+	UA_AddNodesItem *nodesToAdd,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_AddNodesResult* addNodesResults,
+	UA_DiagnosticInfo *diagnosticInfos
+);
 
-#define PROTOTYPE(TYPE, type)	\
-	typedef OV_DLLFNCEXPORT void UA_##TYPE##_SERVICE( \
-		UA_Server						*server,	\
-		const UA_##type##Request		*request,	\
-		UA_##type##Response				*response)
-	
-	/*	Discovery Service Set	*/
-	PROTOTYPE(FINDSERVERS, FindServers);
-	PROTOTYPE(GETENDPOINTS, GetEndpoints);
-	PROTOTYPE(REGISTERSERVER, RegisterServer);
-	
-	/*	SecureChannel Service Set	*/
-	PROTOTYPE(OPENSECURECHANNEL, OpenSecureChannel);
-	PROTOTYPE(CLOSESECURECHANNEL, CloseSecureChannel);
-	
-	/*	Session Service Set	*/
-	PROTOTYPE(CREATESESSION, CreateSession);
-	PROTOTYPE(ACTIVATESESSION, ActivateSession);
-	PROTOTYPE(CLOSESESSION, CloseSession);
-	PROTOTYPE(CANCEL, Cancel);
-	
-	/*	NodeManagement Service Set	*/
-	PROTOTYPE(ADDNODES, AddNodes);
-	PROTOTYPE(ADDREFERENCES, AddReferences);
-	PROTOTYPE(DELETENODES, DeleteNodes);
-	PROTOTYPE(DELETEREFERENCES, DeleteReferences);
-	
-	/*	View Service Set	*/
-	PROTOTYPE(BROWSE, Browse);
-	PROTOTYPE(BROWSENEXT, BrowseNext);
-	PROTOTYPE(TRANSLATEBROWSEPATHSTONODEIDS, TranslateBrowsePathsToNodeIds);
-	PROTOTYPE(REGISTERNODES, RegisterNodes);
-	PROTOTYPE(UNREGISTERNODES, UnregisterNodes);
-	
-	/*	Query Service Set	*/
-	PROTOTYPE(QUERYFIRST, QueryFirst);
-	PROTOTYPE(QUERYNEXT, QueryNext);
-	
-	/*	Attribute Service Set	*/
-	PROTOTYPE(READ, Read);
-	PROTOTYPE(HISTORYREAD, HistoryRead);
-	PROTOTYPE(WRITE, Write);
-	PROTOTYPE(HISTORYUPDATE, HistoryUpdate);
-	
-	/*	Method Service Set	*/
-	PROTOTYPE(CALL, Call);
-	
-	/*	MonitoredItem Service Set	*/
-	PROTOTYPE(CREATEMONITOREDITEMS, CreateMonitoredItems);
-	PROTOTYPE(MODIFYMONITOREDITEMS, ModifyMonitoredItems);
-	PROTOTYPE(SETMONITORINGMODE, SetMonitoringMode);
-	PROTOTYPE(SETTRIGGERING, SetTriggering);
-	PROTOTYPE(DELETEMONITOREDITEMS, DeleteMonitoredItems);
-	
-	/*	Subscription Service Set	*/
-	PROTOTYPE(CREATESUBSCRIPTION, CreateSubscription);
-	PROTOTYPE(MODIFYSUBSCRIPTION, ModifySubscription);
-	PROTOTYPE(SETPUBLISHINGMODE, SetPublishingMode);
-	PROTOTYPE(PUBLISH, Publish);
-	PROTOTYPE(REPUBLISH, Republish);
-	PROTOTYPE(TRANSFERSUBSCRIPTIONS, TransferSubscriptions);
-	PROTOTYPE(DELETESUBSCRIPTIONS, DeleteSubscriptions);
-	
-	
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDREFERENCES(
+	UA_AddReferencesItem* referencesToAdd,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_StatusCode *addReferencesResults,
+	UA_DiagnosticInfo diagnosticInfos
+);
+
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETENODES(
+	UA_DeleteNodesItem *nodesToDelete,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_StatusCode *deleteNodesResults,
+	UA_DiagnosticInfo *diagnosticInfos
+);
+
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETEREFERENCES(
+	UA_DeleteReferencesItem *referenceToDelete,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_StatusCode deleteReferencesresults,
+	UA_DiagnosticInfo diagnosticInfos
+);
+
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_READNODES(
+	UA_ReadValueId *readValueIds,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_DataValue *readNodesResults,
+	UA_Boolean timeStampToReturn,
+	UA_DiagnosticInfo *diagnosticInfos
+);
+
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
+	UA_WriteValue *writeValues,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_StatusCode *writeNodesResults,
+	UA_DiagnosticInfo *diagnosticInfo
+);
+
+typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_BROWSENODES(
+	UA_UInt32 requestedMaxReferencesPerNode,
+	UA_BrowseDescription *browseDescriptions,
+	UA_Int32 *indices,
+	UA_UInt32 indicesSize,
+	UA_BrowseResult *browseResults,
+	UA_DiagnosticInfo *diagnosticInfos
+);
+
 #endif
 

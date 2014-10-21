@@ -71,7 +71,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 		}
 	}
 
-	if(UA_UInt32_decodeBinary(&msgSource, &offset, &msgLength) != UA_SUCCESS){
+	if(UA_UInt32_decodeBinary(&msgSource, &offset, &msgLength) != UA_STATUSCODE_GOOD){
 		KS_logfile_debug(("%s: could not decode length in HelloMessage header", thisId->v_identifier));
 		return FALSE;
 	}
@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 		return FALSE;
 	}
 
-	if(UA_TcpHelloMessage_decodeBinary(&msgSource, &offset, &testMsg) == UA_SUCCESS){
+	if(UA_TcpHelloMessage_decodeBinary(&msgSource, &offset, &testMsg) == UA_STATUSCODE_GOOD){
 		KS_logfile_debug(("%s: HelloMessage successfully decoded", thisId->v_identifier));
 		return TRUE;
 	} else {

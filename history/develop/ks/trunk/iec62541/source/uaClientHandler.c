@@ -29,7 +29,7 @@
 #include "ksbase_helper.h"
 #include "ua_server.h"
 
-UA_Int32 UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection, const UA_ByteString *msg);
+void UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection, const UA_ByteString *msg);
 UA_Int32 UA_Connection_init(UA_Connection *connection, UA_ConnectionConfig localConf, void *callbackHandle,
                             UA_Connection_closeCallback close, UA_Connection_writeCallback write);
 extern OV_INSTPTR_iec62541_uaServer iec62541_pUaServer;
@@ -225,7 +225,7 @@ OV_DLLFNCEXPORT void iec62541_uaClientHandler_startup(
     ksbase_ClientHandler_startup(pobj);
 
     /* do what */
-    UA_Connection_init(&(pinst->v_connectionData), UA_ConnectionConfig_default, NULL, UA_Free, UA_append);
+    UA_Connection_init(&(pinst->v_connectionData), UA_ConnectionConfig_default, NULL, (UA_Connection_closeCallback)UA_Free, (UA_Connection_writeCallback)UA_append);
 
     return;
 }
@@ -263,7 +263,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 		return OV_ERR_BADFACTORY;
 	}
 
-	if(UA_TcpMessageHeader_decodeBinary(&tempMsg, &offset, &tempMsgHeader) != UA_SUCCESS){
+	if(UA_TcpMessageHeader_decodeBinary(&tempMsg, &offset, &tempMsgHeader) != UA_STATUSCODE_GOOD){
 		/*	error handling	*/
 		KS_logfile_info(("%s: error decoding TcpHeader - message probably corrupted", thisCl->v_identifier));
 		ksbase_free_KSDATAPACKET(dataReceived);
@@ -271,12 +271,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	}
 
 	thisCl->v_connectionData.callbackHandle = answer;
-	if(UA_Server_processBinaryMessage(&(iec62541_pUaServer->v_serverData), &(thisCl->v_connectionData), &tempMsg) != UA_SUCCESS){
-		/*	error handling	*/
-		KS_logfile_info(("%s: error decoding Message", thisCl->v_identifier));
-		ksbase_free_KSDATAPACKET(dataReceived);
-		return OV_ERR_GENERIC;
-	}
+	UA_Server_processBinaryMessage(&(iec62541_pUaServer->v_serverData), &(thisCl->v_connectionData), &tempMsg);
 
 
 	return OV_ERR_OK;
