@@ -108,6 +108,7 @@ function HMI(debug, error, warning, info, trace) {
 	this.Playground = null;
 	this.ErrorOutput = null;
 	this.InfoOutput = null;
+	this.Throbber = null;
 	this.gestureReactionMarkerTimeoutID = null;
 	
 	this.RefreshTimeoutID = null;
@@ -279,8 +280,8 @@ HMI.prototype = {
 			};
 		}
 		if(ErrorDetail !== ""){
-			if (document.getElementById("idThrobbler") !== null){
-				document.getElementById("idThrobbler").style.display = "none";
+			if (this.Throbber !== null){
+				this.Throbber.style.display = "none";
 			}
 			window.alert ("Error initialising HMI Website: "+ErrorDetail);
 			return false;
@@ -307,6 +308,7 @@ HMI.prototype = {
 		if ((this.InfoOutput = document.getElementById('idInfoOutput'))){
 			deleteChilds(HMI.InfoOutput);
 		}
+		this.Throbber = document.getElementById('idThrobber');
 		
 		// prepare smooth hiding
 		HMI.HideableHeader.style.overflow = "hidden";
@@ -355,8 +357,8 @@ HMI.prototype = {
 					//some old mobile browser does not support syncron requests
 					this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
 					this.hmi_log_onwebsite("This Browser does not support synchronous XMLHttpRequest, which is required for ACPLT/HMI. Please use another Browser");
-					if (document.getElementById("idThrobbler") !== null){
-						document.getElementById("idThrobbler").style.display = "none";
+					if (this.Throbber !== null){
+						this.Throbber.style.display = "none";
 					}
 					return false;
 				}else if (ResponseServerString && -1 !== ResponseServerString.indexOf('Tcl-Webserver')){
@@ -376,8 +378,8 @@ HMI.prototype = {
 			}catch(e){
 				this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
 				this.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
-				if (document.getElementById("idThrobbler") !== null){
-					document.getElementById("idThrobbler").style.display = "none";
+				if (this.Throbber !== null){
+					this.Throbber.style.display = "none";
 				}
 				return false;
 			}
@@ -430,8 +432,8 @@ HMI.prototype = {
 				HMI.ErrorOutput.appendChild(ErrorNode);
 			}
 			ErrorNode = null;
-			if (document.getElementById("idThrobbler") !== null){
-				document.getElementById("idThrobbler").style.display = "none";
+			if (this.Throbber !== null){
+				this.Throbber.style.display = "none";
 			}
 			return false;
 		}
@@ -590,8 +592,8 @@ HMI.prototype = {
 		}
 		*/
 		
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "none";
+		if (this.Throbber !== null){
+			this.Throbber.style.display = "none";
 		}
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
@@ -730,8 +732,8 @@ HMI.prototype = {
 			this.InputHost.parentNode.appendChild(datalistNode);
 		}
 		
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "none";
+		if (this.Throbber !== null){
+			this.Throbber.style.display = "none";
 		}
 		
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter - End");
@@ -1020,8 +1022,8 @@ HMI.prototype = {
 		//disable double click by user
 		HMI.ButShowServers.disabled = true;
 		HMI.ButShowServers.value = "Please wait...";
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "inline";
+		if (HMI.Throbber !== null){
+			HMI.Throbber.style.display = "inline";
 		}
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1054,8 +1056,8 @@ HMI.prototype = {
 		//reenable click by user
 		HMI.ButShowServers.disabled = false;
 		HMI.ButShowServers.value = "Reload Serverlist";
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "none";
+		if (HMI.Throbber !== null){
+			HMI.Throbber.style.display = "none";
 		}
 		
 		//present a "deep link" to the state
@@ -1192,8 +1194,8 @@ HMI.prototype = {
 		HMI.PossServers.blur();
 		
 		HMI.ButShowServers.value = "Reload Serverlist";
-		if (document.getElementById("idThrobbler") !== null){
-			document.getElementById("idThrobbler").style.display = "none";
+		if (HMI.Throbber !== null){
+			HMI.Throbber.style.display = "none";
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showSheet - End");
