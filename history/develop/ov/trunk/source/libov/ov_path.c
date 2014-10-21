@@ -40,7 +40,10 @@
 #endif
 
 /*	----------------------------------------------------------------------	*/
-
+/*
+ * Get an object pointer from the object's numeric id
+ * (unique in ov-server instance), consisting of a high and a low DWORD
+ */
 OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById(
 	const OV_UINT			idHigh,
 	const OV_UINT			idLow,
@@ -68,6 +71,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById(
 	} else {
 		return OV_ERR_OK;
 	}
+}
+
+/*
+ * same as ov_path_getObjectById but using a single 64bit wide id
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById64(
+	const OV_UINT64			id,
+	OV_INSTPTR_ov_object	*ppobj
+){
+	return ov_path_getObjectById(((id>>32) & 0xFFFF), (id & 0xFFFF), ppobj);
 }
 
 /*
