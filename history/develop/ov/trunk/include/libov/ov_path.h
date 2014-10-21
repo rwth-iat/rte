@@ -62,7 +62,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById(
 OV_DLLFNCEXPORT OV_RESULT ov_path_getObjectById64(
 	const OV_UINT64			id,
 	OV_INSTPTR_ov_object	*ppobj
-)
+);
 
 /**
 *	Resolve a path using a given path name
