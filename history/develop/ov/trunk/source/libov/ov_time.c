@@ -464,6 +464,70 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 }
 
 /*	----------------------------------------------------------------------	*/
+/*
+ * conversion between ov_time and time values as 64bit integers with 100ns resolution starting at 01.01.1601
+ */
+#define EPOCHDIFFERENCE_SECONDS	11644473600LL
+#define TOSECONDS				10000000LL
+#define TOMICROSECONDS			10LL
+
+OV_TIME ov_1601nsTimeToOvTime(OV_INT64 time){
+	OV_TIME timeTemp;
+	OV_INT64 tempInt64;
+	tempInt64 = (time / TOSECONDS) - EPOCHDIFFERENCE_SECONDS;	/*	convert to seconds and subtract the difference in epoch	*/
+	if((tempInt64 < 0) || (time < 0)){
+		timeTemp.secs = 0;
+		timeTemp.usecs = 0;
+	} else if(tempInt64 > OV_VL_MAXUINT || time == OV_VL_MAXINT64){
+		timeTemp.secs = OV_VL_MAXUINT;
+		timeTemp.usecs = OV_VL_MAXUINT;
+	} else {
+		timeTemp.secs = tempInt64;
+		timeTemp.usecs = (time - ((timeTemp.secs + EPOCHDIFFERENCE_SECONDS) * TOSECONDS)) / TOMICROSECONDS; /*	subtract the seconds-part and convert to microseconds	*/
+	}
+	return timeTemp;
+}
+
+OV_INT64 ov_ovTimeTo1601nsTime(OV_TIME time){
+	OV_INT64 result;
+	if((time.secs == 0) && (time.usecs == 0)){
+		return 0;
+	} else if((time.secs == OV_VL_MAXUINT) && (time.usecs >= 999999)){
+		return OV_VL_MAXINT64;
+	} else {
+		result = (time.secs + EPOCHDIFFERENCE_SECONDS) * TOSECONDS + time.usecs * TOMICROSECONDS;
+		return result;
+	}
+}
+
+OV_TIME_SPAN ov_1601nsTimeToOvTimeSpan(OV_INT64 time){
+	OV_TIME_SPAN timeTemp;
+	OV_INT64 tempInt64;
+	tempInt64 = (time / TOSECONDS);	/*	convert to seconds	*/
+	if(tempInt64 < (-OV_VL_MAXINT)){
+		timeTemp.secs = -OV_VL_MAXINT;
+		timeTemp.usecs = -OV_VL_MAXINT;
+	} else if(tempInt64 > OV_VL_MAXINT){
+		timeTemp.secs = OV_VL_MAXINT;
+		timeTemp.usecs = OV_VL_MAXINT;
+	} else {
+		timeTemp.secs = tempInt64;
+		timeTemp.usecs = (time - (timeTemp.secs * TOSECONDS)) / TOMICROSECONDS; /*	subtract the seconds-part and convert to microseconds	*/
+	}
+	return timeTemp;
+}
+
+OV_INT64 ov_ovTimeSpanTo1601nsTime(OV_TIME_SPAN time){
+	OV_INT64 result;
+	if((time.secs == (-OV_VL_MAXINT)) && (time.usecs == (-OV_VL_MAXINT))){
+		return 0;
+	} else if((time.secs == OV_VL_MAXINT) && (time.usecs >= 999999)){
+		return OV_VL_MAXINT64;
+	} else {
+		result = time.secs  * TOSECONDS + time.usecs * TOMICROSECONDS;
+		return result;
+	}
+}
 
 /*
 *	End of file
