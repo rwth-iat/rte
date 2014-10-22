@@ -259,7 +259,23 @@ __ml_ptr ov_database_morecore(
 	}
  }
  
- OV_UINT64 ov_database_convertId(const OV_UINT idH, const OV_UINT idL){
+ /*	
+ *	Get a numeric id being set next time and do not increment the internal counter
+ *	INTERNAL USE ONLY --> create instances with unique identifier variables mirroring the numeric id
+ */
+ void ov_database_getId_noInc(OV_UINT *idH, OV_UINT *idL){
+	if(idH){
+		*idH = pdb->idCounter1;
+	}
+	if(idL){
+		*idL = pdb->idCounter0;
+	}
+}
+
+/*
+ *	Convert a high low dword pair to a 64bit id
+ */
+ OV_DLLFNCEXPORT OV_UINT64 ov_database_convertId(const OV_UINT idH, const OV_UINT idL){
 	OV_UINT64 result;
 	result = (OV_UINT64)idH << 32;
 	result += idL;

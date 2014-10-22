@@ -600,6 +600,49 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	return OV_ERR_OK;
 }
 
+/*
+*	Create an instance of the class
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_class_createIDedObject(
+	const OV_INSTPTR_ov_class	pclass,
+	const OV_INSTPTR_ov_domain	pparent,
+	const OV_STRING				identifierPostfix,
+	const OV_PLACEMENT_HINT		hint,
+	const OV_INSTPTR_ov_object	prelobj,
+	OV_FNC_INITOBJ				*initobjfnc,
+	OV_POINTER					userdata,
+	OV_INSTPTR_ov_object		*ppobj
+) {
+	OV_STRING tempString = NULL;
+	OV_UINT idH, idL;
+	OV_UINT identLength = 0;
+	OV_RESULT result;
+	
+	ov_database_getId_noInc(&idH, &idL);
+	ov_memstack_lock();
+	if(identifierPostfix && * identifierPostfix){
+		identLength = 16 + 1 + strlen(identifierPostfix) + 1;/*	16byte hex number + '_' + postfix + '\0'	*/
+		tempString = ov_memstack_alloc(identLength * sizeof(char)); 
+		if(!tempString){
+			ov_memstack_unlock();
+			return OV_ERR_HEAPOUTOFMEMORY;
+		}
+		snprintf(tempString, identLength, "%#08X%08X_%s", idH, idL, identifierPostfix);
+	} else {
+		identLength = 16 + 1;/*	16byte hex number + '\0'	*/
+		tempString = ov_memstack_alloc(identLength * sizeof(char)); 
+		if(!tempString){
+			ov_memstack_unlock();
+			return OV_ERR_HEAPOUTOFMEMORY;
+		}
+		snprintf(tempString, identLength, "%#08X%08X", idH, idL);
+	}
+	
+	result = ov_class_createobject(pclass, pparent, tempString,	hint, prelobj, initobjfnc, userdata, ppobj);
+	ov_memstack_unlock();
+	return result;
+}
+
 /*	----------------------------------------------------------------------	*/
 
 /*

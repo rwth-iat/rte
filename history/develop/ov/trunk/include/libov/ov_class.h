@@ -183,6 +183,23 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 );
 
 /**
+*	Create an instance of the class
+*	the instances identifier will consist of 16 chars representing the instance's id in hex notation 
+*	and an optional given postfix
+*	this function wraps around ov_class_createobject
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_class_createIDedObject(
+	const OV_INSTPTR_ov_class	pclass,
+	const OV_INSTPTR_ov_domain	pparent,
+	const OV_STRING				identifierPostfix,
+	const OV_PLACEMENT_HINT		hint,
+	const OV_INSTPTR_ov_object	prelobj,
+	OV_FNC_INITOBJ				*initobjfnc,
+	OV_POINTER					userdata,
+	OV_INSTPTR_ov_object		*ppobj
+);
+
+/**
 *	Delete an instance of the class
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(

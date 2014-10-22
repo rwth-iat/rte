@@ -335,6 +335,20 @@
 #endif
 
 /**
+*	Create an object of a given class with an identifier representing the instance's id
+*/
+#if OV_SYSTEM_LINUX
+#define Ov_CreateIDedObject(class, pobj, pparent, identPostFix)						\
+	ov_class_createIDedObject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\
+	identPostFix, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)&(pobj)))
+#else
+#define Ov_CreateIDedObject(class, pobj, pparent, identPostFix)						\
+	ov_class_createIDedObject(pclass_##class, Ov_PtrUpCast(ov_domain, pparent),	\
+	identPostFix, OV_PMH_DEFAULT, NULL, NULL, NULL, ((OV_INSTPTR_ov_object*)		\
+	&(pobj))+(0*((pobj)->__classinfo.is_of_class_##class)))
+#endif
+
+/**
 *	Delete an object and all its children
 */
 #define Ov_DeleteObject(pobj)												\

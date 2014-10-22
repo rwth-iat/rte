@@ -162,7 +162,15 @@ OV_EXTERN OV_STRING db_backup_filename;
  *	Get a numeric id and increment the internal counter
  */
 OV_DLLFNCEXPORT OV_BOOL ov_database_getId(OV_UINT *idH, OV_UINT *idL);
-
+/**	
+ *	Get a numeric id being set next time and do not increment the internal counter
+ *	INTERNAL USE ONLY --> create instances with unique identifier variables mirroring the numeric id
+ */
+void ov_database_getId_noInc(OV_UINT *idH, OV_UINT *idL);
+/**
+ *	Convert a high low dword pair to a 64bit id
+ */
+ OV_DLLFNCEXPORT OV_UINT64 ov_database_convertId(const OV_UINT idH, const OV_UINT idL);
 /**	
  *	Relate an object pointer  with an id (creates a new entry in the idList relating object pointer and id)
  *	is called on every object creation
