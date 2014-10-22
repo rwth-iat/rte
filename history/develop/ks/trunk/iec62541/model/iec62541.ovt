@@ -10,7 +10,9 @@
 #include "../open62541/include/ua_connection.h"
 #include "../open62541/include/ua_server.h"
 #include "../open62541/src/ua_session.h"
+#include "../open62541/src/server/ua_services.h"
 #include "../open62541/src_generated/ua_types_generated.h"
+#include "../open62541/src_generated/ua_namespace_0.h"
 
 /*	restore pre-anti-warning state	*/
 #ifndef WIN32

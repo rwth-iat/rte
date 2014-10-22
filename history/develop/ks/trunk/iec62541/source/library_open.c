@@ -97,7 +97,7 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 	}
 
 	/*	create uaServer	*/
-	pServer = Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaServer);
+	pServer = Ov_StaticPtrCast(iec62541_uaServer, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaServer));
 	if(!pServer){
 		result = Ov_CreateObject(iec62541_uaServer, pServer, pDomOpcUa, "uaServer");
 		if(Ov_Fail(result))

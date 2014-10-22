@@ -26,6 +26,7 @@
 #include "ks_logfile.h"
 #include "ua_types.h"
 #include "ua_server.h"
+#include "server/ua_nodestore.h"
 
 /*	function declaration needed as they are declared with __declspec(dllimport) in the header which means they MUST come from a dll not an .a	*/
 UA_Int32 UA_String_copycstring(char const *src, UA_String *dst);
@@ -106,7 +107,11 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
     iec62541_pUaServer = pinst;
     UA_String_copycstring(pinst->v_endpointName, &(pinst->v_endpointUrl));
     UA_Server_init(&(pinst->v_serverData), &(pinst->v_endpointUrl));
+    UA_Server_addNamespace(&(pinst->v_serverData),0,&(pinst->v_nodeStoreNs0));
+    UA_Server_addNamespace(&(pinst->v_serverData),42,&(pinst->v_nodeStoreNsOV));
 
+    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNs0), ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
+    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNsOV), ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
     return;
 }
 
