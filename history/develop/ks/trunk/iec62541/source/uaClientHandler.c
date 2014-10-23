@@ -36,8 +36,10 @@ extern OV_INSTPTR_iec62541_uaServer iec62541_pUaServer;
 
 void UA_append (KS_DATAPACKET *dataPacket, const UA_ByteStringArray buf){
 	OV_UINT iterator = 0;
+	KS_logfile_debug(("UA_append:\n\tdata:\t\t%p\n\tlength:\t\t%u", buf.strings, buf.stringsSize));
 	for(iterator = 0; iterator < buf.stringsSize; iterator++){
 		ksbase_KSDATAPACKET_append(dataPacket, buf.strings[iterator].data, buf.strings[iterator].length);
+		KS_logfile_debug(("\n\ti:\t\t\t%u\n\tstrings[i]:\t\t%p\n\tstrings[i].length:\t%u", iterator, buf.strings[iterator].data, buf.strings[iterator].length));
 	}
 }
 void UA_Free  (KS_DATAPACKET *dataPacket){
@@ -271,8 +273,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	}
 
 	thisCl->v_connectionData.callbackHandle = answer;
+
+	KS_logfile_debug(("-------------\nbefore response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p", answer->data, answer->length, answer->readPT, answer->writePT));
+
 	UA_Server_processBinaryMessage(&(iec62541_pUaServer->v_serverData), &(thisCl->v_connectionData), &tempMsg);
 
+	KS_logfile_debug(("after response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p\n-------------", answer->data, answer->length, answer->readPT, answer->writePT));
 
 	return OV_ERR_OK;
 }

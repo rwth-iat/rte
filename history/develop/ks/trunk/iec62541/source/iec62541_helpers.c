@@ -56,6 +56,59 @@ UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	}
 }
 
+UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type){
+	UA_NodeId *varType;
+	UA_NodeId_new(&varType);
+	if(!varType){
+		return varType;
+	}
+	varType->namespaceIndex = 0;
+	varType->identifierType = UA_NODEIDTYPE_NUMERIC;
+	switch(type & (OV_VT_KSMASK & (~OV_VT_ISVECTOR))){
+	case OV_VT_ANY:
+	case OV_VT_VOID:
+		varType->identifier.numeric = 24;
+		break;
+	case OV_VT_BOOL:
+		varType->identifier.numeric = 1;
+		break;
+	case OV_VT_BYTE:
+		varType->identifier.numeric = 3;
+		break;
+	case OV_VT_CTYPE:
+	case OV_VT_POINTER:
+	case OV_VT_STRUCT:
+		varType->identifier.numeric = 22;
+		break;
+	case OV_VT_DOUBLE:
+		varType->identifier.numeric = 11;
+		break;
+	case OV_VT_INT:
+		varType->identifier.numeric = 6;
+		break;
+	case OV_VT_SINGLE:
+		varType->identifier.numeric = 10;
+		break;
+	case OV_VT_STATE:
+		varType->identifier.numeric = 19;
+		break;
+	case OV_VT_STRING:
+		varType->identifier.numeric = 12;
+		break;
+	case OV_VT_TIME:
+	case OV_VT_TIME_SPAN:
+		varType->identifier.numeric = 13;
+		break;
+	case OV_VT_UINT:
+		varType->identifier.numeric = 7;
+		break;
+	default:
+		varType->identifier.numeric = 22;
+		break;
+	}
+	return varType;
+}
+
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	UA_StatusCode result;
 	void *value = NULL;
@@ -68,8 +121,6 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	UA_String*	tempStringArray = NULL;
 	UA_DateTime*	tempTimeArray = NULL;
 	UA_Int32	iterator;
-
-	UA_VTable_Entry *debug = UA_;
 
 	if(!((pAny->value.vartype & OV_VT_KSMASK) & OV_VT_ISVECTOR)){
 		switch(pAny->value.vartype & OV_VT_KSMASK){
@@ -157,35 +208,35 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 					tempBoolArray[iterator] = UA_FALSE;
 				}
 			}
-			value = &(tempBoolArray);
+			value = tempBoolArray;
 			vt = &UA_[UA_BOOLEAN];
 			break;
 		case OV_VT_BYTE_VEC:
 			arrayLength = pAny->value.valueunion.val_byte_vec.veclen;
-			value = &(pAny->value.valueunion.val_byte_vec.value);
+			value = pAny->value.valueunion.val_byte_vec.value;
 			vt = &UA_[UA_BYTE];
 			break;
 		case OV_VT_DOUBLE_VEC:
 		case OV_VT_DOUBLE_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_double_vec.veclen;
-			value = &(pAny->value.valueunion.val_double_vec.value);
+			value = pAny->value.valueunion.val_double_vec.value;
 			vt = &UA_[UA_DOUBLE];
 			break;
 		case OV_VT_INT_VEC:
 		case OV_VT_INT_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_int_vec.veclen;
-			value = &(pAny->value.valueunion.val_int_vec.value);
+			value = pAny->value.valueunion.val_int_vec.value;
 			vt = &UA_[UA_INT32];
 			break;
 		case OV_VT_STATE_VEC:
 			arrayLength = pAny->value.valueunion.val_state_vec.veclen;
-			value = &(pAny->value.valueunion.val_state_vec.value);
+			value = pAny->value.valueunion.val_state_vec.value;
 			vt = &UA_[UA_INT32];
 			break;
 		case OV_VT_SINGLE_VEC:
 		case OV_VT_SINGLE_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_single_vec.veclen;
-			value = &(pAny->value.valueunion.val_single_vec.value);
+			value = pAny->value.valueunion.val_single_vec.value;
 			vt = &UA_[UA_FLOAT];
 			break;
 		case OV_VT_STRING_VEC:
@@ -204,7 +255,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 					tempStringArray[iterator].data = (UA_Byte*)pAny->value.valueunion.val_string_vec.value[iterator];
 				}
 			}
-			value = &(tempStringArray);
+			value = tempStringArray;
 			vt = &UA_[UA_STRING];
 			break;
 		case OV_VT_TIME_VEC:
@@ -218,7 +269,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				tempTimeArray[iterator] = ov_ovTimeTo1601nsTime(pAny->value.valueunion.val_time_vec.value[iterator]);
 			}
-			value = &(tempTimeArray);
+			value = tempTimeArray;
 			vt = &UA_[UA_DATETIME];
 			break;
 		case OV_VT_TIME_SPAN_VEC:
@@ -232,13 +283,13 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			for(iterator = 0; iterator < arrayLength; iterator++){
 				tempTimeArray[iterator] = ov_ovTimeSpanTo1601nsTime(pAny->value.valueunion.val_time_span_vec.value[iterator]);
 			}
-			value = &(tempTimeArray);
+			value = tempTimeArray;
 			vt = &UA_[UA_DATETIME];
 			break;
 		case OV_VT_UINT_VEC:
 		case OV_VT_UINT_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_uint_vec.veclen;
-			value = &(pAny->value.valueunion.val_uint_vec.value);
+			value = pAny->value.valueunion.val_uint_vec.value;
 			vt = &UA_[UA_UINT32];
 			break;
 		default:
