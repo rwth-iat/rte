@@ -800,6 +800,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_resetCache(
 		CSHMI_EMPTYCLASSCACHEENTRY(InstantiateTemplate);
 	}else if(Ov_CanCastTo(cshmi_Rectangle, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(Rectangle);
+	}else if(Ov_CanCastTo(cshmi_Circle, pobj)){
+		CSHMI_EMPTYCLASSCACHEENTRY(Circle);
 	}else if(Ov_CanCastTo(cshmi_Text, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(Text);
 	}else if(Ov_CanCastTo(cshmi_Line, pobj)){

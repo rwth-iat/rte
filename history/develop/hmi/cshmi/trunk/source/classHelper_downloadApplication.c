@@ -287,6 +287,7 @@ static OV_RESULT cshmi_downloadApplication_buildElementList(
 	CSHMI_BUILDSTRINGCLASS(TemplateDefinition);
 	CSHMI_BUILDSTRINGCLASS(InstantiateTemplate);
 	CSHMI_BUILDSTRINGCLASS(Rectangle);
+	CSHMI_BUILDSTRINGCLASS(Circle);
 	CSHMI_BUILDSTRINGCLASS(Text);
 	CSHMI_BUILDSTRINGCLASS(Line);
 	CSHMI_BUILDSTRINGCLASS(Polyline);
@@ -625,6 +626,7 @@ OV_DLLFNCEXPORT void cshmi_downloadApplication_startup(
 	pDownloadApplication->v_ApplicationCache.strTemplateDefinition = NULL;
 	pDownloadApplication->v_ApplicationCache.strInstantiateTemplate = NULL;
 	pDownloadApplication->v_ApplicationCache.strRectangle = NULL;
+	pDownloadApplication->v_ApplicationCache.strCircle = NULL;
 	pDownloadApplication->v_ApplicationCache.strText = NULL;
 	pDownloadApplication->v_ApplicationCache.strLine = NULL;
 	pDownloadApplication->v_ApplicationCache.strPolyline = NULL;
@@ -661,6 +663,7 @@ OV_DLLFNCEXPORT void cshmi_downloadApplication_shutdown(
 	CSHMI_EMPTYCLASSCACHEENTRY(TemplateDefinition);
 	CSHMI_EMPTYCLASSCACHEENTRY(InstantiateTemplate);
 	CSHMI_EMPTYCLASSCACHEENTRY(Rectangle);
+	CSHMI_EMPTYCLASSCACHEENTRY(Circle);
 	CSHMI_EMPTYCLASSCACHEENTRY(Text);
 	CSHMI_EMPTYCLASSCACHEENTRY(Line);
 	CSHMI_EMPTYCLASSCACHEENTRY(Polyline);
