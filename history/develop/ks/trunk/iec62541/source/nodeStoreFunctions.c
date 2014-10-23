@@ -178,6 +178,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					value.value.vartype &= OV_VT_KSMASK;
 					if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 						readNodesResults[indices[i]].status = ov_AnyToVariant(&value, &(readNodesResults[indices[i]].value));
+						readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
 						ov_variable_setanyvalue(&value, &emptyAny);
 					}
 					ov_memstack_unlock();
