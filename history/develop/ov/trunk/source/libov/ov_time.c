@@ -471,7 +471,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime(
 #define TOSECONDS				10000000LL
 #define TOMICROSECONDS			10LL
 
-OV_TIME ov_1601nsTimeToOvTime(OV_INT64 time){
+OV_DLLFNCEXPORT OV_TIME ov_1601nsTimeToOvTime(OV_INT64 time){
 	OV_TIME timeTemp;
 	OV_INT64 tempInt64;
 	tempInt64 = (time / TOSECONDS) - EPOCHDIFFERENCE_SECONDS;	/*	convert to seconds and subtract the difference in epoch	*/
@@ -488,7 +488,7 @@ OV_TIME ov_1601nsTimeToOvTime(OV_INT64 time){
 	return timeTemp;
 }
 
-OV_INT64 ov_ovTimeTo1601nsTime(OV_TIME time){
+OV_DLLFNCEXPORT OV_INT64 ov_ovTimeTo1601nsTime(OV_TIME time){
 	OV_INT64 result;
 	if((time.secs == 0) && (time.usecs == 0)){
 		return 0;
@@ -500,7 +500,7 @@ OV_INT64 ov_ovTimeTo1601nsTime(OV_TIME time){
 	}
 }
 
-OV_TIME_SPAN ov_1601nsTimeToOvTimeSpan(OV_INT64 time){
+OV_DLLFNCEXPORT OV_TIME_SPAN ov_1601nsTimeToOvTimeSpan(OV_INT64 time){
 	OV_TIME_SPAN timeTemp;
 	OV_INT64 tempInt64;
 	tempInt64 = (time / TOSECONDS);	/*	convert to seconds	*/
@@ -517,7 +517,7 @@ OV_TIME_SPAN ov_1601nsTimeToOvTimeSpan(OV_INT64 time){
 	return timeTemp;
 }
 
-OV_INT64 ov_ovTimeSpanTo1601nsTime(OV_TIME_SPAN time){
+OV_DLLFNCEXPORT OV_INT64 ov_ovTimeSpanTo1601nsTime(OV_TIME_SPAN time){
 	OV_INT64 result;
 	if((time.secs == (-OV_VL_MAXINT)) && (time.usecs == (-OV_VL_MAXINT))){
 		return 0;
