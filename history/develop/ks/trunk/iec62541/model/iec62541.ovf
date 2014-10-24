@@ -61,5 +61,10 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_BROWSENODES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
+typedef OV_DLLFNCEXPORT	OV_INSTPTR_iec62541_uaBaseNodeType UA_FNC_GETNODEPTR(
+	OV_UINT nodeId
+);
+	
+	
 #endif
 

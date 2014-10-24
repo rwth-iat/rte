@@ -24,15 +24,105 @@ LIBRARY iec62541
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
-			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;
 		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS uaNamespace0		:	CLASS ov/domain
+		IS_INSTANTIABLE;
+		COMMENT = "Holds the 0 namespace of the uaServer - singleton. can only be instantiated once";
+		VARIABLES
+			
+		END_VARIABLES;	
+		OPERATIONS
+			constructor		:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
+			getNodePtr		:	C_FUNCTION	<UA_FNC_GETNODEPTR>;
+			addNodes		:	C_FUNCTION	<UA_FNC_ADDNODES>;
+			addReferences	:	C_FUNCTION	<UA_FNC_ADDREFERENCES>;
+			deleteNodes		:	C_FUNCTION	<UA_FNC_DELETENODES>;
+			deleteReferences :	C_FUNCTION	<UA_FNC_DELETEREFERENCES>;
+			readNodes		:	C_FUNCTION	<UA_FNC_READNODES>;
+			writeNodes		:	C_FUNCTION	<UA_FNC_WRITENODES>;
+			browseNodes		:	C_FUNCTION	<UA_FNC_BROWSENODES>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	
+	
+	CLASS uaBaseNodeType	:	CLASS ov/domain
+		VARIABLES
+			NodeId		:	UINT;	/*	used in the findNode function , BrowseName and DisplayName mirror the objects identifier	*/	
+			NodeClass	:	STRING;
+			WriteMask	:	UINT;
+		END_VARIABLES;	
+		OPERATIONS
+			getaccess	:	C_FUNCTION <OV_FNC_GETACCESS>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS uaReferenceTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			IsAbstract	:	BOOL
+				INITIALVALUE	=	FALSE;
+			Symmetric	:	BOOL
+				INITIALVALUE	=	FALSE;	
+		END_VARIABLES;	
+	END_CLASS;
+	
+	CLASS uaObjectNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			EventNotifier	:	UINT
+				INITIALVALUE	=	0;	
+		END_VARIABLES;	
+	END_CLASS;
+	
+	CLASS uaObjectTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			IsAbstract	:	BOOL
+				INITIALVALUE	=	FALSE;	
+		END_VARIABLES;	
+	END_CLASS;
+	
+	CLASS uaVariableNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			Value		:	ANY;
+			DataType	:	INT;
+			ValueRank	:	INT;
+			ArrayDimensions	:	INT
+				INITIALVALUE	=	0;
+			AccessLevel	:	UINT
+				INITIALVALUE	=	1; /*	read access	*/
+			Historizing	:	BOOL
+				INITIALVALUE	=	FALSE;	
+		END_VARIABLES;	
+	END_CLASS;
+	
+	CLASS uaVariableTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			Value		:	ANY;
+			DataType	:	INT;
+			ValueRank	:	INT;
+			ArrayDimensions	:	INT
+				INITIALVALUE	=	0;
+			IsAbstract	:	BOOL
+				INITIALVALUE	=	FALSE;		
+		END_VARIABLES;	
+	END_CLASS;
+	
+	CLASS uaDataTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		VARIABLES
+			IsAbstract	:	BOOL
+				INITIALVALUE	=	FALSE;		
+		END_VARIABLES;	
 	END_CLASS;
 	
 	/**
 	 *	Checks whether received data complies with a OPC UA opening of a connection
 	 *	criteria are:	1.	"HEL" in first three bytes of message
-	 *					2.	ProtocolVersion is not larger than the highes specified version number of iec62541 				
+	 *					2.	ProtocolVersion is not larger than the highest specified version number of iec62541 				
 	 *					3.	Message size (starting in byte 5) is larger than 32
 	 *					4.	Message size equals 32 + plus the given size in the EndpointUrl length field	
 	 */

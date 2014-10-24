@@ -134,3 +134,15 @@ OV_DLLFNCEXPORT void iec62541_uaServer_shutdown(
     return;
 }
 
+OV_DLLFNCEXPORT OV_ACCESS iec62541_uaServer_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+
+    return (OV_ACCESS)0;
+}
