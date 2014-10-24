@@ -62,16 +62,16 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     if(Ov_Fail(result))
          return result;
 
-
+    OV_INSTPTR_iec62541_uaObjectNode obj;
    /* do what */
     //get the container
-    CREATE_NS0_OBJECT(pinst,pobj,"Root",84);
+    CREATE_NS0_OBJECT(pinst,obj,"Root",84);
     root = pobj;
-    	CREATE_NS0_OBJECT(root,pobj,"Objects",85);
-    	CREATE_NS0_OBJECT(root,pobj,"Types",86);
+    	CREATE_NS0_OBJECT(root,obj,"Objects",85);
+    	CREATE_NS0_OBJECT(root,obj,"Types",86);
     	types = pobj;
-    		CREATE_NS0_OBJECT(types,pobj,"DataTypes",90);
-    		CREATE_NS0_OBJECT(types,pobj,"ReferenceTypes",91);
+    		CREATE_NS0_OBJECT(types,obj,"DataTypes",90);
+    		CREATE_NS0_OBJECT(types,obj,"ReferenceTypes",91);
     		referenceTypes = pobj;
 
     CREATE_REFERENCE_TYPE(referenceTypes,tmpRef,"References",31,FALSE);
