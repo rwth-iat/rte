@@ -9,6 +9,7 @@
 #define IEC62541_HELPERS_H_
 
 #include "iec62541.h"
+#include "libov/ov_path.h"
 UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant);
 UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type);

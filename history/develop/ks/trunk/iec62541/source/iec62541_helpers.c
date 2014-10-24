@@ -10,6 +10,8 @@
 #include "iec62541_helpers.h"
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
+#include "libov/ov_path.h"
+#include "libov/ov_macros.h"
 
 #define EPOCHDIFFERENCE_SECONDS	11644473600LL
 #define TOSECONDS				10000000LL
@@ -116,6 +118,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	UA_Boolean tempBool;	/*	has different byte size in ov and ua hence we need a temp variable	*/
 	UA_String tempString = {.length = 0, .data = NULL};
 	UA_DateTime tempTime;
+	UA_Double duration;
 	UA_Int32	arrayLength;
 	UA_Boolean* tempBoolArray = NULL;
 	UA_String*	tempStringArray = NULL;
@@ -173,9 +176,10 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			break;
 		case OV_VT_TIME_SPAN:
 		case OV_VT_TIME_SPAN_PV:
-			tempTime = ov_ovTimeSpanTo1601nsTime(pAny->value.valueunion.val_time_span);
-			value = &tempTime;
-			vt = &UA_[UA_DATETIME];
+			Ov_TimeSpanToDouble(pAny->value.valueunion.val_time_span, duration);
+			duration *= 1000.0;	/*	duration useses ms	*/
+			value = &duration;
+			vt = &UA_[UA_DOUBLE];
 			break;
 		case OV_VT_UINT:
 		case OV_VT_UINT_PV:

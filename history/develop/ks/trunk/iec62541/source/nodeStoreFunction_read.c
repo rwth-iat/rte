@@ -301,21 +301,107 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
 			ov_memstack_unlock();
 		}
-			break;
+		break;
 
 		case UA_ATTRIBUTEID_ISABSTRACT:
-			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
-			break;
+		{
+			UA_Boolean *isAbstract;
+			UA_Boolean_new(&isAbstract);
+			if(!isAbstract){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			if(path.elements[path.size-1].elemtype == OV_ET_OBJECT){
+				if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_class){
+					if(!(Ov_StaticPtrCast(ov_class, pobj)->v_classprops & OV_CP_INSTANTIABLE)){
+						*isAbstract = UA_TRUE; /*	is instantiable is the negation of isAbstract	*/
+					} else {
+						*isAbstract = UA_FALSE;
+					}
+				} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+					*isAbstract = UA_FALSE;
+				} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
+					*isAbstract = UA_FALSE;
+				} else {
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
+					ov_memstack_unlock();
+					break;
+				}
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
+				ov_memstack_unlock();
+				break;
+			}
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = isAbstract;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
 
 		case UA_ATTRIBUTEID_SYMMETRIC:
+		{
+			UA_Boolean *isSymmetric;
+			UA_Boolean_new(&isSymmetric);
+			if(!isSymmetric){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			if(path.elements[path.size-1].elemtype == OV_ET_OBJECT){
+				if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
+					*isSymmetric = UA_FALSE;	/*	all ov_associations have a direction	*/
+				} else {
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
+					ov_memstack_unlock();
+					break;
+				}
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
+				ov_memstack_unlock();
+				break;
+			}
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = isSymmetric;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_INVERSENAME:	/*	optional and not really a meaningfull mirror in ov (as we define a reference as an assiciation whereas UA defines a reference as one end of an association)	*/
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
 			break;
 
-		case UA_ATTRIBUTEID_INVERSENAME:
-			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
-			break;
-
-		case UA_ATTRIBUTEID_CONTAINSNOLOOPS:
+		case UA_ATTRIBUTEID_CONTAINSNOLOOPS:	/*	ov has no view nodes	*/
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
 			break;
 
@@ -381,111 +467,317 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			break;
 
-			case UA_ATTRIBUTEID_DATATYPE:
-			{
-				UA_NodeId *dataType;
-				ov_memstack_lock();
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
-				if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+		case UA_ATTRIBUTEID_DATATYPE:
+		{
+			UA_NodeId *dataType;
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			pobj = path.elements[path.size-1].pobj;
+			Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
+			if((!pVtblObj) || (ov_activitylock)){
+				pVtblObj = pclass_ov_object->v_pvtable;
+			}
+			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+			if(access & OV_AC_READ){
+				switch(path.elements[path.size-1].elemtype) {
+				case OV_ET_MEMBER:
+				case OV_ET_VARIABLE:
+					if(Ov_CanCastTo(ov_variable, pobj)){
+						dataType = ov_varTypeToNodeId(((OV_INSTPTR_ov_variable)pobj)->v_vartype);
+						if(!dataType){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							ov_memstack_unlock();
+							break;
+						} else {
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+						}
+					}
+					ov_memstack_unlock();
+					break;
+				default:
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					ov_memstack_unlock();
 					break;
 				}
-				pobj = path.elements[path.size-1].pobj;
-				Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
-				if((!pVtblObj) || (ov_activitylock)){
-					pVtblObj = pclass_ov_object->v_pvtable;
+			}
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_VALUERANK:
+		{
+			UA_Int32 *valueRank;
+			UA_Int32_new(&valueRank);
+			if(!valueRank){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			pobj = path.elements[path.size-1].pobj;
+			Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
+			if((!pVtblObj) || (ov_activitylock)){
+				pVtblObj = pclass_ov_object->v_pvtable;
+			}
+			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+			if(access & OV_AC_READ){
+				switch(path.elements[path.size-1].elemtype) {
+				case OV_ET_MEMBER:
+				case OV_ET_VARIABLE:
+					if(Ov_CanCastTo(ov_variable, pobj)){
+						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+						case OV_VT_ANY:
+						case OV_VT_VOID:
+							*valueRank = -3;	/*	scalar or one dimension	*/
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							break;
+						default:
+							if((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_ISVECTOR){
+								*valueRank = 1;	/*	one dimension	*/
+								readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							} else {
+								*valueRank = -1;	/*	scalar	*/
+								readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							}
+							break;
+						}
+					}
+					ov_memstack_unlock();
+					break;
+				default:
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
+					ov_memstack_unlock();
+					break;
 				}
-				access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
-				if(access & OV_AC_READ){
-					switch(path.elements[path.size-1].elemtype) {
-					case OV_ET_MEMBER:
-					case OV_ET_VARIABLE:
-						if(Ov_CanCastTo(ov_variable, pobj)){
-							dataType = ov_varTypeToNodeId(readNodesResults[indices[i]].status = ((OV_INSTPTR_ov_variable)pobj)->v_vartype);
-							if(!dataType){
-								readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-								ov_memstack_unlock();
+			}
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = valueRank;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_ARRAYDIMENSIONS:
+		{
+			UA_Int32 *arrayDimensions;
+			UA_Int32 arrayLength;
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			pobj = path.elements[path.size-1].pobj;
+			Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
+			if((!pVtblObj) || (ov_activitylock)){
+				pVtblObj = pclass_ov_object->v_pvtable;
+			}
+			access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+			if(access & OV_AC_READ){
+				switch(path.elements[path.size-1].elemtype) {
+				case OV_ET_MEMBER:
+				case OV_ET_VARIABLE:
+					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+					if(Ov_CanCastTo(ov_variable, pobj)){
+						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+						case OV_VT_ANY:
+						case OV_VT_VOID:
+							arrayLength = 0;
+							readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);	/*	scalar or one dimension	*/
+							break;
+						default:
+							if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
+								/*	scalar	*/
+								arrayLength = 0;
+								readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);
+							} else {
+								/*	vector	*/
+								arrayLength = 1;
+								readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);
+								if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+									break;
+								}
+								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), arrayLength, &UA_[UA_INT32], (void**)&arrayDimensions);
 								break;
 							}
 						}
-						ov_memstack_unlock();
-						break;
-					default:
-						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
-						ov_memstack_unlock();
-						break;
 					}
-				}
-				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
-				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-				readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
-				ov_memstack_unlock();
-			}
-				break;
-
-			case UA_ATTRIBUTEID_VALUERANK:
-				break;
-
-			case UA_ATTRIBUTEID_ARRAYDIMENSIONS:
-				break;
-
-			case UA_ATTRIBUTEID_ACCESSLEVEL:
-				break;
-
-			case UA_ATTRIBUTEID_USERACCESSLEVEL:
-				break;
-
-			case UA_ATTRIBUTEID_MINIMUMSAMPLINGINTERVAL:
-				readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
-				break;
-
-			case UA_ATTRIBUTEID_HISTORIZING:
-			{
-				UA_Boolean *historizing;
-				UA_Boolean_new(&historizing);
-				if(!historizing){
-					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 					break;
-				}
-				ov_memstack_lock();
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
-				if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				default:
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					ov_memstack_unlock();
 					break;
 				}
-				historizing = UA_FALSE;
-
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
-				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-				readNodesResults[indices[i]].value.storage.data.dataPtr = historizing;
+				readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+				readNodesResults[indices[i]].value.storage.data.arrayLength = arrayLength;
+				readNodesResults[indices[i]].value.storage.data.dataPtr = arrayDimensions;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
 				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
 				ov_memstack_unlock();
 			}
+		}
+		break;
+
+		case UA_ATTRIBUTEID_ACCESSLEVEL:
+		case UA_ATTRIBUTEID_USERACCESSLEVEL:
+		{
+			UA_Byte *accessLevel;
+			UA_Byte_new(&accessLevel);
+			if(!accessLevel){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_ACCESSLEVEL){
+				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), NULL, &pobj, &pVtblObj, &access);
+			} else {
+				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			}
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			*accessLevel = 0;
+			if(access & OV_AC_READ){
+				*accessLevel |= (1<<0);
+			}
+			if(access & OV_AC_WRITE){
+				*accessLevel |= (1<<1);
+			}
+
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_BYTE];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = accessLevel;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_MINIMUMSAMPLINGINTERVAL:
+		{
+			UA_Double *interval;
+			UA_Double_new(&interval);
+			if(!interval){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			*interval =  -1;
+
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_DOUBLE];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = interval;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_HISTORIZING:
+		{
+			UA_Boolean *historizing;
+			UA_Boolean_new(&historizing);
+			if(!historizing){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			historizing = UA_FALSE;
+
+			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+			readNodesResults[indices[i]].value.storage.data.dataPtr = historizing;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			ov_memstack_unlock();
+		}
+		break;
+
+		case UA_ATTRIBUTEID_EXECUTABLE:
+		case UA_ATTRIBUTEID_USEREXECUTABLE:
+		{
+			UA_Boolean *executable;
+			UA_Boolean_new(&executable);
+			if(!executable){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			ov_memstack_lock();
+			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			if(path.elements[path.size-1].elemtype == OV_ET_OPERATION){
+				*executable = UA_FALSE;
+				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+				readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+				readNodesResults[indices[i]].value.storage.data.dataPtr = executable;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+				ov_memstack_unlock();
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
+				ov_memstack_unlock();
+				break;
+			}
+
+
+		}
+		break;
+
+		default:
 			break;
-
-			case UA_ATTRIBUTEID_EXECUTABLE:
-				readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
-				break;
-
-			case UA_ATTRIBUTEID_USEREXECUTABLE:
-				readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
-				break;
-
-			default:
-				break;
 		}
 
-		//if(retval != UA_STATUSCODE_GOOD) {
-		//	readNodesResults[indices].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
-		//	readNodesResults[indices].status       = UA_STATUSCODE_BADNOTREADABLE;
-		// }
+		if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD) {
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
+		}
 	}
 	return UA_STATUSCODE_GOOD;
 }
