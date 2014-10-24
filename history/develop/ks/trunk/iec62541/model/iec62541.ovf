@@ -53,10 +53,10 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_BROWSENODES(
-	UA_UInt32 requestedMaxReferencesPerNode,
 	UA_BrowseDescription *browseDescriptions,
-	UA_Int32 *indices,
+	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
+	UA_UInt32 requestedMaxReferencesPerNode,
 	UA_BrowseResult *browseResults,
 	UA_DiagnosticInfo *diagnosticInfos
 );

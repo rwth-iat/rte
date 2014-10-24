@@ -32,13 +32,15 @@
 
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
-		UA_UInt32 requestedMaxReferencesPerNode,
 		UA_BrowseDescription *browseDescriptions,
-		UA_Int32 *indices,
+		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
+		UA_UInt32 requestedMaxReferencesPerNode,
 		UA_BrowseResult *browseResults,
 		UA_DiagnosticInfo *diagnosticInfos
 ) {
+
+
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
