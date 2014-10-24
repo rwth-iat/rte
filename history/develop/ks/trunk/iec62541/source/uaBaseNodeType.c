@@ -36,7 +36,7 @@ OV_DLLFNCEXPORT OV_ACCESS iec62541_uaBaseNodeType_getaccess(
 			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
 				return OV_AC_NONE;
 			else
-				return OV_AC_READWRITE;
+				return OV_AC_READ;
 		}
 		break;
 	default:

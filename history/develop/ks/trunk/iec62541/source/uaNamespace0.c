@@ -24,6 +24,7 @@
 #include "iec62541.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
+#include "ks_logfile.h"
 
 #define CREATE_NS0_OBJECT(PPARENT,POBJECT,IDENTIFIER,NS0ID) \
 		Ov_CreateObject(iec62541_uaObjectNode, POBJECT, PPARENT, IDENTIFIER); \
@@ -44,6 +45,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     */
     OV_INSTPTR_iec62541_uaNamespace0 pinst = Ov_StaticPtrCast(iec62541_uaNamespace0, pobj);
     OV_RESULT    result;
+    OV_INSTPTR_ov_object pOtherObject = NULL;
 
     OV_INSTPTR_iec62541_uaReferenceTypeNode tmpRef;
     OV_INSTPTR_iec62541_uaReferenceTypeNode leaf0;
@@ -65,6 +67,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 
     OV_INSTPTR_iec62541_uaObjectNode obj;
    /* do what */
+    Ov_ForEachChild(ov_instantiation, pclass_iec62541_uaNamespace0, pOtherObject){
+    	if(pOtherObject != pobj){
+    		KS_logfile_error(("%s: cannot instantiate - uaNamespace0 instance already exists", pinst->v_identifier));
+    		return OV_ERR_ALREADYEXISTS;
+    	}
+    }
+
     //get the container
     CREATE_NS0_OBJECT(pinst,obj,"Root",84);
     root = obj;

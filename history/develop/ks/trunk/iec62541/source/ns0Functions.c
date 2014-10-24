@@ -90,6 +90,24 @@ static void* iec62541_ns0Node_getValuePointer(OV_INSTPTR_iec62541_uaBaseNodeType
 	return NULL;
 }
 
+UA_Int32 iec62541_uaNamespace0_getNodeClass(OV_INSTPTR_iec62541_uaBaseNodeType pNode){
+	if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaObjectTypeNode){
+		return UA_NODECLASS_OBJECTTYPE;
+	} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaVariableNode){
+		return UA_NODECLASS_VARIABLE;
+	} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaObjectNode){
+		return UA_NODECLASS_OBJECT;
+	} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaReferenceTypeNode){
+		return UA_NODECLASS_REFERENCETYPE;
+	} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaDataTypeNode){
+		return UA_NODECLASS_DATATYPE;
+	} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaVariableTypeNode){
+		return UA_NODECLASS_VARIABLETYPE;
+	} else {
+		return UA_NODECLASS_UNSPECIFIED;
+	}
+}
+
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		UA_ReadValueId *readValueIds,
 		UA_UInt32 *indices,
@@ -100,9 +118,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 ) {
 	OV_INSTPTR_iec62541_uaBaseNodeType pNode = NULL;
 	void* tempPointer = NULL;
-
-
-
 	for(OV_UINT i = 0; i<indicesSize;i++){
 		if(readValueIds[indices[i]].nodeId.identifierType != UA_NODEIDTYPE_NUMERIC){
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNODEIDREJECTED;
@@ -140,21 +155,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 					break;
 				}
-				if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaObjectTypeNode){
-					*nodeClass = UA_NODECLASS_OBJECTTYPE;
-				} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaVariableNode){
-					*nodeClass = UA_NODECLASS_VARIABLE;
-				} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaObjectNode){
-					*nodeClass = UA_NODECLASS_OBJECT;
-				} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaReferenceTypeNode){
-					*nodeClass = UA_NODECLASS_REFERENCETYPE;
-				} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaDataTypeNode){
-					*nodeClass = UA_NODECLASS_DATATYPE;
-				} else if(Ov_GetParent(ov_instantiation, pNode) == pclass_iec62541_uaVariableTypeNode){
-					*nodeClass = UA_NODECLASS_VARIABLETYPE;
-				} else {
-					*nodeClass = UA_NODECLASS_UNSPECIFIED;
-				}
+				*nodeClass = iec62541_uaNamespace0_getNodeClass(pNode);
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				readNodesResults[indices[i]].value.vt = &UA_[UA_NODECLASS];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
@@ -471,6 +472,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_writeNodes(
 
 }
 
+static OV_BOOL iec62541_nodeClassMaskMatch(OV_INSTPTR_iec62541_uaBaseNodeType pNode, UA_UInt32 mask){
+	return TRUE; /*	todo: implement!!!	*/
+}
+
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 		UA_UInt32 requestedMaxReferencesPerNode,
 		UA_BrowseDescription *browseDescriptions,
@@ -479,6 +484,108 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 		UA_BrowseResult *browseResults,
 		UA_DiagnosticInfo *diagnosticInfos
 ) {
-	return UA_STATUSCODE_BADNOTIMPLEMENTED;
+	OV_INSTPTR_iec62541_uaBaseNodeType pNode = NULL;
+	void* tempPointer = NULL;
+
+	for(OV_UINT i = 0; i<indicesSize;i++){
+		if((browseDescriptions[indices[i]].nodeId.identifierType != UA_NODEIDTYPE_NUMERIC)
+				|| (browseDescriptions[indices[i]].referenceTypeId.identifierType != UA_NODEIDTYPE_NUMERIC)){
+			browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNODEIDREJECTED;
+			continue;
+		}
+		pNode = iec62541_uaNamespace0_getNodePtr(browseDescriptions[indices[i]].nodeId.identifier.numeric);
+
+		switch(browseDescriptions[indices[i]].referenceTypeId.identifier.numeric){
+		case 35:	/*	organizes	*/
+		{
+			OV_UINT refCount = 0;
+			UA_Int32 result = 0;
+			OV_INSTPTR_iec62541_uaBaseNodeType pChild = NULL;
+			/*	count references	*/
+			if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_FORWARD)
+					|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
+				Ov_ForEachChildEx(ov_containment, pNode, pChild, iec62541_uaBaseNodeType){
+					if(iec62541_nodeClassMaskMatch(pChild, browseDescriptions[indices[i]].nodeClassMask)){
+						refCount++;
+					}
+				}
+			}
+			if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_INVERSE)
+					|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
+				if(pNode->v_NodeId != 84){	/*	84 is root node	*/
+					refCount++;
+				}
+			}
+			UA_Array_new(&(browseResults[indices[i]].references), refCount, &UA_[UA_REFERENCEDESCRIPTION]);
+			if(!browseResults[indices[i]].references){
+				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
+				break;
+			}
+			browseResults[indices[i]].referencesSize = refCount;
+			refCount = 0;
+			while(refCount < browseResults[indices[i]].referencesSize){
+				if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_FORWARD)
+						|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
+					Ov_ForEachChildEx(ov_containment, pNode, pChild, iec62541_uaBaseNodeType){
+						if(iec62541_nodeClassMaskMatch(pChild, browseDescriptions[indices[i]].nodeClassMask)){
+							UA_String_copycstring(pChild->v_identifier, &(browseResults[indices[i]].references[refCount].browseName));
+							UA_String_copycstring(pChild->v_identifier, &(browseResults[indices[i]].references[refCount].displayName.text));
+							browseResults[indices[i]].references[refCount].isForward = UA_TRUE;
+							browseResults[indices[i]].references[refCount].nodeClass = iec62541_uaNamespace0_getNodeClass(pChild);
+							browseResults[indices[i]].references[refCount].nodeId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+							browseResults[indices[i]].references[refCount].nodeId.nodeId.namespaceIndex = 0;
+							browseResults[indices[i]].references[refCount].nodeId.nodeId.identifier.numeric = pNode->v_NodeId;
+							browseResults[indices[i]].references[refCount].referenceTypeId.namespaceIndex = 0;
+							browseResults[indices[i]].references[refCount].referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+							browseResults[indices[i]].references[refCount].referenceTypeId.identifier.numeric = 35;
+							browseResults[indices[i]].references[refCount].typeDefinition.nodeId.namespaceIndex = 0;
+							browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+							tempPointer = iec62541_ns0Node_getValuePointer(pChild, "Type", &result);
+							if((result != UA_STATUSCODE_GOOD) || (!tempPointer)){
+								browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifier.numeric = *((UA_Int32*)tempPointer);
+							} else {
+								browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifier.numeric = 0;
+							}
+							refCount++;
+						}
+					}
+				}
+			}
+			while(refCount < browseResults[indices[i]].referencesSize){
+				if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_INVERSE)
+						|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
+					pChild = Ov_DynamicPtrCast(iec62541_uaBaseNodeType, Ov_GetParent(ov_containment, pNode));
+					if(iec62541_nodeClassMaskMatch(pChild, browseDescriptions[indices[i]].nodeClassMask)){
+						UA_String_copycstring(pChild->v_identifier, &(browseResults[indices[i]].references[refCount].browseName));
+						UA_String_copycstring(pChild->v_identifier, &(browseResults[indices[i]].references[refCount].displayName.text));
+						browseResults[indices[i]].references[refCount].isForward = UA_TRUE;
+						browseResults[indices[i]].references[refCount].nodeClass = iec62541_uaNamespace0_getNodeClass(pChild);
+						browseResults[indices[i]].references[refCount].nodeId.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+						browseResults[indices[i]].references[refCount].nodeId.nodeId.namespaceIndex = 0;
+						browseResults[indices[i]].references[refCount].nodeId.nodeId.identifier.numeric = pNode->v_NodeId;
+						browseResults[indices[i]].references[refCount].referenceTypeId.namespaceIndex = 0;
+						browseResults[indices[i]].references[refCount].referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+						browseResults[indices[i]].references[refCount].referenceTypeId.identifier.numeric = 35;
+						browseResults[indices[i]].references[refCount].typeDefinition.nodeId.namespaceIndex = 0;
+						browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+						tempPointer = iec62541_ns0Node_getValuePointer(pChild, "Type", &result);
+						if((result != UA_STATUSCODE_GOOD) || (!tempPointer)){
+							browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifier.numeric = *((UA_Int32*)tempPointer);
+						} else {
+							browseResults[indices[i]].references[refCount].typeDefinition.nodeId.identifier.numeric = 0;
+						}
+						refCount++;
+					}
+				}
+			}
+
+		}
+		break;
+		default:
+			break;
+		}
+
+	}
+	return UA_STATUSCODE_GOOD;
 }
 
