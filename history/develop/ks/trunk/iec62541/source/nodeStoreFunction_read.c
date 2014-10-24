@@ -51,6 +51,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 
 	for(OV_UINT i = 0; i<indicesSize;i++){
 		switch(readValueIds[indices[i]].attributeId){
+		/*******************************************************************************************************************************************
+		 * NODEID - every type of node has one. we return the full canonical path to this node (including a part's name)
+		 *******************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_NODEID:
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
@@ -150,7 +153,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			ov_memstack_unlock();
 			break;
-
+			/***************************************************************************************************************************************************
+			 * NODECLASS - every type of node has one. we differentiate between Obejcts, Objecttypes (classes), variableTypes (instance of ov/variable) and
+			 * 		referenceTypes (instances of ov/assiciation)
+			 ***************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_NODECLASS:
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
@@ -205,7 +211,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
 			}
 			break;
-
+			/***************************************************************************************************************************************************
+			 * BROWSENAME and DISPLYNAME - every type of node has these two. For us they're the same
+			 * we return the objects identifier
+			 ***************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_BROWSENAME:
 		case UA_ATTRIBUTEID_DISPLAYNAME:
 			ov_memstack_lock();
@@ -234,7 +243,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			ov_memstack_unlock();
 			break;
-
+			/**********************************************************************************************************************************************************
+			 * DESCRIPTION - every type of node has one. We rturn the objects comment (from the class / variable)
+			 **********************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_DESCRIPTION:
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
@@ -260,7 +271,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			ov_memstack_unlock();
 			break;
-
+			/**********************************************************************************************************************************************************
+			 * WRITEMASK and USERWRITEMAS - every type of node has these two. For objects we return writable names (a rename will do it). Nothing more
+			 **********************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_WRITEMASK:
 		case UA_ATTRIBUTEID_USERWRITEMASK:
 		{
@@ -302,7 +315,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * ISABSTRACT - Objecttypes, VariableTypes and ReferenceTypes have it. ov only knows abstract Objecttypes which is returned. Other types return FALSE
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_ISABSTRACT:
 		{
 			UA_Boolean *isAbstract;
@@ -353,7 +368,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * SYMMETRIC - References have it. ov only knows directed references, so we return FALSE
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_SYMMETRIC:
 		{
 			UA_Boolean *isSymmetric;
@@ -396,15 +413,21 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * INVERSENAME - Reference have it. but ov does not know it
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_INVERSENAME:	/*	optional and not really a meaningfull mirror in ov (as we define a reference as an assiciation whereas UA defines a reference as one end of an association)	*/
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
 			break;
-
+			/*********************************************************************************************************************************************
+			 * CONTAINSNOLOOPS - Views have it. ov has no views
+			 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_CONTAINSNOLOOPS:	/*	ov has no view nodes	*/
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNOTIMPLEMENTED;
 			break;
-
+			/*********************************************************************************************************************************************
+			 * EVENTNOTIFIER - Objects have it. ov does not support notification, so we return 0
+			 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_EVENTNOTIFIER:
 		{
 			UA_Byte *eventNotifer;
@@ -431,7 +454,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * VALUE - Variables and VariableTypes have it. First return the current value the latter return the default value
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_VALUE:
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
@@ -456,17 +481,26 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 						readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
 						value = emptyAny;
 					}
-					ov_memstack_unlock();
 					break;
-					/*	todo: implement getValue for links as well?	*/
+				case OV_ET_OBJECT:
+					/*	Variables are defined by instances of ov/variable	*/
+					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+						readNodesResults[indices[i]].status = ov_AnyToVariant(ov_variable_initialvalue_get(Ov_StaticPtrCast(ov_variable,pobj)), &(readNodesResults[indices[i]].value));
+						readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					} else {
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
+					}
+					break;
 				default:
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
-					ov_memstack_unlock();
 					break;
 				}
+				ov_memstack_unlock();
 			}
 			break;
-
+			/*********************************************************************************************************************************************
+			 * DATATYPE - Variables and VariableTypes have it.
+			 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_DATATYPE:
 		{
 			UA_NodeId *dataType;
@@ -486,11 +520,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				switch(path.elements[path.size-1].elemtype) {
 				case OV_ET_MEMBER:
 				case OV_ET_VARIABLE:
-					if(Ov_CanCastTo(ov_variable, pobj)){
+					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
 						dataType = ov_varTypeToNodeId(((OV_INSTPTR_ov_variable)pobj)->v_vartype);
 						if(!dataType){
 							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-							ov_memstack_unlock();
 							break;
 						} else {
 							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
@@ -498,23 +532,39 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					}
 					ov_memstack_unlock();
 					break;
+				case OV_ET_OBJECT:
+					/*	Variables are defined by instances of ov/variable	*/
+					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+						dataType = ov_varTypeToNodeId(ov_variable_vartype_get(Ov_StaticPtrCast(ov_variable,pobj)));
+						if(!dataType){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							break;
+						} else {
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+						}
+					} else {
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
+						break;
+					}
 				default:
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
-					ov_memstack_unlock();
 					break;
 				}
 			}
-			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-			readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
-			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-			readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
+				readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
+				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+				readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			}
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * VALUERANK - Variables and VariableTypes have it. returns the number of dimensions a variable has (scalar, one dimensional array, or both possible)
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_VALUERANK:
 		{
 			UA_Int32 *valueRank;
@@ -539,7 +589,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				switch(path.elements[path.size-1].elemtype) {
 				case OV_ET_MEMBER:
 				case OV_ET_VARIABLE:
-					if(Ov_CanCastTo(ov_variable, pobj)){
+					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
+					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
 						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 						case OV_VT_ANY:
 						case OV_VT_VOID:
@@ -557,25 +608,46 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 							break;
 						}
 					}
-					ov_memstack_unlock();
+					break;
+				case OV_ET_OBJECT:
+					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+						case OV_VT_ANY:
+						case OV_VT_VOID:
+							*valueRank = -3;	/*	scalar or one dimension	*/
+							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							break;
+						default:
+							if((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_ISVECTOR){
+								*valueRank = 1;	/*	one dimension	*/
+								readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							} else {
+								*valueRank = -1;	/*	scalar	*/
+								readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+							}
+							break;
+						}
+					}
 					break;
 				default:
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
-					ov_memstack_unlock();
 					break;
 				}
 			}
-			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-			readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
-			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-			readNodesResults[indices[i]].value.storage.data.dataPtr = valueRank;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
+				readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
+				readNodesResults[indices[i]].value.storage.data.dataPtr = valueRank;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			}
 			ov_memstack_unlock();
 		}
 		break;
-
+		/*********************************************************************************************************************************************
+		 * ARRAYDIMENSIONS - Variables and VariableTypes have it. returns the number elements each dimension of a variable can take
+		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_ARRAYDIMENSIONS:
 		{
 			UA_Int32 *arrayDimensions;
@@ -622,23 +694,53 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 						}
 					}
 					break;
+				case OV_ET_OBJECT:
+					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].pobj);
+					if(Ov_CanCastTo(ov_variable, pobj)){
+						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
+						case OV_VT_ANY:
+						case OV_VT_VOID:
+							arrayLength = 0;
+							readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);	/*	scalar or one dimension	*/
+							break;
+						default:
+							if(((OV_INSTPTR_ov_variable)pobj)->v_veclen == 1){
+								/*	scalar	*/
+								arrayLength = 0;
+								readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);
+							} else {
+								/*	vector	*/
+								arrayLength = 1;
+								readNodesResults[indices[i]].status = UA_Array_new((void **)&arrayDimensions, arrayLength, &UA_[UA_INT32]);
+								if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+									break;
+								}
+								readNodesResults[indices[i]].status = UA_Array_copy(&(((OV_INSTPTR_ov_variable)pobj)->v_veclen), arrayLength, &UA_[UA_INT32], (void**)&arrayDimensions);
+								break;
+							}
+						}
+					}
+					break;
 				default:
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
-					ov_memstack_unlock();
 					break;
 				}
-				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
-				readNodesResults[indices[i]].value.storage.data.arrayLength = arrayLength;
-				readNodesResults[indices[i]].value.storage.data.dataPtr = arrayDimensions;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+				if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
+					readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+					readNodesResults[indices[i]].value.storage.data.arrayLength = arrayLength;
+					readNodesResults[indices[i]].value.storage.data.dataPtr = arrayDimensions;
+					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
+					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
+					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+				}
 				ov_memstack_unlock();
 			}
 		}
 		break;
-
+		/*****************************************************************************************************************************************************
+		 * ACCESSLEVEL and USERACCESSLEVEL - variables have it. We return the rights of current read and current write according to the ov-access flags
+		 * 		all other types of access are unknown to ov and so denied
+		 ****************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_ACCESSLEVEL:
 		case UA_ATTRIBUTEID_USERACCESSLEVEL:
 		{
@@ -682,6 +784,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		}
 		break;
 
+		/********************************************************************************************************************************************************
+		 * MINIMUMSAMPLINGINTERVAL - variables have it. ov has no means to get such a value from a variables.
+		 * 		despite we can determine cyctimes of fbs or comtasks, this is not visible in the ov metamodel
+		 ********************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_MINIMUMSAMPLINGINTERVAL:
 		{
 			UA_Double *interval;
@@ -708,7 +814,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/********************************************************************************************************************************************************
+		* HISTORIZING - variables have it. ov has no means to get such a value from a variables.
+		* 		despite we can have histories using the ov/kshistlib this is not part of the ov-metamodel
+		*********************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_HISTORIZING:
 		{
 			UA_Boolean *historizing;
@@ -735,7 +844,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			ov_memstack_unlock();
 		}
 		break;
-
+		/****************************************************************************************************************************************************
+		 * EXECUTABLE and USEREXECUTABLE - methods have it. methods (or operations) in ov are generally not accessable from the outside world
+		 * 		despite services are accessible from the outside world, they are specific instances of user-defined classes and not part of the ov-metamodel
+		 ****************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_EXECUTABLE:
 		case UA_ATTRIBUTEID_USEREXECUTABLE:
 		{
@@ -766,12 +878,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				ov_memstack_unlock();
 				break;
 			}
-
-
 		}
 		break;
-
+		/*****************************************************************************************************************************************************
+		 * wtf???
+		 ****************************************************************************************************************************************************/
 		default:
+			readNodesResults[indices[i]].status = UA_STATUSCODE_BADATTRIBUTEIDINVALID;
 			break;
 		}
 
