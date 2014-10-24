@@ -57,7 +57,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaObjectNode root;
     OV_INSTPTR_iec62541_uaObjectNode types;
     OV_INSTPTR_iec62541_uaObjectNode referenceTypes;
-#define CREATE_REFERENCE_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
@@ -89,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasProperty",46,FALSE);
 						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasCompoent",47,FALSE);
 						leaf6 = tmpRef;
-							CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasOrderedCompoent",49,FALSE);
+							CREATE_REFERENCE_TYPE(leaf6,tmpRef,"HasOrderedCompoent",49,FALSE);
 					CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasSubtype",45,FALSE);
 
 			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"Organizes",35,FALSE);
