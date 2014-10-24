@@ -67,13 +67,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
    /* do what */
     //get the container
     CREATE_NS0_OBJECT(pinst,obj,"Root",84);
-    root = pobj;
+    root = obj;
     	CREATE_NS0_OBJECT(root,obj,"Objects",85);
     	CREATE_NS0_OBJECT(root,obj,"Types",86);
-    	types = pobj;
+    	types = obj;
     		CREATE_NS0_OBJECT(types,obj,"DataTypes",90);
     		CREATE_NS0_OBJECT(types,obj,"ReferenceTypes",91);
-    		referenceTypes = pobj;
+    		referenceTypes = obj;
 
     CREATE_REFERENCE_TYPE(referenceTypes,tmpRef,"References",31,FALSE);
     	leaf0 = tmpRef;
