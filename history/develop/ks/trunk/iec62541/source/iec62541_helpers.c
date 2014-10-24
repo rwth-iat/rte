@@ -309,3 +309,55 @@ UA_StatusCode ov_VariantToAny(UA_Variant* pVariant, OV_ANY* pAny){
 
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
+
+/**
+ * resolves a UA-nodeId to an OV_PATH object
+ * the nodeId has to be of type STRING
+ * call ov_memstack_lock() /_unlock() around this one
+ */
+
+UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
+	OV_STRING tmpString = NULL;
+	OV_RESULT result;
+	if(nodeId.identifierType != UA_NODEIDTYPE_STRING){
+		return UA_STATUSCODE_BADNODEIDINVALID;
+	}
+	tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
+	if(!tmpString){
+		return UA_STATUSCODE_BADOUTOFMEMORY;
+	}
+	memcpy(tmpString,nodeId.identifier.string.data,nodeId.identifier.string.length);
+	tmpString[nodeId.identifier.string.length] = 0;
+	result = ov_path_resolve(pPath,NULL,tmpString, 2);
+	if(Ov_Fail(result)){
+		return ov_resultToUaStatusCode(result);
+	}
+	return UA_STATUSCODE_GOOD;
+}
+
+
+UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
+	switch(pelem->elemtype){
+	case OV_ET_OBJECT:
+	case OV_ET_OPERATION:
+		*pInstance = pelem->pobj;
+		break;
+	case OV_ET_MEMBER:
+	case OV_ET_VARIABLE:
+		*pInstance = pelem->elemunion.pobj;
+		break;
+	case OV_ET_CHILDLINK:
+	case OV_ET_PARENTLINK:
+		*pInstance = Ov_StaticPtrCast(ov_object, pelem->elemunion.passoc);
+		break;
+	default:
+		*pInstance = pelem->pobj;
+		break;
+	}
+	Ov_GetVTablePtr(ov_object, *ppVtblObj, *pInstance);
+	if((!*ppVtblObj) || (ov_activitylock)){
+		*ppVtblObj = pclass_ov_object->v_pvtable;
+	}
+	*access = (*ppVtblObj)->m_getaccess(pelem->pobj, pelem, pTicket);
+	return UA_STATUSCODE_GOOD;
+}
