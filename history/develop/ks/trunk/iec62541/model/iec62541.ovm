@@ -64,6 +64,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaReferenceTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			IsAbstract	:	BOOL
 				INITIALVALUE	=	FALSE;
@@ -73,6 +74,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaObjectNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			EventNotifier	:	UINT
 				INITIALVALUE	=	0;	
@@ -80,6 +82,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaObjectTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			IsAbstract	:	BOOL
 				INITIALVALUE	=	FALSE;	
@@ -87,6 +90,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaVariableNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			Value		:	ANY;
 			DataType	:	INT;
@@ -101,6 +105,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaVariableTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			Value		:	ANY;
 			DataType	:	INT;
@@ -113,6 +118,7 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	CLASS uaDataTypeNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
 		VARIABLES
 			IsAbstract	:	BOOL
 				INITIALVALUE	=	FALSE;		
