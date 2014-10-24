@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-10-24 11:35:39
+* Erstellt: 2014-10-24 14:28:57
 * 
 * HOST   : 134.130.125.43:7509
 * SERVER : MANAGER
@@ -15167,7 +15167,7 @@
     CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
       points : INPUT STRING = "0,0 0,0";
-      strokeWidth : INPUT SINGLE = 1.000000;
+      strokeWidth : INPUT SINGLE = 2.000000;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -15246,7 +15246,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -15256,7 +15256,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -15273,7 +15273,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pipe/Polyline/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -15358,7 +15358,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 5;
+      value : INPUT SINGLE = 5.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -15432,7 +15432,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 1;
+      value : INPUT SINGLE = 2.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -15627,7 +15627,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT SINGLE = 2.000000;
+      value : INPUT SINGLE = 5.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -15702,7 +15702,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT SINGLE = 1.000000;
+      value : INPUT SINGLE = 2.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -19794,7 +19794,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -19804,7 +19804,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -19821,7 +19821,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Vessel/4eck/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25495,7 +25495,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -25505,7 +25505,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25522,7 +25522,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Pump/Kreis/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27461,7 +27461,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -27471,7 +27471,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27488,7 +27488,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/DPump/Kreis/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -29445,7 +29445,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -29455,7 +29455,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -29472,7 +29472,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/RPump/Kreis/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -31427,7 +31427,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -31437,7 +31437,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -31454,7 +31454,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/Valve/Line/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -33376,7 +33376,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -33386,7 +33386,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -33403,7 +33403,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ThreeWayValve/Line/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -35345,7 +35345,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -35355,7 +35355,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -35372,7 +35372,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/CheckValve/Line/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -37082,7 +37082,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -37092,7 +37092,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -37109,7 +37109,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/SafetyValve/Line/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -47926,7 +47926,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -47936,7 +47936,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -47953,7 +47953,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/HeatSource/Circle/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -49708,7 +49708,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/FlowpathAnalyser/Rahmen :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/FlowpathAnalyser/Frame :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -52269,7 +52269,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -52279,7 +52279,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -52296,7 +52296,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunction/Polyline/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -54027,7 +54027,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/isInFlowpath :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -54037,7 +54037,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/if.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/isInFlowpath.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -54054,7 +54054,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/if.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PipeJunctionFlipped/Polyline/globalvarchanged/if.if/isInFlowpath.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
