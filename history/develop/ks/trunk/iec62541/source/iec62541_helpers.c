@@ -36,7 +36,7 @@ UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 	case OV_ERR_BADPLACEMENT:
 		return UA_STATUSCODE_BADINVALIDARGUMENT;
 	case OV_ERR_BADNAME:
-		return UA_STATUSCODE_BADNODEIDINVALID;
+		return UA_STATUSCODE_BADNODEIDREJECTED;
 	case OV_ERR_BADPATH:
 	case OV_ERR_CANTMOVE:
 		return UA_STATUSCODE_BADBROWSENAMEINVALID;
@@ -324,7 +324,7 @@ UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PA
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
 	if(nodeId.identifierType != UA_NODEIDTYPE_STRING){
-		return UA_STATUSCODE_BADNODEIDINVALID;
+		return UA_STATUSCODE_BADNODEIDREJECTED;
 	}
 	tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
 	if(!tmpString){

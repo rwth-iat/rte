@@ -55,7 +55,6 @@ LIBRARY iec62541
 	CLASS uaBaseNodeType	:	CLASS ov/domain
 		VARIABLES
 			NodeId		:	UINT;	/*	used in the findNode function , BrowseName and DisplayName mirror the objects identifier	*/	
-			NodeClass	:	STRING;
 			WriteMask	:	UINT;
 		END_VARIABLES;	
 		OPERATIONS
@@ -93,7 +92,7 @@ LIBRARY iec62541
 		IS_INSTANTIABLE;
 		VARIABLES
 			Value		:	ANY;
-			DataType	:	INT;
+			DataType	:	UINT;
 			ValueRank	:	INT;
 			ArrayDimensions	:	INT
 				INITIALVALUE	=	0;
@@ -108,7 +107,7 @@ LIBRARY iec62541
 		IS_INSTANTIABLE;
 		VARIABLES
 			Value		:	ANY;
-			DataType	:	INT;
+			DataType	:	UINT;
 			ValueRank	:	INT;
 			ArrayDimensions	:	INT
 				INITIALVALUE	=	0;

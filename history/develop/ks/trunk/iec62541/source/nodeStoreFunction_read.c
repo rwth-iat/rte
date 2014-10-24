@@ -174,6 +174,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				UA_NodeClass_new(&nodeClass);
 				if(!nodeClass){
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+					ov_memstack_unlock();
+					break;
 				}
 				switch(path.elements[path.size-1].elemtype){
 				case OV_ET_OBJECT:
