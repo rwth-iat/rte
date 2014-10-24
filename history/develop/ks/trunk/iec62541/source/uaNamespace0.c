@@ -23,8 +23,19 @@
 
 #include "iec62541.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_path.h"
 
-
+#define CREATE_NS0_OBJECT(PPARENT,POBJECT,IDENTIFIER,NS0ID) \
+		Ov_CreateObject(iec62541_uaObjectNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaObjectNode)POBJECT)->v_NodeId = NS0ID; \
+	}
+#define CREATE_REFERENCE_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
+	Ov_CreateObject(iec62541_uaReferenceTypeNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_NodeId = NS0ID; \
+		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_IsAbstract = ISABSTRACT; \
+	}
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -34,12 +45,66 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaNamespace0 pinst = Ov_StaticPtrCast(iec62541_uaNamespace0, pobj);
     OV_RESULT    result;
 
+    OV_INSTPTR_iec62541_uaReferenceTypeNode tmpRef;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf0;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf1;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf2;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf3;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf4;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf5;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf6;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf7;
+    OV_INSTPTR_iec62541_uaObjectNode root;
+    OV_INSTPTR_iec62541_uaObjectNode types;
+    OV_INSTPTR_iec62541_uaObjectNode referenceTypes;
+#define CREATE_REFERENCE_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
-    /* do what */
+
+   /* do what */
+    //get the container
+    CREATE_NS0_OBJECT(pinst,pobj,"Root",84);
+    root = pobj;
+    	CREATE_NS0_OBJECT(root,pobj,"Objects",85);
+    	CREATE_NS0_OBJECT(root,pobj,"Types",86);
+    	types = pobj;
+    		CREATE_NS0_OBJECT(types,pobj,"DataTypes",90);
+    		CREATE_NS0_OBJECT(types,pobj,"ReferenceTypes",91);
+    		referenceTypes = pobj;
+
+    CREATE_REFERENCE_TYPE(referenceTypes,tmpRef,"References",31,FALSE);
+    	leaf0 = tmpRef;
+    	CREATE_REFERENCE_TYPE(leaf0,tmpRef,"HierarchicalReferences",33,FALSE);
+    	leaf2 = tmpRef;
+			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasEventSource",36,FALSE);
+				leaf3 = tmpRef;
+				CREATE_REFERENCE_TYPE(leaf3,tmpRef,"HasNotifier",48,FALSE);
+			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasChild",34,FALSE);
+				leaf4 = tmpRef;
+					CREATE_REFERENCE_TYPE(leaf4,tmpRef,"Aggregates",44,FALSE);
+					leaf5 = tmpRef;
+						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasProperty",46,FALSE);
+						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasCompoent",47,FALSE);
+						leaf6 = tmpRef;
+							CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasOrderedCompoent",49,FALSE);
+					CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasSubtype",45,FALSE);
+
+			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"Organizes",35,FALSE);
+		CREATE_REFERENCE_TYPE(leaf0,tmpRef,"NonHierarchicalReferences",32,FALSE);
+		leaf7 = tmpRef;
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasModelParent",50,FALSE);
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"GeneratesEvent",41,FALSE);
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasEncoding",38,FALSE);
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasModellingRule",37,FALSE);
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasDescription",39,FALSE);
+			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasTypeDefinition",40,FALSE);
+
+
+
+	   //CREATE_NS0_OBJECT(pinst,rootObj,"Views",84);
 
 
     return OV_ERR_OK;
