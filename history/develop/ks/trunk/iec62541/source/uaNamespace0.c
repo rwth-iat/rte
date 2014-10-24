@@ -57,6 +57,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaObjectNode root;
     OV_INSTPTR_iec62541_uaObjectNode types;
     OV_INSTPTR_iec62541_uaObjectNode referenceTypes;
+
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))

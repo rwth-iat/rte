@@ -3,7 +3,7 @@
 *
 *   FILE
 *   ----
-*   uaBaseNodeType.c
+*   uaReferenceNode.c
 *
 *   History
 *   -------
@@ -24,25 +24,4 @@
 #include "iec62541.h"
 #include "libov/ov_macros.h"
 
-
-OV_DLLFNCEXPORT OV_ACCESS iec62541_uaBaseNodeType_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-   switch(pelem->elemtype) {
-	case OV_ET_VARIABLE:
-		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
-			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
-				return OV_AC_NONE;
-			else
-				return OV_AC_READWRITE;
-		}
-		break;
-	default:
-		break;
-	}
-
-	return ov_object_getaccess(pobj, pelem, pticket);
-}
 

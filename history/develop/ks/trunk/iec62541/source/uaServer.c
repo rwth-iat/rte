@@ -60,7 +60,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
-
+    OV_INSTPTR_iec62541_uaNamespace0	pNs0 = NULL;
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
@@ -72,6 +72,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     		KS_logfile_error(("%s: cannot instantiate - uaServer instance already exists", pinst->v_identifier));
     		return OV_ERR_ALREADYEXISTS;
     	}
+    }
+
+    result = Ov_CreateObject(iec62541_uaNamespace0, pNs0, pinst, "ns0");
+    if(Ov_Fail(result) && (result != OV_ERR_ALREADYEXISTS))
+    {
+    	return result;
     }
 
     return OV_ERR_OK;
@@ -110,8 +116,10 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
     UA_Server_addNamespace(&(pinst->v_serverData),0,&(pinst->v_nodeStoreNs0));
     UA_Server_addNamespace(&(pinst->v_serverData),42,&(pinst->v_nodeStoreNsOV));
 
-    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNs0), ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
-    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNsOV), ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
+    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNs0),
+    		((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes);
+    UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNsOV),
+    		((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
     return;
 }
 
@@ -139,10 +147,18 @@ OV_DLLFNCEXPORT OV_ACCESS iec62541_uaServer_getaccess(
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
 ) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+	switch(pelem->elemtype) {
+	case OV_ET_VARIABLE:
+		if(pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object,__classinfo)) {
+			if(pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE)
+				return OV_AC_NONE;
+			else
+				return OV_AC_READWRITE;
+		}
+		break;
+	default:
+		break;
+	}
 
-    return (OV_ACCESS)0;
+	return ov_object_getaccess(pobj, pelem, pticket);
 }

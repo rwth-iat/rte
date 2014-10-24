@@ -72,11 +72,19 @@ LIBRARY iec62541
 		END_VARIABLES;	
 	END_CLASS;
 	
+	CLASS uaReferenceNode	:	CLASS	iec62541/uaBaseNodeType
+		IS_INSTANTIABLE;
+		VARIABLES
+			Type	:	UINT;	
+		END_VARIABLES;	
+	END_CLASS;
+	
 	CLASS uaObjectNode	:	CLASS	iec62541/uaBaseNodeType
 		IS_INSTANTIABLE;
 		VARIABLES
 			EventNotifier	:	UINT
-				INITIALVALUE	=	0;	
+				INITIALVALUE	=	0;
+			Type	:	UINT;
 		END_VARIABLES;	
 	END_CLASS;
 	
@@ -99,7 +107,8 @@ LIBRARY iec62541
 			AccessLevel	:	UINT
 				INITIALVALUE	=	1; /*	read access	*/
 			Historizing	:	BOOL
-				INITIALVALUE	=	FALSE;	
+				INITIALVALUE	=	FALSE;
+			Type	:	UINT;
 		END_VARIABLES;	
 	END_CLASS;
 	
@@ -257,9 +266,14 @@ LIBRARY iec62541
 		Add associations and their documentation here.
 		Association syntax is:
 	*/
-	//ASSOCIATION assocName : ONE_TO_MANY
-	//	PARENT parentVarName : CLASS ov/object;
-	//	CHILD  childVarName : CLASS ov/object;
-	//END_ASSOCIATION;
+	ASSOCIATION Reference1 : ONE_TO_MANY
+		PARENT node1		: CLASS iec62541/uaBaseNodeType;
+		CHILD  reference1	: CLASS iec62541/uaReferenceNode;
+	END_ASSOCIATION;
+	
+	ASSOCIATION Reference2 : ONE_TO_MANY
+		PARENT node2		: CLASS iec62541/uaBaseNodeType;
+		CHILD  reference2	: CLASS iec62541/uaReferenceNode;
+	END_ASSOCIATION;
 	
 END_LIBRARY;
