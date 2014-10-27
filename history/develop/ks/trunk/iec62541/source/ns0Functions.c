@@ -474,6 +474,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_writeNodes(
 
 static OV_BOOL iec62541_nodeClassMaskMatch(OV_INSTPTR_iec62541_uaBaseNodeType pNode, UA_UInt32 mask){
 	UA_Int32 nodeClass = iec62541_uaNamespace0_getNodeClass(pNode);
+	if(mask == 0){
+		return TRUE; //if no bit is set, all attributes should be returned
+	}
 	switch(nodeClass){
 	case UA_NODECLASS_OBJECT:
 		return ((mask & (1<<0)) ? TRUE : FALSE);
@@ -523,16 +526,16 @@ static UA_StatusCode iec62541_fillReferenceDescription(
 	if(resultMask & (1<<0)){
 		dst->referenceTypeId.namespaceIndex = 0;
 		dst->referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
-		dst->referenceTypeId.identifier.numeric = 35;
+		dst->referenceTypeId.identifier.numeric = 35; // remove const value
 	}
 	if(resultMask & (1<<5)){
 		dst->typeDefinition.nodeId.namespaceIndex = 0;
 		dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
 		tempPointer = iec62541_ns0Node_getValuePointer(pNode, "Type", &result);
 		if((result != UA_STATUSCODE_GOOD) || (!tempPointer)){
-			dst->typeDefinition.nodeId.identifier.numeric = *((UA_Int32*)tempPointer);
-		} else {
 			dst->typeDefinition.nodeId.identifier.numeric = 0;
+		} else {
+			dst->typeDefinition.nodeId.identifier.numeric = *((UA_Int32*)tempPointer);
 		}
 	}
 	return result;
@@ -578,7 +581,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 				}
 			}
 			UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_[UA_REFERENCEDESCRIPTION]);
-			if(!browseResults[indices[i]].references){
+			if(!browseResults[indices[i]].references && refCount>0){
 				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 				break;
 			}
@@ -589,7 +592,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 					Ov_ForEachChildEx(ov_containment, pNode, pChild, iec62541_uaBaseNodeType){
 						if(iec62541_nodeClassMaskMatch(pChild, browseDescriptions[indices[i]].nodeClassMask)){
-							browseResults[indices[i]].statusCode = iec62541_fillReferenceDescription(pNode,
+							browseResults[indices[i]].statusCode = iec62541_fillReferenceDescription(pChild,
 									35 , browseDescriptions[indices[i]].resultMask, &(browseResults[indices[i]].references[refCount]));
 							refCount++;
 						}
@@ -601,7 +604,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 					pChild = Ov_DynamicPtrCast(iec62541_uaBaseNodeType, Ov_GetParent(ov_containment, pNode));
 					if(iec62541_nodeClassMaskMatch(pChild, browseDescriptions[indices[i]].nodeClassMask)){
-						browseResults[indices[i]].statusCode = iec62541_fillReferenceDescription(pNode,
+						browseResults[indices[i]].statusCode = iec62541_fillReferenceDescription(pChild,
 								35 , browseDescriptions[indices[i]].resultMask, &(browseResults[indices[i]].references[refCount]));
 						refCount++;
 					}
