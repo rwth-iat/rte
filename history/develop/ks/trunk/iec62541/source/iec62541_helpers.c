@@ -316,25 +316,41 @@ UA_StatusCode ov_VariantToAny(UA_Variant* pVariant, OV_ANY* pAny){
 
 /**
  * resolves a UA-nodeId to an OV_PATH object
- * the nodeId has to be of type STRING
+ * the nodeId has to be of type STRING or NUMERIC
+ * in the latter case only objects can be addressed (no variables)
+ * the STRING nodeIds are treated as a usual path, so the ov-id can be part of them (/.xxx)
  * call ov_memstack_lock() /_unlock() around this one
  */
 
 UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
-	if(nodeId.identifierType != UA_NODEIDTYPE_STRING){
+	switch(nodeId.identifierType){
+	case UA_NODEIDTYPE_STRING:
+		tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
+		if(!tmpString){
+			return UA_STATUSCODE_BADOUTOFMEMORY;
+		}
+		memcpy(tmpString,nodeId.identifier.string.data,nodeId.identifier.string.length);
+		tmpString[nodeId.identifier.string.length] = 0;
+		result = ov_path_resolve(pPath,NULL,tmpString, 2);
+		if(Ov_Fail(result)){
+			return ov_resultToUaStatusCode(result);
+		}
+		break;
+	case UA_NODEIDTYPE_NUMERIC:
+		tmpString = ov_memstack_alloc(32);
+		if(!tmpString){
+			return UA_STATUSCODE_BADOUTOFMEMORY;
+		}
+		snprintf(tmpString, 31, "/.%u", nodeId.identifier.numeric);
+		result = ov_path_resolve(pPath,NULL,tmpString, 2);
+		if(Ov_Fail(result)){
+			return ov_resultToUaStatusCode(result);
+		}
+		break;
+	default:
 		return UA_STATUSCODE_BADNODEIDREJECTED;
-	}
-	tmpString = ov_memstack_alloc(nodeId.identifier.string.length + 1);
-	if(!tmpString){
-		return UA_STATUSCODE_BADOUTOFMEMORY;
-	}
-	memcpy(tmpString,nodeId.identifier.string.data,nodeId.identifier.string.length);
-	tmpString[nodeId.identifier.string.length] = 0;
-	result = ov_path_resolve(pPath,NULL,tmpString, 2);
-	if(Ov_Fail(result)){
-		return ov_resultToUaStatusCode(result);
 	}
 	return UA_STATUSCODE_GOOD;
 }

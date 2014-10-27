@@ -117,9 +117,9 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
     UA_Server_addNamespace(&(pinst->v_serverData),42,&(pinst->v_nodeStoreNsOV));
 
     UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNs0),
-    		((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes);
+    		((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes);
     UA_NodeStore_registerBrowseNodesOperation(&(pinst->v_nodeStoreNs0),
-       		((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes);
+       		((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes);
     UA_NodeStore_registerReadNodesOperation(&(pinst->v_nodeStoreNsOV),
     		((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes);
     return;

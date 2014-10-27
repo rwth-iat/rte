@@ -508,7 +508,8 @@ static UA_StatusCode iec62541_fillReferenceDescription(
 	dst->nodeId.nodeId.identifier.numeric = pNode->v_NodeId;
 
 	if(resultMask & (1<<3)){
-		UA_String_copycstring(pNode->v_identifier, &(dst->browseName));
+		UA_String_copycstring(pNode->v_identifier, &(dst->browseName.name));
+		dst->browseName.namespaceIndex = 0;
 	}
 	if(resultMask & (1<<4)){
 		UA_String_copycstring(pNode->v_identifier, &(dst->displayName.text));
@@ -546,7 +547,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 		UA_DiagnosticInfo *diagnosticInfos
 ) {
 	OV_INSTPTR_iec62541_uaBaseNodeType pNode = NULL;
-	void* tempPointer = NULL;
 
 	for(OV_UINT i = 0; i<indicesSize;i++){
 		if((browseDescriptions[indices[i]].nodeId.identifierType != UA_NODEIDTYPE_NUMERIC)
@@ -558,9 +558,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 
 		switch(browseDescriptions[indices[i]].referenceTypeId.identifier.numeric){
 		case 35:	/*	organizes	*/
+		case 33:
 		{
 			OV_UINT refCount = 0;
-			UA_Int32 result = 0;
 			OV_INSTPTR_iec62541_uaBaseNodeType pChild = NULL;
 			/*	count references	*/
 			if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_FORWARD)
@@ -577,7 +577,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 					refCount++;
 				}
 			}
-			UA_Array_new(&(browseResults[indices[i]].references), refCount, &UA_[UA_REFERENCEDESCRIPTION]);
+			UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_[UA_REFERENCEDESCRIPTION]);
 			if(!browseResults[indices[i]].references){
 				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 				break;
@@ -611,6 +611,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 		}
 		break;
 		default:
+			browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNOTSUPPORTED;
 			break;
 		}
 
