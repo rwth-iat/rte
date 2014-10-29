@@ -5,6 +5,29 @@
 #include "libov/ov_ov.h"
 #include "ksbase.h"
 
+/**
+ * splits up a path string into its components
+ * a path string may contain:
+ *	[//host[:MANAGERPort]/servername[:serverport]/]instancePath
+ *	examples are
+ *	//dev:7509/MANAGER:7509/vendor/server_description
+ *	//dev/MANAGER:7509/vendor/server_description
+ *	//dev:7509/MANAGER/vendor/server_description
+ *	//dev/MANAGER/vendor/server_description
+ *	call ov_memstack_lock() / _unlock() around it
+ *	when the result pointers are NULL they are not filled, no error is returned
+ *	however, managerport and serverport are only set, if the pointers host and serverName,
+ *	respectively, are set
+ */
+OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
+		const OV_STRING path,
+		OV_STRING* host,
+		OV_STRING* managerPort,
+		OV_STRING* serverName,
+		OV_STRING* serverPort,
+		OV_STRING* instancePath
+);
+
 OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name);
 
 OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet);
