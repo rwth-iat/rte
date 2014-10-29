@@ -139,8 +139,8 @@ static char* readValue(char* line)
  * @return Bool
  */
 static OV_BOOL serverNameOk(const char* servername){
-	OV_STRING const temp = NULL;
-	if(!name){
+	OV_STRING temp = NULL;
+	if(!servername){
 		return FALSE;
 	}
 	temp = servername;
