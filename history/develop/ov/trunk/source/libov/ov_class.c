@@ -719,13 +719,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	OV_INSTPTR_ov_object	pcurrobj;
 	OV_BOOL					rename;
 	OV_STRING				newid;
+	OV_VTBLPTR_ov_object	pvtable;
 	/*
 	*	check parameters
 	*/
 	if(!pobj || !pparent) {
 		return OV_ERR_BADPARAM;
 	}
-	if(!Ov_DynamicPtrCast(ov_domain, pparent)) {
+	if(!Ov_CanCastTo(ov_domain, pparent)) {
 		return OV_ERR_BADPARAM;
 	}
 	/*
@@ -775,6 +776,22 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 			}
 		}
 	}
+
+	/*
+	*	get the vtable pointer of the object
+	*/
+	Ov_GetVTablePtr(ov_object, pvtable, pobj);
+	if(!pvtable) {
+		pvtable = pclass_ov_object->v_pvtable;
+	}
+	/*
+	*	calling the precheck
+	*/
+	result = pvtable->m_rename(pobj, newid, pparent);
+	if(Ov_Fail(result)) {
+		return result;
+	}
+
 	/*
 	*	rename the object if necessary
 	*/

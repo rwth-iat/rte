@@ -98,8 +98,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_idL_set(
 	return OV_ERR_OK;
 }
 
-
-/*
+/**
 *	Default constructor of an object
 */
 OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
@@ -228,7 +227,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_constructor(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default initialization check of an object
 */
 OV_DLLFNCEXPORT OV_RESULT ov_object_checkinit(
@@ -239,7 +238,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_checkinit(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default destructor of an object
 */
 void OV_DLLFNCEXPORT ov_object_destructor(
@@ -384,9 +383,21 @@ void OV_DLLFNCEXPORT ov_object_shutdown(
 	return;
 }
 
+/**
+*	Default before rename or moving of an object
+*/
+OV_DLLFNCEXPORT OV_RESULT ov_object_rename(
+		OV_INSTPTR_ov_object	pobj,
+		OV_STRING				newid,
+		OV_INSTPTR_ov_domain	pnewparent
+) {
+	return OV_ERR_OK;
+}
+
+
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default method for getting the access rights
 *	of an object or one of its elements
 */
@@ -508,7 +519,7 @@ OV_ACCESS OV_DLLFNCEXPORT ov_object_getaccess(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default method for reading the semantical flags of an object or one
 *	of its elements (part of the engineered properties)
 */
@@ -537,7 +548,7 @@ OV_UINT OV_DLLFNCEXPORT ov_object_getflags(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default method for getting the comment of an object or
 *	one of its elements (variables, parts, operations, links)
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
@@ -567,7 +578,7 @@ OV_STRING OV_DLLFNCEXPORT ov_object_getcomment(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default method for getting the technical unit of a variable of the object
 *	NOTE: call ov_memstack_lock/unlock() outside of this function!
 */
@@ -701,7 +712,10 @@ OV_STRING OV_DLLFNCEXPORT ov_object_gettechunit(
 		}																		\
 		return OV_ERR_OK
 
-/*	----------------------------------------------------------------------	*/
+/**
+*	Default method for reading the current properties of
+*	a variable (value, state and timestamp, compare ACPLT/KS)
+*/
 OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 	OV_INSTPTR_ov_object 	pobj, 
 	const OV_ELEMENT		*pelem,
@@ -987,7 +1001,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_getvar(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Default method for writing the current properties of
 *	a variable (value, state and timestamp, compare ACPLT/KS)
 */
@@ -1170,7 +1184,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_object_setvar(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Test, if an object owns links (except to the parent domain and class)
 */
 OV_DLLFNCEXPORT OV_BOOL ov_object_haslinks(
@@ -1225,7 +1239,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_object_haslinks(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Test, if a string is a valid identifier for an object
 */
 OV_DLLFNCEXPORT OV_BOOL ov_object_identifierok(
@@ -1245,7 +1259,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_object_identifierok(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Constructor of an object in case the database is not started up (subroutine)
 */
 OV_RESULT ov_object_constructor_nostartup(
@@ -1256,7 +1270,7 @@ OV_RESULT ov_object_constructor_nostartup(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Method for getting the access rights of an object or one of its elements
 *	in case the database is not started up (subroutine)
 */
@@ -1355,7 +1369,7 @@ OV_ACCESS ov_object_getaccess_nostartup(
 	}
 /*	----------------------------------------------------------------------	*/
 
-/*
+/**
 *	Move an object and its children/parts to a new address (subroutine)
 *
 *	For this all pointers of the object (pobj), its linktable, variables, parts and childs
@@ -1495,6 +1509,8 @@ OV_RESULT ov_object_move(
 									if(pvector) {
 										if(pvector->value && (((OV_BYTE*) pvector->value + distance) < pdb->pstart || ((OV_BYTE*) pvector->value + distance) > pdb->pend))
 										{
+											//fixme ignore initial value?
+
 											#ifdef OV_DEBUG
 												ov_logfile_error("moving pointers: string vector variable %s of object %s points outside the database", Ov_StringPtr(pelem->v_identifier), Ov_StringPtr(pobj->v_identifier));
 											#endif

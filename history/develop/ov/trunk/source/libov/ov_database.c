@@ -137,6 +137,7 @@ static OV_VTBL_ov_object nostartupvtable = {
 	ov_object_destructor,
 	ov_object_startup,
 	ov_object_shutdown,
+	ov_object_rename,
 	ov_object_getaccess_nostartup,
 	ov_object_getflags,
 	ov_object_getcomment,

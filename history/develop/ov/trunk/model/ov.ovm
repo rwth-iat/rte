@@ -47,7 +47,7 @@ LIBRARY ov
 				HAS_ACCESSORS
 				COMMENT	= "low dword of this object's unique id within the server (as long as it exists)";
 			creationtime : TIME;
-			pouterobject : C_TYPE <OV_INSTPTR>;	//if this is a OV Part
+			pouterobject : C_TYPE <OV_INSTPTR>;	//pointer to outer object if this is a OV Part
 			objectstate : INT;	//OV_OS_NONE, OV_OS_INIT, OV_OS_STARTED or OV_OS_ACTIVE
 			linktable : C_TYPE <OV_ATBLPTR>;
 		END_VARIABLES;
@@ -57,6 +57,7 @@ LIBRARY ov
 			destructor : C_FUNCTION <OV_FNC_DESTRUCTOR>;	//deletion of object
 			startup : C_FUNCTION <OV_FNC_STARTUP>;	//startup could be after creation or after restarting db
 			shutdown : C_FUNCTION <OV_FNC_SHUTDOWN>;	//could be before destructor or before shuting down db
+			rename : C_FUNCTION <OV_FNC_RENAME>;	//the object should be renamed or moved
 			getaccess : C_FUNCTION <OV_FNC_GETACCESS>;
 			getflags : C_FUNCTION <OV_FNC_GETFLAGS>;
 			getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;

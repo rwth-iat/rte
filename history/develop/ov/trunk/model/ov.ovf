@@ -93,6 +93,15 @@ typedef OV_DLLFNCEXPORT void OV_FNC_SHUTDOWN(
 );
 
 /*
+*	Function prototype for method before renaming or moving an object 
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT OV_FNC_RENAME(
+	OV_INSTPTR_ov_object	pobj,
+	OV_STRING				newid,
+	OV_INSTPTR_ov_domain	pnewparent
+);
+
+/*
 *	Function prototype for method reading the access rights
 *	of an object or one of its elements
 */
