@@ -701,7 +701,7 @@ OV_RESULT ov_library_prepare(
 		memset(pclass->v_linktable, 0, ov_association_gettablesize(&OV_CLASS_DEF_ov_class));
 		DoLink(ov_containment, &pdb->ov, pclass);
 		ov_database_getId(&(pclass->v_idH), &(pclass->v_idL));
-		ov_database_idListInsert(pclass->v_idH, pclass->v_idL, pclass);
+		ov_database_idListInsert(pclass->v_idH, pclass->v_idL, Ov_PtrUpCast(ov_object, pclass));
 		/*
 		*	initialize class pointers
 		*/
@@ -749,7 +749,7 @@ OV_RESULT ov_library_prepare(
 			passoc_ov_inheritance = passoc;
 		}
 		ov_database_getId(&(passoc->v_idH), &(passoc->v_idL));
-		ov_database_idListInsert(passoc->v_idH, passoc->v_idL, passoc);
+		ov_database_idListInsert(passoc->v_idH, passoc->v_idL, Ov_PtrUpCast(ov_object, passoc));
 	}
 	/*
 	*	link all class objects with class "class"

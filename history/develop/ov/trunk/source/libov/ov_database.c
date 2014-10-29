@@ -910,10 +910,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 	ov_time_gettime(&pdb->root.v_creationtime);
 	/*	as this is the first getId call for this database it will return 0 0	*/
 	ov_database_getId(&(pdb->root.v_idH), &(pdb->root.v_idL));
-	ov_database_idListInsert(pdb->root.v_idH, pdb->root.v_idL, (OV_INSTPTR_ov_object) &(pdb->root));
+	ov_database_idListInsert(pdb->root.v_idH, pdb->root.v_idL, Ov_PtrUpCast(ov_object, &(pdb->root)));
 	/*	call get id once more to reserve 0 1 for the vendortree (has to be set hard coded as it is not stored in the database)	*/
 	ov_database_getId(NULL, NULL);	// call with NULL-pointers just increments the counter
-	ov_database_idListInsert(0, 1, (OV_INSTPTR_ov_object) &(pdb->vendordom));
+	ov_database_idListInsert(0, 1, Ov_PtrUpCast(ov_object, &(pdb->vendordom)));
 	/*
 	*	initialize the acplt domain object
 	*/
@@ -921,7 +921,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 		OV_OBJNAME_ACPLT)));
 	ov_time_gettime(&pdb->acplt.v_creationtime);
 	ov_database_getId(&(pdb->acplt.v_idH), &(pdb->acplt.v_idL));
-	ov_database_idListInsert(pdb->acplt.v_idH, pdb->acplt.v_idL, (OV_INSTPTR_ov_object) &(pdb->acplt));
+	ov_database_idListInsert(pdb->acplt.v_idH, pdb->acplt.v_idL, Ov_PtrUpCast(ov_object, &(pdb->acplt)));
 	/*
 	*	initialize the OV library object
 	*/
@@ -929,7 +929,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_create(
 		OV_OBJNAME_OV)));
 	ov_time_gettime(&pdb->ov.v_creationtime);
 	ov_database_getId(&(pdb->ov.v_idH), &(pdb->ov.v_idL));
-	ov_database_idListInsert(pdb->ov.v_idH, pdb->ov.v_idL, (OV_INSTPTR_ov_object) &(pdb->ov));
+	ov_database_idListInsert(pdb->ov.v_idH, pdb->ov.v_idL, Ov_PtrUpCast(ov_object, &(pdb->ov)));
 	/*
 	*	load the OV library
 	*/
