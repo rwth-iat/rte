@@ -66,6 +66,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 				}
 				if(managerPort){
 					*managerPort = temp2;
+					(*managerPort)++;
 				}
 				if(serverName){
 					*serverName = NULL;
@@ -95,6 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 				}
 				if(managerPort){
 					*managerPort = temp2;
+					(*managerPort)++;
 				}
 			}
 			temp1++;
@@ -114,6 +116,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 					}
 					if(serverPort){
 						*serverPort = temp2;
+						(*serverPort)++;
 					}
 					if(instancePath){
 						*instancePath = NULL;
@@ -137,6 +140,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 					}
 					if(serverPort){
 						*serverPort = temp2;
+						(*serverPort)++;
 					}
 				}
 			}
