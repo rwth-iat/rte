@@ -133,8 +133,13 @@ static char* readValue(char* line)
 	}
 }
 
-static OV_BOOL serverNameOk(const char* name){
-	const OV_STRING temp = NULL;
+/**
+ * checking if the string contains only A-Z, a-z, 0-9 and _
+ * @param servername to check
+ * @return Bool
+ */
+static OV_BOOL serverNameOk(const char* servername){
+	OV_STRING const temp = NULL;
 	if(!name){
 		return FALSE;
 	}
