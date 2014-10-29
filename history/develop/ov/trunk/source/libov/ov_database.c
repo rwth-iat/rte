@@ -1581,7 +1581,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	}
 #endif
 	if(pdb) {
-	    return ml_malloc(size);
+		return ml_malloc(size);
 	}
 	return NULL;
 }
@@ -1610,7 +1610,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	}
 #endif
 	if(pdb) {
-	    return ml_realloc(ptr, size);
+		return ml_realloc(ptr, size);
 	}
 	return NULL;
 }

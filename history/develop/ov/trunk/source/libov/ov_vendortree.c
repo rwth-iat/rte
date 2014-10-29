@@ -161,7 +161,6 @@ OV_RESULT ov_vendortree_init(void) {
 /**
  * frees the heap memory used by the vendor tree variables
  */
-/* TODO add with new libov release!
 OV_RESULT ov_vendortree_free(void) {
 	//it is save to pass a NULL pointer
 	Ov_HeapFree(databasename);
@@ -180,7 +179,6 @@ OV_RESULT ov_vendortree_free(void) {
 	cmdlineoptions = NULL;
 	return OV_ERR_OK;
 }
-*/
 
 /*	----------------------------------------------------------------------	*/
 

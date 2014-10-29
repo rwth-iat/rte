@@ -106,9 +106,7 @@ OV_RESULT ov_vendortree_init(void);
 /**
  * frees the heap memory used by the vendor tree variables
  */
-/* TODO add with new libov release!
 OV_RESULT ov_vendortree_free(void);
-*/
 
 /**
  *	Get unit of a vendor object

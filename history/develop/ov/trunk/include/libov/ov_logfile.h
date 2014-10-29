@@ -156,9 +156,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 /**
  *	frees the heap memory used by the logfile array
  */
-/* TODO add with new libov release!
 void ov_logfile_free();
-*/
 
 #ifdef __cplusplus
 }	/* extern "C" */

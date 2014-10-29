@@ -545,8 +545,10 @@ OV_DLLFNCEXPORT OV_BOOL ov_path_isvalidchar (
 		&& (!((pcurr >= 'A') && (pcurr <= 'Z')))	/* no upper char */
 		&& (!((pcurr >= '0') && (pcurr <= '9')))	/* no digit */
 		&& (pcurr != '_')				/* and no underscore */
-	) return FALSE;						/* is not a valid char */
-        return TRUE;                                            /* is a valid char */
+	){
+		return FALSE;						/* is not a valid char */
+	}
+	return TRUE;                                            /* is a valid char */
 }
 
 /*	----------------------------------------------------------------------	*/
