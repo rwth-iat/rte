@@ -133,6 +133,24 @@ static char* readValue(char* line)
 	}
 }
 
+static OV_BOOL serverNameOk(const char* name){
+	const OV_STRING temp = NULL;
+	if(!name){
+		return FALSE;
+	}
+	temp = servername;
+	while((*temp>='0' && *temp<='9')
+			|| (*temp>='A' && *temp<='Z')
+			|| (*temp>='a' && *temp<='z')
+			|| *temp=='_')
+		temp++;
+	if(*temp!='\0'){	/*	nothing may follow here	*/
+		return FALSE;
+	} else {
+		return TRUE;
+	}
+}
+
 /*
 *	Signal handler for server shutdown
 */
@@ -365,6 +383,11 @@ int main(int argc, char **argv) {
 			if(i<argc) {
 				if(argv[i])
 				{
+					if(!serverNameOk(argv[i])){
+						ov_logfile_error("Invalid servername given: only A-Z, a-z, 0-9 and _ allowed.");
+						ov_logfile_free();
+						return EXIT_FAILURE;
+					}
 					servername = malloc(strlen(argv[i])+1);
 					if(!servername){
 						/* TODO add with new libov release!
@@ -532,15 +555,10 @@ int main(int argc, char **argv) {
 							*/
 							return EXIT_FAILURE;
 						}
-						temp2 = servername;
-						while((*temp2>='0' && *temp2<='9')
-								|| (*temp2>='A' && *temp2<='Z')
-								|| (*temp2>='a' && *temp2<='z')
-								|| *temp2=='_')
-							temp2++;
-						if(*temp2!='\0')
-						{	/*	whitespaces at line end are stripped: nothing may follow here	*/
-							ov_logfile_error("Error parsing SERVERNAME in line %u: only A-Z, a-z, 0-9 and _ allowed in servername.", line);
+						if(!serverNameOk(servername))
+						{	ov_logfile_error("Error parsing SERVERNAME in line %u: only A-Z, a-z, 0-9 and _ allowed in servername.", line);
+							ov_logfile_free();
+							return EXIT_FAILURE;
 						}
 					}
 					/*	ID	*/
