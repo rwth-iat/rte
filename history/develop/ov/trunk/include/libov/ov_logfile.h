@@ -156,7 +156,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 /**
  *	frees the heap memory used by the logfile array
  */
-void ov_logfile_free();
+OV_DLLFNCEXPORT void ov_logfile_free();
 
 #ifdef __cplusplus
 }	/* extern "C" */

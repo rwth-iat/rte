@@ -138,7 +138,7 @@ static char* readValue(char* line)
  * @param servername to check
  * @return Bool
  */
-static OV_BOOL serverNameOk(const char* servername){
+static OV_BOOL serverNameOk(char* servername){
 	OV_STRING temp = NULL;
 	if(!servername){
 		return FALSE;
