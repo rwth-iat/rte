@@ -351,7 +351,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_load(
 			pc2--;
 		}
 		if ((!pc1) || (!pc2) || (strcmp(ovversion1, ovversion2))) {
-			ov_logfile_error("Can't load library. OV-version of library (%s) too old for OV-server (%s)\n",ovversion1,ovversion2);
+			ov_logfile_error("Can't load library '%s'. OV-version of library (%s) too old for OV-server (%s)\n", plibdef->identifier, ovversion1,ovversion2);
 			return OV_ERR_LIBDEFMISMATCH;
 		}
 	}
@@ -542,7 +542,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_library_compare(
 	*	print error message and exit
 	*/
 ERRORMSG:
-	ov_logfile_error("Error loading library \"%s\".", plib->v_identifier);
+	ov_logfile_error("Error loading library '%s'.", plib->v_identifier);
 	return OV_ERR_LIBDEFMISMATCH;
 }
 
