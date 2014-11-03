@@ -120,7 +120,7 @@ OV_DLLFNCEXPORT OV_TICKET* ksxdr_xdrSimpleTicketAuthenticator_createticket(
 	}
 
 	/*	read password into simpleticket id	*/
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(datapacket, &(SimpleAuth->v_ticket.ticketunion.simpleticket.id), KS_SIMPLEID_MAXLEN)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_string(datapacket, &(SimpleAuth->v_ticket.ticketunion.simpleticket.id), KS_SIMPLETICKETID_MAXLEN)))
 		return NULL;
 
 	return &(SimpleAuth->v_ticket);
