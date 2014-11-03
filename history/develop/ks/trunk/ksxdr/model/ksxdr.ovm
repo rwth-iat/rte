@@ -53,6 +53,22 @@ LIBRARY ksxdr
 	END_OPERATIONS;	
 	END_CLASS;
 	
+	/**
+ 	*	Baseclass for clientHandler Extensions belonging to the ksxdr protocol
+ 	*	if the xdr clientHandler instance cannot handle a requested operation (determined by the ks-procedure number)
+ 	*	it will iterate over all instances of this class and check if the procedure number is listed in the procedureNumbers
+ 	*	vector. if so the handle request function is called. 
+ 	*/
+ 	CLASS	xdrClientHandlerExtension			:	CLASS ksbase/baseClientHandlerExtension
+		COMMENT	=	"Baseclass for client handler extensions for the ksxdr protocol";
+		VARIABLES
+			procedureNumbers []	:	UINT
+				COMMENT	=	"Array of procedureNumbers this extension can handle";
+		END_VARIABLES;
+		OPERATIONS
+		HandleExtendedRequest	:	C_FUNCTION	<KSXDR_FNC_HANDLEEXTREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;	
 		
 	CLASS xdrSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
 	IS_INSTANTIABLE;

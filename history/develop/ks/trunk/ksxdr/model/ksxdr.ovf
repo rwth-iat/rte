@@ -1,6 +1,18 @@
+#ifndef KSXDR_OVF_INCLUDED
+#define KSXDR_OVF_INCLUDED
 
+typedef OV_RESULT KSXDR_FNC_HANDLEEXTREQUEST(
+	const OV_INSTPTR_ksxdr_xdrClientHandlerExtension	pobj,
+	const OV_INSTPTR_ksxdr_xdrClientHandler				pClientHandler,
+	const OV_UINT version, 
+	const OV_TICKET* pticket, 
+	OV_UINT	procedureNumber,
+	KS_DATAPACKET* dataReceived, 
+	KS_DATAPACKET* serviceAnswer, 
+	OV_UINT* msgState, 
+	OV_UINT* ksErrCode
+	);
 
-
-
-/*	Empty file needed here, probably because we have a C_TYPE in the ovm	*/  
  
+ 
+#endif

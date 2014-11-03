@@ -333,6 +333,11 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 										this is needed if the message is valid but incomplete and has to be processed in the next cycle	*/
 	OV_UINT dummy;
 	OV_INSTPTR_ksxdr_xdrClientHandler thisxdrCL	=	Ov_StaticPtrCast(ksxdr_xdrClientHandler, this);
+	OV_INSTPTR_ksxdr_xdrClientHandlerExtension	pExtension	=	NULL;
+	OV_VTBLPTR_ksxdr_xdrClientHandlerExtension	pVtblClientHandlerExtension	=	NULL;
+	OV_INSTPTR_ov_class							pExtensionClass	=	NULL;
+	OV_UINT	iterator;
+	OV_BOOL found;
 
 	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
@@ -818,39 +823,53 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		}
 		break;
 		/***********************************************************************************************************************************************************************/
-//NOT IMPLEMENTED YET
 	case KS_EXGDATA:
-		KS_logfile_debug(("%s: HandleRequest: processing EXGDATA (%0#8x)", this->v_identifier, procedure));
-
-		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
-			msgAccepted = XDR_MSG_ACCEPTED;
-			msgState = XDR_MSGST_SUCCESS;
-			ksErrCode = KS_ERR_NOTIMPLEMENTED;
-			ksbase_free_KSDATAPACKET(dataReceived);
-		}
-		break;
-		/***********************************************************************************************************************************************************************/
-//NOT IMPLEMENTED YET
 	case KS_GETHIST:
-		KS_logfile_debug(("%s: HandleRequest: processing GETHIST (%0#8x)", this->v_identifier, procedure));
-
-		{
-			KS_logfile_info(("%s: HandleRequest: procedure %0#8x not (yet) implemented", this->v_identifier, procedure));
+	default:
+		/*	iterate over all xdrClientHandlerExtensions	*/
+		found = FALSE;
+		Ov_ForEachChildEx(ov_inheritance, pclass_ksxdr_xdrClientHandlerExtension, pExtensionClass, ov_class){
+			Ov_ForEachChildEx(ov_instantiation, pExtensionClass, pExtension, ksxdr_xdrClientHandlerExtension){
+				for(iterator = 0; iterator < pExtension->v_procedureNumbers.veclen; iterator++){
+					if(pExtension->v_procedureNumbers.value[iterator] == procedure){
+						found = TRUE;
+						break;
+					}
+				}
+				if(found == TRUE){
+					break;
+				}
+			}
+			if(found == TRUE){
+				break;
+			}
+		}
+		if(found == TRUE){
+			KS_logfile_debug(("%s: HandleRequest: processing extension (%0#8x) by protocolExtension %s", this->v_identifier, procedure, pExtension->v_identifier));
+			Ov_GetVTablePtr(ksxdr_xdrClientHandlerExtension, pVtblClientHandlerExtension, pExtension);
+			if(!pVtblClientHandlerExtension){
+				KS_logfile_error(("%s: HandleRequest: vtable pointer of %s not found. aborting. %s", this->v_identifier, pExtension->v_identifier));
+				ksbase_free_KSDATAPACKET(&serviceAnswer);
+				ksbase_free_KSDATAPACKET(answer);
+				return result;
+			}
+			result = pVtblClientHandlerExtension->m_HandleExtendedRequest(pExtension, thisxdrCL, ProgVersion, pticket, procedure, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+			if(Ov_Fail(result))
+			{
+				ov_memstack_lock();
+				KS_logfile_error(("%s: HandleRequest: processing service %0#8x by %s failed with error %s", this->v_identifier, procedure, pExtension->v_identifier, ov_result_getresulttext(result)));
+				ov_memstack_unlock();
+				ksbase_free_KSDATAPACKET(&serviceAnswer);
+				ksbase_free_KSDATAPACKET(answer);
+				return result;
+			}
+		} else {
+			KS_logfile_error(("%s: HandleRequest: procedure %0#8x not implemented", this->v_identifier, procedure));
 			msgAccepted = XDR_MSG_ACCEPTED;
 			msgState = XDR_MSGST_SUCCESS;
 			ksErrCode = KS_ERR_NOTIMPLEMENTED;
 			ksbase_free_KSDATAPACKET(dataReceived);
 		}
-		break;
-		/***********************************************************************************************************************************************************************/
-
-	default:
-		KS_logfile_error(("%s: HandleRequest: procedure %0#8x not implemented", this->v_identifier, procedure));
-		msgAccepted = XDR_MSG_ACCEPTED;
-		msgState = XDR_MSGST_SUCCESS;
-		ksErrCode = KS_ERR_NOTIMPLEMENTED;
-		ksbase_free_KSDATAPACKET(dataReceived);
 		break;
 	}
 	/***********************************************************************************************************************************************************************
