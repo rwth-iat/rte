@@ -1248,6 +1248,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_object_identifierok(
 	/*
 	*	check parameters
 	*/
+	//TODO: chars a-z, A-Z, 0-9, '_', % if followed by two chars, OV_NAME_MAXLEN
 	if(!identifier) {
 		return FALSE;
 	}

@@ -36,10 +36,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 
 OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength);
 
-#ifndef KS_KS_INCLUDED
-/**************************************************************/
-/* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
-
 /* ----------------------------------------------------------------------------
  * ACPLT/KS error codes defined by the ACPLT/KS core protocol...
  */
@@ -91,10 +87,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
  * 255 characters in length, there is no limit on the path to an object. Thus,
  * a full path and identifier name can be of arbitrary length.
  */
-#define KS_NAME_MAXLEN 255
-#define KS_COMMENT_MAXLEN 4095
-#define KS_TECHUNIT_MAXLEN 63
-#define KS_SIMPLEID_MAXLEN 255
+#define KS_NAME_MAXLEN OV_NAME_MAXLEN
+#define KS_COMMENT_MAXLEN OV_COMMENT_MAXLEN
+#define KS_TECHUNIT_MAXLEN OV_TECHUNIT_MAXLEN
+#define KS_SIMPLETICKETID_MAXLEN OV_SIMPLETICKETID_MAXLEN
 
 /* ----------------------------------------------------------------------------
  * States a value can have, so clients can decide whether they want to trust
@@ -106,22 +102,6 @@ typedef OV_STATE KS_STATE;
 #define KS_ST_BAD           OV_ST_BAD          /* information is bad          */
 #define KS_ST_QUESTIONABLE  OV_ST_QUESTIONABLE /* information is questionable */
 #define KS_ST_GOOD          OV_ST_GOOD         /* information is good         */
-
-
-#else
-//these new defines are not available on old compile environments as the ks.h separation was at the same time
-#ifdef PRId32
-	#define	OV_PRINT_INT	PRId32		/* integer value */
-	#define	OV_PRINT_UINT	PRIu32		/* unsigned integer value */
-#else
-	#define	OV_PRINT_INT	"i"		/* integer value */
-	#define	OV_PRINT_UINT	"lu"		/* unsigned integer value */
-#endif
-#define	OV_PRINT_SINGLE	"f"	/* single precision floating value */
-#define	OV_PRINT_DOUBLE	"lf"	/* double precision floating value */
-#define	OV_PRINT_STRING	"s"	/* string value */
-
-#endif
 
 //association of ClientHandler
 #define KSBASE_CH_NOTNEEDED			0

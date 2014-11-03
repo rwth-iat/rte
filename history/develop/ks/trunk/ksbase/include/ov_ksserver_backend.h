@@ -37,10 +37,6 @@
 #include "libov/ov_logfile.h"
 
 
-#ifndef KS_KS_INCLUDED
-/**************************************************************/
-/* these things are not available on pre mid 2014 ov builds, as ks/ks.h is not included*/
-
 /* ----------------------------------------------------------------------------
  * Object types (flags). When browsing through the object tree, these flags
  * can be combined (or-ed) to find any object belonging to one of the types
@@ -259,17 +255,6 @@ ENUMDEF(KS_SVC)
 #endif
 
 
-#else
-/**************************************************************/
-//most things are delivered via ks/ks.h but not in OV name space
-typedef KS_OBJ_TYPE			OV_OBJ_TYPE;
-typedef KS_LINK_TYPE		OV_LINK_TYPE;
-typedef KS_SEMANTIC_FLAGS	OV_SEMANTIC_FLAGS;
-typedef KS_SVC				OV_SVC;
-typedef KS_EP_FLAGS			OV_EP_FLAGS;
-
-/**************************************************************/
-#endif
 
 /*
 *	shared datatypes ACPLT/KS -- ACPLT/OV

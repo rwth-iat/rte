@@ -471,7 +471,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		msgAccepted = XDR_MSG_DENIED;
 		msgState = XDR_DEN_AUTH_ERROR;
 	}
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_opaque(dataReceived, &authdata, &decodeLength, KS_SIMPLEID_MAXLEN)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_opaque(dataReceived, &authdata, &decodeLength, KS_SIMPLETICKETID_MAXLEN)))
 	{
 		KS_logfile_error(("%s: HandleRequest: reading auth_cred data failed", this->v_identifier));
 		msgAccepted = XDR_MSG_DENIED;
@@ -490,7 +490,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		msgAccepted = XDR_MSG_DENIED;
 		msgState = XDR_DEN_AUTH_ERROR;
 	}
-	if(Ov_Fail(KS_DATAPACKET_read_xdr_opaque(dataReceived, &authdata, &decodeLength, KS_SIMPLEID_MAXLEN)))
+	if(Ov_Fail(KS_DATAPACKET_read_xdr_opaque(dataReceived, &authdata, &decodeLength, KS_SIMPLETICKETID_MAXLEN)))
 	{
 		KS_logfile_error(("%s: HandleRequest: reading auth_ver data failed", this->v_identifier));
 		msgAccepted = XDR_MSG_DENIED;

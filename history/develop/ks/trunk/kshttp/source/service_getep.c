@@ -490,9 +490,11 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 					}
 				}
 				getEP_begin_RequestOutputPart(&temp, response_format, "comment");
-				kshttp_escapeString(&temp2, &(one_result->comment), response_format);
-				ov_string_append(&temp, temp2);
-				ov_string_setvalue(&temp2, NULL);
+				if(ov_string_getlength(one_result->comment) < KS_COMMENT_MAXLEN){
+					kshttp_escapeString(&temp2, &(one_result->comment), response_format);
+					ov_string_append(&temp, temp2);
+					ov_string_setvalue(&temp2, NULL);
+				}
 				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
 				if(response_format == TCL){
 					ov_string_append(&temp, "}");
@@ -592,9 +594,11 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 			case OP_TECHUNIT:
 				if(one_result->objtype & KS_OT_VARIABLE) {
 					getEP_begin_RequestOutputPart(&temp, response_format, "techunit");
-					kshttp_escapeString(&temp2, &(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit), response_format);
-					ov_string_append(&temp, temp2);
-					ov_string_setvalue(&temp2, NULL);
+					if(ov_string_getlength(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit) < KS_TECHUNIT_MAXLEN){
+						kshttp_escapeString(&temp2, &(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit), response_format);
+						ov_string_append(&temp, temp2);
+						ov_string_setvalue(&temp2, NULL);
+					}
 					getEP_finalize_RequestOutputPart(&temp, response_format, "techunit");
 				}
 				break;

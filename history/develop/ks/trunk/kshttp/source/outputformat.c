@@ -344,18 +344,22 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSH
 	return OV_ERR_OK;
 }
 
-/* escapes a String to make a valid XML/TCL String
-possible changes in XML:
-"	&quot;
-'	&apos;
-<	&lt;
->	&gt;
-&	&amp;
-in TCL:
-" -> \"
-{ -> \{
-} -> \}
-
+/** escapes a String to make a valid XML/TCL String
+	possible changes in XML:
+	"	&quot;
+	'	&apos;
+	<	&lt;
+	>	&gt;
+	&	&amp;
+	in TCL:
+	" -> \"
+	{ -> \{
+	} -> \}
+ *
+ * @param resultString pointer to an OV_STRING as output
+ * @param strIn pointer to an OV_STRING to escape
+ * @param response_format
+ * @return
  */
 OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING heapString;

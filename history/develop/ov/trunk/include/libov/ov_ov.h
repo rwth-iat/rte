@@ -831,6 +831,17 @@ typedef OV_ENUM OV_MSG_TYPE;
 
 #define OV_CONST_OPENFNC_PREFIX			"ov_library_open_"
 
+/*
+ * Please note that although an objects name (identifier) can't be longer than
+ * 255 characters in length, there is no limit on the path to an object. Thus,
+ * a full path and identifier name can be of arbitrary length.
+ */
+#define OV_NAME_MAXLEN 255
+#define OV_COMMENT_MAXLEN 4095
+#define OV_TECHUNIT_MAXLEN 63
+#define OV_SIMPLETICKETID_MAXLEN 255
+
+
 #ifdef __cplusplus
 }	/* extern "C" */
 #endif
