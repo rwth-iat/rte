@@ -91,6 +91,18 @@ LIBRARY ksbase
 		END_OPERATIONS;
 	END_CLASS;
 	
+	/**
+ 	*	Baseclass for clientHandler Extensions - this is just an empty class. each library shall define its own baseclass for the specific protocol
+ 	*	this class is meant to serve as a starting point giving this comment for best-practices
+ 	*	each protocol library (xdr, http etc.) shall define a baseclass containing the variables necessarry to hand over a request from a client handler
+ 	*	to such an extension object.
+ 	*	probably a clientHandler has a switch-case inside deciding on the ks-operation to execute. If the desired operation is not found it shall iterate
+ 	*	over the clientHandlerExtensions belonging to the protocol and look if one of them can handle the request. if so, the according function is called 
+ 	*/
+ 	CLASS	baseClientHandlerExtension			:	CLASS ov/domain
+		COMMENT	=	"Baseclass for client handler extensions";
+	END_CLASS;	
+	
 	CLASS DataHandler : CLASS ksbase/ComTask
 		COMMENT = "DataHandler used for callbacks";
 	 	OPERATIONS
