@@ -52,9 +52,9 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_createAnonymousObject(OV_INSTPTR_ov_class p
 /**
  * This is a function to create an anonymous message.
  */
-OV_DLLFNCEXPORT OV_RESULT MessageSys_createAnonymousMessage(OV_INSTPTR_ov_domain pParent, OV_STRING identifier, OV_INSTPTR_ov_object* pObj)
+OV_DLLFNCEXPORT OV_RESULT MessageSys_createAnonymousMessage(OV_INSTPTR_ov_domain pParent, OV_STRING identifier, OV_INSTPTR_MessageSys_Message* pObj)
 {
-	return MessageSys_createAnonymousObject(pclass_MessageSys_Message, pParent, identifier, pObj);
+	return Ov_CreateIDedObject(MessageSys_Message, *pObj, pParent, identifier);
 }
 
 
