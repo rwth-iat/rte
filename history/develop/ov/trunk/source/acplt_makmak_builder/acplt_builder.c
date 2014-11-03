@@ -1058,7 +1058,7 @@ int main(int argc, char **argv) {
 	char        devBinPath[512] = "";
 	char        sysModelPath[512] = "";
 	char        sysBinPath[512] = "";
-	int			new = 0;
+	int			newDirStructure = 0;
 
 	/*
 	*    exGlobal Variables
@@ -1134,7 +1134,7 @@ HELP:
 
     /* Enviroment */
 	//locate library now
-	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &new)){
+	if(1 == locateLibrary(libname, libPath, devModelPath, devBinPath, sysModelPath, sysBinPath, &newDirStructure)){
 		return 1;
 	}
  
@@ -1175,7 +1175,7 @@ HELP:
 	    includepath[numDevLibs+i] = ph;
 	}
 
-	if(new == 1){
+	if(newDirStructure == 1){
 		//add ov model library
 		sprintf(outputpath, "%sov/model/", sysModelPath);
 	}else{
@@ -1184,6 +1184,18 @@ HELP:
 	}
 	compatiblePath(outputpath);
 
+	/* add to the include list */
+	ph = (char*)malloc(strlen(outputpath) + 1);
+	if(!ph) {
+		fprintf(stderr, "Out of memory\n");
+		exit(1);
+	}
+	strcpy(ph, outputpath);
+	includepath[includepath_ptr++] = ph;
+
+	//add own path to find ovm definitions in ovf for example
+	sprintf(outputpath, "%s/model/", libPath);
+	compatiblePath(outputpath);
 	/* add to the include list */
 	ph = (char*)malloc(strlen(outputpath) + 1);
 	if(!ph) {

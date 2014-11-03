@@ -719,7 +719,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
-	fprintf(fd," -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
+	fprintf(fd," -I $(MODEL_DIR) -f $(MODEL_DIR)$(LIBRARY).ovm -l $(notdir $(basename $<))\n\n");
 
 	fprintf(fd,"%%.c %%.h: %%.ovm Makefile\n");
 #if OV_SYSTEM_LINUX
@@ -732,7 +732,7 @@ fprintf(fd,"ifndef STATIC_ONLY\n");
 	for(i=0; i<numSysLibs; i++) {
 		fprintf(fd," -I $(%s_MODEL_DIR)", getUpperLibName(sysLibs[i]));
 	}
-	fprintf(fd," -f $< -l $(notdir $(basename $<))\n\n");
+	fprintf(fd," -I $(MODEL_DIR) -f $< -l $(notdir $(basename $<))\n\n");
 
 	fprintf(fd,"\n");
 	fprintf(fd,"%%.o: %%.c\n");
