@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_HandleData(
 	OV_INSTPTR_ksbase_DataHandler this,
 	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* UNUSED answer
+	UNUSED KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpClientBase				thisCl = Ov_StaticPtrCast(kshttp_httpClientBase, this);
 	OV_INSTPTR_ksbase_Channel				pChannel = NULL;

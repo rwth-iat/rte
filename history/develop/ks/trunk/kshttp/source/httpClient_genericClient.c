@@ -181,7 +181,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				break;
 			}
 			thislength = offset-lastoffset;
-			strUserOrServer = (OV_STRING)ov_database_malloc(thislength +1);
+			strUserOrServer = (OV_STRING)Ov_DbMalloc(thislength +1);
 			memcpy(strUserOrServer, &(*URI)[lastoffset], thislength);
 			strUserOrServer[thislength] = '\0';
 			if(state == DECODESTATE_INIT){
@@ -195,7 +195,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 					strUserOrServer[thislength-1] = '\0';
 				}
 				ov_string_setvalue(server, strUserOrServer);
-				ov_database_free(strUserOrServer);
+				Ov_DbFree(strUserOrServer);
 				strUserOrServer = NULL;
 				state = DECODESTATE_SERVER_OK;
 			}
@@ -208,18 +208,18 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 			}
 			thislength = offset-lastoffset;
 			if(state == DECODESTATE_INIT){
-				strUserOrServer = (OV_STRING)ov_database_malloc(thislength +1);
+				strUserOrServer = (OV_STRING)Ov_DbMalloc(thislength +1);
 				memcpy(strUserOrServer, &(*URI)[lastoffset], thislength);
 				strUserOrServer[thislength] = '\0';
 			}else{
-				strPassword = (OV_STRING)ov_database_malloc(thislength +1);
+				strPassword = (OV_STRING)Ov_DbMalloc(thislength +1);
 				memcpy(strPassword, &(*URI)[lastoffset], thislength);
 				strPassword[thislength] = '\0';
 			}
 			ov_string_setvalue(username, strUserOrServer);
 			ov_string_setvalue(password, strPassword);
-			ov_database_free(strUserOrServer);
-			ov_database_free(strPassword);
+			Ov_DbFree(strUserOrServer);
+			Ov_DbFree(strPassword);
 			strUserOrServer = NULL;
 			strPassword = NULL;
 			lastoffset = offset+1;
@@ -238,7 +238,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 				break;
 			}else if(state == DECODESTATE_PASSWORD_OK || state == DECODESTATE_INIT){
 				//save server info
-				strServer = (OV_STRING)ov_database_malloc(thislength +1);
+				strServer = (OV_STRING)Ov_DbMalloc(thislength +1);
 				memcpy(strServer, &(*URI)[lastoffset], thislength);
 				if(strServer[thislength-1] == ']'){
 					//an ipv6 address could include an ]
@@ -247,17 +247,17 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 					strServer[thislength] = '\0';
 				}
 				ov_string_setvalue(server, strServer);
-				ov_database_free(strServer);
+				Ov_DbFree(strServer);
 				strServer = NULL;
 
 				state = DECODESTATE_READY;
 			}else if(state == DECODESTATE_SERVER_OK || state == DECODESTATE_USER_OR_SERVER){
 				//save port info
-				strPort = (OV_STRING)ov_database_malloc(thislength +1);
+				strPort = (OV_STRING)Ov_DbMalloc(thislength +1);
 				memcpy(strPort, &(*URI)[lastoffset], thislength);
 				strPort[thislength] = '\0';
 				ov_string_setvalue(port, strPort);
-				ov_database_free(strPort);
+				Ov_DbFree(strPort);
 				strPort = NULL;
 				if(state == DECODESTATE_USER_OR_SERVER){
 					//save server info
@@ -267,7 +267,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 					}
 					//server could be NULL if only a validation is requested, so do not check return value
 					ov_string_setvalue(server, strUserOrServer);
-					ov_database_free(strUserOrServer);
+					Ov_DbFree(strUserOrServer);
 					strUserOrServer = NULL;
 				}
 				state = DECODESTATE_READY;
@@ -320,7 +320,7 @@ OV_RESULT kshttp_decodeURI(const OV_STRING *URI, OV_STRING *server, OV_STRING *p
 		offset++;
 	}
 	//free does not crash if the pointer is NULL
-	ov_database_free(strUserOrServer);
+	Ov_DbFree(strUserOrServer);
 	strUserOrServer = NULL;
 	if(state != DECODESTATE_READY){
 		return OV_ERR_BADPARAM;
@@ -410,7 +410,7 @@ void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain UNUSED instanceCalle
 			ov_string_match(thisCl->v_contentType, "*+xml*") == TRUE ||	//includes image/svg+xml
 			ov_string_match(thisCl->v_contentType, "application/json*") == TRUE ||
 			ov_string_match(thisCl->v_contentType, "application/javascript*") == TRUE ){
-		thisCl->v_messageBody =  ov_database_malloc(thisCl->v_ServerResponse.contentLength+1);
+		thisCl->v_messageBody =  Ov_DbMalloc(thisCl->v_ServerResponse.contentLength+1);
 		if(!thisCl->v_messageBody){
 			//database too small
 			thisCl->v_httpParseStatus = HTTP_MSG_DBOUTOFMEMORY;

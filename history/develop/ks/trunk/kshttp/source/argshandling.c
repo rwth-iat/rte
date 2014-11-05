@@ -115,7 +115,7 @@ static OV_RESULT extract_response_format(OV_STRING_VEC* const args, KSHTTP_RESPO
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSE *serverResponse)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -145,12 +145,19 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 	ov_string_setvalue(&RequestLine, plist[1]);
 	//does the client use HTTP 1.0?
 	if(ov_string_compare(plist[2], "HTTP/1.0") == OV_STRCMP_EQUAL){
-		//if so, use 1.0, otherwise 1.1 is set
+		//if the server uses 1.0, use 1.0 as the response
 		ov_string_setvalue(&clientRequest->version, "1.0");
+		ov_string_setvalue(&serverResponse->version, "1.0");
 		clientRequest->keepAlive = FALSE;
-	}else{
-		//default HTTP version
+	}else if(ov_string_compare(plist[2], "HTTP/1.1") == OV_STRCMP_EQUAL){
+		//if the server uses 1.1, use 1.1 as the response
 		ov_string_setvalue(&clientRequest->version, "1.1");
+		ov_string_setvalue(&serverResponse->version, "1.1");
+		clientRequest->keepAlive = TRUE;
+	}else{
+		//with an unknown request version, answer with default HTTP version
+		ov_string_setvalue(&clientRequest->version, NULL);
+		ov_string_setvalue(&serverResponse->version, "1.1");
 		clientRequest->keepAlive = TRUE;
 	}
 

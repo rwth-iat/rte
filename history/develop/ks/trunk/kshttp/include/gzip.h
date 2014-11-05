@@ -1,1 +1,1 @@
-OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length);
+OV_RESULT gzip(OV_BYTE* inputdata, OV_INT inputlength, OV_BYTE** outputdata, OV_INT* outputlength);

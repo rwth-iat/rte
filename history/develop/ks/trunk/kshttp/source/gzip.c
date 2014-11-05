@@ -7,10 +7,7 @@
 
 #ifndef KSHTTP_DISABLE_GZIP
 
-#include "libov/ov_string.h"
-#include "libov/ov_database.h"
-
-#include "ks_logfile.h"
+#include "config.h"
 #include "zlib.h"
 
 /**
@@ -26,13 +23,15 @@
 // The zlib.h compression library provides in-memory compression and decompression functions,
 // including integrity checks of the uncompressed data. This version of the library supports only one compression method (deflation).
 
-OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length){
+
+OV_RESULT gzip(OV_BYTE* inputdata, OV_INT inputlength, OV_BYTE** outputdata, OV_INT* outputlength){
 	z_stream zstr2;
-	int slen = ov_string_getlength(input), dlen, rc;
+	uLong slen = (uLong)inputlength, dlen;
+	int rc;
 	zstr2.zalloc = Z_NULL;               // The fields zalloc, zfree and opaque in strm must be initialized before the call.
 	zstr2.zfree = Z_NULL;                // If zalloc and zfree are Z_NULL, then the default library- derived memory allocation routines are used.
 	zstr2.opaque = Z_NULL;               // The application must update next_in and avail_in when avail_in has dropped to zero.
-	zstr2.next_in = (unsigned char*)input; // It must update next_out and avail_out when avail_out has dropped to zero.
+	zstr2.next_in = (Bytef*)inputdata;       // It must update next_out and avail_out when avail_out has dropped to zero.
 	zstr2.avail_in = slen;               // The application must initialize zalloc, zfree and opaque before calling the deflateinit2 function.
 
 
@@ -50,19 +49,19 @@ OV_RESULT gzip(OV_STRING input, OV_STRING* output, OV_INT* length){
 	// This would be used to allocate an output buffer for deflation in a single pass, and so would be called before deflateInit2().
 	dlen = deflateBound(&zstr2,slen)+12;
 
-	*output = ov_database_malloc(dlen);
-	if (*output == NULL){
+	*outputdata = Ov_DbMalloc(dlen);
+	if (*outputdata == NULL){
 		KS_logfile_error(("Out of memory"));
 		return OV_ERR_GENERIC;
 	}
 
-	zstr2.next_out = (unsigned char*)*output;
+	zstr2.next_out = (Bytef*)*outputdata;
 	zstr2.avail_out = dlen;
 	if(Z_STREAM_END != (rc = deflate(&zstr2, Z_FINISH)))return OV_ERR_GENERIC;
 
 	if(Z_OK != deflateEnd(&zstr2))return OV_ERR_GENERIC;
 
-	*length = zstr2.total_out;
+	*outputlength = zstr2.total_out;
 
 	return OV_ERR_OK;
 }

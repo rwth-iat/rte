@@ -52,7 +52,7 @@
 #include "NoneTicketAuthenticator.h"
 
 
-#ifdef __GNUC__
+#ifdef OV_COMPILER_GCC
 #define UNUSED __attribute__ ((unused))
 #else
 #define UNUSED
@@ -146,7 +146,7 @@
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest);
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSE *serverResponse);
 OV_RESULT kshttp_find_arguments(OV_STRING_VEC* const args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING kshttp_ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);

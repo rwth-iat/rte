@@ -73,6 +73,7 @@ LIBRARY kshttp
 		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
 		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
 		ClientRequest :	C_TYPE	<KSHTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
+		ServerResponse :	C_TYPE	<KSHTTP_RESPONSE> COMMENT	=	"Structured Data for the HTTP response.";
 	END_VARIABLES;
 	OPERATIONS
 		/**

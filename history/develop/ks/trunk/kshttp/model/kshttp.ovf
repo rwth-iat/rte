@@ -5,8 +5,7 @@ typedef OV_RESULT KSHTTP_FNC_HANDLEEXTREQUEST(
 	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
 	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
 	KSHTTP_REQUEST request,
-	OV_BYTE* responseBody,
-	OV_INT* responseLength
+	KSHTTP_RESPONSE response
 );
 
 #endif
