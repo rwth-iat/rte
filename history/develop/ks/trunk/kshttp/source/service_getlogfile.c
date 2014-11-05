@@ -51,10 +51,10 @@
  *
  * extracts the command for the getlogfile and let do ov_logfile_getmessages the job
  * @param args arguments of the http get request
- * @param message pointer to the result string
+ * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -84,7 +84,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 		from.usecs = 0;
 	}
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(message, response_format, &fr, 1, ": did not recognised 'from' time.");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": did not recognised 'from' time.");
 		EXEC_GETLOGFILE_RETURN fr;
 	}
 
@@ -97,7 +97,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 		ov_time_gettime(&to);
 	}
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(message, response_format, &fr, 1, ": did not recognised 'to' time.");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": did not recognised 'to' time.");
 		EXEC_GETLOGFILE_RETURN fr;
 	}
 
@@ -118,7 +118,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 	 */
 	if(Ov_Fail(fr)){
 		//general problem like memory problem
-		kshttp_print_result_array(message, response_format, &fr, 1, ": general problem");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETLOGFILE_RETURN fr;
 	}
@@ -132,7 +132,7 @@ OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, 
 		kshttp_escapeString(&LoopEntryTimeString, &logmessages[i], response_format);
 		ov_string_append(&LoopEntry, LoopEntryTimeString);
 		kshttp_response_part_finalize(&LoopEntry, response_format, "entry");
-		ov_string_append(message, LoopEntry);
+		ov_string_append(responseBody, LoopEntry);
 	}
 
 	ov_memstack_unlock();

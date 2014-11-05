@@ -40,8 +40,6 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "limits.h"
-#include "kshttp.h"
 #include "config.h"
 
 void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling);

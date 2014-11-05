@@ -63,7 +63,7 @@
 		ov_string_setvalue(&Temp, NULL);\
 		return
 
-OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -98,7 +98,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 	kshttp_find_arguments(args, "path", &pathmatch);
 	if(pathmatch.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
 		EXEC_SETVAR_RETURN fr; //400
 	}
 	//process newvalue
@@ -106,7 +106,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 	kshttp_find_arguments(args, "newvalue", &newvaluematch);
 	if(newvaluematch.veclen< pathmatch.veclen){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": not enough Variables newvalue found");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables newvalue found");
 		EXEC_SETVAR_RETURN fr; //400
 	}
 
@@ -115,7 +115,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
 		EXEC_SETVAR_RETURN fr;
 	}
 
@@ -137,7 +137,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 		if(!*addrpGet) {
 			ov_memstack_unlock();
 			fr = OV_ERR_TARGETGENERIC;
-			kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
+			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
 			EXEC_SETVAR_RETURN fr;
 		}
 		paramsGet.identifiers_val = addrpGet;
@@ -153,7 +153,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 
 		if(Ov_Fail(resultGet.result)){
 			//general problem like memory problem or NOACCESS
-			kshttp_print_result_array(message, response_format, &resultGet.result, 1, ": general problem with get");
+			kshttp_print_result_array(responseBody, response_format, &resultGet.result, 1, ": general problem with get");
 			ov_memstack_unlock();
 			EXEC_SETVAR_RETURN fr;
 		}
@@ -166,7 +166,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			one_resultGet = *(resultGet.items_val + i);
 			if(Ov_Fail(one_resultGet.result)){
 				fr = one_resultGet.result;
-				kshttp_print_result_array(message, response_format, &fr, 1, ": problem with get");
+				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": problem with get");
 				EXEC_SETVAR_RETURN fr;
 			}
 			addrp->var_current_props.value.vartype = one_resultGet.var_current_props.value.vartype;
@@ -236,7 +236,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 					addrp->var_current_props.value.valueunion.val_bool = FALSE;
 				}else{
 					fr = OV_ERR_BADPARAM;
-					kshttp_print_result_array(message, response_format, &fr, 1, ": Input not detected as bool");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Input not detected as bool");
 					EXEC_SETVAR_RETURN fr;
 				}
 				break;
@@ -269,7 +269,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 				addrp->var_current_props.value.valueunion.val_string = NULL;
 				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
-					kshttp_print_result_array(message, response_format, &fr, 1, ": Setting string value failed");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Setting string value failed");
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
@@ -278,7 +278,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			case OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				if(ov_string_getlength(newvaluematch.value[i]) > 0){
 					fr = OV_ERR_BADTYPE;
-					kshttp_print_result_array(message, response_format, &fr, 1, ": Variable is/should be void, but a newvalue is given");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable is/should be void, but a newvalue is given");
 					EXEC_SETVAR_RETURN fr;
 				}
 				break;
@@ -287,7 +287,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
-					kshttp_print_result_array(message, response_format, &fr, 1, ": Setting time value failed");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Setting time value failed");
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
@@ -313,7 +313,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
-				kshttp_print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
 				EXEC_SETVAR_RETURN fr;
 			break;
 
@@ -411,7 +411,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 
 				if(*pArgumentList[i] != '{' && len > 2){
 					fr = OV_ERR_BADPARAM;
-					kshttp_print_result_array(message, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
 					EXEC_SETVAR_RETURN fr;
 				}
 
@@ -442,7 +442,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
-				kshttp_print_result_array(message, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
 				EXEC_SETVAR_RETURN fr;
 
 	/*	TODO Time* VEC
@@ -462,7 +462,7 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 					addrp->var_current_props.value.vartype);
 	*/
 				fr = OV_ERR_NOTIMPLEMENTED;
-				kshttp_print_result_array(message, response_format, &fr, 1, ": Vartype not supported");
+				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Vartype not supported");
 				EXEC_SETVAR_RETURN fr;
 		}
 
@@ -481,11 +481,11 @@ OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* message, KSHTTP_RES
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_SETVAR_RETURN result.result;
 	}
-	fr = kshttp_print_result_array(message, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(responseBody, response_format, result.results_val, result.results_len, "");
 
 	ov_memstack_unlock();
 	EXEC_SETVAR_RETURN fr;

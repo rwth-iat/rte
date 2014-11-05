@@ -41,7 +41,6 @@
 #endif
 
 
-#include "kshttp.h"
 #include "config.h"
 
 OV_DLLFNCEXPORT void kshttp_httpClientBase_typemethod (

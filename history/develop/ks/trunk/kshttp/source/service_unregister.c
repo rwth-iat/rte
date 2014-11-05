@@ -47,10 +47,10 @@
  *
  * extracts the command for the register and process
  * @param args arguments of the http get request
- * @param message pointer to the result string
+ * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -65,11 +65,11 @@ OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, 
 	kshttp_find_arguments(args, "name", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable name not found");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable name not found");
 		EXEC_UNREGISTER_RETURN fr; //400
 	}else if(!ks_isvalidname(match.value[0])){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": Server name not valid");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Server name not valid");
 		EXEC_UNREGISTER_RETURN fr; //400
 	}else{
 		ov_string_setvalue(&servername, match.value[0]);
@@ -86,13 +86,13 @@ OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, 
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
 	if(!pManager){
 		fr = KS_ERR_NOMANAGER;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": received Manager command but no Manager here");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": received Manager command but no Manager here");
 		EXEC_UNREGISTER_RETURN fr;
 	}
 
 	fr = ksbase_Manager_unregister(servername, serverversion, KSHTTP_IDENTIFIER);
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(message, response_format, &fr, 1, ": could not register server at manager.");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": could not register server at manager.");
 		EXEC_UNREGISTER_RETURN fr;
 	}
 	EXEC_UNREGISTER_RETURN OV_ERR_OK;

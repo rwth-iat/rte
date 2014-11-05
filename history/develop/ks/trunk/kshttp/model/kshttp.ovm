@@ -72,8 +72,7 @@ LIBRARY kshttp
 		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
 		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
 		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
-			ClientRequest	:	C_TYPE	<KSHTTP_REQUEST>
-				COMMENT	=	"Structured Data for the HTTP request.";
+		ClientRequest :	C_TYPE	<KSHTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
 	END_VARIABLES;
 	OPERATIONS
 		/**
@@ -89,6 +88,23 @@ LIBRARY kshttp
 		shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 	END_OPERATIONS;	
 	END_CLASS;
+	
+	/**
+ 	*	Baseclass for clientHandler Extensions belonging to the kshttp protocol
+ 	*	if the http clientHandler instance cannot handle a requested operation (determined by the http get path)
+ 	*	it will iterate over all instances of this class and check if the path is listed in the commandList
+ 	*	vector. if so the handle request function is called. 
+ 	*/
+ 	CLASS	httpClientHandlerExtension			:	CLASS ksbase/baseClientHandlerExtension
+		COMMENT	=	"Baseclass for client handler extensions for the kshttp protocol";
+		VARIABLES
+			commandList []	:	STRING
+				COMMENT	=	"Array of commands this extension can handle for example '/getHist' or '/callservice'";
+		END_VARIABLES;
+		OPERATIONS
+		HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST> IS_ABSTRACT;
+	END_OPERATIONS;	
+	END_CLASS;	
 	
 	CLASS httpSimpleTicketAuthenticator	:	CLASS ksbase/TicketAuthenticator
 	IS_INSTANTIABLE;

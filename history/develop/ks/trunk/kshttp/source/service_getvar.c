@@ -57,10 +57,10 @@ http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{
 /**
  * extracts the (multiple) commands for the getVar and let do ks_server_getVar the job
  * @param args arguments of the http get request
- * @param message pointer to the result string
+ * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -91,7 +91,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
 		EXEC_GETVAR_RETURN fr; //400
 	}
 
@@ -102,7 +102,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 	if(!*addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
 		EXEC_GETVAR_RETURN fr;
 	}
 
@@ -152,7 +152,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(message, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETVAR_RETURN result.result;
 	}
@@ -275,7 +275,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					lasterror = fr;
-					kshttp_print_result_array(message, response_format, &fr, 1, ": bytevec");
+					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": bytevec");
 					/* todo should be base64 encoded content
 					for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
 						ov_string_print(&singleVecEntry, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
@@ -471,7 +471,7 @@ OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHT
 		}//end if ov_fail
 	}//end for entry
 
-	ov_string_append(message, LoopEntryList);
+	ov_string_append(responseBody, LoopEntryList);
 
 	ov_memstack_unlock();
 	EXEC_GETVAR_RETURN lasterror;

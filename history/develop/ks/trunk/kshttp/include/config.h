@@ -95,9 +95,6 @@
 //config for gzip compression
 #define MINIMAL_LENGTH_FOR_GZIP  150
 
-//output format for response
-typedef enum KSHTTP_RESPONSEFORMAT {FORMATUNDEFINED=0,TCL=1,PLAIN=2,KSX=3,JSON=4,FORMATDEFAULT=TCL} KSHTTP_RESPONSEFORMAT;
-
 //requestOutput for getVar and getEP, only internal used!
 #define OP_UNKNOWN 0
 #define OP_NAME 1
@@ -113,9 +110,6 @@ typedef enum KSHTTP_RESPONSEFORMAT {FORMATUNDEFINED=0,TCL=1,PLAIN=2,KSX=3,JSON=4
 #define OP_DEFAULTINTERP 11
 #define OP_SUPPORTEDINTERP 12
 #define OP_TYPEIDENT 13
-
-
-typedef enum KSHTTP_REQUESTHANDLEDBY {NONE,GETVAR,GETVARSTREAM,SETVAR,GETEP,GETHANDLE,DELHANDLE,HTTPAUTH,CORSOPTION,STATICFILE,CREATEOBJECT,DELETEOBJECT,RENAMEOBJECT,LINK,UNLINK,GETSERVER,REGISTER,UNREGISTER,GETLOGFILE} KSHTTP_REQUESTHANDLEDBY;
 
 //authorization.c
 #define REALM "Top secret! User: simple Pass: pass"
@@ -152,38 +146,38 @@ typedef enum KSHTTP_REQUESTHANDLEDBY {NONE,GETVAR,GETVARSTREAM,SETVAR,GETEP,GETH
 
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSEFORMAT *response_format);
-OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest);
+OV_RESULT kshttp_find_arguments(OV_STRING_VEC* const args, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING kshttp_ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
 OV_RESULT kshttp_include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
-OV_RESULT kshttp_printresponseheader(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type);
-OV_RESULT kshttp_printresponsefooter(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type);
-OV_RESULT kshttp_response_part_init(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type);
-OV_RESULT kshttp_response_part_begin(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type);
-OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_response_part_finalize(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type);
+OV_RESULT kshttp_printresponseheader(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type);
+OV_RESULT kshttp_printresponsefooter(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type);
+OV_RESULT kshttp_response_part_init(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type);
+OV_RESULT kshttp_response_part_begin(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type);
+OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_response_part_finalize(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type);
 
-OV_RESULT kshttp_print_result_array(OV_STRING *output, KSHTTP_RESPONSEFORMAT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text);
+OV_RESULT kshttp_print_result_array(OV_STRING *output, KSHTTP_RESPONSEFORMAT const response_format, OV_RESULT *results, OV_UINT const len, OV_STRING const explain_text);
 
-OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_createObject(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_renameObject(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unlink(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_getep(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_getvar(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_setvar(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_createObject(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_deleteObject(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_renameObject(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_link(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_unlink(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
 
-OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_register(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_unregister(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_exec_getlogfile(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format);
 
-OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring);
-OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* const time, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* const ptime, KSHTTP_RESPONSEFORMAT const response_format);
+OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING const timestring);
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING* strIn, KSHTTP_RESPONSEFORMAT const response_format);
 
 OV_RESULT kshttp_generateAndSendHttpMessage(
 		OV_STRING method,

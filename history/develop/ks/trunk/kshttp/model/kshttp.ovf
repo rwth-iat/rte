@@ -1,3 +1,12 @@
+#ifndef KSHTTP_OVF_INCLUDED
+#define KSHTTP_OVF_INCLUDED
 
-/*	Empty file needed here, probably because we have a C_TYPE in the ovm	*/  
- 
+typedef OV_RESULT KSHTTP_FNC_HANDLEEXTREQUEST(
+	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
+	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
+	KSHTTP_REQUEST request,
+	OV_BYTE* responseBody,
+	OV_INT* responseLength
+);
+
+#endif

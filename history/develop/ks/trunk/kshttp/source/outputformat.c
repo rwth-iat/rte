@@ -23,7 +23,7 @@
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_printresponseheader(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_printresponseheader(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(response_format==KSX){
 		ov_string_setvalue(output, "<response xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
 		return kshttp_response_part_begin(output, response_format, entry_type);
@@ -40,7 +40,7 @@ OV_RESULT kshttp_printresponseheader(OV_STRING* output, KSHTTP_RESPONSEFORMAT re
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_printresponsefooter(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_printresponsefooter(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(ov_string_compare(entry_type, NULL) == OV_STRCMP_EQUAL){
 		return OV_ERR_GENERIC;
 	}
@@ -60,7 +60,7 @@ OV_RESULT kshttp_printresponsefooter(OV_STRING* output, KSHTTP_RESPONSEFORMAT re
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_response_part_init(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_init(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	ov_string_setvalue(output, "");
 	return kshttp_response_part_begin(output, response_format, entry_type);
 }
@@ -72,7 +72,7 @@ OV_RESULT kshttp_response_part_init(OV_STRING* output, KSHTTP_RESPONSEFORMAT res
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_response_part_begin(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_begin(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(response_format==TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "{");
@@ -110,7 +110,7 @@ OV_RESULT kshttp_response_part_begin(OV_STRING* output, KSHTTP_RESPONSEFORMAT re
  * @param format UINT for the type of response
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format){
 	if(response_format==TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, " ");
@@ -143,7 +143,7 @@ OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, KSHTTP_RESPONSEFORMA
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT kshttp_response_part_finalize(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+OV_RESULT kshttp_response_part_finalize(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(response_format==TCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "}");
@@ -188,7 +188,7 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, KSHTTP_RESPONSEFORMAT
  * @param explain_text additional text, which will be appended after the error
  * @return last error we had
  */
-OV_RESULT kshttp_print_result_array(OV_STRING *output, KSHTTP_RESPONSEFORMAT response_format, OV_RESULT *results, OV_UINT len, OV_STRING explain_text){
+OV_RESULT kshttp_print_result_array(OV_STRING *output, KSHTTP_RESPONSEFORMAT const response_format, OV_RESULT *results, OV_UINT const len, OV_STRING const explain_text){
 	OV_UINT i = 0;
 	OV_STRING temp = NULL;
 	OV_RESULT fr = OV_ERR_OK;
@@ -266,7 +266,7 @@ or
 /**
  * Convert a time into a XML, TCL or plaintext timestring (local time)
 */
-OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* const time, KSHTTP_RESPONSEFORMAT const response_format){
 	//timetoascii has timeformat 2002/05/30 09:30:10.123456
 	//TCL needs                  2002-05-30 09:30:10.123
 	//XML needs                  2002-05-30T09:30:10.123456
@@ -288,7 +288,7 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, OV_TIME* time, KSHTTP_RESPON
 /**
  * Convert a XML, TCL or plaintext timestring into a time (local time)
 */
-OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring){
+OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING const timestring){
 	//asciitotime has timeformat 2002/05/30 09:30:10.123456
 	//TCL needs                  2002-05-30 09:30:10.123
 	//XML needs                  2002-05-30T09:30:10.123456
@@ -316,7 +316,7 @@ OV_RESULT kshttp_asciitotime(OV_TIME* time, OV_STRING timestring){
  * Convert a timespan into a XML, TCL or plaintext timestring
  * XML PT42S Period: T time delimiter, 42 Seconds
  */
-OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* const ptime, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	local variables
 	*/
@@ -361,7 +361,7 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, OV_TIME_SPAN* ptime, KSH
  * @param response_format
  * @return
  */
-OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, KSHTTP_RESPONSEFORMAT const response_format){
 	OV_STRING heapString;
 	OV_STRING	pcIn;
 	OV_STRING	pcOut = 0;

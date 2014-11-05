@@ -48,7 +48,7 @@
  * @param response_format UINT format descriptor
  * @return
  */
-OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_STRING value, KSHTTP_RESPONSEFORMAT response_format){
+static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const prefix, OV_STRING value, KSHTTP_RESPONSEFORMAT const response_format){
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
@@ -82,7 +82,7 @@ OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING prefix, OV_ST
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_begin(output, response_format, entry_type);
 	}else if(response_format == TCL){
@@ -100,7 +100,7 @@ OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT response_format, OV_STRING entry_type){
+static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFORMAT const response_format, OV_STRING const entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}else if(response_format == TCL){
@@ -121,7 +121,7 @@ OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, KSHTTP_RESPONSEFOR
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getep(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -157,7 +157,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 	kshttp_find_arguments(args, "path", &match);
 	if(match.veclen!=1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(re, response_format, &fr, 1, ": Path not found or multiple path given");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Path not found or multiple path given");
 		EXEC_GETEP_RETURN fr; //400
 	}
 
@@ -197,7 +197,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 			params.type_mask = KS_OT_ANY;
 		}else{
 			fr = OV_ERR_BADPARAM;
-			kshttp_print_result_array(re, response_format, &fr, 1, ": Requesttype not supported");
+			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Requesttype not supported");
 			EXEC_GETEP_RETURN fr; //400
 		}
 	}else{
@@ -250,7 +250,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(re, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETEP_RETURN result.result;
 	}
@@ -279,7 +279,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
-			ov_string_append(re, "internal memory problem");
+			ov_string_append(responseBody, "internal memory problem");
 			fr = OV_ERR_GENERIC;
 			kshttp_print_result_array(&message, response_format, &fr, 1, ": memory problem");
 			EXEC_GETEP_RETURN fr; //404
@@ -651,7 +651,7 @@ OV_RESULT kshttp_exec_getep(OV_STRING_VEC* args, OV_STRING* re, KSHTTP_RESPONSEF
 	ov_string_setvalue(&message, temp);
 	ov_string_setvalue(&temp, NULL);
 
-	ov_string_append(re, message);
+	ov_string_append(responseBody, message);
 
 	EXEC_GETEP_RETURN fr;
 }

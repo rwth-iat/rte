@@ -50,10 +50,10 @@
  *
  * extracts the command for the getserver and let do ks_server_getserver the job
  * @param args arguments of the http get request
- * @param message pointer to the result string
+ * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* responseBody, KSHTTP_RESPONSEFORMAT const response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -76,11 +76,11 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, K
 	kshttp_find_arguments(args, "servername", &match);
 	if(match.veclen<1){
 		fr = KS_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": Variable servername not found");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable servername not found");
 		EXEC_GETSERVER_RETURN fr; //400
 	}else if(ov_string_compare(match.value[0], NULL) == OV_STRCMP_EQUAL){
 		fr = KS_ERR_BADPARAM;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": requested servername empty");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": requested servername empty");
 		EXEC_GETSERVER_RETURN fr;
 	}
 	ov_string_setvalue(&servername, match.value[0]);
@@ -97,7 +97,7 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, K
 	if(!pManager)
 	{
 		fr = KS_ERR_NOMANAGER;
-		kshttp_print_result_array(message, response_format, &fr, 1, ": received Manager command but no Manager here");
+		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": received Manager command but no Manager here");
 		EXEC_GETSERVER_RETURN fr; //400
 	}
 
@@ -125,7 +125,7 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, K
 			//ksbase is happy, but we are not
 			fr = KS_ERR_SERVERUNKNOWN;
 			KS_logfile_debug(("kshttp_getserver: getserver: kshttp not supported."));
-			kshttp_print_result_array(message, response_format, &fr, 1, ": Server unknown via kshttp protocol)");
+			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Server unknown via kshttp protocol)");
 			EXEC_GETSERVER_RETURN fr; //400
 		}
 	}
@@ -133,33 +133,33 @@ OV_RESULT kshttp_exec_getserver(OV_STRING_VEC* const args, OV_STRING* message, K
 	{
 		if(fr == KS_ERR_SERVERUNKNOWN)
 		{
-			kshttp_print_result_array(message, response_format, &fr, 1, ": Server unknown");
+			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Server unknown");
 			EXEC_GETSERVER_RETURN fr; //400
 		}
 		else
 		{/*	not all values set...how can this happen?	*/
-			kshttp_print_result_array(message, response_format, &fr, 1, ": weird: getserverdata returned unknown error. i don't know how this can happen");
+			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": weird: getserverdata returned unknown error. i don't know how this can happen");
 			EXEC_GETSERVER_RETURN KS_ERR_TARGETGENERIC; //400
 		}
 	}
 
 
-	kshttp_response_part_begin(message, response_format, "port");
-	if(*message == NULL){
+	kshttp_response_part_begin(responseBody, response_format, "port");
+	if(*responseBody == NULL){
 		//could be the case at format=plain
-		ov_string_setvalue(message, http_port);
+		ov_string_setvalue(responseBody, http_port);
 	}else{
-		ov_string_append(message, http_port);
+		ov_string_append(responseBody, http_port);
 	}
-	kshttp_response_part_finalize(message, response_format, "port");
+	kshttp_response_part_finalize(responseBody, response_format, "port");
 
-	kshttp_response_part_begin(message, response_format, "servername");
-	ov_string_append(message, servername);
-	kshttp_response_part_finalize(message, response_format, "servername");
+	kshttp_response_part_begin(responseBody, response_format, "servername");
+	ov_string_append(responseBody, servername);
+	kshttp_response_part_finalize(responseBody, response_format, "servername");
 
-	kshttp_response_part_begin(message, response_format, "serverversion");
-	ov_string_print(message, "%s%u", *message, registeredVersion);
-	kshttp_response_part_finalize(message, response_format, "serverversion");
+	kshttp_response_part_begin(responseBody, response_format, "serverversion");
+	ov_string_print(responseBody, "%s%u", *responseBody, registeredVersion);
+	kshttp_response_part_finalize(responseBody, response_format, "serverversion");
 
 	EXEC_GETSERVER_RETURN fr;
 }

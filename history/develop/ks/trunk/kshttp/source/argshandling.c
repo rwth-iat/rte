@@ -48,11 +48,13 @@
  * @param re return list
  * @return always success
  */
-OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
+OV_RESULT kshttp_find_arguments(OV_STRING_VEC* const args, const OV_STRING varname, OV_STRING_VEC* re){
 	OV_UINT i = 0;
 	OV_INT varname_len = 0;
 	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
-	if(args == NULL || varname == NULL)return OV_ERR_OK;
+	if(args == NULL || varname == NULL){
+		return OV_ERR_OK;
+	}
 	//iterate over argument names
 	for(i = 0;i < args->veclen;i=i+2){
 		//simple match -> put value in the output list
@@ -79,7 +81,7 @@ OV_RESULT kshttp_find_arguments(OV_STRING_VEC* args, const OV_STRING varname, OV
  * returns the format of the output
  * constants are in the config.h file
  */
-static OV_RESULT extract_response_format(OV_STRING_VEC* args, KSHTTP_RESPONSEFORMAT *response_format){
+static OV_RESULT extract_response_format(OV_STRING_VEC* const args, KSHTTP_RESPONSEFORMAT *response_format){
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	kshttp_find_arguments(args, "format", &match);
@@ -98,8 +100,8 @@ static OV_RESULT extract_response_format(OV_STRING_VEC* args, KSHTTP_RESPONSEFOR
 	return OV_ERR_OK;
 }
 
-#define PARSE_HTTP_HEADER_RETURN if(*response_format == FORMATUNDEFINED){\
-			*response_format = FORMATDEFAULT;\
+#define PARSE_HTTP_HEADER_RETURN if(clientRequest->response_format == FORMATUNDEFINED){\
+			clientRequest->response_format = FORMATDEFAULT;\
 		}\
 		ov_string_setvalue(&RequestLine, NULL);\
 		ov_string_freelist(plist);\
@@ -113,7 +115,7 @@ static OV_RESULT extract_response_format(OV_STRING_VEC* args, KSHTTP_RESPONSEFOR
  * @param args output string vector of form value content
  * @param http_version sets HTTP/1.1 or HTTP/1.0
  */
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSEFORMAT *response_format)
+OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -126,7 +128,7 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 	OV_UINT i = 0, len = 0, len1 = 0;
 
 	//initialize return vector properly
-	Ov_SetDynamicVectorLength(&clientRequest->args,0,STRING);
+	Ov_SetDynamicVectorLength(&clientRequest->args, 0, STRING);
 
 	pallheaderslist = ov_string_split(clientRequest->requestHeader, "\r\n", &allheaderscount);
 	if(allheaderscount<=0){
@@ -206,15 +208,15 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 			clientRequest->keepAlive = FALSE;
 		}else if(ov_string_match(pallheaderslist[i], "?ccept:*") == TRUE){
 			if(ov_string_comparei(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
-				*response_format = PLAIN;
+				clientRequest->response_format = PLAIN;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
-				*response_format = TCL;
+				clientRequest->response_format = TCL;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
-				*response_format = KSX;
+				clientRequest->response_format = KSX;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
-				*response_format = JSON;
+				clientRequest->response_format = JSON;
 			}
 		}else if(ov_string_match(pallheaderslist[i], "?ost:*") == TRUE){
 			ov_string_freelist(plist);
@@ -252,7 +254,7 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 		PARSE_HTTP_HEADER_RETURN OV_ERR_BADPARAM; //400
 	}
 	//try setting format via url parameter
-	extract_response_format(&clientRequest->args, response_format);
+	extract_response_format(&clientRequest->args, &clientRequest->response_format);
 	PARSE_HTTP_HEADER_RETURN OV_ERR_OK;
 }
 
