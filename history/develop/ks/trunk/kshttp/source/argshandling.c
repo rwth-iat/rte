@@ -48,7 +48,7 @@
  * @param re return list
  * @return always success
  */
-OV_RESULT kshttp_find_arguments(OV_STRING_VEC* const args, const OV_STRING varname, OV_STRING_VEC* re){
+OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re){
 	OV_UINT i = 0;
 	OV_INT varname_len = 0;
 	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
@@ -81,7 +81,7 @@ OV_RESULT kshttp_find_arguments(OV_STRING_VEC* const args, const OV_STRING varna
  * returns the format of the output
  * constants are in the config.h file
  */
-static OV_RESULT extract_response_format(OV_STRING_VEC* const args, KSHTTP_RESPONSEFORMAT *response_format){
+static OV_RESULT extract_response_format(const OV_STRING_VEC* args, KSHTTP_RESPONSEFORMAT *response_format){
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	kshttp_find_arguments(args, "format", &match);

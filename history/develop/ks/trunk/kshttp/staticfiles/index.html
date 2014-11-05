@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="windows-1252">
+		<meta name="viewport" content="width=device-width"><!-- no desktop view for mobile browsers -->
 		<title>OV-http Server</title>
 		<style type="text/css">
 			code{
@@ -117,6 +118,10 @@
 		<p>Outputs logfile outputs of the server.</p>
 		example: <code>/getLogfile?format=ksx</code><br>
 		example: <code>/getLogfile?format=ksx&amp;from=2013-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=30</code><br>
+		<h2>getServer</h2>
+		<p>Gives TCP Port of a Server (if this server is the KS-MANAGER).</p>
+		example: <code>/getServer?format=ksx&servername=MANAGER</code><br>
+		example: <code>/getServer?format=ksx&servername=MANAGER&serverversion=2</code><br>
 		
 		<script type="text/javascript" >
 		var CommandPlayground = document.getElementById("idCommandPlayground");

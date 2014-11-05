@@ -95,7 +95,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streambuffer_set(
  * @param header will be overwritten
  * @param body will be overwritten in an error state
  */
-static void map_result_to_http(OV_RESULT const result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body, KSHTTP_RESPONSEFORMAT const response_format){
+static void map_result_to_http(OV_RESULT const result, OV_STRING* http_version, OV_STRING* header, OV_STRING* body, const KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING tmp_header = NULL;
 	OV_STRING tmp_body = NULL;
 	//this is very ugly, but better than code duplication
@@ -324,7 +324,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		if(ov_string_compare(this->v_ClientRequest.cmd, "/getServer") == OV_STRCMP_EQUAL){
 			//http GET
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getserver");
-			result = kshttp_exec_getserver(&this->v_ClientRequest.args, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+
+			//todo rebuild the other services to use the same function prototype
+			result = kshttp_exec_getserver(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getserver");
 			request_handled_by = GETSERVER;
 		}else if(ov_string_compare(this->v_ClientRequest.cmd, "/register") == OV_STRCMP_EQUAL){
@@ -467,7 +469,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 							pExtension,
 							this,
 							this->v_ClientRequest,
-							this->v_ServerResponse);
+							&this->v_ServerResponse);
 					if(Ov_Fail(result)){
 						ov_memstack_lock();
 						KS_logfile_error(("%s: HandleRequest: processing service %s by %s failed with error %s", this->v_identifier, this->v_ClientRequest.cmd, pExtension->v_identifier, ov_result_getresulttext(result)));
@@ -748,4 +750,5 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 
 	return;
 }
+
 
