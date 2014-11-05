@@ -227,7 +227,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_Manager_unregister(
 					}
 					if(i < pSrvRep->v_protocols.veclen)
 					{/*	protocol found --> delete it from list	*/
-						//ov_database_free the unregister protocol String
+						//Ov_DbFree the unregister protocol String
 						ov_string_setvalue(&pSrvRep->v_protocols.value[i], NULL);
 						ov_string_setvalue(&pSrvRep->v_port.value[i], NULL);
 						for(;i<pSrvRep->v_protocols.veclen-1; i++)

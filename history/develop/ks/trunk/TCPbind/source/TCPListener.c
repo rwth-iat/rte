@@ -264,6 +264,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			//create an endpoint for communication
+			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
 #if OV_SYSTEM_NT
 			if((fd==-1) || (fd==INVALID_SOCKET))
@@ -303,13 +304,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				KS_logfile_print_sysMsg();
 			}
 
-			//assign the address to this socket
+			//setting source address and port
 			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen))
 			{
 				continue;
 			}
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
+			//second parameter is the maximum length to which the queue of pending connections for fd may grow
 			if (listen(fd, 5) == -1)
 			{
 				continue;
@@ -353,7 +355,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return;
 		}
-		if(thisLi->v_port == -1)
+		if(TCPbind_TCPListener_port_get(thisLi) == -1)
 		{
 			TCPbind_TCPListener_port_set(thisLi, atoi(portbuf));
 		}

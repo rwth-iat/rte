@@ -5,7 +5,7 @@
 #include "ksbase.h"
 #include "ks_logfile.h"
 
-/*
+/**
  * splits up a path string into its components
  * a path string may contain:
  *	[//host[:MANAGERPort]/servername[:serverport]/]instancePath
@@ -182,7 +182,9 @@ OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 		return FALSE;
 }
 
-
+/**
+ * frees the memory of a datapacket
+ */
 OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 {
 	if(!packet)
@@ -193,7 +195,7 @@ OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 		if(packet->length > 65536){
 			ks_logfile_debug("freeing large (>64k)  ks-datapacket, length is: %i", packet->length);
 		}
-		ov_free(packet->data);
+		Ov_HeapFree(packet->data);
 		packet->data = NULL;
 		packet->length = 0;
 		packet->writePT = NULL;
@@ -201,7 +203,9 @@ OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 	}
 	return;
 }
-
+/**
+ * appends an amount of data to a datapacket via copying the data into the heap
+ */
 OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength)
 {
 	OV_BYTE* tempdata;
@@ -214,10 +218,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 		if(packet->length > 65536){
 			ks_logfile_debug("appending to large (>64k)  ks-datapacket, length is: %i", packet->length);
 		}
-		tempdata = ov_realloc(packet->data, packet->length + addlength);
+		tempdata = Ov_HeapRealloc(packet->data, packet->length + addlength);
 		if(!tempdata)
 		{
-			ov_free(packet->data);
+			Ov_HeapFree(packet->data);
 			packet->data = NULL;
 			packet->length = 0;
 			packet->readPT = NULL;
@@ -242,7 +246,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	}
 	else
 	{
-		packet->data = ov_malloc(addlength);
+		packet->data = Ov_HeapMalloc(addlength);
 		if(!packet->data)
 		{
 			packet->length = 0;
@@ -259,6 +263,10 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	return OV_ERR_OK;
 }
 
+/**
+ * sets an amount of data to a datapacket via copying the data into the heap
+ * frees the datapacket if the new size is zero
+ */
 OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE* data, OV_UINT addlength)
 {
 	if(!packet)
@@ -270,10 +278,11 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_set(KS_DATAPACKET* packet, OV_BYTE
 	if(addlength == 0){
 		return OV_ERR_OK;
 	}
-	if(!data)
+	if(!data){
 		return OV_ERR_BADPARAM;
+	}
 
-	packet->data = ov_malloc(addlength);
+	packet->data = Ov_HeapMalloc(addlength);
 	if(!packet->data)
 	{
 		packet->length = 0;
