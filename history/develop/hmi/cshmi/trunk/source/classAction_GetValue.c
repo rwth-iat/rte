@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 
 	pParent = Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pobj));
 	if (pParent != NULL){
-		if(Ov_GetParent(ov_instantiation, (pParent)) == pclass_cshmi_SetConcatValue){
+		if(Ov_GetClassPtr(pParent) == pclass_cshmi_SetConcatValue){
 			//whitelist any GetValue under a SetConcatValue
 			return OV_ERR_OK;
 		}else if (Ov_CanCastTo(cshmi_SetMathValue, pParent)){

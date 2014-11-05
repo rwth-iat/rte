@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_TicketAuthenticator_constructor(
     /* do what */
 
      /*	check if there is already an authenticator of the same type     */
-    pclass = Ov_GetParent(ov_instantiation, pobj);
+    pclass = Ov_GetClassPtr(pobj);
     if(Ov_GetFirstChild(ov_instantiation, pclass) != pobj)
     	return OV_ERR_ALREADYEXISTS;
     if(Ov_GetNextChild(ov_instantiation, pobj))

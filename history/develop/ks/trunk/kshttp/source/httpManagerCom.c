@@ -109,7 +109,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_shutdown(
 		httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetFirstChild(ov_containment, thisMngCom));
 		if(httpClient)
 		{
-			while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
+			while(httpClient && (Ov_GetClassPtr(httpClient) != pclass_kshttp_httpClient))
 				httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 		}
 
@@ -297,7 +297,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 				httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetFirstChild(ov_containment, this));
 				if(httpClient)
 				{
-					while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
+					while(httpClient && (Ov_GetClassPtr(httpClient) != pclass_kshttp_httpClient))
 						httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 				}
 
@@ -334,7 +334,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 			httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetFirstChild(ov_containment, this));
 			if(httpClient)
 			{
-				while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
+				while(httpClient && (Ov_GetClassPtr(httpClient) != pclass_kshttp_httpClient))
 					httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 			}
 			kshttp_httpClientBase_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));
@@ -350,7 +350,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 		httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetFirstChild(ov_containment, this));
 		if(httpClient)
 		{
-			while(httpClient && (Ov_GetParent(ov_instantiation, httpClient) != pclass_kshttp_httpClient))
+			while(httpClient && (Ov_GetClassPtr(httpClient) != pclass_kshttp_httpClient))
 				httpClient = Ov_StaticPtrCast(kshttp_httpClient, Ov_GetNextChild(ov_containment, httpClient));
 		}
 		kshttp_httpClientBase_reset(Ov_StaticPtrCast(ksbase_ClientBase, httpClient));

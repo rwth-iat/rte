@@ -97,7 +97,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 		xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, thisMngCom));
 		if(xdrClient)
 		{
-			while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+			while(xdrClient && (Ov_GetClassPtr(xdrClient) != pclass_ksxdr_xdrClient))
 				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 		}
 
@@ -285,7 +285,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
 				if(xdrClient)
 				{
-					while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+					while(xdrClient && (Ov_GetClassPtr(xdrClient) != pclass_ksxdr_xdrClient))
 						xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 				}
 
@@ -321,7 +321,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 			xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
 			if(xdrClient)
 			{
-				while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+				while(xdrClient && (Ov_GetClassPtr(xdrClient) != pclass_ksxdr_xdrClient))
 					xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 			}
 			ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
@@ -337,7 +337,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 		xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetFirstChild(ov_containment, this));
 		if(xdrClient)
 		{
-			while(xdrClient && (Ov_GetParent(ov_instantiation, xdrClient) != pclass_ksxdr_xdrClient))
+			while(xdrClient && (Ov_GetClassPtr(xdrClient) != pclass_ksxdr_xdrClient))
 				xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 		}
 		ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));

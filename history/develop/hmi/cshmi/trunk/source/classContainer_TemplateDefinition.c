@@ -95,7 +95,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_TemplateDefinition_getcomment(
 	const OV_ELEMENT		*pelem
 ) {
 	OV_INSTPTR_cshmi_TemplateDefinition pinst = Ov_StaticPtrCast(cshmi_TemplateDefinition, pobj);
-	OV_INSTPTR_ov_class pClass = Ov_GetParent(ov_instantiation, pobj);
+	OV_INSTPTR_ov_class pClass = Ov_GetClassPtr(pobj);
 	OV_STRING temp = NULL;
 	OV_UINT classcommentlength = 0;
 	OV_UINT length = 0;
