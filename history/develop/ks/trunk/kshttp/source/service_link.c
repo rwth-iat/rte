@@ -55,11 +55,11 @@
  *
  *
  * extracts the command for the linking and let do ks_server_link the job
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_link(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -81,7 +81,7 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* args, OV_STRING* responseBody, c
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(args, "path", &match);
+	kshttp_find_arguments(urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
@@ -89,7 +89,7 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* args, OV_STRING* responseBody, c
 	}
 	//process element
 	Ov_SetDynamicVectorLength(&elementmatch,0,STRING);
-	kshttp_find_arguments(args, "element", &elementmatch);
+	kshttp_find_arguments(urlQuery, "element", &elementmatch);
 	if(elementmatch.veclen < match.veclen){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables element found: ");
@@ -110,10 +110,10 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* args, OV_STRING* responseBody, c
 	params.items_val = addrp;
 	params.items_len = match.veclen;
 
-	kshttp_find_arguments(args, "placehint", &placehintmatch);
-	kshttp_find_arguments(args, "placepath", &placepathmatch);
-	kshttp_find_arguments(args, "oppositeplacehint", &oppositeplacehintmatch);
-	kshttp_find_arguments(args, "oppositeplacepath", &oppositeplacepathmatch);
+	kshttp_find_arguments(urlQuery, "placehint", &placehintmatch);
+	kshttp_find_arguments(urlQuery, "placepath", &placepathmatch);
+	kshttp_find_arguments(urlQuery, "oppositeplacehint", &oppositeplacehintmatch);
+	kshttp_find_arguments(urlQuery, "oppositeplacepath", &oppositeplacepathmatch);
 
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){

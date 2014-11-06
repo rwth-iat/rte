@@ -50,11 +50,11 @@
  * Syntax: /getLogfile?from=2014-01-01T13:15:00.000000&to=2016-01-01T13:15:00.000000&maxentries=10
  *
  * extracts the command for the getlogfile and let do ov_logfile_getmessages the job
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -76,7 +76,7 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* args, OV_STRING* responseB
 
 	//process from
 	Ov_SetDynamicVectorLength(&frommatch,0,STRING);
-	kshttp_find_arguments(args, "from", &frommatch);
+	kshttp_find_arguments(urlQuery, "from", &frommatch);
 	if(frommatch.veclen == 1){
 		fr = kshttp_asciitotime(&from, frommatch.value[0]);
 	}else{
@@ -90,7 +90,7 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* args, OV_STRING* responseB
 
 	//process to
 	Ov_SetDynamicVectorLength(&tomatch,0,STRING);
-	kshttp_find_arguments(args, "to", &tomatch);
+	kshttp_find_arguments(urlQuery, "to", &tomatch);
 	if(tomatch.veclen == 1){
 		fr = kshttp_asciitotime(&to, tomatch.value[0]);
 	}else{
@@ -103,7 +103,7 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* args, OV_STRING* responseB
 
 	//process maxnomessages
 	Ov_SetDynamicVectorLength(&maxentriesmatch,0,STRING);
-	kshttp_find_arguments(args, "maxentries", &maxentriesmatch);
+	kshttp_find_arguments(urlQuery, "maxentries", &maxentriesmatch);
 	if(maxentriesmatch.veclen == 1){
 		max_no_messages = atoi(maxentriesmatch.value[0]);
 	}else{

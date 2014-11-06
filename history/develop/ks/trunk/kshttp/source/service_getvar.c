@@ -56,11 +56,11 @@ http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{
 
 /**
  * extracts the (multiple) commands for the getVar and let do ks_server_getVar the job
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -88,7 +88,7 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* args, OV_STRING* responseBody,
 	 */
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(args, "path", &match);
+	kshttp_find_arguments(urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");

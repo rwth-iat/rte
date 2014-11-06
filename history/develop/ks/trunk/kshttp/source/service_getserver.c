@@ -49,7 +49,7 @@
  * Syntax: /getServer?servername=hallowelt&serverversion=2
  *
  * extracts the command for the getserver and let do ks_server_getserver the job
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
@@ -73,7 +73,7 @@ OV_RESULT kshttp_exec_getserver(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *r
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(&request.args, "servername", &match);
+	kshttp_find_arguments(&request.urlQuery, "servername", &match);
 	if(match.veclen<1){
 		fr = KS_ERR_BADPARAM;
 		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable servername not found");
@@ -86,7 +86,7 @@ OV_RESULT kshttp_exec_getserver(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *r
 	ov_string_setvalue(&servername, match.value[0]);
 
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(&request.args, "serverversion", &match);
+	kshttp_find_arguments(&request.urlQuery, "serverversion", &match);
 	if(match.veclen<1){
 		serverversion = 2;
 	}else{

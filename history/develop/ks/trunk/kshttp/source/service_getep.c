@@ -121,7 +121,7 @@ static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const KSHTT
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -154,7 +154,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, 
 	 * Build Parameter for KS function
 	 */
 	//process path
-	kshttp_find_arguments(args, "path", &match);
+	kshttp_find_arguments(urlQuery, "path", &match);
 	if(match.veclen!=1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Path not found or multiple path given");
@@ -163,13 +163,13 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, 
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
-	kshttp_find_arguments(args, "nameMask", &match);
+	kshttp_find_arguments(urlQuery, "nameMask", &match);
 	if(match.veclen > 0){
 		ov_string_setvalue(&params.name_mask, match.value[0]);
 	}else{
 		ov_string_setvalue(&params.name_mask, "*");
 	}
-	kshttp_find_arguments(args, "scopeFlags", &match);
+	kshttp_find_arguments(urlQuery, "scopeFlags", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "parts") == OV_STRCMP_EQUAL){
 			params.scope_flags = KS_EPF_PARTS;
@@ -185,7 +185,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, 
 		params.scope_flags = KS_EPF_DEFAULT;
 	}
 
-	kshttp_find_arguments(args, "requestType", &match);
+	kshttp_find_arguments(urlQuery, "requestType", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "OT_DOMAIN") == OV_STRCMP_EQUAL){
 			params.type_mask = KS_OT_DOMAIN;
@@ -205,7 +205,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, 
 		params.type_mask = KS_OT_DOMAIN;
 	}
 
-	kshttp_find_arguments(args, "requestOutput", &match);
+	kshttp_find_arguments(urlQuery, "requestOutput", &match);
 	if(response_format == KSX || response_format == JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;

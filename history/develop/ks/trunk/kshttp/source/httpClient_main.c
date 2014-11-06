@@ -154,7 +154,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_startup(
 	thisCl->v_ServerResponse.contentType = NULL;
 	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.contentBinary = NULL;
-	thisCl->v_ServerResponse.version = NULL;
+	thisCl->v_ServerResponse.httpVersion = NULL;
 	return;
 }
 
@@ -176,7 +176,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientBase_reset(
 	thisCl->v_httpParseStatus = HTTP_MSG_NEW;
 	thisCl->v_httpStatusCode = 0;
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
-	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
+	ov_string_setvalue(&(thisCl->v_ServerResponse.httpVersion), NULL);
 	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 	thisCl->v_ServerResponse.contentBinary = NULL;
 
@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void kshttp_httpClientBase_shutdown(
 	thisCl->v_callback.instanceCalled = NULL;
 	thisCl->v_callback.callbackFunction = NULL;
 
-	ov_string_setvalue(&(thisCl->v_ServerResponse.version), NULL);
+	ov_string_setvalue(&(thisCl->v_ServerResponse.httpVersion), NULL);
 	ov_string_setvalue(&(thisCl->v_ServerResponse.contentType), NULL);
 	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
 	thisCl->v_ServerResponse.contentBinary = NULL;

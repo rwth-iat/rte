@@ -147,7 +147,7 @@
 #define IsFlagSet(flags, name)	(flags & (1L << (name-'a')))
 
 OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSE *serverResponse);
-OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* args, const OV_STRING varname, OV_STRING_VEC* re);
+OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING varname, OV_STRING_VEC* re);
 OV_STRING kshttp_ov_path_topercent_noslash (OV_STRING org);
 OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING cmd);
 OV_RESULT kshttp_include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
@@ -161,18 +161,18 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const KSHTTP_RESPONSE
 OV_RESULT kshttp_print_result_array(OV_STRING *output, const KSHTTP_RESPONSEFORMAT response_format, OV_RESULT *results, const OV_UINT len, const OV_STRING explain_text);
 
 OV_RESULT kshttp_exec_getserver(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
-OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_createObject(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_link(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unlink(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_createObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_unlink(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
 
-OV_RESULT kshttp_exec_register(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_register(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
 
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, const OV_TIME* time, const KSHTTP_RESPONSEFORMAT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptime, const KSHTTP_RESPONSEFORMAT response_format);

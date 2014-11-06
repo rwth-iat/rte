@@ -13,20 +13,23 @@ typedef enum KSHTTP_REQUESTHANDLEDBY {
 /**
  *	KSHTTP_REQUEST
  *	This structure is used for decoded transmitted data.
+ *	example http 1.1 GET request of /getVar?format=ksx&path[0]=/vendor/database_free&path[1]=/vendor/database_size
+ *	to the server localhost:7509 results in this values:
  */
 typedef struct{
-	OV_STRING requestHeader;
-	OV_STRING cmd;
-	OV_STRING version;
-	OV_STRING host;
-	OV_STRING_VEC args;
-	KSHTTP_RESPONSEFORMAT response_format;
-	OV_UINT headerLength;
-	OV_UINT contentLength;
-	OV_BYTE* messageBody;
-	OV_STRING requestMethod;
-	OV_BOOL gzipAccepted;
-	OV_BOOL keepAlive;
+	OV_STRING requestHeader;	/* the full, unprocessed http header */
+	OV_STRING requestMethod;	/* GET */
+	OV_STRING urlPath;			/* /getVar */
+	OV_STRING httpVersion;		/* 1.1 */
+	OV_STRING host;				/* localhost:7509 */
+	OV_STRING_VEC urlQuery;		/* {"format", "ksx", "path[0]", "/vendor/database_free", "path[1]", "/vendor/database_size"} */
+	KSHTTP_RESPONSEFORMAT response_format /* KSX */;
+	OV_STRING Accept;			/* Accept: text/ksx */
+	OV_BOOL gzipAccepted;		/* TRUE probably with modern browsers */
+	OV_BOOL keepAlive;			/* TRUE probably with modern browsers */
+	OV_UINT headerLength;		/* 1342 for example */
+	OV_UINT contentLength;		/* 0, as we have not POST */
+	OV_BYTE* messageBody;		/* NULL, as we have not POST */
 } KSHTTP_REQUEST;
 
 /**
@@ -34,14 +37,14 @@ typedef struct{
  *	This structure is used for decoded transmitted data.
  */
 typedef struct{
-	OV_STRING version;
-	OV_INT statusCode;
-	OV_UINT headerLength;
-	OV_STRING header;
-	OV_STRING contentString; /* content send from the server back to the client */
-	OV_BYTE* contentBinary; /* will be used if contentString is empty */
-	OV_UINT contentLength;
-	OV_STRING contentType;
-	OV_STRING contentEncoding;
-	OV_BOOL transferEncodingChunked;
+	OV_STRING httpVersion;		/* 1.1 */
+	OV_INT statusCode;			/* 200, hopefully */
+	OV_UINT headerLength;		/* 1342 for example */
+	OV_STRING header;			/* the full http header */
+	OV_STRING contentString; 	/* content send from the server back to the client */
+	OV_BYTE* contentBinary; 	/* will be used if contentString is empty */
+	OV_UINT contentLength;		/*  */
+	OV_STRING contentType;		/*  */
+	OV_STRING contentEncoding;	/*  */
+	OV_BOOL transferEncodingChunked;	/* FALSE for OV Servers */
 } KSHTTP_RESPONSE;

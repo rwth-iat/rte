@@ -46,11 +46,11 @@
  * Syntax: /register?name=dieter&port=7510&ksversion=2
  *
  * extracts the command for the register and process
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -62,7 +62,7 @@ OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* args, OV_STRING* responseB
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(args, "name", &match);
+	kshttp_find_arguments(urlQuery, "name", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable name not found");
@@ -76,7 +76,7 @@ OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* args, OV_STRING* responseB
 	}
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(args, "version", &match);
+	kshttp_find_arguments(urlQuery, "version", &match);
 	if(match.veclen<1 || match.value[0] == NULL){
 		serverversion = 2;
 	}else{

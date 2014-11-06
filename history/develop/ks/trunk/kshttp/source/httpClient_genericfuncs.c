@@ -381,7 +381,7 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RE
 			ov_string_freelist(plist);
 			return OV_ERR_BADPARAM; //400
 		}
-		ov_string_setvalue(&responseStruct->version, plist[0]);
+		ov_string_setvalue(&responseStruct->httpVersion, plist[0]);
 		responseStruct->statusCode = atoi(plist[1]);
 
 		//check all other headers

@@ -45,16 +45,18 @@
 
 /**
  * extracts the command for the renaming and let do ks_server_rename the job
- * @param args arguments of the http get request
+ * @param urlQuery arguments of the http get request
  * @param responseBody pointer to the result string
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
 	OV_STRING_VEC match = {0,NULL};
 	OV_STRING_VEC newnamematch = {0,NULL};
+	OV_STRING_VEC pmhmatch = {0,NULL};
+	OV_STRING_VEC pmhpathmatch = {0,NULL};
 	OV_RENAMEOBJECT_ITEM *addrp = NULL;
 	OV_UINT i = 0;
 	OV_RESULT fr = OV_ERR_OK;
@@ -67,7 +69,7 @@ OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* args, OV_STRING* respons
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(args, "path", &match);
+	kshttp_find_arguments(urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
@@ -75,12 +77,17 @@ OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* args, OV_STRING* respons
 	}
 	//process factory
 	Ov_SetDynamicVectorLength(&newnamematch,0,STRING);
-	kshttp_find_arguments(args, "newname", &newnamematch);
+	kshttp_find_arguments(urlQuery, "newname", &newnamematch);
 	if(newnamematch.veclen < match.veclen){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables newname found");
 		EXEC_RENAMEOBJECT_RETURN fr; //400
 	}
+	//process Placement hint
+	Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);
+	kshttp_find_arguments(urlQuery, "placementHint", &pmhmatch);
+	Ov_SetDynamicVectorLength(&pmhpathmatch,0,STRING);
+	kshttp_find_arguments(urlQuery, "placePath", &pmhpathmatch);
 
 	ov_memstack_lock();
 	addrp = (OV_RENAMEOBJECT_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_RENAMEOBJECT_ITEM));
@@ -99,8 +106,26 @@ OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* args, OV_STRING* respons
 		addrp->old_path = match.value[i];
 		addrp->new_path = newnamematch.value[i];
 
-		//todo PMH implementieren
-		addrp->place.hint = KS_PMH_DEFAULT;
+		//placement hint
+		if(i<pmhmatch.veclen){
+			if(ov_string_compare(pmhmatch.value[i], "PMH_DEFAULT") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_DEFAULT;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_BEGIN") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_BEGIN;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_END") == OV_STRCMP_EQUAL){
+				addrp->place.hint = KS_PMH_END;
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_BEFORE") == OV_STRCMP_EQUAL && match.veclen<=pmhpathmatch.veclen){
+				addrp->place.hint = KS_PMH_BEFORE;
+				addrp->place.place_path = pmhpathmatch.value[i];
+			}else if(ov_string_compare(pmhmatch.value[i], "PMH_AFTER") == OV_STRCMP_EQUAL && match.veclen<=pmhpathmatch.veclen){
+				addrp->place.hint = KS_PMH_AFTER;
+				addrp->place.place_path = pmhpathmatch.value[i];
+			}else{
+				addrp->place.hint = KS_PMH_DEFAULT;
+			}
+		}else{
+			addrp->place.hint = KS_PMH_DEFAULT;
+		}
 
 		//add one size of a pointer
 		addrp ++;

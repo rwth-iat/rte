@@ -63,7 +63,7 @@
 		ov_string_setvalue(&Temp, NULL);\
 		return
 
-OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
 	/*
 	*	parameter and result objects
 	*/
@@ -95,7 +95,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody,
 
 	//process path
 	Ov_SetDynamicVectorLength(&pathmatch,0,STRING);
-	kshttp_find_arguments(args, "path", &pathmatch);
+	kshttp_find_arguments(urlQuery, "path", &pathmatch);
 	if(pathmatch.veclen<1){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
@@ -103,7 +103,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody,
 	}
 	//process newvalue
 	Ov_SetDynamicVectorLength(&newvaluematch,0,STRING);
-	kshttp_find_arguments(args, "newvalue", &newvaluematch);
+	kshttp_find_arguments(urlQuery, "newvalue", &newvaluematch);
 	if(newvaluematch.veclen< pathmatch.veclen){
 		fr = OV_ERR_BADPARAM;
 		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables newvalue found");
@@ -129,7 +129,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody,
 	//process vartype
 	//we have to get the vartypes via GetVar, if not specified in request
 	Ov_SetDynamicVectorLength(&vartypematch,0,STRING);
-	kshttp_find_arguments(args, "vartype", &vartypematch);
+	kshttp_find_arguments(urlQuery, "vartype", &vartypematch);
 	if(vartypematch.veclen< 1){
 		//getVar
 		addrpGet = Ov_MemStackAlloc(OV_STRING);
@@ -324,7 +324,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* args, OV_STRING* responseBody,
 			 * with STRING_VEC we have to do some more
 			 */
 
-	/*		todo implement is base64encoded
+	/*		todo implement base64encoded set
 			case OV_VT_BYTE_VEC:
 			case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 	*/
