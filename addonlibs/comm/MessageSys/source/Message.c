@@ -213,6 +213,10 @@ OV_DLLFNCEXPORT void MessageSys_Message_destructor(
 
     /* do what */
     ov_string_setvalue(&this->v_msgBody, NULL);
+    /*	delete an associated channel object	*/
+    if(Ov_GetChild(MessageSys_Message2Channel, this)){
+    	Ov_DeleteObject(Ov_GetChild(MessageSys_Message2Channel, this));
+    }
 
     /* destroy object */
     ov_object_destructor(pobj);
