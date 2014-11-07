@@ -1271,6 +1271,27 @@ ERRORMSG:
 			}
 		}
 	}
+	/*	set config basPath	*/
+	if(configBasePath || *configBasePath){
+		if(commandline_options)
+		{
+			tempstr = malloc(strlen(commandline_options)+9+strlen(configBasePath) + 1); //" CONFDIR=" + strlen(configbasepath) + '\0'
+			if(tempstr)
+			{
+				sprintf(tempstr, "CONFDIR=%s %s", configBasePath, commandline_options);
+				free(commandline_options);
+				commandline_options = tempstr;
+			}
+		}
+		else
+		{
+			commandline_options = malloc(9+strlen(configBasePath) + 1);
+			if(commandline_options)
+			{
+				sprintf(commandline_options, "CONFDIR=%s %s", configBasePath);
+			}
+		}
+	}
 	if(commandline_options)
 		ov_vendortree_setcmdlineoptions(commandline_options);
 
