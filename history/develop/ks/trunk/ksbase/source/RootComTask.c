@@ -182,6 +182,7 @@ void ksbase_RootComTask_execute(
 	OV_TIME_SPAN		t;
         OV_INSTPTR_ksbase_RootComTask	rcTask;
 	OV_INSTPTR_ksbase_ComTask 	childTask = NULL;
+	OV_INSTPTR_ksbase_ComTask 	nextChild = NULL;
 	OV_INSTPTR_ksbase_ComTask firstChild = NULL;
 	OV_VTBLPTR_ksbase_ComTask	pvtable;
 	OV_TIME time_next, now, earliestChild;
@@ -225,40 +226,33 @@ void ksbase_RootComTask_execute(
 		//lets see if something is todo...
 		firstChild = Ov_GetFirstChild(ksbase_AssocComTaskList, rcTask);
 		childTask = firstChild;
-		while(childTask) {//TODO modify this loop not to iterate over ALL children before return if the time for the next ov_scheduler task is reached
+		while(childTask) {
+			nextChild = Ov_GetNextChild(ksbase_AssocComTaskList, childTask);
 			if(ksbase_ComTask_calcExec(childTask)) {//if TRUE, its time to execute this object
 				//go via the methodtable to call the "real" implementation of the typemethod
 				//KS_logfile_debug(("RootComTask: %s was executed", childTask->v_identifier));
 				Ov_GetVTablePtr(ksbase_ComTask, pvtable, childTask);
-				if(pvtable)
-				{
-					pvtable->m_typemethod(childTask);
+				if(pvtable) {
 					//calculate and set next execution time of child task
 					ov_time_gettime(&now);
 					ts.secs = rcTask->v_cycsecs * childTask->v_cycInterval;
 					ts.usecs = rcTask->v_cycusecs * childTask->v_cycInterval;
-					if(ts.usecs >= 1000000)
-					{
+					if(ts.usecs >= 1000000) {
 						ts.secs += (ts.usecs / 1000000);
 						ts.usecs %= 1000000;
 					}
 					ov_time_add(&(childTask->v_NextExecTime), &(now), &ts);
-
 					//get the earliest child task to be run again; just to estimate possible sleep time
 					//sequence of child-task, however, remains
-					if(ov_time_compare(&(childTask->v_NextExecTime), &(earliestChild)) < 0)
-					{
+					if(ov_time_compare(&(childTask->v_NextExecTime), &(earliestChild)) == OV_TIMECMP_BEFORE) {
 						earliestChild = childTask->v_NextExecTime;
-
 					}
-				}
-				else
+					pvtable->m_typemethod(childTask);
+				} else {
 					KS_logfile_error(("No Vtable found for %s.", childTask->v_identifier));
+				}
 			}
-
-
-			childTask = Ov_GetNextChild(ksbase_AssocComTaskList, childTask);
-
+			childTask = nextChild;
 		}
 
 		ov_time_gettime(&now);
@@ -306,7 +300,7 @@ void ksbase_RootComTask_execute(
 
 		// Checking of ov_activitylock prevents the communication system from freezing when activity lock is set by a ks-command
 
-	}while((ov_time_compare(&time_next, &now) > 0) || ov_activitylock);
+	}while((ov_time_compare(&time_next, &now) == OV_TIMECMP_AFTER) || ov_activitylock);
 
 
 	//KS_logfile_debug(("leaving loop"));
