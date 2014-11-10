@@ -207,7 +207,8 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 	for (i=1; i<allheaderscount; i++){
 		if(ov_string_match(pallheaderslist[i], "?ccept-?ncoding:*") == TRUE){
 			if(ov_string_match(pallheaderslist[i], "*gzip*") == TRUE){
-				clientRequest->gzipAccepted = TRUE;
+				//could be overwritten by getVar server side push support
+				clientRequest->compressionGzip = TRUE;
 			}
 		}else if(ov_string_compare(pallheaderslist[i], "?onnection: close") == OV_STRCMP_EQUAL){
 			//scan header for Connection: close - the default behavior is keep-alive

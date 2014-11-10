@@ -74,6 +74,7 @@ LIBRARY kshttp
 		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
 		ClientRequest :	C_TYPE	<KSHTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
 		ServerResponse :	C_TYPE	<KSHTTP_RESPONSE> COMMENT	=	"Structured Data for the HTTP response.";
+		CommunicationStatus : C_TYPE <KSHTTP_COMMUNICATIONSTATUS>;
 	END_VARIABLES;
 	OPERATIONS
 		/**
@@ -84,17 +85,28 @@ LIBRARY kshttp
 		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
 		 *		4. The readptr of the answer data may not be altered.
 		 */
-		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		HandleRequest		:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
 		startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
 		shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/**
+		 * if a httpClientHandlerExtension want to make further http communication it is recommended to use these methods
+		 */
+		analyzeRequestHeader:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
+		analyzeRequestBody	:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
+		generateHttpBody	:	C_FUNCTION	<KSHTTP_FNC_DATAHANDLING>;
+		generateHttpHeader	:	C_FUNCTION	<KSHTTP_FNC_DATAHANDLINGRESULT>;
+		mapresult2http		:	C_FUNCTION	<KSHTTP_FNC_RESULT2HTTP>;
+		sendHttpHeader		:	C_FUNCTION	<KSHTTP_FNC_OUTPACKETHANDLING>;
+		sendHttpBody		:	C_FUNCTION	<KSHTTP_FNC_OUTPACKETHANDLING>;
 	END_OPERATIONS;	
 	END_CLASS;
 	
 	/**
  	*	Baseclass for clientHandler Extensions belonging to the kshttp protocol
- 	*	if the http clientHandler instance cannot handle a requested operation (determined by the http get path)
- 	*	it will iterate over all instances of this class and check if the path is listed in the commandList
- 	*	vector. if so the handle request function is called. 
+ 	*	if the http clientHandler instance cannot handle a requested operation (determined by the http urlpath)
+ 	*	it will iterate over all instances of this class and check if the urlpath is listed in the commandList
+ 	*	vector. If so the handle request function is called. If this sets KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED 
+ 	*	the client handler will do nothing on this channel anymore (probably best to change ksbase_AssocChannelClientHandler to you)
  	*/
  	CLASS	httpClientHandlerExtension			:	CLASS ksbase/baseClientHandlerExtension
 		COMMENT	=	"Baseclass for client handler extensions for the kshttp protocol";

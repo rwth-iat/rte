@@ -93,7 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streambuffer_set(
  * @param header will be overwritten
  * @param body will be overwritten in an error state
  */
-static void map_result_to_http(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response, OV_RESULT const result){
+DLLFNCEXPORT void kshttp_httpclienthandler_mapresult2http(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response, OV_RESULT const result){
 	OV_STRING tmp_header = NULL;
 	OV_STRING tmp_body = NULL;
 	//this is very ugly, but better than code duplication
@@ -212,45 +212,73 @@ static void map_result_to_http(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *re
 /**
  * This function handles requests received over a channel. It reads data as an http-stream and triggers the appropriate OV-functions
  */
-
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
-	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
-
-	OV_BYTE *endOfHeader = NULL;
-
-	KSHTTP_REQUESTHANDLEDBY request_handled_by = NONE;
-	OV_BOOL gzip_applicable = FALSE;
-
-	OV_BOOL extclientfound = FALSE;
-
-	OV_INSTPTR_kshttp_httpClientHandlerExtension pExtension = NULL;
-	OV_VTBLPTR_kshttp_httpClientHandlerExtension pVtblClientHandlerExtension = NULL;
-	OV_INSTPTR_ov_class pExtensionClass = NULL;
-	OV_UINT iterator;
-
 	OV_RESULT result = OV_ERR_OK;
-	OV_STRING_VEC match = {0,NULL};
 
-	//gzip compression business
-	OV_BYTE* gzip_compressed_body = NULL;
-	OV_INT gzip_compressed_body_length = 0;
+	switch (this->v_CommunicationStatus) {
+		case KSHTTP_CS_INITIAL:
+			result = kshttp_httpclienthandler_analyzeRequestHeader(this, dataReceived);
+			if(Ov_Fail(result)) return result;
+			//no break wanted
+		case KSHTTP_CS_REQUESTHEADERPARSED :
+			result = kshttp_httpclienthandler_analyzeRequestBody(this, dataReceived);
+			if(Ov_Fail(result)) return result;
+			//no break wanted
+		case KSHTTP_CS_REQUESTPARSED :
+			result = kshttp_httpclienthandler_generateHttpBody(this);
+			if(this->v_CommunicationStatus == KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED){
+				//we reject every further work on this channel
+				return OV_ERR_OK;
+			}
+			//no break wanted
+		case KSHTTP_CS_RESPONSEBODYGENERATED :
+			result = kshttp_httpclienthandler_generateHttpHeader(this, result);
+			if(Ov_Fail(result)) return result;
+			//no break wanted
+		case KSHTTP_CS_RESPONSEHEADERGENERATED :
+			result = kshttp_httpclienthandler_sendHttpHeader(this, answer);
+			if(Ov_Fail(result)) return result;
+			//no break wanted
+		case KSHTTP_CS_RESPONSEHEADERSEND :
+			result = kshttp_httpclienthandler_sendHttpBody(this, answer);
+			return result;
 
-	OV_INSTPTR_kshttp_staticfile pStaticfile;
+		case KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED :
+			KS_logfile_error(("%s: HandleRequest: we have no responsibility for this channel, but got called! 8-(", this->v_identifier));
+			return OV_ERR_NOTIMPLEMENTED;
+		case KSHTTP_CS_SHUTDOWN :
+			Ov_DeleteObject(this);
+			return OV_ERR_OK;
+		default:
+			KS_logfile_error(("%s: HandleRequest: no matching communication status found: %d. aborting.", this->v_identifier, this->v_CommunicationStatus));
+			break;
+	}
+	return result;
+}
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	KS_DATAPACKET* dataReceived
+) {
+	OV_RESULT result = OV_ERR_OK;
+	OV_BYTE *endOfHeader = NULL;
 
 	//initialise struct
 	this->v_ClientRequest.response_format = FORMATUNDEFINED;
-	this->v_ClientRequest.gzipAccepted = FALSE;
+	this->v_ClientRequest.compressionGzip = FALSE;
+
 	ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
 	Ov_HeapFree(this->v_ServerResponse.contentBinary);
 	this->v_ServerResponse.contentBinary = NULL;
 	this->v_ServerResponse.contentLength = 0;
 	ov_string_setvalue(&this->v_ServerResponse.contentType, NULL);
 	ov_string_setvalue(&this->v_ServerResponse.contentEncoding, NULL);
+	this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_NONE;
+	this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
 
 	//if no stream mode, wait for the end of the header
 	if(this->v_stream == FALSE){
@@ -277,11 +305,23 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//parse request header into get command and arguments request
 	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest, &this->v_ServerResponse);
+	if(Ov_Fail(result)){
+		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
+		return OV_ERR_BADPARAM;
+	}
+	this->v_CommunicationStatus = KSHTTP_CS_REQUESTHEADERPARSED;
+	return OV_ERR_OK;
+}
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	KS_DATAPACKET* dataReceived
+) {
 	if(this->v_ClientRequest.contentLength != 0){
 		//save message body (for POST?) in memory
 		if(dataReceived->length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
 			this->v_ClientRequest.messageBody = (OV_BYTE*)Ov_HeapMalloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
+				this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 				return OV_ERR_TARGETGENERIC;
 			}
 
@@ -292,9 +332,33 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			return OV_ERR_OK;
 		}
 	}
+	this->v_CommunicationStatus = KSHTTP_CS_REQUESTPARSED;
 
 	//empty the buffers
 	ksbase_free_KSDATAPACKET(dataReceived);
+
+	return OV_ERR_OK;
+}
+
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
+	OV_INSTPTR_kshttp_httpclienthandler this
+) {
+	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
+	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_kshttp_httpClientHandlerExtension pExtension = NULL;
+	OV_VTBLPTR_kshttp_httpClientHandlerExtension pVtblClientHandlerExtension = NULL;
+	OV_INSTPTR_ov_class pExtensionClass = NULL;
+	OV_BOOL extclientfound = FALSE;
+	OV_UINT iterator;
+	OV_STRING_VEC match = {0,NULL};
+
+	OV_INSTPTR_kshttp_staticfile pStaticfile;
+	//gzip compression business
+	OV_BYTE* gzip_compressed_body = NULL;
+	OV_INT gzip_compressed_body_length = 0;
+
+
+	this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_NONE;
 
 	if(KSX == this->v_ClientRequest.response_format){
 		ov_string_setvalue(&this->v_ServerResponse.contentType, "text/xml");
@@ -314,11 +378,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		//hmi uses this headers, which is no problem for us
 		ov_string_append(&this->v_ServerResponse.header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
 		//only an 200 is required, so abort request handling
-		request_handled_by = CORSOPTION;
+		this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CORSOPTION;
 	}
 
 	//BEGIN command routine
-	if(Ov_OK(result) && request_handled_by == NONE){
+	if(Ov_OK(result) && this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_NONE){
 		if(ov_string_compare(this->v_ClientRequest.urlPath, "/getServer") == OV_STRCMP_EQUAL){
 			//http GET
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getserver");
@@ -326,7 +390,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			//todo rebuild the other services to use the same function prototype
 			result = kshttp_exec_getserver(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getserver");
-			request_handled_by = GETSERVER;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETSERVER;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/register") == OV_STRCMP_EQUAL){
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "register");
 			if(!pChannel->v_isLocal){
@@ -337,7 +401,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 				result = kshttp_exec_register(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			}
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "register");
-			request_handled_by = REGISTER;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_REGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/unregister") == OV_STRCMP_EQUAL){
 			//name, port, ksversion
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unregister");
@@ -348,7 +412,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 				result = kshttp_exec_unregister(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			}
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unregister");
-			request_handled_by = UNREGISTER;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_UNREGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getvar");
@@ -358,7 +422,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			kshttp_find_arguments(&this->v_ClientRequest.urlQuery, "stream", &match);
 			if(match.veclen>0){
 				result = OV_ERR_NOTIMPLEMENTED;
-				request_handled_by = GETVAR;
+				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
 			}else if(FALSE){
 				//disabled, because we are not called cyclic
 
@@ -379,10 +443,12 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 					//no - set body to null
 					ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
 				}
-				request_handled_by = GETVARSTREAM;
+				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVARSTREAM;
+				//deactivate compression if push is used
+				this->v_ClientRequest.compressionGzip = FALSE;
 			}else{
 				//no
-				request_handled_by = GETVAR;
+				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
 			}
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
@@ -390,55 +456,55 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "setvar");
 			result = kshttp_exec_setvar(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "setvar");
-			request_handled_by = SETVAR;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_SETVAR;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getEP") == OV_STRCMP_EQUAL){
 			//http PROPFIND, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getep");
 			result = kshttp_exec_getep(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getep");
-			request_handled_by = GETEP;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETEP;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/createObject") == OV_STRCMP_EQUAL){
 			//http PUT, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "createobject");
 			result = kshttp_exec_createObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "createobject");
-			request_handled_by = CREATEOBJECT;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CREATEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/deleteObject") == OV_STRCMP_EQUAL){
 			//http DELETE, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "deleteobject");
 			result = kshttp_exec_deleteObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "deleteobject");
-			request_handled_by = DELETEOBJECT;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_DELETEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/renameObject") == OV_STRCMP_EQUAL){
 			//http MOVE, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "renameobject");
 			result = kshttp_exec_renameObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "renameobject");
-			request_handled_by = RENAMEOBJECT;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_RENAMEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/link") == OV_STRCMP_EQUAL){
 			//http LINK
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "link");
 			result = kshttp_exec_link(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "link");
-			request_handled_by = LINK;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_LINK;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/unlink") == OV_STRCMP_EQUAL){
 			//http UNLINK
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unlink");
 			result = kshttp_exec_unlink(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unlink");
-			request_handled_by = UNLINK;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_UNLINK;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getLogfile") == OV_STRCMP_EQUAL){
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "logfile");
 			result = kshttp_exec_getlogfile(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "logfile");
-			request_handled_by = GETLOGFILE;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETLOGFILE;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/auth") == OV_STRCMP_EQUAL){
 			result = kshttp_authorize(1, this, this->v_ClientRequest.requestHeader, &this->v_ServerResponse.header, this->v_ClientRequest.requestMethod, this->v_ClientRequest.urlPath);
 			if(!Ov_Fail(result)){
 				ov_string_append(&this->v_ServerResponse.contentString, "Secret area");
 				result = OV_ERR_OK;
 			}
-			request_handled_by = HTTPAUTH;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_HTTPAUTH;
 		}else{
 			/*	iterate over all httpClientHandlerExtension	*/
 			Ov_ForEachChildEx(ov_inheritance, pclass_kshttp_httpClientHandlerExtension, pExtensionClass, ov_class){
@@ -473,7 +539,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 						KS_logfile_error(("%s: HandleRequest: processing service %s by %s failed with error %s", this->v_identifier, this->v_ClientRequest.urlPath, pExtension->v_identifier, ov_result_getresulttext(result)));
 						ov_memstack_unlock();
 					}else{
-						request_handled_by = CLIENTHANDLEREXT;
+						this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CLIENTHANDLEREXT;
+						if(this->v_CommunicationStatus == KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED){
+							//we reject every further work on this channel
+							return OV_ERR_OK;
+						}
 					}
 				}
 			} else {
@@ -483,14 +553,9 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 	//END command routine
 
-	//raw request header not needed any longer
-	ov_string_setvalue(&this->v_ClientRequest.requestHeader, NULL);
-	Ov_SetDynamicVectorLength(&this->v_ClientRequest.urlQuery,0,STRING);
-	Ov_SetDynamicVectorLength(&match,0,STRING);
-
 	//BEGIN static file routine
 	//no command matched yet... Is it a static file?
-	if(!Ov_Fail(result) && request_handled_by == NONE){
+	if(!Ov_Fail(result) && this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_NONE){
 		OV_STRING filename = NULL;
 		OV_STRING filepath = NULL;
 		//assume index.html as a root file
@@ -520,50 +585,25 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			result = OV_ERR_OK;
 			//we do not copy the value here! The string pointer is NULL right now
 			this->v_ServerResponse.contentString = pStaticfile->v_content;
-			request_handled_by = STATICFILE;
+			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_STATICFILE;
 		}
 	}
 	//END static file routine
 
+	//raw request header not needed any longer
+	ov_string_setvalue(&this->v_ClientRequest.requestHeader, NULL);
+	Ov_SetDynamicVectorLength(&this->v_ClientRequest.urlQuery,0,STRING);
+	Ov_SetDynamicVectorLength(&match,0,STRING);
+	ov_string_setvalue(&this->v_ClientRequest.urlPath, NULL);
+
 	//no method has found a hit
-	if (request_handled_by == NONE){
+	if (this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_NONE){
 		result = OV_ERR_BADPATH; //404
 		kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "notimplemented");
 		kshttp_print_result_array(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, &result, 1, ": KS command not supported or static file not found");
 		kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "notimplemented");
 	}
 
-	//BEGIN forming and sending the answer
-
-	//adding encoding and content-type to the header
-	if (ov_string_compare(this->v_ServerResponse.contentEncoding, "") == OV_STRCMP_EQUAL){
-			ov_string_print(&this->v_ServerResponse.header, "%sContent-Type: %s\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentType);
-		}else{
-			ov_string_print(&this->v_ServerResponse.header, "%sContent-Type: %s; charset=%s\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentType, this->v_ServerResponse.contentEncoding);
-	}
-
-	//now we have to format the raw http answer
-	map_result_to_http(this->v_ClientRequest, &this->v_ServerResponse, result);
-
-	//Append common data to header:
-	ov_string_print(&this->v_ServerResponse.header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", this->v_ServerResponse.header, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
-	//no-cache
-	if(request_handled_by != STATICFILE){
-		if(ov_string_compare(this->v_ServerResponse.httpVersion, "1.0") == OV_STRCMP_EQUAL){
-			//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
-			ov_string_print(&this->v_ServerResponse.header, "%sPragma: no-cache\r\n", this->v_ServerResponse.header);
-		}else{
-			ov_string_print(&this->v_ServerResponse.header, "%sExpires: 0\r\n", this->v_ServerResponse.header);
-		}
-	}
-	//HTTP1.1 says, we MUST send a Date: header if we have a clock. Do we have one? :)
-
-	//handle keep_alives
-	if (this->v_ClientRequest.keepAlive == TRUE) {
-		ov_string_print(&this->v_ServerResponse.header, "%sConnection: keep-alive\r\n", this->v_ServerResponse.header);
-	}else{
-		ov_string_print(&this->v_ServerResponse.header, "%sConnection: close\r\n", this->v_ServerResponse.header);
-	}
 	//in case of a HEAD request there is no need to send the body
 	if(ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
 		this->v_ServerResponse.contentLength = 0;
@@ -579,9 +619,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 		this->v_ServerResponse.contentLength = 0;
 	}
 
+
 #ifndef KSHTTP_DISABLE_GZIP
 	// check if the body length corresponds for compression
-	if (this->v_ServerResponse.contentLength >= MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.gzipAccepted == TRUE &&
+	if (Ov_OK(result) && this->v_ServerResponse.contentLength >= MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.compressionGzip == TRUE &&
 												  (ov_string_match(this->v_ServerResponse.contentType, "text/*") == TRUE
 												|| ov_string_compare(this->v_ServerResponse.contentType, "application/javascript") == OV_STRCMP_EQUAL
 												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml") == TRUE
@@ -589,43 +630,130 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 												|| ov_string_match(this->v_ServerResponse.contentType, "*+xml") == TRUE 	//includes image/svg+xml
 												|| ov_string_compare(this->v_ServerResponse.contentType, "application/json") == OV_STRCMP_EQUAL))
 	{
-		gzip_applicable = TRUE;
-	}
-
-	if(gzip_applicable){
 		// The body is compressed by using gzip function in gzip.h
-		gzip(this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength, &gzip_compressed_body, &gzip_compressed_body_length);
+		result = gzip(this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength, &gzip_compressed_body, &gzip_compressed_body_length);
+		if(Ov_OK(result)){
+			KS_logfile_debug(("Compression ratio (content only): %" OV_PRINT_SINGLE, (OV_SINGLE)(gzip_compressed_body_length/this->v_ServerResponse.contentLength)));
+			//free old content
+			if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_STATICFILE){
+				if(this->v_ServerResponse.contentBinary > pdb->pstart && this->v_ServerResponse.contentBinary < pdb->pend){
+					//this was this->v_ServerResponse.contentString
+					Ov_DbFree(this->v_ServerResponse.contentBinary);
+				}else{
+					Ov_HeapFree(this->v_ServerResponse.contentBinary);
+				}
+			}else{
+				//this points to a string variable of a static file, so using is the right thing
+			}
+			//replace by gzipped content
+			this->v_ServerResponse.contentBinary = gzip_compressed_body;
+			this->v_ServerResponse.contentLength = gzip_compressed_body_length;
+			gzip_compressed_body = NULL;
+		}else{
+			//prevent sending Content-Encoding Header
+			this->v_ClientRequest.compressionGzip = FALSE;
+			Ov_DbFree(gzip_compressed_body);
+			gzip_compressed_body = NULL;
+		}
+	}else{
+		//prevent sending Content-Encoding Header
+		this->v_ClientRequest.compressionGzip = FALSE;
 	}
 #endif
+	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYGENERATED;
 
-	if(request_handled_by != GETVARSTREAM){
-		//append content length
-		if(gzip_applicable){
-			ov_string_print(&this->v_ServerResponse.header, "%sContent-Length: %i\r\n", this->v_ServerResponse.header, gzip_compressed_body_length);
-			KS_logfile_debug(("Compression ratio: %f", (float)((float)gzip_compressed_body_length+ov_string_getlength(this->v_ServerResponse.header))/((float)ov_string_getlength(this->v_ServerResponse.header)-24+this->v_ServerResponse.contentLength)));
-		}else{
-			ov_string_print(&this->v_ServerResponse.header, "%sContent-Length: %i\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentLength);
-		}
+	return result;
+}
+
+//BEGIN forming and sending the answer
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	OV_RESULT responseCreationResult
+){
+	//header already sent?
+	if(this->v_ServerResponse.header == NULL){
+		return OV_ERR_OK;
 	}
 
+	//adding encoding and content-type to the header
+	if (ov_string_compare(this->v_ServerResponse.contentEncoding, "") == OV_STRCMP_EQUAL){
+			ov_string_print(&this->v_ServerResponse.header, "%sContent-Type: %s\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentType);
+		}else{
+			ov_string_print(&this->v_ServerResponse.header, "%sContent-Type: %s; charset=%s\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentType, this->v_ServerResponse.contentEncoding);
+	}
+
+	//now we have to format the raw http answer
+	kshttp_httpclienthandler_mapresult2http(this->v_ClientRequest, &this->v_ServerResponse, responseCreationResult);
+
+	ov_string_setvalue(&this->v_ClientRequest.httpVersion, NULL);
+	ov_string_setvalue(&this->v_ClientRequest.host, NULL);
+	ov_string_setvalue(&this->v_ServerResponse.httpVersion, NULL);
+
+	//Append common data to header:
+	ov_string_print(&this->v_ServerResponse.header, "%sServer: ACPLT/OV HTTP Server %s (compiled %s %s)\r\n", this->v_ServerResponse.header, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
+	//no-cache
+	if(ov_string_compare(this->v_ServerResponse.httpVersion, "1.0") == OV_STRCMP_EQUAL){
+		//Cache-Control is not defined in 1.0, so we misuse the Pragma header (as everyone)
+		ov_string_print(&this->v_ServerResponse.header, "%sPragma: no-cache\r\n", this->v_ServerResponse.header);
+	}else{
+		ov_string_print(&this->v_ServerResponse.header, "%sExpires: 0\r\n", this->v_ServerResponse.header);
+	}
+	//HTTP1.1 says, we MUST send a Date: header if we have a clock. Do we have one? :)
+
+	//handle keep_alives
+	if (this->v_ClientRequest.keepAlive == TRUE) {
+		ov_string_print(&this->v_ServerResponse.header, "%sConnection: keep-alive\r\n", this->v_ServerResponse.header);
+	}else{
+		ov_string_print(&this->v_ServerResponse.header, "%sConnection: close\r\n", this->v_ServerResponse.header);
+	}
+
+	//append content length
+	ov_string_print(&this->v_ServerResponse.header, "%sContent-Length: %i\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentLength);
+
 	//handle gzip encoding by attaching a line to the header if accepted
-	if(gzip_applicable)
-	{
+	if(this->v_ClientRequest.compressionGzip){
 		ov_string_append(&this->v_ServerResponse.header, "Content-Encoding: gzip\r\n");
 	}
 
 	// and finalize the header
 	ov_string_append(&this->v_ServerResponse.header, "\r\n");
 
-	//send header only if not in stream mode
-	if(request_handled_by != GETVARSTREAM){
-		KS_logfile_debug(("httpclienthandler: sending header: %d bytes", (int)ov_string_getlength(this->v_ServerResponse.header)));
-		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
-		//note: this does not send the request
+	ov_string_setvalue(&this->v_ServerResponse.contentEncoding, NULL);
+	ov_string_setvalue(&this->v_ServerResponse.contentType, NULL);
+
+	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEHEADERGENERATED;
+
+	return OV_ERR_OK;
+}
+
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	KS_DATAPACKET* answer
+){
+	if(this->v_ServerResponse.header == NULL){
+		return OV_ERR_OK;
 	}
 
+	//send header only if not in stream mode
+	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_GETVARSTREAM){
+		KS_logfile_debug(("httpclienthandler: sending header: %" OV_PRINT_INT " bytes", ov_string_getlength(this->v_ServerResponse.header)));
+		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
+		//note: this does not send the request
+		ov_string_setvalue(&this->v_ServerResponse.header, NULL);
+	}
+
+	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEHEADERSEND;
+	return OV_ERR_OK;
+}
+
+DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	KS_DATAPACKET* answer
+){
+	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
+
 	//are we starting a stream?
-	if(this->v_stream == FALSE && request_handled_by == GETVARSTREAM){
+	if(this->v_stream == FALSE && this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_GETVARSTREAM){
 		this->v_stream = TRUE;
 		//speed the processing time down to 5ms
 		this->v_cycInterval = 5;
@@ -633,32 +761,19 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 
 	//in case of a HEAD request there is no need to send the body
 	if(this->v_ServerResponse.contentLength > 0){
-		if(gzip_applicable){
-			KS_logfile_debug(("httpclienthandler: sending compressed body: %d bytes", gzip_compressed_body_length));
-			//this does not send the request
-			ksbase_KSDATAPACKET_append(answer, gzip_compressed_body, gzip_compressed_body_length);
-		}else{
-			KS_logfile_debug(("httpclienthandler: sending body: %d bytes", this->v_ServerResponse.contentLength));
-			//this does not send the request
-			ksbase_KSDATAPACKET_append(answer, this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength);
-		}
+		KS_logfile_debug(("httpclienthandler: sending body: %" OV_PRINT_INT " bytes", this->v_ServerResponse.contentLength));
+		//this does not send the request
+		ksbase_KSDATAPACKET_append(answer, this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength);
 	}
 
-	//free resources
-	Ov_DbFree(gzip_compressed_body);
-	gzip_compressed_body = NULL;
-	//ClientRequest.requestHeader and urlQuery are freed already
-	ov_string_setvalue(&this->v_ClientRequest.httpVersion, NULL);
-	ov_string_setvalue(&this->v_ClientRequest.host, NULL);
-	ov_string_setvalue(&this->v_ServerResponse.httpVersion, NULL);
-	ov_string_setvalue(&this->v_ServerResponse.header, NULL);
 	Ov_HeapFree(this->v_ClientRequest.messageBody);
 	this->v_ClientRequest.messageBody = NULL;
+	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYSEND;
 
 	//if a static file is returned body is pointing inside the database
-	if(request_handled_by != STATICFILE){
+	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_STATICFILE || this->v_ClientRequest.compressionGzip){
 		if(this->v_ServerResponse.contentBinary > pdb->pstart && this->v_ServerResponse.contentBinary < pdb->pend){
-			//this was this->v_ServerResponse.contentString
+			//this was in the database as for example this->v_ServerResponse.contentString
 			Ov_DbFree(this->v_ServerResponse.contentBinary);
 		}else{
 			Ov_HeapFree(this->v_ServerResponse.contentBinary);
@@ -668,14 +783,14 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 	this->v_ServerResponse.contentBinary = NULL;
 
-	ov_string_setvalue(&this->v_ServerResponse.contentEncoding, NULL);
-	ov_string_setvalue(&this->v_ServerResponse.contentType, NULL);
-
-	ov_string_setvalue(&this->v_ClientRequest.urlPath, NULL);
 
 	//shutdown tcp connection if no keep_alive was set
-	if (this->v_ClientRequest.keepAlive != TRUE || Ov_Fail(result)) {
+	if (this->v_ClientRequest.keepAlive == TRUE) {
 		pChannel->v_CloseAfterSend = TRUE;
+		this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
+	}else{
+		pChannel->v_CloseAfterSend = FALSE;
+		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 	}
 	return OV_ERR_OK;
 }
@@ -692,6 +807,8 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	/* do what the base class does first */
 	ksbase_ClientHandler_startup(pobj);
 
+	thisCl->v_CommunicationStatus = KSHTTP_CS_INITIAL;
+
 	// initial strings
 	thisCl->v_ClientRequest.urlQuery.veclen = 0;
 	thisCl->v_ClientRequest.urlQuery.value = NULL;
@@ -703,7 +820,7 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	thisCl->v_ClientRequest.Accept = NULL;
 
 	thisCl->v_ClientRequest.contentLength = 0;
-	thisCl->v_ClientRequest.gzipAccepted = FALSE;
+	thisCl->v_ClientRequest.compressionGzip = FALSE;
 
 	thisCl->v_ClientRequest.response_format = FORMATUNDEFINED;
 
@@ -728,6 +845,8 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 	*   local variables
 	*/
 	OV_INSTPTR_kshttp_httpclienthandler thisCl = Ov_StaticPtrCast(kshttp_httpclienthandler, pobj);
+
+	thisCl->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 
 	//free memory
 	Ov_SetDynamicVectorLength(&thisCl->v_ClientRequest.urlQuery, 0, STRING);
