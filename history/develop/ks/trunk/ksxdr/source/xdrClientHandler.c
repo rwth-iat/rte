@@ -81,7 +81,7 @@ void ksxdr_prepend_length(KS_DATAPACKET* answer, OV_UINT begin)
 	return;
 }
 
-OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, OV_UINT xid, OV_UINT msgAccepted, OV_UINT msgState)
+OV_RESULT ksxdr_create_global_answer(KS_DATAPACKET* answer, const OV_UINT xid, const OV_UINT msgAccepted, const OV_UINT msgState)
 {
 	OV_RESULT result;
 	OV_UINT dummy;
@@ -338,6 +338,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_INSTPTR_ov_class							pExtensionClass	=	NULL;
 	OV_UINT	iterator;
 	OV_BOOL found;
+	OV_BOOL	extensionTakesOver	=	FALSE;
 
 	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
@@ -853,7 +854,8 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ksbase_free_KSDATAPACKET(answer);
 				return result;
 			}
-			result = pVtblClientHandlerExtension->m_HandleExtendedRequest(pExtension, thisxdrCL, ProgVersion, pticket, procedure, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
+			result = pVtblClientHandlerExtension->m_HandleExtendedRequest(pExtension, thisxdrCL, ProgVersion, xid, msgAccepted, msgState, authflavour,
+					pticket, procedure, dataReceived, &beginAnswer, answer, &ksErrCode, &serviceAnswer, &extensionTakesOver);
 			if(Ov_Fail(result))
 			{
 				ov_memstack_lock();
@@ -862,6 +864,11 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ksbase_free_KSDATAPACKET(&serviceAnswer);
 				ksbase_free_KSDATAPACKET(answer);
 				return result;
+			}
+			if(extensionTakesOver == TRUE){
+				return OV_ERR_OK;
+			} else {
+				break;
 			}
 		} else {
 			KS_logfile_error(("%s: HandleRequest: procedure %0#8x not implemented", this->v_identifier, procedure));
@@ -875,6 +882,41 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	/***********************************************************************************************************************************************************************
 	 * Create Answer
 	 ***********************************************************************************************************************************************************************/
+	result = ksxdr_xdrClientHandler_encodeReplyHeader(pChannel, xid, msgAccepted, msgState, authflavour, pticket, &beginAnswer, answer);
+	if(Ov_Fail(result)){
+		ksbase_free_KSDATAPACKET(&serviceAnswer);
+		return result;
+	}
+	result =  ksxdr_xdrClientHandler_appendKsReplyBody(pChannel, ksErrCode, &serviceAnswer, beginAnswer, answer);
+	if(Ov_Fail(result)){
+		return result;
+	}
+
+	/*	if the whole buffer was decoded free it	*/
+	if((dataReceived->readPT - dataReceived->data) >= dataReceived->length){
+		KS_logfile_debug(("%s: HandleRequest: dataReceived decoded completely, freeing it", this->v_identifier));
+		ksbase_free_KSDATAPACKET(dataReceived);
+	}
+    return OV_ERR_OK;
+}
+
+/**
+ * encodes the ksxdr reply header
+ * in case of error the answer datapacket is freed
+ */
+OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_encodeReplyHeader(
+		OV_INSTPTR_ksbase_Channel pChannel,
+		const OV_UINT xid,
+		const OV_UINT msgAccepted,
+		const OV_UINT msgState,
+		const OV_UINT authflavour,
+		OV_TICKET* pticket,
+		OV_UINT* beginAnswer,
+		KS_DATAPACKET* answer
+){
+	OV_RESULT	result;
+	OV_UINT		dummy;
+
 	//DEBUG
 	// KS_logfile_debug(("%s HandleData line %u: \n\tanswer.length:\t%u\n\tanswer.readPT\t%p\n\tanswer.data\t%p", this->v_identifier, __LINE__, answer->length, answer->readPT,answer->data));
 	//DEBUG_END
@@ -882,7 +924,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	if(pChannel->v_usesStreamProtocol == TRUE)
 	{
 		/*	save index of first byte of answer in packet in beginAnswer	*/
-		beginAnswer = ((answer->writePT - answer->data));
+		*beginAnswer = ((answer->writePT - answer->data));
 		/*	reserver space for length (first 4 bytes in xdr 0x80xxxxxx) length = xxxxxx	*/
 		dummy = 0x80;
 		result = KS_DATAPACKET_write_xdr_uint(answer, &dummy);
@@ -897,53 +939,54 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 
 	/*	set auth part in reply. set tickettype and use ticket->encodereply for specific data	*/
 	/*	set ticketindicator	*/
-	if(Ov_Fail(KS_DATAPACKET_write_xdr_uint(answer, &authflavour)))
-	{
-		ksbase_free_KSDATAPACKET(&serviceAnswer);
+	if(Ov_Fail(KS_DATAPACKET_write_xdr_uint(answer, &authflavour)))	{
 		ksbase_free_KSDATAPACKET(answer);
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 
 	/*	set ticketreply	*/
-	if(!(pticket->vtbl->encodereply(answer, pticket)))	/*	this will crash if someone tries to delete the ticket-authenticator he is using at the moment	*/
-	{
-		KS_logfile_error(("%s: HandleRequest: ticket encodereply failed", this->v_identifier));
+	if(!(pticket->vtbl->encodereply(answer, pticket))){	/*	this will crash if someone tries to delete the ticket-authenticator he is using at the moment	*/
+		KS_logfile_error(("encodeRequestHeader: ticket encodereply failed"));
 		return OV_ERR_GENERIC;
 	}
 
 	/*	delete Ticket	*/
 	pticket->vtbl->deleteticket(pticket);
+	return OV_ERR_OK;
+}
 
+/**
+ * appends the body of a ks reply to the datapacket
+ * in case of error serviceAnswer and answer are freed
+ */
+OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_appendKsReplyBody(
+		OV_INSTPTR_ksbase_Channel pChannel,
+		const OV_UINT ksErrCode,
+		KS_DATAPACKET* serviceAnswer,
+		OV_UINT beginAnswer,
+		KS_DATAPACKET* answer
+){
 	/*	set ksErrCode	*/
 	if(Ov_Fail(KS_DATAPACKET_write_xdr_uint(answer, &ksErrCode)))
 	{
-		ksbase_free_KSDATAPACKET(&serviceAnswer);
+		ksbase_free_KSDATAPACKET(serviceAnswer);
 		ksbase_free_KSDATAPACKET(answer);
 		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 	/*	append service specific data (if service succeeded)	*/
 	if(ksErrCode == KS_ERR_OK)
-		if(serviceAnswer.length)
+		if(serviceAnswer->length)
 		{
-			if(Ov_Fail(ksbase_KSDATAPACKET_append(answer, serviceAnswer.data, serviceAnswer.length)))
+			if(Ov_Fail(ksbase_KSDATAPACKET_append(answer, serviceAnswer->data, serviceAnswer->length)))
 			{
-				ksbase_free_KSDATAPACKET(&serviceAnswer);
+				ksbase_free_KSDATAPACKET(serviceAnswer);
 				ksbase_free_KSDATAPACKET(answer);
 				return OV_ERR_HEAPOUTOFMEMORY;
 			}
-			ksbase_free_KSDATAPACKET(&serviceAnswer);
+			ksbase_free_KSDATAPACKET(serviceAnswer);
 		}
-	if(pChannel->v_usesStreamProtocol == TRUE)
+	if(pChannel->v_usesStreamProtocol == TRUE){
 		ksxdr_prepend_length(answer, beginAnswer);
-
-	/*	if the whole buffer was decoded free it	*/
-	if((dataReceived->readPT - dataReceived->data) >= dataReceived->length)
-	{
-		KS_logfile_debug(("%s: HandleRequest: dataReceived decoded completely, freeing it", this->v_identifier));
-		ksbase_free_KSDATAPACKET(dataReceived);
 	}
-
-
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
-

@@ -1,18 +1,60 @@
 #ifndef KSXDR_OVF_INCLUDED
 #define KSXDR_OVF_INCLUDED
-
+ /**
+ *	Function to handle an extended request i.e. a request not handled in the standard ksxdr clientHandler
+ *	the two pointers are the common this pointers to extension and "normal" clientHandler
+ *	the following OV_UINT parameters are read from the requests header. the function may use them although at this point they are 
+ *	not so interesting as the have been evaluated. the authflavour, though, has some importance as is has to be encoded in the reply again
+ *	so the extension should remeber it if it wants to take over and create the answer itself
+ *	pticket points to the ticket used for the request. be sure not to delete it too early (before the reply was sent)
+ *	procedureNumber is the procedure number the extension has to handle (i.e. the requested procedure)
+ *	request is the ksRequest
+ *	beginAnswer is the begin of the answer inside the toStoreAnswer datapacket
+ *	it should not be altered but handed over to the encode functions (is needed for correct answerEncoding) in case the extension takes over
+ *	toStoreAnswer is the datapacket the extension should put its answer in
+ *	ksErrCode is the result of the ksRequest (NOT of the extension function, this one is just returned) - is encoded in the reply if
+ *	the extension does not take over
+ *	extensionsAnswer is the datapacket the extension can put its reply body in if it does not take over
+ *	taking Over - if the extension wants top take over completely it will set this one to TRUE to signale the clientHandler
+ *	not to send an answer and just return. In this case the extension has to generate, encode and send the answer itself (by filliong toStoreAnswer appropriately)
+ *	if set to FALSE the ClientHandler will use ksErrCode and extensionsAnswer to send the reply
+ */
 typedef OV_RESULT KSXDR_FNC_HANDLEEXTREQUEST(
 	const OV_INSTPTR_ksxdr_xdrClientHandlerExtension	pobj,
 	const OV_INSTPTR_ksxdr_xdrClientHandler				pClientHandler,
 	const OV_UINT version, 
+	const OV_UINT xid,
+	const OV_UINT msgAccepted,
+	const OV_UINT msgState,
+	const OV_UINT authflavour,
 	const OV_TICKET* pticket, 
 	OV_UINT	procedureNumber,
-	KS_DATAPACKET* dataReceived, 
-	KS_DATAPACKET* serviceAnswer, 
-	OV_UINT* msgState, 
-	OV_UINT* ksErrCode
+	KS_DATAPACKET* request, 
+	OV_UINT* beginAnswer,
+	KS_DATAPACKET* toStoreAnswer,
+	OV_UINT* ksErrCode,
+	KS_DATAPACKET* extensionsAnswer,
+	OV_BOOL* takingOver
 	);
 
+typedef OV_DLLFNCEXPORT OV_RESULT KSXDR_ENCODEREPLYHEADER(
+	OV_INSTPTR_ksbase_Channel pChannel,
+	const OV_UINT xid,
+	const OV_UINT msgAccepted,
+	const OV_UINT msgState,
+	const OV_UINT authflavour,
+	OV_TICKET* pticket,
+	OV_UINT* beginAnswer,
+	KS_DATAPACKET* answer
+	);
+	
+typedef OV_DLLFNCEXPORT OV_RESULT KSXDR_APPENDREPLYBODY(
+	OV_INSTPTR_ksbase_Channel pChannel,
+	const OV_UINT ksErrCode,
+	KS_DATAPACKET* serviceAnswer,
+	OV_UINT beginAnswer,
+	KS_DATAPACKET* answer
+);
  
  
 #endif

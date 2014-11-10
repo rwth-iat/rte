@@ -50,6 +50,8 @@ LIBRARY ksxdr
 		 *		4. The readptr of the answer data may not be altered.
 		 */
 		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+		encodeReplyHeader	:	C_FUNCTION	<KSXDR_ENCODEREPLYHEADER>;
+		appendKsReplyBody	:	C_FUNCTION	<KSXDR_APPENDREPLYBODY>;
 	END_OPERATIONS;	
 	END_CLASS;
 	
