@@ -223,10 +223,18 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	switch (this->v_CommunicationStatus) {
 		case KSHTTP_CS_INITIAL:
 			result = kshttp_httpclienthandler_analyzeRequestHeader(this, dataReceived);
+			if(this->v_CommunicationStatus != KSHTTP_CS_REQUESTHEADERPARSED){
+				//wait for more data
+				return OV_ERR_OK;
+			}
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_REQUESTHEADERPARSED :
 			result = kshttp_httpclienthandler_analyzeRequestBody(this, dataReceived);
+			if(this->v_CommunicationStatus != KSHTTP_CS_REQUESTPARSED){
+				//wait for more data
+				return OV_ERR_OK;
+			}
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_REQUESTPARSED :
@@ -237,7 +245,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			}
 			//no break wanted
 		case KSHTTP_CS_RESPONSEBODYGENERATED :
-			result = kshttp_httpclienthandler_generateHttpHeader(this, result);
+			result = kshttp_httpclienthandler_generateHttpHeader(this, result, NULL);
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_RESPONSEHEADERGENERATED :
@@ -668,7 +676,8 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 //BEGIN forming and sending the answer
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	OV_RESULT responseCreationResult
+	OV_RESULT responseCreationResult,
+	OV_STRING additionalHeaders
 ){
 	//header already sent?
 	if(this->v_ServerResponse.header == NULL){
@@ -713,6 +722,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	//handle gzip encoding by attaching a line to the header if accepted
 	if(this->v_ClientRequest.compressionGzip){
 		ov_string_append(&this->v_ServerResponse.header, "Content-Encoding: gzip\r\n");
+	}
+	if(ov_string_compare(additionalHeaders, "") != OV_STRCMP_EQUAL){
+		ov_string_append(&this->v_ServerResponse.header, additionalHeaders);
 	}
 
 	// and finalize the header

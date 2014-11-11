@@ -15,9 +15,10 @@ typedef OV_RESULT KSHTTP_FNC_INPACKETHANDLING(
 typedef OV_RESULT KSHTTP_FNC_DATAHANDLING(
 	OV_INSTPTR_kshttp_httpclienthandler this
 );
-typedef OV_RESULT KSHTTP_FNC_DATAHANDLINGRESULT(
+typedef OV_RESULT KSHTTP_FNC_GENERATEHEADER(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	OV_RESULT responseCreationResult
+	OV_RESULT responseCreationResult,
+	OV_STRING additionalHeaders
 );
 typedef OV_RESULT KSHTTP_FNC_OUTPACKETHANDLING(
 	OV_INSTPTR_kshttp_httpclienthandler this,
