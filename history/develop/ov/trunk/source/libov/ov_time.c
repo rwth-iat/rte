@@ -444,7 +444,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_local(
 
 /*
 *	Convert an ASCII string into a time (UTC)
-*	Warning: this is NOTIMPLEMENTED with some compilers on windows!
+*	Warning: this is NOTIMPLEMENTED on some uclibc compilers or platforms other than Windows and Unix!
 */
 OV_DLLFNCEXPORT OV_RESULT ov_time_asciitotime_utc(
 	OV_TIME				*ptime,
