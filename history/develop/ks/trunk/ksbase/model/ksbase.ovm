@@ -99,7 +99,7 @@ LIBRARY ksbase
  	*	probably a clientHandler has a switch-case inside deciding on the ks-operation to execute. If the desired operation is not found it shall iterate
  	*	over the clientHandlerExtensions belonging to the protocol and look if one of them can handle the request. if so, the according function is called 
  	*/
- 	CLASS	baseClientHandlerExtension			:	CLASS ov/domain
+ 	CLASS	baseClientHandlerExtension			:	CLASS ksbase/ClientHandler
 		COMMENT	=	"Baseclass for client handler extensions";
 	END_CLASS;	
 	
