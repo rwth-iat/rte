@@ -542,12 +542,13 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 							this,
 							this->v_ClientRequest,
 							&this->v_ServerResponse);
+
+					this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CLIENTHANDLEREXT;
 					if(Ov_Fail(result)){
 						ov_memstack_lock();
 						KS_logfile_error(("%s: HandleRequest: processing service %s by %s failed with error %s", this->v_identifier, this->v_ClientRequest.urlPath, pExtension->v_identifier, ov_result_getresulttext(result)));
 						ov_memstack_unlock();
 					}else{
-						this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CLIENTHANDLEREXT;
 						if(this->v_CommunicationStatus == KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED){
 							//we reject every further work on this channel
 							return OV_ERR_OK;

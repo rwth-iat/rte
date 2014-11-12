@@ -44,6 +44,7 @@ typedef enum KSHTTP_COMMUNICATIONSTATUS{
 /**
  *	KSHTTP_REQUEST
  *	This structure is used for decoded transmitted data.
+ *	All Strings are located in the OV database, only the messageBody is in the Heap
  *	example http 1.1 GET request of /getVar?format=ksx&path[0]=/vendor/database_free&path[1]=/vendor/database_size
  *	to the server localhost:7509 results in this values:
  */
@@ -60,12 +61,13 @@ typedef struct{
 	OV_BOOL keepAlive;			/* TRUE probably with modern browsers */
 	OV_UINT headerLength;		/* 1342 for example */
 	OV_UINT contentLength;		/* 0, as we have not POST */
-	OV_BYTE* messageBody;		/* NULL, as we have not POST */
+	OV_BYTE* messageBody;		/* NULL, as we have not POST. Located in the Heap! */
 } KSHTTP_REQUEST;
 
 /**
  *	KSHTTP_RESPONSE
  *	This structure is used for decoded transmitted data.
+ *	All Strings and Bytes must be located in the OV database (and will be freed except if it points to a static file)
  */
 typedef struct{
 	OV_STRING httpVersion;		/* 1.1 */
@@ -74,7 +76,7 @@ typedef struct{
 	OV_STRING header;			/* the full http header */
 	OV_STRING contentString; 	/* content send from the server back to the client */
 	OV_BYTE* contentBinary; 	/* will be used if contentString is empty */
-	OV_UINT contentLength;		/*  */
+	OV_UINT contentLength;		/* Length of the Binary */
 	OV_STRING contentType;		/*  */
 	OV_STRING contentEncoding;	/*  */
 	OV_BOOL transferEncodingChunked;	/* FALSE for OV Servers */
