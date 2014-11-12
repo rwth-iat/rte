@@ -778,10 +778,10 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 		//this does not send the request
 		ksbase_KSDATAPACKET_append(answer, this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength);
 	}
+	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYSEND;
 
 	Ov_HeapFree(this->v_ClientRequest.messageBody);
 	this->v_ClientRequest.messageBody = NULL;
-	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYSEND;
 
 	//if a static file is returned body is pointing inside the database
 	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_STATICFILE || this->v_ClientRequest.compressionGzip){
@@ -793,16 +793,16 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 		}
 	}else{
 		//this points to a string variable of a static file, so setting NULL is the right thing
+		this->v_ServerResponse.contentString = NULL;
 	}
 	this->v_ServerResponse.contentBinary = NULL;
 
-
 	//shutdown tcp connection if no keep_alive was set
 	if (this->v_ClientRequest.keepAlive == TRUE) {
-		pChannel->v_CloseAfterSend = TRUE;
+		pChannel->v_CloseAfterSend = FALSE;
 		this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
 	}else{
-		pChannel->v_CloseAfterSend = FALSE;
+		pChannel->v_CloseAfterSend = TRUE;
 		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 	}
 	return OV_ERR_OK;
