@@ -353,6 +353,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 ) {
 	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 	OV_RESULT result = OV_ERR_OK;
+	OV_INSTPTR_kshttp_httpIdentificator pIdentificator = Ov_StaticPtrCast(kshttp_httpIdentificator, Ov_GetFirstChild(ov_instantiation, pclass_kshttp_httpIdentificator));
 	OV_INSTPTR_kshttp_httpClientHandlerExtension pExtension = NULL;
 	OV_VTBLPTR_kshttp_httpClientHandlerExtension pVtblClientHandlerExtension = NULL;
 	OV_INSTPTR_ov_class pExtensionClass = NULL;
@@ -381,10 +382,28 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 	ov_string_setvalue(&this->v_ServerResponse.header, "Access-Control-Allow-Origin:*\r\n");
 
 	if(Ov_OK(result) && ov_string_compare(this->v_ClientRequest.requestMethod, "OPTIONS") == OV_STRCMP_EQUAL){
-		//used for Cross-Origin Resource Sharing (CORS)
+		//some "fishy" requests are not send to us, but the browser ask us with a preflight of Cross-Origin Resource Sharing (CORS)
 
-		//hmi uses this headers, which is no problem for us
+		//CORS is not easy with non standard headers, but we have not problem with other custom headers:
+		//hmi uses if-modified-since
 		ov_string_append(&this->v_ServerResponse.header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
+
+		//we must allow all Methods to make some browsers happy
+		if(pIdentificator != NULL && pIdentificator->v_AllowedMethods.veclen > 0){
+			//quite silly check, but better be safe
+
+			ov_string_append(&this->v_ServerResponse.header, "Access-Control-Allow-Methods: ");
+			for(iterator = 0;iterator < pIdentificator->v_AllowedMethods.veclen;iterator++){
+				ov_string_append(&this->v_ServerResponse.header, pIdentificator->v_AllowedMethods.value[iterator]);
+				if(iterator != pIdentificator->v_AllowedMethods.veclen -1 && pIdentificator->v_AllowedMethods.value[iterator] != NULL){
+					//there are more methods in the Vector and this value was not NULL
+					ov_string_append(&this->v_ServerResponse.header, ", ");
+				}
+			}
+			ov_string_append(&this->v_ServerResponse.header, "\r\n");
+		}
+
+		//" "
 		//only an 200 is required, so abort request handling
 		this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CORSOPTION;
 	}
@@ -870,6 +889,10 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 	ov_string_setvalue(&thisCl->v_ClientRequest.httpVersion, NULL);
 	ov_string_setvalue(&thisCl->v_ClientRequest.Accept, NULL);
 
+	Ov_HeapFree(thisCl->v_ClientRequest.messageBody);
+	thisCl->v_ClientRequest.messageBody = NULL;
+
+
 	ov_string_setvalue(&thisCl->v_ServerResponse.header, NULL);
 	ov_string_setvalue(&thisCl->v_ServerResponse.httpVersion, NULL);
 	ov_string_setvalue(&thisCl->v_ServerResponse.contentString, NULL);
@@ -882,5 +905,3 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 
 	return;
 }
-
-
