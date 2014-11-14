@@ -75,12 +75,14 @@ typedef OV_DLLFNCEXPORT void KSBASE_FNC_CLOSECONN(
  */
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_HANDLEREQUEST(
 	OV_INSTPTR_ksbase_ClientHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 );
 
 typedef OV_DLLFNCEXPORT OV_RESULT KSBASE_FNC_HANDLEDATA(
 	OV_INSTPTR_ksbase_DataHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 );

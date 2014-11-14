@@ -36,6 +36,7 @@
  */
 OV_DLLFNCEXPORT OV_RESULT ksbase_DataHandler_HandleData(
 	OV_INSTPTR_ksbase_DataHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 )	{
