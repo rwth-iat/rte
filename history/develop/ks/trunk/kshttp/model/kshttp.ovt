@@ -57,8 +57,8 @@ typedef struct{
 	OV_STRING_VEC urlQuery;		/* {"format", "ksx", "path[0]", "/vendor/database_free", "path[1]", "/vendor/database_size"} */
 	KSHTTP_RESPONSEFORMAT response_format /* KSX */;
 	OV_STRING Accept;			/* Accept: text/ksx */
-	OV_BOOL compressionGzip;	/* TRUE probably with modern browsers */
-	OV_BOOL keepAlive;			/* TRUE probably with modern browsers */
+	OV_BOOL compressionGzip;	/* TRUE probably with modern browsers (can be changed while if not desired while processing!)*/
+	OV_BOOL keepAlive;			/* TRUE probably with modern browsers (can be changed while if not desired while processing!) */
 	OV_UINT headerLength;		/* 1342 for example */
 	OV_UINT contentLength;		/* 0, as we have not POST */
 	OV_BYTE* messageBody;		/* NULL, as we have not POST. Located in the Heap! */

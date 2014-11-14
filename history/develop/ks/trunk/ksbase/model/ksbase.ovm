@@ -114,7 +114,7 @@ LIBRARY ksbase
 			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
 			 *		4. The readptr of the answer data may not be altered.
 			 */
-			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;	
+			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA> IS_ABSTRACT;
 		END_OPERATIONS;
 	END_CLASS;
 

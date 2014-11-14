@@ -214,15 +214,16 @@ DLLFNCEXPORT void kshttp_httpclienthandler_mapresult2http(const KSHTTP_REQUEST r
  */
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
-	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* answer
+	OV_INSTPTR_ksbase_Channel pChannel,
+	UNUSED KS_DATAPACKET* dataReceived,
+	UNUSED KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
 	OV_RESULT result = OV_ERR_OK;
 
 	switch (this->v_CommunicationStatus) {
 		case KSHTTP_CS_INITIAL:
-			result = kshttp_httpclienthandler_analyzeRequestHeader(this, dataReceived);
+			result = kshttp_httpclienthandler_analyzeRequestHeader(this, pChannel);
 			if(this->v_CommunicationStatus != KSHTTP_CS_REQUESTHEADERPARSED){
 				//wait for more data
 				return OV_ERR_OK;
@@ -230,7 +231,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_REQUESTHEADERPARSED :
-			result = kshttp_httpclienthandler_analyzeRequestBody(this, dataReceived);
+			result = kshttp_httpclienthandler_analyzeRequestBody(this, pChannel);
 			if(this->v_CommunicationStatus != KSHTTP_CS_REQUESTPARSED){
 				//wait for more data
 				return OV_ERR_OK;
@@ -238,7 +239,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_REQUESTPARSED :
-			result = kshttp_httpclienthandler_generateHttpBody(this);
+			result = kshttp_httpclienthandler_generateHttpBody(this, pChannel);
 			if(this->v_CommunicationStatus == KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED){
 				//we reject every further work on this channel
 				return OV_ERR_OK;
@@ -249,11 +250,11 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_RESPONSEHEADERGENERATED :
-			result = kshttp_httpclienthandler_sendHttpHeader(this, answer);
+			result = kshttp_httpclienthandler_sendHttpHeader(this, pChannel);
 			if(Ov_Fail(result)) return result;
 			//no break wanted
 		case KSHTTP_CS_RESPONSEHEADERSEND :
-			result = kshttp_httpclienthandler_sendHttpBody(this, answer);
+			result = kshttp_httpclienthandler_sendHttpBody(this, pChannel);
 			return result;
 
 		case KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED :
@@ -270,7 +271,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 }
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* dataReceived
+	OV_INSTPTR_ksbase_Channel pChannel
 ) {
 	OV_RESULT result = OV_ERR_OK;
 	OV_BYTE *endOfHeader = NULL;
@@ -280,7 +281,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	this->v_ClientRequest.compressionGzip = FALSE;
 
 	ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
-	Ov_HeapFree(this->v_ServerResponse.contentBinary);
+	Ov_DbFree(this->v_ServerResponse.contentBinary);
 	this->v_ServerResponse.contentBinary = NULL;
 	this->v_ServerResponse.contentLength = 0;
 	ov_string_setvalue(&this->v_ServerResponse.contentType, NULL);
@@ -291,7 +292,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	//if no stream mode, wait for the end of the header
 	if(this->v_stream == FALSE){
 		//split header and footer of the http request
-		endOfHeader = kshttp_strnstr(dataReceived->readPT, "\r\n\r\n", dataReceived->length);
+		endOfHeader = kshttp_strnstr(pChannel->v_inData.readPT, "\r\n\r\n", pChannel->v_inData.length);
 		if(!endOfHeader){
 			//if no double line break detected yet - wait till next cycle
 			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
@@ -302,11 +303,11 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 		*endOfHeader = '\0';
 
 		//header plus both line breaks
-		this->v_ClientRequest.headerLength = endOfHeader - dataReceived->data + 4;
+		this->v_ClientRequest.headerLength = endOfHeader - pChannel->v_inData.data + 4;
 
-		ov_string_setvalue(&this->v_ClientRequest.requestHeader, (OV_STRING)dataReceived->data);
+		ov_string_setvalue(&this->v_ClientRequest.requestHeader, (OV_STRING)pChannel->v_inData.data);
 		//save pointer to the content
-		dataReceived->readPT = dataReceived->readPT + this->v_ClientRequest.headerLength;
+		pChannel->v_inData.readPT = pChannel->v_inData.readPT + this->v_ClientRequest.headerLength;
 	}else{
 		ov_string_setvalue(&this->v_ClientRequest.requestHeader, this->v_streamrequestheader);
 	}
@@ -322,18 +323,18 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 }
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* dataReceived
+	OV_INSTPTR_ksbase_Channel pChannel
 ) {
 	if(this->v_ClientRequest.contentLength != 0){
 		//save message body (for POST?) in memory
-		if(dataReceived->length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
+		if(pChannel->v_inData.length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
 			this->v_ClientRequest.messageBody = (OV_BYTE*)Ov_HeapMalloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
 				this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 				return OV_ERR_TARGETGENERIC;
 			}
 
-			memcpy(this->v_ClientRequest.messageBody, dataReceived->data + this->v_ClientRequest.headerLength, this->v_ClientRequest.contentLength);
+			memcpy(this->v_ClientRequest.messageBody, pChannel->v_inData.data + this->v_ClientRequest.headerLength, this->v_ClientRequest.contentLength);
 			this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
 		}else{
 			//we have the full header, but not the full body yet. Get called again next time
@@ -343,15 +344,15 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 	this->v_CommunicationStatus = KSHTTP_CS_REQUESTPARSED;
 
 	//empty the buffers
-	ksbase_free_KSDATAPACKET(dataReceived);
+	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 
 	return OV_ERR_OK;
 }
 
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
-	OV_INSTPTR_kshttp_httpclienthandler this
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	OV_INSTPTR_ksbase_Channel pChannel
 ) {
-	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_kshttp_httpIdentificator pIdentificator = Ov_StaticPtrCast(kshttp_httpIdentificator, Ov_GetFirstChild(ov_instantiation, pclass_kshttp_httpIdentificator));
 	OV_INSTPTR_kshttp_httpClientHandlerExtension pExtension = NULL;
@@ -386,7 +387,8 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 
 		//CORS is not easy with non standard headers, but we have not problem with other custom headers:
 		//hmi uses if-modified-since
-		ov_string_append(&this->v_ServerResponse.header, "Access-Control-Allow-Headers: if-modified-since\r\nAccess-Control-Max-Age: 60\r\n");
+		//POST has content-type
+		ov_string_append(&this->v_ServerResponse.header, "Access-Control-Allow-Headers: if-modified-since, content-type\r\nAccess-Control-Max-Age: 60\r\n");
 
 		//we must allow all Methods to make some browsers happy
 		if(pIdentificator != NULL && pIdentificator->v_AllowedMethods.veclen > 0){
@@ -558,6 +560,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				}else{
 					result = pVtblClientHandlerExtension->m_HandleExtendedRequest(
 							pExtension,
+							pChannel,
 							this,
 							this->v_ClientRequest,
 							&this->v_ServerResponse);
@@ -610,10 +613,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 		if(pStaticfile != NULL){
 			ov_string_setvalue(&this->v_ServerResponse.contentType, pStaticfile->v_mimetype);
 			ov_string_setvalue(&this->v_ServerResponse.contentEncoding, pStaticfile->v_encoding);
-			result = OV_ERR_OK;
-			//we do not copy the value here! The string pointer is NULL right now
-			this->v_ServerResponse.contentString = pStaticfile->v_content;
+			ov_string_setvalue(&this->v_ServerResponse.contentString, pStaticfile->v_content);
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_STATICFILE;
+			result = OV_ERR_OK;
 		}
 	}
 	//END static file routine
@@ -632,8 +634,11 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 		kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "notimplemented");
 	}
 
-	//in case of a HEAD request there is no need to send the body
+	//move convenience contentString to contentBinary
 	if(ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
+		//in case of a HEAD request there is no need to send the body
+		ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
+		Ov_DbFree(this->v_ServerResponse.contentBinary);
 		this->v_ServerResponse.contentLength = 0;
 	}else if(this->v_ServerResponse.contentString != NULL){
 		//we have a content as string, so check its length and move content to binary pointer
@@ -663,16 +668,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 		if(Ov_OK(result)){
 			KS_logfile_debug(("Compression ratio (content only): %" OV_PRINT_SINGLE, (OV_SINGLE)(gzip_compressed_body_length/this->v_ServerResponse.contentLength)));
 			//free old content
-			if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_STATICFILE){
-				if(this->v_ServerResponse.contentBinary > pdb->pstart && this->v_ServerResponse.contentBinary < pdb->pend){
-					//this was this->v_ServerResponse.contentString
-					Ov_DbFree(this->v_ServerResponse.contentBinary);
-				}else{
-					Ov_HeapFree(this->v_ServerResponse.contentBinary);
-				}
-			}else{
-				//this points to a string variable of a static file, so using is the right thing
-			}
+			Ov_DbFree(this->v_ServerResponse.contentBinary);
 			//replace by gzipped content
 			this->v_ServerResponse.contentBinary = gzip_compressed_body;
 			this->v_ServerResponse.contentLength = gzip_compressed_body_length;
@@ -760,7 +756,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* answer
+	OV_INSTPTR_ksbase_Channel pChannel
 ){
 	if(this->v_ServerResponse.header == NULL){
 		return OV_ERR_OK;
@@ -769,7 +765,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 	//send header only if not in stream mode
 	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_GETVARSTREAM){
 		KS_logfile_debug(("httpclienthandler: sending header: %" OV_PRINT_INT " bytes", ov_string_getlength(this->v_ServerResponse.header)));
-		ksbase_KSDATAPACKET_append(answer, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
+		ksbase_KSDATAPACKET_append(&pChannel->v_outData, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
 		//note: this does not send the request
 		ov_string_setvalue(&this->v_ServerResponse.header, NULL);
 	}
@@ -780,10 +776,8 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* answer
+	OV_INSTPTR_ksbase_Channel pChannel
 ){
-	OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
-
 	//are we starting a stream?
 	if(this->v_stream == FALSE && this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_GETVARSTREAM){
 		this->v_stream = TRUE;
@@ -795,25 +789,14 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	if(this->v_ServerResponse.contentLength > 0){
 		KS_logfile_debug(("httpclienthandler: sending body: %" OV_PRINT_INT " bytes", this->v_ServerResponse.contentLength));
 		//this does not send the request
-		ksbase_KSDATAPACKET_append(answer, this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength);
+		ksbase_KSDATAPACKET_append(&pChannel->v_outData, this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength);
 	}
 	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYSEND;
 
 	Ov_HeapFree(this->v_ClientRequest.messageBody);
 	this->v_ClientRequest.messageBody = NULL;
 
-	//if a static file is returned body is pointing inside the database
-	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_STATICFILE || this->v_ClientRequest.compressionGzip){
-		if(this->v_ServerResponse.contentBinary > pdb->pstart && this->v_ServerResponse.contentBinary < pdb->pend){
-			//this was in the database as for example this->v_ServerResponse.contentString
-			Ov_DbFree(this->v_ServerResponse.contentBinary);
-		}else{
-			Ov_HeapFree(this->v_ServerResponse.contentBinary);
-		}
-	}else{
-		//this points to a string variable of a static file, so setting NULL is the right thing
-		this->v_ServerResponse.contentString = NULL;
-	}
+	Ov_DbFree(this->v_ServerResponse.contentBinary);
 	this->v_ServerResponse.contentBinary = NULL;
 
 	//shutdown tcp connection if no keep_alive was set
@@ -860,9 +843,9 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	thisCl->v_ServerResponse.statusCode = 0;
 	thisCl->v_ServerResponse.headerLength = 0;
 	thisCl->v_ServerResponse.header = NULL;
-	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.contentString = NULL;
 	thisCl->v_ServerResponse.contentBinary = NULL;
+	thisCl->v_ServerResponse.contentLength = 0;
 	thisCl->v_ServerResponse.contentType = NULL;
 	thisCl->v_ServerResponse.contentEncoding = NULL;
 	thisCl->v_ServerResponse.transferEncodingChunked = FALSE;
@@ -892,11 +875,11 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 	Ov_HeapFree(thisCl->v_ClientRequest.messageBody);
 	thisCl->v_ClientRequest.messageBody = NULL;
 
-
 	ov_string_setvalue(&thisCl->v_ServerResponse.header, NULL);
 	ov_string_setvalue(&thisCl->v_ServerResponse.httpVersion, NULL);
 	ov_string_setvalue(&thisCl->v_ServerResponse.contentString, NULL);
-	Ov_HeapFree(thisCl->v_ServerResponse.contentBinary);
+	Ov_DbFree(thisCl->v_ServerResponse.contentBinary);
+	thisCl->v_ServerResponse.contentBinary = NULL;
 	thisCl->v_ServerResponse.contentLength = 0;
 	ov_string_setvalue(&thisCl->v_ServerResponse.contentType, NULL);
 

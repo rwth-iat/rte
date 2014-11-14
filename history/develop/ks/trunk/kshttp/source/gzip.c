@@ -11,19 +11,15 @@
 #include "zlib.h"
 
 /**
- *
- * @param body: a string that needs to be send
- * @param output: a string for the encoded-body that is send
- * @param length: a integer that is defined for the length of the body that needs to be compress and send
+ * the function gzip is making the compression of the body using the deflate algorithm for compressing it.The function contains
+ * The zlib.h compression library provides in-memory compression and decompression functions,
+ * including integrity checks of the uncompressed data. This version of the library supports only one compression method (deflation).
+ * @param inputdata ByteVec of input data
+ * @param inputlength length to compress
+ * @param outputdata pointer to bytevec, will be Ov_DbMalloc by this function
+ * @param outputlength length of compressed output
  * @return
  */
-
-// the function gzip.c is making the compression of the body using the deflate algorithm for compressing it.The function contains
-// 1 input and 2 outputs as parameters
-// The zlib.h compression library provides in-memory compression and decompression functions,
-// including integrity checks of the uncompressed data. This version of the library supports only one compression method (deflation).
-
-
 OV_RESULT gzip(OV_BYTE* inputdata, OV_INT inputlength, OV_BYTE** outputdata, OV_INT* outputlength){
 	z_stream zstr2;
 	uLong slen = (uLong)inputlength, dlen;

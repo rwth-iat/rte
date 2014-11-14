@@ -4,30 +4,28 @@
 typedef OV_RESULT KSHTTP_FNC_HANDLEEXTREQUEST(
 	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
 	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
+	const OV_INSTPTR_ksbase_Channel pChannel,
 	const KSHTTP_REQUEST request,
 	KSHTTP_RESPONSE *response
 );
 
 typedef OV_RESULT KSHTTP_FNC_INPACKETHANDLING(
 	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* dataReceived
-);
-typedef OV_RESULT KSHTTP_FNC_DATAHANDLING(
-	OV_INSTPTR_kshttp_httpclienthandler this
+	OV_INSTPTR_ksbase_Channel pChannel
 );
 typedef OV_RESULT KSHTTP_FNC_GENERATEHEADER(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_RESULT responseCreationResult,
 	OV_STRING additionalHeaders
 );
-typedef OV_RESULT KSHTTP_FNC_OUTPACKETHANDLING(
-	OV_INSTPTR_kshttp_httpclienthandler this,
-	KS_DATAPACKET* answer
-);
 typedef void KSHTTP_FNC_RESULT2HTTP(
 	const KSHTTP_REQUEST request,
 	KSHTTP_RESPONSE *response,
 	OV_RESULT const result
+);
+typedef OV_RESULT KSHTTP_FNC_OUTPACKETHANDLING(
+	OV_INSTPTR_kshttp_httpclienthandler this,
+	OV_INSTPTR_ksbase_Channel pChannel
 );
 
 #endif

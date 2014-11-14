@@ -39,10 +39,10 @@
 #include "ksbase.ovm"
 
 LIBRARY kshttp
-	VERSION   = "V1.5 (13-Jan-2014)";
+	VERSION   = "V2.0 (14-Nov-2014)";
 	AUTHOR    = "Sten Gruener, Henning Mersch, Holger Jeromin";
 	COPYRIGHT	= "Copyright (C) 2014 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
-	COMMENT		= "HTTP Webserver with lightweight KS and static file support";
+	COMMENT		= "HTTP Webserver and Webclient with lightweight KS and static file support";
 	
 	/**
 	 *	Checks whether received data is conforming to the http protocol
@@ -93,7 +93,7 @@ LIBRARY kshttp
 		 */
 		analyzeRequestHeader:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
 		analyzeRequestBody	:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
-		generateHttpBody	:	C_FUNCTION	<KSHTTP_FNC_DATAHANDLING>;
+		generateHttpBody	:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
 		generateHttpHeader	:	C_FUNCTION	<KSHTTP_FNC_GENERATEHEADER>;
 		mapresult2http		:	C_FUNCTION	<KSHTTP_FNC_RESULT2HTTP>;
 		sendHttpHeader		:	C_FUNCTION	<KSHTTP_FNC_OUTPACKETHANDLING>;
