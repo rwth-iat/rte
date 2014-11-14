@@ -112,10 +112,11 @@ LIBRARY kshttp
 		COMMENT	=	"Baseclass for client handler extensions for the kshttp protocol";
 		VARIABLES
 			commandList []	:	STRING
-				COMMENT	=	"Array of commands this extension can handle for example '/getHist' or '/callservice'";
+				COMMENT	=	"Array of commands this extension can handle for example '/getHist' or '/callservice' (wildcards '?' single char, '*' multiple chars are possible";
 		END_VARIABLES;
 		OPERATIONS
-		HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST> IS_ABSTRACT;
+			HandleExtendedRequest	:	C_FUNCTION	<KSHTTP_FNC_HANDLEEXTREQUEST> IS_ABSTRACT;
+			HandleRequest			:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>; 	/* not every extention need this */
 	END_OPERATIONS;	
 	END_CLASS;	
 	
@@ -133,7 +134,7 @@ LIBRARY kshttp
  		createticket	:	C_FUNCTION	<KSBASE_FNC_CREATETICKET>;
  		deleteticket	:	C_FUNCTION	<KSBASE_FNC_DELETETICKET>;
 		encodereply		:	C_FUNCTION	<KSBASE_FNC_ENCODEREPLY>;
-		TicketGetaccess		:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
+		TicketGetaccess	:	C_FUNCTION	<KSBASE_FNC_GETACCESS>;
 	END_OPERATIONS;	
 	END_CLASS;
 	

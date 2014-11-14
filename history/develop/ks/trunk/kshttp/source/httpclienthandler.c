@@ -548,7 +548,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 			Ov_ForEachChildEx(ov_inheritance, pclass_kshttp_httpClientHandlerExtension, pExtensionClass, ov_class){
 				Ov_ForEachChildEx(ov_instantiation, pExtensionClass, pExtension, kshttp_httpClientHandlerExtension){
 					for(iterator = 0; iterator < pExtension->v_commandList.veclen; iterator++){
-						if(ov_string_compare(this->v_ClientRequest.urlPath, pExtension->v_commandList.value[iterator]) == OV_STRCMP_EQUAL){
+						if(ov_string_match(this->v_ClientRequest.urlPath, pExtension->v_commandList.value[iterator]) == TRUE){
 							extclientfound = TRUE;
 							break;
 						}
