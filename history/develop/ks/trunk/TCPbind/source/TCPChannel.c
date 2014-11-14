@@ -464,7 +464,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					if(pVTBLClientHandler)
 					{
 						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pClientHandler->v_identifier));
-						result = pVTBLClientHandler->m_HandleRequest(pClientHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+						result = pVTBLClientHandler->m_HandleRequest(pClientHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result))
 						{
 							ov_memstack_lock();
@@ -509,7 +509,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					if(pVTBLDataHandler)
 					{
 						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pDataHandler->v_identifier));
-						result = pVTBLDataHandler->m_HandleData(pDataHandler, &(thisCh->v_inData), &(thisCh->v_outData));
+						result = pVTBLDataHandler->m_HandleData(pDataHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result))
 						{
 							ov_memstack_lock();
