@@ -129,7 +129,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 			return;
 		}
 		/*	HadleData will do the state change to COMPLETED if the header could be processed and the message is completely received	*/
-		result = ksxdr_xdrClient_HandleData(Ov_StaticPtrCast(ksbase_DataHandler, this), &(pChannel->v_inData), NULL);
+		result = ksxdr_xdrClient_HandleData(Ov_StaticPtrCast(ksbase_DataHandler, this), pChannel, &(pChannel->v_inData), NULL);
 		if(Ov_Fail(result))
 		{
 			thisCl->v_state = KSBASE_CLST_ERROR;
@@ -265,20 +265,18 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
  *******************************************************************************************************************************************************************************/
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_HandleData(
 	OV_INSTPTR_ksbase_DataHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_ksxdr_xdrClient				thisCl = Ov_StaticPtrCast(ksxdr_xdrClient, this);
-	OV_INSTPTR_ksbase_Channel				pChannel = NULL;
 	OV_INSTPTR_ksbase_ClientTicketGenerator	pTicketGenerator = NULL;
 	OV_UINT									xid;
 	OV_RESULT								result;
 	OV_UINT									procHeaderStatus;
 
 	/*	process header and generic stuff	*/
-	pChannel = Ov_GetParent(ksbase_AssocChannelDataHandler, thisCl);
-	if(!pChannel)
-	{
+	if(!pChannel) {
 		KS_logfile_error(("%s: HandleData: no Channel object associated. cannot process data.", this->v_identifier));
 		return OV_ERR_GENERIC;
 	}

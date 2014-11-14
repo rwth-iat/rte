@@ -303,6 +303,7 @@ OV_RESULT unfragmentXDRmessage(KS_DATAPACKET* dataReceived, OV_BYTE* BeginOfMess
 
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
@@ -326,7 +327,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_TICKET* pticket = NULL;
 	OV_INSTPTR_ksbase_TicketAuthenticator pTicketAuth = NULL;
 	OV_INSTPTR_ov_domain pDomAuthenticators	= NULL;
-	OV_INSTPTR_ksbase_Channel pChannel = NULL;
 	KS_DATAPACKET serviceAnswer = {0, NULL, NULL, NULL};
 	OV_UINT beginAnswer = 0;	/*	indicates the beginning of the answer in the packet, set before create_global_answer, used by prepend_length	*/
 	OV_BYTE* BeginOfMessage = NULL;	/*	stores the pointer to the very beginning of the message.
@@ -339,8 +339,6 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	OV_UINT	iterator;
 	OV_BOOL found;
 	OV_BOOL	extensionTakesOver	=	FALSE;
-
-	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 	/*********************************************************************************************************************************************************************
 	 * decode header
