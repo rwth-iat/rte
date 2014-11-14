@@ -22,6 +22,7 @@
 typedef OV_RESULT KSXDR_FNC_HANDLEEXTREQUEST(
 	const OV_INSTPTR_ksxdr_xdrClientHandlerExtension	pobj,
 	const OV_INSTPTR_ksxdr_xdrClientHandler				pClientHandler,
+	const OV_INSTPTR_ksbase_Channel pChannel,
 	const OV_UINT version, 
 	const OV_UINT xid,
 	const OV_UINT msgAccepted,

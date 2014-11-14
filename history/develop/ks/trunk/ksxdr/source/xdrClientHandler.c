@@ -852,7 +852,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 				ksbase_free_KSDATAPACKET(answer);
 				return result;
 			}
-			result = pVtblClientHandlerExtension->m_HandleExtendedRequest(pExtension, thisxdrCL, ProgVersion, xid, msgAccepted, msgState, authflavour,
+			result = pVtblClientHandlerExtension->m_HandleExtendedRequest(pExtension, thisxdrCL, pChannel, ProgVersion, xid, msgAccepted, msgState, authflavour,
 					pticket, procedure, dataReceived, &beginAnswer, answer, &ksErrCode, &serviceAnswer, &extensionTakesOver);
 			if(Ov_Fail(result))
 			{
