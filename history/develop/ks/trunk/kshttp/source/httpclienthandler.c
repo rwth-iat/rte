@@ -210,7 +210,7 @@ DLLFNCEXPORT void kshttp_httpclienthandler_mapresult2http(const KSHTTP_REQUEST r
 }
 
 /**
- * This function handles requests received over a channel. It reads data as an http-stream and triggers the appropriate OV-functions
+ * This function handles requests received over a channel. It reads data as an http-stream and triggers the appropriate internal functions
  */
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
@@ -269,6 +269,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	}
 	return result;
 }
+
+/**
+ * init structs, read header (if full available) and parse it into this->v_ClientRequest
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
@@ -321,12 +325,16 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	this->v_CommunicationStatus = KSHTTP_CS_REQUESTHEADERPARSED;
 	return OV_ERR_OK;
 }
+
+/**
+ * move requestBody to Heap (if full available)
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
 ) {
 	if(this->v_ClientRequest.contentLength != 0){
-		//save message body (for POST?) in memory
+		//save message body (for POST?) in heap
 		if(pChannel->v_inData.length - this->v_ClientRequest.headerLength >= this->v_ClientRequest.contentLength){
 			this->v_ClientRequest.messageBody = (OV_BYTE*)Ov_HeapMalloc(this->v_ClientRequest.contentLength+1);
 			if(!this->v_ClientRequest.messageBody){
@@ -349,6 +357,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 	return OV_ERR_OK;
 }
 
+/**
+ * builds up the body with the KS commands, Extention or static files
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
@@ -363,9 +374,6 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_INSTPTR_kshttp_staticfile pStaticfile;
-	//gzip compression business
-	OV_BYTE* gzip_compressed_body = NULL;
-	OV_INT gzip_compressed_body_length = 0;
 
 
 	this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_NONE;
@@ -479,6 +487,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				//no
 				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
 			}
+			Ov_SetDynamicVectorLength(&match,0,STRING);
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
 			//add Access-Control-Allow-Methods to OPTIONS if implement other Methods
@@ -560,8 +569,8 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				}else{
 					result = pVtblClientHandlerExtension->m_HandleExtendedRequest(
 							pExtension,
-							pChannel,
 							this,
+							pChannel,
 							this->v_ClientRequest,
 							&this->v_ServerResponse);
 
@@ -623,7 +632,6 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 	//raw request header not needed any longer
 	ov_string_setvalue(&this->v_ClientRequest.requestHeader, NULL);
 	Ov_SetDynamicVectorLength(&this->v_ClientRequest.urlQuery,0,STRING);
-	Ov_SetDynamicVectorLength(&match,0,STRING);
 	ov_string_setvalue(&this->v_ClientRequest.urlPath, NULL);
 
 	//no method has found a hit
@@ -634,67 +642,29 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 		kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "notimplemented");
 	}
 
-	//move convenience contentString to contentBinary
-	if(ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
-		//in case of a HEAD request there is no need to send the body
-		ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
-		Ov_DbFree(this->v_ServerResponse.contentBinary);
-		this->v_ServerResponse.contentLength = 0;
-	}else if(this->v_ServerResponse.contentString != NULL){
-		//we have a content as string, so check its length and move content to binary pointer
-		this->v_ServerResponse.contentLength = ov_string_getlength(this->v_ServerResponse.contentString);
-		this->v_ServerResponse.contentBinary = (OV_BYTE*)this->v_ServerResponse.contentString;
-		this->v_ServerResponse.contentString = NULL;
-	}else if(this->v_ServerResponse.contentBinary != NULL){
-		//contentLength is already set
-	}else{
-		//we have nothing to send available...
-		this->v_ServerResponse.contentLength = 0;
-	}
-
-
-#ifndef KSHTTP_DISABLE_GZIP
-	// check if the body length corresponds for compression
-	if (Ov_OK(result) && this->v_ServerResponse.contentLength >= MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.compressionGzip == TRUE &&
-												  (ov_string_match(this->v_ServerResponse.contentType, "text/*") == TRUE
-												|| ov_string_compare(this->v_ServerResponse.contentType, "application/javascript") == OV_STRCMP_EQUAL
-												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml") == TRUE
-												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml-dtd") == TRUE
-												|| ov_string_match(this->v_ServerResponse.contentType, "*+xml") == TRUE 	//includes image/svg+xml
-												|| ov_string_compare(this->v_ServerResponse.contentType, "application/json") == OV_STRCMP_EQUAL))
-	{
-		// The body is compressed by using gzip function in gzip.h
-		result = gzip(this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength, &gzip_compressed_body, &gzip_compressed_body_length);
-		if(Ov_OK(result)){
-			KS_logfile_debug(("Compression ratio (content only): %" OV_PRINT_SINGLE, (OV_SINGLE)(gzip_compressed_body_length/this->v_ServerResponse.contentLength)));
-			//free old content
-			Ov_DbFree(this->v_ServerResponse.contentBinary);
-			//replace by gzipped content
-			this->v_ServerResponse.contentBinary = gzip_compressed_body;
-			this->v_ServerResponse.contentLength = gzip_compressed_body_length;
-			gzip_compressed_body = NULL;
-		}else{
-			//prevent sending Content-Encoding Header
-			this->v_ClientRequest.compressionGzip = FALSE;
-			Ov_DbFree(gzip_compressed_body);
-			gzip_compressed_body = NULL;
-		}
-	}else{
-		//prevent sending Content-Encoding Header
-		this->v_ClientRequest.compressionGzip = FALSE;
-	}
-#endif
 	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYGENERATED;
 
 	return result;
 }
 
-//BEGIN forming and sending the answer
+/**
+ * builds up the this->v_ServerResponse.header with the information from the ServerResponse struct
+ * maps responseCreationResult to http codes
+ * additionalHeaders will be added (must end with \r\n)
+ * convenience contentString will be moved to contentBinary
+ * contentBinary will be gzipped on demand
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_RESULT responseCreationResult,
 	OV_STRING additionalHeaders
 ){
+	//gzip compression business
+	OV_BYTE* gzip_compressed_body = NULL;
+	OV_INT gzip_compressed_body_length = 0;
+
+	OV_RESULT result = OV_ERR_OK;
+
 	//header already sent?
 	if(this->v_ServerResponse.header == NULL){
 		return OV_ERR_OK;
@@ -732,13 +702,61 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 		ov_string_print(&this->v_ServerResponse.header, "%sConnection: close\r\n", this->v_ServerResponse.header);
 	}
 
+	//move convenience contentString to contentBinary
+	if(ov_string_compare(this->v_ClientRequest.requestMethod, "HEAD") == OV_STRCMP_EQUAL){
+		//in case of a HEAD request there is no need to send the body
+		ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
+		Ov_DbFree(this->v_ServerResponse.contentBinary);
+		this->v_ServerResponse.contentLength = 0;
+	}else if(this->v_ServerResponse.contentString != NULL){
+		//we have a content as string, so check its length and move content to binary pointer
+		this->v_ServerResponse.contentLength = ov_string_getlength(this->v_ServerResponse.contentString);
+		this->v_ServerResponse.contentBinary = (OV_BYTE*)this->v_ServerResponse.contentString;
+		this->v_ServerResponse.contentString = NULL;
+	}else if(this->v_ServerResponse.contentBinary != NULL){
+		//contentLength is already set
+	}else{
+		//we have nothing to send available...
+		this->v_ServerResponse.contentLength = 0;
+	}
+
+#ifndef KSHTTP_DISABLE_GZIP
+	// check if the body length corresponds for compression
+	if (this->v_ServerResponse.contentLength >= MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.compressionGzip == TRUE &&
+												  (ov_string_match(this->v_ServerResponse.contentType, "text/*") == TRUE
+												|| ov_string_compare(this->v_ServerResponse.contentType, "application/javascript") == OV_STRCMP_EQUAL
+												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml") == TRUE
+												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml-dtd") == TRUE
+												|| ov_string_match(this->v_ServerResponse.contentType, "*+xml") == TRUE 	//includes image/svg+xml
+												|| ov_string_compare(this->v_ServerResponse.contentType, "application/json") == OV_STRCMP_EQUAL))
+	{
+		// The body is compressed by using gzip function in gzip.h
+		result = gzip(this->v_ServerResponse.contentBinary, this->v_ServerResponse.contentLength, &gzip_compressed_body, &gzip_compressed_body_length);
+		if(Ov_OK(result)){
+			KS_logfile_debug(("Compression ratio (content only): %" OV_PRINT_SINGLE, (OV_SINGLE)(gzip_compressed_body_length/this->v_ServerResponse.contentLength)));
+			//free old content
+			Ov_DbFree(this->v_ServerResponse.contentBinary);
+			//replace by gzipped content
+			this->v_ServerResponse.contentBinary = gzip_compressed_body;
+			this->v_ServerResponse.contentLength = gzip_compressed_body_length;
+			gzip_compressed_body = NULL;
+
+			ov_string_append(&this->v_ServerResponse.header, "Content-Encoding: gzip\r\n");
+		}else{
+			//prevent sending Content-Encoding Header
+			this->v_ClientRequest.compressionGzip = FALSE;
+			Ov_DbFree(gzip_compressed_body);
+			gzip_compressed_body = NULL;
+		}
+	}else{
+		//prevent sending Content-Encoding Header
+		this->v_ClientRequest.compressionGzip = FALSE;
+	}
+#endif
+
 	//append content length
 	ov_string_print(&this->v_ServerResponse.header, "%sContent-Length: %i\r\n", this->v_ServerResponse.header, this->v_ServerResponse.contentLength);
 
-	//handle gzip encoding by attaching a line to the header if accepted
-	if(this->v_ClientRequest.compressionGzip){
-		ov_string_append(&this->v_ServerResponse.header, "Content-Encoding: gzip\r\n");
-	}
 	if(ov_string_compare(additionalHeaders, "") != OV_STRCMP_EQUAL){
 		ov_string_append(&this->v_ServerResponse.header, additionalHeaders);
 	}
@@ -754,6 +772,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	return OV_ERR_OK;
 }
 
+/**
+ * Sends the header from this->v_ServerResponse.header via the channel
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
@@ -774,6 +795,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 	return OV_ERR_OK;
 }
 
+/**
+ * Sends the content from this->v_ServerResponse.contentBinary via the channel
+ */
 DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
@@ -810,7 +834,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	return OV_ERR_OK;
 }
 
-
+/**
+ * inits the pointers
+ */
 OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -853,6 +879,9 @@ OV_DLLFNCEXPORT void kshttp_httpclienthandler_startup(
 	return;
 }
 
+/**
+ * frees all memory used by the structs
+ */
 OV_DLLFNCEXPORT void kshttp_httpclienthandler_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {

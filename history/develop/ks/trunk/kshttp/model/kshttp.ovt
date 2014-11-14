@@ -74,8 +74,8 @@ typedef struct{
 	OV_INT statusCode;			/* 200, hopefully */
 	OV_UINT headerLength;		/* 1342 for example */
 	OV_STRING header;			/* the full http header */
-	OV_STRING contentString; 	/* content send from the server back to the client */
-	OV_BYTE* contentBinary; 	/* will be used if contentString is empty */
+	OV_STRING contentString; 	/* convenience contentString will be moved to contentBinary in generateHttpHeader */
+	OV_BYTE* contentBinary; 	/* content send from the server back to the client */
 	OV_UINT contentLength;		/* Length of the Binary */
 	OV_STRING contentType;		/*  */
 	OV_STRING contentEncoding;	/*  */
