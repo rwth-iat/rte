@@ -70,7 +70,7 @@ static OV_INT		refcount = 0;
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
-OV_DLLFNCEXPORT void _F_ov_memstack_lock(void) {
+OV_DLLFNCEXPORT OV_INT _F_ov_memstack_lock(void) {
 	/*
 	*	initialize if necessary
 	*/
@@ -84,6 +84,7 @@ OV_DLLFNCEXPORT void _F_ov_memstack_lock(void) {
 	*/
 	refcount++;
 	Ov_WarnIf(refcount > 16);
+	return refcount;
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -144,7 +145,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
-OV_DLLFNCEXPORT void _F_ov_memstack_unlock(void) {
+OV_DLLFNCEXPORT OV_INT _F_ov_memstack_unlock(void) {
 	/*
 	*	decrement the reference count
 	*/
@@ -177,6 +178,7 @@ OV_DLLFNCEXPORT void _F_ov_memstack_unlock(void) {
 		printf("memstack freed\n");
 #endif
 	}
+	return refcount;
 }
 
 /*	----------------------------------------------------------------------	*/

@@ -67,40 +67,58 @@ extern "C" {
 *	Defines to use the logger if wanted
 */
 #if defined MEMSTACK_LOG && MEMSTACK_LOG != 0
-	/*	yes, this variable will cause warnings when memstack.h is included and lock / unlock is not used in that file	*/
+	/*	yes, these variables will cause warnings when memstack.h is included and lock / unlock is not used in that file	*/
 	static OV_INT localRefCount = 0;
+	static OV_INT globalRefCount = 0;
 	#if MEMSTACK_LOG >= 2
 		/*	high loglevel: log locks and unlocks, print out if refcount is 0	*/
 		/*	use do{}while(0) to make the statement one block with the need of a ; at the end	*/
 		#define ov_memstack_lock() 																			\
 		do{																									\
 			localRefCount++;																				\
-			printf("memstack_lock: %s line %i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);	\
-			_F_ov_memstack_lock();																			\
+			printf("memstack_lock: %s:%i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);		\
+			fflush(stdout);	/* needed for https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732 */			\
+			globalRefCount = _F_ov_memstack_lock();															\
+			if(globalRefCount == 1){																		\
+				printf("Info: %s:%i: memstack was just opened (aka memstack refcount is now 1)\n", __FILE__, __LINE__);				\
+				fflush(stdout);																				\
+			}																								\
 		}while(0)
 
 		#define ov_memstack_unlock()																			\
 		do{																										\
 			localRefCount--;																					\
-			printf("memstack_unlock: %s line %i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);	\
-			if(!localRefCount)																					\
-				printf("memstack warning: local refcount is 0!\n");												\
+			printf("memstack_unlock: %s:%i, local refcount is %i\n", __FILE__, __LINE__, localRefCount);		\
+			if(!localRefCount){																					\
+				printf("memstack info: local refcount is 0!\n");												\
+				fflush(stdout);	/* needed for https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732 */			\
+			}																									\
 			_F_ov_memstack_unlock();																			\
 		}while(0)
 	#elif MEMSTACK_LOG == 1
-		/*	low loglevel: print out if refcount is 0	*/
+		/*	low loglevel: print out if refcount is 0 and global memstack begin and free	*/
 		#define ov_memstack_lock() 																			\
 		do{																									\
 			localRefCount++;																				\
-			_F_ov_memstack_lock();																			\
+			globalRefCount = _F_ov_memstack_lock();															\
+			if(globalRefCount == 1){																		\
+				printf("Info: %s:%i: memstack was just opened (aka memstack refcount is now 1)\n", __FILE__, __LINE__);		\
+				fflush(stdout);		\
+			}	\
 		}while(0)
 
 		#define ov_memstack_unlock()																			\
 		do{																										\
 			localRefCount--;																					\
-			if(!localRefCount)																					\
+			if(!localRefCount){																					\
 				printf("localRefCount is 0: %s line %i\n", __FILE__, __LINE__);									\
-			_F_ov_memstack_unlock();																			\
+				fflush(stdout);																					\
+			}																									\
+			globalRefCount = _F_ov_memstack_unlock();															\
+			if(globalRefCount == 0){																			\
+				printf("Info: %s:%i: memstack was just freed (aka memstack refcount is now 0)\n", __FILE__, __LINE__);			\
+				fflush(stdout);																					\
+			}																									\
 		}while(0)
 	#endif
 #else
@@ -127,7 +145,7 @@ typedef struct OV_MEMSTACK OV_MEMSTACK;
 *	Increment the reference count of the stack and initialize
 *	if necessary
 */
-OV_DLLFNCEXPORT void _F_ov_memstack_lock(void);
+OV_DLLFNCEXPORT OV_INT _F_ov_memstack_lock(void);
 
 /*
 *	Allocate memory on the stack
@@ -140,7 +158,7 @@ OV_DLLFNCEXPORT OV_POINTER ov_memstack_alloc(
 *	Decrement the reference count of the stack and free the
 *	stack memory if necessary
 */
-OV_DLLFNCEXPORT void _F_ov_memstack_unlock(void);
+OV_DLLFNCEXPORT OV_INT _F_ov_memstack_unlock(void);
 
 #ifdef __cplusplus
 }	/* extern "C" */
