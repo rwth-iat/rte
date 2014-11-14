@@ -50,18 +50,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_constructor(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleRequest(
-	OV_INSTPTR_ksbase_ClientHandler this,
-	OV_INSTPTR_ksbase_Channel pChannel,
-	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* answer
-) {
-    /*
-    *   local variables
-    */
-
-    return OV_ERR_OK;
-}
 
 #define Try(command, errorMessage, answerContent)	\
 	do{	\
