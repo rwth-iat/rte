@@ -167,6 +167,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 			if(Ov_Fail(one_resultGet.result)){
 				fr = one_resultGet.result;
 				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": problem with get");
+				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 			}
 			addrp->var_current_props.value.vartype = one_resultGet.var_current_props.value.vartype;
@@ -237,6 +238,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				}else{
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Input not detected as bool");
+					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				}
 				break;
@@ -270,6 +272,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				fr = ov_string_setvalue(&addrp->var_current_props.value.valueunion.val_string, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Setting string value failed");
+					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
@@ -279,6 +282,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				if(ov_string_getlength(newvaluematch.value[i]) > 0){
 					fr = OV_ERR_BADTYPE;
 					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable is/should be void, but a newvalue is given");
+					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				}
 				break;
@@ -288,6 +292,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Setting time value failed");
+					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				};
 				break;
@@ -314,6 +319,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
 				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 			break;
 
@@ -412,6 +418,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				if(*pArgumentList[i] != '{' && len > 2){
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": VEC entries should be urlencoded, separated with a space and wrapped with curly brackets");
+					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
 				}
 
@@ -443,6 +450,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
 				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
+				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 
 	/*	TODO Time* VEC
@@ -463,6 +471,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 	*/
 				fr = OV_ERR_NOTIMPLEMENTED;
 				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Vartype not supported");
+				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 		}
 
