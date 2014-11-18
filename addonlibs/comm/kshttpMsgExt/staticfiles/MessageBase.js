@@ -50,3 +50,33 @@ function createBasicMessage(host, port, receiverAddress){
 function getMessageString(MessageDoc){
 	return MessageDoc.Container.innerHTML;
 }
+
+function CreateGenericServiceCall(host, port, localAddress, Service, Operation){
+	var MessageDoc = createBasicMessage(host, port, localAddress)
+	MessageDoc.Body.setAttribute("Svc", Service); 
+	MessageDoc.Body.setAttribute("Op", Operation); 
+	return MessageDoc;
+}
+
+function AddStructData(messageDoc, parentElement, id){
+	var newel = messageDoc.createElement("sd");
+	if(id){
+		newel.setAttribute("id", id);
+	}
+	parentElement.appendChild(newel);
+	return newel;
+}
+
+function AddValue(messageDoc, parentElement, id, value, type){
+	var newel = messageDoc.createElement("val");
+	if(id){
+		newel.setAttribute("id", id);
+	}
+	if(type){
+		newel.setAttribute("type", type);
+	}
+	var newtext = messageDoc.createTextNode(value);
+	newel.appendChild(newtext);
+	parentElement.appendChild(newel);
+	return newel;
+}

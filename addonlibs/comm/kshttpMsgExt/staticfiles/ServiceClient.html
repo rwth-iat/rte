@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="windows-1252">
+		<meta name="viewport" content="width=device-width"><!-- no desktop view for mobile browsers -->
+		<title>OV-ServiceRequester</title>
+		<style type="text/css">
+			code{
+				background-color: #DDDDFF;
+				border: 1px solid #8080FF;
+				color: #000080;
+			}
+			#idResponseOutput, #idUrldisplay{
+				background-color: lightgrey;
+				border: 1px solid #8080FF;
+				color: #000080;
+				width:500px;
+			}
+			#idResponseOutput{
+				display:block;
+			}
+			input{
+				transition: background-color 0.5s;
+			}
+			th {
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+		<form id="idServiceRequester" action="" style="width:1000px">
+			<h1>Service-Requester</h1>
+			Host:<br/>
+			http:// <input id="idUrlInput" value="" placeholder="server URL" style="width:300px">
+			<input type="button" id="idRefresh" value="Refresh Servers"> <br/> <br/>
+			Available servers:<br/>
+			<span id="idServers">
+				<select id="idServersSelect" size="10" style="width:150px">
+				</select>
+			</span> <br/>
+			<fieldset id="idSVCFieldset" style="display:none;" style="width:800px">
+				<table id="idServiceInfo" border="0" style="width:800px" class="fixed">
+					<col width="160px" />
+					<col width="150px" />
+					<col width="480px" />
+					<tr>
+						<th>Available (registered) System Services</th>
+						<th>ServiceType</th>		
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<span id="idServices">
+								<select id="idServiceSelect" size="10" style="width:150px"></select>
+							</span>
+						</td>
+						<td id="idServiceType"></td>
+						<td id="idServiceDesciption"></td>
+					</tr>
+				</table> 
+				<p id="idOperationField" style="display:none;">
+					<table id="idOperationInfo" border="0" style="width:800px" class="fixed">
+						<col width="160px" />
+						<col width="630px" />
+						<tr>
+							<th>Registered operations of service <b id="idOutputServiceName"></b></th>
+							<th>Operation Documentation</th>		
+						</tr>
+						<tr>
+							<td>
+								<span id="idOperations">
+									<select id="idOperationsSelect" size="10" style="width:150px"></select>
+								</span>
+							</td>
+							<td id="idOperationDocumentation"></td>
+						</tr>
+					</table> 
+				</p>
+				<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
+				Parameters of operation <b id="idOutputOperationName"></b><br/>
+				<b>Inputs:</b><br/>
+				<table id="idInParameters" border="0" style="width:800px">
+				</table> 
+				<b>Outputs:</b><br/>
+				<table id="idOutParameters" border="0" style="width:800px">
+				</table> 
+				</fieldset> <br/>
+					<input type="submit" id="idSubmitbutton" value="Send Request"> <br/>
+			</fieldset>
+			<br/>
+			<p id="idNoServiceAvailable" style="display:inline;">
+				No registered Service provider available on this server.<br/>
+			</p> <br/>
+			<textarea readonly id="idResponseOutput" rows="10" wrap="soft" style="width:800px">Reply will be displayed here</textarea>
+		</form>
+		<script type="text/javascript" src="MessageBase.js"></script>
+		<script type="text/javascript" src="ServiceRequester.js"></script>
+	</body>
+</html>
