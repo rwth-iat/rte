@@ -27,6 +27,7 @@
 #include "acplt_simpleMsgHandling.h"
 #include "MessageSys_helpers.h"
 #include "ksbase_helper.h"
+#include "libov/ov_result.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_constructor(
@@ -50,12 +51,24 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_constructor(
 }
 
 
+OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleRequest(
+	OV_INSTPTR_ksbase_ClientHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
+	KS_DATAPACKET* dataReceived,
+	KS_DATAPACKET* answer
+) {
+    /*
+    *   local variables
+    */
+
+    return OV_ERR_OK;
+}
 
 #define Try(command, errorMessage, answerContent)	\
 	do{	\
 		result	=	command;	\
 		if(Ov_Fail(result)){	\
-			KS_logfile_error((errorMessage));	\
+			KS_logfile_error(errorMessage);	\
 			ov_string_setvalue(&response->contentString, answerContent);	\
 			return result;	\
 		}	\
@@ -136,7 +149,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 		do{	\
 			result	=	command;	\
 			if(Ov_Fail(result)){	\
-				KS_logfile_error((errorMessage));	\
+				KS_logfile_error(errorMessage);	\
 				if(pNewMessage){	\
 					Ov_DeleteObject(pNewMessage);	\
 				}	\
@@ -146,7 +159,6 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 				if(Ov_Fail(Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pClientHandler))){	\
 					Ov_DeleteObject(pChannel);	\
 					Ov_DeleteObject(pClientHandler);	\
-					Ov_DeleteObject(pobj);	\
 					Ov_DeleteObject(pNewSendExt);	\
 					return result;	\
 				}	\
@@ -166,21 +178,13 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 			ov_element_getnextpart(&InboxElem, &VarElem, OV_ET_VARIABLE);
 		}
 		if(Ov_GetChild(MessageSys_Message2Channel, pNewMessage) != pChannel){
-			/*	no need to hold the connection --> relink clientHandler to Channel and return with ok Message	*/
+			/*	no need to hold the connection -->  return with ok Message	*/
 			pClientHandler->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYGENERATED;
 			pChannel->v_CloseAfterSend = TRUE;
-			Ov_Unlink(ksbase_AssocChannelClientHandler, pChannel, pobj);
-			if(Ov_Fail(Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pClientHandler))){
-				Ov_DeleteObject(pChannel);
-				Ov_DeleteObject(pClientHandler);
-				Ov_DeleteObject(pobj);
-				return result;
-			}
 			ov_string_setvalue(&response->contentString, "Message delivered to inbox. Wait for effect. No further communication on this connection. Bye.\n");
 			return OV_ERR_OK;
 		}
-	}
-	else{
+	} else {
 		KS_logfile_info(("%s: Message was not created (line: %u)", pobj->v_identifier, __LINE__));
 		ov_string_setvalue(&response->contentString, "Message was not delivered.");	\
 	}
