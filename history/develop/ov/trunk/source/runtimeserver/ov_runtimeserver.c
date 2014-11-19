@@ -1275,7 +1275,7 @@ ERRORMSG:
 	if(configBasePath || *configBasePath){
 		if(commandline_options)
 		{
-			tempstr = malloc(strlen(commandline_options)+9+strlen(configBasePath) + 1); //" CONFDIR=" + strlen(configbasepath) + '\0'
+			tempstr = malloc(strlen(commandline_options) + 9 + strlen(configBasePath) + 1); // "CONFDIR=" + strlen(configbasepath) + '\0'
 			if(tempstr)
 			{
 				sprintf(tempstr, "CONFDIR=%s %s", configBasePath, commandline_options);
@@ -1285,10 +1285,10 @@ ERRORMSG:
 		}
 		else
 		{
-			commandline_options = malloc(9+strlen(configBasePath) + 1);
+			commandline_options = malloc(9 + strlen(configBasePath) + 1);
 			if(commandline_options)
 			{
-				sprintf(commandline_options, "CONFDIR=%s %s", configBasePath);
+				sprintf(commandline_options, "CONFDIR=%s", configBasePath);
 			}
 		}
 	}
