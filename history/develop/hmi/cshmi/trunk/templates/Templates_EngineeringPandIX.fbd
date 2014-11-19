@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-10-24 14:28:57
+* Erstellt: 2014-11-12 22:20:13
 * 
 * HOST   : 134.130.125.43:7509
 * SERVER : MANAGER
@@ -1799,7 +1799,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_PantSection :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_PantGroup :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
@@ -1810,7 +1810,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_PantSection.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_PantGroup.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1821,63 +1821,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/PlantSection" , "/acplt/pandix/PlantSection"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_ProcessPlant :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_CLASS";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_ProcessPlant.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/ProcessPlant" , "/acplt/pandix/ProcessPlant"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_IndustrialComplex :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_CLASS";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_ModulFound.if/comp_IndustrialComplex.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/IndustrialComplex" , "/acplt/pandix/IndustrialComplex"};
+      value[10] : INPUT STRING = {"/Libraries/pandix/PlantSection" , "/acplt/pandix/PlantSection" , "/Libraries/pandix/ProcessPlant" , "/acplt/pandix/ProcessPlant" , "/Libraries/pandix/IndustrialComplex" , "/acplt/pandix/IndustrialComplex" , "/Libraries/pandix/TechnicalUnit" , "/acplt/pandix/TechnicalUnit" , "/Libraries/pandix/PlantScheme" , "/acplt/pandix/PlantScheme"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1962,35 +1906,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/Vessel" , "/acplt/pandix/Vessel"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_Vessel.if/If_LVessel :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_CLASS";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_Vessel.if/If_LVessel.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/LVessel" , "/acplt/pandix/LVessel"};
+      value[6] : INPUT STRING = {"/Libraries/pandix/Vessel" , "/acplt/pandix/Vessel" , "/Libraries/pandix/LVessel" , "/acplt/pandix/LVessel" , "/Libraries/pandix/TemperatedLVessel" , "/acplt/pandix/TemperatedLVessel"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -2464,7 +2380,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -2484,7 +2400,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 1;
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -2650,7 +2566,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -2670,7 +2586,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 1;
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -6507,7 +6423,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -6614,7 +6530,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -6721,7 +6637,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -6823,7 +6739,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -6897,7 +6813,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -7109,7 +7025,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -7208,7 +7124,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -7241,7 +7157,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -8348,7 +8264,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -8455,7 +8371,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -8562,7 +8478,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 2;
@@ -8664,7 +8580,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -8917,7 +8833,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -9016,7 +8932,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -9049,7 +8965,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -12248,7 +12164,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -12268,7 +12184,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 0;
+      value : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12290,7 +12206,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -12309,7 +12225,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 1;
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12364,7 +12280,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -12383,7 +12299,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 0;
+      value : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12646,7 +12562,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -12666,7 +12582,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 0;
+      value : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12688,7 +12604,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -12707,7 +12623,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 1;
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12762,7 +12678,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.flipped";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -12781,7 +12697,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT INT = 0;
+      value : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -14779,7 +14695,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PandixEngineering/onload/GotLinkPartner :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PandixEngineering/onload/initGotLinkPartner :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -14795,7 +14711,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/PandixEngineering/onload/GotLinkPartner.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/PandixEngineering/onload/initGotLinkPartner.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -15533,7 +15449,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "visuallayout";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.route";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -15549,7 +15465,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "visuallayout";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.route";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -16683,7 +16599,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -16749,7 +16665,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -16818,7 +16734,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -16876,7 +16792,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -16901,7 +16817,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -16961,7 +16877,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -17019,7 +16935,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -17060,7 +16976,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -17093,7 +17009,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -17883,7 +17799,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -17925,7 +17841,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -18031,7 +17947,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -18047,7 +17963,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18252,7 +18168,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -18318,7 +18234,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -18402,7 +18318,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18460,7 +18376,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18485,7 +18401,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -18545,7 +18461,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18603,7 +18519,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18644,7 +18560,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18677,7 +18593,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -19467,7 +19383,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -19509,7 +19425,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -19615,7 +19531,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -19631,7 +19547,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P1.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20095,7 +20011,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20153,7 +20069,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20178,7 +20094,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -20238,7 +20154,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20296,7 +20212,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20337,7 +20253,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20479,7 +20395,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -20999,7 +20915,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -21306,7 +21222,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -21372,7 +21288,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -22284,7 +22200,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -22350,7 +22266,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -22603,7 +22519,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -22661,7 +22577,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -22686,7 +22602,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -22746,7 +22662,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -22804,7 +22720,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -22845,7 +22761,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -22878,7 +22794,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -23544,7 +23460,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -23586,7 +23502,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -23692,7 +23608,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -23708,7 +23624,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -23909,7 +23825,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -23975,7 +23891,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -24228,7 +24144,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -24286,7 +24202,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -24311,7 +24227,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -24371,7 +24287,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -24429,7 +24345,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -24470,7 +24386,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -24503,7 +24419,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -25169,7 +25085,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -25211,7 +25127,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -25317,7 +25233,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -25333,7 +25249,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -25686,7 +25602,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -25752,7 +25668,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -26042,7 +25958,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -26100,7 +26016,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -26125,7 +26041,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -26185,7 +26101,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -26243,7 +26159,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -26284,7 +26200,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -26317,7 +26233,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -27135,7 +27051,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -27177,7 +27093,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -27283,7 +27199,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -27299,7 +27215,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -27652,7 +27568,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -27718,7 +27634,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -27805,7 +27721,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -27863,7 +27779,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -27888,7 +27804,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -27948,7 +27864,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -28006,7 +27922,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -28047,7 +27963,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -28080,7 +27996,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29119,7 +29035,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29161,7 +29077,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -29267,7 +29183,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -29283,7 +29199,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29636,7 +29552,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -29702,7 +29618,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -29789,7 +29705,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29847,7 +29763,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29872,7 +29788,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -29932,7 +29848,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -29990,7 +29906,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -30031,7 +29947,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -30064,7 +29980,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -31103,7 +31019,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -31145,7 +31061,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -31251,7 +31167,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -31267,7 +31183,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -31787,7 +31703,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -31853,7 +31769,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -31959,7 +31875,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -32017,7 +31933,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -32042,7 +31958,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -32102,7 +32018,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -32160,7 +32076,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -32201,7 +32117,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -32234,7 +32150,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33052,7 +32968,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33094,7 +33010,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -33200,7 +33116,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -33216,7 +33132,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33546,7 +33462,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33604,7 +33520,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33629,7 +33545,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -33689,7 +33605,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33747,7 +33663,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33788,7 +33704,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33821,7 +33737,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -33880,7 +33796,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -33946,7 +33862,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -35021,7 +34937,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35063,7 +34979,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -35169,7 +35085,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -35185,7 +35101,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35532,7 +35448,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35590,7 +35506,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35615,7 +35531,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -35675,7 +35591,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35733,7 +35649,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35774,7 +35690,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35807,7 +35723,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -35866,7 +35782,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -35932,7 +35848,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -36758,7 +36674,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -36800,7 +36716,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -36906,7 +36822,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -36922,7 +36838,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37287,7 +37203,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37345,7 +37261,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37370,7 +37286,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -37430,7 +37346,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37488,7 +37404,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37529,7 +37445,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37562,7 +37478,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -37621,7 +37537,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -37687,7 +37603,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -38513,7 +38429,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -38555,7 +38471,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -38661,7 +38577,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -38677,7 +38593,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -38873,7 +38789,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -38931,7 +38847,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -38956,7 +38872,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -39016,7 +38932,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -39074,7 +38990,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -39115,7 +39031,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -39148,7 +39064,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -39207,7 +39123,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -39273,7 +39189,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -40099,7 +40015,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40141,7 +40057,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -40247,7 +40163,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -40263,7 +40179,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40492,7 +40408,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40550,7 +40466,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40575,7 +40491,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -40635,7 +40551,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40693,7 +40609,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40734,7 +40650,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -40811,7 +40727,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -40877,7 +40793,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -40993,7 +40909,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "FunctionCode";
+      TemplateFBReferenceVariable : INPUT STRING = "PCEInitial";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -41010,7 +40926,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "SignalCode";
+      TemplateFBReferenceVariable : INPUT STRING = "/VAL.SoftwareSignalType";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -41136,7 +41052,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 0.100000;
+      cyctime : INPUT SINGLE = 0.500000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -41145,7 +41061,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route :
     CLASS /acplt/cshmi/RoutePolyline;
     VARIABLE_VALUES
-      offset : INPUT SINGLE = 17.000000;
+      offset : INPUT SINGLE = 5.000000;
       gridWidth : INPUT SINGLE = 5.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -41256,7 +41172,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor :
     CLASS /acplt/cshmi/RoutePolyline;
     VARIABLE_VALUES
-      offset : INPUT SINGLE = 17.000000;
+      offset : INPUT SINGLE = 5.000000;
       gridWidth : INPUT SINGLE = 5.000000;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -42629,6 +42545,48 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ControlFunction/Polyline/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ControlFunction/Polyline/onload/unsetCrisp :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "shape-rendering";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ControlFunction/Polyline/onload/unsetCrisp.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "geometricPrecision";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/ControlFunction/Line :
     CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
@@ -42821,7 +42779,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -42879,7 +42837,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -42904,7 +42862,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -42964,7 +42922,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -43022,7 +42980,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -43063,7 +43021,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -43122,7 +43080,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -43188,7 +43146,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -43816,7 +43774,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -43874,7 +43832,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -43899,7 +43857,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -43959,7 +43917,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -44017,7 +43975,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -44058,7 +44016,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -44091,7 +44049,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -44150,7 +44108,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -44216,7 +44174,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -45042,7 +45000,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -45084,7 +45042,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -45190,7 +45148,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -45206,7 +45164,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -45408,7 +45366,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -45474,7 +45432,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -46603,7 +46561,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -46661,7 +46619,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -46686,7 +46644,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -46746,7 +46704,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -46804,7 +46762,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -46845,7 +46803,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48117,7 +48075,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -48183,7 +48141,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -48481,7 +48439,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48539,7 +48497,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48564,7 +48522,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -48624,7 +48582,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48682,7 +48640,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48723,7 +48681,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -48756,7 +48714,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -49382,7 +49340,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -49424,7 +49382,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -49530,7 +49488,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -49546,7 +49504,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/PIn.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -51953,7 +51911,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -52019,7 +51977,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -52457,7 +52415,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -52515,7 +52473,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -52540,7 +52498,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -52600,7 +52558,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -52658,7 +52616,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -52699,7 +52657,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -52732,7 +52690,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -53089,7 +53047,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -53131,7 +53089,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -53237,7 +53195,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -53253,7 +53211,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -53711,7 +53669,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -53777,7 +53735,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -54215,7 +54173,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54273,7 +54231,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54298,7 +54256,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -54358,7 +54316,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54416,7 +54374,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54457,7 +54415,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54490,7 +54448,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54847,7 +54805,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -54889,7 +54847,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -54995,7 +54953,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -55011,7 +54969,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P3.Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.rotateAngle";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -55588,7 +55546,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -55646,7 +55604,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -55671,7 +55629,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -55731,7 +55689,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -55789,7 +55747,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -55830,7 +55788,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -56195,7 +56153,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -56261,7 +56219,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -57091,6 +57049,63 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline :
+    CLASS /acplt/cshmi/Polyline;
+    VARIABLE_VALUES
+      points : INPUT STRING = "-50,-15 35,-15 35,-25 55,0 35,25 35,15 -50,15 -50,-15";
+      strokeWidth : INPUT SINGLE = 2.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "white";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline/onload/unsetCrisp :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "shape-rendering";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline/onload/unsetCrisp.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "geometricPrecision";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Name :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
@@ -57109,7 +57124,7 @@
       fill : INPUT STRING = "black";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -57160,7 +57175,7 @@
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
-      zindex : INPUT UINT = 1;
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -57200,7 +57215,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -57258,7 +57273,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -57283,7 +57298,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 0;
@@ -57343,7 +57358,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -57401,7 +57416,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -57442,258 +57457,10 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint :
-    CLASS /acplt/cshmi/ChildrenIterator;
-    VARIABLE_VALUES
-      ChildrenType : INPUT STRING = "OT_DOMAIN";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if/comp :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_CLASS";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.if/comp.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/Libraries/pandix/ProductConnectionPoint" , "/acplt/pandix/ProductConnectionPoint"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1 :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if/comp :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_NAME";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.if/comp.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "PE1";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.then/Inst_ConPointLeft :
-    CLASS /acplt/cshmi/InstantiateTemplate;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointLeft";
-      x : INPUT SINGLE = -50.000000;
-      y : INPUT SINGLE = 0.000000;
-      xOffset : INPUT SINGLE = 0.000000;
-      yOffset : INPUT SINGLE = 5.000000;
-      maxTemplatesPerDirection : INPUT STRING = "x:6";
-      FBReference[1] : INPUT STRING = {"OP_NAME"};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
-      preventClone : INPUT BOOL = FALSE;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      rotate : INPUT INT = 0;
-      opacity : INPUT SINGLE = 1.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2 :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if/comp :
-    CLASS /acplt/cshmi/CompareIteratedChild;
-    VARIABLE_VALUES
-      childValue : INPUT STRING = "OP_NAME";
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.if/comp.withValue :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "PE2";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.then/Inst_ConPointRight :
-    CLASS /acplt/cshmi/InstantiateTemplate;
-    VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointRight";
-      x : INPUT SINGLE = 55.000000;
-      y : INPUT SINGLE = 0.000000;
-      xOffset : INPUT SINGLE = 0.000000;
-      yOffset : INPUT SINGLE = 5.000000;
-      maxTemplatesPerDirection : INPUT STRING = "x:6";
-      FBReference[1] : INPUT STRING = {"OP_NAME"};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
-      preventClone : INPUT BOOL = FALSE;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      rotate : INPUT INT = 0;
-      opacity : INPUT SINGLE = 1.000000;
-      hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.then/If_PE1.else/If_PE2.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/onload/ProductConnectionPoint.forEachChild/If_Found.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -57703,7 +57470,7 @@
     CLASS /acplt/cshmi/ChildrenIterator;
     VARIABLE_VALUES
       ChildrenType : INPUT STRING = "OT_DOMAIN";
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -57805,7 +57572,7 @@
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "aftermove";
-      zindex : INPUT UINT = 2;
+      zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -57851,7 +57618,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Xpos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.x";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 1;
@@ -57917,7 +57684,7 @@
       elemVar : INPUT STRING = "";
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "Ypos";
+      TemplateFBReferenceVariable : INPUT STRING = "/csHMI.y";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       zindex : INPUT UINT = 3;
@@ -57946,7 +57713,7 @@
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -58393,7 +58160,7 @@
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "globalvarchanged";
-      zindex : INPUT UINT = 4;
+      zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -58736,17 +58503,42 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/Polyline :
-    CLASS /acplt/cshmi/Polyline;
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/PE1 :
+    CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
-      points : INPUT STRING = "-50,-15 35,-15 35,-25 55,0 35,25 35,15 -50,15 -50,-15";
-      strokeWidth : INPUT SINGLE = 2.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
+      x : INPUT SINGLE = -50.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 5;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointLeft";
+      FBReference[1] : INPUT STRING = {"CSHMIfullqualifiedname/PE2"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ExternalInterface/PE2 :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 55.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 100.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "Pandix/internal/Temp_ConPointRight";
+      FBReference[1] : INPUT STRING = {"CSHMIfullqualifiedname/PE1"};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[1] : INPUT STRING = {"ConfigAssocType:"};
+      zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;

@@ -826,20 +826,18 @@ var maxValue = 100;
 if(cshmimodel.variables.maxValue){
 	maxValue = parseFloat(cshmimodel.variables.maxValue.getValue());
 }
-var labelColor = 'white';
+var labelColor = 'black';
 if(cshmimodel.variables.labelColor){
 	labelColor = cshmimodel.variables.labelColor.getValue();
+}
+var backgroundColor = 'lightgrey';
+if(cshmimodel.variables.backgroundColor){
+	backgroundColor = cshmimodel.variables.backgroundColor.getValue();
 }
 var velocity = 0.1;
 if(cshmimodel.variables.velocity){
 	//the config value is in pixel per second
 	velocity = parseFloat(1 / (cshmimodel.variables.velocity.getValue()));
-}
-var verticalSections = true;
-if(cshmimodel.variables.verticalSections){
-	if(cshmimodel.variables.verticalSections.getValue().toLowerCase() == 'false'){
-		verticalSections = false;
-	}
 }
 var cycTime = 1;
 if(cshmimodel.variables.cycTime){
@@ -860,17 +858,18 @@ var linestyle = [	'rgb(30, 200, 30)',
 var smoothie = new SmoothieChart({
 	minValue: minValue,
 	maxValue: maxValue,
-	interpolation: 'line',
+	interpolation: 'step',
 	labels: {
 		fillStyle: labelColor
 	},
 	millisPerPixel: velocity * 1000,
 	grid: {
-		fillStyle: '#000000',
+		fillStyle: backgroundColor,
 		strokeStyle: 'rgb(60, 0, 0)',
 		lineWidth: 1,
 		millisPerLine: 1000,
-		verticalSections: verticalSections
+		sharpLines:true,
+		timestampFormatter:SmoothieChart.timeFormatter
 	}
 });
 smoothie.streamTo(VisualObject.getElementById('mycanvas'), 1000);

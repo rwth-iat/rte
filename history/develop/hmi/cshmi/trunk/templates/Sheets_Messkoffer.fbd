@@ -128,7 +128,7 @@
       TemplateDefinition : INPUT STRING = "xtdiagram";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[2] : INPUT STRING = {"data1:/TechUnits/fielddevices/mechanic/inductive.Pv" , "data2:/TechUnits/fielddevices/mechanic/eddy_current.Pv"};
-      ConfigValues[6] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "labelColor:white" , "cycTime:0.5" , "verticalSections:TRUE"};
+      ConfigValues[4] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "cycTime:0.5"};
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -252,7 +252,7 @@
       TemplateDefinition : INPUT STRING = "xtdiagram";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[3] : INPUT STRING = {"data1:/TechUnits/fielddevices/level/ultrasonic.Pv" , "data2:/TechUnits/fielddevices/level/capacitive.Pv" , "data3:/TechUnits/fielddevices/level/hydrostatic.Pv"};
-      ConfigValues[6] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "labelColor:white" , "cycTime:0.5" , "verticalSections:TRUE"};
+      ConfigValues[4] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "cycTime:0.5"};
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -376,7 +376,7 @@
       TemplateDefinition : INPUT STRING = "xtdiagram";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[2] : INPUT STRING = {"data1:/TechUnits/fielddevices/pressure/relative_pressure.Pv" , "data2:/TechUnits/fielddevices/pressure/hydrostatic.Pv"};
-      ConfigValues[6] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "labelColor:white" , "cycTime:0.5" , "verticalSections:TRUE"};
+      ConfigValues[5] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "labelColor:white" , "cycTime:0.5"};
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -500,7 +500,7 @@
       TemplateDefinition : INPUT STRING = "xtdiagram";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[3] : INPUT STRING = {"data1:/TechUnits/fielddevices/temperature/pt100.Pv" , "data2:/TechUnits/fielddevices/temperature/type_k.Pv" , "data3:/TechUnits/fielddevices/temperature/pyrometer.Pv"};
-      ConfigValues[6] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "labelColor:white" , "cycTime:0.5" , "verticalSections:TRUE"};
+      ConfigValues[4] : INPUT STRING = {"minValue:0" , "maxValue:100" , "velocity:10" , "cycTime:0.5"};
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;

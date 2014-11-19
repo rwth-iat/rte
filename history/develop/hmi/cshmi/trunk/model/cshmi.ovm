@@ -559,8 +559,8 @@ LIBRARY cshmi
 				COMMENT = "name of the persistent global variable (survives reloading)";
 			OperatorInput : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1')";
-			TemplateFBReferenceVariable : STRING HAS_SET_ACCESSOR
+				COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1'";
+			TemplateFBReferenceVariable : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "name of a variable of a referenced FB object, example 'IN1' or 'CSHMIfullqualifiedname' for the full name of the FBref, a suffix to the FBRef (with '/subobject') or 'CSHMIfullqualifiedparentname', 'CSHMIabsolutepathname' and 'CSHMIabsoluteparentpathname' does not include host and Server (which would be 'CSHMIHostServer')";
 			TemplateFBVariableReferenceName : STRING
@@ -705,10 +705,10 @@ LIBRARY cshmi
 				INITIALVALUE = 0.0;
 			maxTemplatesPerDirection : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "'x:3'' will paint three Templates horizontal and then reset x position, but adds the yOffset; same for y:3";
+				COMMENT = "'x:3' will paint three Templates horizontal and then reset x position, but adds the yOffset; same for y:3";
 			FBReference[] : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Probably 'OP_NAME'' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
+				COMMENT = "Probably 'OP_NAME' for the iteratedChild, path of the Reference object"; // (multiple values possible, when named as pump47:/TechUnits/Pump47)
 			FBVariableReference[] : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "Probably 'myVar:OP_NAME', path of a named reference variable object";
@@ -985,6 +985,7 @@ LIBRARY cshmi
 			asJSON	: STRING
 				IS_DERIVED
 				HAS_GET_ACCESSOR
+				FLAGS	=	"v"
 				COMMENT = "get the application as JSON";
 			ApplicationCache	:	C_TYPE	<CSHMI_CLASSCACHE>
 				COMMENT	=	"cached information (Strings in the heap mem)";
