@@ -79,7 +79,7 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return OV_ERR_HEAPOUTOFMEMORY;
     }
 
-    snprintf(msgIdentifier, sizeof(msgPrefix) + 11, "%s%lu", msgPrefix, pobj->v_msgsInQueue);
+    snprintf(msgIdentifier, sizeof(msgPrefix) + 11, "%s%u", msgPrefix, pobj->v_msgsInQueue);
     result = Ov_CreateObject(MessageSys_Message, pMsg, pobj, msgIdentifier);
     if(Ov_Fail(result))
     {
@@ -132,15 +132,9 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return result;
     }
 
-    result = MessageSys_Message_sendBy_set(pMsg, 2);	/*	send via ks-setvar	*/
-    if(Ov_Fail(result))
-    {
-    	Ov_DeleteObject(pMsg);
-    	ov_memstack_unlock();
-    	return result;
-    }
+    pMsg->v_sendBy = MSG_SEND_KSSETVAR;	/*	send via ks-setvar	*/
 
-    /*	generic party set, now build the body	*/
+    /*	generic part set, now build the body	*/
 
     values.value[0] = value;
     command = strchr(value, ';')+1;
@@ -158,7 +152,7 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     }
 
 
- /*   ov_logfile_debug("length: %lu\nmessageBody:\n%s\n", tempctr, msgBody);	*/
+//    ov_logfile_debug("length: %lu\nmessageBody:\n%s\n", tempctr, msgBody);
 
     result = MessageSys_Message_msgBody_set(pMsg, msgBody);
     if(Ov_Fail(result))
@@ -183,7 +177,6 @@ OV_DLLFNCEXPORT void PCMsgCreator_msgCreator_typemethod(
     OV_INSTPTR_PCMsgCreator_msgCreator pinst = Ov_StaticPtrCast(PCMsgCreator_msgCreator, pfb);
     OV_INSTPTR_MessageSys_Message pMsg = NULL;
     OV_INSTPTR_MessageSys_MsgDelivery pMsgDelivery = NULL;
-
 
     Ov_ForEachChildEx(ov_containment, pinst, pMsg, MessageSys_Message)
     {
