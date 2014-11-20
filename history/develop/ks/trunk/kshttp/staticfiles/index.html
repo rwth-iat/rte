@@ -84,9 +84,10 @@
 		example: <code>/getVar?format=ksx&amp;path=/vendor/database_free</code><br>
 		example: <code>/getVar?format=ksx&amp;path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
 		<h2>SetVar</h2>
-		<p>Sets one or multiple Variables.</p>
+		<p>Sets one or multiple Variables. Note: The indexes of the parts are not relevant, only the order matters (second newvalue will be written into the second path).</p>
 		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
-		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[1]=1</code>
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[2]=1</code><br>
+		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;newvalue[0]=3.2&amp;path[1]=/TechUnits/add2.IN1&amp;newvalue[1]=2&amp;path[2]=.IN2&amp;newvalue[2]=1</code>
 		<h2>GetEP</h2>
 		<p>Gets the engineering properties of an object. Can give all childrens with the parameter <code>requestType</code>(default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</p>
 		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
