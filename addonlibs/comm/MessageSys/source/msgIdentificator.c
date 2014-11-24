@@ -118,7 +118,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgIdentificator_createClientHandler (
 	do {
 		pMsgHandler = NULL;
 		namecounter++;
-		sprintf(CHNameBuffer, "MsgHandler%lu", namecounter);
+		sprintf(CHNameBuffer, "MsgHandler%" OV_PRINT_UINT, namecounter);
 		pMsgHandler	= (OV_INSTPTR_MessageSys_msgHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
 	} while (pMsgHandler);
 

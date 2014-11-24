@@ -147,21 +147,6 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_constructor(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void MessageSys_MsgDelivery_startup(
-
-		OV_INSTPTR_ov_object 	pobj
-
-) {
-
-	OV_INSTPTR_ksapi_setVar setVar =  NULL;
-	OV_STRING tmpPath = NULL;
-
-	ov_string_print(&tmpPath, "%s",SENDINGINSTANCE);
-	setVar = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(tmpPath,2);
-
-	ov_string_setvalue(&tmpPath, NULL);
-}
-
 OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 		OV_INSTPTR_ksbase_ComTask       pfb
 ) {

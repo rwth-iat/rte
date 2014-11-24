@@ -35,7 +35,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_createAnonymousObject(OV_INSTPTR_ov_class p
 	}
 
 	do{
-		sprintf(tmpName, "%s_%lu",identifier,i);
+		sprintf(tmpName, "%s_%" OV_PRINT_UINT,identifier,i);
 		result = ov_class_createobject(pClass, pParent, tmpName, OV_PMH_DEFAULT, NULL, NULL, NULL, pObj);
 		if(Ov_OK(result))
 			break;	/*	finished, leave the loop	*/
