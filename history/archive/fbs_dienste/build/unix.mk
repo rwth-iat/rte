@@ -188,7 +188,7 @@ fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 	$(CXX_COMPILE) -o $@ $<
 
 fb_dbcommands$(EXE) : fb_dbcommands.o templ_for_exec.o
-	$(CXX_LINK) -static -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
+	$(CXX_LINK) -static -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -static-libstdc++ -static-libgcc -lstdc++ $(WINDOWS_LIBS)
 	strip --strip-debug fb_dbcommands$(EXE)
 
 fb_init.o : $(SOURCE_DIR)fb_init.cpp
