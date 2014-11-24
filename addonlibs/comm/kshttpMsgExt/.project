@@ -3,6 +3,8 @@
 	<name>kshttpMsgExt</name>
 	<comment></comment>
 	<projects>
+		<project>kshttp</project>
+		<project>MessageSys</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -130,7 +130,7 @@ function startGetServerIteration(evt){
 			for (var i = 0; i < ServerInstances.length; i++){
 				if(ServerInstances[i].tagName == "DomainEngProps" 
 					&& ServerInstances[i].getElementsByTagName("identifier")[0]){
-					var servername = ServerInstances[i].getElementsByTagName("identifier")[0].innerHTML;
+					var servername = ServerInstances[i].getElementsByTagName("identifier")[0].textContent;
 					var option = document.createElement("option");
 					option.value = servername;
 					option.text = servername;

@@ -25,6 +25,8 @@
 #undef ov_library_open_kshttpMsgExt
 #endif
 
+OV_RESULT kshttpMsgExt_include_localfiles(OV_INSTPTR_ov_domain pstaticfiles);
+
 /*
 * This function will be called, when the library is loaded.
 * It could generate components and initializes the startup procedure
