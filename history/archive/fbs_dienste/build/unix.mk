@@ -189,7 +189,7 @@ fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 
 #static for windows build. Feed free to bugfix the static linking for unix, too.
 fb_dbcommands$(EXE) : fb_dbcommands.o templ_for_exec.o
-ifeq (SYSTEM, NT)
+ifeq ($(SYSTEM), NT)
 	$(CXX_LINK) -static -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
 else
 	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
