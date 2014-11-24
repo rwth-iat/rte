@@ -187,8 +187,14 @@ fb_dbload$(EXE) : fb_dbload.o templ_for_exec.o
 fb_dbcommands.o : $(SOURCE_DIR)dbcommands.cpp
 	$(CXX_COMPILE) -o $@ $<
 
+#static for windows build. Feed free to bugfix the static linking for unix, too.
 fb_dbcommands$(EXE) : fb_dbcommands.o templ_for_exec.o
-	$(CXX_LINK) -static -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -static-libstdc++ -static-libgcc -lstdc++ $(WINDOWS_LIBS)
+ifeq (SYSTEM, NT)
+	$(CXX_LINK) -static -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
+else
+	$(CXX_LINK) -o $@ $^ $(DIENST_LIB) $(ACPLTKS_LIBS) -lstdc++ $(WINDOWS_LIBS)
+endif
+
 	strip --strip-debug fb_dbcommands$(EXE)
 
 fb_init.o : $(SOURCE_DIR)fb_init.cpp
