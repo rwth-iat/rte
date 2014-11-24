@@ -372,7 +372,7 @@ proc build_acplt_mingw {} {
 	global build_dbcommands
 	
 	if {$build_dbcommands == 1} {
-		print_msg "Building oncrpc"
+		print_msg "Building oncrpc for fb_dbcommands"
 		cd $builddir/oncrpc/
 		execute makemingw.bat
 		#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
@@ -456,10 +456,10 @@ proc install_dir {dir} {
 		set libfiles [concat [glob -nocomplain $dir/*.lib $dir/*.a]]
 	}
 	foreach file $binfiles {
-	file copy -force $file $builddir/bin
+		file copy -force $file $builddir/bin
 	}
 	foreach file $libfiles {
-	file copy -force $file $builddir/lib
+		file copy -force $file $builddir/lib
 	}
 	# execute make -C $dir install
 } 
@@ -469,9 +469,6 @@ proc install_acplt { target } {
 	global build_dbcommands
 	
 	if {$build_dbcommands == 1} {
-		install_dir $builddir/oncrpc/bin
-		install_dir $builddir/base/plt/build/$target
-		install_dir $builddir/base/ks/build/$target
 		#install solely fb_dbcommands executable
 		if { $target == "linux" } then {
 			file copy -force $builddir/base/fbs_dienste/build/$target/fb_dbcommands $builddir/bin
@@ -720,9 +717,6 @@ proc create_release {} {
 	foreach file $libfiles {
 		file copy -force $file $releasedir/system/sysdevbase/ov/lib/
 	}
-	if { $os == "nt" && $build_dbcommands == 1 } then {
-		file copy -force "$builddir/lib/oncrpc$lib" $releasedir/system/sysdevbase/ov/lib/
-	}
 	#model dir
 	file mkdir $releasedir/system/sysdevbase/ov/model
 	set libfiles [concat [glob -nocomplain $builddir/base/ov/model/ov.*]]
@@ -733,18 +727,6 @@ proc create_release {} {
 	#file mkdir $releasedir/database
 	#include dir
 	file mkdir $releasedir/system/sysdevbase/ov/include
-	if {$build_dbcommands == 1} {
-		file mkdir $releasedir/system/sysdevbase/ov/include/ks
-		copy_wildcard $builddir/base/ks/include/ks/*.h $releasedir/system/sysdevbase/ov/include/ks
-		file mkdir $releasedir/system/sysdevbase/ov/include/plt
-		copy_wildcard $builddir/base/plt/include/plt/*.h $releasedir/system/sysdevbase/ov/include/plt
-		if { $os == "nt" } then {
-			file mkdir $releasedir/system/sysdevbase/ov/include/rpc
-			copy_wildcard $builddir/oncrpc/rpc/*.h $releasedir/system/sysdevbase/ov/include/rpc
-		}
-		file mkdir $releasedir/system/sysdevbase/ov/include/libovks
-		copy_wildcard $builddir/base/ov/include/libovks/*.h $releasedir/system/sysdevbase/ov/include/libovks
-	}
 	file mkdir $releasedir/system/sysdevbase/ov/include/libov
 	copy_wildcard $builddir/base/ov/include/libov/*.h $releasedir/system/sysdevbase/ov/include/libov
 	#user dir
@@ -807,8 +789,6 @@ proc create_systools_and_servers {} {
 		file delete $releasedir/servers/ov_server.conf.example
 	}
 	
-
-
 	#including sys tools
 	cd $releasedir/system
 	checkout_lib {systools}
@@ -817,11 +797,6 @@ proc create_systools_and_servers {} {
 	
 	#serverstarttools
 	checkout_lib {base_serverstarttools}
-	if { $os == "nt" } then {
-	
-		file copy $releasedir/system/base_serverstarttools/libstdc++-6.dll $releasedir/system/syslibs/libstdc++-6.dll
-	
-	}
 	set files [glob -nocomplain $releasedir/system/base_serverstarttools/*$batsuffix]
 	foreach f $files {
 		file copy $f $releasedir/servers/MANAGER/

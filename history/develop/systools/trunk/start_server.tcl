@@ -78,11 +78,11 @@ set env(PATH) "${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/addonl
 #  Setzen des LD_LIBRATY_PATH fuer linux
 #
 if {$tcl_platform(os) == "Linux"} then {
-   if {[info exists env(LD_LIBRARY_PATH)]} {
-         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/syslibs;$env(LD_LIBRARY_PATH)"
-   } else {
-         set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/syslibs"
-   }
+	if {[info exists env(LD_LIBRARY_PATH)]} {
+		set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/syslibs;$env(LD_LIBRARY_PATH)"
+	} else {
+		set env(LD_LIBRARY_PATH) "${THISACPLTSYSTEM}/system/addonlibs;${THISACPLTSYSTEM}/system/sysbin;${THISACPLTSYSTEM}/system/syslibs"
+	}
 }
 
 #
@@ -200,7 +200,7 @@ while {$k<1} {
 		#
 		#  Auswahl des Templateordners
 		#
-		puts "please enter the groupnumber"  
+		puts "please enter the groupnumber"
 		gets stdin DIRNUMBER
 		# Templatenummer prüfen
 		if {[>= ${DIRNUMBER} $i] == 1} {
@@ -218,7 +218,7 @@ while {$k<1} {
 		foreach item $content2 {
 			set out "-  "
 			append out $item
-			puts "$out laden ? (j/n) \n"
+			puts "$out laden ? (j/N)"
 			gets stdin JN
 			if {[| [eq ${JN} J] [eq ${JN} j]] == 0} {
 				continue
@@ -263,11 +263,13 @@ while {$k<1} {
 			gets stdin MODELNUMBER
 			# Modellnummer prüfen
 			if {[>= ${MODELNUMBER} $i] == 1} {
-			puts "number not allowed"
-			continue}
+				puts "number not allowed"
+				continue
+			}
 			if {[< ${MODELNUMBER} 1] == 1} {
-			puts "number not allowed"
-			continue}
+				puts "number not allowed"
+				continue
+			}
 			# Name des gewählten Modells bestimmen
 			set MODELNAME [lindex $content1 ${MODELNUMBER}-1]
 			set LOADFILE "${MODELDIR}/${MODELNAME}"
