@@ -38,59 +38,117 @@
 				<select id="idServersSelect" size="10" style="width:150px">
 				</select>
 			</span> <br/>
-			<fieldset id="idSVCFieldset" style="display:none;" style="width:800px">
-				<table id="idServiceInfo" border="0" style="width:800px" class="fixed">
-					<col width="160px" />
-					<col width="150px" />
-					<col width="480px" />
-					<tr>
-						<th>Available (registered) System Services</th>
-						<th>ServiceType</th>		
-						<th>Description</th>
-					</tr>
-					<tr>
-						<td>
-							<span id="idServices">
-								<select id="idServiceSelect" size="10" style="width:150px"></select>
-							</span>
-						</td>
-						<td id="idServiceType"></td>
-						<td id="idServiceDesciption"></td>
-					</tr>
-				</table> 
-				<p id="idOperationField" style="display:none;">
-					<table id="idOperationInfo" border="0" style="width:800px" class="fixed">
-						<col width="160px" />
-						<col width="630px" />
-						<tr>
-							<th>Registered operations of service <b id="idOutputServiceName"></b></th>
-							<th>Operation Documentation</th>		
-						</tr>
-						<tr>
-							<td>
-								<span id="idOperations">
-									<select id="idOperationsSelect" size="10" style="width:150px"></select>
-								</span>
-							</td>
-							<td id="idOperationDocumentation"></td>
-						</tr>
-					</table> 
-				</p>
-				<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
-				Parameters of operation <b id="idOutputOperationName"></b><br/>
-				<b>Inputs:</b><br/>
-				<table id="idInParameters" border="0" style="width:800px">
-				</table> 
-				<b>Outputs:</b><br/>
-				<table id="idOutParameters" border="0" style="width:800px">
-				</table> 
-				</fieldset> <br/>
-					<input type="submit" id="idSubmitbutton" value="Send Request"> <br/>
-			</fieldset>
+			<table id="idServiceInfo" border="0" style="width:1600px" class="fixed">
+				<col width="800px" />
+				<col width="800px" />
+				<tr>
+					<td valign="top">
+						<fieldset id="idSVCFieldset" style="display:none;" style="width:800px">
+							<table id="idServiceInfo" border="0" style="width:800px" class="fixed">
+								<col width="160px" />
+								<col width="150px" />
+								<col width="480px" />
+								<tr>
+									<th>Available (registered) System Services</th>
+									<th>ServiceType</th>		
+									<th>Description</th>
+								</tr>
+								<tr>
+									<td>
+										<span id="idServices">
+											<select id="idServiceSelect" size="10" style="width:150px"></select>
+										</span>
+									</td>
+									<td id="idServiceType"></td>
+									<td id="idServiceDesciption"></td>
+								</tr>
+							</table> 
+							<p id="idOperationField" style="display:none;">
+								<table id="idOperationInfo" border="0" style="width:800px" class="fixed">
+									<col width="160px" />
+									<col width="630px" />
+									<tr>
+										<th>Registered operations of service <b id="idOutputServiceName"></b></th>
+										<th>Operation Documentation</th>		
+									</tr>
+									<tr>
+										<td>
+											<span id="idOperations">
+												<select id="idOperationsSelect" size="10" style="width:150px"></select>
+											</span>
+										</td>
+										<td id="idOperationDocumentation"></td>
+									</tr>
+								</table> 
+							</p>
+							<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
+							Parameters of operation <b id="idOutputOperationName"></b><br/>
+							<b>Inputs:</b><br/>
+							<table id="idInParameters" border="0" style="width:800px">
+							</table> 
+							<b>Outputs:</b><br/>
+							<table id="idOutParameters" border="0" style="width:800px">
+							</table> 
+							</fieldset> <br/>
+						</fieldset>
+						<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
+							Parameters of operation <b id="idOutputOperationName"></b><br/>
+							<b>Inputs:</b><br/>
+							<table id="idInParameters" border="0" style="width:800px">
+							</table> 
+							<b>Outputs:</b><br/>
+							<table id="idOutParameters" border="0" style="width:800px">
+							</table> 
+						</fieldset> 
+						<p id="idNoServiceAvailable" style="display:inline;">
+							No registered Service provider available on this server.<br/>
+						</p> <br/>
+					</td>
+					<td valign="top">
+						<fieldset id="idPCFieldset" style="display:none;" style="width:800px">
+							<table id="idPCUsInfo" border="0" style="width:800px" class="fixed">
+								<tr>
+									<th width="300px">Available PCInboxes</th>
+									<th width="200px">Available Operations</th>		
+									<th width="300px">Parameters</th>
+								</tr>
+								<tr>
+									<td>
+										<span id="idPCUSpan">
+											<select id="idPCUSelect" size="10" style="width:150px"></select>
+										</span>
+									</td>
+									<td>
+										<span id="idPCUoperationSpan">
+											<select id="idPCUOperationSelect" size="10" style="width:150px"></select>
+										</span>
+									</td>
+									<td>
+										<b>ControllerName</b><br/>
+										<input id="idPCUController" value="OP" placeholder="OP" style="width:300px"><br/>
+										<b>Value</b><br/>
+										<input id="idPCUParameter" value="0" placeholder="Parameter Value" style="width:300px">
+									</td>
+								</tr>
+							</table> 
+							<b>Occupier</b><br/>
+							<input id="idPCUCurrOcc" readonly value="" placeholder="current Occupier" style="width:400px"><br/>
+							<b>WorkingState</b><br/>
+							<input id="idPCUWoSt" readonly value="" placeholder="current Working State" style="width:400px"><br/>
+							<b>Error</b><br/>
+							<input id="idPCUErrSt" readonly value="" placeholder="current Error (if available)" style="width:400px"><br/>
+							<b>Function mode</b><br/>
+							<input id="idPCUFunctionMode" readonly value="" placeholder="current function mode (if available)" style="width:400px"><br/>
+							<br/>
+						</fieldset>
+						<p id="idNoPCUsAvailable" style="display:inline;">
+							No service enabled process control units available on this server.<br/>
+						</p> <br/>
+					</td>
+				</tr>
+			</table>
 			<br/>
-			<p id="idNoServiceAvailable" style="display:inline;">
-				No registered Service provider available on this server.<br/>
-			</p> <br/>
+			<input type="submit" id="idSubmitbutton" value="Send Request"> <br/>
 			<textarea readonly id="idResponseOutput" rows="10" wrap="soft" style="width:800px">Reply will be displayed here</textarea>
 		</form>
 		<script type="text/javascript" src="MessageBase.js"></script>

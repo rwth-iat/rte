@@ -17,8 +17,23 @@ var ParamsOfOperation = document.getElementById("idOutputOperationName");
 var InParamsTable = document.getElementById("idInParameters");
 var OutParamsTable = document.getElementById("idOutParameters");
 
+
+var PCFiledset = document.getElementById("idPCFieldset");
+var noPCParagraph = document.getElementById("idNoPCUsAvailable");
+var PCUSelect = document.getElementById("idPCUSelect");
+var PCUOperationSelect = document.getElementById("idPCUOperationSelect");
+var PCUParameter = document.getElementById("idPCUParameter");
+var PCUController = document.getElementById("idPCUController");
+var PCUCurrOcc = document.getElementById("idPCUCurrOcc");
+var PCUCurrWoSt = document.getElementById("idPCUWoSt");
+var PCUCurrError = document.getElementById("idPCUErrSt");
+var PCUCurrFM = document.getElementById("idPCUFunctionMode");
+
+
 var HostUrl;
 var HostName;
+var requestSystemService = false;
+var requestPCService = false;
 var ServerInstances;
 var ServerIterator;
 var Services;
@@ -33,6 +48,7 @@ var inTypes;
 var outParameters;
 var outParamIds;
 var outTypes;
+var PCInboxClassPath;
 
 
 window.onload = preparePage;
@@ -46,10 +62,26 @@ ServerList.onchange = checkServiceProvider;
 ServiceList.onchange = displayServiceData;
 OperationList.onchange = displayOperationData;
 
+PCUSelect.onchange = function(){
+	getDataFromPfPCU();
+	checkPCUoperations();
+	PCUCurrFM.disabled = true;
+	PCUCurrFM.value = "N/A";
+	PCUCurrError.disabled = true;
+	PCUCurrError.value = "N/A";
+	PCUCurrOcc.disabled = true;
+	PCUCurrOcc.value = "N/A";
+	PCUCurrWoSt.disabled = true;
+	PCUCurrWoSt.value = "N/A";}
+	
+PCUOperationSelect.onchange = function(){
+	requestSystemService = false;
+	requestPCService = true;
+	Submitbutton.disabled = false;};
 
 function emptySelect(sel){
-	while(sel.length > 0){
-	sel.remove(sel.length-1);
+	while(sel.firstChild){
+	sel.removeChild(sel.firstChild);
 	}
 }
 
@@ -57,6 +89,14 @@ function preparePage(){
 	UrlInput.value = document.location.hostname;
 	caluclateHostUrl();
 	getServers();
+	PCUCurrFM.disabled = true;
+	PCUCurrFM.value = "N/A";
+	PCUCurrError.disabled = true;
+	PCUCurrError.value = "N/A";
+	PCUCurrOcc.disabled = true;
+	PCUCurrOcc.value = "N/A";
+	PCUCurrWoSt.disabled = true;
+	PCUCurrWoSt.value = "N/A";
 }
 
 function caluclateHostUrl(){
@@ -123,7 +163,7 @@ function startGetServerIteration(evt){
 			for (var i = 0; i < ServerInstances.length; i++){
 				if(ServerInstances[i].tagName == "DomainEngProps" 
 					&& ServerInstances[i].getElementsByTagName("identifier")[0]){
-					var servername = ServerInstances[i].getElementsByTagName("identifier")[0].innerHTML;
+					var servername = ServerInstances[i].getElementsByTagName("identifier")[0].textContent;
 					var option = document.createElement("option");
 					option.value = servername;
 					option.text = servername;
@@ -174,7 +214,7 @@ function GetNextServer(evt){
 				xmlResponse.async = false;
 				xmlResponse.loadXML(req.responseText);
 			} 
-			var port = xmlResponse.getElementsByTagName("port")[0].innerHTML;
+			var port = xmlResponse.getElementsByTagName("port")[0].textContent;
 			if(port){
 				ServerList.options[ServerIterator].value = port;
 				ServerList.options[ServerIterator].disabled = false;
@@ -247,25 +287,54 @@ function handleResponseCheckprovider(evt){
 			} 
 			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
 			var Instances = baseGetVar.childNodes;
+			var foundServiceProvider = false;
+			var foundPCInbox = false;
+			ResponseOutput.innerHTML = "";
 			for (var i = 0; i < Instances.length; i++){
 				if(Instances[i].tagName == "string"){
-					if(Instances[i].innerHTML.match(/ServiceProvider\/API/)){
-						ResponseOutput.innerHTML = "ServiceProvider available!";
+					if(!foundServiceProvider && Instances[i].textContent.match(/ServiceProvider\/API/)){
+						ResponseOutput.innerHTML += "ServiceProvider available!\n";
 						ServiceFieldSet.style.display = "inline";
 						NoProviderParagraph.style.display = "none";
 						ParametersFieldset.style.display = "none";
 						Submitbutton.disabled = true;
 						emptySelect(ServiceList);
 						getServicesOfProvider();
-						return;
+						foundServiceProvider = true;
+						if(foundServiceProvider && foundPCInbox){
+							return;
+						}
+						continue;
+					}
+					if(!foundPCInbox && Instances[i].textContent.match(/PCMsgParser\/PCInbox/)){
+						PCInboxClassPath = Instances[i].textContent;
+						ResponseOutput.innerHTML += "PCInboxes available!\n";
+						PCFiledset.style.display = "inline";
+						noPCParagraph.style.display = "none";
+						Submitbutton.disabled = true;
+						emptySelect(ServiceList);
+						getPCInboxes();
+						foundPCInbox = true;
+						if(foundServiceProvider && foundPCInbox){
+							return;
+						}
+						continue;
 					}
 				}
 			}
-				ResponseOutput.innerHTML = "ServiceProvider NOT available!";
-				ServiceFieldSet.style.display = "none";
-				NoProviderParagraph.style.display = "inline";
-				ParametersFieldset.style.display = "none";
-				Submitbutton.disabled = true;
+				if(!foundServiceProvider){
+					ResponseOutput.innerHTML += "ServiceProvider NOT available!\n";
+					ServiceFieldSet.style.display = "none";
+					NoProviderParagraph.style.display = "inline";
+					ParametersFieldset.style.display = "none";
+					Submitbutton.disabled = true;
+				}
+				if(!foundPCInbox){
+					ResponseOutput.innerHTML += "NO PCInboxes available!\n";
+					PCFiledset.style.display = "none";
+					noPCParagraph.style.display = "inline";
+					Submitbutton.disabled = true;
+				}
 		} else {
 			ResponseOutput.innerHTML = "error";
 		}
@@ -320,10 +389,10 @@ function handleResponsegetServices(evt){
 			emptySelect(ServiceList);
 			try{
 				var Body = xmlResponse.getElementsByTagName("bdy")[0];
-				var servicesString = Body.getElementsByTagName("val")[0].innerHTML;
-				var serviceTypesString = Body.getElementsByTagName("val")[1].innerHTML;
-				var isActiveString = Body.getElementsByTagName("val")[2].innerHTML;
-				var DefinitionsString = Body.getElementsByTagName("val")[3].innerHTML;
+				var servicesString = Body.getElementsByTagName("val")[0].textContent;
+				var serviceTypesString = Body.getElementsByTagName("val")[1].textContent;
+				var isActiveString = Body.getElementsByTagName("val")[2].textContent;
+				var DefinitionsString = Body.getElementsByTagName("val")[3].textContent;
 				var servicesList = servicesString.split(";");
 				var serviceTypesList = serviceTypesString.split(";");
 				var isActiveList = isActiveString.split(";");
@@ -404,8 +473,8 @@ function handleResponseGetOperations(evt){
 			emptySelect(OperationList);
 			try{
 				var Body = xmlResponse.getElementsByTagName("bdy")[0];
-				var operationsString = Body.getElementsByTagName("val")[0].innerHTML;
-				var operationDocumentationsString = Body.getElementsByTagName("val")[1].innerHTML;
+				var operationsString = Body.getElementsByTagName("val")[0].textContent;
+				var operationDocumentationsString = Body.getElementsByTagName("val")[1].textContent;
 				var operationsList = operationsString.split(";");
 				var documentationsList = operationDocumentationsString.split(";");
 				
@@ -429,6 +498,8 @@ function handleResponseGetOperations(evt){
 function displayOperationData(){
 	OperationField.style.display = "inline";
 	ParametersFieldset.style.display = "none";
+	requestSystemService = true;
+	requestPCService = false;
 	Submitbutton.disabled = false;
 	OperationDocumentation.innerHTML = OperationDocumentations[OperationList.options.selectedIndex];
 	ParamsOfOperation.innerHTML = Operations[OperationList.options.selectedIndex];
@@ -484,10 +555,10 @@ function handleResponseGetParameters(evt){
 			outTypes = new Array();
 			try{
 				var Body = xmlResponse.getElementsByTagName("bdy")[0];
-				var inParametersString = Body.getElementsByTagName("val")[0].innerHTML;
-				var inTypesString = Body.getElementsByTagName("val")[1].innerHTML;
-				var outParametersString = Body.getElementsByTagName("val")[2].innerHTML;
-				var outTypesString = Body.getElementsByTagName("val")[3].innerHTML;
+				var inParametersString = Body.getElementsByTagName("val")[0].textContent;
+				var inTypesString = Body.getElementsByTagName("val")[1].textContent;
+				var outParametersString = Body.getElementsByTagName("val")[2].textContent;
+				var outTypesString = Body.getElementsByTagName("val")[3].textContent;
 				var inParametersList = inParametersString.split(";");
 				var inTypesList = inTypesString.split(";");
 				var outParametersList = outParametersString.split(";");
@@ -540,6 +611,8 @@ function handleResponseGetParameters(evt){
 					}
 				}
 				ParametersFieldset.style.display = "inline";
+				requestSystemService = false;
+				requestPCService = true;
 				Submitbutton.disabled = false;
 			} catch(err){
 				ResponseOutput.innerHTML = "error getting parameters: "+err;
@@ -552,30 +625,48 @@ function handleResponseGetParameters(evt){
 
 
 Submitbutton.onclick = document.getElementsByTagName("form")[0].onsubmit = function(evt){
-	if(!HostName || !ServerList.options[ServerList.options.selectedIndex].value || !ServiceList.options[ServiceList.options.selectedIndex].value || !OperationList.options[OperationList.options.selectedIndex].value){
-		return;
+	if(!HostName || !ServerList.options[ServerList.options.selectedIndex].value){
+		return false;
 	}
-	var MessageDoc = CreateGenericServiceCall(HostName, ServerList.options[ServerList.options.selectedIndex].value, ServiceList.options[ServiceList.options.selectedIndex].value,
-	ServiceList.options[ServiceList.options.selectedIndex].value, OperationList.options[OperationList.options.selectedIndex].value);
-	var sd = AddStructData(MessageDoc, MessageDoc.Body, "ServiceRequest")
-	for(i in inParamIds){
-		AddValue(MessageDoc, sd, inParameters[i], inParamIds[i].value, null)
+	if(requestSystemService){
+		if(!ServiceList.options[ServiceList.options.selectedIndex].value || !OperationList.options[OperationList.options.selectedIndex].value){
+			return false;
+		}
+		var MessageDoc = CreateGenericServiceCall(HostName, ServerList.options[ServerList.options.selectedIndex].value, ServiceList.options[ServiceList.options.selectedIndex].value,
+		ServiceList.options[ServiceList.options.selectedIndex].value, OperationList.options[OperationList.options.selectedIndex].value);
+		var sd = AddStructData(MessageDoc, MessageDoc.Body, "ServiceRequest")
+		for(i in inParamIds){
+			AddValue(MessageDoc, sd, inParameters[i], inParamIds[i].value, null);
+		}
+	} else if(requestPCService){
+		if(!PCUSelect.options[PCUSelect.options.selectedIndex].value || !PCUOperationSelect.options[PCUOperationSelect.options.selectedIndex].value){
+			return false;
+		}
+		var valueNumber = parseFloat(PCUParameter.value);
+		if(isNaN(valueNumber)){
+			alert("Only numeric values are allowed as parameters!");
+			PCUParameter.focus();
+			return false;
+		}
+		var MessageDoc = CreateGenericServiceCall(HostName, ServerList.options[ServerList.options.selectedIndex].value, PCUSelect.options[PCUSelect.options.selectedIndex].value, "ProcessControl", PCUOperationSelect.options[PCUOperationSelect.options.selectedIndex].value);
+		AddValue(MessageDoc, MessageDoc.Body, "cmdr", PCUController.value, null);
+		AddValue(MessageDoc, MessageDoc.Body, "Value", valueNumber, null);
 	}
 	if (window.XMLHttpRequest)
-	{// code for IE7+, Firefox, Chrome, Opera, Safari
-		var req = new XMLHttpRequest();
-	} else {// code for IE6, IE5
-		var req = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	req.open("POST", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/msg", true);
-	req.onreadystatechange = RequestStatehandler;
-	req.timeout = 10000;
-	try{
-		req.send(getMessageString(MessageDoc));
-	}catch(e){
-		ResponseOutput.innerHTML = "transmit error: "+e;
-	};
-	return false;
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("POST", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/msg", true);
+		req.onreadystatechange = RequestStatehandler;
+		req.timeout = 10000;
+		try{
+			req.send(getMessageString(MessageDoc));
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+		return false;
 };
 
 function RequestStatehandler(evt){
@@ -589,26 +680,28 @@ function RequestStatehandler(evt){
 			ResponseOutput.innerHTML = "The request failed. Timeout?";
 		}
 		if(req.status == 200){
-			if (window.DOMParser) {
-				parser = new DOMParser();
-				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
-			} else // Internet Explorer
-			{
-				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
-				xmlResponse.async = false;
-				xmlResponse.loadXML(req.responseText);
-			} 
-			try{
-				var Body = xmlResponse.getElementsByTagName("bdy")[0];
-				var responseVars = Body.getElementsByTagName("val");
-				for(i in outParamIds){
-					outParamIds[i].value = responseVars[i].innerHTML;
+			if(requestSystemService){
+				if (window.DOMParser) {
+					parser = new DOMParser();
+					xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+				} else // Internet Explorer
+				{
+					xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+					xmlResponse.async = false;
+					xmlResponse.loadXML(req.responseText);
+				} 
+				try{
+					var Body = xmlResponse.getElementsByTagName("bdy")[0];
+					var responseVars = Body.getElementsByTagName("val");
+					for(i in outParamIds){
+						outParamIds[i].value = responseVars[i].textContent;
+					}
+				} catch(err){
+					ResponseOutput.innerHTML = "error parsing service reply: "+err;
 				}
-			} catch(err){
-				ResponseOutput.innerHTML = "error parsing service reply: "+err;
-			}		
-
-
+			} else if(requestPCService){
+				ResponseOutput.innerHTML = req.responseText;
+			}
 			ResponseOutput.style.borderColor = "#8080FF";
 			Submitbutton.style.backgroundColor = "limegreen";
 			Submitbutton.value = "response received";
@@ -623,3 +716,321 @@ function RequestStatehandler(evt){
 		},1500);
 	}
 }
+
+function getPCInboxes(){
+//test servers on url
+	if(HostUrl){
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path=" + PCInboxClassPath + ".instance&format=ksx", true);
+		req.onreadystatechange = handleResponsegetPCInboxes;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+	}
+};
+
+function handleResponsegetPCInboxes(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+		}
+		if(req.status == 200){
+			emptySelect(PCUSelect);
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(req.responseText);
+			} 
+			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
+			var Instances = baseGetVar.childNodes;
+			for (i in Instances){
+				if(Instances[i].tagName == "string"){
+					var splitPath = Instances[i].textContent.split("/");
+					var showPath = "";
+					for(var j = 1; j < splitPath.length - 1; j++){
+						showPath += "/" + splitPath[j];
+					}
+					var option = document.createElement("option");
+					option.value = showPath;
+					option.text = showPath;
+					PCUSelect.add(option);
+				}
+			}			
+		}
+	}
+}
+
+function checkPCUoperations(){
+//test servers on url
+	Submitbutton.disabled = true;
+	if(HostUrl){
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".PossibleCmds&path[1]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + "/possibleCommands.value&format=ksx", true);
+		req.onreadystatechange = handlecheckPCUoperations;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+	}
+};
+
+function handlecheckPCUoperations(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+		}
+		// we will get a 404 since we check pflib PCUs and fc PCUs at the same time. Only one will work
+		if(req.status == 200 || req.status == 404){
+			emptySelect(PCUOperationSelect);
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(req.responseText);
+			} 
+			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
+			if(baseGetVar){
+				var OperationStrings = baseGetVar.childNodes;
+				for (i in OperationStrings){
+					if(OperationStrings[i].tagName == "string"){
+						var option = document.createElement("option");
+						option.value = OperationStrings[i].textContent;
+						option.text = OperationStrings[i].textContent;
+						PCUOperationSelect.add(option);
+					}
+				}
+				var option = document.createElement("option");
+				option.value = "START";
+				option.text = "START";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "STOP";
+				option.text = "STOP";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "OCCUPY";
+				option.text = "OCCUPY";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "FREE";
+				option.text = "FREE";
+				PCUOperationSelect.add(option);
+			}
+		}
+	}
+}
+
+function getDataFromPfPCU(){
+	if(!HostName || !ServerList.options[ServerList.options.selectedIndex].value || !PCUSelect.options[PCUSelect.options.selectedIndex].value){
+		return;
+	}
+	if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.				selectedIndex].value + ".Occupier&path[1]=.WorkingState&path[2]=.FunctionMode&path[3]=.ErrorString&format=ksx", true);
+		req.onreadystatechange = handleResponseGetDataFromPfPCU;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+}
+
+function handleResponseGetDataFromPfPCU(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+			var timeoutID = window.setTimeout(function(){
+					getDataFromPfPCU();
+				},2000);
+		}
+		// we will get a 404 since we check pflib PCUs and fc PCUs at the same time. Only one will work
+		if(req.status == 200){
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(req.responseText);
+			} 
+			var values = xmlResponse.getElementsByTagName("value");
+			if(values.length >= 4){
+				var Children = values[0].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "string"){
+						PCUCurrOcc.value = Children[i].textContent;
+						PCUCurrOcc.disabled = false;
+						break;
+					}
+				}
+				Children = values[1].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "uint"){
+						PCUCurrWoSt.value = Children[i].textContent;
+						PCUCurrWoSt.disabled = false;
+						break;
+					}
+				}
+				Children = values[2].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "string"){
+						PCUCurrFM.value = Children[i].textContent;
+						PCUCurrFM.disabled = false;
+						break;
+					}
+				}
+				Children = values[3].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "stringvec"){
+						var Strings = Children[i].childNodes;
+						var first = true;
+						for(j in Strings){
+							if(Strings[j].tagName == "string"){
+								if(first){
+									PCUCurrError.value = Strings[j].textContent;
+									first = false;
+								} else {
+									PCUCurrError.value += " | " + Strings[j].textContent;
+								}
+							}
+						}
+						PCUCurrError.disabled = false;
+						break;
+					}
+				}
+				var timeoutID = window.setTimeout(function(){
+					getDataFromPfPCU();
+				},1000);
+			}
+		} else if(req.status == 404){
+			var timeoutID = window.setTimeout(function(){
+				getDataFromFcPCU();
+			},1000);
+			return;
+		}
+	}
+}	
+
+
+function getDataFromFcPCU(){
+	if(!HostName || !ServerList.options[ServerList.options.selectedIndex].value || !PCUSelect.options[PCUSelect.options.selectedIndex].value){
+		return;
+	}
+	if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + "/Occupier.value&path[1]=../workingState.value&format=ksx", 				true);
+		req.onreadystatechange = handleResponseGetDataFromFcPCU;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+}
+
+
+function handleResponseGetDataFromFcPCU(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+			var timeoutID = window.setTimeout(function(){
+					getDataFromFcPCU();
+				},2000);
+		}
+		// we will get a 404 since we check pflib PCUs and fc PCUs at the same time. Only one will work
+		if(req.status == 200){
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(req.responseText);
+			} 
+			var values = xmlResponse.getElementsByTagName("value");
+			if(values.length >= 2){
+				var Children = values[0].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "string"){
+						PCUCurrOcc.value = Children[i].textContent;
+						PCUCurrOcc.disabled = false;
+						break;
+					}
+				}
+				Children = values[1].childNodes;
+				for (i in Children){
+					if(Children[i].tagName == "string"){
+						PCUCurrWoSt.value = Children[i].textContent;
+						PCUCurrWoSt.disabled = false;
+						break;
+					}
+				}
+				PCUCurrFM.disabled = true;
+				PCUCurrFM.value = "N/A";
+				PCUCurrError.disabled = true;
+				PCUCurrError.value = "N/A";
+				}
+				var timeoutID = window.setTimeout(function(){
+					getDataFromFcPCU();
+				},1000);
+		} else if(req.status == 404){
+			var timeoutID = window.setTimeout(function(){
+				getDataFromPfPCU();
+			},1000);
+			return;
+		}
+	}
+}	
