@@ -58,10 +58,18 @@ typedef OV_DLLFNCEXPORT void MSGSYS_ARRIVALSERVICE_FNC(
 );
 
 
-typedef OV_DLLVAREXPORT OV_RESULT MSGSYS_FINDSERVICE_FNC(
+typedef OV_DLLFNCEXPORT OV_RESULT MSGSYS_FINDSERVICE_FNC(
 		OV_INSTPTR_ov_object *sobj,
 		const OV_STRING service
 		);
 	
+
+typedef OV_DLLFNCEXPORT OV_RESULT MSGSYS_SENDMSG(
+	OV_INSTPTR_MessageSys_MsgSendExtension pobj,
+	OV_INSTPTR_MessageSys_Message pMsg,
+	OV_STRING headerString
+	);
+
+
 
 #endif

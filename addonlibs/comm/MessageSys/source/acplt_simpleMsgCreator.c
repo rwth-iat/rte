@@ -186,7 +186,7 @@ OV_DLLFNCEXPORT OV_STRING acplt_simpleMsg_generateMsgHeader(ACPLT_MSGHEADER cons
 	}
 	else
 	{
-		snprintf(tempinside, 11, "%lu", msgID);
+		snprintf(tempinside, 11, "%i", msgID);
 		tempinside += strlen(tempinside);
 	}
 	GEN_ADD_CLOSETAG(msgId);

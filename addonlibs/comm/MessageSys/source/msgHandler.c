@@ -64,6 +64,7 @@ OV_DLLFNCEXPORT void MessageSys_msgHandler_shutdown(
 
 OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler this,
+	OV_INSTPTR_ksbase_Channel pChannel,
 	KS_DATAPACKET* dataReceived,
 	KS_DATAPACKET* answer
 ) {
@@ -83,10 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	OV_INSTPTR_ov_domain			pInbox 		=	NULL;
 	OV_ELEMENT						InboxElem;
 	OV_ELEMENT						VarElem;
-	OV_INSTPTR_ksbase_Channel		pChannel	=	NULL;
 	OV_INSTPTR_MessageSys_msgHandler	thisMsgHandler = Ov_StaticPtrCast(MessageSys_msgHandler, this);
-
-	pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 
 	/***********************************************************************************************************************************************************************************************
 	 *	Check if message is complete in buffer. if not, return ERR_OK and wait for a short time. is the message has not arrived completely within a second we assume it is broken
@@ -183,7 +181,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_msgHandler_HandleRequest(
 	MessageSys_parseAndDeliverMsg(msgString, &pNewMessage, &pInbox);
 	if(pNewMessage && pInbox)
 	{/*	fill in additional information	*/
-		pNewMessage->v_sendBy = 0; /*	came directly	*/
+		pNewMessage->v_sendBy = MSG_SEND_DIRECTLY; /*	came directly	*/
 
 		pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
 		if(pChannel)

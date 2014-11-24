@@ -159,23 +159,6 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_msgBody_set(
     return ov_string_setvalue(&pobj->v_msgBody,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_sendBy_set(
-    OV_INSTPTR_MessageSys_Message          pobj,
-    const OV_UINT  value
-) {
-    if(value <= 2)
-    {
-    	//TODO: remove this block as soon as http POST is implemented for Messaging
-    	if(value == 1)
-    		return OV_ERR_BADVALUE;
-    	//TODO: end block
-    	pobj->v_sendBy = value;
-    	return OV_ERR_OK;
-    }
-    else
-    	return OV_ERR_BADVALUE;
-}
-
 OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -199,6 +182,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_Message_constructor(
 
 	//Collect Garbage
 	ov_string_setvalue(&servername,NULL);
+	this->v_sendBy = MSG_SEND_KSSETVAR;
 
     return OV_ERR_OK;
 }

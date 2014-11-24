@@ -77,10 +77,8 @@ CLASS Message : CLASS ov/object
 		msgBody : STRING
 			HAS_ACCESSORS
 			COMMENT	=	"Message Body";
-		sendBy	:	UINT
-			HAS_SET_ACCESSOR
-			COMMENT	=	"Determines sending behaviour: 0: directly; 1: http POST; 2: ks-setvar"
-			INITIALVALUE	=	2;
+		sendBy	:	C_TYPE <MESSAGESYS_SENDBY>
+			COMMENT	=	"Determines sending behaviour: 0: directly; 2: ks-setvar; 16: extension";
 		expectAnswer	:	BOOL
 			COMMENT	=	"TRUE tells MsgDelivery to expect an answer message (keep connection open if possible with protocol)"
 			INITIALVALUE	=	FALSE;
@@ -88,6 +86,13 @@ CLASS Message : CLASS ov/object
 	OPERATIONS
 		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 		getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;
+	END_OPERATIONS;
+END_CLASS;
+
+CLASS	MsgSendExtension	:	CLASS	ksbase/DataHandler
+	COMMENT	=	"Baseclass for Send Extensions. Is a message should be send via an Extension the Message is linked to the Extension Object.";
+	OPERATIONS
+		sendMessage	:	C_FUNCTION <MSGSYS_SENDMSG> IS_ABSTRACT;
 	END_OPERATIONS;
 END_CLASS;
 
@@ -159,5 +164,10 @@ ASSOCIATION Message2Channel : ONE_TO_ONE
     PARENT parMsg : CLASS MessageSys/Message;
  	CHILD chChannel : CLASS ksbase/Channel;
 END_ASSOCIATION;
+	
+ASSOCIATION SendExtension2Message : ONE_TO_MANY
+    PARENT	parSendExt : CLASS MessageSys/MsgSendExtension;
+ 	CHILD	chMsg : CLASS MessageSys/Message;
+END_ASSOCIATION;	
 	
 END_LIBRARY;

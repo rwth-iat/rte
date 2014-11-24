@@ -174,6 +174,8 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 	OV_INSTPTR_ksbase_Channel pChannel = NULL;
 	OV_VTBLPTR_ksbase_Channel pVtblChannel = NULL;
 	OV_INSTPTR_MessageSys_msgHandler pMsgHandler = NULL;
+	OV_INSTPTR_MessageSys_MsgSendExtension	pMsgSendExt	=	NULL;
+	OV_VTBLPTR_MessageSys_MsgSendExtension	pVtblSendExt	=	NULL;
 	OV_ANY value;
 	OV_STRING msgString = NULL;
 	OV_STRING headerString = NULL;
@@ -186,86 +188,64 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 	msg = Ov_GetChild(MessageSys_MsgDelivery2CurrentMessage, this);
 	if(msg){ //Currently we are processing a message, lets see how far we are...
 		if((msg->v_msgStatus != MSGDONE) && (msg->v_msgStatus != MSGRECEIVERERROR)
-				&& (msg->v_msgStatus != MSGFATALERROR))
-		{	/*	still sending / waiting for answer of ks-system	*/
-
-			switch(msg->v_sendBy)
-			{
-			case 0:	/*	send directly	*/
+				&& (msg->v_msgStatus != MSGFATALERROR)){
+			/*	still sending / waiting for answer of ks-system	*/
+			switch(msg->v_sendBy){
+			case MSG_SEND_DIRECTLY:	/*	send directly	*/
 				pChannel = Ov_GetChild(MessageSys_Message2Channel, msg);
-				if(!pChannel || !pChannel->v_outData.length || (pChannel->v_outData.readPT - pChannel->v_outData.data >= pChannel->v_outData.length) || !pChannel->v_ConnectionState)
-				{/*	everything is sent or Channel disappeared or connection is closed	*/
+				if(!pChannel || !pChannel->v_outData.length || (pChannel->v_outData.readPT - pChannel->v_outData.data >= pChannel->v_outData.length) || !pChannel->v_ConnectionState) {
+				/*	everything is sent or Channel disappeared or connection is closed	*/
 					if(!pChannel->v_ConnectionState)
 						Ov_DeleteObject(pChannel);
 					Ov_DeleteObject(msg);
-				}
-				else if(pChannel->v_ConnectionState > 128)
-				{	/*	connection error	*/
+				} else if(pChannel->v_ConnectionState > 128) {	/*	connection error	*/
 					ov_logfile_info("MessageDelivery/typeMethod: Channel indicates error in connection, CurrentMessage wasn't sent");
 					Ov_DeleteObject(msg);
-				}
-				else
-				{	/*	check timeouts	*/
+				} else {	/*	check timeouts	*/
 					ov_time_gettime(&tTemp);
-					if(tTemp.secs > (this->v_sendTime.secs + this->v_sendTimeOut))
-					{
+					if(tTemp.secs > (this->v_sendTime.secs + this->v_sendTimeOut)) {
 						ov_logfile_info("MessageDelivery/typeMethod: Timeout after sending Message, CurrentMessage probably wasn't delivered");
 						Ov_DeleteObject(msg);
 					}
 				}
 				break;
-
-			case 1:	/*	send via http POST	*/
-
-				break;
-
-			case 2:	/*	send via ks-setvar	*/
-			sendingInstance = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(SENDINGINSTANCE,2);
-			if(sendingInstance->v_status == KSAPI_COMMON_REQUESTCOMPLETED)
-			{
-				Ov_DeleteObject(msg);
-			}
-			else if(sendingInstance->v_status == KSAPI_COMMON_INTERNALERROR)
-			{
-				ov_logfile_info("MessageDelivery/typeMethod: An error occured in the sendingprocess, CurrentMessage wasn't sent");
-				Ov_DeleteObject(msg);
-			}
-			else if(sendingInstance->v_status ==KSAPI_COMMON_EXTERNALERROR)
-			{
-				ov_logfile_info("MessageDelivery/typeMethod: Error between ksClient-Object and receiver-side, CurrentMessage wasn't delivered");
-				Ov_DeleteObject(msg);
-			}
-			else if(sendingInstance->v_status == KSAPI_COMMON_WAITINGFORANSWER)
-			{
-				ov_time_gettime(&tTemp);
-				if(tTemp.secs > (this->v_sendTime.secs + this->v_sendTimeOut))
-				{
-					ov_logfile_info("MessageDelivery/typeMethod: Timeout after sending Message, CurrentMessage probably wasn't delivered");
+			case MSG_SEND_KSSETVAR:	/*	send via ks-setvar	*/
+				sendingInstance = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(SENDINGINSTANCE,2);
+				if(sendingInstance->v_status == KSAPI_COMMON_REQUESTCOMPLETED) {
 					Ov_DeleteObject(msg);
+				} else if(sendingInstance->v_status == KSAPI_COMMON_INTERNALERROR) {
+					ov_logfile_info("MessageDelivery/typeMethod: An error occured in the sendingprocess, CurrentMessage wasn't sent");
+					Ov_DeleteObject(msg);
+				} else if(sendingInstance->v_status ==KSAPI_COMMON_EXTERNALERROR) {
+					ov_logfile_info("MessageDelivery/typeMethod: Error between ksClient-Object and receiver-side, CurrentMessage wasn't delivered");
+					Ov_DeleteObject(msg);
+				} else if(sendingInstance->v_status == KSAPI_COMMON_WAITINGFORANSWER) {
+					ov_time_gettime(&tTemp);
+					if(tTemp.secs > (this->v_sendTime.secs + this->v_sendTimeOut)) {
+						ov_logfile_info("MessageDelivery/typeMethod: Timeout after sending Message, CurrentMessage probably wasn't delivered");
+						Ov_DeleteObject(msg);
+					}
 				}
-			}
-			break;
-
+				break;
+			case MSG_SEND_EXTENSION:
+				/*	someone else is handling this one --> detach	*/
+					Ov_Unlink(MessageSys_MsgDelivery2CurrentMessage, this, msg);
+					Ov_Unlink(MessageSys_MsgDelivery2Message, this, msg);
+				break;
 			default:
 				ov_logfile_info("MessageDelivery/typeMethod: invalid protocol for Message: %s", msg->v_identifier);
 				Ov_DeleteObject(msg);
 				break;
 			}
-
-		}
-		else
-		{	/*	message is sent or an error occurred -> delte message	*/
+		} else {	/*	message is sent or an error occurred -> delete message	*/
 			Ov_DeleteObject(msg);
 		}
 		return;
-	}
-	else
-	{ // we are NOT currently handling a message - lets see if sth is needs to be done!
+	} else { // we are NOT currently handling a message - lets see if sth is needs to be done!
 		value.value.vartype = OV_VT_VOID;	/*	initialize value	*/
 		value.value.valueunion.val_string = NULL;
 		msg = Ov_GetFirstChild(MessageSys_MsgDelivery2Message, this);
-		if(msg)
-		{
+		if(msg) {
 			result = Ov_Link(MessageSys_MsgDelivery2CurrentMessage, this, msg);
 			if(Ov_Fail(result)){
 				ov_memstack_lock();
@@ -274,32 +254,27 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				//Collecting Garbage
 				return;
 			}
-
 			/*	build message string	*/
 			/*	build header	*/
 			ov_memstack_lock();
 			acplt_simpleMsg_initHeader(&msgHeader);
-			if(!msg->v_receiverAddress || !msg->v_receiverName)
-			{
+			if(!msg->v_receiverAddress || !msg->v_receiverName) {
 				ov_logfile_error("MessageDelivery/typeMethod: receiverAddress or ReceiverName of message %s not set", msg->v_identifier);
 				msg->v_msgStatus = MSGFATALERROR;
 				ov_memstack_unlock();
 				return;
 			}
 			result = ov_string_print(&(msgHeader.rcvSysAdr), "%s:%s", msg->v_receiverAddress, msg->v_receiverName);
-			if(Ov_Fail(result))
-			{
+			if(Ov_Fail(result)) {
 				ov_logfile_error("MessageDelivery/typeMethod: Couldn't build rcvSysAdr for message %s", msg->v_identifier);
 				msg->v_msgStatus = MSGFATALERROR;
 				ov_memstack_unlock();
 				return;
 			}
 			msgHeader.rcvLocAdr = msg->v_receiverComponent;
-			if(msg->v_senderAddress && msg->v_senderName)
-			{
+			if(msg->v_senderAddress && msg->v_senderName) {
 				result = ov_string_print(&(msgHeader.sndSysAdr), "%s:%s", msg->v_senderAddress, msg->v_senderName);
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't build sndSysAdr for message %s", msg->v_identifier);
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_string_setvalue(&(msgHeader.rcvSysAdr), NULL);
@@ -314,48 +289,38 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 			headerString = acplt_simpleMsg_generateMsgHeader(&msgHeader);
 			ov_string_setvalue(&(msgHeader.rcvSysAdr), NULL);
 			ov_string_setvalue(&(msgHeader.sndSysAdr), NULL);
-			if(!headerString)
-			{
+			if(!headerString) {
 				ov_logfile_error("MessageDelivery/typeMethod: Couldn't build header for message %s", msg->v_identifier);
 				msg->v_msgStatus = MSGFATALERROR;
 				ov_memstack_unlock();
 				return;
 			}
-
-			if(!msg->v_msgBody)
-			{
+			if(!msg->v_msgBody) {
 				ov_logfile_error("MessageDelivery/typeMethod: No body for message %s", msg->v_identifier);
 				msg->v_msgStatus = MSGFATALERROR;
 				ov_memstack_unlock();
 				return;
 			}
 			/*	build message string (concatenate header and body and set <msg> </msg> tags around it and send it via specified protocol	*/
-
-			switch(msg->v_sendBy)
-			{
-			case 0:
+			switch(msg->v_sendBy) {
+			case MSG_SEND_DIRECTLY:
 				/*	send directly	*/
 				hdrLength = strlen(headerString);
 				bdyLength = strlen(msg->v_msgBody);
 				result = ov_string_print(&msgString, "<msg hdrL=%u bdyL=%u>%s%s</msg>", hdrLength, bdyLength, headerString, msg->v_msgBody);
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't build message %s", msg->v_identifier);
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_memstack_unlock();
 					return;
 				}
-
 				/*	unlock memstack, we don't need it anymore	*/
 				ov_memstack_unlock();
-
 				pChannel = Ov_GetChild(MessageSys_Message2Channel, msg);
-				if(!pChannel)
-				{	/*	no channel found, create new one	*/
+				if(!pChannel) {	/*	no channel found, create new one	*/
 					KS_logfile_debug(("msgDelivers: no Channel associated with message. creating new one"));
 					result = MessageSys_createChannel(this, &pChannel);
-					if(Ov_Fail(result))
-					{
+					if(Ov_Fail(result)) {
 						ov_memstack_lock();
 						ov_logfile_error("MessageDelivery/typeMethod: Couldn't create Channel. reason: %s", ov_result_getresulttext(result));
 						msg->v_msgStatus = MSGFATALERROR;
@@ -363,8 +328,7 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 						return;
 					}
 					result = Ov_Link(MessageSys_Message2Channel, msg, pChannel);
-					if(Ov_Fail(result))
-					{
+					if(Ov_Fail(result)) {
 						ov_memstack_lock();
 						ov_logfile_error("MessageDelivery/typeMethod: Couldn't link Message and Channel. reason: %s", ov_result_getresulttext(result));
 						msg->v_msgStatus = MSGFATALERROR;
@@ -373,39 +337,30 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 						return;
 					}
 				}
-
 				/*	copy data to channel	*/
 				result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), (OV_BYTE*) msgString, strlen(msgString));
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_memstack_lock();
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't copy data. reason: %s", ov_result_getresulttext(result));
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_memstack_unlock();
 					return;
 				}
-
 				/*	set flags at channel	*/
-				if(msg->v_expectAnswer == TRUE)
-				{
+				if(msg->v_expectAnswer == TRUE) {
 					/*	check if MsgHandler for answers is there. If not, create one and link it to the channel	*/
 					pMsgHandler = Ov_StaticPtrCast(MessageSys_msgHandler, Ov_GetChild(ksbase_AssocChannelClientHandler, pChannel));
-					if(!pMsgHandler)
-					{
+					if(!pMsgHandler) {
 						pChannel->v_CloseAfterSend = FALSE;
 						result = Ov_CreateObject(MessageSys_msgHandler, pMsgHandler, pChannel, "MsgHandler");
-						if(Ov_Fail(result))
-						{
+						if(Ov_Fail(result)) {
 							ov_memstack_lock();
 							ov_logfile_error("MessageDelivery/typeMethod: Couldn't create MsgHandler for AnswerMessages. reason: %s", ov_result_getresulttext(result));
 							ov_memstack_unlock();
 							pChannel->v_CloseAfterSend = TRUE;
-						}
-						else
-						{
+						} else 	{
 							result = Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pMsgHandler);
-							if(Ov_Fail(result))
-							{
+							if(Ov_Fail(result)) {
 								ov_memstack_lock();
 								ov_logfile_error("MessageDelivery/typeMethod: Couldn't link MsgHandler and channel. reason: %s", ov_result_getresulttext(result));
 								ov_memstack_unlock();
@@ -416,28 +371,21 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 						}
 					}
 
-				}
-				else
-				{
+				} else {
 					pChannel->v_CloseAfterSend = TRUE;
 				}
-
-
 				KS_logfile_debug(("msgDelivery: pChannel->v_ConnectionState is: %u", pChannel->v_ConnectionState));
 				result = MessageSys_initiateConnection(pChannel, msg->v_receiverAddress, msg->v_receiverName);
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_memstack_lock();
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't initiate connection. reason: %s", ov_result_getresulttext(result));
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_memstack_unlock();
 					return;
 				}
-
 				Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
 				result = MessageSys_trySend(msg, pChannel, pVtblChannel);
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_memstack_lock();
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't send message. reason: %s", ov_result_getresulttext(result));
 					msg->v_msgStatus = MSGFATALERROR;
@@ -446,34 +394,53 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				}
 				pChannel->v_actimode = 1;
 				break;
-			case 1:
-				/*	send via http POST	*/
-				break;
-			case 2:
+			case MSG_SEND_KSSETVAR:
 				/*	send via ks-setvar	*/
 				result = ov_string_print(&msgString, "<msg>%s%s</msg>", headerString, msg->v_msgBody);
 				/*	unlock memstack, we don't need it anymore	*/
 				ov_memstack_unlock();
-				if(Ov_Fail(result))
-				{
+				if(Ov_Fail(result)) {
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't build message %s", msg->v_identifier);
 					msg->v_msgStatus = MSGFATALERROR;
 					ov_memstack_unlock();
 					return;
 				}
-
 				//send
 				value.value.vartype = OV_VT_STRING;
 				value.value.valueunion.val_string = msgString;
-
 				sendingInstance = (OV_INSTPTR_ksapi_setVar)ov_path_getobjectpointer(SENDINGINSTANCE,2);
-				if(sendingInstance)
-				{
+				if(sendingInstance) {
 					ksapi_setVar_setandsubmit(sendingInstance, MessageSys_Message_receiverAddress_get(msg),MessageSys_Message_receiverName_get(msg),"/communication/MessageSys.retrieveMessage", value);
 					ov_time_gettime(&(this->v_sendTime));
-				}
-				else
+				} else {
 					ov_logfile_error("MessageDelivery/typeMethod: Couldn't find sendingInstance, no further sending will proceed");
+				}
+				break;
+			case MSG_SEND_EXTENSION:
+				pMsgSendExt = Ov_GetParent(MessageSys_SendExtension2Message, msg);
+				if(!pMsgSendExt){
+					/*	no send extension --> delete message	*/
+					ov_logfile_error("MessageDelivery/typemethod: no sendextension linked to msg %s which shall be sent by extension --> deleting message", msg->v_identifier);
+					Ov_DeleteObject(msg);
+					ov_memstack_unlock();
+					break;
+				}
+				Ov_GetVTablePtr(MessageSys_MsgSendExtension, pVtblSendExt, pMsgSendExt);
+				if(!pVtblSendExt){
+					ov_logfile_error("MessageDelivery/typemethod: could not get Vtable pointer of sendextension for %s --> deleting message", msg->v_identifier);
+					Ov_DeleteObject(msg);
+					ov_memstack_unlock();
+					break;
+				}
+				result = pVtblSendExt->m_sendMessage(pMsgSendExt, msg, headerString);
+				ov_memstack_unlock();
+				if(Ov_Fail(result)){
+					ov_memstack_lock();
+					ov_logfile_error("MessageDelivery/typemethod: sending message %s returned error: %s", msg->v_identifier, ov_result_getresulttext(result));
+					ov_memstack_unlock();
+					Ov_DeleteObject(msg);
+					break;
+				}
 				break;
 			default:
 				/*	invalid protocol	*/
@@ -713,9 +680,9 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_MsgDelivery_retrieveMessage_set(
 ) {
 	OV_INSTPTR_MessageSys_Message pMsg = NULL;
 	MessageSys_parseAndDeliverMsg(value, &pMsg, NULL);
-	if(pMsg)
-		pMsg->v_sendBy = 2;
-
+	if(pMsg){
+		pMsg->v_sendBy = MSG_SEND_KSSETVAR;
+	}
 	return OV_ERR_OK;
 }
 
