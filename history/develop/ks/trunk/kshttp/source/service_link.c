@@ -110,10 +110,10 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBod
 	params.items_val = addrp;
 	params.items_len = match.veclen;
 
-	kshttp_find_arguments(urlQuery, "placehint", &placehintmatch);
-	kshttp_find_arguments(urlQuery, "placepath", &placepathmatch);
-	kshttp_find_arguments(urlQuery, "oppositeplacehint", &oppositeplacehintmatch);
-	kshttp_find_arguments(urlQuery, "oppositeplacepath", &oppositeplacepathmatch);
+	kshttp_find_arguments(urlQuery, "placementHint", &placehintmatch);
+	kshttp_find_arguments(urlQuery, "placePath", &placepathmatch);
+	kshttp_find_arguments(urlQuery, "oppositePlacementHint", &oppositeplacehintmatch);
+	kshttp_find_arguments(urlQuery, "oppositePlacePath", &oppositeplacepathmatch);
 
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){

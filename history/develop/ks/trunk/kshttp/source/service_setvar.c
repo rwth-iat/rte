@@ -166,7 +166,7 @@ OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 			one_resultGet = *(resultGet.items_val + i);
 			if(Ov_Fail(one_resultGet.result)){
 				fr = one_resultGet.result;
-				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": problem with get");
+				kshttp_print_result_array(responseBody, response_format, &fr, 1, ": problem with get (Is the path to the variable valid?)");
 				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 			}

@@ -30,6 +30,7 @@
 	<body>
 		<h1>The Webserver is running!</h1>
 		<p>Powered by ACPLT/OV. This server <!--  has some static files as a <a href="sse.html">demo</a> and--> supports KS commands. This page is only a quick reference.</p>
+		<span id="idHmi"></span>
 		<span id="idServices"></span>
 		<form id="idCommandPlayground" style="display:none;" action="">
 			<h1>Command playground</h1>
@@ -79,46 +80,79 @@
 		It is possible to select KSX with the 
 		<a href="http://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP accept header</a>
 		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=ksx</code>.</p>
+		
 		<h2>GetVar</h2>
 		<p>Gets one or multiple Variables.</p>
 		example: <code>/getVar?format=ksx&amp;path=/vendor/database_free</code><br>
 		example: <code>/getVar?format=ksx&amp;path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
+		
 		<h2>SetVar</h2>
 		<p>Sets one or multiple Variables. Note: The indexes of the parts are not relevant, only the order matters (second newvalue will be written into the second path).</p>
 		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
 		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[2]=1</code><br>
 		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;newvalue[0]=3.2&amp;path[1]=/TechUnits/add2.IN1&amp;newvalue[1]=2&amp;path[2]=.IN2&amp;newvalue[2]=1</code>
+		
 		<h2>GetEP</h2>
-		<p>Gets the engineering properties of an object. Can give all childrens with the parameter <code>requestType</code>(default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</p>
-		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
-		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code><br>
+		<p>Gets the engineering properties of an object. It has a few optional parameters:
+			<ul>
+				<li><code>requestType</code> filters some type of result: childrens (default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</li>
+				<li><code>nameMask</code> filters for names (<code>?</code> is an arbitrary character, <code>*</code> is an arbitrary amount of any characters). Default is <code>*</code></li>
+				<li><code>scopeFlags</code> filters for the scope (<code>children</code> are normal children, <code>parts</code> are some hard wired objects). Default is no restriction</li>
+				<li><code>requestOutput</code> a list of answser columns: <code>OP_NAME</code>, <code></code>, <code>OP_TYPE</code>, <code>OP_COMMENT</code>, <code>OP_ACCESS</code>, <code>OP_SEMANTIC</code>, <code>OP_CREATIONTIME</code>, <code>OP_CLASS</code>, <code>OP_TECHUNIT</code>, <code>OP_ASSOCIDENT</code>, <code>OP_ROLEIDENT</code>. Default is all of them in this order.</li>
+			</ul>
+			</p>
+			example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
+			example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code>
+		</p>
+		
 		<h2>createObject</h2>
-		<p>Instantiates new objects.</p>
-		example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
-		example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		<p>Instantiates new objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
+			<ul>
+				<li><code>placementHint</code> defines the placement of the new object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+			</ul>
+			example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
+			example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		</p>
+		
 		<h2>deleteObject</h2>
 		<p>Deletes objects.</p>
 		example: <code>/deleteObject?format=ksx&amp;path=/TechUnits/add1</code><br>
 		example: <code>/deleteObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
+		
 		<h2>renameObject</h2>
-		<p>Renames objects.</p>
-		example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
-		example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
+		<p>Renames objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
+			<ul>
+				<li><code>placementHint</code> defines the placement of the object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+			</ul>
+			example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
+			example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
+		</p>
+		
 		<h2>linkObject</h2>
-		<p>Links two pairs of objects with an OV association.</p>
-		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
-		equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
-		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
-		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placehint=BEGIN</code><br>
-		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placehint=BEFORE&amp;placepath=/TechUnits/sub1</code><br>
+		<p>Links two pairs of objects with an OV association. It has optional parameters:
+			<ul>
+				<li><code>placementHint</code> defines the placement of the object in the association: <code>PMH_DEFAULT</code>=<code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+			</ul>
+			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
+			equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
+			example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
+			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEGIN</code><br>
+			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEFORE&amp;placePath=/TechUnits/sub1</code><br>
+		</p>
+		
 		<h2>unlinkObject</h2>
 		<p>Unlinks two pairs of objects with an OV association.</p>
 		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
 		example: <code>/unlink?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
+		
 		<h2>getLogfile</h2>
 		<p>Outputs logfile outputs of the server.</p>
 		example: <code>/getLogfile?format=ksx</code><br>
 		example: <code>/getLogfile?format=ksx&amp;from=2013-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=30</code><br>
+		
 		<h2>getServer</h2>
 		<p>Gives TCP Port of a Server (if this server is the KS-MANAGER).</p>
 		example: <code>/getServer?format=ksx&servername=MANAGER</code><br>
@@ -147,14 +181,49 @@
 				}
 				
 				//test HMI and other services if transfered via http
-				var ServicesNode = document.getElementById("idServices");
-				if(ServicesNode && !!window.XMLHttpRequest){
+				var HmiNode = document.getElementById("idHmi");
+				if(HmiNode && !!window.XMLHttpRequest){
 					var req = new XMLHttpRequest();
-					req.open("HEAD", "/hmi/", false);
+					req.open("GET", "/getEP?requestType=OT_DOMAIN&path=/data/kshttp", true);
+					req.setRequestHeader("Accept", "text/ksx");
+					req.onreadystatechange = function(evt){
+						if (!evt){
+							var req = this;
+						}else{
+							req = evt.target;
+						}
+						if( req.readyState === 4 && req.status === 200){
+							var listDomainEngProps = req.responseXML.getElementsByTagName("DomainEngProps")
+							var listServices = Array();
+							for(var i = 0; i < listDomainEngProps.length;i++){
+								var DomainEngPropsClass = listDomainEngProps[i].getElementsByTagName("classIdentifier");
+								if(DomainEngPropsClass && DomainEngPropsClass.length === 1 && DomainEngPropsClass[0].textContent == '/acplt/ov/domain'){
+									var DomainEngPropsId = listDomainEngProps[i].getElementsByTagName("identifier");
+									if(DomainEngPropsId && DomainEngPropsId.length === 1){
+										if(DomainEngPropsId[0].textContent === 'hmi'){
+											HmiNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+										}else{
+											listServices.push(DomainEngPropsId[0].textContent);
+										}
+									}
+								} 
+							}
+							if(listServices.length > 0){
+								var ServicesNode = document.getElementById("idServices");
+								var ServicesHtml = "<h1>Services</h1><p>There are the following other services available on this server:</p><ul>";
+								for (var i = 0; i < listServices.length; i++){
+									ServicesHtml += "<li><a href='/"+listServices[i]+"/'>"+listServices[i]+"</a></li>";
+								}
+								ServicesHtml += "</ul></p>";
+								ServicesNode.innerHTML = ServicesHtml;
+							}
+						}
+					};
+					req.timeout = 1000;
 					try{
 						req.send(null);
 						if(req.status == 200){
-							ServicesNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+							HmiNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
 						}
 					}catch(e){
 						//do nothing
@@ -210,7 +279,7 @@
 				SecondtextSpan.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
-				PathInput.value = "4";
+				PathInput.value = "10";
 				SecondtextSpan.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else{

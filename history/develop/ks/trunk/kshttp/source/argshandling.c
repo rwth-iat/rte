@@ -79,7 +79,6 @@ OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING v
 
 /*
  * returns the format of the output
- * constants are in the config.h file
  */
 static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, KSHTTP_RESPONSEFORMAT *response_format){
 	OV_STRING_VEC match = {0,NULL};
