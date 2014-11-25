@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-09-04 13:21:05
+* Erstellt: 2014-11-25 12:59:26
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -7125,7 +7125,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[13] : INPUT STRING = {"ov" , "ksserv" , "ksservtcp" , "ksservhttp" , "ksbase" , "TCPbind" , "ksxdr" , "kshttp" , "cshmi" , "hmi" , "hmisvg" , "hmisvggesture" , "hmixml"};
+      value[10] : INPUT STRING = {"ov" , "ksbase" , "TCPbind" , "ksxdr" , "kshttp" , "cshmi" , "hmi" , "hmisvg" , "hmisvggesture" , "hmixml"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -7147,7 +7147,7 @@
       y : INPUT SINGLE = 0.000000;
       xOffset : INPUT SINGLE = 65.000000;
       yOffset : INPUT SINGLE = 25.000000;
-      maxTemplatesPerDirection : INPUT STRING = "x:10";
+      maxTemplatesPerDirection : INPUT STRING = "x:16";
       FBReference[1] : INPUT STRING = {"OP_VALUE"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
@@ -32211,6 +32211,62 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value[1] : INPUT STRING = {"KS_OT_VARIABLE"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isIdH :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_NAME";
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isIdH.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"idH"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isIdL :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_NAME";
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isIdL.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[1] : INPUT STRING = {"idL"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
