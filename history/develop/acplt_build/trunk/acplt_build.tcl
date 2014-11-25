@@ -264,7 +264,7 @@ proc get_revision {} {
 }
 
 
-# Checkout a CVS module
+# Checkout a SVN module
 proc checkout_dir {prefix module {dirname ""} {notrunk ""}} {
 	print_msg "Checking out $module via checkout_dir"
 	if {$dirname == ""} then { set dirname $module }
@@ -297,9 +297,7 @@ proc checkout_better {module {notrunk ""}}  {
 }
 
 proc checkout_lib {x} {
-	if { [string equal $x ksbase] } {
-		checkout_dir develop/ks/trunk/ks_revised $x $x notrunk
-	} elseif { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
+	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
 		checkout_dir develop/ks/trunk $x $x notrunk
 	} else {
 		checkout_dir develop $x
@@ -375,7 +373,6 @@ proc build_acplt_mingw {} {
 		print_msg "Building oncrpc for fb_dbcommands"
 		cd $builddir/oncrpc/
 		execute makemingw.bat
-		#file copy -force $builddir/oncrpc/bin/oncrpc.a $builddir/oncrpc/bin/oncrpcms.a
 	}
 	cd $builddir/base/ov/source/libml
 	build_cygwin libml make -f mingw.mk
@@ -410,7 +407,6 @@ proc build_acplt {} {
 	if { $os == "nt" && $build_dbcommands == 1 } then { 
 		cd $builddir/oncrpc
 		execute make.bat
-		#file copy -force $builddir/oncrpc/bin/oncrpc.lib $builddir/oncrpc/bin/oncrpcms.lib
 		cd $basedir
 	}
 	# build libmpm make -C $builddir/base/libmpm -f $makefile
@@ -776,6 +772,7 @@ proc separate_dev {} {
 }
 
 proc create_systools_and_servers {} {
+	global basedir
 	global releasedir
 	global batsuffix
 	global os
@@ -785,26 +782,15 @@ proc create_systools_and_servers {} {
 	file mkdir $releasedir/servers/MANAGER/modelinstances
 	file mkdir $releasedir/servers/MANAGER/logfiles 
 	
-	if { [file exists $releasedir/servers/ov_server.conf.example] } then {
-		file delete $releasedir/servers/ov_server.conf.example
-	}
-	
-	#including sys tools
+	#including systools
 	cd $releasedir/system
-	checkout_lib {systools}
-	#file copy $releasedir/system/systools/systools/fb_dbcommands.exe $releasedir/system/sysbin/fb_dbcommands.exe
-	file delete -force $releasedir/system/systools/.svn/
+	file mkdir $releasedir/system/systools
+	copy_wildcard $basedir/systools/*.tcl $releasedir/system/systools/
+	copy_wildcard $basedir/systools/*.fbd $releasedir/system/systools/
 	
-	#serverstarttools
-	checkout_lib {base_serverstarttools}
-	set files [glob -nocomplain $releasedir/system/base_serverstarttools/*$batsuffix]
-	foreach f $files {
-		file copy $f $releasedir/servers/MANAGER/
-	}
-	
-	file copy $releasedir/system/base_serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
-	file delete -force $releasedir/system/base_serverstarttools/	
-
+	#including serverstarttools
+	copy_wildcard $basedir/serverstarttools/*$batsuffix $releasedir/servers/MANAGER/
+	file copy $basedir/serverstarttools/ov_server.conf $releasedir/servers/MANAGER/ov_server.conf 
 }
 
 #/*
@@ -904,7 +890,7 @@ if {$release == 1} {
 	cd $basedir
 	#rename 
 	file rename -force acplt.build acplt-source
-	print_msg "Deleting .svn directories"
+	print_msg "Deleting .svn directories for acplt-server-source archive"
 	remove_svn_dirs "$basedir/acplt-source"
 
 	compress "acplt-server-source-$date" "./acplt-source"
