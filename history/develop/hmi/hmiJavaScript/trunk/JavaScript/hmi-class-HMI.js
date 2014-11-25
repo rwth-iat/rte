@@ -718,7 +718,7 @@ HMI.prototype = {
 					||	window.location.hostname.toLowerCase() === "127.0.0.1"
 					||	window.location.hostname.toLowerCase() === "::1"
 					||	window.location.protocol === "file:"
-					||	window.location.hostname.toLowerCase() === "" // should not be the case...
+					||	window.location.hostname === "" // should not be the case...
 					){
 				hostlist = new Array("localhost");
 			}else{
@@ -743,11 +743,12 @@ HMI.prototype = {
 	/**
 	 * update deep link and HTML5 history
 	 */
-	updateDeepLink: function (){
+	updateDeepLink: function (optionalParameter){
 		var newDeepLink = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/")+1);
 		var SheetInfo = {"Host":"", "Server":"", "Sheet":""};
 		newDeepLink += "?";
 		if(this.cshmi === null && this.Playground.firstChild !== null){
+			//only the old HMI has a refreshtime
 			newDeepLink += "RefreshTime="+HMI.RefreshTime;
 		}
 		if(HMI.InputHost.value !== ""){
@@ -770,6 +771,9 @@ HMI.prototype = {
 		}
 		if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
 			newDeepLink += "&ShowComp=true";
+		}
+		if (optionalParameter !== undefined){
+			newDeepLink += optionalParameter;
 		}
 		document.getElementById("idBookmark").href = newDeepLink;
 		
@@ -1187,7 +1191,12 @@ HMI.prototype = {
 		this.optimizeSheetSize();
 		
 		//update the "deep link" to the state
-		this.updateDeepLink();
+		if(HMI.Playground.firstElementChild && HMI.Playground.firstElementChild.FBReference && HMI.Playground.firstElementChild.FBReference["default"]){
+			//if we have an cshmi with a fbref on the first sheet, link to this ref
+			this.updateDeepLink("&FBReference="+HMI.Playground.firstElementChild.FBReference["default"]);
+		}else{
+			this.updateDeepLink();
+		}
 		
 		//blur the buttons for convenience with keyboard interaction
 		HMI.PossSheets.blur();

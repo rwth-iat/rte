@@ -241,35 +241,10 @@ cshmi.prototype = {
 		
 		//calculate all offset parameter to be able to display visual feedback
 		//this is only possible now, as the orientation of the parents are not defined when they are not appended
-		var maxPosition = HMI.saveAbsolutePosition(VisualObject);
+		HMI.saveAbsolutePosition(VisualObject);
 		
 		this._interpreteOnloadCallStack();
 		
-		/*  Warning of not visible content disabled. Was a bad usability concept
-		var invisibleObjectName = "";
-		var ComponentChilds = VisualObject.getElementsByTagName("svg");
-		for(var i = 0;i < ComponentChilds.length;i++){
-			var elementWidth = parseInt(ComponentChilds[i].getAttribute("width"), 10)+parseInt(ComponentChilds[i].getAttribute("absolutex"), 10);
-			var elementHeight = parseInt(ComponentChilds[i].getAttribute("height"), 10)+parseInt(ComponentChilds[i].getAttribute("absolutey"), 10);
-			
-			if (!isNaN(elementWidth) && elementWidth > maxPosition[0]){
-				//wider than the last
-				maxPosition[0] = elementWidth;
-				invisibleObjectName = ComponentChilds[i].id;
-			}
-			if (!isNaN(elementHeight) && elementHeight > maxPosition[1]){
-				//higher than the last
-				maxPosition[1] = elementHeight;
-				invisibleObjectName = ComponentChilds[i].id;
-			}
-		}
-		
-		if (maxPosition[0] > VisualObject.getAttribute('width') || maxPosition[1] > VisualObject.getAttribute('height')){
-			HMI.hmi_log_info_onwebsite("Warning: There is a chance, that there is content outside your view. Last known candidate is: "+invisibleObjectName);
-		}
-		maxPosition = null;
-		invisibleObjectName = null;
-		*/
 		
 		//the DOM Tree is populated now
 		this.initStage = false;
@@ -288,7 +263,7 @@ cshmi.prototype = {
 		if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
 			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
-			VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, false, preventNetworkRequest);
+			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, false, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
@@ -2012,6 +1987,9 @@ cshmi.prototype = {
 					}
 					TemplateObject.FBReference["default"] = NewValue;
 					TemplateObject.id = NewValue;
+					if(TemplateObject.parentNode === HMI.Playground){
+						HMI.updateDeepLink("&FBReference="+NewValue);
+					}
 					return true;
 				}
 				return false;
@@ -3115,7 +3093,7 @@ cshmi.prototype = {
 			var TargetVariablename = this._getValue(VisualObject, ObjectPath+".TargetVariablename");
 			
 			if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
-				//an error occured
+				//this error will never be fixed, so prevent this routing forever. But how???
 				return false;
 			}else if (SourceBasename === null){
 				SourceBasename = "";
@@ -4145,7 +4123,7 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * Action which calls _buildFromTemplate to build a template
+	 * Action which calls _buildSvgGroup to build a template
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @return {Boolean} true on success, false if an error occured
@@ -4155,7 +4133,7 @@ cshmi.prototype = {
 			HMI.hmi_log_info_onwebsite("InstantiateTemplate is not allowed under an Element (configured here: "+ObjectPath+")");
 			return false;
 		}
-		var VisualObject = this._buildFromTemplate(VisualParentObject, ObjectPath, true, false);
+		var VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, true, false);
 		if (VisualObject !== null){
 			//remember the ObjectType on every object (needed for reloading via action)
 			VisualObject.setAttribute("data-ObjectType", "/cshmi/Template");
@@ -4183,7 +4161,7 @@ cshmi.prototype = {
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildFromTemplate: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, preventNetworkRequest){
+	_buildSvgGroup: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, preventNetworkRequest){
 		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
@@ -4328,7 +4306,7 @@ cshmi.prototype = {
 			requestList[ObjectPath]["ConfigValues"] = "";
 		}
 		if (VisualParentObject === null && HMI.HMI_Constants.UrlParameterList && HMI.HMI_Constants.UrlParameterList.FBReference && HMI.HMI_Constants.UrlParameterList.FBReference.length > 0){
-			//a url parameter is able to overwrite the fbreference
+			//an url parameter is able to overwrite the FBReference
 			var FBReferenceList = [HMI.HMI_Constants.UrlParameterList.FBReference];
 		}else{
 			FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
@@ -4339,8 +4317,6 @@ cshmi.prototype = {
 				break;
 			}
 			if (FBReferenceList[i] !== ""){
-				//save the info to the default position 
-				
 				if(this.ResourceList.newRebuildObject.id !== undefined){
 					//we should use a preconfigured FBref, instead of the configured one...
 					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObject.id;
@@ -4858,7 +4834,7 @@ cshmi.prototype = {
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
-				var VisualChildObject = HMI.cshmi._buildFromTemplate(VisualObject, "tempPath", false, false);
+				var VisualChildObject = HMI.cshmi._buildSvgGroup(VisualObject, "tempPath", false, false);
 				VisualObject.appendChild(VisualChildObject);
 				
 				//calculate all offset parameter to be able to display visual feedback

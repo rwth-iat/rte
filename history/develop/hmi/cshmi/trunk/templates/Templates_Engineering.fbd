@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-11-25 12:59:26
+* Erstellt: 2014-11-25 16:50:02
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -43,7 +43,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/cyclicmonitoring :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 2.000000;
+      cyctime : INPUT SINGLE = 1.000000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1923,7 +1923,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = -3.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 7.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -2030,7 +2030,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = 6.000000;
+      cy : INPUT SINGLE = 10.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -2694,7 +2694,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 57.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 7.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -2759,7 +2759,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 54.000000;
-      cy : INPUT SINGLE = 6.000000;
+      cy : INPUT SINGLE = 10.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -3181,7 +3181,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = -3.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 7.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -3810,7 +3810,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = 6.000000;
+      cy : INPUT SINGLE = 10.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -4073,7 +4073,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 57.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 7.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -4660,7 +4660,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 54.000000;
-      cy : INPUT SINGLE = 6.000000;
+      cy : INPUT SINGLE = 10.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -12318,19 +12318,11 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/deb :
-    CLASS /acplt/cshmi/debuggingbreakpoint;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCPortIterator :
     CLASS /acplt/cshmi/ChildrenIterator;
     VARIABLE_VALUES
       ChildrenType : INPUT STRING = "OT_DOMAIN";
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -12509,14 +12501,6 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCPortIterator.forEachChild/NotInNotOut.then/checkPortconfig.then/deb :
-    CLASS /acplt/cshmi/debuggingbreakpoint;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCPortIterator.forEachChild/NotInNotOut.then/checkPortconfig.then/addFCPortSetter :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
@@ -12536,7 +12520,7 @@
       rotate : INPUT INT = 0;
       opacity : INPUT SINGLE = 1.000000;
       hideable : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
+      zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
