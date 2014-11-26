@@ -25,6 +25,19 @@
 			th {
 				text-align: left;
 			}
+			fieldset{
+				transition: max-height 1.0s ease;
+			}
+			.hideable{
+				max-height:12px;
+				overflow:hidden;
+			}
+			.wide{
+				width:750px;
+			}
+			p{
+				transition: max-height 1.0s ease;
+			}
 		</style>
 	</head>
 	<body>
@@ -43,11 +56,14 @@
 				<col width="800px" />
 				<tr>
 					<td valign="top">
-						<fieldset id="idSVCFieldset" style="display:none;" style="width:800px">
-							<table id="idServiceInfo" border="0" style="width:800px" class="fixed">
+						<fieldset id="idSVCFieldset" class="hideable wide">
+							<p id="idNoServiceAvailable" style="display:inline;">
+								No registered Service provider available on this server.<br/>
+							</p>
+							<table id="idServiceInfo" border="0" style="width:750px" class="fixed">
 								<col width="160px" />
 								<col width="150px" />
-								<col width="480px" />
+								<col width="400px" />
 								<tr>
 									<th>Available (registered) System Services</th>
 									<th>ServiceType</th>		
@@ -63,10 +79,10 @@
 									<td id="idServiceDesciption"></td>
 								</tr>
 							</table> 
-							<p id="idOperationField" style="display:none;">
-								<table id="idOperationInfo" border="0" style="width:800px" class="fixed">
+							<p id="idOperationField" class="hideable">
+								<table id="idOperationInfo" border="0" style="width:750px" class="fixed">
 									<col width="160px" />
-									<col width="630px" />
+									<col width="550px" />
 									<tr>
 										<th>Registered operations of service <b id="idOutputServiceName"></b></th>
 										<th>Operation Documentation</th>		
@@ -81,34 +97,24 @@
 									</tr>
 								</table> 
 							</p>
-							<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
-							Parameters of operation <b id="idOutputOperationName"></b><br/>
-							<b>Inputs:</b><br/>
-							<table id="idInParameters" border="0" style="width:800px">
-							</table> 
-							<b>Outputs:</b><br/>
-							<table id="idOutParameters" border="0" style="width:800px">
-							</table> 
-							</fieldset> <br/>
 						</fieldset>
-						<fieldset id="idParametersFieldset" style="display:none;" style="width:800px">
-							Parameters of operation <b id="idOutputOperationName"></b><br/>
-							<b>Inputs:</b><br/>
-							<table id="idInParameters" border="0" style="width:800px">
-							</table> 
-							<b>Outputs:</b><br/>
-							<table id="idOutParameters" border="0" style="width:800px">
-							</table> 
-						</fieldset> 
-						<p id="idNoServiceAvailable" style="display:inline;">
-							No registered Service provider available on this server.<br/>
-						</p> <br/>
+						<fieldset id="idParametersFieldset" class="hideable wide">
+								<br/>
+								Parameters of operation <b id="idOutputOperationName"></b><br/>
+								<b>Inputs:</b><br/>
+								<table id="idInParameters" border="0" style="width:750px"></table> 
+								<b>Outputs:</b><br/>
+								<table id="idOutParameters" border="0" style="width:750px"></table> 
+						</fieldset> <br/>
 					</td>
 					<td valign="top">
-						<fieldset id="idPCFieldset" style="display:none;" style="width:800px">
-							<table id="idPCUsInfo" border="0" style="width:800px" class="fixed">
+						<fieldset id="idPCFieldset" class="hideable wide">
+							<p id="idNoPCUsAvailable" style="display:inline;">
+								No service enabled process control units available on this server.<br/>
+							</p>
+							<table id="idPCUsInfo" border="0" style="width:750px" class="fixed">
 								<tr>
-									<th width="300px">Available PCInboxes</th>
+									<th width="250px">Available PCInboxes</th>
 									<th width="200px">Available Operations</th>		
 									<th width="300px">Parameters</th>
 								</tr>
@@ -141,9 +147,6 @@
 							<input id="idPCUFunctionMode" readonly value="" placeholder="current function mode (if available)" style="width:400px"><br/>
 							<br/>
 						</fieldset>
-						<p id="idNoPCUsAvailable" style="display:inline;">
-							No service enabled process control units available on this server.<br/>
-						</p> <br/>
 					</td>
 				</tr>
 			</table>

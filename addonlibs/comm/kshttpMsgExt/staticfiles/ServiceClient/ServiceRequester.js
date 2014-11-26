@@ -245,8 +245,8 @@ function GetNextServer(evt){
 function checkServiceProvider(){
 //test servers on url
 	if(HostUrl){
-		OperationField.style.display = "none";
-		ParametersFieldset.style.display = "none";
+		OperationField.style.maxHeight = "12px";
+		ParametersFieldset.style.maxHeight = "12px";
 		Submitbutton.disabled = true;
 		if (window.XMLHttpRequest)
 		{// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -294,9 +294,9 @@ function handleResponseCheckprovider(evt){
 				if(Instances[i].tagName == "string"){
 					if(!foundServiceProvider && Instances[i].textContent.match(/ServiceProvider\/API/)){
 						ResponseOutput.innerHTML += "ServiceProvider available!\n";
-						ServiceFieldSet.style.display = "inline";
-						NoProviderParagraph.style.display = "none";
-						ParametersFieldset.style.display = "none";
+						ServiceFieldSet.style.maxHeight = "600px";
+						NoProviderParagraph.style.display="none";
+						ParametersFieldset.style.maxHeight = "12px";
 						Submitbutton.disabled = true;
 						emptySelect(ServiceList);
 						getServicesOfProvider();
@@ -309,8 +309,8 @@ function handleResponseCheckprovider(evt){
 					if(!foundPCInbox && Instances[i].textContent.match(/PCMsgParser\/PCInbox/)){
 						PCInboxClassPath = Instances[i].textContent;
 						ResponseOutput.innerHTML += "PCInboxes available!\n";
-						PCFiledset.style.display = "inline";
-						noPCParagraph.style.display = "none";
+						PCFiledset.style.maxHeight = "600px";
+						noPCParagraph.style.display="none";
 						Submitbutton.disabled = true;
 						emptySelect(ServiceList);
 						getPCInboxes();
@@ -324,15 +324,15 @@ function handleResponseCheckprovider(evt){
 			}
 				if(!foundServiceProvider){
 					ResponseOutput.innerHTML += "ServiceProvider NOT available!\n";
-					ServiceFieldSet.style.display = "none";
-					NoProviderParagraph.style.display = "inline";
-					ParametersFieldset.style.display = "none";
+					ServiceFieldSet.style.maxHeight = "12px";
+					NoProviderParagraph.style.display="inline";
+					ParametersFieldset.style.maxHeight = "12px";
 					Submitbutton.disabled = true;
 				}
 				if(!foundPCInbox){
 					ResponseOutput.innerHTML += "NO PCInboxes available!\n";
-					PCFiledset.style.display = "none";
-					noPCParagraph.style.display = "inline";
+					PCFiledset.style.maxHeight = "12px";
+					noPCParagraph.style.display="inline";
 					Submitbutton.disabled = true;
 				}
 		} else {
@@ -342,8 +342,8 @@ function handleResponseCheckprovider(evt){
 }
 
 function getServicesOfProvider(){
-	OperationField.style.display = "none";
-	ParametersFieldset.style.display = "none";
+	OperationField.style.maxHeight = "12px";
+	ParametersFieldset.style.maxHeight = "12px";
 	Submitbutton.disabled = true;
 	var MessageDoc = CreateGenericServiceCall(HostName, ServerList.options[ServerList.options.selectedIndex].value, "Exploration", "Exploration", "getServices");
 	if (window.XMLHttpRequest)
@@ -419,8 +419,8 @@ function handleResponsegetServices(evt){
 }
 
 function displayServiceData(){
-	OperationField.style.display = "none";
-	ParametersFieldset.style.display = "none";
+	OperationField.style.maxHeight = "12px";
+	ParametersFieldset.style.maxHeight = "12px";
 	Submitbutton.disabled = true;
 	ServiceTypeText.innerHTML = ServiceTypes[ServiceList.options.selectedIndex];
 	ServiceDesciptionText.innerHTML = ServicesDescriptions[ServiceList.options.selectedIndex];
@@ -496,8 +496,8 @@ function handleResponseGetOperations(evt){
 }
 
 function displayOperationData(){
-	OperationField.style.display = "inline";
-	ParametersFieldset.style.display = "none";
+	OperationField.style.maxHeight = "600px";
+	ParametersFieldset.style.maxHeight = "12px";
 	requestSystemService = true;
 	requestPCService = false;
 	Submitbutton.disabled = false;
@@ -610,9 +610,9 @@ function handleResponseGetParameters(evt){
 						inputCell.appendChild(outParamIds[i]);
 					}
 				}
-				ParametersFieldset.style.display = "inline";
-				requestSystemService = true;
-				requestPCService = false;
+				ParametersFieldset.style.maxHeight = "60000px";
+				requestSystemService = false;
+				requestPCService = true;
 				Submitbutton.disabled = false;
 			} catch(err){
 				ResponseOutput.innerHTML = "error getting parameters: "+err;
@@ -663,6 +663,9 @@ Submitbutton.onclick = document.getElementsByTagName("form")[0].onsubmit = funct
 		req.timeout = 10000;
 		try{
 			req.send(getMessageString(MessageDoc));
+			Submitbutton.style.backgroundColor = "yellow";
+			Submitbutton.value = "Awaiting Response";
+			Submitbutton.disabled = true;
 		}catch(e){
 			ResponseOutput.innerHTML = "transmit error: "+e;
 		};
@@ -705,10 +708,12 @@ function RequestStatehandler(evt){
 			ResponseOutput.style.borderColor = "#8080FF";
 			Submitbutton.style.backgroundColor = "limegreen";
 			Submitbutton.value = "response received";
+			Submitbutton.disabled = false;
 		}else{
 			ResponseOutput.style.borderColor = "red";
 			Submitbutton.style.backgroundColor = "red";
 			Submitbutton.value = "error received";
+			Submitbutton.disabled = false;
 		}
 		var timeoutID = window.setTimeout(function(){
 			Submitbutton.value = "send request";
