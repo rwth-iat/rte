@@ -3573,6 +3573,7 @@ cshmi.prototype = {
 		}
 		
 		var routingString = null;
+		var savedRouting = false;
 		if (VisualObject.ResourceList.RoutePolyline.Coords.StartX === undefined && typeof JSON === 'object' && typeof JSON.parse === 'function'){
 			routingString = HMI.cshmi._getValue(VisualObject, ObjectPath+".RoutingString.value");
 			if(routingString){
@@ -3586,6 +3587,7 @@ cshmi.prototype = {
 				}
 				VisualObject.ResourceList.RoutePolyline.Coords = temp;
 				temp = null;
+				savedRouting = true;
 			}else if(routingString === false){
 				//the target has no possiblity to store this value (KS_ERR)
 				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
@@ -3593,8 +3595,12 @@ cshmi.prototype = {
 			routingString = null;
 		}
 		
-		//if start- and endPoints changed since last time, recompute polyline points
-		if (StartX !== VisualObject.ResourceList.RoutePolyline.Coords.StartX ||
+		if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated === undefined && savedRouting === true){
+			//initial fill if we have a saved polyline
+			VisualObject.correctAllLines(VisualObject);
+			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
+		}else if (StartX !== VisualObject.ResourceList.RoutePolyline.Coords.StartX ||
+				//if start- and endPoints changed since last time, recompute polyline points
 				StartY !== VisualObject.ResourceList.RoutePolyline.Coords.StartY ||
 				rotateStart !== VisualObject.ResourceList.RoutePolyline.Coords.rotateStart ||
 				EndX !== VisualObject.ResourceList.RoutePolyline.Coords.EndX ||
@@ -3974,10 +3980,6 @@ cshmi.prototype = {
 			}
 			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = false;
 			//end calculate new points
-		}else if(VisualObject.ResourceList.RoutePolyline.Coords.StartX !== undefined && VisualObject.ResourceList.RoutePolyline.LineWasManipulated === undefined){
-			//initial fill if we have a fresh polyline
-			VisualObject.correctAllLines(VisualObject);
-			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
 		}
 		return true;
 	},
