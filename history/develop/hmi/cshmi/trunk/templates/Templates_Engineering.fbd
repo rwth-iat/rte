@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-11-28 15:54:59
+* Erstellt: 2014-11-28 16:07:14
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -12287,13 +12287,13 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/Title/click/Save_NodeClassName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/Title/click/Save_activecfcClassName :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "NodeClassName";
+      globalVar : INPUT STRING = "activecfcClassName";
       persistentGlobalVar : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
@@ -12303,7 +12303,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/Title/click/Save_NodeClassName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/Title/click/Save_activecfcClassName.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -12313,7 +12313,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "InstanceType";
+      TemplateConfigValues : INPUT STRING = "objectclass";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12817,13 +12817,13 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/click/Save_NodeClassName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/click/Save_activecfcClassName :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "NodeClassName";
+      globalVar : INPUT STRING = "activecfcClassName";
       persistentGlobalVar : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
@@ -12833,7 +12833,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/click/Save_NodeClassName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/Node/click/Save_activecfcClassName.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -12843,7 +12843,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "InstanceType";
+      TemplateConfigValues : INPUT STRING = "objectclass";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13153,7 +13153,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:1";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[2] : INPUT STRING = {"SetColor:white" , "InstanceType:OP_CLASS"};
+      ConfigValues[2] : INPUT STRING = {"SetColor:white" , "objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
@@ -13185,7 +13185,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:1";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[2] : INPUT STRING = {"SetColor:lightyellow" , "InstanceType:OP_CLASS"};
+      ConfigValues[2] : INPUT STRING = {"SetColor:lightyellow" , "objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = FALSE;
       stroke : INPUT STRING = "black";
@@ -16585,7 +16585,7 @@
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "NodeClassName";
+      globalVar : INPUT STRING = "activecfcClassName";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
@@ -29681,6 +29681,39 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/setClassName :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "activecfcClassName";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/setClassName.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "objectclass";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/Set_activeCfcview :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
@@ -29692,7 +29725,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -30181,7 +30214,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/Node";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[3] : INPUT STRING = {"SetColor:white" , "InstanceType:OP_CLASS" , "ReferencedNode:OP_NAME"};
+      ConfigValues[3] : INPUT STRING = {"SetColor:white" , "objectclass:OP_CLASS" , "ReferencedNode:OP_NAME"};
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -32426,7 +32459,7 @@
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "NodeClassName";
+      globalVar : INPUT STRING = "activecfcClassName";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
