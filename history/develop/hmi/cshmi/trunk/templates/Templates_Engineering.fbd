@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-11-28 14:44:51
+* Erstellt: 2014-11-28 15:54:59
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -29681,39 +29681,6 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/Save_BaseDomainName :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "BaseDomainName";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/Save_BaseDomainName.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/Domainv1/onload/Set_activeCfcview :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
@@ -29725,7 +29692,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 1;
+      zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -30406,7 +30373,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "cfcview";
+      value : INPUT STRING = "iterate";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -32833,6 +32800,39 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT INT = 1;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/rightclick/changeactimode.else/iexreq :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "iexreq";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/rightclick/changeactimode.else/iexreq.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
