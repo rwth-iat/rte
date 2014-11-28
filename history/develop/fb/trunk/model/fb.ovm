@@ -193,6 +193,7 @@ LIBRARY fb
         OPERATIONS
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
             setvar : C_FUNCTION <OV_FNC_SETVAR>;
+            getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;
         END_OPERATIONS;
     END_CLASS;
     

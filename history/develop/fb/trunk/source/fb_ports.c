@@ -100,8 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_port_constructor(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_fb_port pinst = Ov_StaticPtrCast(fb_port, pobj);
-	OV_INSTPTR_ov_object pParent = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pobj));
+	OV_INSTPTR_ov_domain pParent = Ov_GetParent(ov_containment, pobj);
 	OV_RESULT    result;
 
 	/* do what the base class does first */
@@ -115,4 +114,17 @@ OV_DLLFNCEXPORT OV_RESULT fb_port_constructor(
 	}
 
 	return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT OV_STRING fb_port_getcomment(
+		OV_INSTPTR_ov_object 	pobj,
+		const OV_ELEMENT		*pelem
+) {
+	OV_INSTPTR_fb_port pinst = Ov_StaticPtrCast(fb_port, pobj);
+	switch(pelem->elemtype) {
+	case OV_ET_OBJECT:
+		return pinst->v_comment;
+	}
+	return ov_object_getcomment(pobj, pelem);
 }

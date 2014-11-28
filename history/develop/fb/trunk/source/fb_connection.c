@@ -575,7 +575,6 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
 	OV_RESULT               result;
     OV_STRING               conIdent = NULL;
     OV_STRING               pIdent;
-    OV_INSTPTR_ov_class     pClas;
     OV_INSTPTR_ov_domain    pdom;
     OV_INSTPTR_ov_object    pobj;
     OV_TIME                 t0;
@@ -588,15 +587,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
 		return OV_ERR_BADPARAM;
 	}
 	*pcon = NULL;
-		
-    /* Klass suchen */
-    pClas = ov_class_search("fb/connection");
-    if(!pClas) {
-        /* Logging */
-        FbSvcLog_printsvc(KS_CREATEOBJECT, "fb_server", "create connection object", OV_ERR_BADFACTORY);
-        
-        return OV_ERR_BADFACTORY;
-    }
+
     
     /* Connection container */
     pdom = (OV_INSTPTR_ov_domain)Ov_SearchChild(ov_containment, &pdb->root, FB_CONN_CONTAINER);
@@ -646,7 +637,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
     
     /* Verbindung anlegen */
     pobj = NULL;
-    result = ov_class_createobject(pClas, pdom, pIdent, OV_PMH_DEFAULT, NULL,
+    result = ov_class_createobject(pclass_fb_connection, pdom, pIdent, OV_PMH_DEFAULT, NULL,
 	         fb_concreate_init_fnc, (OV_POINTER)&userdata, &pobj);
 
     if(result == OV_ERR_OK) {
