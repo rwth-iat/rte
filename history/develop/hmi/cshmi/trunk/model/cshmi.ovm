@@ -150,7 +150,7 @@ LIBRARY cshmi
 				INITIALVALUE = TRUE;
 			TemplateDefinition : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Path to the TemplateDefinition (relative to the templates domain)";
+				COMMENT = "Path to the TemplateDefinition (relative to the templates domain, or starting with a /)";
 			FBReference[] : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef;(//localhost is replaced with the hostname of the hmi model)";

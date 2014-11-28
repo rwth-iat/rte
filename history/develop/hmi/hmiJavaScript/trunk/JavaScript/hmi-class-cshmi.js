@@ -4210,20 +4210,20 @@ cshmi.prototype = {
 		}
 		
 		var wasRebuildObject = false;
+		var PathOfTemplateDefinition = null;
 		if(requestList[ObjectPath]["TemplateDefinition"] !== undefined && requestList[ObjectPath]["TemplateDefinition"] !== ""){
-			var TemplateLocation = "/TechUnits/cshmi/Templates/";
-			var PathOfTemplateDefinition = TemplateLocation+requestList[ObjectPath]["TemplateDefinition"];
-		}else{
-			PathOfTemplateDefinition = null;
-		}
-		if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
-			HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
-			return null;
-		}else if (requestList[ObjectPath]["TemplateDefinition"] === undefined || requestList[ObjectPath]["TemplateDefinition"] === ""){
-			//no template to fill
-		}else{
-			//we have an template to fill
+			if(requestList[ObjectPath]["TemplateDefinition"][0] === "/"){
+				//we have a template name with a full path
+				PathOfTemplateDefinition = requestList[ObjectPath]["TemplateDefinition"];
+			}else{
+				PathOfTemplateDefinition = "/TechUnits/cshmi/Templates/"+requestList[ObjectPath]["TemplateDefinition"];
+			}
+			if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
+				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
+				return null;
+			}
 			
+			//we have an template to fill
 			var requestListTemplate = new Object();
 			//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 			if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
@@ -4236,7 +4236,7 @@ cshmi.prototype = {
 				
 				successCode = this._requestVariablesArray(requestListTemplate, true);
 				if (successCode === false){
-					HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+TemplateLocation+requestList[ObjectPath]["TemplateDefinition"]+"' is not available.");
+					HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is wrong configured. TemplateDefinition '"+PathOfTemplateDefinition+"' is not available.");
 					return null;
 				}
 				
