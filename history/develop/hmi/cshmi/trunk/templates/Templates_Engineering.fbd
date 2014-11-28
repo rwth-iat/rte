@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-11-25 16:50:02
+* Erstellt: 2014-11-28 13:32:10
 * 
 * HOST   : DEV:7509
 * SERVER : engineering
@@ -1847,7 +1847,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "variablecomment";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
       value : INPUT STRING = "";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -1912,7 +1912,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "inputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2189,7 +2189,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "inputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2398,7 +2398,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "inputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2618,7 +2618,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "variablecomment";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
       value : INPUT STRING = "";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2683,7 +2683,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "outputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2918,7 +2918,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "outputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -3103,9 +3103,9 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "comment";
+      TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
       value : INPUT STRING = "";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -3170,7 +3170,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "inputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -4004,6 +4004,48 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputFrame/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputFrame/onload/setTitle :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "title";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputFrame/onload/setTitle.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputText :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
@@ -4062,7 +4104,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "outputname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -4854,6 +4896,48 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Border/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Border/onload/setTitle :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "title";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Border/onload/setTitle.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Class :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
@@ -4912,7 +4996,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "varname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6034,6 +6118,48 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Border/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Border/onload/setTitle :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "title";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Border/onload/setTitle.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectcomment";
+      value : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Class :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
@@ -6092,7 +6218,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "varname";
+      TemplateConfigValues : INPUT STRING = "objectname";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10765,7 +10891,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:5";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[2] : INPUT STRING = {"classname:OP_CLASS" , "objectcomment:OP_COMMENT"};
+      ConfigValues[2] : INPUT STRING = {"objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -10935,7 +11061,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:5";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -11150,7 +11276,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"varname:OP_NAME"};
+      ConfigValues[1] : INPUT STRING = {"objectname:OP_NAME"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -11329,7 +11455,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"varname:OP_NAME" , "ValueOfClass:FC" , "classname:OP_CLASS"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -11508,7 +11634,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"varname:OP_NAME" , "ValueOfClass:FC" , "classname:OP_CLASS"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -12127,7 +12253,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:5";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -12297,7 +12423,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:5";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -12512,7 +12638,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"varname:OP_NAME"};
+      ConfigValues[1] : INPUT STRING = {"objectname:OP_NAME"};
       preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -14362,7 +14488,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[2] : INPUT STRING = {"inputname:OP_NAME" , "Name:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -14464,7 +14590,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"OutputVarPath:OP_NAME"};
-      ConfigValues[2] : INPUT STRING = {"outputname:OP_NAME" , "Name:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -14566,7 +14692,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"OutputVarPath:OP_NAME"};
-      ConfigValues[2] : INPUT STRING = {"outputname:OP_NAME" , "Name:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -14668,7 +14794,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[2] : INPUT STRING = {"inputname:OP_NAME" , "Name:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -16614,7 +16740,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[4] : INPUT STRING = {"varname:OP_NAME" , "classname:OP_CLASS" , "WithDeleteButton:FALSE" , "ValueOfClass:sscHeader"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "WithDeleteButton:FALSE" , "ValueOfClass:sscHeader"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -16744,7 +16870,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"varname:OP_NAME" , "classname:OP_CLASS" , "WithDeleteButton:FALSE"};
+      ConfigValues[3] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "WithDeleteButton:FALSE"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -17828,7 +17954,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -21355,7 +21481,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -25846,7 +25972,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -26131,7 +26257,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -29511,7 +29637,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -29565,7 +29691,7 @@
       maxTemplatesPerDirection : INPUT STRING = "x:4";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -31703,7 +31829,7 @@
       TemplateDefinition : INPUT STRING = "Engineering/internal/DeleteFunction";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"classname:OP_CLASS"};
+      ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -31767,7 +31893,7 @@
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "classname";
+      TemplateConfigValues : INPUT STRING = "objectclass";
       value : INPUT STRING = "";
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32275,7 +32401,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"inputname:OP_NAME" , "Name:OP_NAME" , "variablecomment:OP_COMMENT"};
+      ConfigValues[3] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -32457,7 +32583,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"inputname:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -32567,7 +32693,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[1] : INPUT STRING = {"OutputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"outputname:OP_NAME" , "Name:OP_NAME" , "variablecomment:OP_COMMENT"};
+      ConfigValues[3] : INPUT STRING = {"objectname:OP_NAME" , "Name:OP_NAME" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -32749,7 +32875,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[1] : INPUT STRING = {"outputname:OP_NAME"};
+      ConfigValues[2] : INPUT STRING = {"objectname:OP_NAME" , "objectcomment:OP_COMMENT"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
