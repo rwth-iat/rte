@@ -59,7 +59,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 					return OV_ERR_HEAPOUTOFMEMORY;
 				}
 				memcpy(*host, temp1, copylength);
-				*host[copylength] = '\0';
+				(*host)[copylength] = '\0';
 				temp2 = strchr(*host, ':');
 				if(temp2){
 					*temp2 = '\0';
@@ -88,7 +88,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 				}
 
 				memcpy(*host, temp1, copylength);
-				*host[copylength] = '\0';
+				(*host)[copylength] = '\0';
 				temp1 = temp2;
 				temp2 = strchr(*host, ':');
 				if(temp2){
@@ -105,11 +105,11 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 				if(serverName){
 					copylength = strlen(temp1);
 					*serverName = ov_memstack_alloc((copylength + 1) * sizeof(char));
-					if(!(*host)){
+					if(!(*serverName)){
 						return OV_ERR_HEAPOUTOFMEMORY;
 					}
 					memcpy(*serverName, temp1, copylength);
-					*serverName[copylength] = '\0';
+					(*serverName)[copylength] = '\0';
 					temp2 = strchr(*serverName, ':');
 					if(temp2){
 						*temp2 = '\0';
@@ -127,12 +127,12 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 				if(serverName){
 					copylength = temp2 - temp1;
 					*serverName = ov_memstack_alloc((copylength + 1) * sizeof(char));
-					if(!(*host)){
+					if(!(*serverName)){
 						return OV_ERR_HEAPOUTOFMEMORY;
 					}
 
 					memcpy(*serverName, temp1, copylength);
-					*serverName[copylength] = '\0';
+					(*serverName)[copylength] = '\0';
 					temp1 = temp2;
 					temp2 = strchr(*serverName, ':');
 					if(temp2){
@@ -154,7 +154,7 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 			return OV_ERR_HEAPOUTOFMEMORY;
 		}
 		memcpy(*instancePath, temp1, copylength);
-		*instancePath[copylength] = '\0';
+		(*instancePath)[copylength] = '\0';
 	}
 	return OV_ERR_OK;
 }
