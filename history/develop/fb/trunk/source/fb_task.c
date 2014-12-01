@@ -372,37 +372,43 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 	*/
 	switch(pelem->elemtype) {
 		case OV_ET_OBJECT:
-		    /* Default access */
-		    acces = (OV_AC_READWRITE | OV_AC_LINKABLE );
-		    
-        	/*
-        	*	test if we are the "urtask"
-        	*/
-	        if(!fb_task_is_urtask(ptask)) {
+			/* Default access */
+			acces = (OV_AC_READWRITE | OV_AC_LINKABLE );
+
+			/*
+			 *	test if we are the "urtask"
+			 */
+			if(!fb_task_is_urtask(ptask)) {
 				acces |= OV_AC_RENAMEABLE;
 			}
-			 
+
 			/* Task als Unterobjekt? */
-   	    	ptaskchild = Ov_GetParent(fb_tasklist, ptask);
-		    if(ptaskchild) {
-		        acces |= OV_AC_UNLINKABLE;
-		    }
-		    
-		    /* Gibt es Task-Unterobjekte ? */
-   	    	ptaskchild = Ov_GetFirstChild(fb_tasklist, ptask);
-		    if(ptaskchild) {
-		        acces |= OV_AC_UNLINKABLE;
-		    }
-		    
-		    /* Ist Task eingeschaltet, darf Task nicht geloescht werden */
-		    if(ptask->v_actimode == FB_AM_OFF) {
-    		    if(!ptaskchild) {
-        		    /* Keine Unterobjekte. Dann ist Task loeschbar. Auch UrTask */
-        		    acces |= OV_AC_DELETEABLE;
-    		    }
-		    }
-		    
-		    acces &= fb_object_getaccess(pobj, pelem, pticket);
+			ptaskchild = Ov_GetParent(fb_tasklist, ptask);
+			if(ptaskchild) {
+				acces |= OV_AC_UNLINKABLE;
+			}
+
+			/* Gibt es Task-Unterobjekte ? */
+			ptaskchild = Ov_GetFirstChild(fb_tasklist, ptask);
+			if(ptaskchild) {
+				acces |= OV_AC_UNLINKABLE;
+			}
+			acces &= fb_object_getaccess(pobj, pelem, pticket);
+
+			//OV does not allow deletion if there are links
+			//all tasks have a task parent link, so fb_object_getaccess probably forbid deletion
+			//override this as we have no easy way checking for the type of a delete preventing link 8-/
+
+			/* Ist Task eingeschaltet, darf Task nicht geloescht werden */
+			if(ptask->v_actimode == FB_AM_OFF) {
+				//only inactive tasks are deletable
+
+				if(!ptaskchild) {
+					/* Keine Unterobjekte. Dann ist Task loeschbar. Auch UrTask */
+					acces |= OV_AC_DELETEABLE;
+				}
+			}
+
 			return acces;
 		default:
 			break;
