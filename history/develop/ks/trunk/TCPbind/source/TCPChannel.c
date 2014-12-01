@@ -152,7 +152,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			return OV_ERR_OK;
 		}
 		//issue send command
-		KS_logfile_debug(("%s SendData: have to send %d bytes", thisCh->v_identifier, sendlength));
+		KS_logfile_debug(("%s SendData: have to send %" OV_PRINT_UINT " bytes", thisCh->v_identifier, sendlength));
 		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
 #if !OV_SYSTEM_NT
 		if (sentChunkSize == -1)
@@ -160,17 +160,17 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 #else
 		if (sentChunkSize == SOCKET_ERROR)
 		{
-			errno = WSAGetLastError();
 #endif
 
-			KS_logfile_error(("%s: send() failed: %d", thisCh->v_identifier, errno));
+			KS_logfile_error(("%s: send() failed...", thisCh->v_identifier));
+			ks_logfile_print_sysMsg();
 			thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
 			return OV_ERR_GENERIC;
 		}
 
 		thisCh->v_outData.readPT += sentChunkSize;
 
-		KS_logfile_debug(("%s: sent %u bytes", this->v_identifier, sentChunkSize));
+		KS_logfile_debug(("%s: sent %" OV_PRINT_UINT " bytes", this->v_identifier, sentChunkSize));
 
 		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length)
 		{
