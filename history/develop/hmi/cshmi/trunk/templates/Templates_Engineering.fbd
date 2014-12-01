@@ -1,8 +1,8 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-11-28 16:07:14
+* Erstellt: 2014-12-01 12:24:35
 * 
-* HOST   : DEV:7509
+* HOST   : 134.130.125.4:7509
 * SERVER : engineering
 ************************************************************/
 
@@ -1854,19 +1854,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/InputText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 3.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 5.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "10.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "normal";
       fontFamily : INPUT STRING = "monospace";
       horAlignment : INPUT STRING = "start";
-      verAlignment : INPUT STRING = "auto";
-      trimToLength : INPUT INT = 11;
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 10;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "none";
       fill : INPUT STRING = "black";
@@ -1877,7 +1877,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/InputText/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -1886,7 +1886,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/InputText/onload/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -1902,7 +1902,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/InputText/onload/Text.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBInputVariable/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -1923,7 +1923,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = -3.000000;
-      y : INPUT SINGLE = 7.000000;
+      y : INPUT SINGLE = 6.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -2030,7 +2030,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = 10.000000;
+      cy : INPUT SINGLE = 8.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -2625,18 +2625,18 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/OutputText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 52.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 5.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "10.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "normal";
       fontFamily : INPUT STRING = "monospace";
       horAlignment : INPUT STRING = "end";
-      verAlignment : INPUT STRING = "auto";
+      verAlignment : INPUT STRING = "middle";
       trimToLength : INPUT INT = 10;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "none";
@@ -2648,7 +2648,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/OutputText/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -2657,7 +2657,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/OutputText/onload/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -2673,7 +2673,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/OutputText/onload/Text.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBOutputVariable/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -2694,7 +2694,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 57.000000;
-      y : INPUT SINGLE = 7.000000;
+      y : INPUT SINGLE = 6.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -2759,7 +2759,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 54.000000;
-      cy : INPUT SINGLE = 10.000000;
+      cy : INPUT SINGLE = 8.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -3112,19 +3112,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/InputText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 3.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 5.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "10.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "normal";
       fontFamily : INPUT STRING = "monospace";
       horAlignment : INPUT STRING = "start";
-      verAlignment : INPUT STRING = "auto";
-      trimToLength : INPUT INT = 7;
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 10;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "none";
       fill : INPUT STRING = "black";
@@ -3135,7 +3135,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/InputText/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -3144,7 +3144,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/InputText/onload/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -3160,7 +3160,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/InputText/onload/Text.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCInputPort/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -3181,7 +3181,7 @@
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = -3.000000;
-      y : INPUT SINGLE = 7.000000;
+      y : INPUT SINGLE = 6.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "7px";
       fontStyle : INPUT STRING = "normal";
@@ -3568,7 +3568,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = 10.000000;
+      cy : INPUT SINGLE = 8.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -3804,19 +3804,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 52.000000;
-      y : INPUT SINGLE = 8.000000;
+      y : INPUT SINGLE = 5.000000;
       content : INPUT STRING = "??";
       fontSize : INPUT STRING = "10.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "normal";
       fontFamily : INPUT STRING = "monospace";
       horAlignment : INPUT STRING = "end";
-      verAlignment : INPUT STRING = "auto";
-      trimToLength : INPUT INT = 7;
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 10;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "none";
       fill : INPUT STRING = "black";
@@ -3827,7 +3827,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputText/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -3836,7 +3836,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputText/onload/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -3852,7 +3852,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/OutputText/onload/Text.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCOutputPort/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -4218,7 +4218,7 @@
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 54.000000;
-      cy : INPUT SINGLE = 10.000000;
+      cy : INPUT SINGLE = 8.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = TRUE;
@@ -4454,7 +4454,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 10.000000;
@@ -4477,7 +4477,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Class/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -4486,7 +4486,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Class/onload/ClassName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -4502,7 +4502,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/Class/onload/ClassName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewInputport/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -5676,7 +5676,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/variablename :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 10.000000;
@@ -5699,7 +5699,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Class/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/variablename/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -5708,7 +5708,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Class/onload/ClassName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/variablename/onload/setvariablename :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -5724,7 +5724,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/Class/onload/ClassName.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCChartviewOutputport/variablename/onload/setvariablename.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";

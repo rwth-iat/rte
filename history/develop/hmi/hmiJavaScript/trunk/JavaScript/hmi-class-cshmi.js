@@ -3487,10 +3487,13 @@ cshmi.prototype = {
 						oldX = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX;
 					}
 					//all X coordinates which had this position has to be updated
-					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX = newX;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.EndX !== VisualObject.ResourceList.RoutePolyline.Coords.StartX){
+						//we do not start and end at the same position, so the OffsetPoints are candidates to be moved, too
+						if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceX = newX;}
+						if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX = newX;}
+					}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceX = newX;}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetX = newX;}
-					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX === oldX){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetX = newX;}
 				}else if(this.style.cursor === "row-resize"){
 					var newY = parseFloat(this.getAttribute("y1"));
 					var oldY = 0;
@@ -3503,10 +3506,13 @@ cshmi.prototype = {
 						oldY = VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY;
 					}
 					//all Y coordinates which had this position has to be updated
-					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY = newY;}
+					if(VisualObject.ResourceList.RoutePolyline.Coords.EndY !== VisualObject.ResourceList.RoutePolyline.Coords.StartY){
+						//we do not start and end at the same height, so the OffsetPoints are candidates to be moved, too
+						if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointSourceY = newY;}
+						if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY = newY;}
+					}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointSourceY = newY;}
 					if(VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.ContrlPointTargetY = newY;}
-					if(VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY === oldY){ VisualObject.ResourceList.RoutePolyline.Coords.OffsetPointTargetY = newY;}
 				}
 				VisualObject.correctAllLines(VisualObject);
 				
