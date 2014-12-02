@@ -611,8 +611,8 @@ function handleResponseGetParameters(evt){
 					}
 				}
 				ParametersFieldset.style.maxHeight = "60000px";
-				requestSystemService = false;
-				requestPCService = true;
+				requestSystemService = true;
+				requestPCService = false;
 				Submitbutton.disabled = false;
 			} catch(err){
 				ResponseOutput.innerHTML = "error getting parameters: "+err;
