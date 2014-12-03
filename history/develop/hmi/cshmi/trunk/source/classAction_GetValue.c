@@ -127,6 +127,9 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 			}else if(ov_string_match(pobj->v_identifier, "tan*")){
 				//Returns the tangent of a number.
 				return OV_ERR_OK;
+			}else if(ov_string_match(pobj->v_identifier, "ran*")){
+				//Returns a random number with the maximum of the value.
+				return OV_ERR_OK;
 			}
 			ov_logfile_warning("Naming the GetValue %s was wrong. allowed is add*, sub*, mul*, div*, abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*, pow* ", pobj->v_identifier);
 			return OV_ERR_BADNAME;

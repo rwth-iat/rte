@@ -97,7 +97,7 @@ function HMI(debug, error, warning, info, trace) {
 	//log trace info to console
 	this.trace = trace;
 	this.initialised = false;
-	this.cyclicRequestNeeded = true;
+	this.cyclicRequestNeeded = false;
 	
 	this.ButShowServers = null;
 	this.InputRefreshTime = null;
@@ -673,8 +673,6 @@ HMI.prototype = {
 				
 				this.HMI_Constants.UrlParameterList = UrlParameterList;
 				
-				//the path of the HMI Manager could be different in every OV Server (manager needed for all hmi gestures, not cshmi)
-				this.KSClient.getHMIManagerPointer(Host, UrlParameterList.Server);
 				//spaces in objectname are encoded as %20 within OV
 				HMI.showSheet(Host, UrlParameterList.Server, encodeURI(UrlParameterList.Sheet));
 				
@@ -1167,9 +1165,6 @@ HMI.prototype = {
 			return;
 		}
 		
-		//[StyleDescription] remove this line if no ACPLT/HMI Server has a StyleDescription anymore
-		HMI.KSClient.checkSheetProperty(Host, Server, Sheet);
-		
 		this.refreshSheet(Host, Server, Sheet);
 		
 		//show fb-server name when known
@@ -1253,77 +1248,88 @@ HMI.prototype = {
 		){
 			skipRefresh = true;
 		}
-		//load hmi if playground is empty or with empty view (load in background)
+		//load sheet if playground is empty or with empty view (load in background)
 		if (skipRefresh === false || HMI.Playground.childNodes.length === 0){
-			
-			//spaces in objectname are encoded as %20 within OV
-			var SVGRequestURI = new Array("//"+Host+"/"+Server+encodeURI(Sheet) + ".GraphicDescription");
-			
-			//[StyleDescription] remove this if no ACPLT/HMI Server has a StyleDescription anymore
-			if (HMI.ServerProperty.SheetHasStyleDescription){
-				SVGRequestURI.push('.StyleDescription');
-			}else if (HMI.KSClient.HMIMANAGER_PATH === null){
-				SVGRequestURI = null;
-			}
-			
 			var ComponentText = null;
-			if (SVGRequestURI !== null){
-				//	get GraphicDescription
-				//
-				if ("kshttp" === HMI.HMI_Constants.ServerType){
-					ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null, false, "text/plain");
-				}else{
-					ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null);
-				}
-			}
-			SVGRequestURI = null;
-			
+			var Component = null;
 			HMI.cyclicRequestNeeded = false;
 			
-			//check if we have an cshmi target, no hmimanager at all or an error
-			if (ComponentText === null || (ComponentText && ComponentText.indexOf("KS_ERR") !== -1)){
+			if(this.KSClient.cshmilib_path[Host+Server] === undefined && this.KSClient.hmilib_path[Host+Server] === undefined){
+				//we have no cached library information about this server
+				this.KSClient.pingServer(Host, Server);
+			}
+			
+			//test loading old HMI, if hmilib is loaded
+			if(this.KSClient.hmilib_path[Host+Server] !== null){
+				if(!this.KSClient.HMIMANAGER_PATH[Host+Server]){
+					//hmimanager path is unknown right now
+					this.KSClient.getHMIManagerPointer(Host, Server);
+				}
+				
+				//check if this sheet is a old hmi url by requesting it
+				
+				//spaces in objectname are encoded as %20 within OV
+				var SVGRequestURI = "//"+Host+"/"+Server+encodeURI(Sheet) + ".GraphicDescription";
+				
+				if (SVGRequestURI !== null){
+					//	get GraphicDescription
+					//
+					if ("kshttp" === HMI.HMI_Constants.ServerType){
+						ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null, false, "text/plain");
+					}else{
+						ComponentText = this.KSClient.getVar(SVGRequestURI, "OP_VALUE", null);
+					}
+				}
+				SVGRequestURI = null;
+				
+				if (ComponentText && ComponentText.length > 0 && ComponentText.indexOf("KS_ERR") === -1){
+					//hmi target
+					var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
+					if (SplitComponent === null){
+						//logging not required, already done by prepareComponentText
+						return;
+					}
+					
+					//build a DOM fragment with the SVG String
+					Component = this.HMIDOMParser.parse(SplitComponent, null);
+					
+					if (Component != null){
+						this._showComponent(Host, Server, Component);
+						HMI.cyclicRequestNeeded = true;
+						//maximize the dimension of the new main sheet
+						this.optimizeSheetSize();
+					}
+					
+					//reload scroll setting
+					//wheelsupport is not supported by the HMI Team and probably firefox only
+					if(this.scrollComponent)
+					{
+						var scrollComponent = null;
+						if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
+							scrollComponent = document.getElementById(this.scrollComponent);
+						} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
+							scrollComponent = this.Playground.getElementById(this.scrollComponent);
+						}
+						scrollComponent.setAttribute("y", this.currY);
+						scrollComponent.setAttribute("x", this.currX);
+					}
+				}
+				ComponentText = null;
+			}
+			
+			//check if we have an cshmi target, if hmi was not successful till now
+			if (Component === null && this.KSClient.cshmilib_path[Host+Server] !== null){
 				//save for later use
 				this.KSClient.ResourceList.ModelHost = Host;
 				this.KSClient.ResourceList.ModelServer = Server;
 				
 				this.hideRefreshInfo(true);
 				
+				//startup cshmi
 				this.cshmi = new cshmi();
 				this.cshmi.instanciateCshmi(Host, Server, Sheet);
-			}else{
-				//hmi target
-				var SplitComponent = this.KSClient.prepareComponentText(ComponentText);
-				if (SplitComponent === null){
-					//logging not required, already done by prepareComponentText
-					return;
-				}
-				
-				//[StyleDescription] adjust this line if no ACPLT/HMI Server has a StyleDescription anymore
-				//build a DOM fragment with the SVG String
-				var Component = this.HMIDOMParser.parse(SplitComponent[0], SplitComponent[1]);
-				
-				if (Component != null){
-					this._showComponent(Host, Server, Component);
-					HMI.cyclicRequestNeeded = true;
-					//maximize the dimension of the new main sheet
-					this.optimizeSheetSize();
-				}
-				
-				//reload scroll setting
-				//wheelsupport is not supported by the HMI Team and probably firefox only
-				if(this.scrollComponent)
-				{
-					var Component = null;
-					if(document.getElementById(this.scrollComponent) !== null){ //opera, ff
-						Component = document.getElementById(this.scrollComponent);
-					} else if(this.Playground.getElementById(this.scrollComponent) !== null){ //ie
-						Component = this.Playground.getElementById(this.scrollComponent);
-					}
-					Component.setAttribute("y", this.currY);
-					Component.setAttribute("x", this.currX);
-				}
 			}
-			ComponentText = null;
+			
 		}
 		if(this.Playground.firstChild !== null){
 			//set x, y position to zero. A component could be out of view (especially when in embed-Node in IE)

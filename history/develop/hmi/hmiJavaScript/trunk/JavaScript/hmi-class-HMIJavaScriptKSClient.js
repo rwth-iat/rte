@@ -106,7 +106,9 @@ function HMIJavaScriptKSClient() {
 	this.ResourceList = Object();
 	
 	//needed in the gestures and SHOWSHEETS
-	this.HMIMANAGER_PATH = null;
+	this.HMIMANAGER_PATH = Object();
+	this.hmilib_path = Object();
+	this.cshmilib_path = Object();
 	
 	//needed for absolute ks path on the same ksserver
 	this.ResourceList.ModelHost = null;
@@ -1088,6 +1090,8 @@ HMIJavaScriptKSClient.prototype = {
 	pingServer: function(Host, Server) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - Start: "+Server);
 		//get a list of all loaded ov libraries of this server
+		this.hmilib_path[Host+Server] = null;
+		this.cshmilib_path[Host+Server] = null;
 		var Response = this.getVar("//"+Host+"/"+Server+"/acplt/ov/library.instance", "OP_VALUE", null);
 		if (!Response){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - communication problem, so no hmi and no cshmi server");
@@ -1097,6 +1101,19 @@ HMIJavaScriptKSClient.prototype = {
 			return false;
 		}else if (	Response.indexOf("/hmi") !== -1
 				||	Response.indexOf("/cshmi") !== -1){
+			var ServerLibraryList = this.splitKsResponse(Response);
+			if (ServerLibraryList.length > 0 && ServerLibraryList[0] !== ""){
+				ServerLibraryList = ServerLibraryList[0].split(" ");
+			}
+			var index, value;
+			for (index = 0; index < ServerLibraryList.length; index++) {
+				value = ServerLibraryList[index];
+				if (value.search(".*/hmi$") !== -1) {
+					this.hmilib_path[Host+Server] = value;
+				}else if (value.search(".*/cshmi$") !== -1) {
+					this.cshmilib_path[Host+Server] = value;
+				}
+			}
 			//an hmi or cshmi library is loaded
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.pingServer - hmi and/or cshmi server");
 			return true;
@@ -1113,26 +1130,26 @@ HMIJavaScriptKSClient.prototype = {
 	 */
 	getHMIManagerPointer: function(Host, Server) {
 		//the path of the HMI Manager could be different in every OV Server
-		var ManagerResponse = this.getVar("//"+Host+"/"+Server+"/Libraries/hmi/Manager.instance", "OP_VALUE", null);
+		var ManagerResponse = this.getVar("//"+Host+"/"+Server+this.hmilib_path[Host+Server]+"/Manager.instance", "OP_VALUE", null);
 		
 		var ManagerResponseArray = this.splitKsResponse(ManagerResponse);
 		if (ManagerResponseArray.length === 0){
 			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Response invalid");
-			this.HMIMANAGER_PATH = null;
+			this.HMIMANAGER_PATH[Host+Server] = null;
 			return false;
 		}else if (ManagerResponse.length === 0){
 			// Opera bis exklusive version 9.5 liefert einen leeren responseText bei HTTP-Status 503
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - Empty Response");
-			this.HMIMANAGER_PATH = null;
+			this.HMIMANAGER_PATH[Host+Server] = null;
 			return false;
 		}else if (ManagerResponseArray[0] === ""){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getHMIManagerPointer - no instance found");
-			this.HMIMANAGER_PATH = null;
+			this.HMIMANAGER_PATH[Host+Server] = null;
 			return false;
 		}
 		
 		var ManagerArray = ManagerResponseArray[0].split(' ');
-		this.HMIMANAGER_PATH = encodeURI(ManagerArray[0]);
+		this.HMIMANAGER_PATH[Host+Server] = encodeURI(ManagerArray[0]);
 		ManagerResponse = null;
 		ManagerResponseArray = null;
 		return true;
@@ -1146,21 +1163,17 @@ HMIJavaScriptKSClient.prototype = {
 		
 		var SheetList = new Array();
 		
-		//todo reuse the result from the PingServer library location!
+		if(this.cshmilib_path[Host+Server] === undefined && this.hmilib_path[Host+Server] === undefined){
+			//we have no cached information about this server
+			this.pingServer(Host, Server);
+		}
 		
 		//get Sheets from cshmi library
-		var responseArray;
-		var lastEntry;
-		var sortedList = Array();
-		var cshmiString = this.getVar("//"+Host+"/"+Server+'/Libraries/cshmi/Group.instance', "OP_VALUE", null);
-		if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
-			responseArray = this.splitKsResponse(cshmiString);
-			//the array could be [""]
-			if (responseArray.length > 0 && responseArray[0] !== ""){
-				sortedList = responseArray[0].split(" ").sort();
-			}
-		}else{
-			cshmiString = this.getVar("//"+Host+"/"+Server+'/acplt/cshmi/Group.instance', "OP_VALUE", null);
+		if(this.cshmilib_path[Host+Server] !== null){
+			var responseArray;
+			var lastEntry;
+			var sortedList = Array();
+			var cshmiString = this.getVar("//"+Host+"/"+Server+this.cshmilib_path[Host+Server]+'/Group.instance', "OP_VALUE", null);
 			if (!(cshmiString && cshmiString.indexOf("KS_ERR") !== -1)){
 				responseArray = this.splitKsResponse(cshmiString);
 				//the array could be [""]
@@ -1168,66 +1181,67 @@ HMIJavaScriptKSClient.prototype = {
 					sortedList = responseArray[0].split(" ").sort();
 				}
 			}
-		}
-		//detect all relevant groups
-		for(var i = 0; i < sortedList.length;){
-			if (sortedList[i].indexOf("/TechUnits/cshmi/Templates/") === 0){
-				//hide all Groups in Templates
-				sortedList.splice(i, 1);
-			}else
-			if (sortedList[i].indexOf(lastEntry) === 0){
-				//this sheet is a child from the last sheet
-				//so remove it from list
-				//the next entry will move down, so index i is still valid
-				sortedList.splice(i, 1);
-			}else{
-				//save Sheetname, but append a / to find only children not similar named sheets
-				lastEntry = sortedList[i]+"/";
-				i++;
+			//detect all relevant groups
+			for(var i = 0; i < sortedList.length;){
+				if (sortedList[i].indexOf("/TechUnits/cshmi/Templates/") === 0){
+					//hide all Groups in Templates
+					sortedList.splice(i, 1);
+				}else
+				if (sortedList[i].indexOf(lastEntry) === 0){
+					//this sheet is a child from the last sheet
+					//so remove it from list
+					//the next entry will move down, so index i is still valid
+					sortedList.splice(i, 1);
+				}else{
+					//save Sheetname, but append a / to find only children not similar named sheets
+					lastEntry = sortedList[i]+"/";
+					i++;
+				}
 			}
+			SheetList = SheetList.concat(sortedList);
+			lastEntry = null;
+			sortedList = Array();
 		}
-		SheetList = SheetList.concat(sortedList);
 		
-		lastEntry = null;
-		sortedList = null;
 		
 		//get Sheets from hmi library
-		
-		//the path of the HMI Manager could be different in every OV Server
-		this.getHMIManagerPointer(Host, Server);
-		if (this.HMIMANAGER_PATH === null){
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - No HMI Manager found on this Server.");
-			return SheetList;
+		if(this.hmilib_path[Host+Server] !== null){
+			//the path of the HMI Manager could be different in every OV Server
+			if(!this.HMIMANAGER_PATH[Host+Server]){
+				//hmimanager path is unknown right now
+				this.getHMIManagerPointer(Host, Server);
+			}
+			if (this.HMIMANAGER_PATH[Host+Server] === null){
+				HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - No HMI Manager found on this Server.");
+				return SheetList;
+			}
+			
+			var Command = null;
+			if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
+				Command = [HMI.KSClient.getMessageID(),
+				           '010',
+				           this.HMIMANAGER_PATH[Host+Server],
+				           'SHOWCOMPONENTS'];
+			}else{
+				Command = [HMI.KSClient.getMessageID(),
+				           '010',
+				           this.HMIMANAGER_PATH[Host+Server],
+				           'SHOWSHEETS'];
+			}
+			
+			this.setVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH[Host+Server] + '.Command', Command, null);
+			var Sheetstring = this.getVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH[Host+Server] + '.CommandReturn', "OP_VALUE", null);
+			Command = null;
+			
+			var responseArray = this.splitKsResponse(Sheetstring);
+			//the array could be [""]
+			if (responseArray.length > 0 && responseArray[0] !== ""){
+				SheetList = SheetList.concat(responseArray[0].split(" ").sort());
+			}
 		}
-		
-		var Command = null;
-		if (document.getElementById("idShowcomponents") && document.getElementById("idShowcomponents").checked){
-			Command = [HMI.KSClient.getMessageID(),
-			           '010',
-			           this.HMIMANAGER_PATH,
-			           'SHOWCOMPONENTS'];
-		}else{
-			Command = [HMI.KSClient.getMessageID(),
-			           '010',
-			           this.HMIMANAGER_PATH,
-			           'SHOWSHEETS'];
-		}
-		
-		this.setVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.Command',
-				Command,
-				null);
-		var Sheetstring = this.getVar("//"+Host+"/"+Server+this.HMIMANAGER_PATH + '.CommandReturn', "OP_VALUE", null);
-		Command = null;
-		
-		var responseArray = this.splitKsResponse(Sheetstring);
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getSheets - End");
-		//the array could be [""]
-		if (responseArray.length > 0 && responseArray[0] !== ""){
-			return SheetList.concat(responseArray[0].split(" ").sort());
-		}else{
-			return SheetList;
-		}
+		return SheetList;
 	},
 	
 	/**
@@ -1375,8 +1389,6 @@ HMIJavaScriptKSClient.prototype = {
 	prepareComponentText: function(ComponentText) {
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - Start");
 		
-		//[StyleDescription] adjust this code if no ACPLT/HMI Server has a StyleDescription anymore
-		
 		if (ComponentText === null || ComponentText === ""){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.prepareComponentText - parameter was null or empty");
 			return null;
@@ -1409,49 +1421,17 @@ HMIJavaScriptKSClient.prototype = {
 			}
 			window.clearInterval(HMI.RefreshTimeoutID);
 			HMI.RefreshTimeoutID = null;
-			ReturnText = null;
+			return null;
 		}else if (ReturnText[0] === ""){
 				HMI.hmi_log_onwebsite('Gateway reply was empty.');
 				return null;
-		} else {
-			//return the GraphicDescription and StyleDescription
-			
-			//put StyleVariable to defined state
-			if (ReturnText.length !== 2 ){
-				ReturnText[1] = null;
-			}
-		};
+		}
 		
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.prepareComponentText - End");
 		
-		return ReturnText;
+		return ReturnText[0];
 	},
 	
-	/*********************************
-		checkSheetProperty
-	*********************************/
-	checkSheetProperty: function(Host, Server, ComponentPath) {
-		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Start");
-		
-		if (this.HMIMANAGER_PATH === null){
-			//we have no HMIMANAGER, so there could be no StyleDescription
-			HMI.ServerProperty.SheetHasStyleDescription = false;
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endn");
-			return;
-		}
-		//spaces in objectname are encoded as %20 within OV
-		var StyleResponse = this.getVar("//"+Host+"/"+Server+encodeURI(ComponentPath) + '.StyleDescription', "OP_VALUE", null);
-		
-		if (StyleResponse.indexOf("KS_ERR") !== -1){
-			//error could be: TksS-0015::KS_ERR_BADPATH {{/TechUnits/SchneemannImSchnee.StyleDescription KS_ERR_BADPATH}}
-			HMI.ServerProperty.SheetHasStyleDescription = false;
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endf");
-		}else{
-			HMI.ServerProperty.SheetHasStyleDescription = true;
-			HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.checkSheetProperty - Endt");
-		}
-		return;
-	},	
 	/*********************************
 		splitKsResponse
 			returns the KS Response as an Array, or an empty Array
@@ -1667,6 +1647,10 @@ HMIJavaScriptKSClient.prototype = {
 		destroy
 	*********************************/
 	destroy: function () {
+		this.HMIMANAGER_PATH = Object();
+		this.hmilib_path = Object();
+		this.cshmilib_path = Object();
+		
 		//destroy all handles
 		for (var i in this.ResourceList.Servers){
 			if(this.ResourceList.Servers[i].HandleString !== undefined){

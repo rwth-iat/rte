@@ -1558,6 +1558,8 @@ cshmi.prototype = {
 						NewValue = NewValue + Math.sqrt(parseFloat(NewValuePart));
 					}else if (thisObserverEntry.ObjectName.indexOf("tan") === 0){
 						NewValue = NewValue + Math.tan(parseFloat(NewValuePart));
+					}else if (thisObserverEntry.ObjectName.indexOf("ran") === 0){
+						NewValue = NewValue + Math.random()*NewValuePart;
 					}else if (thisObserverEntry.ObjectName.indexOf("pow") === 0){
 						NewValue = Math.pow(NewValue, parseFloat(NewValuePart));
 					}
