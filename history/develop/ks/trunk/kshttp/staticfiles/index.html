@@ -32,67 +32,75 @@
 		<p>Powered by ACPLT/OV. This server <!--  has some static files as a <a href="sse.html">demo</a> and--> supports KS commands. This page is only a quick reference.</p>
 		<span id="idHmi"></span>
 		<span id="idServices"></span>
-		<form id="idCommandPlayground" style="display:none;" action="">
-			<h1>Command playground</h1>
-			<div>
-				<span id="idSpanOutputformat">
-					output format: 
-					<select id="idOutputformatSelect">
-						<option value="ksx">KSX 2.1r</option>
-						<option value="tcl">KSTCL (human readable errors)</option>
-						<option value="plain">text plain (no structure)</option>
+		<h2>Supported KS commands</h2>
+		<form action="">
+			<fieldset id="idCommandPlayground" style="display:none;">
+				<legend>Command playground</legend>
+				<div>
+					<label id="idSpanOutputformat">output format:
+						<select id="idOutputformatSelect">
+							<option value="ksx">KSX 2.1r</option>
+							<option value="tcl">KSTCL (human readable errors)</option>
+							<option value="plain">text plain (no structure)</option>
+						</select>
+					</label>
+					<select id="idServicelist">
+						<option value="none">select type of request</option>
+						<option value="getEP">getEP</option>
+						<option value="getVar">getVar</option>
+						<option value="setVar">setVar</option>
+						<option value="createObject">createObject</option>
+						<option value="deleteObject">deleteObject</option>
+						<option value="renameObject">renameObject</option>
+						<option value="link">link</option>
+						<option value="unlink">unlink</option>
+						<option value="getLogfile">getLogfile</option>
 					</select>
-				</span>
-				<select id="idServicelist">
-					<option value="none">select type of request</option>
-					<option value="getEP">getEP</option>
-					<option value="getVar">getVar</option>
-					<option value="setVar">setVar</option>
-					<option value="createObject">createObject</option>
-					<option value="deleteObject">deleteObject</option>
-					<option value="renameObject">renameObject</option>
-					<option value="link">link</option>
-					<option value="unlink">unlink</option>
-					<option value="getLogfile">getLogfile</option>
-				</select>
-				path: 
-				<input id="idPathInput" value="" placeholder="full path to the object/variable" style="width:200px;">
-				<span id="idSecondtextSpan" style="display:none;">
-					<span id="idSecondtextLabel">new value: </span>
-					<input id="idSecondtextInput" placeholder="new value to set" style="width:200px;">
-				</span>
-				<span id="idSpanGetepRequestType" style="display:none;">
-					request type: 
-					<select id="idGetepRequestTypeSelect">
-						<option value="OT_DOMAIN">children (OT_DOMAIN)</option>
-						<option value="OT_VARIABLE">variables (OT_VARIABLE)</option>
-						<option value="OT_LINK">associations (OT_LINK)</option>
-						<option value="OT_ANY">all (OT_ANY)</option>
-					</select>
-				</span>
-			</div>
-			<input id="idUrldisplay" value="" placeholder="enter a request right here or use the boxes above">
-			<input type="submit" id="idSubmitbutton" value="send request">
-			<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
+					<label id="idPathLabel">path:
+						<input id="idPathInput" list="idPathlist" value="" placeholder="full path to the object/variable" style="width:200px;">
+						<datalist id="idPathlist">
+							<optgroup label="dynamic entries" id="idPathdynamicentries">
+							</optgroup>
+							<optgroup label="default entries" id="idPathdefaultentries">
+								<option label="root" value="/"></option>
+								<option label="main engineering" value="/TechUnits"></option>
+							</optgroup>
+						</datalist>
+					</label>
+					<label id="idSecondtextLabel" style="display:none;">new value:
+						<input id="idSecondtextInput" placeholder="new value to set" style="width:200px;">
+					</label>
+					<label id="idSpanGetepRequestType" style="display:none;">request type:
+						<select id="idGetepRequestTypeSelect">
+							<option value="OT_DOMAIN">children (OT_DOMAIN)</option>
+							<option value="OT_VARIABLE">variables (OT_VARIABLE)</option>
+							<option value="OT_LINK">associations (OT_LINK)</option>
+							<option value="OT_ANY">all (OT_ANY)</option>
+						</select>
+					</label>
+				</div>
+				<input id="idUrldisplay" value="" placeholder="enter a request right here or use the boxes above">
+				<input type="submit" id="idSubmitbutton" value="send request">
+				<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
+			</fieldset>
 		</form>
-		<h1>Supported KS commands</h1>
 		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
 		It is possible to select KSX with the 
 		<a href="http://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP accept header</a>
 		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=ksx</code>.</p>
 		
-		<h2>GetVar</h2>
+		<h3>GetVar</h3>
 		<p>Gets one or multiple Variables.</p>
 		example: <code>/getVar?format=ksx&amp;path=/vendor/database_free</code><br>
 		example: <code>/getVar?format=ksx&amp;path[0]=/vendor/database_free&amp;path[1]=/vendor/database_size</code>
 		
-		<h2>SetVar</h2>
+		<h3>SetVar</h3>
 		<p>Sets one or multiple Variables. Note: The indexes of the parts are not relevant, only the order matters (second newvalue will be written into the second path).</p>
 		example: <code>/setVar?format=ksx&amp;path=/TechUnits/add1.IN1&amp;newvalue=4.5</code><br>
 		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;path[1]=/TechUnits/add2.IN1&amp;path[2]=.IN2&amp;newvalue[0]=3.2&amp;newvalue[1]=2&amp;newvalue[2]=1</code><br>
 		example: <code>/setVar?format=ksx&amp;path[0]=/TechUnits/add1.IN1&amp;newvalue[0]=3.2&amp;path[1]=/TechUnits/add2.IN1&amp;newvalue[1]=2&amp;path[2]=.IN2&amp;newvalue[2]=1</code>
 		
-		<h2>GetEP</h2>
+		<h3>GetEP</h3>
 		<p>Gets the engineering properties of an object. It has a few optional parameters:
 			<ul>
 				<li><code>requestType</code> filters some type of result: childrens (default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</li>
@@ -105,7 +113,7 @@
 			example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code>
 		</p>
 		
-		<h2>createObject</h2>
+		<h3>createObject</h3>
 		<p>Instantiates new objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
 			<ul>
 				<li><code>placementHint</code> defines the placement of the new object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
@@ -115,12 +123,12 @@
 			example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
 		</p>
 		
-		<h2>deleteObject</h2>
+		<h3>deleteObject</h3>
 		<p>Deletes objects.</p>
 		example: <code>/deleteObject?format=ksx&amp;path=/TechUnits/add1</code><br>
 		example: <code>/deleteObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
 		
-		<h2>renameObject</h2>
+		<h3>renameObject</h3>
 		<p>Renames objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
 			<ul>
 				<li><code>placementHint</code> defines the placement of the object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
@@ -130,7 +138,7 @@
 			example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
 		</p>
 		
-		<h2>linkObject</h2>
+		<h3>linkObject</h3>
 		<p>Links two pairs of objects with an OV association. It has optional parameters:
 			<ul>
 				<li><code>placementHint</code> defines the placement of the object in the association: <code>PMH_DEFAULT</code>=<code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
@@ -143,17 +151,17 @@
 			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEFORE&amp;placePath=/TechUnits/sub1</code><br>
 		</p>
 		
-		<h2>unlinkObject</h2>
+		<h3>unlinkObject</h3>
 		<p>Unlinks two pairs of objects with an OV association.</p>
 		example: <code>/unlink?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/UrTask</code><br>
 		example: <code>/unlink?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/UrTask</code><br>
 		
-		<h2>getLogfile</h2>
+		<h3>getLogfile</h3>
 		<p>Outputs logfile outputs of the server.</p>
 		example: <code>/getLogfile?format=ksx</code><br>
 		example: <code>/getLogfile?format=ksx&amp;from=2013-12-24T13:15:00.000000&amp;to=2016-12-31T22:45:00.000000&amp;maxentries=30</code><br>
 		
-		<h2>getServer</h2>
+		<h3>getServer</h3>
 		<p>Gives TCP Port of a Server (if this server is the KS-MANAGER).</p>
 		example: <code>/getServer?format=ksx&servername=MANAGER</code><br>
 		example: <code>/getServer?format=ksx&servername=MANAGER&serverversion=2</code><br>
@@ -163,26 +171,32 @@
 		var OutputformatSelect = document.getElementById("idOutputformatSelect");
 		var Servicelist = document.getElementById("idServicelist");
 		var Submitbutton = document.getElementById("idSubmitbutton");
+		var PathtextLabel = document.getElementById("idPathLabel");
 		var PathInput = document.getElementById("idPathInput");
-		var SecondtextSpan = document.getElementById("idSecondtextSpan");
-		var SecondtextInput = document.getElementById("idSecondtextInput");
 		var SecondtextLabel = document.getElementById("idSecondtextLabel");
+		var SecondtextInput = document.getElementById("idSecondtextInput");
 		var SpanGetepRequestType = document.getElementById("idSpanGetepRequestType");
 		var GetepRequestTypeSelect = document.getElementById("idGetepRequestTypeSelect");
 		var Urldisplay = document.getElementById("idUrldisplay");
 		var PlaygroundOutput = document.getElementById("idPlaygroundOutput");
 		
+		var timeoutID = null;
+		var autofillmagicXHR = new XMLHttpRequest();
+		var pathdynamicentries = document.getElementById("idPathdynamicentries");
+		var requestBasePath = "";
+		var activeRequestPath = "";
+		
 		var prepareWebpage = function(){
 			//show playground
-			if (-1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
+			if (true || -1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
 				//show playground
 				if(CommandPlayground){
 					CommandPlayground.style.display = "block";
 				}
 				
 				//test HMI and other services if transfered via http
-				var HmiNode = document.getElementById("idHmi");
-				if(HmiNode && !!window.XMLHttpRequest){
+				if(!!window.XMLHttpRequest){
+					var HmiNode = document.getElementById("idHmi");
 					var req = new XMLHttpRequest();
 					req.open("GET", "/getEP?requestType=OT_DOMAIN&path=/data/kshttp", true);
 					req.setRequestHeader("Accept", "text/ksx");
@@ -233,57 +247,67 @@
 		};
 		window.onload = prepareWebpage;
 		Servicelist.onchange = function(evt){
+			PathtextLabel.firstChild.nodeValue = "Path:";
+			PathtextLabel.style.display = "inline";
 			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
-				SecondtextSpan.style.display = "none";
+				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
-				PathInput.value = "/TechUnits";
-				SecondtextSpan.style.display = "none";
+				if(PathInput.value === ""){
+					PathInput.value = "/TechUnits";
+				}
+				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "inline";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
-				PathInput.value = "/TechUnits/add1.IN1";
+				if(PathInput.value === ""){
+					PathInput.value = "/TechUnits/add1.IN1";
+				}
 				SecondtextInput.value = "42";
-				SecondtextLabel.innerHTML = "new value: ";
-				SecondtextSpan.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "new value: ";
+				SecondtextLabel.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getVar"){
-				PathInput.value = "/TechUnits/add1.IN1";
-				SecondtextSpan.style.display = "none";
+				if(PathInput.value === ""){
+					PathInput.value = "/TechUnits/add1.IN1";
+				}
+				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "createObject"){
 				PathInput.value = "/TechUnits/add1";
 				SecondtextInput.value = "/Libraries/iec61131stdfb/add";
-				SecondtextLabel.innerHTML = "factory/class: ";
-				SecondtextSpan.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "factory/class: ";
+				SecondtextLabel.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "deleteObject"){
 				PathInput.value = "/TechUnits/add1";
-				SecondtextSpan.style.display = "none";
+				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "renameObject"){
 				PathInput.value = "/TechUnits/add1";
 				SecondtextInput.value = "/TechUnits/add2";
-				SecondtextLabel.innerHTML = "new name: ";
-				SecondtextSpan.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "new name: ";
+				SecondtextLabel.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "link"){
 				PathInput.value = "/TechUnits/add1.taskparent";
 				SecondtextInput.value = "/Tasks/UrTask";
-				SecondtextLabel.innerHTML = "link partner: ";
-				SecondtextSpan.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "link partner: ";
+				SecondtextLabel.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "unlink"){
 				PathInput.value = "/TechUnits/add1.taskparent";
 				SecondtextInput.value = "/Tasks/UrTask";
-				SecondtextLabel.innerHTML = "link partner: ";
-				SecondtextSpan.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "link partner: ";
+				SecondtextLabel.style.display = "inline";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getLogfile"){
-				PathInput.value = "10";
-				SecondtextSpan.style.display = "none";
+				PathtextLabel.style.display = "none";
+				SecondtextLabel.style.display = "inline";
+				SecondtextLabel.firstChild.nodeValue = "maximal entries: ";
+				SecondtextInput.value = "10";
 				SpanGetepRequestType.style.display = "none";
 			}else{
-				SecondtextSpan.style.display = "none";
+				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}
 			calculateUrl();
@@ -387,6 +411,96 @@
 				},1500);
 			}
 		}
+		PathInput.onkeydown = function(evt){
+			if (activeRequestPath === PathInput.value) return;
+			while (pathdynamicentries.firstChild) {
+				pathdynamicentries.removeChild(pathdynamicentries.firstChild);
+			}
+			window.clearTimeout(timeoutID);
+			autofillmagicXHR.abort();
+		}
+		
+		PathInput.onkeyup = function(evt){
+			if (activeRequestPath === PathInput.value) return;
+			var insertautofillinformation = function(evt){
+				if (!evt){
+					var req = this;
+				}else{
+					req = evt.target;
+				}
+				if( req.readyState === 4 && req.status === 200){
+					while (pathdynamicentries.firstChild) {
+						pathdynamicentries.removeChild(pathdynamicentries.firstChild);
+					}
+					var resultlist = req.responseXML.getElementsByTagName("DomainEngProps");
+					for (var i=0;i < resultlist.length;i++){
+						var access = resultlist[i].getElementsByTagName("access")[0].textContent;
+						var newPath = requestBasePath;
+						var labelname = "";
+						if(requestBasePath === "/"){
+						}else if(access.indexOf("part") !== -1){
+							//we have a part here, so delimiter is a point
+							newPath += ".";
+							labelname = "part";
+						}else{
+							newPath += "/";
+							labelname = "child";
+						}
+						var newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
+						var newOption = new Option(newPath);
+						newOption.label = labelname;
+						pathdynamicentries.appendChild(newOption);
+					}
+					var resultlist = req.responseXML.getElementsByTagName("VariableEngProps");
+					for (var i=0;i < resultlist.length;i++){
+						access = resultlist[i].getElementsByTagName("access")[0].textContent;
+						newPath = requestBasePath;
+						if(requestBasePath === "/"){
+						}else if(access.indexOf("part") !== -1){
+							//we have a part here, so delimiter is a point
+							newPath += ".";
+						}else{
+							newPath += "/";
+						}
+						labelname = "variable";
+						newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
+						newOption = new Option(newPath);
+						newOption.label = labelname;
+						pathdynamicentries.appendChild(newOption);
+					}
+				}
+			};
+			var requestautofillinformation = function(evt){
+				var lastSlash = PathInput.value.lastIndexOf("/");
+				var lastDot = PathInput.value.lastIndexOf(".");
+				if(lastSlash > lastDot){
+					requestBasePath = PathInput.value.substring(0, lastSlash);
+					var requestMask = PathInput.value.substring(lastSlash+1)+"*";
+				}else if(lastSlash < lastDot){
+					requestBasePath = PathInput.value.substring(0, lastDot);
+					requestMask = PathInput.value.substring(lastDot+1)+"*";
+				}
+				if(requestBasePath === ""){
+					requestBasePath = "/";
+				}
+				//disable old request
+				autofillmagicXHR.abort();
+				autofillmagicXHR = new XMLHttpRequest();
+				
+				autofillmagicXHR.open("GET", "/getEP?requestType=OT_ANY&path="+requestBasePath+"&nameMask="+requestMask, true);
+				
+				autofillmagicXHR.setRequestHeader("Accept", "text/ksx");
+				autofillmagicXHR.timeout = 1000;
+				autofillmagicXHR.onreadystatechange = insertautofillinformation;
+				autofillmagicXHR.send();
+				activeRequestPath = PathInput.value;
+			};
+			window.clearTimeout(timeoutID);
+			autofillmagicXHR.abort();
+			
+			timeoutID = window.setTimeout(requestautofillinformation , 300);
+		}
+		
 		//init url
 		calculateUrl();
 		</script>
