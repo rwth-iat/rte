@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2014-12-01 12:24:35
+* Erstellt: 2014-12-10 11:28:22
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -766,7 +766,76 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/Save_Identifier :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.if/checkOff :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.if/checkOff.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "on";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.if/checkOff.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/Save_Identifier :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -781,7 +850,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/Save_Identifier/Question :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/Save_Identifier/Question :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -798,7 +867,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/Save_Identifier/ConName :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/Save_Identifier/ConName :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -815,7 +884,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/Save_Identifier/QuestionMark :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/Save_Identifier/QuestionMark :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -832,7 +901,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -841,7 +910,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -849,7 +918,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.if/confirm :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.if/confirm :
     CLASS /acplt/cshmi/Confirm;
     VARIABLE_VALUES
       ignoreError : INPUT BOOL = FALSE;
@@ -858,7 +927,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.if/confirm.question :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.if/confirm.question :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -875,7 +944,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -883,7 +952,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.then/Delete :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.then/Delete :
     CLASS /acplt/cshmi/DeleteObject;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -891,7 +960,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.then/Delete.Path :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.then/Delete.Path :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -908,7 +977,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.then/Set_RequestReload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.then/Set_RequestReload :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -924,7 +993,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.then/Set_RequestReload.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.then/Set_RequestReload.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -941,7 +1010,74 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/If_AnswerYes.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.then/If_AnswerYes.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification.if/notification :
+    CLASS /acplt/cshmi/Confirm;
+    VARIABLE_VALUES
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification.if/notification.question :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "Active connections are not deleteable. Rightclick to deactivate.";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/ConnectionPolyline/doubleclick/isInactiveCon.else/notification.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -959,9 +1095,8 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/onload/setTitle :
-    CLASS /acplt/cshmi/SetValue;
+    CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
       ksVar : INPUT STRING = "";
       elemVar : INPUT STRING = "title";
       globalVar : INPUT STRING = "";
@@ -974,7 +1109,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/onload/setTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/onload/setTitle/name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -987,6 +1122,23 @@
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FBConnection/onload/setTitle/description :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = ": right click to activate, double click to delete";
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -14792,7 +14944,76 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Unlink :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.if/actimodeOff :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.if/actimodeOff.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "actimode";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.if/actimodeOff.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = 1;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Unlink :
     CLASS /acplt/cshmi/UnlinkObjects;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -14800,7 +15021,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Unlink.ObjectA :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Unlink.ObjectA :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14817,7 +15038,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Unlink.ObjectB :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Unlink.ObjectB :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14834,7 +15055,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Unlink.Association :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Unlink.Association :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14851,7 +15072,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Delete :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Delete :
     CLASS /acplt/cshmi/DeleteObject;
     VARIABLE_VALUES
       zindex : INPUT UINT = 1;
@@ -14859,7 +15080,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Delete.Path :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Delete.Path :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14876,7 +15097,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Set_RequestReload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Set_RequestReload :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -14892,7 +15113,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Set_RequestReload.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Set_RequestReload.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14909,7 +15130,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Set_Invisible :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Set_Invisible :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -14925,7 +15146,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/Set_Invisible.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.then/Set_Invisible.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -14937,6 +15158,73 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification.if/notification :
+    CLASS /acplt/cshmi/Confirm;
+    VARIABLE_VALUES
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification.if/notification.question :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "Active FBs are not deleteable. Rightclick on the header to deactivate.";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.then/ifactiveFB.else/notification.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;

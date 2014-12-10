@@ -365,7 +365,7 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 	*/
 	OV_INSTPTR_fb_task	ptask = Ov_StaticPtrCast(fb_task, pobj);
 	OV_INSTPTR_fb_task	ptaskchild;
-	OV_ACCESS           acces;
+	OV_ACCESS           access;
 	
 	/*
 	*	switch based on the element's type
@@ -373,27 +373,27 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 	switch(pelem->elemtype) {
 		case OV_ET_OBJECT:
 			/* Default access */
-			acces = (OV_AC_READWRITE | OV_AC_LINKABLE );
+			access = (OV_AC_READWRITE | OV_AC_LINKABLE );
 
 			/*
 			 *	test if we are the "urtask"
 			 */
 			if(!fb_task_is_urtask(ptask)) {
-				acces |= OV_AC_RENAMEABLE;
+				access |= OV_AC_RENAMEABLE;
 			}
 
 			/* Task als Unterobjekt? */
 			ptaskchild = Ov_GetParent(fb_tasklist, ptask);
 			if(ptaskchild) {
-				acces |= OV_AC_UNLINKABLE;
+				access |= OV_AC_UNLINKABLE;
 			}
 
 			/* Gibt es Task-Unterobjekte ? */
 			ptaskchild = Ov_GetFirstChild(fb_tasklist, ptask);
 			if(ptaskchild) {
-				acces |= OV_AC_UNLINKABLE;
+				access |= OV_AC_UNLINKABLE;
 			}
-			acces &= fb_object_getaccess(pobj, pelem, pticket);
+			access &= fb_object_getaccess(pobj, pelem, pticket);
 
 			//OV does not allow deletion if there are links
 			//all tasks have a task parent link, so fb_object_getaccess probably forbid deletion
@@ -405,11 +405,11 @@ OV_DLLFNCEXPORT OV_ACCESS fb_task_getaccess(
 
 				if(!ptaskchild) {
 					/* Keine Unterobjekte. Dann ist Task loeschbar. Auch UrTask */
-					acces |= OV_AC_DELETEABLE;
+					access |= OV_AC_DELETEABLE;
 				}
 			}
 
-			return acces;
+			return access;
 		default:
 			break;
 	}

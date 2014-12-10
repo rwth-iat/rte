@@ -204,10 +204,19 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_on_set(
 	OV_INSTPTR_fb_connection	pconn,
 	const OV_BOOL				on
 ) {
+	OV_VTBLPTR_fb_connection	pvtable;
+
 	if(!pconn){
 		return OV_ERR_BADPARAM;
 	}
-	//fixme, hier sollte eigentlich fb_connection_checkelements() aufgerufen werden, oder?
+
+	Ov_GetVTablePtr(fb_connection, pvtable, pconn);
+	if(!pvtable) {
+		return OV_ERR_GENERIC;
+	}
+	if(pvtable->m_checkelements(pconn) == FALSE){
+		return OV_ERR_BADVALUE;
+	}
 	pconn->v_on = on;
 	return OV_ERR_OK;
 }
@@ -357,6 +366,7 @@ OV_DLLFNCEXPORT OV_ACCESS fb_connection_getaccess(
 	const OV_ELEMENT			*pelem,
 	const OV_TICKET				*pticket
 ) {
+	OV_INSTPTR_fb_connection	pconn = Ov_StaticPtrCast(fb_connection, pobj);
 	/*
 	*	switch based on the element's type
 	*/
@@ -372,6 +382,10 @@ OV_DLLFNCEXPORT OV_ACCESS fb_connection_getaccess(
 			break;
 		case OV_ET_OBJECT:
 		    /* Version 2: Auch Links zu spaeteren Zeitpunkten zulassen */
+			if(pconn->v_on == TRUE){
+				//active connections should not be deletable
+				return (OV_AC_READWRITE | OV_AC_RENAMEABLE | OV_AC_LINKABLE | OV_AC_UNLINKABLE);
+			}
 			return (OV_AC_READWRITE | OV_AC_RENAMEABLE | OV_AC_DELETEABLE | OV_AC_LINKABLE | OV_AC_UNLINKABLE);
 		default:
 			break;
