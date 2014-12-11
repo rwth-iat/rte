@@ -36,6 +36,14 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 
+#if OV_SYSTEM_UNIX
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
+#if OV_SYSTEM_NT
+#include <WinBase.h>
+#endif
 
 /*	----------------------------------------------------------------------	*/
 
@@ -62,6 +70,9 @@ static OV_UINT		ks_maxStringLength = 0;
 static OV_UINT		ks_maxVectorLength = 0;
 static OV_UINT		ov_scheduler_allowedJitter = 0;
 static OV_UINT		ov_scheduler_numberOfExceeds = 0;
+static OV_UINT		ov_serverPID = 0;
+static OV_UINT		ov_instanceCount = 0;
+
 
 OV_DLLVAREXPORT OV_BOOL ov_activitylock;
 OV_DLLVAREXPORT OV_BOOL ov_backup;
@@ -82,7 +93,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "libraries",				NULL,	ov_vendortree_getlibraries, NULL },
 		{ "classes",				NULL,	ov_vendortree_getclasses, NULL },
 		{ "associations",			NULL,	ov_vendortree_getassociations, NULL },
-		{ "structures",				NULL,	ov_vendortree_getstructures, NULL },
+		{ "instanceCount",			NULL,	ov_vendortree_getInstanceCount, NULL },
 		{ "database_fragmentation",	"%",	ov_vendortree_getdatabasefrag, NULL },
 		{ "database_free",			"Byte",	ov_vendortree_getdatabasefree, NULL },
 		{ "database_name",			NULL,	ov_vendortree_getdatabasename, NULL },
@@ -100,6 +111,7 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "server_configuration",	NULL,	ov_vendortree_getserverconfiguration, ov_vendortree_setserverconfiguration },
 		{ "server_run",				NULL,	ov_vendortree_getserverrun, ov_vendortree_setserverrun },
 		{ "server_password",		NULL,	ov_vendortree_getserverpassword, ov_vendortree_setserverpassword_ext },
+		{ "serverPID",				NULL,	ov_vendortree_getserverPID, NULL },
 		{ "startup_time",			"UTC",	ov_vendortree_getstartuptime, NULL },
 		{ "running_db_backup",		NULL,	ov_vendortree_getbackup, NULL },
 		{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
@@ -863,63 +875,62 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstartuptime(
 /*	----------------------------------------------------------------------	*/
 
 /**
- *	Get list of structures in the database
+ *	Get number of instances in database
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getInstanceCount(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 ) {
-	/*
-	 *	local variables
-	 */
-	OV_UINT					structs = 0;
-	OV_INSTPTR_ov_structure	pstruct;
-	OV_INSTPTR_ov_class	pclass;
-	OV_STRING				*pstring = NULL;
-	/*
-	 *	count associations
-	 */
-	Ov_ForEachChildEx(ov_instantiation, pclass_ov_structure, pstruct, ov_structure) {
-		structs++;
+	if(!pvarcurrprops){
+		return OV_ERR_BADPARAM;
 	}
-	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
-		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
-			structs++;
-		}
-	}
-	/*
-	 *	allocate memory for the structure paths
-	 */
-	if(structs) {
-		pstring = (OV_STRING*)ov_memstack_alloc(structs*sizeof(OV_STRING));
-		if(!pstring) {
-			return OV_ERR_HEAPOUTOFMEMORY;
-		}
-	}
-	/*
-	 *	enter structure paths into a string vector
-	 */
-	pvarcurrprops->value.vartype = OV_VT_STRING_VEC;
-	pvarcurrprops->value.valueunion.val_string_vec.veclen = structs;
-	pvarcurrprops->value.valueunion.val_string_vec.value = pstring;
-	Ov_ForEachChildEx(ov_instantiation, pclass_ov_structure, pstruct, ov_structure) {
-		*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pstruct), 2);
-		if(!*pstring) {
-			return OV_ERR_HEAPOUTOFMEMORY;
-		}
-		pstring++;
-	}
-	Ov_ForEachChild(ov_inheritance, pclass_ov_structure, pclass) {
-		Ov_ForEachChildEx(ov_instantiation, pclass, pstruct, ov_structure) {
-			*pstring = ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pstruct), 2);
-			if(!*pstring) {
-				return OV_ERR_HEAPOUTOFMEMORY;
-			}
-			pstring++;
-		}
-	}
+	
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ov_instanceCount;
 	return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_getInstanceCountUINT() {
+	return ov_instanceCount;
+}
+
+OV_DLLFNCEXPORT void ov_vendortree_incrementInstanceCount(){
+	ov_instanceCount++;
+}
+
+OV_DLLFNCEXPORT void ov_vendortree_decrementInstanceCount(){
+	ov_instanceCount--;
+}
+
+/**
+ *	Get PID of server
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverPID(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+) {
+	if(!pvarcurrprops){
+		return OV_ERR_BADPARAM;
+	}
+	
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = ov_serverPID;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_getserverPIDUINT() {
+	return ov_serverPID;
+}
+
+OV_DLLFNCEXPORT void ov_vendortree_setServerPID(){
+#if OV_SYSTEM_UNIX
+	ov_serverPID = getpid();
+#endif
+#if OV_SYSTEM_NT
+	ov_serverPID = GetCurrentProcessId();
+#endif
+}
+
 
 /*	----------------------------------------------------------------------	*/
 

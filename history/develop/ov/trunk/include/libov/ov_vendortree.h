@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	31
+#define	OV_NUM_VENDOROBJECTS	32
 
 /*
 *	Number of configuration bits
@@ -337,13 +337,27 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstartuptime(
 );
 
 /**
- *	Get list of structures in the database
+ *	Get number of instances in database
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getstructures(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getInstanceCount(
 	OV_ANY			*pvarcurrprops,
 	const OV_TICKET	*pticket
 );
 
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_getInstanceCountUINT();
+OV_DLLFNCEXPORT void ov_vendortree_incrementInstanceCount();
+OV_DLLFNCEXPORT void ov_vendortree_decrementInstanceCount();
+
+/**
+ *	Get PID of server
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getserverPID(
+	OV_ANY			*pvarcurrprops,
+	const OV_TICKET	*pticket
+);
+
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_getserverPIDUINT();
+OV_DLLFNCEXPORT void ov_vendortree_setServerPID();
 /**
  *	Get server configuration
  */
