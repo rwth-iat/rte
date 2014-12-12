@@ -1332,7 +1332,7 @@ ERRORMSG:
 	*	set the serverpassword of the database
 	*/
 	if (!pdb->serverpassword) ov_vendortree_setserverpassword(password);
-
+	ov_vendortree_setServerPID();
 	if(!exit){
 		/*
 		*   run server
