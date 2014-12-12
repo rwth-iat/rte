@@ -476,7 +476,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/Zeiger/CyclicTime :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -867,7 +867,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIRotationPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1528,7 +1528,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIBarPointerDisplay/VerlaufGruppe/AktuellerWert/Value/UpdateActualTemperature :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1639,7 +1639,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/AIBarPointerDisplay/VerlaufGruppe/MovingBar/CyclicTime :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1870,7 +1870,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DOButton/getSpCyclic :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -2519,7 +2519,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/IOdriverlib/DI_Area/getSpCyclic :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 1.000000;
+      cyctime : INPUT SINGLE = 0.100000;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
