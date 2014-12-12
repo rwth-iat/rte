@@ -59,8 +59,8 @@
 					<label id="idPathLabel">path:
 						<input id="idPathInput" list="idPathlist" value="" placeholder="full path to the object/variable" style="width:200px;">
 						<datalist id="idPathlist">
-							<optgroup label="dynamic entries" id="idPathdynamicentries">
-							</optgroup>
+							<optgroup label="dynamic entries" id="idPathdirentries"></optgroup>
+							<optgroup label="dynamic entries" id="idPathvarentries"></optgroup>
 							<optgroup label="default entries" id="idPathdefaultentries">
 								<option label="root" value="/"></option>
 								<option label="main engineering" value="/TechUnits"></option>
@@ -179,12 +179,6 @@
 		var GetepRequestTypeSelect = document.getElementById("idGetepRequestTypeSelect");
 		var Urldisplay = document.getElementById("idUrldisplay");
 		var PlaygroundOutput = document.getElementById("idPlaygroundOutput");
-		
-		var timeoutID = null;
-		var autofillmagicXHR = new XMLHttpRequest();
-		var pathdynamicentries = document.getElementById("idPathdynamicentries");
-		var requestBasePath = "";
-		var activeRequestPath = "";
 		
 		var prepareWebpage = function(){
 			//show playground
@@ -411,17 +405,30 @@
 				},1500);
 			}
 		}
-		PathInput.onkeydown = function(evt){
+		//init url
+		calculateUrl();
+		
+		//##################### Autofill for the path
+		var timeoutID = null;
+		var autofillmagicXHR = new XMLHttpRequest();
+		var pathdirentries = document.getElementById("idPathdirentries");
+		var pathvarentries = document.getElementById("idPathvarentries");
+		
+		var requestBasePath = "";
+		var activeRequestPath = "";
+		
+		PathInput.onkeydown = PathInput.onmousedown = function(evt){
+			//no change, so we need no request
 			if (activeRequestPath === PathInput.value) return;
-			while (pathdynamicentries.firstChild) {
-				pathdynamicentries.removeChild(pathdynamicentries.firstChild);
-			}
 			window.clearTimeout(timeoutID);
 			autofillmagicXHR.abort();
 		}
 		
-		PathInput.onkeyup = function(evt){
+		PathInput.onkeyup = PathInput.onmouseup = function(evt){
+			//no change, so we need no request
 			if (activeRequestPath === PathInput.value) return;
+			
+			//################## insert information
 			var insertautofillinformation = function(evt){
 				if (!evt){
 					var req = this;
@@ -429,15 +436,20 @@
 					req = evt.target;
 				}
 				if( req.readyState === 4 && req.status === 200){
-					while (pathdynamicentries.firstChild) {
-						pathdynamicentries.removeChild(pathdynamicentries.firstChild);
-					}
+					//############### Children
 					var resultlist = req.responseXML.getElementsByTagName("DomainEngProps");
+					if(resultlist.length !== 0){
+						while (pathdirentries.firstChild) {
+							pathdirentries.removeChild(pathdirentries.firstChild);
+						}
+					}
 					for (var i=0;i < resultlist.length;i++){
 						var access = resultlist[i].getElementsByTagName("access")[0].textContent;
 						var newPath = requestBasePath;
 						var labelname = "";
 						if(requestBasePath === "/"){
+							//no need to append a slash or dot at the root domain
+							labelname = "child";
 						}else if(access.indexOf("part") !== -1){
 							//we have a part here, so delimiter is a point
 							newPath += ".";
@@ -449,38 +461,49 @@
 						var newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
 						var newOption = new Option(newPath);
 						newOption.label = labelname;
-						pathdynamicentries.appendChild(newOption);
+						pathdirentries.appendChild(newOption);
 					}
+					//############### Parts and Variables
 					var resultlist = req.responseXML.getElementsByTagName("VariableEngProps");
+					if(resultlist.length !== 0){
+						while (pathvarentries.firstChild) {
+							pathvarentries.removeChild(pathvarentries.firstChild);
+						}
+					}
 					for (var i=0;i < resultlist.length;i++){
 						access = resultlist[i].getElementsByTagName("access")[0].textContent;
 						newPath = requestBasePath;
-						if(requestBasePath === "/"){
-						}else if(access.indexOf("part") !== -1){
+						if(access.indexOf("part") !== -1){
 							//we have a part here, so delimiter is a point
 							newPath += ".";
-						}else{
+						}else if(requestBasePath !== "/"){
 							newPath += "/";
 						}
 						labelname = "variable";
 						newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
 						newOption = new Option(newPath);
 						newOption.label = labelname;
-						pathdynamicentries.appendChild(newOption);
+						pathvarentries.appendChild(newOption);
 					}
 				}
 			};
+			
+			//################## request information
 			var requestautofillinformation = function(evt){
 				var lastSlash = PathInput.value.lastIndexOf("/");
 				var lastDot = PathInput.value.lastIndexOf(".");
 				if(lastSlash > lastDot){
+					//our basepath is something like /TechUnits/add1
 					requestBasePath = PathInput.value.substring(0, lastSlash);
 					var requestMask = PathInput.value.substring(lastSlash+1)+"*";
 				}else if(lastSlash < lastDot){
+					//our basepath is a part like /TechUnits/setvar.value
 					requestBasePath = PathInput.value.substring(0, lastDot);
 					requestMask = PathInput.value.substring(lastDot+1)+"*";
 				}
+				
 				if(requestBasePath === ""){
+					//the root domain, needs to end with a slash
 					requestBasePath = "/";
 				}
 				//disable old request
@@ -495,14 +518,12 @@
 				autofillmagicXHR.send();
 				activeRequestPath = PathInput.value;
 			};
+			
+			//################## trigger check in a few ms
 			window.clearTimeout(timeoutID);
 			autofillmagicXHR.abort();
-			
 			timeoutID = window.setTimeout(requestautofillinformation , 300);
 		}
-		
-		//init url
-		calculateUrl();
 		</script>
 	</body>
 </html>
