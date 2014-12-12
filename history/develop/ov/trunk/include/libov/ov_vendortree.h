@@ -345,8 +345,6 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getInstanceCount(
 );
 
 OV_DLLFNCEXPORT OV_UINT ov_vendortree_getInstanceCountUINT();
-OV_DLLFNCEXPORT void ov_vendortree_incrementInstanceCount();
-OV_DLLFNCEXPORT void ov_vendortree_decrementInstanceCount();
 
 /**
  *	Get PID of server

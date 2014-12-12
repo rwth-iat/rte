@@ -864,7 +864,6 @@ OV_RESULT ov_class_createobject_preinit(
 	if(Ov_Fail(result)) {
 		return result;
 	}
-	ov_vendortree_incrementInstanceCount();
 	/*
 	*	link with class object
 	*/
@@ -977,7 +976,6 @@ void ov_class_deleteobject_cleanupinst(
 			ov_logfile_error("could not release objects id %#X%08X of instance %s. reason %s", pobj->v_idH, pobj->v_idL, pobj->v_identifier, ov_result_getresulttext(result));
 			ov_memstack_unlock();
 		}
-		ov_vendortree_decrementInstanceCount();
 		/*
 		*	iterate over class elements and free strings, unlink links
 		*/
