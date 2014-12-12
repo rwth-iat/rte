@@ -107,33 +107,37 @@ OV_UINT fb_task_is_urtask(
 
 /*	----------------------------------------------------------------------	*/
 
-/*
-*	Set proctime
+/**
+*	Set init proctime, to stay in the old cycle
+*	called on task reactivation and db startup
 */
 void fb_set_proctime(
 	OV_INSTPTR_fb_task	ptask
 ) {
     
-    double 				d1,d2,d3;
-    OV_TIME				t0;
-    OV_TIME_SPAN		dt;
-    long int			n;
+    OV_DOUBLE 			nowDouble,proctimeDouble,cyctimeDouble;
+    OV_TIME				nowTime;
+    OV_TIME_SPAN		procTimeDiff;
+    OV_INT			cycMisses;
 
-    ov_time_gettime(&t0);
+    ov_time_gettime(&nowTime);
 
-    d1 = (double)t0.secs + ((double)t0.usecs)/1000000;
-    d2 = (double)ptask->v_proctime.secs + ((double)ptask->v_proctime.usecs)/1000000;
+    Ov_TimeToDouble(nowTime, nowDouble);
+    Ov_TimeToDouble(ptask->v_proctime, proctimeDouble);
 
-    if(d2 < d1) {
-        d3 = (double)ptask->v_cyctime.secs + ((double)ptask->v_cyctime.usecs)/1000000;
-        if((d2 >= 0) && (d3 > 0)) {
-            n=(long int)( (d1 - d2)/d3 );
-            d3 *= n; n = (long int)d3;
-            dt.secs = n;
-            dt.usecs= (long int)( (d3-n)*1000000 );
-            ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &dt);
+    if(proctimeDouble < nowDouble) {
+        //the next execution time is in the past
+        Ov_TimeSpanToDouble(ptask->v_cyctime, cyctimeDouble);
+        if((proctimeDouble >= 0) && (cyctimeDouble > 0)) {
+            cycMisses = (OV_INT)( (nowDouble - proctimeDouble)/cyctimeDouble );
+            cyctimeDouble *= cycMisses;
+            cycMisses = (OV_INT)cyctimeDouble;
+            procTimeDiff.secs = cycMisses;
+            procTimeDiff.usecs= (OV_INT)( (cyctimeDouble-cycMisses)*1000000 );
+            ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &procTimeDiff);
         } else {
-            ptask->v_proctime = t0;
+            //set to now, to call this as soon as possible
+            ptask->v_proctime = nowTime;
         }
     }
 }
@@ -152,6 +156,7 @@ OV_DLLFNCEXPORT void fb_task_setNextProcTime(
 		case FB_AM_ON:
 			if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
 				do {
+					//make sure the next proctime is in the future
 					ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
 				} while(ov_time_compare(&ptask->v_proctime, pltc) == OV_TIMECMP_BEFORE);
 			}
@@ -189,11 +194,13 @@ OV_DLLFNCEXPORT OV_RESULT fb_task_actimode_set(
     
     switch(actimode) {
         case FB_AM_ON:
-		    fb_set_proctime(ptask);
+            fb_set_proctime(ptask);
+            /* no break */
         case FB_AM_UNLINK:
         case FB_AM_ONCE:
         case FB_AM_CATCHUP:
                 ptask->v_ErrState = 0;
+                /* no break */
         case FB_AM_OFF:
                 ptask->v_actimode = actimode;
                 return OV_ERR_OK;
@@ -474,7 +481,7 @@ OV_DLLFNCEXPORT void fb_task_execute(
 	/*
 	*	is otc >= ltc or task object off?
 	*/
-	if((ov_time_compare(&ptask->v_proctime, pltc) > 0) || (ptask->v_actimode == 0)) {
+	if((ov_time_compare(&ptask->v_proctime, pltc) == OV_TIMECMP_AFTER) || (ptask->v_actimode == 0)) {
 		return;
 	}
 
@@ -539,7 +546,7 @@ OV_DLLFNCEXPORT void fb_task_run(
         if((ptask->v_cyctime.secs) || (ptask->v_cyctime.usecs)) {
 			do {
 				ov_time_add(&ptask->v_proctime, &ptask->v_proctime, &ptask->v_cyctime);
-			} while(ov_time_compare(&ptask->v_proctime, &time) <= 0);
+			} while(ov_time_compare(&ptask->v_proctime, &time) <= 0); //OV_TIMECMP_EQUAL or BEFORE
 		} else {
 			ptask->v_proctime.secs = time.secs + 1;
 		}
