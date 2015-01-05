@@ -100,6 +100,30 @@ LIBRARY SSChelper
 			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
+	CLASS commandCreator : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			order : STRING  FLAGS = "i" COMMENT = "order to be processed";
+			param : STRING  FLAGS = "i" COMMENT = "parameter";
+			sender : STRING  FLAGS = "i" COMMENT = "sender";
+			start : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "startsignal" ;
+			
+			command : STRING FLAGS = "o" COMMENT = "command";
+			
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
+			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
+			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
 	
 	/**
 		Add associations and their documentation here.
