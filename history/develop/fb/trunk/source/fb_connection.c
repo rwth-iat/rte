@@ -204,19 +204,11 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_on_set(
 	OV_INSTPTR_fb_connection	pconn,
 	const OV_BOOL				on
 ) {
-	OV_VTBLPTR_fb_connection	pvtable;
-
 	if(!pconn){
 		return OV_ERR_BADPARAM;
 	}
+	//more checks are not possible, as an FBD import can activate first and configure later... 8-/
 
-	Ov_GetVTablePtr(fb_connection, pvtable, pconn);
-	if(!pvtable) {
-		return OV_ERR_GENERIC;
-	}
-	if(pvtable->m_checkelements(pconn) == FALSE){
-		return OV_ERR_BADVALUE;
-	}
 	pconn->v_on = on;
 	return OV_ERR_OK;
 }
