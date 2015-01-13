@@ -1417,7 +1417,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("setStaticValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setStaticValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue: "+ObjectPath+".value");
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
@@ -1463,7 +1463,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("setConCatValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setConCatValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in a getValue from: "+ObjectPath);
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
@@ -1516,7 +1516,7 @@ cshmi.prototype = {
 					var thisObserverEntry = this.ObserverEntryArray[i];
 					if(thisObserverEntry.value === false){
 						//getValue had an error
-						HMI.hmi_log_info("setMathValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in getValue.");
+						HMI.hmi_log_info("setMathValue on "+thisObserverEntry.ObjectName+" (baseobject: "+this.VisualObject.id+") failed because of an error in a getValue from: "+ObjectPath);
 						return false;
 					}else if(thisObserverEntry.value === null){
 						//getValue had intentionally no value, abort
