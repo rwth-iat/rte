@@ -18,12 +18,8 @@
 
 
 
-#include "ssc.h"
 #include "ssclib.h"
-
 #include "libov/ov_association.h"
-
-#include "libov/ov_macros.h"
 
 /***********************************************************************
 	Link
@@ -44,7 +40,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 	OV_INSTPTR_ssc_transition pTrans = Ov_StaticPtrCast(ssc_transition, pchild);
 	OV_INSTPTR_fb_task pTransTaskParent=Ov_GetParent(fb_tasklist, pchild);
 	OV_INSTPTR_ssc_step pNextStep = Ov_GetParent(ssc_previousTransitions, pchild);
-	OV_RESULT    result;
 
 	// check if the previousStep and nextStep are the same
 	if ( pNextStep == pparent)
@@ -57,7 +52,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 	if (pTransTaskParent !=NULL)
 		Ov_Unlink(fb_tasklist, pTransTaskParent, pchild);
 	// link to local tasklist of the parent step
-	result=Ov_Link(fb_tasklist, &pparent->p_trans, pchild);
+	Ov_Link(fb_tasklist, &pparent->p_trans, pchild);
 
 	// activate transition
 	pTrans->v_actimode = FB_AM_ON;

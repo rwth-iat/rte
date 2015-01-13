@@ -21,7 +21,6 @@
 #endif
 
 
-#include "ssc.h"
 #include "ssclib.h"
 #include "libov/ov_association.h"
 

@@ -9,323 +9,238 @@
 #define OV_COMPILE_LIBRARY_ssc
 #endif
 
-#include "ov.h"
-#include "ssc.h"
 #include "ssclib.h"
-//#include "string.h"
-#include "libov/ov_macros.h"
-#include "libov/ov_string.h"
-#include "libov/ov_path.h"
 
-
-static void extractBehindSeperator(OV_STRING *string, OV_STRING *end,char sep)
-
-{ 	OV_STRING old=NULL;
-	OV_STRING secondhalf=NULL;
-	//OV_STRING firsthalf=NULL;
-//
+/**
+ * splits ths inputstring at the last seperator and writes the parts in two strings
+ */
+static void extractBehindSeperator(const OV_STRING inputstring, OV_STRING *pathname, OV_STRING *varname, char seperator){
 	OV_UINT len = 0;
 
-	ov_string_setvalue(&old,*string);
-	//ov_logfile_debug("string %s", old);
-	len=ov_string_getlength(old);
-	for(int i =0;i<len-1;i++){
-		//ov_logfile_debug("string %c", old[len-i]);
-		if(old[len-i]==sep){
-			//firsthalf=ov_malloc((len-i));
-			//secondhalf=ov_malloc((i+2));
-			//memcpy(firsthalf,string,len-i);
-			//memcpy(secondhalf,old[len-i],i+1);
-			ov_string_setvalue(&secondhalf,&old[len-i+1]);
-			old[len-i] = '\0';
-
-//			ov_realloc(old,(len-i+2));
-			//memcpy(old,&secondhalf[i+1],1);
+	if(!inputstring){
+		return;
+	}
+	ov_string_setvalue(pathname, inputstring);
+	len = ov_string_getlength(inputstring);	//todo iterate backwards, for speed :-)
+	for(int i=0 ; i<len-1 ; i++){
+		if(inputstring[len-i] == seperator){
+			ov_string_setvalue(varname, &inputstring[len-i+1]);
+			(*pathname)[len-i] = '\0';
 			break;
 		}
 	}
-
-//	OV_INSTPTR_Merkmalserver_Merkmal MerkmalTemp = NULL;
-//	OV_INSTPTR_Merkmalserver_Auspraegungsaussage AusTemp = NULL;
-//	OV_STRING Wert = NULL;
-//	MerkmalTemp =
-//			(OV_INSTPTR_Merkmalserver_Merkmal) Ov_SearchChild(ov_containment,Signal,name);
-//	if (MerkmalTemp == NULL)
-//		return Wert;
-//	AusTemp =
-//			(OV_INSTPTR_Merkmalserver_Auspraegungsaussage) Ov_SearchChild(ov_containment,MerkmalTemp,"Auspraegungsaussage");
-//	if (AusTemp == NULL)
-//		return Wert;
-//	Wert = AusTemp->v_Wert;
-//	 ov_logfile_debug("string %s", *string);
-	ov_string_setvalue(string,old);
-	ov_string_setvalue(&old, NULL);
-	ov_string_setvalue(end,secondhalf);
-	ov_string_setvalue(&secondhalf, NULL);
+	return;
 }
 
-OV_DLLFNCEXPORT OV_INSTPTR_ov_object getrelativeobjectpointer(
-    	const OV_STRING			startPoint,
-    	const OV_STRING			pathname,
-    	const OV_UINT			version
-     ) {
-    	/*
-    	*	local variables
-    	*/
-   	OV_PATH		path;
-    OV_ELEMENT	element;
-    OV_PATH     startPointPath;
-    ov_memstack_lock();
-    ov_path_resolve(&startPointPath, NULL, startPoint, version);
-
-   	/*
-    	*	instructions
-     	*/
-
-     	if(Ov_Fail(ov_path_resolve(&path, &startPointPath, pathname, version))) {
-    		/*
-     		*	bad path
-    		*/
-     		ov_memstack_unlock();
-   		return NULL;
-     	}
-   	element = path.elements[path.size-1];
-
-     	 ov_memstack_unlock();
-     	if(element.elemtype == OV_ET_OBJECT) {
-   		return element.pobj;
-     	}
-    	/*
-    	*	not an object path
-    	*/
-     	return NULL;
-}
-OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
-    OV_INSTPTR_ssc_setVariable          pinst,
-    const OV_STRING  value
+/**
+ * gets a object pointer from a relative path name and an anchor path
+ * @param startPoint
+ * @param pathname
+ * @return
+ */
+OV_INSTPTR_ov_object getrelativeobjectpointer(
+		const OV_STRING			startPoint,
+		const OV_STRING			pathname
 ) {
-    // check input
+	/*
+	 *	local variables
+	 */
+	OV_PATH		path;
+	OV_ELEMENT	element;
+	OV_PATH     startPointPath;
+	ov_memstack_lock();
+	ov_path_resolve(&startPointPath, NULL, startPoint, 2);
+
+	/*
+	 *	instructions
+	 */
+	if(Ov_Fail(ov_path_resolve(&path, &startPointPath, pathname, 2))) {
+		//	bad path
+		ov_memstack_unlock();
+		return NULL;
+	}
+	element = path.elements[path.size-1];
+
+	ov_memstack_unlock();
+	if(element.elemtype == OV_ET_OBJECT) {
+		return element.pobj;
+	}
+	//	not an object path
+	return NULL;
+}
+
+/**
+ * gets an object pointer and a varname string from a setVariable object
+ * @param pinst
+ * @param pTargetObj will be NULL if object is not found
+ * @param ptargetVarname will be NULL if variable not found on the object
+ * @return
+ */
+static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
+		const OV_INSTPTR_ssc_setVariable pinst,
+		const OV_STRING nameToCheck,
+		OV_INSTPTR_ov_object *pTargetObj,
+		OV_STRING *ptargetVarname
+) {
+	OV_STRING targetPathname = NULL;
+	OV_STRING pathRelativeobject = NULL;
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ov_domain containerDomain = NULL;
+
+	*pTargetObj = NULL;
+	//split the input at dot
+	extractBehindSeperator(nameToCheck, &targetPathname, ptargetVarname, '.');
+
+	if(targetPathname == NULL){
+		return OV_ERR_BADPARAM;
+	}else if(targetPathname[0] == '/'){
+		//we have a full path
+		*pTargetObj = ov_path_getobjectpointer(targetPathname, 2);
+	}else{
+		//we have a relative path
+		ov_memstack_lock();
+		//all path are relative to the containing FC
+		containerDomain = Ov_GetParent(ov_containment, activeHeader);
+		ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
+		*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
+		if(*pTargetObj == NULL){
+			//perhaps the target is in the actions PART of the header
+			containerDomain = Ov_GetPartPtr(actions, activeHeader);
+			ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
+			*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
+		}
+		ov_memstack_unlock();
+	}
+	ov_string_setvalue(&targetPathname, NULL);
+	ov_string_setvalue(&pathRelativeobject,NULL);
+
+	return OV_ERR_OK;
+}
+
+/**
+ * checks and sets the new target path
+ * an empty string is the only allowed not working parameter
+ */
+OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
+	OV_INSTPTR_ssc_setVariable          pinst,
+	const OV_STRING  value
+) {
+	OV_INSTPTR_ov_object pTargetObj = NULL;
+	OV_STRING targetVarname = NULL;
+
+	// check input
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an backup
-		return OV_ERR_OK;
+		//allow INITIAL_VALUE for loading an fbd backup
+		return ov_string_setvalue(&pinst->v_variable, value);
 	}
 
-	//fixme this problem has to be solved!
-    if (ov_string_compare(value, NULL)==0)
-    {
-    	pinst->v_error=TRUE;
-       	ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
-       	return OV_ERR_OK;
-    };
+	ssc_getObjectAndVarnameFromSetVariable(pinst, value, &pTargetObj, &targetVarname);
+	if(pTargetObj == NULL || targetVarname == NULL){
+		return OV_ERR_BADPARAM;
+	}
 
-    pinst->v_error=FALSE;
-    ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	pinst->v_error = FALSE;
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
-    return ov_string_setvalue(&pinst->v_variable,value);
+	return ov_string_setvalue(&pinst->v_variable, value);
 }
 
+/**
+ * setting the new value
+ */
 OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_value_set(
-    OV_INSTPTR_ssc_setVariable          pobj,
-    const OV_ANY*  value
+		OV_INSTPTR_ssc_setVariable          pobj,
+		const OV_ANY*  value
 ) {
-    return ov_variable_setanyvalue(&pobj->v_value, value);
+	return ov_variable_setanyvalue(&pobj->v_value, value);
 }
+
+/**
+ * set a variable with a pointer to the object and the name of the variable (correct handling for chart variables)
+ * @param pTargetObj
+ * @param targetVarname
+ * @param value
+ * @return
+ */
+OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value){
+	OV_RESULT result = OV_ERR_OK;
+	OV_ELEMENT element;
+	OV_ELEMENT varElement;
+	OV_VTBLPTR_ov_object pVtblObj = NULL;
+
+	if(pTargetObj == NULL){
+			return OV_ERR_BADPARAM;
+	}else if (Ov_CanCastTo(fb_functionchart, pTargetObj)){
+		//set variable in a functionchart
+		result = fb_functionchart_setport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
+	}else{
+		//set variable in a functionblock
+		varElement.elemtype = OV_ET_NONE;
+		element.elemtype = OV_ET_OBJECT;
+		element.pobj = pTargetObj;
+
+		//search the variable for the set operation
+		ov_element_searchpart(&element, &varElement, OV_ET_VARIABLE, targetVarname);
+		if(varElement.elemtype == OV_ET_VARIABLE) {
+			//port found, use the setter to write the value
+			Ov_GetVTablePtr(ov_object, pVtblObj, pTargetObj);
+			result = pVtblObj->m_setvar(varElement.pobj, &varElement, value);
+		}
+	}
+
+	return result;
+}
+
 
 OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-    // local variables
-    OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
-    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    //OV_INSTPTR_ssc_sscHeader  pSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
-    OV_RESULT    result = OV_ERR_OK;
-    OV_UINT stringCount;
-    OV_STRING pathToVariable=NULL;
-    OV_STRING *pathToObject = NULL;
-    OV_STRING temp =NULL;
-    OV_STRING temp2=NULL;
-    OV_STRING temp3=NULL;
-    OV_INSTPTR_ov_object pObj = NULL;
-    OV_ELEMENT element;
-    OV_ELEMENT varElement;
-    OV_VTBLPTR_ov_object pVtblObj = NULL;
+	// local variables
+	OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+	OV_RESULT    result = OV_ERR_OK;
+	OV_INSTPTR_ov_object pTargetObj = NULL;
+	OV_STRING targetVarname = NULL;
 
 
-    // init variables
-    pinst->v_cyctime.secs = 0;
-    pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = TRUE;
-    pinst->v_error=FALSE;
+	// init variables
+	pinst->v_cyctime.secs = 0;
+	pinst->v_cyctime.usecs = 0;
+	pinst->v_iexreq = TRUE;
+	pinst->v_error=FALSE;
 
-    ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
-    // check location
-    if ( pStep==NULL )
-	{
-    	pinst->v_error=TRUE;
-		ov_logfile_error("ssc_actionBlock_constructor: action block must be encapsulated in a step.");
+	// check location
+	if (pStep == NULL){
+		pinst->v_error = TRUE;
+		ov_logfile_error("ssc_actionBlock_typemethod: action block must be encapsulated in a step.");
 		return;
 	}
 
+	// check input
+	if (ov_string_compare(pinst->v_variable, NULL) == OV_STRCMP_EQUAL){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
+	};
 
-    // check input
-    if (ov_string_compare(pinst->v_variable, NULL)== OV_STRCMP_EQUAL)
-    {
-       pinst->v_error=TRUE;
-       ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
-    };
+	ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
 
-
-    // set variable
-    //result= fb_functionchart_getvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
-    //result= fb_functionchart_setvariable(Ov_PtrUpCast(fb_functionchart, pSSC), pinst->v_variable, &pinst->v_value);
-
-
-// Extension to set any Port at any Variable
-    //split the input at dot
-   // pathToVariable =  ov_string_split(pinst->v_variable,".", &stringCount);
-    ov_string_setvalue(&pathToVariable,pinst->v_variable);
-
-    extractBehindSeperator(&pathToVariable,&temp2,'.');
-
-   // ov_logfile_debug("path to variable %s", pathToVariable);
-// for(int i=1;i<stringCount-1;i++)
-// {
-//	 ov_string_append( &(pathToVariable[0]),".");
-//	 ov_string_append( &(pathToVariable[0]),pathToVariable[i]);
-// }
-
-   if((pinst->v_variable)[0]!='/'){
-	   ov_memstack_lock();
-	   ov_string_setvalue(&temp,ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object,pinst), 2));
-	   ov_memstack_unlock();
-
-	  // ov_string_append(&temp,"/");
-
-
-
-
-	 pathToObject=ov_string_split(pathToVariable,"/",&stringCount);
-
-	   //result =ov_string_append(&temp,pathToVariable);
-
-	  // ov_logfile_debug("result %s", ov_result_getresulttext(result));
-	   //ov_logfile_debug("path %s", temp);
-	   pObj = getrelativeobjectpointer(temp,pathToVariable ,2);
-	//   ov_logfile_debug("path %s", pObj);
-
-   }else{
-	   pObj = ov_path_getobjectpointer(pathToVariable,2);
-   }
-   ov_string_setvalue(&pathToVariable,temp2);
-
-    //pObj = ov_path_getobjectpointer(pathToVariable[0],2);
-
-    if(pObj != NULL && pathToVariable != NULL)
-    {
-    	if (Ov_CanCastTo(fb_functionchart,pObj))
-    	{
-    		//set variable in a functionchart
-
-    		result = fb_functionchart_setport((OV_INSTPTR_fb_functionchart)pObj, pathToVariable, &(pinst->v_value));
-    	}
-    	else
-    	{
-    		//set variable in a functionblock
-			varElement.elemtype = OV_ET_NONE;
-			element.elemtype = OV_ET_OBJECT;
-			element.pobj = pObj;
-			//iterate over all ports of the object to find the destination port for the set operation
-			ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
-
-			while(varElement.elemtype != OV_ET_NONE)
-			{
-				if(varElement.elemunion.pvar)
-				{
-					if(ov_string_compare(varElement.elemunion.pvar->v_identifier, pathToVariable) == OV_STRCMP_EQUAL)	/*	variable name matches	*/
-					{
-						//port found, use the setter to write the value
-						Ov_GetVTablePtr(ov_object, pVtblObj, pObj);
-						result = pVtblObj->m_setvar(varElement.pobj, &varElement, &(pinst->v_value));
-
-					}
-				}
-				ov_element_getnextpart(&element, &varElement, OV_ET_VARIABLE);
-			}
-    	}
-    }
-    else
-    {
-    	pinst->v_error = TRUE;
-    	ov_string_setvalue(&pinst->v_errorDetail, "path not found");
-    }
-
-    //result = fb_functionchart_setport( Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC)), pinst->v_variable, &pinst->v_value);
-
-    if(Ov_Fail(result))
-    {
-    	pinst->v_error=TRUE;
-    	ov_string_setvalue(&pinst->v_errorDetail, "bad parameter");
-
-    }
-
-/*
-    		OV_INSTPTR_fb_functionchart pfc,
-    		 const OV_STRING varname,
-    		 OV_ANY *pvarcurrprops)
-*/
-    ov_string_setvalue(&temp,NULL);
-    ov_string_setvalue(&pathToVariable,NULL);
-    ov_string_freelist(pathToObject);
-    ov_string_setvalue(&temp2,NULL);
-    ov_string_setvalue(&temp3,NULL);
-
-
-
-    return;
-}
-
-OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_setActionName(
-             OV_INSTPTR_ssc_actionBlock          pinst,
-             const OV_STRING  value
-) {
-	return ov_string_setvalue(&pinst->v_actionName,value);
-}
-
-OV_DLLFNCEXPORT OV_ACCESS ssc_setVariable_getaccess(
-	OV_INSTPTR_ov_object	pobj,
-	const OV_ELEMENT		*pelem,
-	const OV_TICKET			*pticket
-) {
-	/*
-	*   local variables
-	*/
-	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pobj));
-	OV_INSTPTR_ssc_sscHeader activeHeader= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
-	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
-
-	/*
-	*	switch based on the element's type
-	*/
-	switch(pelem->elemtype) {
-		case OV_ET_OBJECT:
-			if(!activeHeader){
-				//skip handling
-			}else if(	activeHeader->v_error == TRUE ||
-						activeHeader->v_workingState == WOST_INIT ||
-						activeHeader->v_workingState == WOST_STOP ||
-						activeHeader->v_workingState == WOST_TERMINATE)
-			{
-				//allow deletion
-				access_code = (access_code | OV_AC_DELETEABLE);
-			}else{
-				//disallow deletion
-				access_code = (access_code &~ OV_AC_DELETEABLE);
-			}
-			break;
-		default:
-			break;
+	if(pTargetObj != NULL && targetVarname != NULL){
+		result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
+	}else{
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "path not found");
 	}
-	return access_code;
+
+	if(Ov_Fail(result)){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "bad parameter");
+	}
+
+	ov_string_setvalue(&targetVarname,NULL);
+
+	return;
 }

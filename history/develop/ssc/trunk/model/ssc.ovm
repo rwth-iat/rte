@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2010
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	RWTH Aachen University
 *	All rights reserved.
@@ -54,6 +54,8 @@
 *	--------
 *	02-July-2011		Yu		V0.1
 *		-	Creation.
+*	12-December-2014		Jeromin		V1.0
+*		-	general revision and simplification
 *
 ***********************************************************************/
 
@@ -61,15 +63,15 @@
 
 LIBRARY ssc
 
-  VERSION   = "0.1";
-  AUTHOR    = "Liyong Yu";
-  COPYRIGHT = "2011 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
-  COMMENT   = "ACPLT Sequential Function Chart Library";
+  VERSION   = "1.0";
+  AUTHOR    = "Liyong Yu, Holger Jeromin";
+  COPYRIGHT = "2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+  COMMENT   = "ACPLT Sequential State Chart Library";
 
   /* Yu: Viele Engineeringaspekte wurden bei der Modellierung mitberücksichtig. Es wird z.B. bei jeder Instanzierung automatisch überprüft, 
   ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
   Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
-   
+  
   /* Konzeptionell wurde entschieden (Epple, Qurios, Krausser, Yu), dass man nicht von fb/functionchart ableiten darf. 
   Deswegen wurde die Verwaltungsfunktion für ein SSC als eine eigenständige Klasse definiert.
   Es kann jedoch überlegt werden, ob dieser Design noch nötig ist.*/
@@ -79,11 +81,10 @@ LIBRARY ssc
 		VARIABLES
 			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2" INITIALVALUE = 0;
 			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" INITIALVALUE = "INIT";
-			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step" INITIALVALUE = "END";
+			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step(s), multiple values possible via comma delimiter" INITIALVALUE = "END";
 			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
 			woStQualifier   : UINT							FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
 			activeStep  	: STRING						FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
-			terminated		: BOOL							FLAGS = "o"	COMMENT = "TRUE if SSC reaches END step";
 			workingState    : UINT							FLAGS = "o"	COMMENT = "working state: INIT: 0, START = 1, BREAK = 2, STOP = 3, TERMINATE = 4" INITIALVALUE = 0;
 			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: INIT/START/BREAK/STOP" INITIALVALUE = "INIT";
 			error			: BOOL							FLAGS = "o"	COMMENT = "error";
@@ -104,24 +105,24 @@ LIBRARY ssc
 
   CLASS step : CLASS fb/functionblock
 		IS_INSTANTIABLE;
-  	COMMENT = "step";
-  	VARIABLES
-			internalID		:UINT  		FLAGS = "n"	COMMENT = "internal ID" INITIALVALUE = 1;
+		COMMENT = "step";
+		VARIABLES
+			internalRole	:UINT  		FLAGS = "n"	COMMENT = "internal role (0 start, 1 normal, 999 end)" INITIALVALUE = 1;
 			X				:BOOL		FLAGS = "o"	COMMENT = "step flag according to IEC61131-3";
 			T				:TIME_SPAN 	FLAGS = "o"	COMMENT = "elapsed time since initiation of a step according to IEC61131-3";
 			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
 			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
 			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
-			hasSubSsc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSSC(s) (only for entry- and do-actions)";
-			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";
+			hasSubSsc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSSC(s) (only for entry- and do-actions)"; /*fixme remove, da transition immer aktiv sein soll! */
+			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";/*fixme remove, da transition immer aktiv sein soll! */
 			error			:BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
 			startTime 		:TIME   	FLAGS = "n" COMMENT = "point of time in which the step is entered";
-	END_VARIABLES;
+		END_VARIABLES;
 	PARTS
       		entry 	: CLASS fb/task;
       		do  	: CLASS fb/task;
-      		trans  	: CLASS fb/task;	
+      		trans  	: CLASS fb/task;	//todo should always active so move to header!
       		exit 	: CLASS fb/task;
     END_PARTS;
   	OPERATIONS
@@ -157,14 +158,13 @@ LIBRARY ssc
   CLASS actionBlock : CLASS fb/functionblock
   	COMMENT = "action block ";
     VARIABLES
-      actionQualifier   : UINT      HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "action qualifier: 1(entry) 2 (do) 3 (exit)" INITIALVALUE = 1;	
-      actionName		: STRING	HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "action name";
+      actionQualifier   : UINT      HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "action qualifier: 1(entry) 2 (do) 3 (exit)" INITIALVALUE = 1; /* todo remove later? */	
       error				: BOOL		FLAGS = "o"	COMMENT = "error";
 	  errorDetail		: STRING	FLAGS = "o"	COMMENT = "error details";
     END_VARIABLES;
     OPERATIONS
-      constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-      setActionName		    : 	C_FUNCTION  <SSC_FNC_SETACTIONNAME> IS_ABSTRACT;
+      constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+      getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
     END_OPERATIONS;
   END_CLASS;
    
@@ -172,56 +172,44 @@ LIBRARY ssc
 	IS_INSTANTIABLE;
   	COMMENT = "action block for set variable action";
     VARIABLES
-      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name";
+      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name (relative to the containing Functionchart or absolute path)";
       value				: ANY 			HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "The value to be set";
     END_VARIABLES;
     OPERATIONS
       typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
-      setActionName		: C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
     END_OPERATIONS;
   END_CLASS;
-  
   /* TODO: setVariable für Wertzuweisung auf einen internen FB-Eingang. */
   /* TODO: setVariable für variable A = variable B (Die jetzige setVariable ist nur variable A = value) */
   
-  
-   CLASS executeFb : CLASS ssc/actionBlock
+   CLASS execute : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
-  	COMMENT = "action block calling FB- or CFC-action ";
+  	COMMENT = "action block calling SSC, FB- or CFC-action ";
     VARIABLES
+      targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
+      targetIsSSC			: BOOL		FLAGS = "o"	COMMENT = "The target is an SSC"; /* todo remove when removing do? */
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
-      setActionName		: 	C_FUNCTION  <SSC_FNC_SETACTIONNAME>;
-      checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>;
+      checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>; /* todo remove later?*/
+      destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
     END_OPERATIONS;
   END_CLASS;
   
-  /*Yu: in der Zunkunft kann überlegt werden, executeFb und executeSsc als eine Klasse zusammenzufassen. */
-   CLASS executeSsc : CLASS ssc/executeFb
+   CLASS sendCommand : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
-  	COMMENT = "action block calling SSC action";
+  	COMMENT = "action block sending a command";
     VARIABLES
-      enableSsc				: UINT		FLAGS = "i"	COMMENT = "SSC commando" INITIALVALUE = 1;
+      targetObject		: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
+      command			: STRING		FLAGS = "i"	COMMENT = "Command to send";
+      parameter			: STRING		FLAGS = "i"	COMMENT = "optional parameters to send";
     END_VARIABLES;
     OPERATIONS
-      typemethod	: C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      getaccess		: C_FUNCTION <OV_FNC_GETACCESS>;
-      destructor	: C_FUNCTION <OV_FNC_DESTRUCTOR>;
+      typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
     END_OPERATIONS;
   END_CLASS;
-  
 
   /* Associations */
-    /* Connections from steps to next transitions. */
-    /* Yu: Diese Assoziation ist zwar praktisch, sollte aber entfernt werden, damit nicht jeder FB eine zusätzliche Assoziation bekommt. 
-           Lösung: Wenn ein AB bei der Initialisierung seine Aktion findet, linkt sie als TaskChild zu sich. */
-  ASSOCIATION actionBlocks : ONE_TO_MANY
-    PARENT action  		: CLASS fb/functionblock;
-    CHILD  actionBlocks : CLASS ssc/executeFb;
-  END_ASSOCIATION;
   
   /* Connections from steps to next transitions. */
   ASSOCIATION nextTransitions : ONE_TO_MANY
@@ -231,7 +219,6 @@ LIBRARY ssc
   END_ASSOCIATION;
 
   /* Connections from transitions to next steps. */
-
   ASSOCIATION previousTransitions : ONE_TO_MANY
     IS_LOCAL;
     PARENT nextStep  : CLASS ssc/step;

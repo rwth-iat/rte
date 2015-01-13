@@ -56,6 +56,7 @@
 	Includes
 ***********************************************************************/
 
+#include "ssc.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
@@ -77,10 +78,10 @@
 ***********************************************************************/
 
 enum {
-	SSCCMD_STOP		= 0,	// execute exit-actions of the active step and stop SSC
-	SSCCMD_START	= 1,	// start SSC
-	SSCCMD_BREAK	= 2,	// stop SSC and hold on active step
-	SSCCMD_RESET	= 3		// stop SSC and reset ssc
+	SSC_CMD_STOP		= 0,	// execute exit-actions of the active step and stop SSC
+	SSC_CMD_START	= 1,	// start SSC
+	SSC_CMD_BREAK	= 2,	// stop SSC and hold on active step
+	SSC_CMD_RESET	= 3		// stop SSC and reset SSC
 };
 
 /***********************************************************************
@@ -88,21 +89,34 @@ enum {
 ***********************************************************************/
 
 enum {
-	WOST_INIT		= 0,	// initialized
-	WOST_START		= 1,	// start
-	WOST_BREAK		= 2,	// break
-	WOST_STOP		= 3,	// break off
-	WOST_TERMINATE	= 4		// terminate (reaches END-step)
+	SSC_WOST_INIT		= 0,	// initialized
+	SSC_WOST_START		= 1,	// start
+	SSC_WOST_BREAK		= 2,	// break
+	SSC_WOST_STOP		= 3,	// break off
+	SSC_WOST_TERMINATE	= 4		// terminate (reaches END-step)
 };
 
 /***********************************************************************
-	action identifier
+	action qualifier
 ***********************************************************************/
+enum {
+	SSC_QUALIFIER_ENTRY	= 1,
+	SSC_QUALIFIER_DO		= 2,
+	SSC_QUALIFIER_EXIT		= 3
+};
+
+/***********************************************************************
+	phase of the execution
+***********************************************************************/
+enum {
+	SSC_PHASE_ENTRYDO		= 1,	//entry or do phase
+	SSC_PHASE_EXITTRANS		= 2		//exit or transition phase
+};
 
 enum {
-	ACT_ENTRY		= 1,
-	ACT_DO		    = 2,
-	ACT_EXIT		= 3
+	SSC_STEPROLE_START		= 0,	//this step is the start step
+	SSC_STEPROLE_NORMAL		= 1,	//this step is a normal step
+	SSC_STEPROLE_END			= 999		//this step is the end step
 };
 
 /***********************************************************************
@@ -116,3 +130,7 @@ enum {
 	}
 
 #endif
+
+OV_INSTPTR_ov_object getrelativeobjectpointer(const OV_STRING startPoint, const OV_STRING pathname);
+OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_STRING targetVarname, OV_ANY *value);
+OV_RESULT ssc_getObjectFromExecute(const OV_INSTPTR_ssc_execute pinst, const OV_STRING nameToCheck, OV_INSTPTR_fb_functionblock *pTargetObj);

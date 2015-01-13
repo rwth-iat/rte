@@ -21,104 +21,135 @@
 #endif
 
 
-#include "ssc.h"
 #include "ssclib.h"
 
 OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionQualifier_set(
-    OV_INSTPTR_ssc_actionBlock          pinst,
-    const OV_UINT  value
+		OV_INSTPTR_ssc_actionBlock          pinst,
+		const OV_UINT  value
 ) {
-    OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
-    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    OV_RESULT    result;
+	OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
+	OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+	OV_RESULT    result;
 
-    if (pStep==NULL)
-    {
-    	ov_logfile_error("ssc_actionBlock_actionQualifier_set: action block must be encapsulated in a step.");
-    	return OV_ERR_BADPLACEMENT;
-    }
+	if (pStep==NULL){
+		ov_logfile_error("ssc_actionBlock_actionQualifier_set: action block must be encapsulated in a step.");
+		return OV_ERR_BADPLACEMENT;
+	}
 
 	switch (value)
 	{
-	case ACT_ENTRY:
+	case SSC_QUALIFIER_ENTRY:
 		//unlink from current task parent
-		if (pTaskParent != NULL)	Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		if (pTaskParent != NULL){
+			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		}
 		//link to entry task
 		result=Ov_Link(fb_tasklist, &pStep->p_entry, pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
 		break;
-	case ACT_DO:
+	case SSC_QUALIFIER_DO:
 		//unlink from current task parent
-		if (pTaskParent != NULL)	Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		if (pTaskParent != NULL){
+			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		}
 		//link to do task
 		result=Ov_Link(fb_tasklist, &pStep->p_do, pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
 		break;
-	case ACT_EXIT:
+	case SSC_QUALIFIER_EXIT:
 		//unlink from current task parent
-		if (pTaskParent != NULL)	Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		if (pTaskParent != NULL){
+			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
+		}
 		//link to entry task
 		result=Ov_Link(fb_tasklist, &pStep->p_exit, pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
 		break;
+	default:
+		return OV_ERR_BADPARAM;
 	}
 
-    return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionName_set(
-    OV_INSTPTR_ssc_actionBlock          pinst,
-    const OV_STRING  value
-) {
-	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an backup
-		return OV_ERR_OK;
-	}
-
-	return Ov_Call1 (ssc_actionBlock, pinst, setActionName, value);
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
-	OV_INSTPTR_ov_object 	pobj
+		OV_INSTPTR_ov_object 	pobj
 ) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_ssc_actionBlock pinst = Ov_StaticPtrCast(ssc_actionBlock, pobj);
-    OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    OV_RESULT    result;
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_actionBlock pinst = Ov_StaticPtrCast(ssc_actionBlock, pobj);
+	OV_INSTPTR_ssc_step  pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+	OV_RESULT    result;
 
-    /* do what the base class does first */
-    result = fb_functionblock_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
+	/* do what the base class does first */
+	result = fb_functionblock_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
 
-    // check location
-    if ( pStep==NULL )
-	{
+	// check location
+	if ( pStep==NULL ){
 		ov_logfile_error("ssc_actionBlock_constructor: action block must be encapsulated in a step.");
 		return OV_ERR_BADPLACEMENT;
 	}
 
-    // link to subtask
-    result=ssc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
-    result = 0;
-    /* do what */
-    pinst->v_cyctime.secs = 0;
-    pinst->v_cyctime.usecs = 0;
-    pinst->v_iexreq = TRUE;
+	// link to corresponding taskparent
+	//todo bald haben wir nur noch einen task!
+	ssc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
+
+	pinst->v_cyctime.secs = 0;
+	pinst->v_cyctime.usecs = 0;
+	pinst->v_iexreq = TRUE;
+
+	// activate itself
+	pinst->v_actimode = FB_AM_ON;
+
+	return OV_ERR_OK;
+}
 
 
+/**
+ * prevent deletion if the ssc is not running or in an error state
+ */
+OV_DLLFNCEXPORT OV_ACCESS ssc_actionBlock_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+	/*
+	*   local variables
+	*/
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pobj));
+	OV_INSTPTR_ssc_sscHeader activeHeader= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 
-
-    // activate itself
-    pinst->v_actimode = FB_AM_ON;
-
-    return OV_ERR_OK;
+	/*
+	*	switch based on the element's type
+	*/
+	switch(pelem->elemtype) {
+		case OV_ET_OBJECT:
+			if(!activeHeader){
+				//skip handling
+			}else if(	activeHeader->v_error == TRUE ||
+						activeHeader->v_workingState == SSC_WOST_INIT ||
+						activeHeader->v_workingState == SSC_WOST_STOP ||
+						activeHeader->v_workingState == SSC_WOST_TERMINATE)
+			{
+				//allow deletion
+				access_code = (access_code | OV_AC_DELETEABLE);
+			}else{
+				//disallow deletion
+				access_code = (access_code &~ OV_AC_DELETEABLE);
+			}
+			break;
+		default:
+			break;
+	}
+	return access_code;
 }

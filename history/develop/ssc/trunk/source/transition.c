@@ -25,7 +25,6 @@
 #endif
 
 
-#include "ssc.h"
 #include "ssclib.h"
 
 OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
@@ -81,19 +80,18 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     OV_INSTPTR_ov_domain        pTransCondsContainer = NULL;
     OV_INSTPTR_fb_task          pTransCondsTaskParent = NULL;
 
-    OV_RESULT    result;
     //OV_INSTPTR_fb_port port = NULL;
 
     OV_INSTPTR_fb_functionblock pTransCond = NULL;
     //Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
-    OV_INSTPTR_ssc_step  		pPreStep = Ov_GetParent(ssc_nextTransitions, pinst);
+    OV_INSTPTR_ssc_step  		pPrevStep = Ov_GetParent(ssc_nextTransitions, pinst);
     OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
 
     OV_INSTPTR_ssc_sscHeader	pSSC = Ov_StaticPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_fb_functionchart pFC = Ov_StaticPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
 
-    //OV_INSTPTR_fb_task          pPreStepExit = &pPreStep->p_exit;
-    //OV_INSTPTR_fb_task          pPreStepEntry = &pPreStep->p_entry;
+    //OV_INSTPTR_fb_task          pPrevStepExit = &pPrevStep->p_exit;
+    //OV_INSTPTR_fb_task          pPrevStepEntry = &pPrevStep->p_entry;
 
 
 
@@ -135,7 +133,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 
 
     // check location and links
-    if ( !pPreStep || !pNextStep || !pSSC)
+    if ( !pPrevStep || !pNextStep || !pSSC)
     {
     	pinst->v_error=TRUE;
     	ov_string_setvalue(&pinst->v_errorDetail, "wrong link");
@@ -160,8 +158,9 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     		//}
 
     		// check tasklist
-    		if (pTransCondsTaskParent != NULL)
+    		if (pTransCondsTaskParent != NULL){
     			Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
+    		}
 
     		// init transition condition
     		pTransCond->v_actimode = FB_AM_ON;
@@ -170,7 +169,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     		pTransCond->v_iexreq = TRUE;
     		pResultConnection->v_on = 1;
     		pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
-    		// execute transtion condition
+    		// execute transition condition
     		Ov_Call1(fb_task, pTransCond, execute, pltc);
     	}
     }
@@ -179,27 +178,30 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
     // trigger
     if (pinst->v_result)
     {
-       	if (!pPreStep->v_evTransTrigger)
+       	if (!pPrevStep->v_evTransTrigger)
        	{
-
        		// broadcast the trigger event
-       		pPreStep->v_evTransTrigger=TRUE;
+       		pPrevStep->v_evTransTrigger=TRUE;
 
         	// deactivate transition condition
-        	if (pTransCond !=NULL) pTransCond->v_actimode = FB_AM_OFF;
+        	if (pTransCond !=NULL){
+        		pTransCond->v_actimode = FB_AM_OFF;
+        	}
 
         	// execute exit-actions of subSSCs
 
 
         	// link next-step to ssc-tasklist
         	//result=Ov_LinkPlaced(fb_tasklist, &pSSC->p_intask, pNextStep, OV_PMH_END);
-        	result=Ov_Link(fb_tasklist, &pSSC->p_intask, pNextStep);
+        	Ov_Link(fb_tasklist, &pSSC->p_intask, pNextStep);
         	pNextStep->v_actimode = FB_AM_ON;
-        	pNextStep->v_phase=1;
-        	pNextStep->v_qualifier=1;
+        	pNextStep->v_phase = SSC_PHASE_ENTRYDO;
+        	pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
 
         	// deactivate transition condition
-        	if (pTransCond != NULL) pTransCond->v_actimode = FB_AM_OFF;
+        	if (pTransCond != NULL){
+        		pTransCond->v_actimode = FB_AM_OFF;
+        	}
         }
     }
 
@@ -225,9 +227,9 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_transition_getaccess(
 			if(!activeHeader){
 				//skip handling
 			}else if(	activeHeader->v_error == TRUE ||
-						activeHeader->v_workingState == WOST_INIT ||
-						activeHeader->v_workingState == WOST_STOP ||
-						activeHeader->v_workingState == WOST_TERMINATE)
+						activeHeader->v_workingState == SSC_WOST_INIT ||
+						activeHeader->v_workingState == SSC_WOST_STOP ||
+						activeHeader->v_workingState == SSC_WOST_TERMINATE)
 			{
 				//allow deletion
 				access_code = (access_code | OV_AC_DELETEABLE);

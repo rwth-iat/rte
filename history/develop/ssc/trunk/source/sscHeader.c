@@ -21,11 +21,7 @@
 #endif
 
 
-#include "ssc.h"
 #include "ssclib.h"
-#include "libov/ov_path.h"
-#include <string.h>
-#include "libov/ov_macros.h"
 
 OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
     OV_INSTPTR_ssc_sscHeader          pobj,
@@ -34,48 +30,31 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 {
 	OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
 
-	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
+	OV_INSTPTR_ssc_step pstep;
 	OV_INSTPTR_ssc_step foundStep = NULL;
 
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//allow old INITIAL_VALUE for loading an backup
 		return OV_ERR_OK;
 	}
-	if (pinst->v_workingState == WOST_INIT)
+
+	if (pinst->v_workingState == SSC_WOST_INIT)
 	{
-		//find the matching init step
-		Ov_ForEachChild(ov_containment, pobj, pstep)
-		{
-
-			if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
-			{
-				if(ov_string_compare(pstep->v_identifier, value) == OV_STRCMP_EQUAL)
+		foundStep = Ov_SearchChildEx(ov_containment, pobj, value, ssc_step);
+		if(foundStep != NULL){
+			Ov_ForEachChildEx(ov_containment, pobj, pstep, ssc_step){
+				if(foundStep == pstep)
 				{
-					foundStep = Ov_StaticPtrCast(ssc_step, pstep);
-					break;
+					pstep->v_internalRole = SSC_STEPROLE_START;
+					pstep->v_actimode = FB_AM_ON;
 				}
-
-			}
-		}
-		if(foundStep != NULL)
-		{
-			Ov_ForEachChild(ov_containment, pobj, pstep)
-			{
-				if(pstep != NULL && Ov_CanCastTo(ssc_step, pstep))
+				else //deactivate all non init steps and set the correct id
 				{
-					if(foundStep == Ov_StaticPtrCast(ssc_step, pstep))
+					if (pstep->v_internalRole != SSC_STEPROLE_END) //not an end step
 					{
-						Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 0;
-						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = FB_AM_ON;
+						pstep->v_internalRole = SSC_STEPROLE_NORMAL;
 					}
-					else //deactivate all non init steps and set the correct id
-					{
-						if (Ov_StaticPtrCast(ssc_step, pstep)->v_internalID != 999) //not an end step
-						{
-							Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 1;
-						}
-						Ov_StaticPtrCast(ssc_step, pstep)->v_actimode = 0;
-					}
+					pstep->v_actimode = FB_AM_OFF;
 				}
 			}
 		}
@@ -92,7 +71,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_initStepName_set(
 		ov_string_setvalue(&(pinst->v_errorDetail),"init and end step can only be set when workingState = 0");
 		return OV_ERR_BADVALUE;
 	}
-    return ov_string_setvalue(&pobj->v_initStepName,value);
+	return ov_string_setvalue(&pobj->v_initStepName, value);
 }
 
 OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
@@ -105,7 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	int i = 0; // loop variable
 	int n = 1;
 	OV_STRING *pEndStepList = NULL;
-	OV_INSTPTR_ov_object pstep = Ov_GetFirstChild(ov_containment,pobj);
+	OV_INSTPTR_ssc_step pstep = NULL;
 
 	pEndStepList = ov_string_split(value,",",&count);
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
@@ -113,18 +92,12 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 		return OV_ERR_OK;
 	}
 
-	Ov_ForEachChild(ov_containment, pobj, pstep)
-	{
-		if(Ov_CanCastTo(ssc_step, pstep))
-		{
-			for(i = 0; i<count; i++)
+	Ov_ForEachChildEx(ov_containment, pobj, pstep, ssc_step){
+		for(i = 0; i<count; i++){
+			if(ov_string_compare(pstep->v_identifier, pEndStepList[i]) == OV_STRCMP_EQUAL)
 			{
-
-				if(ov_string_compare(pstep->v_identifier, pEndStepList[i]) == OV_STRCMP_EQUAL)
-				{
-					Ov_StaticPtrCast(ssc_step, pstep)->v_internalID = 999;
-					n++;
-				}
+				pstep->v_internalRole = SSC_STEPROLE_END;
+				n++;
 			}
 		}
 	}
@@ -137,17 +110,16 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	}
     return ov_string_setvalue(&pobj->v_endStepName,value);
 }
-OV_RESULT ssc_sscHeader_checkLocation(
-	OV_INSTPTR_ssc_sscHeader	pSSC
+static OV_RESULT ssc_sscHeader_checkLocation(
+		OV_INSTPTR_ssc_sscHeader	pSSC
 ) {
 	OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
 	OV_INSTPTR_ov_domain pSscContainerContainer = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pSSC));
 
-	//if ( pSscContainer == NULL )
 	if ( (pSscContainer == NULL) && (pSscContainerContainer != NULL) )
 	{
-	   	pSSC->v_error=TRUE;
-	   	ov_string_setvalue(&pSSC->v_errorDetail, "ssc must be encapsulated in a functionchart.");
+		pSSC->v_error=TRUE;
+		ov_string_setvalue(&pSSC->v_errorDetail, "ssc must be encapsulated in a functionchart.");
 		ov_logfile_error("ssc_sscHeader_constructor: ssc must be encapsulated in a functionchart.");
 		return OV_ERR_BADPLACEMENT;
 	}
@@ -162,10 +134,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
     *   local variables
     */
     OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
-    //OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_ssc_step pInitStep = NULL;
     OV_INSTPTR_ssc_step pEndStep = NULL;
-    //OV_INSTPTR_fb_task pInitTaskParent = NULL;
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -173,31 +143,19 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
     if(Ov_Fail(result))
          return result;
 
-    /* do what */
-
     // check location
-    result = ssc_sscHeader_checkLocation (pinst);
+    result = ssc_sscHeader_checkLocation(pinst);
     if(Ov_Fail(result)) return result;
-
-
-    /*
-    if (pSscContainer == NULL)
-    {
-    	ov_logfile_error("ssc_sscHeader_constructor: ssc must be encapsulated in a functionchart.");
-		return OV_ERR_BADPLACEMENT;
-	}
-	*/
-
 
     // create INIT- & END-step
     result = Ov_CreateObject(ssc_step, pInitStep, pinst, "INIT");
-    pInitStep->v_internalID=0;
+    pInitStep->v_internalRole = SSC_STEPROLE_START;
     pInitStep->v_actimode = FB_AM_ON;
     result = Ov_CreateObject(ssc_step, pEndStep, pinst, "END");
-    pEndStep->v_internalID=999;
+    pEndStep->v_internalRole = SSC_STEPROLE_END;
 
     //init variables
-    pinst->v_workingState= WOST_INIT;
+    pinst->v_workingState = SSC_WOST_INIT;
     pinst->v_actimode = FB_AM_ON;
     pinst->v_iexreq = TRUE;
 
@@ -230,17 +188,15 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     intask->v_cyctime.usecs = 0;
 
     // check location
-    result = ssc_sscHeader_checkLocation (pinst);
-    if(Ov_Fail(result))
-   	{
+    result = ssc_sscHeader_checkLocation(pinst);
+    if(Ov_Fail(result)){
     	return;
     }
 
 
     // find active step
     Ov_GetFirstChildEx(fb_tasklist, intask, pActiveStep, ssc_step);
-    if (pActiveStep != NULL)
-    {
+    if (pActiveStep != NULL){
     	pActiveStep->v_actimode = FB_AM_OFF;
    		ov_string_setvalue(&pinst->v_activeStep, pActiveStep->v_identifier);
     }
@@ -253,18 +209,16 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     	switch (pinst->v_workingState)
     	{
     	/* step 0 init */
-    	case WOST_INIT:
+    	case SSC_WOST_INIT:
     		switch (pinst->v_woStPhase)
     		{
-    		case 1:
+    		case SSC_PHASE_ENTRYDO:
     			/* entry: */
-    			if (pinst->v_woStQualifier == 1)
-    			{
-
+    			if (pinst->v_woStQualifier == SSC_QUALIFIER_ENTRY){
     				ov_string_setvalue(&pinst->v_woStText, "INIT");
 
     				// generic part
-    				pinst->v_woStQualifier = 2;
+    				pinst->v_woStQualifier = SSC_QUALIFIER_DO;
     				//printf("init, entry\n");
     			}
 
@@ -275,25 +229,25 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     			if(Ov_Fail(result)) return;
 
     			// generic part
-    			pinst->v_woStPhase = 2;
+    			pinst->v_woStPhase = SSC_PHASE_EXITTRANS;
     		break;
-    		case 2:
+    		case SSC_PHASE_EXITTRANS:
     			/* transitions */
     			//printf("init, transitions\n");
     			// INIT to START
-    			if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
+    			if (pinst->v_EN == SSC_CMD_START){
+    				pinst->v_workingState= SSC_WOST_START;
+    			}
 
     			/* exit */
-    			if (pinst->v_workingState != WOST_INIT)
-    			{
-
+    			if (pinst->v_workingState != SSC_WOST_INIT){
     				// generic part
-    				pinst->v_woStQualifier = 1;
+    				pinst->v_woStQualifier = SSC_QUALIFIER_ENTRY;
 					//printf("init, exit\n");
 				}
 
     			// generic part
-    			pinst->v_woStPhase = 1;
+    			pinst->v_woStPhase = SSC_PHASE_ENTRYDO;
     			exitLoop=FALSE;
     		break;
     		} // END switch woStPhase
@@ -301,53 +255,51 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     	/* END step 0 init */
 
     	/* step 1 START */
-        case WOST_START:
+        case SSC_WOST_START:
         	switch (pinst->v_woStPhase)
         	{
-        	case 1:
+        	case SSC_PHASE_ENTRYDO:
         		/* entry: */
-        		if (pinst->v_woStQualifier == 1)
-        		{
-
+        		if (pinst->v_woStQualifier == SSC_QUALIFIER_ENTRY){
        				ov_string_setvalue(&pinst->v_woStText, "START");
 
        				// generic part
-       				pinst->v_woStQualifier = 2;
+       				pinst->v_woStQualifier = SSC_QUALIFIER_DO;
        				//printf("start, entry\n");
        			}
 
        			/* do: */
        			//printf("start, do\n");
        			// activate active step
-       			if (pActiveStep != NULL)
-       			{
+       			if (pActiveStep != NULL){
        				pActiveStep->v_actimode = FB_AM_ON;
        			}
 
        			// generic part
-       			pinst->v_woStPhase = 2;
+       			pinst->v_woStPhase = SSC_PHASE_EXITTRANS;
        		break;
-       		case 2:
+       		case SSC_PHASE_EXITTRANS:
        			/* transitions */
        			//printf("start, transitions\n");
 
        			// START to BREAK
-    			if (pinst->v_EN == SSCCMD_BREAK) pinst->v_workingState= WOST_BREAK;
-
+    			if (pinst->v_EN == SSC_CMD_BREAK){
+    				pinst->v_workingState= SSC_WOST_BREAK;
+    			}else
     			// START to STOP
-    			if (pinst->v_EN == SSCCMD_STOP) pinst->v_workingState= WOST_STOP;
+    			if (pinst->v_EN == SSC_CMD_STOP){
+    				pinst->v_workingState= SSC_WOST_STOP;
+    			}
 
        			/* exit */
-       			if (pinst->v_workingState != WOST_START)
-       			{
-
-       				// generic part
-       				pinst->v_woStQualifier = 1;
+       			if (pinst->v_workingState != SSC_WOST_START){
+      				// generic part
+       				pinst->v_woStQualifier = SSC_QUALIFIER_ENTRY;
    					//printf("start, exit\n");
    				}
 
        			// generic part
-               	pinst->v_woStPhase = 1;
+               	pinst->v_woStPhase = SSC_PHASE_ENTRYDO;
                	exitLoop=FALSE;
        		break;
         	} // END switch woStPhase
@@ -355,62 +307,63 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
         /* END step 1 START */
 
         /* step 2 BREAK */
-        case WOST_BREAK:
+        case SSC_WOST_BREAK:
         switch (pinst->v_woStPhase)
         {
-           	case 1:
+           	case SSC_PHASE_ENTRYDO:
            		/* entry: */
-           		if (pinst->v_woStQualifier == 1)
-           		{
+           		if (pinst->v_woStQualifier == SSC_QUALIFIER_ENTRY){
            			// activate active step
-           			if (pActiveStep != NULL)
-           			{
+           			if (pActiveStep != NULL){
            				pActiveStep->v_actimode = FB_AM_ON;
            			}
 
            			ov_string_setvalue(&pinst->v_woStText, "BREAK");
 
            			// generic part
-           			pinst->v_woStQualifier = 2;
+           			pinst->v_woStQualifier = SSC_QUALIFIER_DO;
            			//printf("break, entry\n");
            		}
 
            		/* do: */
            		//printf("break, do\n");
            		// activate active step
-           		if (pActiveStep != NULL)
-           		{
+           		if (pActiveStep != NULL){
            			pActiveStep->v_actimode = FB_AM_OFF;
-           			pActiveStep->v_phase=1;
+           			pActiveStep->v_phase = SSC_PHASE_ENTRYDO;
            			pActiveStep->v_X=FALSE;
            		}
 
            		// generic part
-           		pinst->v_woStPhase = 2;
+           		pinst->v_woStPhase = SSC_PHASE_EXITTRANS;
            		break;
-           	case 2:
+           	case SSC_PHASE_EXITTRANS:
            		/* transitions */
            		//printf("break, transitions\n");
 
            		// BREAK to STOP
-           		if (pinst->v_EN == SSCCMD_STOP) pinst->v_workingState= WOST_STOP;
-
+           		if (pinst->v_EN == SSC_CMD_STOP){
+           			pinst->v_workingState= SSC_WOST_STOP;
+           		}else
            		// BREAK to START
-           		if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
+           		if (pinst->v_EN == SSC_CMD_START){
+           			pinst->v_workingState= SSC_WOST_START;
+           		}
 
            		// generic part
-           		if (pinst->v_workingState != WOST_BREAK) pinst->v_woStQualifier = 3;
+           		if (pinst->v_workingState != SSC_WOST_BREAK){
+           			pinst->v_woStQualifier = SSC_QUALIFIER_EXIT;
+           		}
 
            		/* exit */
-           		if (pinst->v_woStQualifier == 3)
-           		{
+           		if (pinst->v_woStQualifier == SSC_QUALIFIER_EXIT){
            			// generic part
-           			pinst->v_woStQualifier = 1;
+           			pinst->v_woStQualifier = SSC_QUALIFIER_ENTRY;
            			//printf("break, exit\n");
            		}
 
            	// generic part
-           	pinst->v_woStPhase = 1;
+           	pinst->v_woStPhase = SSC_PHASE_ENTRYDO;
            	exitLoop=FALSE;
            	break;
             } // END switch woStPhase
@@ -418,13 +371,12 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
         /* END step 2 BREAK */
 
         /* step 3 STOP */
-        case WOST_STOP:
+        case SSC_WOST_STOP:
         switch (pinst->v_woStPhase)
         {
-           	case 1:
+           	case SSC_PHASE_ENTRYDO:
         	/* entry: */
-        	if (pinst->v_woStQualifier == 1)
-        	{
+        	if (pinst->v_woStQualifier == SSC_QUALIFIER_ENTRY){
         		// execute exit-actions of the end step
         		if (pActiveStep == NULL)					// step specific
         		{
@@ -436,11 +388,10 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
         		//Ov_Call1 (ssc_step, pActiveStep, typemethod, pltc);
         		Ov_Call1 (fb_functionblock, pActiveStep, typemethod, pltc);
 
-
         		ov_string_setvalue(&pinst->v_woStText, "STOP");
 
         		// generic part
-        		pinst->v_woStQualifier = 2;
+        		pinst->v_woStQualifier = SSC_QUALIFIER_DO;
         		//printf("stop, entry\n");
         	}
 
@@ -451,29 +402,31 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
         	if(Ov_Fail(result)) return;
 
         	// generic part
-        	pinst->v_woStPhase = 2;
+        	pinst->v_woStPhase = SSC_PHASE_EXITTRANS;
         	break;
-           	case 2:
+       	case SSC_PHASE_EXITTRANS:
         	/* transitions */
            	//printf("stop, transitions\n");
 
            	// STOP to START
-        	if (pinst->v_EN == SSCCMD_START) pinst->v_workingState= WOST_START;
+        	if (pinst->v_EN == SSC_CMD_START){
+        		pinst->v_workingState= SSC_WOST_START;
+        	}
 
         	// generic part
-           	if (pinst->v_workingState != WOST_STOP) pinst->v_woStQualifier = 3;
+           	if (pinst->v_workingState != SSC_WOST_STOP){
+           		pinst->v_woStQualifier = SSC_QUALIFIER_EXIT;
+           	}
 
            	/* exit */
-           	if (pinst->v_woStQualifier == 3)
-           	{
+           	if (pinst->v_woStQualifier == SSC_QUALIFIER_EXIT){
            		// generic part
-           		pinst->v_woStQualifier = 1;
-       			//printf("stop, exit\n");
+           		pinst->v_woStQualifier = SSC_QUALIFIER_ENTRY;
        		}
 
            	// generic part
-           	pinst->v_woStPhase = 1;
-           	exitLoop=FALSE;
+           	pinst->v_woStPhase = SSC_PHASE_ENTRYDO;
+           	exitLoop = FALSE;
            	break;
             } // END switch woStPhase
         break;
@@ -490,8 +443,6 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     /* Execute internal task */
     Ov_Call1 (fb_task, intask, execute, pltc);
 
-    if (ov_string_compare(pinst->v_identifier, "ssc1") == 0)
-    	printf("\n");
     return;
 }
 
@@ -501,37 +452,38 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 	OV_INSTPTR_ssc_step      pStep = NULL;
 	OV_INSTPTR_ssc_step      pInitStep = NULL;
 	OV_INSTPTR_fb_task 		 intask = &pinst->p_intask;
-	OV_RESULT    			 result;
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
 	OV_INSTPTR_ssc_sscHeader pSscAction = NULL;
+	OV_RESULT result = OV_ERR_OK;
     //OV_TIME *pTime;
     //ov_time_gettime(&pTime);
 
     //reset all steps; find and link INIT-step to intask
-	  Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step)
-	  {
+	  Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){
 		  result=Ov_Call0(ssc_step, pStep, resetStep);
 
-		  if(pStep->v_internalID == 0)
-		  {
+		  if(pStep->v_internalRole == SSC_STEPROLE_START){
 			  pInitStep=pStep;
 		  }
 	  }
-	  if (pInitStep == NULL)
-	  {
+	  if (pInitStep == NULL){
 		  pinst->v_error=TRUE;
 		  ov_string_setvalue(&pinst->v_errorDetail, "no INIT-step is defined");
 		  return OV_ERR_BADPATH;
 	  }
 	  result=Ov_Link(fb_tasklist, intask,  pInitStep);
+	  if(Ov_Fail(result)){
+		  return result;
+	  }
 
 	  // reset all actions (FB, CFC or SSC) under .actions folder
-	  Ov_ForEachChildEx(ov_containment, &pinst->p_actions, pFbAction, fb_functionblock)
-	  {
+	  Ov_ForEachChildEx(ov_containment, &pinst->p_actions, pFbAction, fb_functionblock){
 		  // unlink from task parent
 		  pTask = Ov_GetParent(fb_tasklist, pFbAction);
-		  if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pFbAction);
+		  if (pTask != NULL){
+			  Ov_Unlink(fb_tasklist, pTask, pFbAction);
+		  }
 
 		  // reset parameters
 		  pFbAction->v_actimode = FB_AM_OFF;
@@ -541,22 +493,25 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 
 		  // reset SSC action
 		  pSscAction=Ov_DynamicPtrCast(ssc_sscHeader,pFbAction);
-		  if (pSscAction != NULL)
-		  {
+		  if (pSscAction != NULL){
 			  pSscAction->v_actimode = FB_AM_ON;
-			  pSscAction->v_EN=SSCCMD_STOP;
+			  pSscAction->v_EN=SSC_CMD_STOP;
 			  //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pSscAction), execute, &pTime);
-			  Ov_Call0 (ssc_sscHeader, pSscAction, resetSsc);
+			  result = Ov_Call0 (ssc_sscHeader, pSscAction, resetSsc);
+			  if(Ov_Fail(result)){
+				  return result;
+			  }
 			  pSscAction->v_actimode = FB_AM_OFF;
 		  }
 	  }
 
 	  // TODO: reset all transition conditions under .transConds folder
-	  Ov_ForEachChildEx(ov_containment, &pinst->p_transConds, pFbAction, fb_functionblock)
-	  	  {
+	  Ov_ForEachChildEx(ov_containment, &pinst->p_transConds, pFbAction, fb_functionblock){
 	  		  // unlink from task parent
 	  		  OV_INSTPTR_fb_task pTask = Ov_GetParent(fb_tasklist, pFbAction);
-	  		  if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pFbAction);
+	  		  if (pTask != NULL){
+	  			  Ov_Unlink(fb_tasklist, pTask, pFbAction);
+	  		  }
 
 	  		  // reset parameters
 	  		  pFbAction->v_actimode = FB_AM_OFF;
@@ -567,14 +522,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 	  //printf("%s: reset all steps END\n", pinst->v_identifier);
 
 	  return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_checkPlausibility(
-	OV_INSTPTR_ssc_sscHeader          pobj
-) {
-
-
-    return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_ACCESS ssc_sscHeader_getaccess(
@@ -596,9 +543,9 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_sscHeader_getaccess(
 			if(!activeHeader){
 				//skip handling
 			}else if(	activeHeader->v_error == TRUE ||
-						activeHeader->v_workingState == WOST_INIT ||
-						activeHeader->v_workingState == WOST_STOP ||
-						activeHeader->v_workingState == WOST_TERMINATE)
+						activeHeader->v_workingState == SSC_WOST_INIT ||
+						activeHeader->v_workingState == SSC_WOST_STOP ||
+						activeHeader->v_workingState == SSC_WOST_TERMINATE)
 			{
 				//allow deletion
 				access_code = (access_code | OV_AC_DELETEABLE);
