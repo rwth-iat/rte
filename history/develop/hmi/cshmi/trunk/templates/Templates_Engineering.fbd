@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-01-13 14:27:04
+* Erstellt: 2015-01-15 17:13:05
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -14601,7 +14601,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[6] : INPUT STRING = {"/Libraries/ssc/setVariable" , "/acplt/ssc/setVariable" , "/Libraries/executeFb" , "/acplt/ssc/executeSsc" , "/Libraries/executeSsc" , "/acplt/ssc/executeFb"};
+      value[6] : INPUT STRING = {"/Libraries/ssc/setVariable" , "/acplt/ssc/setVariable" , "/Libraries/execute" , "/acplt/ssc/execute" , "/Libraries/sendCommand" , "/acplt/ssc/sendCommand"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -14931,6 +14931,50 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.if/Not_StepTransAction :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.if/Not_StepTransAction.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "objectclass";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb.if/Not_StepTransAction.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[10] : INPUT STRING = {"/Libraries/ssc/step" , "/acplt/ssc/step" , "/Libraries/ssc/transition" , "/acplt/ssc/transition" , "/Libraries/ssc/setVariable" , "/acplt/ssc/setVariable" , "/Libraries/execute" , "/acplt/ssc/execute" , "/Libraries/sendCommand" , "/acplt/ssc/sendCommand"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -15299,7 +15343,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTrans :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTransAction :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
@@ -15309,7 +15353,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTrans.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTransAction.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -15326,7 +15370,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTrans.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/DeleteFunction/click/If_AnswerYes.then/Is_Fb_taskparentEmpty.if/Not_StepTransAction.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -15337,7 +15381,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[4] : INPUT STRING = {"/Libraries/ssc/step" , "/acplt/ssc/step" , "/Libraries/ssc/transition" , "/acplt/ssc/transition"};
+      value[10] : INPUT STRING = {"/Libraries/ssc/step" , "/acplt/ssc/step" , "/Libraries/ssc/transition" , "/acplt/ssc/transition" , "/Libraries/ssc/setVariable" , "/acplt/ssc/setVariable" , "/Libraries/execute" , "/acplt/ssc/execute" , "/Libraries/sendCommand" , "/acplt/ssc/sendCommand"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -16335,7 +16379,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "WithDeleteButton:FALSE" , "ValueOfClass:sscHeader"};
+      ConfigValues[5] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT" , "WithDeleteButton:FALSE" , "ValueOfClass:sscHeader"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -16465,7 +16509,7 @@
       maxTemplatesPerDirection : INPUT STRING = "";
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
-      ConfigValues[3] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "WithDeleteButton:FALSE"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT" , "WithDeleteButton:FALSE"};
       preventClone : INPUT BOOL = FALSE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
@@ -21858,6 +21902,158 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/rightclick/If_ConSetter_SourceDone.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "doubleclick";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.if/isactive :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.if/isactive.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "result";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.if/isactive.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.then/setInactive :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "result";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.then/setInactive.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.else/setActive :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "result";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscTrans/Rect/doubleclick/checkstatus.else/setActive.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
