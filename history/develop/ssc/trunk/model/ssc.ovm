@@ -79,7 +79,7 @@ LIBRARY ssc
 		IS_INSTANTIABLE;
 		COMMENT = "SSC header";
 		VARIABLES
-			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2" INITIALVALUE = 0;
+			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2/reset=3" INITIALVALUE = 0;
 			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" INITIALVALUE = "INIT";
 			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step(s), multiple values possible via comma delimiter" INITIALVALUE = "END";
 			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
@@ -93,7 +93,8 @@ LIBRARY ssc
 		PARTS
       		actions 			: CLASS ov/domain;
       		transConds 			: CLASS ov/domain;
-      		intask	 			: CLASS fb/task;
+      		intask	 			: CLASS fb/task;	//only the active step is linked here
+      		trans				: CLASS fb/task;
     	END_PARTS;
     	OPERATIONS
         	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
@@ -113,8 +114,6 @@ LIBRARY ssc
 			phase    		:UINT  		FLAGS = "n"	COMMENT = "execution phase (1: entry & do actions. 2: transitions & exit actions)" INITIALVALUE = 1;
 			qualifier  		:UINT  		FLAGS = "n"	COMMENT = "1: entry actions. 2: do actions. 3: exit actions" INITIALVALUE = 1;
 			evTransTrigger  :BOOL		FLAGS = "o"	COMMENT = "Event: transition triggers";
-			hasSubSsc       :BOOL		FLAGS = "o"	COMMENT = "TRUE if has subSSC(s) (only for entry- and do-actions)"; /*fixme remove, da transition immer aktiv sein soll! */
-			subSscTerminated:BOOL		FLAGS = "o"	COMMENT = "TRUE if subSSC is/are terminated";/*fixme remove, da transition immer aktiv sein soll! */
 			error			:BOOL		FLAGS = "o"	COMMENT = "error";
 			errorDetail		:STRING		FLAGS = "o"	COMMENT = "error details";	
 			startTime 		:TIME   	FLAGS = "n" COMMENT = "point of time in which the step is entered";
@@ -122,7 +121,6 @@ LIBRARY ssc
 	PARTS
       		entry 	: CLASS fb/task;
       		do  	: CLASS fb/task;
-      		trans  	: CLASS fb/task;	//todo should always active so move to header!
       		exit 	: CLASS fb/task;
     END_PARTS;
   	OPERATIONS
@@ -187,7 +185,6 @@ LIBRARY ssc
   	COMMENT = "action block calling SSC, FB- or CFC-action ";
     VARIABLES
       targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
-      targetIsSSC			: BOOL		FLAGS = "o"	COMMENT = "The target is an SSC"; /* todo remove when removing do? */
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;

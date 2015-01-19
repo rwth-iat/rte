@@ -77,47 +77,41 @@
 	command
 ***********************************************************************/
 
-enum {
-	SSC_CMD_STOP		= 0,	// execute exit-actions of the active step and stop SSC
-	SSC_CMD_START	= 1,	// start SSC
-	SSC_CMD_BREAK	= 2,	// stop SSC and hold on active step
-	SSC_CMD_RESET	= 3		// stop SSC and reset SSC
-};
+
+#define SSC_CMD_STOP	0	// execute exit-actions of the active step and stop SSC
+#define SSC_CMD_START	1	// start SSC
+#define SSC_CMD_BREAK	2	// stop SSC and hold on active step
+#define SSC_CMD_RESET	3	// stop SSC and reset SSC
 
 /***********************************************************************
 	workingStates
 ***********************************************************************/
 
-enum {
-	SSC_WOST_INIT		= 0,	// initialized
-	SSC_WOST_START		= 1,	// start
-	SSC_WOST_BREAK		= 2,	// break
-	SSC_WOST_STOP		= 3,	// break off
-	SSC_WOST_TERMINATE	= 4		// terminate (reaches END-step)
-};
+#define SSC_WOST_INIT		0	// initialized
+#define SSC_WOST_START		1	// start
+#define SSC_WOST_BREAK		2	// break
+#define SSC_WOST_STOP		3	// break off
+#define SSC_WOST_TERMINATE	4	// terminate (reaches END-step)
 
 /***********************************************************************
 	action qualifier
 ***********************************************************************/
-enum {
-	SSC_QUALIFIER_ENTRY	= 1,
-	SSC_QUALIFIER_DO		= 2,
-	SSC_QUALIFIER_EXIT		= 3
-};
+#define SSC_QUALIFIER_ENTRY	1
+#define SSC_QUALIFIER_DO	2
+#define SSC_QUALIFIER_EXIT	3
 
 /***********************************************************************
 	phase of the execution
 ***********************************************************************/
-enum {
-	SSC_PHASE_ENTRYDO		= 1,	//entry or do phase
-	SSC_PHASE_EXITTRANS		= 2		//exit or transition phase
-};
+#define SSC_PHASE_ENTRYDO	1	//entry or do phase
+#define SSC_PHASE_EXITTRANS	2		//exit or transition phase
 
-enum {
-	SSC_STEPROLE_START		= 0,	//this step is the start step
-	SSC_STEPROLE_NORMAL		= 1,	//this step is a normal step
-	SSC_STEPROLE_END			= 999		//this step is the end step
-};
+/***********************************************************************
+	values of the variable internalRole of a step
+***********************************************************************/
+#define SSC_STEPROLE_START	0	//this step is the start step
+#define SSC_STEPROLE_NORMAL	1	//this step is a normal step
+#define SSC_STEPROLE_END	999		//this step is the end step
 
 /***********************************************************************
 	Ov_GetFirstChildEx

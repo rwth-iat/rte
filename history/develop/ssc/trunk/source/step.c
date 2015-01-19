@@ -29,47 +29,39 @@
 
 
 OV_DLLFNCEXPORT OV_RESULT ssc_step_constructor(
-	OV_INSTPTR_ov_object 	pobj
+		OV_INSTPTR_ov_object 	pobj
 ) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_ssc_step pinst = Ov_StaticPtrCast(ssc_step, pobj);
-    OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
-    OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
-    OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
-    OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_step pinst = Ov_StaticPtrCast(ssc_step, pobj);
+	OV_INSTPTR_fb_task    pEntry = Ov_GetPartPtr(entry, pinst);
+	OV_INSTPTR_fb_task    pDo 	 = Ov_GetPartPtr(do, pinst);
+	OV_INSTPTR_fb_task    pExit  = Ov_GetPartPtr(exit, pinst);
 
-    OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
-    //OV_INSTPTR_fb_task    pIntask=NULL;
-    OV_RESULT    result;
+	OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
+	OV_RESULT    result;
 
-    /* do what the base class does first */
-    result = fb_functionblock_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
+	/* do what the base class does first */
+	result = fb_functionblock_constructor(pobj);
+	if(Ov_Fail(result))
+		return result;
 
-    // check location
-    if (pSSC==NULL)
-    {
-    	ov_logfile_error("ssc_step_constructor: step must be encapsulated in a sscHeader.");
-    	return OV_ERR_BADPLACEMENT;
-    }
+	// check location
+	if (pSSC==NULL){
+		ov_logfile_error("ssc_step_constructor: step must be encapsulated in a sscHeader.");
+		return OV_ERR_BADPLACEMENT;
+	}
 
-    // local tasklist
-    //result=Ov_Link(fb_tasklist, pinst, pEntry);
-    pEntry->v_actimode = FB_AM_ON;
-    //result=Ov_Link(fb_tasklist, pinst, pDo);
-    pDo->v_actimode = FB_AM_ON;
-    //result=Ov_Link(fb_tasklist, pinst, pTrans);
-    pTrans->v_actimode = FB_AM_ON;
-    //result=Ov_Link(fb_tasklist, pinst, pExit);
-    pExit->v_actimode = FB_AM_ON;
+	// local tasklist
+	pEntry->v_actimode = FB_AM_ON;
+	pDo->v_actimode = FB_AM_ON;
+	pExit->v_actimode = FB_AM_ON;
 
-    //activate
-    pinst->v_iexreq=TRUE;
+	//activate
+	pinst->v_iexreq=TRUE;
 
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
 
@@ -81,17 +73,18 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     *   local variables
     */
     OV_INSTPTR_ssc_step pinst = Ov_StaticPtrCast(ssc_step, pfb);
-    OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
-    OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
-    OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
-    OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
+    OV_INSTPTR_fb_task    pEntry = Ov_GetPartPtr(entry, pinst);
+    OV_INSTPTR_fb_task    pDo 	 = Ov_GetPartPtr(do, pinst);
+    OV_INSTPTR_fb_task    pExit  = Ov_GetPartPtr(exit, pinst);
     OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
     OV_INSTPTR_ssc_step pNextStep = NULL;
     OV_INSTPTR_ssc_sscHeader pSubSsc=NULL;
     OV_INSTPTR_ssc_execute pExecute = NULL;
     OV_INSTPTR_fb_functionblock pTargetObj = NULL;
+	OV_INSTPTR_ssc_transition pTransition = NULL;
+
     OV_TIME elapsedTime;
-    // helper vaiables
+    // helper variables
     OV_BOOL	  exitLoop=FALSE;
 
     // check location
@@ -120,8 +113,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     	/* phase 1: entry, do */
     	case SSC_PHASE_ENTRYDO:
     		pinst->v_X=TRUE;
-    		if(pinst->v_qualifier == SSC_QUALIFIER_ENTRY)
-    		{
+    		if(pinst->v_qualifier == SSC_QUALIFIER_ENTRY){
     			/* entry */
     			ov_time_gettime(&pinst->v_startTime);
     			//initialized with zero
@@ -144,21 +136,23 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
     	/* phase 2: transitions, exit*/
     	case SSC_PHASE_EXITTRANS:
-    		/* subSSCs run to the end without interruption. */
-			if (pinst->v_hasSubSsc ){
-				if (pinst->v_subSscTerminated)
-					pTrans->v_actimode = FB_AM_ON;
-				else
-					pTrans->v_actimode = FB_AM_OFF;
-			}
+    		//check all transitions for the result
+    		Ov_ForEachChildEx(ssc_nextTransitions, pinst, pTransition, ssc_transition){
+        		if (pTransition->v_result){
+            		// trigger
+        			if (!pinst->v_evTransTrigger){
+        				//this is the first transition which fires here, remember the next step
+        				pinst->v_evTransTrigger=TRUE;
 
-    		// if stopping SSC, do not check transitions
-    		if (pSSC->v_workingState == SSC_WOST_STOP){
-    			pTrans->v_actimode = FB_AM_OFF;
+        				// link next-step to ssc-tasklist
+        				pNextStep = Ov_GetParent(ssc_previousTransitions, pTransition);
+        				Ov_Link(fb_tasklist, Ov_GetPartPtr(intask, pSSC), pNextStep);
+        				pNextStep->v_actimode = FB_AM_ON;
+        				pNextStep->v_phase = SSC_PHASE_ENTRYDO;
+        				pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
+        			}
+        		}
     		}
-
-    		/* transitions */
-    		Ov_Call1 (fb_task, pTrans, execute, pltc);
 
     		// if Trigger, or cmd "STOP" for final step
 			if ( pinst->v_evTransTrigger || pSSC->v_workingState == SSC_WOST_STOP ){
@@ -176,6 +170,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 				}
 
 				if (pSSC->v_workingState == SSC_WOST_STOP){
+					//we are leaving the step
 					pExit->v_actimode = FB_AM_ONCE;
 				}
 
@@ -186,11 +181,10 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     			pinst->v_X = FALSE;
     			pinst->v_qualifier = SSC_QUALIFIER_ENTRY;
 
-    			// find next step and execute its entry & do
+    			// find next step and execute its entry & do (in the same execution cycle)
     			// Note: this job should be done by ov_ForEachChild(fb_tasklist, ...). But it is not possible to adapt the tasklist dynamically
-    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, &pSSC->p_intask));
-    			if (pNextStep != NULL)
-    			{
+//    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, Ov_GetPartPtr(intask, pSSC)));
+    			if (pNextStep != NULL){
     				// update activeStep
     				ov_string_setvalue(&pSSC->v_activeStep, pNextStep->v_identifier);
     				// execute nextStep entry & do
@@ -217,12 +211,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_fb_task    pEntry = &pinst->p_entry;
-	OV_INSTPTR_fb_task    pDo 	 = &pinst->p_do;
-	OV_INSTPTR_fb_task    pTrans = &pinst->p_trans;
-	OV_INSTPTR_fb_task    pExit  = &pinst->p_exit;
+    OV_INSTPTR_fb_task    pEntry = Ov_GetPartPtr(entry, pinst);
+    OV_INSTPTR_fb_task    pDo 	 = Ov_GetPartPtr(do, pinst);
+    OV_INSTPTR_fb_task    pExit  = Ov_GetPartPtr(exit, pinst);
 	OV_INSTPTR_ssc_actionBlock pActionBlock  = NULL;
-	OV_INSTPTR_ssc_execute pExecute = NULL;
 
 	OV_INSTPTR_fb_task pTaskParent = Ov_GetParent(fb_tasklist, pinst);
 
@@ -241,21 +233,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
 	pinst->v_phase = SSC_PHASE_ENTRYDO;
 	pinst->v_qualifier = SSC_QUALIFIER_ENTRY;
 
-	pinst->v_hasSubSsc=FALSE;
-	// find subSSCs
-	Ov_ForEachChildEx(ov_containment, pinst, pExecute, ssc_execute)
-	{
-		if (pExecute->v_actionQualifier != SSC_QUALIFIER_EXIT && pExecute->v_targetIsSSC){
-			pinst->v_hasSubSsc=TRUE;
-			break;
-		}
-	}
-
 	//reset subtasks
 	pEntry->v_actimode = FB_AM_ON;
 	pDo->v_actimode = FB_AM_ON;
-	pTrans->v_actimode = FB_AM_ON;
-	pExit->v_actimode = FB_AM_OFF;
+	pExit->v_actimode = FB_AM_OFF;	//this is set to FB_AM_ONCE and executed on leaving the step
 
 	// TODO: reset all action blocks
 
@@ -272,7 +253,9 @@ OV_DLLFNCEXPORT OV_RESULT ssc_step_resetStep(
 	return OV_ERR_OK;
 }
 
-
+/**
+ * disallow deletion in run state
+ */
 OV_DLLFNCEXPORT OV_ACCESS ssc_step_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,

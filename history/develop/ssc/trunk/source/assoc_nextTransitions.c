@@ -38,21 +38,22 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 	//
 
 	OV_INSTPTR_ssc_transition pTrans = Ov_StaticPtrCast(ssc_transition, pchild);
-	OV_INSTPTR_fb_task pTransTaskParent=Ov_GetParent(fb_tasklist, pchild);
+	OV_INSTPTR_fb_task pTransTaskParent = Ov_GetParent(fb_tasklist, pchild);
 	OV_INSTPTR_ssc_step pNextStep = Ov_GetParent(ssc_previousTransitions, pchild);
+	OV_INSTPTR_ssc_sscHeader pOwnSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pchild));
 
 	// check if the previousStep and nextStep are the same
-	if ( pNextStep == pparent)
-	{
+	if ( pNextStep == pparent){
 		ov_logfile_error("ssc_nextTransitions_link: %s - the previous step and the next step cannot be the same.", pchild->v_identifier);
 		return OV_ERR_BADPLACEMENT;
 	}
 
 	// unlink the transition from its taskparent
-	if (pTransTaskParent !=NULL)
+	if (pTransTaskParent != NULL){
 		Ov_Unlink(fb_tasklist, pTransTaskParent, pchild);
-	// link to local tasklist of the parent step
-	Ov_Link(fb_tasklist, &pparent->p_trans, pchild);
+	}
+	// link to local tasklist of the parent ssc
+	Ov_Link(fb_tasklist, Ov_GetPartPtr(trans, pOwnSSC), pchild);
 
 	// activate transition
 	pTrans->v_actimode = FB_AM_ON;

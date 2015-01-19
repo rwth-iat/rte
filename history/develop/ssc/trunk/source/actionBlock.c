@@ -44,7 +44,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionQualifier_set(
 			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
 		}
 		//link to entry task
-		result=Ov_Link(fb_tasklist, &pStep->p_entry, pinst);
+		result=Ov_Link(fb_tasklist, Ov_GetPartPtr(entry, pStep), pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
@@ -55,7 +55,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionQualifier_set(
 			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
 		}
 		//link to do task
-		result=Ov_Link(fb_tasklist, &pStep->p_do, pinst);
+		result=Ov_Link(fb_tasklist, Ov_GetPartPtr(do, pStep), pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_actionQualifier_set(
 			Ov_Unlink(fb_tasklist, pTaskParent, pinst);
 		}
 		//link to entry task
-		result=Ov_Link(fb_tasklist, &pStep->p_exit, pinst);
+		result=Ov_Link(fb_tasklist, Ov_GetPartPtr(exit, pStep), pinst);
 		if(Ov_Fail(result))
 			return result;
 		pinst->v_actionQualifier = value;
@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 
 
 /**
- * prevent deletion if the ssc is not running or in an error state
+ * disallow deletion in run state
  */
 OV_DLLFNCEXPORT OV_ACCESS ssc_actionBlock_getaccess(
 	OV_INSTPTR_ov_object	pobj,

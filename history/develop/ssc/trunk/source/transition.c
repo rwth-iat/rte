@@ -28,31 +28,29 @@
 #include "ssclib.h"
 
 OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
-	OV_INSTPTR_ov_object 	pobj
-)
-{
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_ssc_transition pinst = Ov_StaticPtrCast(ssc_transition, pobj);
-    OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_transition pinst = Ov_StaticPtrCast(ssc_transition, pobj);
+	OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
 
+	OV_RESULT    result;
 
-    OV_RESULT    result;
+	/* do what the base class does first */
+	result = fb_functionblock_constructor(pobj);
+	if(Ov_Fail(result)){
+		return result;
+	}
 
-    /* do what the base class does first */
-    result = fb_functionblock_constructor(pobj);
-    if(Ov_Fail(result))
-         return result;
-
-    // check location
-    if (pSSC == NULL)
-	{
+	// check location
+	if (pSSC == NULL){
 		ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a sscHeader.");
 		return OV_ERR_BADPLACEMENT;
 	}
 
-    return OV_ERR_OK;
+	return OV_ERR_OK;
 }
 
 
@@ -60,154 +58,38 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-    /*    
-    *   local variables
-    */
-    OV_INSTPTR_ssc_transition 	pinst = Ov_StaticPtrCast(ssc_transition, pfb);
-    //OV_INSTPTR_fb_functionblock pTransCond = Ov_StaticPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, Ov_GetFirstChild(fb_inputconnections, pinst)));
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_transition 	pinst = Ov_StaticPtrCast(ssc_transition, pfb);
 
-    //find connection object which is connected to the result port
-    OV_INSTPTR_fb_connection pResultConnection = Ov_GetFirstChild(fb_inputconnections, pinst);
+	OV_INSTPTR_ssc_step  		pPrevStep = Ov_GetParent(ssc_nextTransitions, pinst);
+	OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
 
-    // OV_INSTPTR_fb_connection    pResultConnection = Ov_StaticPtrCast(fb_connection, Ov_GetFirstChild(fb_inputconnections, pinst));
+	OV_INSTPTR_ssc_sscHeader	pSSC = Ov_StaticPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
 
-    //find source object which sends the data to transition object
-    OV_INSTPTR_fb_object pSrcObj = Ov_GetParent( fb_outputconnections, pResultConnection);
-
-    //OV_INSTPTR_fb_functionblock pTransCond = (OV_INSTPTR_fb_functionblock)(Ov_GetParent(ov_containment, pParentObj));// Ov_DynamicPtrCast(fb_functionblock, pParentObj);
-
-    //  OV_INSTPTR_ov_domain        pTransCondsDomain = NULL;
-    OV_INSTPTR_ov_domain        pTransCondsContainer = NULL;
-    OV_INSTPTR_fb_task          pTransCondsTaskParent = NULL;
-
-    //OV_INSTPTR_fb_port port = NULL;
-
-    OV_INSTPTR_fb_functionblock pTransCond = NULL;
-    //Ov_DynamicPtrCast(fb_functionblock, Ov_GetParent( fb_outputconnections, pResultConnection));
-    OV_INSTPTR_ssc_step  		pPrevStep = Ov_GetParent(ssc_nextTransitions, pinst);
-    OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
-
-    OV_INSTPTR_ssc_sscHeader	pSSC = Ov_StaticPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_fb_functionchart pFC = Ov_StaticPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
-
-    //OV_INSTPTR_fb_task          pPrevStepExit = &pPrevStep->p_exit;
-    //OV_INSTPTR_fb_task          pPrevStepEntry = &pPrevStep->p_entry;
-
-
-
-    //pTransCondsDomain = &pSSC->p_transConds;
-    //pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
-    //pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
-
-
-
-    //check whether the transCond is a functionchart or a functionblock
-    if(Ov_CanCastTo(fb_port, pSrcObj))
-    {
-    	//transCond is a functionchart, check if the functionchart is within the transCond Container
-    	pTransCond =  Ov_StaticPtrCast(fb_functionblock, Ov_GetParent(fb_variables, Ov_StaticPtrCast(fb_port, pSrcObj)));
-    }
-    else if (Ov_CanCastTo(fb_functionblock, pSrcObj))
-    {
-    	//transCond is a functionblock, check if the functionblock is within the transCond Container
-    	pTransCond = Ov_StaticPtrCast(fb_functionblock, pSrcObj);
-    }
-
-    pTransCondsContainer = Ov_GetParent(ov_containment, pTransCond);
-    pTransCondsTaskParent = Ov_GetParent(fb_tasklist, pTransCond);
-
-
-    //the transition condition is not in the transCond-container, so it does not need to be triggered
-    //the only valid option is now, that the transition condition is a port of the embedding function chart
-    //else an error should be generated
-	if(Ov_GetParent(ov_containment,pTransCond) != pTransCondsContainer )
-	{
-		if(pTransCond != Ov_PtrUpCast(fb_functionblock, pFC)) //the found functionchart/block is not the embedding functionchart
-		{
-			pinst->v_error=TRUE;
-			ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
-			return;
-		}
-		pTransCond = NULL;
+	// check location and links
+	if ( !pSSC){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "placed wrong");
+		return;
+	}else if ( !pPrevStep || !pNextStep ){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "not connected to both steps");
+		return;
 	}
+	pinst->v_error=FALSE;
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
 
 
-    // check location and links
-    if ( !pPrevStep || !pNextStep || !pSSC)
-    {
-    	pinst->v_error=TRUE;
-    	ov_string_setvalue(&pinst->v_errorDetail, "wrong link");
-    	return;
-    }
-    pinst->v_error=FALSE;
-    ov_string_setvalue(&pinst->v_errorDetail, NULL);
-
- //   printf("%s/%s\n", pSSC->v_identifier, pinst->v_identifier);
-
-    // execute transition condition
-    if (pTransCond != NULL)
-    {
-        // check location
-    	if (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC))
-    	{
-    		//if ((pTransCondsContainer != pTransCondsDomain) && (pTransCondsContainer != Ov_StaticPtrCast(ov_domain, pFC)) )
-    		//{
-    		//	pinst->v_error=TRUE;
-    		//	ov_string_setvalue(&pinst->v_errorDetail, "transition condition must be placed in the transConds container ");
-    		//	return;
-    		//}
-
-    		// check tasklist
-    		if (pTransCondsTaskParent != NULL){
-    			Ov_Unlink(fb_tasklist, pTransCondsTaskParent, pTransCond);
-    		}
-
-    		// init transition condition
-    		pTransCond->v_actimode = FB_AM_ON;
-    		pTransCond->v_cyctime.secs = 0;
-    		pTransCond->v_cyctime.usecs = 0;
-    		pTransCond->v_iexreq = TRUE;
-    		pResultConnection->v_on = 1;
-    		pResultConnection->v_sourcetrig = 1;   // connection mode: source sends
-    		// execute transition condition
-    		Ov_Call1(fb_task, pTransCond, execute, pltc);
-    	}
-    }
 
 
-    // trigger
-    if (pinst->v_result)
-    {
-       	if (!pPrevStep->v_evTransTrigger)
-       	{
-       		// broadcast the trigger event
-       		pPrevStep->v_evTransTrigger=TRUE;
-
-        	// deactivate transition condition
-        	if (pTransCond !=NULL){
-        		pTransCond->v_actimode = FB_AM_OFF;
-        	}
-
-        	// execute exit-actions of subSSCs
-
-
-        	// link next-step to ssc-tasklist
-        	//result=Ov_LinkPlaced(fb_tasklist, &pSSC->p_intask, pNextStep, OV_PMH_END);
-        	Ov_Link(fb_tasklist, &pSSC->p_intask, pNextStep);
-        	pNextStep->v_actimode = FB_AM_ON;
-        	pNextStep->v_phase = SSC_PHASE_ENTRYDO;
-        	pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
-
-        	// deactivate transition condition
-        	if (pTransCond != NULL){
-        		pTransCond->v_actimode = FB_AM_OFF;
-        	}
-        }
-    }
-
-    return;
+	return;
 }
 
+/**
+ * disallow deletion in run state
+ */
 OV_DLLFNCEXPORT OV_ACCESS ssc_transition_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,

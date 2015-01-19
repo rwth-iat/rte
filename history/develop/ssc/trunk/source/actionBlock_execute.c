@@ -72,7 +72,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_execute_targetObject_set(
 		const OV_STRING  value
 ) {
 	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
-	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
 
 	// check input
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
@@ -83,13 +82,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_execute_targetObject_set(
 	ssc_getObjectFromExecute(pinst, value, &pTargetObj);
 	if(pTargetObj == NULL){
 		return OV_ERR_BADPARAM;
-	}
-
-	if(Ov_CanCastTo(ssc_sscHeader, pTargetObj)){
-		pinst->v_targetIsSSC = TRUE;
-		pStep->v_hasSubSsc = TRUE;
-	}else{
-		pinst->v_targetIsSSC = FALSE;
 	}
 
 	// init parameters
@@ -150,15 +142,6 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	// execute action for once
 	Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pTargetObj), execute, pltc);
 
-	if(pTargetSscHeader != NULL){
-		// remember state of targetSSC
-		if (pTargetSscHeader->v_workingState == SSC_WOST_TERMINATE){
-			pStep->v_subSscTerminated=TRUE;
-		} else {
-			pStep->v_subSscTerminated=FALSE;
-		}
-	}
-
 	return;
 }
 
@@ -211,26 +194,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_execute_checkAction(
 OV_DLLFNCEXPORT void ssc_execute_destructor(
 		OV_INSTPTR_ov_object 	pobj
 ) {
-	/*
-	 *   local variables
-	 */
-	OV_INSTPTR_ssc_execute pinst = Ov_StaticPtrCast(ssc_execute, pobj);
-	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pobj));
-	OV_INSTPTR_ssc_execute pExecute = NULL;
-
-	//hide ourself in the next search
-	pinst->v_targetIsSSC = FALSE;
-
-	//make hasSubSsc valid again
-	pStep->v_hasSubSsc = FALSE;
-	// find subSSCs
-	Ov_ForEachChildEx(ov_containment, pinst, pExecute, ssc_execute){
-		if (pExecute->v_actionQualifier != SSC_QUALIFIER_EXIT && pExecute->v_targetIsSSC){
-			pStep->v_hasSubSsc=TRUE;
-			break;
-		}
-	}
-
 	/* destroy object */
 	fb_functionblock_destructor(pobj);
 
