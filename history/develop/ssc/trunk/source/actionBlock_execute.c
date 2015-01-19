@@ -108,7 +108,10 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	OV_INSTPTR_ssc_sscHeader  	pOwnSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ssc_sscHeader  	pTargetSscHeader = NULL;
 	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
-	OV_RESULT    			 result;
+	OV_INT targetActimode = FB_AM_ON;
+	OV_INT targetCyctimeSecs = 0;
+	OV_INT targetCyctimeUsecs = 0;
+	OV_BOOL targetIexreq = TRUE;
 
 	// init parameters
 	pinst->v_cyctime.secs = 0;
@@ -130,9 +133,15 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 		return;
 	}
 
-	// check action
-	result = Ov_Call0 (ssc_execute, pinst, checkAction);
-	if(Ov_Fail(result)) return;
+	//save config and initialise targetObject
+	targetActimode = pTargetObj->v_actimode;
+	targetCyctimeSecs = pTargetObj->v_cyctime.secs;
+	targetCyctimeUsecs = pTargetObj->v_cyctime.usecs;
+	targetIexreq = pTargetObj->v_iexreq;
+	pTargetObj->v_actimode = FB_AM_ONCE;
+	pTargetObj->v_cyctime.secs = 0;
+	pTargetObj->v_cyctime.usecs = 0;
+	pTargetObj->v_iexreq = TRUE;
 
 	if(Ov_CanCastTo(ssc_sscHeader, pTargetObj)){
 		pTargetSscHeader = Ov_StaticPtrCast(ssc_sscHeader, pTargetObj);
@@ -142,53 +151,13 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	// execute action for once
 	Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pTargetObj), execute, pltc);
 
+	//restore config of targetObject
+	pTargetObj->v_actimode = targetActimode;
+	pTargetObj->v_cyctime.secs = targetCyctimeSecs;
+	pTargetObj->v_cyctime.usecs = targetCyctimeUsecs;
+	pTargetObj->v_iexreq = targetIexreq;
+
 	return;
-}
-
-/**
- * checks configuration of this action
- */
-OV_DLLFNCEXPORT OV_RESULT ssc_execute_checkAction(
-             OV_INSTPTR_ssc_execute          pinst
-) {
-    OV_INSTPTR_ssc_step  		pStep= Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-    OV_INSTPTR_ssc_sscHeader  	pOwnSSC= Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
-	OV_INSTPTR_fb_functionblock pAction = NULL;
-	OV_INSTPTR_fb_task 			pTask=NULL;
-
-	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
-
-	ssc_getObjectFromExecute(pinst, pinst->v_targetObject, &pTargetObj);
-
-
-	// check action name
-	if (ov_string_compare(pinst->v_targetObject, NULL) == OV_STRCMP_EQUAL)
-	{
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "action instance is not defined");
-		return OV_ERR_BADPARAM;
-	}
-
-	// check location
-	if (pOwnSSC == NULL){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "wrong placement");
-		ov_logfile_error("ssc_execute_checkAction: action block must be encapsulated in a step.");
-		return OV_ERR_BADPLACEMENT;
-	}
-
-	// unlink, if action has task parent
-	pAction = Ov_DynamicPtrCast(fb_functionblock, pTargetObj);
-	pTask = Ov_GetParent(fb_tasklist, Ov_PtrUpCast(fb_task, pAction));
-	if (pTask != NULL)	Ov_Unlink(fb_tasklist, pTask, pAction);
-
-	// init parameters
-	pAction->v_actimode = FB_AM_ON;
-	pAction->v_cyctime.secs = 0;
-	pAction->v_cyctime.usecs = 0;
-	pAction->v_iexreq = TRUE;
-
-	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT void ssc_execute_destructor(

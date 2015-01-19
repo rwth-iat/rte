@@ -182,13 +182,12 @@ LIBRARY ssc
   
    CLASS execute : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
-  	COMMENT = "action block calling SSC, FB- or CFC-action ";
+  	COMMENT = "action block calling SSC, FB- or CFC-action once";
     VARIABLES
       targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
-      checkAction       : 	C_FUNCTION  <SSC_FNC_CHECKACTION>; /* todo remove later?*/
       destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
     END_OPERATIONS;
   END_CLASS;

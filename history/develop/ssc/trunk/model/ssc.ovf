@@ -2,7 +2,6 @@
 #ifndef ssc_OVF_INCLUDE
 #define ssc_OVF_INCLUDE
 
-#endif
 
 typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSSC(
 	OV_INSTPTR_ssc_sscHeader       pSSC
@@ -11,6 +10,4 @@ typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSTEP(
 	OV_INSTPTR_ssc_step       pStep
 );
 
-typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_CHECKACTION(
-	OV_INSTPTR_ssc_execute       pExecuteFb
-);
+#endif
