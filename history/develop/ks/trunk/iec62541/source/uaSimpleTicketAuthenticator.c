@@ -31,7 +31,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaSimpleTicketAuthenticator_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+ //   OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -51,7 +51,7 @@ OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+    //OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
 
     /* do what the base class does first */
     ksbase_TicketAuthenticator_startup(pobj);
@@ -68,7 +68,7 @@ OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+  //  OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
 
     /* do what */
 

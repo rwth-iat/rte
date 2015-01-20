@@ -130,7 +130,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_NODEID:
 			{
 				UA_NodeId	*nodeId;
-				UA_NodeId_new(&nodeId);
+				nodeId = UA_NodeId_new();
 				if(!nodeId){
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 					ov_memstack_unlock();
@@ -139,7 +139,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				nodeId->namespaceIndex = 0;
 				nodeId->identifierType = UA_NODEIDTYPE_NUMERIC;
 				nodeId->identifier.numeric = pNode->v_NodeId;
-				readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
+				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODEID];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeId;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -150,14 +150,14 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_NODECLASS:
 			{
 				UA_NodeClass 	*nodeClass;
-				UA_NodeClass_new(&nodeClass);
+				nodeClass = UA_NodeClass_new();
 				if(!nodeClass){
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 					break;
 				}
 				*nodeClass = iec62541_uaNamespace0_getNodeClass(pNode);
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_[UA_NODECLASS];
+				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODECLASS];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeClass;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -169,14 +169,14 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_DISPLAYNAME:
 		{
 			UA_String *name;
-			UA_String_new(&name);
+			name = UA_String_new();
 			if(!name){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
 			}
 			UA_String_copycstring(pNode->v_identifier, name);
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-			readNodesResults[indices[i]].value.vt = &UA_[UA_STRING];
+			readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_STRING];
 			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 			readNodesResults[indices[i]].value.storage.data.dataPtr = name;
 			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -191,7 +191,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_USERWRITEMASK:
 		{
 			UA_UInt32 *writeMask;
-			UA_UInt32_new(&writeMask);
+			writeMask = UA_UInt32_new();
 			if(!writeMask){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -201,7 +201,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				if(tempPointer){
 					*writeMask = *((OV_UINT*)tempPointer);
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_[UA_UINT32];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_UINT32];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = writeMask;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -216,7 +216,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_ISABSTRACT:
 		{
 			UA_Boolean *isAbstract;
-			UA_Boolean_new(&isAbstract);
+			isAbstract = UA_Boolean_new();
 			if(!isAbstract){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -230,7 +230,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*isAbstract = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = isAbstract;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -245,7 +245,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_SYMMETRIC:
 		{
 			UA_Boolean *isSymmetric;
-			UA_Boolean_new(&isSymmetric);
+			isSymmetric = UA_Boolean_new();
 			if(!isSymmetric){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -259,7 +259,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*isSymmetric = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = isSymmetric;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -280,7 +280,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_EVENTNOTIFIER:
 		{
 			UA_Byte *eventNotifer;
-			UA_Byte_new(&eventNotifer);
+			eventNotifer = UA_Byte_new();
 			if(!eventNotifer){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -290,7 +290,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				if(tempPointer){
 					*eventNotifer = *((OV_UINT*)tempPointer);
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_[UA_BYTE];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BYTE];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = eventNotifer;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -318,7 +318,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_DATATYPE:
 		{
 			UA_NodeId *dataType;
-			UA_NodeId_new(&dataType);
+			dataType = UA_NodeId_new();
 			if(!dataType){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				ov_memstack_unlock();
@@ -330,7 +330,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				if(tempPointer){
 					dataType->identifier.numeric = *((OV_UINT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_[UA_NODEID];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODEID];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -346,7 +346,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_VALUERANK:
 		{
 			UA_Int32 *valueRank;
-			UA_Int32_new(&valueRank);
+			valueRank = UA_Int32_new();
 			if(!valueRank){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -355,7 +355,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				if(tempPointer){
 					*valueRank = *((OV_INT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = valueRank;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -368,7 +368,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_ARRAYDIMENSIONS:
 		{
 			UA_Int32 *arrayDimensions;
-			UA_Int32_new(&arrayDimensions);
+			arrayDimensions = UA_Int32_new();
 			if(!arrayDimensions){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -377,7 +377,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				if(tempPointer){
 					*arrayDimensions = *((OV_INT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_[UA_INT32];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = arrayDimensions;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -391,7 +391,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_USERACCESSLEVEL:
 		{
 			UA_Byte *accessLevel;
-			UA_Byte_new(&accessLevel);
+			accessLevel = UA_Byte_new();
 			if(!accessLevel){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -400,7 +400,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				if(tempPointer){
 					*accessLevel = *((OV_UINT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_[UA_BYTE];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BYTE];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = accessLevel;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -416,7 +416,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		case UA_ATTRIBUTEID_HISTORIZING:
 		{
 			UA_Boolean *historizing;
-			UA_Boolean_new(&historizing);
+			historizing = UA_Boolean_new();
 			if(!historizing){
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				break;
@@ -430,7 +430,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*historizing = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_[UA_BOOLEAN];
+					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
 					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 					readNodesResults[indices[i]].value.storage.data.dataPtr = historizing;
 					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -580,7 +580,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 					refCount++;
 				}
 			}
-			UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_[UA_REFERENCEDESCRIPTION]);
+			UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
 			if(!browseResults[indices[i]].references && refCount>0){
 				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 				break;

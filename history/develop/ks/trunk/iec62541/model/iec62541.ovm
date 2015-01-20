@@ -212,7 +212,7 @@ LIBRARY iec62541
 			clientEndpointUrl		: STRING
 				COMMENT			= "URL this clients wants to connect to"
 				INITIALVALUE	= "";
-			connectionData		:	C_TYPE <UA_Connection>;
+			connectionData		:	C_TYPE <ov_UA_Connection>;
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;

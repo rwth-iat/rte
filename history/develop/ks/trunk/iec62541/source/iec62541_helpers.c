@@ -60,7 +60,7 @@ UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result){
 
 UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type){
 	UA_NodeId *varType;
-	UA_NodeId_new(&varType);
+	varType = UA_NodeId_new();
 	if(!varType){
 		return varType;
 	}
@@ -114,7 +114,7 @@ UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type){
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	UA_StatusCode result;
 	void *value = NULL;
-	const UA_VTable_Entry *vt = NULL;
+	const UA_TypeVTable *vt = NULL;
 	UA_Boolean tempBool;	/*	has different byte size in ov and ua hence we need a temp variable	*/
 	UA_String tempString = {.length = 0, .data = NULL};
 	UA_DateTime tempTime;
@@ -136,55 +136,55 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				tempBool = UA_FALSE;
 			}
 			value = &tempBool;
-			vt = &UA_[UA_BOOLEAN];
+			vt = &UA_TYPES[UA_BOOLEAN];
 			break;
 		case OV_VT_BYTE:
 			value = &(pAny->value.valueunion.val_byte);
-			vt = &UA_[UA_BYTE];
+			vt = &UA_TYPES[UA_BYTE];
 			break;
 		case OV_VT_DOUBLE:
 		case OV_VT_DOUBLE_PV:
 			value = &(pAny->value.valueunion.val_double);
-			vt = &UA_[UA_DOUBLE];
+			vt = &UA_TYPES[UA_DOUBLE];
 			break;
 		case OV_VT_INT:
 		case OV_VT_INT_PV:
 			value = &(pAny->value.valueunion.val_int);
-			vt = &UA_[UA_INT32];
+			vt = &UA_TYPES[UA_INT32];
 			break;
 		case OV_VT_STATE:
 			value = &(pAny->value.valueunion.val_state);
-			vt = &UA_[UA_INT32];
+			vt = &UA_TYPES[UA_INT32];
 			break;
 		case OV_VT_SINGLE:
 		case OV_VT_SINGLE_PV:
 			value = &(pAny->value.valueunion.val_single);
-			vt = &UA_[UA_FLOAT];
+			vt = &UA_TYPES[UA_FLOAT];
 			break;
 		case OV_VT_STRING:
 		case OV_VT_STRING_PV:
 			tempString.data = (UA_Byte*) pAny->value.valueunion.val_string;
 			tempString.length = strlen(pAny->value.valueunion.val_string);
 			value = &tempString;
-			vt = &UA_[UA_STRING];
+			vt = &UA_TYPES[UA_STRING];
 			break;
 		case OV_VT_TIME:
 		case OV_VT_TIME_PV:
 			tempTime = ov_ovTimeTo1601nsTime(pAny->value.valueunion.val_time);
 			value = &tempTime;
-			vt = &UA_[UA_DATETIME];
+			vt = &UA_TYPES[UA_DATETIME];
 			break;
 		case OV_VT_TIME_SPAN:
 		case OV_VT_TIME_SPAN_PV:
 			Ov_TimeSpanToDouble(pAny->value.valueunion.val_time_span, duration);
 			duration *= 1000.0;	/*	duration useses ms	*/
 			value = &duration;
-			vt = &UA_[UA_DOUBLE];
+			vt = &UA_TYPES[UA_DOUBLE];
 			break;
 		case OV_VT_UINT:
 		case OV_VT_UINT_PV:
 			value = &(pAny->value.valueunion.val_uint);
-			vt = &UA_[UA_UINT32];
+			vt = &UA_TYPES[UA_UINT32];
 			break;
 		default:
 			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
@@ -213,35 +213,35 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				}
 			}
 			value = tempBoolArray;
-			vt = &UA_[UA_BOOLEAN];
+			vt = &UA_TYPES[UA_BOOLEAN];
 			break;
 		case OV_VT_BYTE_VEC:
 			arrayLength = pAny->value.valueunion.val_byte_vec.veclen;
 			value = pAny->value.valueunion.val_byte_vec.value;
-			vt = &UA_[UA_BYTE];
+			vt = &UA_TYPES[UA_BYTE];
 			break;
 		case OV_VT_DOUBLE_VEC:
 		case OV_VT_DOUBLE_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_double_vec.veclen;
 			value = pAny->value.valueunion.val_double_vec.value;
-			vt = &UA_[UA_DOUBLE];
+			vt = &UA_TYPES[UA_DOUBLE];
 			break;
 		case OV_VT_INT_VEC:
 		case OV_VT_INT_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_int_vec.veclen;
 			value = pAny->value.valueunion.val_int_vec.value;
-			vt = &UA_[UA_INT32];
+			vt = &UA_TYPES[UA_INT32];
 			break;
 		case OV_VT_STATE_VEC:
 			arrayLength = pAny->value.valueunion.val_state_vec.veclen;
 			value = pAny->value.valueunion.val_state_vec.value;
-			vt = &UA_[UA_INT32];
+			vt = &UA_TYPES[UA_INT32];
 			break;
 		case OV_VT_SINGLE_VEC:
 		case OV_VT_SINGLE_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_single_vec.veclen;
 			value = pAny->value.valueunion.val_single_vec.value;
-			vt = &UA_[UA_FLOAT];
+			vt = &UA_TYPES[UA_FLOAT];
 			break;
 		case OV_VT_STRING_VEC:
 		case OV_VT_STRING_PV_VEC:
@@ -260,7 +260,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				}
 			}
 			value = tempStringArray;
-			vt = &UA_[UA_STRING];
+			vt = &UA_TYPES[UA_STRING];
 			break;
 		case OV_VT_TIME_VEC:
 		case OV_VT_TIME_PV_VEC:
@@ -274,7 +274,7 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				tempTimeArray[iterator] = ov_ovTimeTo1601nsTime(pAny->value.valueunion.val_time_vec.value[iterator]);
 			}
 			value = tempTimeArray;
-			vt = &UA_[UA_DATETIME];
+			vt = &UA_TYPES[UA_DATETIME];
 			break;
 		case OV_VT_TIME_SPAN_VEC:
 		case OV_VT_TIME_SPAN_PV_VEC:
@@ -288,13 +288,13 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 				tempTimeArray[iterator] = ov_ovTimeSpanTo1601nsTime(pAny->value.valueunion.val_time_span_vec.value[iterator]);
 			}
 			value = tempTimeArray;
-			vt = &UA_[UA_DATETIME];
+			vt = &UA_TYPES[UA_DATETIME];
 			break;
 		case OV_VT_UINT_VEC:
 		case OV_VT_UINT_PV_VEC:
 			arrayLength = pAny->value.valueunion.val_uint_vec.veclen;
 			value = pAny->value.valueunion.val_uint_vec.value;
-			vt = &UA_[UA_UINT32];
+			vt = &UA_TYPES[UA_UINT32];
 			break;
 		default:
 			return ov_resultToUaStatusCode(OV_ERR_BADTYPE);
@@ -309,7 +309,7 @@ UA_StatusCode ov_VariantToAny(UA_Variant* pVariant, OV_ANY* pAny){
 	//	UA_NodeId typeid = { .namespaceIndex = 0, .identifierType = UA_NODEIDTYPE_NUMERIC,
 	//	                         .identifier.numeric = encodingByte & UA_VARIANT_ENCODINGMASKTYPE_TYPEID_MASK };
 	//	    UA_Int32 typeNs0Id = UA_ns0ToVTableIndex(&typeid );
-	//	    const UA_VTable_Entry *vt = &UA_[typeNs0Id];
+	//	    const UA_VTable_Entry *vt = &UA_TYPES[typeNs0Id];
 
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }

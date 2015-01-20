@@ -28,11 +28,13 @@
 #include "ua_server.h"
 #include "server/ua_nodestore.h"
 
-/*	function declaration needed as they are declared with __declspec(dllimport) in the header which means they MUST come from a dll not an .a	*/
+/*	function declaration needed as they are declared with __declspec(dllimport) in the header
+ * which means they MUST come from a dll not an .a
+*/
 UA_Int32 UA_String_copycstring(char const *src, UA_String *dst);
 void UA_String_deleteMembers(UA_String *p);
-void UA_Server_init(UA_Server *server, UA_String *endpointUrl);
-UA_Int32 UA_Server_deleteMembers(UA_Server *server);
+//void UA_Server_init(UA_Server *server, UA_String *endpointUrl);
+//UA_Int32 UA_Server_deleteMembers(UA_Server *server);
 
 OV_INSTPTR_iec62541_uaServer iec62541_pUaServer = NULL;
 
@@ -89,7 +91,7 @@ OV_DLLFNCEXPORT void iec62541_uaServer_destructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+   // OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
 
     /* do what */
 
