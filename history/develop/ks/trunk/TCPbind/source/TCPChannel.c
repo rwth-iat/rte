@@ -112,7 +112,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	fd_set write_flags;
 	struct timeval waitd;
 	int err = 0;
-	OV_UINT sentChunkSize;
+	OV_INT sentChunkSize;
 	OV_UINT sendlength = 0;
 
 	if(thisCh->v_outData.length)	//check if there is data to send
@@ -137,7 +137,11 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 		waitd.tv_usec = 0;    //  do not wait
 		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 
-		KS_logfile_debug(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+		if (err == -1) {
+			KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			return OV_ERR_GENERIC;
+		}
 
 		//determine how many bytes have to be sent
 		sendlength = thisCh->v_outData.length;
