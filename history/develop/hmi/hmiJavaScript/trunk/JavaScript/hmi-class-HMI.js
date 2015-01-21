@@ -1356,6 +1356,7 @@ HMI.prototype = {
 	optimizeSheetSize: function () {
 		if(window.getComputedStyle && HMI.Playground.firstChild && HMI.Playground.firstChild.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 			if(!HMI.Playground.firstChild.getAttribute('data-originalModelWidth')){
+				//remember original size from model
 				HMI.Playground.firstChild.setAttribute('data-originalModelWidth', HMI.Playground.firstChild.getAttribute('width'));
 				HMI.Playground.firstChild.setAttribute('data-originalModelHeight', HMI.Playground.firstChild.getAttribute('height'));
 			}
@@ -1368,10 +1369,39 @@ HMI.prototype = {
 			var playgroundMarginRight = parseFloat(playgroundStyle.marginRight);
 			var playgroundMarginBottom = parseFloat(playgroundStyle.marginBottom);
 			
-			if(windowWidth > originalModelWidth + HMI.Playground.offsetLeft + playgroundMarginRight){
+			//calculate the maximum edge which should be visible from the childrens
+			var maxchildRightEdge = 0;
+			var maxchildBottomEdge = 0;
+			var AllChilds = HMI.Playground.firstChild.getElementsByTagNameNS(HMI.HMI_Constants.NAMESPACE_SVG, "*");
+			for(var i = 0;i < AllChilds.length;i++){
+				var elementWidth = parseInt(AllChilds[i].getAttribute("width"), 10);
+				var elementHeight = parseInt(AllChilds[i].getAttribute("height"), 10);
+				if (isNaN(elementWidth)){	elementWidth = 0;	}
+				if (isNaN(elementHeight)){	elementHeight = 0;	}
+				var iteratedchildRightEdge = parseInt(AllChilds[i].getAttribute("absolutex"), 10) + elementWidth;
+				var iteratedchildBottomEdge = parseInt(AllChilds[i].getAttribute("absolutey"), 10) + elementHeight;
+				if(maxchildRightEdge < iteratedchildRightEdge){
+					maxchildRightEdge = iteratedchildRightEdge;
+				}
+				if(maxchildBottomEdge < iteratedchildBottomEdge){
+					maxchildBottomEdge = iteratedchildBottomEdge;
+				}
+			}
+			var candidateWidth = originalModelWidth < maxchildRightEdge?maxchildRightEdge:originalModelWidth;
+			var candidateHeight = originalModelHeight < maxchildBottomEdge?maxchildBottomEdge:originalModelHeight;
+			
+			if(windowWidth < candidateWidth + HMI.Playground.offsetLeft + playgroundMarginRight){
+				//we want to have scroll bars to reach everything
+				HMI.Playground.firstChild.setAttribute('width', candidateWidth - HMI.Playground.offsetLeft - playgroundMarginRight);
+			}else if(windowWidth > originalModelWidth + HMI.Playground.offsetLeft + playgroundMarginRight){
+				//blow up the viewport to be able to see even dynamic moved objects
 				HMI.Playground.firstChild.setAttribute('width', windowWidth - HMI.Playground.offsetLeft - playgroundMarginRight);
 			}
-			if(windowHeight > originalModelHeight + HMI.Playground.offsetTop + playgroundMarginBottom){
+			if(windowHeight < candidateHeight + HMI.Playground.offsetTop + playgroundMarginBottom){
+				//we want to have scroll bars to reach everything
+				HMI.Playground.firstChild.setAttribute('height', candidateHeight - HMI.Playground.offsetTop - playgroundMarginBottom);
+			}else if(windowHeight > originalModelHeight + HMI.Playground.offsetTop + playgroundMarginBottom){
+				//blow up the viewport to be able to see even dynamic moved objects
 				HMI.Playground.firstChild.setAttribute('height', windowHeight - HMI.Playground.offsetTop - playgroundMarginBottom);
 			}
 			
