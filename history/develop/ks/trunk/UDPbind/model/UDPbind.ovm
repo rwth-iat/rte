@@ -1,0 +1,93 @@
+#include "ov.ovm"
+#include "ksbase.ovm"
+
+LIBRARY UDPbind
+	VERSION   = "V0.1 (20-Jan-2015)";
+	AUTHOR    = "Lars Evertz";
+	COPYRIGHT = "";
+	COMMENT   = "UDP binding for generic communications.";
+	
+	/**
+	*	The UDPChannel is a Channel object for Communication over UDP networks.
+	*	It can open a socket to another server and then send and receive data. 
+	*	This is used when acting on the client-side. To open a socket the OpenConnection function is used. 
+	*	There is no processing of data implemented. Just plain receiving and sending. 
+	*/
+	CLASS UDPChannel : CLASS ksbase/Channel
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		VARIABLES
+			socket	:	INT	HAS_ACCESSORS
+				COMMENT	=	"Socket to receive and send data"
+				INITIALVALUE	=	-1;
+			remoteAddress	:	C_TYPE <OV_SOCKADDR_IN>
+				COMMENT	=	"Remote address";
+			remoteAddrLen	:	C_TYPE <socklen_t>
+				COMMENT	=	"Length of remote Address Sturcture";
+		END_VARIABLES;
+		OPERATIONS
+			//real sending of data
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			//receive data and hand it over
+			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			/*	open a local connection (needed for communication with manager)	*/
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
+			AssociateClientHandler	:	C_FUNCTION	<UDPBIND_FNC_ASSOCIATECLIENTHANDLER>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+	*	The UDPListener is used on the server-side.
+	*	it listens on a given UDP port. 
+	*	On incoming conenctions it tries to find a clientHandler to handle the data.
+	*	If found the clientHandler processes the data and a response is sent. 
+	*	If not, the Data is discarded.
+	*	After handling the data a response is sent if wanted.
+	*/
+	CLASS UDPListener : CLASS ksbase/Channel
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		VARIABLES
+			socket [2]	:	INT	
+				COMMENT	=	"listening on socket(s) (IPv4 and IPv6)";
+			SocketState	:	UINT
+				COMMENT	=	"State of the socket: 0 - closed; 1 - opening; 2 - open; 4 - closing; 128 - indicates error; 255 generic error"
+				INITIALVALUE	=	0;
+			port	:	INT	HAS_ACCESSORS
+				COMMENT	=	"port listening on"
+				INITIALVALUE	=	-1;
+			remoteAddress	:	C_TYPE <OV_SOCKADDR_IN>
+				COMMENT	=	"Remote address";
+			remoteAddrLen	:	C_TYPE <socklen_t>
+				COMMENT	=	"Length of remote Address Sturcture";
+			lastRecvSocket	:	INT
+				COMMENT	=	"Socket that received data last"
+				INITIALVALUE	=	-1;
+		END_VARIABLES;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			SendData	:	C_FUNCTION	<KSBASE_FNC_SENDDATA>;
+			OpenLocalConn	:	C_FUNCTION	<KSBASE_FNC_OPENLOCAL>;
+			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
+			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
+			AssociateClientHandler	:	C_FUNCTION	<UDPBIND_FNC_ASSOCIATECLIENTHANDLER>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+
+	/* 
+ 	 * This Association is used on a UDPListener to make it create Channels 
+ 	 *	with a specific ClientHandler 
+ 	 */
+	ASSOCIATION AssocSpecificClientHandler : ONE_TO_ONE
+		PARENT Listener : CLASS UDPbind/UDPListener;
+		CHILD  Identificator  : CLASS ksbase/ProtocolIdentificator;
+	END_ASSOCIATION;	
+	
+END_LIBRARY;

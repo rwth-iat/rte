@@ -1,0 +1,15 @@
+#ifndef UDPbind_OVF_INCLUDED
+#define UDPbind_OVF_INCLUDED
+
+/* 
+	Declare your C functions here. 
+	Example:
+	typedef OV_DLLFNCEXPORT void MY_FUNC(
+		OV_STRING varName
+	);
+*/
+typedef OV_DLLFNCEXPORT OV_RESULT UDPBIND_FNC_ASSOCIATECLIENTHANDLER(
+	OV_INSTPTR_ksbase_Channel this
+);
+
+#endif

@@ -1,0 +1,22 @@
+#ifndef UDPbind_OVT_INCLUDED
+#define UDPbind_OVT_INCLUDED
+
+#if !OV_SYSTEM_NT
+#include <sys/socket.h>
+#include <sys/types.h>
+#else
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x501
+#ifndef IPV6_V6ONLY
+#define IPV6_V6ONLY 27
+#endif
+#include <winsock2.h>
+#include <Ws2tcpip.h>
+#endif
+
+/* 
+	Define your data types here. 
+*/
+typedef struct sockaddr_in OV_SOCKADDR_IN;
+
+#endif
