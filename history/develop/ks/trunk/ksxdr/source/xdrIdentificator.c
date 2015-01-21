@@ -55,20 +55,28 @@ OV_DLLFNCEXPORT OV_BOOL ksxdr_xdrIdentificator_identify (
 	char tempstr[4];
 	OV_UINT* pprognr = (OV_UINT*) tempstr;
 	unsigned int i = 0;
+	unsigned int offset;
 
 	KS_logfile_debug(("%s: identify called", thisId->v_identifier));
 	/*
 	 * check if first byte is valid for an xdr stream (0x80 for last fragment or 0x00 for other fragments
 	 */
-	if((*(pchannel->v_inData.readPT) == (OV_BYTE) 0x00)
-			|| (*(pchannel->v_inData.readPT) == (OV_BYTE) 0x80))
+	if(pchannel->v_usesStreamProtocol == FALSE
+			|| ((*(pchannel->v_inData.readPT) == (OV_BYTE) 0x00)
+					|| (*(pchannel->v_inData.readPT) == (OV_BYTE) 0x80)))
 	{
 		/*
 		 * Check if rpc ID is the right one
 		 */
+		//for strem protocols like tcp the xdr program nummer has an offset of 16 in the request otherwise the offset is 12
+		if(pchannel->v_usesStreamProtocol == TRUE){
+			offset = 16;
+		} else {
+			offset = 12;
+		}
 		//Endian conversion (we do NOT use an XDR-function here since we do NOT want to modify the read pointer)
-		for(i=0; i<4; i++)		//16 is offset of program number in xdr
-			tempstr[3-i] = *(pchannel->v_inData.readPT + 16 + i);
+		for(i=0; i<4; i++)		//offset is offset of program number in xdr
+			tempstr[3-i] = *(pchannel->v_inData.readPT + offset + i);
 
 
 		if(*pprognr == thisId->v_ksProgramnumber)
