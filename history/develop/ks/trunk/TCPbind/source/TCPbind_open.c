@@ -129,7 +129,6 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 			result = ov_vendortree_getservername(&tempAny, NULL);
 				if(Ov_Fail(result))
 				{
-					ov_memstack_lock();
 					KS_logfile_error(("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result)));
 					ov_memstack_unlock();
 					return result;
