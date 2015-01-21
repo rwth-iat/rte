@@ -52,7 +52,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 	{
 		WSADATA wsaData;
 		if (WSAStartup(MAKEWORD(2, 2), &wsaData)){
-			ov_logfile_error(("UDPbind library open: Fatal: initializing Winsock failed"));
+			KS_logfile_error(("UDPbind library open: Fatal: initializing Winsock failed"));
 			return OV_ERR_GENERIC;
 		}
 	}
@@ -61,12 +61,12 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 	pcommunication = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, &(pdb->root), "communication"));
 	if(!pcommunication)
 	{
-		ov_logfile_error("UDPbind library open: Fatal: communication domain not found");
+		KS_logfile_error(("UDPbind library open: Fatal: communication domain not found"));
 		return OV_ERR_BADFACTORY;
 	}
 	else if(!Ov_CanCastTo(ov_domain, (OV_INSTPTR_ov_object) pcommunication))
 	{
-		ov_logfile_error("UDPbind library open: Fatal: communication object found but not domain (or derived)");
+		KS_logfile_error(("UDPbind library open: Fatal: communication object found but not domain (or derived)"));
 		return OV_ERR_BADFACTORY;
 	}
 
@@ -76,7 +76,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 		result = Ov_CreateObject(ov_domain, pUDPbindDom, pcommunication, "UDPbind");
 		if(Ov_Fail(result))
 		{
-			ov_logfile_error("UDPbind library open: Fatal: could not create UDPbind domain");
+			KS_logfile_error(("UDPbind library open: Fatal: could not create UDPbind domain"));
 			return result;
 		}
 	}
@@ -113,8 +113,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 			result = ov_vendortree_getservername(&tempAny, NULL);
 			if(Ov_Fail(result))
 			{
-				ov_memstack_lock();
-				ov_logfile_error("UDPbind library open: could not get servername: %s", ov_result_getresulttext(result));
+				KS_logfile_error(("UDPbind library open: could not get servername: %s", ov_result_getresulttext(result)));
 				ov_memstack_unlock();
 				return result;
 			}
@@ -122,7 +121,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 			if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL)
 				port = 7509;
 			else
-				ov_logfile_info("TCPbind library open: No port set and not manager. Using random port.");
+				KS_logfile_info(("UDPbind library open: No port set and not manager. Using random port."));
 		}
 
 		/*
@@ -136,7 +135,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 		result = Ov_CreateObject(UDPbind_UDPListener, pListener, pUDPbindDom, "UDPListener");
 		if(Ov_Fail(result))
 		{
-			ov_logfile_error("UDPbind library open: could not create UDPListener");
+			KS_logfile_error(("UDPbind library open: could not create UDPListener"));
 			ov_memstack_unlock();
 			return result;
 		}
@@ -148,13 +147,13 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 		UDPbind_UDPListener_typemethod(Ov_StaticPtrCast(ksbase_ComTask, pListener));
 		if(pListener->v_SocketState == UDPbind_CONNSTATE_COULDNOTOPEN)
 		{
-			ov_logfile_error("UDPbind library open: Listener could not open socket");
+			KS_logfile_error(("UDPbind library open: Listener could not open socket"));
 			ov_memstack_unlock();
 			Ov_DeleteObject(pListener);
 			return OV_ERR_GENERIC;
 		}
 		//read out port and print it
-		ov_logfile_info("UDPbind library open: listening on port %d", pListener->v_port);
+		KS_logfile_info(("UDPbind library open: listening on port %d", pListener->v_port));
 
 	}
 	ov_memstack_unlock();

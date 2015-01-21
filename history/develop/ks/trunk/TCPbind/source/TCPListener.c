@@ -503,10 +503,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				}
 				else
 				{
-#if OV_SYSTEM_NT
-					errno = WSAGetLastError();
-#endif
-					KS_logfile_error(("%s: Activity on socket, but accept returned %d (errno is %d: %s) --> no Channel created", this->v_identifier, cfd, errno, strerror(errno)));
+					KS_logfile_error(("%s: Activity on socket, but accept returned %d --> no Channel created", this->v_identifier, cfd));
+					KS_logfile_print_sysMsg();
 				}
 			}
 		}
