@@ -75,7 +75,6 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
 		OV_INSTPTR_TCPbind_TCPListener          pobj,
 		const OV_INT  value
 ) {
-
 	if(pobj->v_socket[0] != -1)
 	{
 		CLOSE_SOCKET(pobj->v_socket[0]);
@@ -228,7 +227,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		ov_memstack_unlock();
 		if(protV4only){
 			Protocolfamily[0] = IPv4;
-		}else{
+		} else {
 			Protocolfamily[0] = IPv4;
 			Protocolfamily[1] = IPv6;
 		}
@@ -248,18 +247,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 			if(TCPbind_TCPListener_port_get(thisLi) != -1){
 				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, TCPbind_TCPListener_port_get(thisLi));
-			}
-			else if(portbuf[0] == '\0')
-			{
+			} else if(portbuf[0] == '\0') {
 				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, 0);
-			}
-			else
-			{
+			} else {
 				//reuse port from the last protocol
 			}
 
-			if((ret = getaddrinfo(NULL, portbuf, &hints, &resultingaddrinfo)) != 0)
-			{
+			if((ret = getaddrinfo(NULL, portbuf, &hints, &resultingaddrinfo)) != 0) {
 				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
@@ -269,63 +263,51 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
 #if OV_SYSTEM_NT
-			if(fd==INVALID_SOCKET)
-			{
+			if(fd==INVALID_SOCKET){
 				errno = WSAGetLastError();
 #else
-			if (fd == -1)
-			{
+			if (fd == -1) {
 #endif
 				//error. Try next protocol
 				continue;
 			}
 
-			if(resultingaddrinfo->ai_family == AF_INET)
-			{
+			if(resultingaddrinfo->ai_family == AF_INET) {
 				KS_logfile_debug(("%s: found IPv4 socket: %d", thisLi->v_identifier, fd));
-			}
-			else if (resultingaddrinfo->ai_family == AF_INET6)
-			{
+			} else if (resultingaddrinfo->ai_family == AF_INET6) {
 				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
-				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
-				{
+				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
 					//error. Try next protocol
 					continue;
 				}
-			}
-			else
-			{
+			} else {
 				//Blacklisting other than IPv4 and IPv6, should not get hit
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
 				CLOSE_SOCKET(fd);
 				continue;
 			}
 
-			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on)))
-			{
+			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on))) {
 				KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
 				KS_logfile_print_sysMsg();
 			}
 
 			//setting source address and port
-			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen))
-			{
+			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen)) {
 				continue;
 			}
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
 			//second parameter is the maximum length to which the queue of pending connections for fd may grow
-			if (listen(fd, 5) == -1)
-			{
+			if (listen(fd, 5) == -1) {
 				continue;
 			}
 
 			//sockaddsize should indicate the amount of space of addr (in bytes) but could be actual size of the last socket address.
 			sockaddsize = sizeof(sa_stor);
 			//get the current address to which we are bound
-			if(getsockname(fd, sockaddress, &sockaddsize))
-			{
+			if(getsockname(fd, sockaddress, &sockaddsize)) {
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -334,8 +316,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			//convert the socket address to a corresponding host and service
-			if(getnameinfo( sockaddress, sockaddsize, hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf), flags))
-			{
+			if(getnameinfo( sockaddress, sockaddsize, hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf), flags)) {
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -350,6 +331,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}else if(Protocolfamily[i] == IPv6){
 				sockfds[1] = fd;
 			}
+		//End of loop --> sockets are open
 		}
 		freeaddrinfo(resultingaddrinfo);
 
@@ -359,8 +341,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return;
 		}
-		if(TCPbind_TCPListener_port_get(thisLi) == -1)
-		{
+		if(TCPbind_TCPListener_port_get(thisLi) == -1) {
 			TCPbind_TCPListener_port_set(thisLi, atoi(portbuf));
 		}
 		//remembering IPv4 socket
@@ -368,22 +349,16 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		//remembering IPv6 socket
 		thisLi->v_socket[1] = sockfds[1];
 		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
-		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
-		{
+		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1) {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
-		}
-		else
-		{
+		} else {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
 		}
 	}
-
 	/**
 	 * Socket is open now
 	 */
-
-	if(thisLi->v_SocketState == TCPbind_CONNSTATE_OPEN)
-	{
+	if(thisLi->v_SocketState == TCPbind_CONNSTATE_OPEN) {
 
 		sockfds[0] = thisLi->v_socket[0];
 		sockfds[1] = thisLi->v_socket[1];
@@ -401,24 +376,20 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		waitd.tv_sec = 0;     // Set Timeout
 		waitd.tv_usec = 0;    //  do not wait
 		ret = select(highest+1, &fds, NULL, NULL, &waitd);
-		if(ret)
-		{
+		if(ret) {
 			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
 		}
 #if OV_SYSTEM_NT
-		if(ret == SOCKET_ERROR)
-		{
+		if(ret == SOCKET_ERROR) {
 			errno = WSAGetLastError();
 #else
-		if(ret == -1)
-		{
+		if(ret == -1) {
 #endif
 			KS_logfile_error(("%s: select returned error %d", this->v_identifier, errno));
 			KS_logfile_print_sysMsg();
-
 		}
 
-		if(ret>0)	//if there is activity on the socket(s)
+		if(ret>0)	//data arrived on the socket(s)
 		{
 			for (i = 0; (i < 2); i++) {
 				if ((sockfds[i] < 0) || (!FD_ISSET(sockfds[i], &fds)))
