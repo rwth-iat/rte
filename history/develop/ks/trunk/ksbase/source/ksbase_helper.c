@@ -193,7 +193,7 @@ OV_DLLFNCEXPORT void ksbase_free_KSDATAPACKET(KS_DATAPACKET* packet)
 	if(packet->length)
 	{
 		if(packet->length > 65536){
-			ks_logfile_debug("freeing large (>64k)  ks-datapacket, length is: %i", packet->length);
+			KS_logfile_debug(("freeing large (>64k)  ks-datapacket, length is: %i", packet->length));
 		}
 		Ov_HeapFree(packet->data);
 		packet->data = NULL;
@@ -216,7 +216,7 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_KSDATAPACKET_append(KS_DATAPACKET* packet, OV_B
 	if(packet->length)
 	{
 		if(packet->length > 65536){
-			ks_logfile_debug("appending to large (>64k)  ks-datapacket, length is: %i", packet->length);
+			KS_logfile_debug(("appending to large (>64k)  ks-datapacket, length is: %i", packet->length));
 		}
 		tempdata = Ov_HeapRealloc(packet->data, packet->length + addlength);
 		if(!tempdata)
