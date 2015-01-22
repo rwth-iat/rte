@@ -60,7 +60,7 @@
 #define IPV6_V6ONLY 27
 #endif
 #include <winsock2.h>
-#include <Ws2tcpip.h>
+#include <ws2tcpip.h>
 #endif
 
 OV_DLLFNCEXPORT OV_INT UDPbind_UDPListener_port_get(
@@ -158,13 +158,14 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 	struct addrinfo *resultingaddrinfo;
 	struct addrinfo hints;
 	int ret;
-	int fd = 0;
-#define NUMPROT 2
+	#define NUMPROT 2
 	UDPBIND_PROT Protocolfamily[NUMPROT] = {PROTUNDEFINED, PROTUNDEFINED};
 	int sockfds[NUMPROT]={-1,-1};
 #if OV_SYSTEM_NT
+	SOCKET fd = 0;
 	char opt_on = 1;
 #else
+	int fd = 0;
 	int opt_on = 1;
 #endif
 	struct sockaddr_storage sa_stor;
@@ -217,8 +218,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 
 			if(UDPbind_UDPListener_port_get(thisLi) != -1){
 				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, UDPbind_UDPListener_port_get(thisLi));
-			}
-			else if(portbuf[0] == '\0') {
+			} else if(portbuf[0] == '\0') {
 				snprintf(portbuf, NI_MAXSERV, "%" OV_PRINT_INT, 0);
 			} else {
 				//reuse port from the last protocol
@@ -234,11 +234,12 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
 #if OV_SYSTEM_NT
-			if((fd==-1) || (fd==INVALID_SOCKET)) {
+			if(fd==INVALID_SOCKET){
 				errno = WSAGetLastError();
 #else
 			if (fd == -1) {
 #endif
+				//error. Try next protocol
 				continue;
 			}
 
@@ -248,6 +249,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
+					//error. Try next protocol
 					continue;
 				}
 			} else {
@@ -296,7 +298,6 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			}
 		//End of loop --> sockets are open
 		}
-
 		freeaddrinfo(resultingaddrinfo);
 
 		if(sockfds[0] == -1 && sockfds[1] == -1){
@@ -312,13 +313,8 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 		thisLi->v_socket[0] = sockfds[0];
 		//remembering IPv6 socket
 		thisLi->v_socket[1] = sockfds[1];
-#if OV_SYSTEM_NT
-		if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
-				|| (thisLi->v_socket[1] != -1 && thisLi->v_socket[1] != INVALID_SOCKET))
-#else
-		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
-#endif
-		{
+		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
+		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1) {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
 		} else {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_COULDNOTOPEN;
@@ -327,19 +323,15 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 	/**
 	 * Socket is open now
 	 */
-	if(thisLi->v_SocketState == UDPbind_CONNSTATE_OPEN)
-	{
+	if(thisLi->v_SocketState == UDPbind_CONNSTATE_OPEN) {
 
 		sockfds[0] = thisLi->v_socket[0];
 		sockfds[1] = thisLi->v_socket[1];
 		highest = 0;
 		FD_ZERO(&fds);
-		for (i = 0; i < NUMPROT; i++) {
-#if OV_SYSTEM_NT
-			if((sockfds[i] != -1) && (sockfds[i] != INVALID_SOCKET))
-#else
+		for (i = 0; i < 2; i++) {
+			//this variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 			if(sockfds[i] != -1)
-#endif
 			{
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
