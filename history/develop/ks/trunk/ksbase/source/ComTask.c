@@ -40,12 +40,6 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_actimode_set(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_INT ksbase_ComTask_cycIntervalCount_get(
-    OV_INSTPTR_ksbase_ComTask          pobj
-) {
-    return pobj->v_cycIntervalCount;
-}
-
 OV_DLLFNCEXPORT OV_INT ksbase_ComTask_cycInterval_get(
     OV_INSTPTR_ksbase_ComTask          pobj
 ) {
@@ -121,7 +115,7 @@ OV_DLLFNCEXPORT void ksbase_ComTask_destructor(
 
 /**
  * Called by RootComTask
- * Checks if its time to execute typemethod and counts down the cycIntervalCount otherwise.
+ * Checks if its time to execute typemethod
  */
 OV_DLLFNCEXPORT OV_BOOL ksbase_ComTask_calcExec(
 	OV_INSTPTR_ksbase_ComTask	this

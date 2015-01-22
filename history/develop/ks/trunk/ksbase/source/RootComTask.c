@@ -266,8 +266,9 @@ void ksbase_RootComTask_execute(
 			if(sleepLimit > 0)
 			{
 				sleepTime.secs = 0;
-				if(sleepTime.usecs > (sleepLimit * 1000))
+				if(sleepTime.usecs > (OV_INT)(sleepLimit * 1000)){
 					sleepTime.usecs = sleepLimit * 1000;
+				}
 			}
 #if OV_SYSTEM_NT
 			else if(majorVersion <= 5)

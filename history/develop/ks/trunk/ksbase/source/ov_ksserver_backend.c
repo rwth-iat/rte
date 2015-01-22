@@ -50,7 +50,7 @@ OV_DLLVAREXPORT OV_TICKET_VTBL noneticketvtbl = {
 
 
 static OV_TICKET *ksxdr_ticket_noneticket_createticket(void *data, OV_TICKET_TYPE type) {
-	static OV_TICKET ticket = { &noneticketvtbl,  OV_TT_NONE };
+	static OV_TICKET ticket = { &noneticketvtbl,  OV_TT_NONE, {{NULL}} };
 
 	//ov_logfile_info("STRIPPED!!!: ov_ksserver_ticket_noneticket_createticket2 called !!!");
 	switch(type) {

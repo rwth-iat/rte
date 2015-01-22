@@ -95,7 +95,7 @@ OV_DLLFNCEXPORT void ov_ksserver_getep(
 	*/
 	OV_PATH			path;
 	OV_STRING		name_mask = params->name_mask;
-	OV_ELEMENT		child={OV_ET_NONE, NULL};
+	OV_ELEMENT		child={OV_ET_NONE, NULL, NULL, NULL, {NULL}};
 	OV_ELEM_TYPE		mask;
 	OV_INSTPTR_ov_class	pclass;
 	OV_ELEMENT 		searchedelement;

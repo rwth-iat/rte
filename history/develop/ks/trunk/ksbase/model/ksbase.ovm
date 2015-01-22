@@ -17,10 +17,12 @@ LIBRARY ksbase
 		IS_INSTANTIABLE;
 		COMMENT = "root communication task - cycling all connected tasks. ";
 		VARIABLES
-			cycsecs	: INT HAS_ACCESSORS  
+			cycsecs	: INT HAS_ACCESSORS
+				UNIT = "sec"
 				COMMENT	=	"seconds for scheduler registration. Please note that we do not calculate the amount of time spent - root task just pauses for this time intervall. If communications need too long there will be a jitter in other timings."
 				INITIALVALUE	=	0;
-			cycusecs: INT HAS_ACCESSORS  
+			cycusecs: INT HAS_ACCESSORS
+				UNIT = "usec"
 				COMMENT	=	"usecs for scheduler registration"
 				INITIALVALUE	=	1000;
 		END_VARIABLES;
@@ -38,11 +40,8 @@ LIBRARY ksbase
 			actimode: INT HAS_ACCESSORS 
 				COMMENT	=	"0=inactive, 1=active"
 				INITIALVALUE	=	1;
-			cycIntervalCount	: INT HAS_GET_ACCESSOR
-				COMMENT	=	"current wait cycles until next execution"
-				INITIALVALUE	=	5;
 			cycInterval		: INT HAS_ACCESSORS 
-				COMMENT	=	"execution intervall of cycles of RootTasks"
+				COMMENT	=	"execution interval of cycles of RootTasks, which has a default 1ms cycle"
 				INITIALVALUE	=	5;
 			NextExecTime	:	TIME 
 				COMMENT	=	"time of next execution (if cycInterval !=0)";
@@ -92,7 +91,7 @@ LIBRARY ksbase
 	END_CLASS;
 	
 	/**
- 	*	Baseclass for clientHandler Extensions - this is just an empty class. each library shall define its own baseclass for the specific protocol
+ 	*	Baseclass for clientHandler Extensions - this is just an empty class. Each library shall define its own baseclass for the specific protocol
  	*	this class is meant to serve as a starting point giving this comment for best-practices
  	*	each protocol library (xdr, http etc.) shall define a baseclass containing the variables necessarry to hand over a request from a client handler
  	*	to such an extension object.
@@ -133,7 +132,7 @@ LIBRARY ksbase
 			name						:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"name of server"
 				INITIALVALUE	=	"";	
-			version						:	UINT	HAS_ACCESSORS						FLAGS	=	"i"
+			version						:	INT	HAS_ACCESSORS						FLAGS	=	"i"
 				COMMENT			=	"Version of the ks protocol"
 				INITIALVALUE	=	2;
 			protocols []				:	STRING	HAS_ACCESSORS						FLAGS	=	"i"
