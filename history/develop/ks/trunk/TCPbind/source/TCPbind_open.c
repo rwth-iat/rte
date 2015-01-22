@@ -134,10 +134,11 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 					return result;
 				}
 
-				if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL)
+				if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL){
 					port = 7509;
-				else
+				}else{
 					KS_logfile_info(("TCPbind library open: No port set and not manager. Using random port."));
+				}
 		}
 
 		/*

@@ -184,14 +184,17 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	struct addrinfo *resultingaddrinfo;
 	struct addrinfo hints;
 	int ret;
-	int fd = 0;
 	#define NUMPROT 2
 	TCPBIND_PROT Protocolfamily[NUMPROT] = {PROTUNDEFINED, PROTUNDEFINED};
 	int sockfds[NUMPROT]={-1,-1};
 #if OV_SYSTEM_NT
 	char opt_on = 1;
+	SOCKET fd = 0;
+	SOCKET cfd = 0;
 #else
 	int opt_on = 1;
+	int fd = 0;
+	int cfd = -1;
 #endif
 	struct sockaddr_storage sa_stor;
 	socklen_t sockaddsize;
@@ -205,7 +208,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	struct timeval waitd;
 	struct sockaddr_storage peer;
 	socklen_t peers = sizeof(struct sockaddr_storage);
-	int cfd = -1;
 	char buf[NI_MAXHOST];
 	int on = 1;
 	OV_UINT namecounter = 0;
@@ -267,13 +269,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
 #if OV_SYSTEM_NT
-			if((fd==-1) || (fd==INVALID_SOCKET))
+			if(fd==INVALID_SOCKET)
 			{
 				errno = WSAGetLastError();
 #else
 			if (fd == -1)
 			{
 #endif
+				//error. Try next protocol
 				continue;
 			}
 
@@ -287,6 +290,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1)
 				{
+					//error. Try next protocol
 					continue;
 				}
 			}
@@ -363,12 +367,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		thisLi->v_socket[0] = sockfds[0];
 		//remembering IPv6 socket
 		thisLi->v_socket[1] = sockfds[1];
-#if OV_SYSTEM_NT
-		if((thisLi->v_socket[0] != -1 && thisLi->v_socket[0] != INVALID_SOCKET)
-				|| (thisLi->v_socket[1] != -1 && thisLi->v_socket[1] != INVALID_SOCKET))
-#else
+		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1)
-#endif
 		{
 			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
 		}
@@ -390,11 +390,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		highest = 0;
 		FD_ZERO(&fds);
 		for (i = 0; i < 2; i++) {
-#if OV_SYSTEM_NT
-			if((sockfds[i] != -1) && (sockfds[i] != INVALID_SOCKET))
-#else
+			//this variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 			if(sockfds[i] != -1)
-#endif
 			{
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
@@ -431,7 +428,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 #if OV_SYSTEM_NT
 				if(cfd != INVALID_SOCKET)
 #else
-				if(cfd >= 0)
+				if(cfd != -1)
 #endif
 				{
 					if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
