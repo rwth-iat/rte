@@ -113,6 +113,15 @@ LIBRARY ksxdr
 		Tries		:	UINT
 			COMMENT	=	"Tries before successfull register. 5 is maximum"
 			INITIALVALUE = 0;
+		PmRegister	:	BOOL
+			COMMENT	=	"If TRUE this server will try to register at the portmapper if it is Manager."
+			INITIALVALUE	=	TRUE;
+		PmAsk	:	BOOL
+			COMMENT	=	"If TRUE this server will ask the portmapper to find the local MANAGER."
+			INITIALVALUE	=	TRUE;
+		PmReqSent	:	BOOL
+			COMMENT	=	"TRUE indicates that the request to the portmapper has been sent"
+			INITIALVALUE	=	FALSE;
 	END_VARIABLES;	
 	OPERATIONS
 		startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
