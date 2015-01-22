@@ -404,6 +404,8 @@
 
 /**
 *	Set the value of a static vector variable
+*	for example:
+*	Ov_SetStaticVectorValue(&pObj->v_myTargetStringvec, pObj->v_mySourceStringvec.value, pObj->v_mySourceStringvec.veclen, STRING);
 */
 #if OV_SYSTEM_LINUX
 #define Ov_SetStaticVectorValue(pvector, pvalue, veclen, type)				\
@@ -418,6 +420,8 @@
 
 /**
 *	Set the value of a dynamic vector variable
+*	for example:
+*	Ov_SetDynamicVectorValue(&pObj->v_myTargetStringvec, pObj->v_mySourceStringvec.value, pObj->v_mySourceStringvec.veclen, STRING);
 */
 #define Ov_SetDynamicVectorValue(pvector, pvalue, veclen, type)				\
 	ov_vector_setdynamicvalue((OV_GENERIC_VEC*)(pvector),					\
@@ -426,6 +430,8 @@
 
 /**
 *	Set the vector length of a dynamic vector variable
+*	for example:
+*	Ov_SetDynamicVectorLength(&pObj->v_myDynamicStringvec, 42, STRING);
 */
 #define Ov_SetDynamicVectorLength(pvector, veclen, type)					\
 	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), (veclen)			\
@@ -434,6 +440,8 @@
 
 /**
 *	Set the value of an ANY variable
+*	for example:
+*	Ov_SetAnyValue(&pObj->v_myTargetAnyvar, &pObj->v_mySourceAnyvar);
 */
 #define Ov_SetAnyValue(pany, pvalue)										\
 	ov_variable_setanyvalue((pany), (pvalue))
