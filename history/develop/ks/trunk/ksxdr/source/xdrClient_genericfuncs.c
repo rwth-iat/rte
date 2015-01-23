@@ -147,7 +147,7 @@ OV_RESULT ksxdr_checkPMAskList(OV_INSTPTR_ksxdr_xdrClient thisCl){
 		for(i = 0; i < pPMAskList->v_hosts.veclen; i++){
 			if(ov_string_compare(pPMAskList->v_hosts.value[i], thisCl->v_serverHost) == OV_STRCMP_EQUAL){
 				if(!pPMAskList->v_results.value[i]){
-					return ov_string_setvalue(thisCl->v_ManagerPort, pPMAskList->v_ports.value[i]);
+					return ov_string_setvalue(&thisCl->v_ManagerPort, pPMAskList->v_ports.value[i]);
 				} else {
 					return OV_ERR_BADVALUE;
 				}
