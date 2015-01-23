@@ -52,7 +52,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestRegister(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -171,7 +171,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestUnRegister(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -285,7 +285,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetServer(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -329,7 +329,12 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetServer(
 		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 		return result;
 	}
-
+	result = ksxdr_checkPMAskList( thisCl);
+	if(Ov_Fail(result)){
+		KS_logfile_error(("%s: could not determine MANAGER port in PortMapList", thisCl->v_identifier));
+		ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
+		return result;
+	}
 	/*	send created Message	*/
 	result = ksxdr_initiateConnection(thisCl, pChannel, pVtblChannel, FALSE, thisCl->v_serverHost, thisCl->v_ManagerPort);
 	if(Ov_Fail(result))

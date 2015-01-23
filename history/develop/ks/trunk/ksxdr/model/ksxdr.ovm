@@ -205,4 +205,35 @@ LIBRARY ksxdr
 		END_OPERATIONS;
 	END_CLASS;
 	
+	CLASS PMAskList	:	CLASS ksbase/DataHandler
+		IS_INSTANTIABLE;
+		COMMENT	=	"Holds a list of hosts on which the potmapper should be asked to determine the manager's port. The list corresponds to a list of port numbers for these servers. The ports are updated every three minutes.";
+		VARIABLES
+			hosts	[]		:	STRING
+				HAS_SET_ACCESSOR
+				COMMENT		=	"List of hosts to ask. Use numeric IPs (e.g. xxx.xxx.xxx.xxx) here as hostnames might cause opening of a IPV6 conenction which the portmapper probably can't handle.";
+			ports	[]		:	STRING
+				COMMENT		=	"List of ports corresponding to hosts. Updated every three minutes.";
+			results	[]		:	INT
+				COMMENT		=	"List of results corresponding to hosts. If an entry is 0 the Port Value is ok. 65535 indicates that the portmapper does not know the manager. 65536 indicates that the entry has not been requested yet";
+			index			:	UINT
+				COMMENT		=	"Index in vectors that is currently worked on";
+			state			:	C_TYPE <ASKLISTSTATE>
+				COMMENT		=	"Current State of requests";
+			nextAskTime		:	TIME
+				COMMENT		=	"Time the next ask cycle will be executed";
+			lastRequestTime	:	TIME
+				COMMENT		=	"Time the last request was sent. Used for tiemouts.";
+			timeOut			:	UINT
+				COMMENT		=	"Timeout for requests in ms"
+				INITIALVALUE	=	10000;
+		END_VARIABLES;
+		OPERATIONS
+			HandleData			:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+			typemethod  		:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 END_LIBRARY;

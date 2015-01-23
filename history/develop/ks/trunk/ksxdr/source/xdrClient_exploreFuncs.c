@@ -54,7 +54,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetPP(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -223,7 +223,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetEP(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -390,7 +390,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_requestGetCanonicalPath(
 	thisCl->v_callback.callbackFunction = callback;
 
 	/*	get pointer to channel and to its Vtable	*/
-	result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+	result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler, thisCl), &pChannel, &pVtblChannel);
 	if(Ov_Fail(result))
 	{
 		KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));

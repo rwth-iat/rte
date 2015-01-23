@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 	{
 	case KSBASE_CLST_AWAITINGCONNECTION:	/*	check if connection is open now. if so, send. otherwise calculate timeout and return	*/
 		/*	get pointer to channel and to its Vtable	*/
-		result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+		result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,thisCl), &pChannel, &pVtblChannel);
 		if(Ov_Fail(result))
 		{
 			KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 			return;
 		}
 		/*	get pointer to channel and to its Vtable	*/
-		result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+		result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,thisCl), &pChannel, &pVtblChannel);
 		if(Ov_Fail(result))
 		{
 			KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 
 		if(!thisCl->v_holdConnection)	/*	close connection if not otherwise specified	*/
 		{
-			result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+			result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,thisCl), &pChannel, &pVtblChannel);
 			if(Ov_Fail(result))
 			{
 				KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -202,7 +202,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 				return;
 			}
 		}
-		result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+		result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,thisCl), &pChannel, &pVtblChannel);
 		if(Ov_Fail(result))
 		{
 			KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));
@@ -226,7 +226,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 	case (KSBASE_CLST_COMPLETED | KSBASE_CLST_AWAITINGCONNECTION):
 		/*	reopening connection after getserver
 		 	 this status is only reached, if we asked the manager for the port	*/
-		result = ksxdr_getChannelPointer(thisCl, &pChannel, &pVtblChannel);
+		result = ksxdr_getChannelPointer(Ov_PtrUpCast(ksbase_DataHandler,thisCl), &pChannel, &pVtblChannel);
 		if(Ov_Fail(result))
 		{
 			KS_logfile_error(("%s: Could not get Channel pointers.", this->v_identifier));

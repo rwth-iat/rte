@@ -31,15 +31,7 @@
 #include "KSDATAPACKET_xdrhandling.h"
 #include "ksxdr_services.h"
 
-#define PM_PORT			"111"
-#define PM_PROGNUMBER	100000
-#define PM_VERSION		2
 
-#define	PM_FUNC_SET		0x01
-#define	PM_FUNC_UNSET	0x02
-#define PM_FUNC_GETPORT	0x03
-#define	PM_PROT_TCP		0x06
-#define	PM_PROT_UDP		0x11
 
 
 
@@ -49,7 +41,7 @@ static OV_UINT pmXID = 0x4359f4a3;
 
 void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling);
 
-static OV_RESULT generate_PMAPPROC(KS_DATAPACKET* datapacket, OV_BOOL usesStreamProtocol, OV_UINT command, OV_UINT protocol, OV_UINT port){
+OV_RESULT generate_PMAPPROC(KS_DATAPACKET* datapacket, OV_BOOL usesStreamProtocol, OV_UINT command, OV_UINT protocol, OV_UINT port){
 	OV_RESULT result = OV_ERR_OK;
 	OV_UINT valToSet;
 
@@ -122,6 +114,45 @@ static OV_RESULT generate_PMAPPROC(KS_DATAPACKET* datapacket, OV_BOOL usesStream
 		result = KS_DATAPACKET_write_xdr_uint(datapacket, &port);
 	}while(0);
 	return result;
+}
+
+OV_RESULT process_getPort(KS_DATAPACKET* datapacket, OV_BOOL usesStreamProtocol, OV_STRING* port){
+	OV_RESULT result;
+	OV_UINT readVar;
+	OV_STRING	OptValTemp = NULL;
+
+	if(usesStreamProtocol == TRUE){
+		//	discard header
+		KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+	}
+	result = KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+	if(readVar == (pmXID - 1)){
+		//	got a valid answer
+		//	discard 5 entries (reply, accept, auth, auth, result)
+		result |= KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+		result |= KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+		result |= KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+		result |= KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+		result |= KS_DATAPACKET_read_xdr_uint(datapacket, &readVar);
+		//	read port
+		if(Ov_OK(result)){
+			if(Ov_Fail(KS_DATAPACKET_read_xdr_uint(datapacket, &readVar))){
+				readVar = 0;
+				return OV_ERR_GENERIC;
+			}
+		} else {
+			KS_logfile_error(("error parsing portmapper answer"));
+			return result;
+		}
+		if(port){
+			ov_memstack_lock();
+			OptValTemp = ov_memstack_alloc(12);
+			sprintf(OptValTemp, "%" OV_PRINT_UINT, readVar);
+			ov_string_setvalue(port, OptValTemp);
+			ov_memstack_unlock();
+		}
+	}
+	return OV_ERR_OK;
 }
 
 static OV_RESULT  ksxdr_xdrManagerCom_getOwnPort(OV_INSTPTR_ksxdr_xdrManagerCom thisMngCom){
@@ -225,9 +256,6 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     OV_RESULT						result;
     OV_TIME							now;
     OV_TIME							endTime;
-    OV_UINT							readVar;
-    OV_UINT							port;
-    OV_STRING						OptValTemp	=	NULL;
     /* do what the base class does first */
     ov_object_startup(pobj);
 
@@ -281,6 +309,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     				KS_logfile_error(("%s: startup: Could not get vtable of channel", pinst->v_identifier));
     				pinst->v_PmRegister = FALSE;
     			} else {
+    				//	Do NOT use "localhost" as this may open an IPV6 connection which the portmapper probably can't handle
     				if(Ov_OK(pVtblChannel->m_OpenConnection(pChannel, "127.0.0.1", PM_PORT))){
     					//	empty output buffer
     					ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
@@ -301,33 +330,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     							pVtblChannel->m_typemethod(Ov_PtrUpCast(ksbase_ComTask, pChannel));
     							if(pChannel->v_inData.length){
     								//	we received something
-    								if(pChannel->v_usesStreamProtocol == TRUE){
-    									//	discard header
-    									KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    								}
-    								result = KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    								if(readVar == (pmXID - 1)){
-    									//	got a valid answer
-    									//	discard 5 entries (reply, accept, auth, auth, result)
-    									result |= KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    									result |= KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    									result |= KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    									result |= KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    									result |= KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &readVar);
-    									//	read port
-    									if(Ov_OK(result)){
-    										KS_DATAPACKET_read_xdr_uint(&pChannel->v_inData, &port);
-    									} else {
-    										KS_logfile_error(("%s: startup: error parsing portmapper answer", pinst->v_identifier));
-    									}
-    									if(port){
-    										ov_memstack_lock();
-    										OptValTemp = ov_memstack_alloc(12);
-    										sprintf(OptValTemp, "%" OV_PRINT_UINT, port);
-    										ov_string_setvalue(&pinst->v_ManagerPort, OptValTemp);
-    										ov_memstack_unlock();
-    									}
-    								}
+    								process_getPort(&pChannel->v_inData, pChannel->v_usesStreamProtocol, &pinst->v_ManagerPort);
     								break;
     							}
     							ov_time_gettime(&now);
@@ -397,6 +400,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 					KS_logfile_error(("%s: typemethod: Could not get vtable of channel", thisMngCom->v_identifier));
 					thisMngCom->v_PmRegister = FALSE;
 				} else {
+					//	Do NOT use "localhost" as this may open an IPV6 connection which the portmapper probably can't handle
 					if(Ov_OK(pVtblChannel->m_OpenConnection(pChannel, "127.0.0.1", PM_PORT))){
 						//	empty output buffer
 						ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
@@ -540,6 +544,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 							KS_logfile_error(("%s: typemethod: Could not get vtable of channel", this->v_identifier));
 							thisMngCom->v_PmRegister = FALSE;
 						} else {
+							//	Do NOT use "localhost" as this may open an IPV6 connection which the portmapper probably can't handle
 							if(Ov_OK(pVtblChannel->m_OpenConnection(pChannel, "127.0.0.1", PM_PORT))){
 								//	empty output buffer
 								ksbase_free_KSDATAPACKET(&(pChannel->v_outData));

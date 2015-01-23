@@ -1,5 +1,11 @@
 
-
+typedef enum ASKLISTSTATE{
+	STATE_IDLE 					=	0,
+	STATE_START					=	1,
+	STATE_AWAITING_CONNECTION	=	2,
+	STATE_AWAITING_RESPONSE		=	3,
+	STATE_CLOSING_CONNECTION	=	4
+} ASKLISTSTATE;
 
 
 /*	Empty file needed here, probably because we have a C_TYPE in the ovm	*/  

@@ -69,3 +69,15 @@
 #define XDR_MNGRCOM_REGISTERSTATE_WAITING 1
 #define XDR_MNGRCOM_REGISTERSTATE_REGISTERED 2
 #define XDR_MNGRCOM_REGISTERSTATE_ERROR 128
+
+// defines for portmapper functions
+
+#define PM_PORT			"111"
+#define PM_PROGNUMBER	100000
+#define PM_VERSION		2
+
+#define	PM_FUNC_SET		0x01
+#define	PM_FUNC_UNSET	0x02
+#define PM_FUNC_GETPORT	0x03
+#define	PM_PROT_TCP		0x06
+#define	PM_PROT_UDP		0x11

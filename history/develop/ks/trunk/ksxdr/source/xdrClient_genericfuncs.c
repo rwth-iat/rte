@@ -30,7 +30,7 @@ static OV_UINT client_xid = 0xd639a74c;	/*	some beating on the keyboard for init
  * 				Channel-handling
  *******************************************************************************************************************************************************************************/
 
-OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
+OV_RESULT ksxdr_getChannelPointer(OV_INSTPTR_ksbase_DataHandler this, OV_INSTPTR_ksbase_Channel* ppChannel, OV_VTBLPTR_ksbase_Channel* ppVtblChannel)
 {
 	OV_STRING OptValTemp = NULL;
 	OV_INSTPTR_ov_class pClassChannel = NULL;
@@ -136,6 +136,24 @@ OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_k
 			return result;
 		}
 		ov_time_gettime(&(this->v_timeLastEvent));
+	}
+	return OV_ERR_OK;
+}
+
+OV_RESULT ksxdr_checkPMAskList(OV_INSTPTR_ksxdr_xdrClient thisCl){
+	OV_INSTPTR_ksxdr_PMAskList	pPMAskList = NULL;
+	OV_UINT i;
+	Ov_ForEachChildEx(ov_instantiation, pclass_ksxdr_PMAskList, pPMAskList, ksxdr_PMAskList){
+		for(i = 0; i < pPMAskList->v_hosts.veclen; i++){
+			if(ov_string_compare(pPMAskList->v_hosts.value[i], thisCl->v_serverHost) == OV_STRCMP_EQUAL){
+				if(!pPMAskList->v_results.value[i]){
+					return ov_string_setvalue(thisCl->v_ManagerPort, pPMAskList->v_ports.value[i]);
+				} else {
+					return OV_ERR_BADVALUE;
+				}
+				break;
+			}
+		}
 	}
 	return OV_ERR_OK;
 }
