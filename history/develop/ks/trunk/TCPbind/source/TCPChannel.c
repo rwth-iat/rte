@@ -176,7 +176,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 
 		KS_logfile_debug(("%s: sent %" OV_PRINT_UINT " bytes", this->v_identifier, sentChunkSize));
 
-		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length)
+		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length)
 		{
 			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 			KS_logfile_debug(("%s: everything sent", thisCh->v_identifier));
@@ -483,7 +483,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						{
 							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
 								Ov_DeleteObject(thisCh);
 							}
@@ -528,7 +528,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						{
 							TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
 								Ov_DeleteObject(thisCh);
 							}
@@ -550,7 +550,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		if(thisCh->v_outData.length)
 		{
 			TCPbind_TCPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
-			if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+			if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 			{/*	channel should close after send and everything is sent	*/
 				Ov_DeleteObject(thisCh);
 				return;
