@@ -33,7 +33,7 @@ OV_DLLFNCEXPORT OV_RESULT ACPLTlab003lindyn_diff_constructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_ACPLTlab003lindyn_diff pinst = Ov_StaticPtrCast(ACPLTlab003lindyn_diff, pobj);
+    //OV_INSTPTR_ACPLTlab003lindyn_diff pinst = Ov_StaticPtrCast(ACPLTlab003lindyn_diff, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */

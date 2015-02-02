@@ -106,7 +106,7 @@ void OV_DLLFNCEXPORT ACPLTlab003lindyn_int_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-	OV_INSTPTR_fb_task		ptask;
+	//OV_INSTPTR_fb_task		ptask;
 	OV_INSTPTR_ACPLTlab003lindyn_int port = Ov_StaticPtrCast(ACPLTlab003lindyn_int, pfb);
 
 	/*
