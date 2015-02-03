@@ -561,7 +561,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 			Ov_ForEachChildEx(ov_containment, pDomAuthenticators, pTicketAuth, ksbase_TicketAuthenticator)
 			{
 					/*	check if authenticator fits for ticket type	*/
-				if(pTicketAuth->v_TicketType == authflavour)
+				if((OV_UINT) pTicketAuth->v_TicketType == authflavour)
 				{
 					pticket = pTicketAuth->v_ticket.vtbl->createticket((void*) dataReceived, authflavour);
 					if(!pticket)

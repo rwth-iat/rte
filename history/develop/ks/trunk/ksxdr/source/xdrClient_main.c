@@ -90,7 +90,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 
 		ov_time_gettime(&now);
 		ov_time_diff(&tstemp, &now, &(thisCl->v_timeLastEvent));
-		if((tstemp.secs > thisCl->v_timeout) || ((tstemp.secs == thisCl->v_timeout) && (tstemp.usecs > 0)))
+		if((tstemp.secs > (OV_INT) thisCl->v_timeout) || ((tstemp.secs == (OV_INT) thisCl->v_timeout) && (tstemp.usecs > 0)))
 		{
 			thisCl->v_state = KSBASE_CLST_ERROR | XDRCL_TIMEOUT;
 			thisCl->v_actimode = 0;
@@ -102,7 +102,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 	case KSBASE_CLST_AWAITINGANSWER:	/*	waiting for answer --> just calculate timeouts	*/
 			ov_time_gettime(&now);
 			ov_time_diff(&tstemp, &now, &(thisCl->v_timeLastEvent));
-			if((tstemp.secs > thisCl->v_timeout) || ((tstemp.secs == thisCl->v_timeout) && (tstemp.usecs > 0)))
+			if((tstemp.secs > (OV_INT) thisCl->v_timeout) || ((tstemp.secs == (OV_INT) thisCl->v_timeout) && (tstemp.usecs > 0)))
 			{
 				thisCl->v_state = KSBASE_CLST_ERROR | XDRCL_TIMEOUT;
 				thisCl->v_actimode = 0;
@@ -114,7 +114,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrClient_typemethod (
 			/*	calculate timeout	*/
 		ov_time_gettime(&now);
 		ov_time_diff(&tstemp, &now, &(thisCl->v_timeLastEvent));
-		if((tstemp.secs > thisCl->v_timeout) || ((tstemp.secs == thisCl->v_timeout) && (tstemp.usecs > 0)))
+		if((tstemp.secs > (OV_INT) thisCl->v_timeout) || ((tstemp.secs == (OV_INT) thisCl->v_timeout) && (tstemp.usecs > 0)))
 		{
 			thisCl->v_state = KSBASE_CLST_ERROR | XDRCL_TIMEOUT;
 			thisCl->v_actimode = 0;
