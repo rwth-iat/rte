@@ -41,9 +41,6 @@ OV_INSTPTR_iec62541_uaServer iec62541_pUaServer = NULL;
 
 void open62541_server_init(UA_Server *server){
 
-    server = UA_malloc(sizeof(UA_Server));
-    if(!server)
-        return UA_NULL;
 
     LIST_INIT(&server->timedWork);
 #ifdef UA_MULTITHREADING
