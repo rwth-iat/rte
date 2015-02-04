@@ -33,6 +33,7 @@
 
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addNodes(
+		UA_RequestHeader requestHeader,
 		UA_AddNodesItem *nodesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -43,6 +44,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addNodes(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addReferences(
+		UA_RequestHeader requestHeader,
 		UA_AddReferencesItem* referencesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,

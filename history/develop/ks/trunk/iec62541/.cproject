@@ -108,14 +108,12 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.so.debug.option.optimization.level.68165169" name="Optimization Level" superClass="gnu.c.compiler.so.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.so.debug.option.debugging.level.68165169" name="Debug Level" superClass="gnu.c.compiler.so.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.68165169" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
-									<!-- Project -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/build/linux/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/libov/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/model/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../system/sysdevbase/ov/include/&quot;"/>
-									<!-- Dependencies -->
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/include/&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../ksbase/model/&quot;"/>
 								</option>
@@ -165,5 +163,7 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="iec62541.null.978427406" name="iec62541"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/iec62541"/>
+	</storageModule>
 </cproject>

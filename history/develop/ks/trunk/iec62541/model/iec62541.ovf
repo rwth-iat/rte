@@ -4,6 +4,7 @@
 #include "iec62541.ovt"
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDNODES(
+	UA_RequestHeader requestHeader,
 	UA_AddNodesItem *nodesToAdd,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -12,6 +13,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDNODES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDREFERENCES(
+	UA_RequestHeader requestHeader,
 	UA_AddReferencesItem* referencesToAdd,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -20,6 +22,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDREFERENCES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETENODES(
+	UA_RequestHeader requestHeader,
 	UA_DeleteNodesItem *nodesToDelete,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -28,6 +31,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETENODES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETEREFERENCES(
+	UA_RequestHeader requestHeader,
 	UA_DeleteReferencesItem *referenceToDelete,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -36,6 +40,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETEREFERENCES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_READNODES(
+	UA_RequestHeader requestHeader,
 	UA_ReadValueId *readValueIds,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -45,6 +50,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_READNODES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
+	UA_RequestHeader requestHeader,
 	UA_WriteValue *writeValues,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -53,6 +59,7 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
 );
 
 typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_BROWSENODES(
+	UA_RequestHeader requestHeader,
 	UA_BrowseDescription *browseDescriptions,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,

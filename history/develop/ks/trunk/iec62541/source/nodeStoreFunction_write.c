@@ -31,6 +31,7 @@
 #include "libov/ov_memstack.h"
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
+		UA_RequestHeader requestHeader,
 		UA_WriteValue *writeValues,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,

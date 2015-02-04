@@ -32,6 +32,7 @@
 
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
+		UA_RequestHeader requestHeader,
 		UA_BrowseDescription *browseDescriptions,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,

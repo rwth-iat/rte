@@ -37,6 +37,12 @@
 		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_NodeId = NS0ID; \
 		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_IsAbstract = ISABSTRACT; \
 	}
+#define CREATE_NS0_VARIABLE_OBJECT(PPARENT,POBJECT,IDENTIFIER,NS0ID) \
+	Ov_CreateObject(iec62541_uaVariableNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaVariableNode)POBJECT)->v_NodeId = NS0ID; \
+	}
+
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -48,17 +54,23 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_ov_object pOtherObject = NULL;
 
     OV_INSTPTR_iec62541_uaReferenceTypeNode tmpRef;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf0;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf1;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf2;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf3;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf4;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf5;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf6;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode leaf7;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch0;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch1;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch2;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch3;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch4;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch5;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch6;
+    OV_INSTPTR_iec62541_uaReferenceTypeNode branch7;
     OV_INSTPTR_iec62541_uaObjectNode root;
     OV_INSTPTR_iec62541_uaObjectNode types;
+    OV_INSTPTR_iec62541_uaObjectNode objects;
+    OV_INSTPTR_iec62541_uaObjectNode server;
     OV_INSTPTR_iec62541_uaObjectNode referenceTypes;
+    OV_INSTPTR_iec62541_uaObjectNode ov_namespace;
+    OV_INSTPTR_iec62541_uaVariableNode serverStatus;
+    OV_INSTPTR_iec62541_uaVariableNode namespaceArray;
+    OV_INSTPTR_iec62541_uaVariableNode State;
 
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
@@ -77,39 +89,47 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     //get the container
     CREATE_NS0_OBJECT(pinst,obj,"Root",84);
     root = obj;
-    	CREATE_NS0_OBJECT(root,obj,"Objects",85);
+    	CREATE_NS0_OBJECT(root,objects,"Objects",85);
     	CREATE_NS0_OBJECT(root,obj,"Types",86);
     	types = obj;
     		CREATE_NS0_OBJECT(types,obj,"DataTypes",90);
     		CREATE_NS0_OBJECT(types,obj,"ReferenceTypes",91);
     		referenceTypes = obj;
 
-    CREATE_REFERENCE_TYPE(referenceTypes,tmpRef,"References",31,FALSE);
-    	leaf0 = tmpRef;
-    	CREATE_REFERENCE_TYPE(leaf0,tmpRef,"HierarchicalReferences",33,FALSE);
-    	leaf2 = tmpRef;
-			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasEventSource",36,FALSE);
-				leaf3 = tmpRef;
-				CREATE_REFERENCE_TYPE(leaf3,tmpRef,"HasNotifier",48,FALSE);
-			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasChild",34,FALSE);
-				leaf4 = tmpRef;
-					CREATE_REFERENCE_TYPE(leaf4,tmpRef,"Aggregates",44,FALSE);
-					leaf5 = tmpRef;
-						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasProperty",46,FALSE);
-						CREATE_REFERENCE_TYPE(leaf5,tmpRef,"HasCompoent",47,FALSE);
-						leaf6 = tmpRef;
-							CREATE_REFERENCE_TYPE(leaf6,tmpRef,"HasOrderedCompoent",49,FALSE);
-					CREATE_REFERENCE_TYPE(leaf2,tmpRef,"HasSubtype",45,FALSE);
+    	CREATE_NS0_OBJECT(objects,server,"Server",2253)
+    	CREATE_NS0_VARIABLE_OBJECT(server,namespaceArray,"NamespaceArray",2255);
+    	CREATE_NS0_VARIABLE_OBJECT(server,serverStatus,"ServerStatus",2255);
+    	CREATE_NS0_VARIABLE_OBJECT(serverStatus,State,"State",2259);
 
-			CREATE_REFERENCE_TYPE(leaf2,tmpRef,"Organizes",35,FALSE);
-		CREATE_REFERENCE_TYPE(leaf0,tmpRef,"NonHierarchicalReferences",32,FALSE);
-		leaf7 = tmpRef;
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasModelParent",50,FALSE);
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"GeneratesEvent",41,FALSE);
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasEncoding",38,FALSE);
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasModellingRule",37,FALSE);
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasDescription",39,FALSE);
-			CREATE_REFERENCE_TYPE(leaf7,tmpRef,"HasTypeDefinition",40,FALSE);
+        CREATE_NS0_OBJECT(pinst,ov_namespace,"OV",9999);
+
+
+    CREATE_REFERENCE_TYPE(referenceTypes,tmpRef,"References",31,FALSE);
+    	branch0 = tmpRef;
+    	CREATE_REFERENCE_TYPE(branch0,tmpRef,"HierarchicalReferences",33,FALSE);
+    	branch2 = tmpRef;
+			CREATE_REFERENCE_TYPE(branch2,tmpRef,"HasEventSource",36,FALSE);
+				branch3 = tmpRef;
+				CREATE_REFERENCE_TYPE(branch3,tmpRef,"HasNotifier",48,FALSE);
+			CREATE_REFERENCE_TYPE(branch2,tmpRef,"HasChild",34,FALSE);
+				branch4 = tmpRef;
+					CREATE_REFERENCE_TYPE(branch4,tmpRef,"Aggregates",44,FALSE);
+					branch5 = tmpRef;
+						CREATE_REFERENCE_TYPE(branch5,tmpRef,"HasProperty",46,FALSE);
+						CREATE_REFERENCE_TYPE(branch5,tmpRef,"HasCompoent",47,FALSE);
+						branch6 = tmpRef;
+							CREATE_REFERENCE_TYPE(branch6,tmpRef,"HasOrderedCompoent",49,FALSE);
+					CREATE_REFERENCE_TYPE(branch4,tmpRef,"HasSubtype",45,FALSE);
+
+			CREATE_REFERENCE_TYPE(branch2,tmpRef,"Organizes",35,FALSE);
+		CREATE_REFERENCE_TYPE(branch0,tmpRef,"NonHierarchicalReferences",32,FALSE);
+		branch7 = tmpRef;
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasModelParent",50,FALSE);
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"GeneratesEvent",41,FALSE);
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasEncoding",38,FALSE);
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasModellingRule",37,FALSE);
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasDescription",39,FALSE);
+			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasTypeDefinition",40,FALSE);
 
 
 

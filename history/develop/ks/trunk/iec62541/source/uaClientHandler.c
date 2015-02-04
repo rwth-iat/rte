@@ -271,12 +271,11 @@ OV_DLLFNCEXPORT void iec62541_uaClientHandler_shutdown(
 
     return;
 }
-
+//OV_FNCEXTERN KSBASE_FNC_HANDLEREQUEST iec62541_uaClientHandler_HandleRequest(
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
-	OV_INSTPTR_ksbase_ClientHandler this,
-	OV_INSTPTR_ksbase_Channel pChannel,
-	KS_DATAPACKET* dataReceived,
-	KS_DATAPACKET* answer
+		OV_INSTPTR_ksbase_ClientHandler this,
+		KS_DATAPACKET* dataReceived,
+		KS_DATAPACKET* answer
 ) {
     /*    
     *   local variables

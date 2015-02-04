@@ -30,7 +30,9 @@
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 
+
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
+		UA_RequestHeader requestHeader,
 		UA_ReadValueId *readValueIds,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
