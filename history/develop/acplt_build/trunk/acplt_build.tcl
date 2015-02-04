@@ -825,7 +825,7 @@ proc compress {archivename dir} {
 	global ov_arch_bitwidth_int
 	print_msg "Compressing"
 	if { $os == "linux" } then {
-		execute "zip -r $archivename-linux$ov_arch_bitwidth_int $dir"
+		execute "tar -zcvf -r $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
 } else {
 		execute "7z a $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
