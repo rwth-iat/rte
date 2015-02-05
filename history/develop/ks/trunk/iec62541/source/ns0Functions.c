@@ -35,7 +35,8 @@ OV_DLLFNCEXPORT	OV_INSTPTR_iec62541_uaBaseNodeType iec62541_uaNamespace0_getNode
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_addNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_AddNodesItem *nodesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -46,7 +47,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_addNodes(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_addReferences(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_AddReferencesItem* referencesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -57,7 +59,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_addReferences(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_deleteNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_DeleteNodesItem *nodesToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -68,7 +71,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_deleteNodes(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_deleteReferences(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_DeleteReferencesItem *referenceToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -113,7 +117,8 @@ UA_Int32 iec62541_uaNamespace0_getNodeClass(OV_INSTPTR_iec62541_uaBaseNodeType p
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_ReadValueId *readValueIds,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -467,7 +472,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_writeNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_WriteValue *writeValues,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -548,7 +554,8 @@ static UA_StatusCode iec62541_fillReferenceDescription(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_BrowseDescription *browseDescriptions,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,

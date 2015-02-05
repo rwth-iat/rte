@@ -3,8 +3,9 @@
 
 #include "iec62541.ovt"
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDNODES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_ADDNODES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_AddNodesItem *nodesToAdd,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -12,8 +13,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDNODES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDREFERENCES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_ADDREFERENCES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_AddReferencesItem* referencesToAdd,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -21,8 +23,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_ADDREFERENCES(
 	UA_DiagnosticInfo diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETENODES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_DELETENODES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_DeleteNodesItem *nodesToDelete,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -30,8 +33,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETENODES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETEREFERENCES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_DELETEREFERENCES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_DeleteReferencesItem *referenceToDelete,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -39,8 +43,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_DELETEREFERENCES(
 	UA_DiagnosticInfo diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_READNODES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_READNODES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_ReadValueId *readValueIds,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -49,8 +54,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_READNODES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_WRITENODES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_WriteValue *writeValues,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,
@@ -58,8 +64,9 @@ typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_WRITENODES(
 	UA_DiagnosticInfo *diagnosticInfo
 );
 
-typedef OV_DLLFNCEXPORT UA_Int32 UA_FNC_BROWSENODES(
-	UA_RequestHeader requestHeader,
+typedef UA_Int32 UA_FNC_BROWSENODES(
+	void *ensHandle,
+	UA_RequestHeader *requestHeader,
 	UA_BrowseDescription *browseDescriptions,
 	UA_UInt32 *indices,
 	UA_UInt32 indicesSize,

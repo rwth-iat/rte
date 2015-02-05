@@ -199,22 +199,23 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
 
     //UA_Server_init(&(pinst->v_serverData), &(pinst->v_endpointUrl));
 
-    UA_ExternalNodeStore ns;
+
     UA_String url;
     UA_String_copycstring("test1",&url);
 
-    //Services on OV Namespace
 
+    //Services on OV Namespace
     iec62541_pUaServer->v_serverData.externalNamespaces = UA_malloc(10 * sizeof(UA_ExternalNamespace));
 
-    ns.readNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes;
-    ns.browseNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_browseNodes;
-    UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,2,&url,&ns);
+    iec62541_pUaServer->v_nodeStoreNs0.readNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes;
+
+    iec62541_pUaServer->v_nodeStoreNs0.browseNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes;
+    UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,0,&url,&iec62541_pUaServer->v_nodeStoreNs0);
 
     //Services on Namespace 0
-    ns.readNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes;
-    ns.browseNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes;
-    UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,0,&url,&ns);
+    iec62541_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes;
+    iec62541_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes;
+    UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
 
 
    // UA_Server_addNamespace(&(pinst->v_serverData),0,&(pinst->v_nodeStoreNs0));

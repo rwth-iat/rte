@@ -31,7 +31,8 @@
 #include "libov/ov_memstack.h"
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteNodes(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_DeleteNodesItem *nodesToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -42,7 +43,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteNodes(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteReferences(
-		UA_RequestHeader requestHeader,
+		void *ensHandle,
+		UA_RequestHeader *requestHeader,
 		UA_DeleteReferencesItem *referenceToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,

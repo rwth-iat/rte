@@ -98,7 +98,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 
     	CREATE_NS0_OBJECT(objects,server,"Server",2253)
     	CREATE_NS0_VARIABLE_OBJECT(server,namespaceArray,"NamespaceArray",2255);
-    	CREATE_NS0_VARIABLE_OBJECT(server,serverStatus,"ServerStatus",2255);
+
+    	namespaceArray->v_DataType = 12;
+
+    	CREATE_NS0_VARIABLE_OBJECT(server,serverStatus,"ServerStatus",2256);
     	CREATE_NS0_VARIABLE_OBJECT(serverStatus,State,"State",2259);
 
         CREATE_NS0_OBJECT(pinst,ov_namespace,"OV",9999);

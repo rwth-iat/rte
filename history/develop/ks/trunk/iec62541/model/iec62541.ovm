@@ -18,8 +18,8 @@ LIBRARY iec62541
 			endpointUrl			:	C_TYPE	<UA_String>;
 			serverData			:	C_TYPE	<UA_Server>
 				COMMENT	=	"Stack-specific representation of server data";
-			nodeStoreNs0		:	C_TYPE	<UA_NodeStore>;
-			nodeStoreNsOV		:	C_TYPE	<UA_NodeStore>;
+			nodeStoreNs0		:	C_TYPE	<UA_ExternalNodeStore>;
+			nodeStoreNsOV		:	C_TYPE	<UA_ExternalNodeStore>;
 		END_VARIABLES;	
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
