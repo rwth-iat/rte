@@ -90,8 +90,6 @@ OV_DLLFNCEXPORT OV_BOOL ksxdr_xdrIdentificator_identify (
     return FALSE;
 }
 
-static OV_UINT xdrClientHandlerNamecounter = 0;
-
 OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
@@ -100,19 +98,9 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrIdentificator_createClientHandler (
     *   local variables
     */
 	OV_INSTPTR_ksxdr_xdrClientHandler pClientHandler = NULL;
+	OV_RESULT result = OV_ERR_OK;
 
-	char CHNameBuffer[28]; //"XDRClientHandler + length MAXINT + '\0'
-	OV_RESULT result;
-
-	//get first free "XDRClientHandler"-name
-	do {
-		pClientHandler = NULL;
-		xdrClientHandlerNamecounter++;
-		sprintf(CHNameBuffer, "XDRClientHandler%" OV_PRINT_UINT, xdrClientHandlerNamecounter);
-		pClientHandler	= (OV_INSTPTR_ksxdr_xdrClientHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
-	} while (pClientHandler);
-
-	result = Ov_CreateObject(ksxdr_xdrClientHandler, pClientHandler, this, CHNameBuffer);
+	result = Ov_CreateIDedObject(ksxdr_xdrClientHandler, pClientHandler, this, "XDRClientHandler");
 	if(Ov_OK(result))
 	{
 		KS_logfile_debug(("%s: ClientHandler created: %s", this->v_identifier, pClientHandler->v_identifier));

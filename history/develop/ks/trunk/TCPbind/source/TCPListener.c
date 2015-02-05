@@ -209,8 +209,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	socklen_t peers = sizeof(struct sockaddr_storage);
 	char buf[NI_MAXHOST];
 	int on = 1;
-	OV_UINT namecounter = 0;
-	char ChannelNameBuffer[21];	//name for TCPChannelxxxxxxxxxx (MAX_UINT Channels should be enough...)
 
 	/*
 	 * If no socket is open, open one and start listening.
@@ -413,19 +411,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					//disable nagle for the receivesocket
 					setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
 
-
-					//get first free "TCPChannel"-name
-					do {
-						pNewChannel = NULL;
-						namecounter++;
-						sprintf(ChannelNameBuffer, "TCPChannel%" OV_PRINT_UINT, namecounter);
-						pNewChannel	= (OV_INSTPTR_TCPbind_TCPChannel) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer);
-					} while (pNewChannel);
-
 					//create receiving TCPChannel
-					if (Ov_OK(Ov_CreateObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), ChannelNameBuffer)))
-					{
-						KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, ChannelNameBuffer, buf));
+					if (Ov_OK(Ov_CreateIDedObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), "TCPChannel"))){
+						KS_logfile_debug(("%s: New Channel created: %s to handle client %s", this->v_identifier, pNewChannel->v_identifier, buf));
 						//copy socket to created object
 						TCPbind_TCPChannel_socket_set(pNewChannel, cfd);
 						if(Ov_Fail(ov_string_setvalue(&(pNewChannel->v_address), buf)))

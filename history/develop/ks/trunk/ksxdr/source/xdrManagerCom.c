@@ -282,13 +282,15 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     				if((ov_string_compare(pClIterator->v_identifier, "UDPChannel") == OV_STRCMP_EQUAL))
     					break;
     				pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
-    			} if(!pClIterator) {
+    			}
+    			if(!pClIterator) {
     				pClIterator = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_Channel);
     				while(pClIterator) {
     					if((ov_string_compare(pClIterator->v_identifier, "TCPChannel") == OV_STRCMP_EQUAL))
     						break;
     					pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
-    				} if(!pClIterator) {
+    				}
+    				if(!pClIterator) {
     					KS_logfile_info(("%s: startup: Neither UDPChannel nor TCPChannel found. Not asking portmapper", pinst->v_identifier));
     					pinst->v_PmAsk = FALSE;
     				}
@@ -307,7 +309,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     			Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
     			if(!pVtblChannel){
     				KS_logfile_error(("%s: startup: Could not get vtable of channel", pinst->v_identifier));
-    				pinst->v_PmRegister = FALSE;
+    				pinst->v_PmAsk = FALSE;
     			} else {
     				//	Do NOT use "localhost" as this may open an IPV6 connection which the portmapper probably can't handle
     				if(Ov_OK(pVtblChannel->m_OpenConnection(pChannel, "127.0.0.1", PM_PORT))){
@@ -340,6 +342,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     					ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
     					ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
     					pinst->v_PmReqSent = TRUE;
+    				}else{
+    					pinst->v_PmAsk = FALSE;
     				}
     			}
     		}
@@ -416,6 +420,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 						pVtblChannel->m_CloseConnection(pChannel);
 						ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
 						ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
+					}else{
+						//errors are not interesting in shutdown
 					}
 				}
 			}
@@ -597,6 +603,8 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 								ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
 								ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 								thisMngCom->v_PmReqSent = TRUE;
+							}else{
+								thisMngCom->v_PmRegister = FALSE;
 							}
 						}
 					}
