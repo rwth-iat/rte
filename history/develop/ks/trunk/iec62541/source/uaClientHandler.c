@@ -54,10 +54,10 @@ UA_Int32 UA_Connection_init(UA_Connection *connection, UA_ConnectionConfig local
 
 void UA_append (ov_UA_Connection *ovUAConn, const UA_ByteStringArray buf){
 	OV_UINT iterator = 0;
-	KS_logfile_debug(("UA_append:\n\tdata:\t\t%p\n\tlength:\t\t%u", buf.strings, buf.stringsSize));
+	// KS_logfile_debug(("UA_append:\n\tdata:\t\t%p\n\tlength:\t\t%u", buf.strings, buf.stringsSize));
 	for(iterator = 0; iterator < buf.stringsSize; iterator++){
 		ksbase_KSDATAPACKET_append(ovUAConn->outData, buf.strings[iterator].data, buf.strings[iterator].length);
-		KS_logfile_debug(("\n\ti:\t\t\t%u\n\tstrings[i]:\t\t%p\n\tstrings[i].length:\t%u", iterator, buf.strings[iterator].data, buf.strings[iterator].length));
+		// KS_logfile_debug(("\n\ti:\t\t\t%u\n\tstrings[i]:\t\t%p\n\tstrings[i].length:\t%u", iterator, buf.strings[iterator].data, buf.strings[iterator].length));
 	}
 }
 void UA_Free  (ov_UA_Connection *ovUAConn){
@@ -274,6 +274,7 @@ OV_DLLFNCEXPORT void iec62541_uaClientHandler_shutdown(
 //OV_FNCEXTERN KSBASE_FNC_HANDLEREQUEST iec62541_uaClientHandler_HandleRequest(
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 		OV_INSTPTR_ksbase_ClientHandler this,
+		OV_INSTPTR_ksbase_Channel pChannel,
 		KS_DATAPACKET* dataReceived,
 		KS_DATAPACKET* answer
 ) {
@@ -300,11 +301,11 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	thisCl->v_connectionData.outData = answer;
 	thisCl->v_connectionData.inData = dataReceived;
 
-	KS_logfile_debug(("-------------\nbefore response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p", answer->data, answer->length, answer->readPT, answer->writePT));
+	//	KS_logfile_debug(("-------------\nbefore response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p", answer->data, answer->length, answer->readPT, answer->writePT));
 
 	UA_Server_processBinaryMessage(&(iec62541_pUaServer->v_serverData), (UA_Connection*) &(thisCl->v_connectionData), &tempMsg);
 
-	KS_logfile_debug(("after response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p\n-------------", answer->data, answer->length, answer->readPT, answer->writePT));
+	//	KS_logfile_debug(("after response creation:\n\tdata:\t\t%p\n\tlength:\t\t%u\n\treadPt:\t\t%p\n\twritePt:\t%p\n-------------", answer->data, answer->length, answer->readPT, answer->writePT));
 
 	thisCl->v_connectionData.clientHandler = NULL;
 	thisCl->v_connectionData.outData = NULL;

@@ -10,6 +10,7 @@
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
+#include "ks_logfile.h"
 #include "iec62541.h"
 #include "iec62541_helpers.h"
 #include "NoneTicketAuthenticator.h"
@@ -135,7 +136,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			continue;
 		}
 		pNode = iec62541_uaNamespace0_getNodePtr(readValueIds[indices[i]].nodeId.identifier.numeric);
-
+		if(!pNode){
+			KS_logfile_debug(("uaNamespace0_readNodes: could not resolve node for numeric id %u (index %u in list). Skipping.", readValueIds[indices[i]].nodeId.identifier.numeric, i));
+			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNODEIDUNKNOWN;
+			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
+			continue;
+		}
 		switch(readValueIds[indices[i]].attributeId){
 		case UA_ATTRIBUTEID_NODEID:
 			{
@@ -167,7 +173,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				}
 				*nodeClass = iec62541_uaNamespace0_getNodeClass(pNode);
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODECLASS];
+				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeClass;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -572,6 +578,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 			continue;
 		}
 		pNode = iec62541_uaNamespace0_getNodePtr(browseDescriptions[indices[i]].nodeId.identifier.numeric);
+		if(!pNode){
+			KS_logfile_debug(("uaNamespace0_browseNodes: could not resolve node for numeric id %u (index %u in list). Skipping.", browseDescriptions[indices[i]].nodeId.identifier.numeric, i));
+			browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNODEIDUNKNOWN;
+			continue;
+		}
 
 		switch(browseDescriptions[indices[i]].referenceTypeId.identifier.numeric){
 		case 35:	/*	organizes	*/

@@ -144,7 +144,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
     OV_INSTPTR_iec62541_uaNamespace0	pNs0 = NULL;
-    open62541_server_init(&pinst->v_serverData);
+
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
@@ -197,8 +197,7 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
     iec62541_pUaServer = pinst;
     UA_String_copycstring(pinst->v_endpointName, &(pinst->v_endpointUrl));
 
-    //UA_Server_init(&(pinst->v_serverData), &(pinst->v_endpointUrl));
-
+    open62541_server_init(&pinst->v_serverData);
 
     UA_String url;
     UA_String_copycstring("test1",&url);

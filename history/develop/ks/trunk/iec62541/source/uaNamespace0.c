@@ -43,6 +43,13 @@
 		((OV_INSTPTR_iec62541_uaVariableNode)POBJECT)->v_NodeId = NS0ID; \
 	}
 
+#define CREATE_DATA_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
+	Ov_CreateObject(iec62541_uaDataTypeNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_NodeId = NS0ID; \
+		((OV_INSTPTR_iec62541_uaReferenceTypeNode)POBJECT)->v_IsAbstract = ISABSTRACT; \
+	}
+
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
@@ -52,6 +59,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaNamespace0 pinst = Ov_StaticPtrCast(iec62541_uaNamespace0, pobj);
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
+    OV_ANY		tempAny = {.value.vartype = OV_VT_VOID, .value.valueunion.val_string = NULL};
+    OV_STRING 	namespaces [] = { "http://opcfoundation.org/UA/", "http://acplt.org/OV" };
 
     OV_INSTPTR_iec62541_uaReferenceTypeNode tmpRef;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch0;
@@ -62,22 +71,25 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch5;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch6;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch7;
-    OV_INSTPTR_iec62541_uaObjectNode root;
-    OV_INSTPTR_iec62541_uaObjectNode types;
-    OV_INSTPTR_iec62541_uaObjectNode objects;
-    OV_INSTPTR_iec62541_uaObjectNode server;
-    OV_INSTPTR_iec62541_uaObjectNode referenceTypes;
-    OV_INSTPTR_iec62541_uaObjectNode ov_namespace;
-    OV_INSTPTR_iec62541_uaVariableNode serverStatus;
-    OV_INSTPTR_iec62541_uaVariableNode namespaceArray;
-    OV_INSTPTR_iec62541_uaVariableNode State;
+    OV_INSTPTR_iec62541_uaObjectNode	root;
+    OV_INSTPTR_iec62541_uaObjectNode	obj;
+    OV_INSTPTR_iec62541_uaObjectNode	types;
+    OV_INSTPTR_iec62541_uaObjectNode	dataTypes;
+    OV_INSTPTR_iec62541_uaObjectNode	objects;
+    OV_INSTPTR_iec62541_uaObjectNode	server;
+    OV_INSTPTR_iec62541_uaObjectNode	referenceTypes;
+    OV_INSTPTR_iec62541_uaObjectNode	ov_namespace;
+    OV_INSTPTR_iec62541_uaVariableNode	serverStatus;
+    OV_INSTPTR_iec62541_uaVariableNode	namespaceArray;
+    OV_INSTPTR_iec62541_uaVariableNode	State;
+    OV_INSTPTR_iec62541_uaDataTypeNode	pDataType;
 
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
-    OV_INSTPTR_iec62541_uaObjectNode obj;
+
    /* do what */
     Ov_ForEachChild(ov_instantiation, pclass_iec62541_uaNamespace0, pOtherObject){
     	if(pOtherObject != pobj){
@@ -93,11 +105,27 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     	CREATE_NS0_OBJECT(root,obj,"Types",86);
     	types = obj;
     		CREATE_NS0_OBJECT(types,obj,"DataTypes",90);
+    		dataTypes = obj;
+				CREATE_DATA_TYPE(dataTypes,pDataType,"Boolean",1,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"Int32",6,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"UInt32",7,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"Float",10,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"Double",11,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"String",12,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"DateTime",13,FALSE);
+
     		CREATE_NS0_OBJECT(types,obj,"ReferenceTypes",91);
     		referenceTypes = obj;
 
     	CREATE_NS0_OBJECT(objects,server,"Server",2253)
     	CREATE_NS0_VARIABLE_OBJECT(server,namespaceArray,"NamespaceArray",2255);
+    	namespaceArray->v_ArrayDimensions = 1;
+    	namespaceArray->v_Value.value.valueunion.val_string_vec.veclen = 0;
+    	namespaceArray->v_Value.value.vartype = OV_VT_VOID;
+    	tempAny.value.vartype = OV_VT_STRING_VEC;
+    	tempAny.value.valueunion.val_string_vec.veclen = 2;
+    	tempAny.value.valueunion.val_string_vec.value = namespaces;
+    	Ov_SetAnyValue(&(namespaceArray->v_Value), &tempAny);
 
     	namespaceArray->v_DataType = 12;
 

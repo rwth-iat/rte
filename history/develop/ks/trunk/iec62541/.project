@@ -11,7 +11,7 @@
 			<arguments>
 				<dictionary>
 					<key>?children?</key>
-					<value>?name?=outputEntries\|?children?=?name?=entry\\\\\\\|\\\|\||</value>
+					<value>?children?=?name?=entry\\\\\\\|\\\|\|?name?=outputEntries\||</value>
 				</dictionary>
 				<dictionary>
 					<key>?name?</key>
@@ -31,11 +31,11 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
-					<value>make</value>
+					<value>mingw32-make</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${ProjDirPath}/build/linux/</value>
+					<value>${ProjDirPath}/build/nt/</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
