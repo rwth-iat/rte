@@ -125,6 +125,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 				CREATE_DATA_TYPE(dataTypes,pDataType,"Double",11,FALSE);
 				CREATE_DATA_TYPE(dataTypes,pDataType,"String",12,FALSE);
 				CREATE_DATA_TYPE(dataTypes,pDataType,"DateTime",13,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"Enumeration",29,FALSE);
+				CREATE_DATA_TYPE(dataTypes,pDataType,"ServerStatusDataType",862,FALSE);
 
     		CREATE_NS0_OBJECT(types,obj,"ReferenceTypes",91);
     		referenceTypes = obj;
@@ -138,13 +140,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     	tempAny.value.valueunion.val_string_vec.veclen = 2;
     	tempAny.value.valueunion.val_string_vec.value = namespaces;
     	Ov_SetAnyValue(&(namespaceArray->v_Value), &tempAny);
-
     	namespaceArray->v_DataType = 12;
 
     	CREATE_NS0_VARIABLE_OBJECT(server,serverStatus,"ServerStatus",2256);
+    	serverStatus->v_DataType	=	862;	//ServerStatusDataType
     	CREATE_NS0_VARIABLE_OBJECT(serverStatus,State,"State",2259);
     	State->v_Value.value.vartype = OV_VT_INT;
     	State->v_Value.value.valueunion.val_int = 0;
+    	State->v_DataType	=	29;	//Enumeration
 
         CREATE_NS0_OBJECT(pinst,ov_namespace,"OV",9999);
 

@@ -75,7 +75,8 @@ LIBRARY iec62541
 	CLASS uaReferenceNode	:	CLASS	iec62541/uaBaseNodeType
 		IS_INSTANTIABLE;
 		VARIABLES
-			Type	:	UINT;	
+			Type	:	UINT
+				INITIALVALUE	=	31;	
 		END_VARIABLES;	
 	END_CLASS;
 	
