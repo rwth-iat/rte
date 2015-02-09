@@ -31,6 +31,11 @@
 	if(POBJECT){ \
 		((OV_INSTPTR_iec62541_uaObjectNode)POBJECT)->v_NodeId = NS0ID; \
 	}
+#define CREATE_OBJECT_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID) \
+		Ov_CreateObject(iec62541_uaObjectTypeNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaObjectTypeNode)POBJECT)->v_NodeId = NS0ID; \
+	}
 #define CREATE_REFERENCE_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
 	Ov_CreateObject(iec62541_uaReferenceTypeNode, POBJECT, PPARENT, IDENTIFIER); \
 	if(POBJECT){ \
@@ -41,6 +46,11 @@
 	Ov_CreateObject(iec62541_uaVariableNode, POBJECT, PPARENT, IDENTIFIER); \
 	if(POBJECT){ \
 		((OV_INSTPTR_iec62541_uaVariableNode)POBJECT)->v_NodeId = NS0ID; \
+	}
+#define CREATE_NS0_VARIABLE_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID) \
+	Ov_CreateObject(iec62541_uaVariableTypeNode, POBJECT, PPARENT, IDENTIFIER); \
+	if(POBJECT){ \
+		((OV_INSTPTR_iec62541_uaVariableTypeNode)POBJECT)->v_NodeId = NS0ID; \
 	}
 
 #define CREATE_DATA_TYPE(PPARENT,POBJECT,IDENTIFIER,NS0ID,ISABSTRACT) \
@@ -64,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 
     OV_INSTPTR_iec62541_uaReferenceTypeNode tmpRef;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch0;
-    OV_INSTPTR_iec62541_uaReferenceTypeNode branch1;
+//    OV_INSTPTR_iec62541_uaReferenceTypeNode branch1;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch2;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch3;
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch4;
@@ -83,6 +93,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaVariableNode	namespaceArray;
     OV_INSTPTR_iec62541_uaVariableNode	State;
     OV_INSTPTR_iec62541_uaDataTypeNode	pDataType;
+    OV_INSTPTR_iec62541_uaVariableTypeNode	pBaseDataVariableType;
+    OV_INSTPTR_iec62541_uaObjectTypeNode	pBaseObjectType;
 
     /* do what the base class does first */
     result = ov_object_constructor(pobj);
@@ -131,6 +143,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 
     	CREATE_NS0_VARIABLE_OBJECT(server,serverStatus,"ServerStatus",2256);
     	CREATE_NS0_VARIABLE_OBJECT(serverStatus,State,"State",2259);
+    	State->v_Value.value.vartype = OV_VT_INT;
+    	State->v_Value.value.valueunion.val_int = 0;
 
         CREATE_NS0_OBJECT(pinst,ov_namespace,"OV",9999);
 
@@ -162,6 +176,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
 			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasDescription",39,FALSE);
 			CREATE_REFERENCE_TYPE(branch7,tmpRef,"HasTypeDefinition",40,FALSE);
 
+		CREATE_NS0_OBJECT(types,obj,"VariableTypes",89);
+			CREATE_NS0_VARIABLE_TYPE(obj, pBaseDataVariableType, "BaseDataVariableType", 63);
+
+		CREATE_NS0_OBJECT(types,obj,"ObjectTypes",88);
+		CREATE_OBJECT_TYPE(obj, pBaseObjectType, "BaseObjectType", 58);
+
 
 
 	   //CREATE_NS0_OBJECT(pinst,rootObj,"Views",84);
@@ -176,7 +196,7 @@ OV_DLLFNCEXPORT void iec62541_uaNamespace0_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaNamespace0 pinst = Ov_StaticPtrCast(iec62541_uaNamespace0, pobj);
+//    OV_INSTPTR_iec62541_uaNamespace0 pinst = Ov_StaticPtrCast(iec62541_uaNamespace0, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);

@@ -639,6 +639,33 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 
 		}
 		break;
+		case 40:
+		{
+			OV_INSTPTR_iec62541_uaBaseNodeType	pType = NULL;
+			UA_StatusCode						resFindTypeVar;
+			OV_UINT								Type;
+			Type =  *((OV_UINT*) iec62541_ns0Node_getValuePointer(pNode, "Type", &resFindTypeVar));
+			if(resFindTypeVar != UA_STATUSCODE_GOOD){
+				browseResults[indices[i]].statusCode = resFindTypeVar;
+				break;
+			}
+			pType = iec62541_uaNamespace0_getNodePtr(Type);
+			if(!pType){
+				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
+				break;
+			}
+			UA_Array_new((void**) &(browseResults[indices[i]].references), 1, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+			if(!browseResults[indices[i]].references){
+				browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
+				break;
+			}
+			browseResults[indices[i]].referencesSize = 1;
+			if(iec62541_nodeClassMaskMatch(pType, browseDescriptions[indices[i]].nodeClassMask)){
+				browseResults[indices[i]].statusCode = iec62541_fillReferenceDescription(pType,
+						40 , browseDescriptions[indices[i]].resultMask, &(browseResults[indices[i]].references[0]));
+			}
+		}
+		break;
 		default:
 			browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNOTSUPPORTED;
 			break;

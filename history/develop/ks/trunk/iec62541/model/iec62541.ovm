@@ -84,7 +84,8 @@ LIBRARY iec62541
 		VARIABLES
 			EventNotifier	:	UINT
 				INITIALVALUE	=	0;
-			Type	:	UINT;
+			Type	:	UINT
+				INITIALVALUE	=	58;
 		END_VARIABLES;	
 	END_CLASS;
 	
@@ -108,7 +109,8 @@ LIBRARY iec62541
 				INITIALVALUE	=	1; /*	read access	*/
 			Historizing	:	BOOL
 				INITIALVALUE	=	FALSE;
-			Type	:	UINT;
+			Type	:	UINT
+				INITIALVALUE	=	63;
 		END_VARIABLES;	
 	END_CLASS;
 	
