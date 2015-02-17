@@ -313,7 +313,7 @@ KS_RESULT IFBS_UPLOAD_LIBRARY(
     ph = help;
     while(ph && (*ph)) ph++;    // String-Ende suchen
     // Datei-Name ausschneiden
-    //the following is save even without a *ph check, as we go backwards
+    //the following is safe even without a *ph check, as we go backwards
     // cppcheck-suppress nullPointer
     while( (*ph != '/') &&
 #if PLT_SYSTEM_NT

@@ -95,7 +95,7 @@ char* lts_encode_string(
             len = 0;
             for( i = 0; i < 3; i++ ) {
                 in[i] = (unsigned char)(*ph);
-                if( ph && (*ph) ) {
+                if( *ph ) {
                     len++;
                     ph++;
                 }

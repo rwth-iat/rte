@@ -88,7 +88,7 @@ void ifb_writeLinkItem(
     strcpy(hStr, (const char*)assPar.identifier);
     ph = hStr;
     while(ph && (*ph)) ph++;
-    //the following is save even without a *ph check, as we go backwards
+    //the following is safe even without a *ph check, as we go backwards
     // cppcheck-suppress nullPointer
     while(((*ph) != '/') && (ph != hStr)) ph--;
     if((*ph) == '/') ph++;
