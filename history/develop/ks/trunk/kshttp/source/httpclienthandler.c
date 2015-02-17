@@ -293,28 +293,24 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestHeader(
 	this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_NONE;
 	this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
 
-	//if no stream mode, wait for the end of the header
-	if(this->v_stream == FALSE){
-		//split header and footer of the http request
-		endOfHeader = kshttp_strnstr(pChannel->v_inData.readPT, "\r\n\r\n", pChannel->v_inData.length);
-		if(!endOfHeader){
-			//if no double line break detected yet - wait till next cycle
-			return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
-											Yes, this could block the ClientHandler for a longer time.	*/
-		}
-
-		//terminate after header for ov_string_split
-		*endOfHeader = '\0';
-
-		//header plus both line breaks
-		this->v_ClientRequest.headerLength = endOfHeader - pChannel->v_inData.data + 4;
-
-		ov_string_setvalue(&this->v_ClientRequest.requestHeader, (OV_STRING)pChannel->v_inData.data);
-		//save pointer to the content
-		pChannel->v_inData.readPT = pChannel->v_inData.readPT + this->v_ClientRequest.headerLength;
-	}else{
-		ov_string_setvalue(&this->v_ClientRequest.requestHeader, this->v_streamrequestheader);
+	//wait for the end of the header
+	//split header and footer of the http request
+	endOfHeader = kshttp_strnstr(pChannel->v_inData.data, "\r\n\r\n", pChannel->v_inData.length);
+	if(!endOfHeader){
+		//if no double line break detected yet - wait till next cycle
+		return OV_ERR_OK;		/*	get called again to process the request next time (if it is complete then).
+										Yes, this could block the ClientHandler for a longer time.	*/
 	}
+
+	//terminate after header for ov_string_split
+	*endOfHeader = '\0';
+
+	//header plus both line breaks
+	this->v_ClientRequest.headerLength = endOfHeader - pChannel->v_inData.data + 4;
+
+	ov_string_setvalue(&this->v_ClientRequest.requestHeader, (OV_STRING)pChannel->v_inData.data);
+	//save pointer to the content
+	pChannel->v_inData.readPT = pChannel->v_inData.data + this->v_ClientRequest.headerLength;
 
 	//parse request header into get command and arguments request
 	result = kshttp_parse_http_header_from_client(&this->v_ClientRequest, &this->v_ServerResponse);
@@ -342,7 +338,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 				return OV_ERR_TARGETGENERIC;
 			}
 
-			memcpy(this->v_ClientRequest.messageBody, pChannel->v_inData.data + this->v_ClientRequest.headerLength, this->v_ClientRequest.contentLength);
+			memcpy(this->v_ClientRequest.messageBody, pChannel->v_inData.readPT, this->v_ClientRequest.contentLength);
 			this->v_ClientRequest.messageBody[this->v_ClientRequest.contentLength] = '\0';
 		}else{
 			//we have the full header, but not the full body yet. Get called again next time
@@ -828,6 +824,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 		pChannel->v_CloseAfterSend = FALSE;
 		this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
 	}else{
+		//shutdown tcp connection if no keep_alive was set
 		pChannel->v_CloseAfterSend = TRUE;
 		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 	}
