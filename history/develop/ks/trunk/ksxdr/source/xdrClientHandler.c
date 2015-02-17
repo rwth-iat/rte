@@ -891,7 +891,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 	}
 
 	/*	if the whole buffer was decoded free it	*/
-	if((dataReceived->readPT - dataReceived->data) >= dataReceived->length){
+	if((dataReceived->readPT - dataReceived->data) >= (OV_INT) dataReceived->length){
 		KS_logfile_debug(("%s: HandleRequest: dataReceived decoded completely, freeing it", this->v_identifier));
 		ksbase_free_KSDATAPACKET(dataReceived);
 	}
