@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -64,6 +64,32 @@
 #endif
 
 #include "cshmilib.h"
+
+/**
+ * clear all parameters to prepare the load of the new variable
+ * @param this
+ */
+static void cshmi_getvalue_clearparameter(OV_INSTPTR_cshmi_GetValue this, const OV_ANY *newvalue){
+	if(		 (newvalue->value.vartype & OV_VT_KSMASK) == OV_VT_VOID
+		||	((newvalue->value.vartype & OV_VT_KSMASK) == OV_VT_STRING && ov_string_compare(newvalue->value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL)){
+		//do not clear the parameters if the new value is empty. A import sets all variables (even the empty ones).
+		return;
+	}
+	//to not use the set accessors here to avoid a loop
+	ov_string_setvalue(&this->v_ksVar, NULL);
+	ov_string_setvalue(&this->v_elemVar, NULL);
+	ov_string_setvalue(&this->v_globalVar, NULL);
+	ov_string_setvalue(&this->v_persistentGlobalVar, NULL);
+	ov_string_setvalue(&this->v_globalVar, NULL);
+	ov_string_setvalue(&this->v_OperatorInput, NULL);
+	ov_string_setvalue(&this->v_TemplateFBReferenceVariable, NULL);
+	ov_string_setvalue(&this->v_TemplateFBVariableReferenceName, NULL);
+	ov_string_setvalue(&this->v_TemplateConfigValues, NULL);
+	//ov_string_setvalue(&this->v_value, NULL);
+	Ov_SetAnyValue(&this->v_value, NULL);
+	return;
+}
+
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -146,7 +172,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_ksVar_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_ksVar,value);
 }
 
@@ -154,7 +184,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_elemVar_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_elemVar,value);
 }
 
@@ -162,7 +196,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_globalVar_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_globalVar,value);
 }
 
@@ -170,7 +208,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_persistentGlobalVar_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_persistentGlobalVar,value);
 }
 
@@ -178,7 +220,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBVariableReferenceName_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
-	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_TemplateFBVariableReferenceName,value);
 }
 
@@ -186,7 +232,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateConfigValues_set(
 		OV_INSTPTR_cshmi_GetValue          pobj,
 		const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	return ov_string_setvalue(&pobj->v_TemplateConfigValues,value);
 }
 
@@ -195,19 +245,24 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_value_set(
 		const OV_ANY*  value
 ) {
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
-	return ov_variable_setanyvalue(&pobj->v_value, value);
+	cshmi_getvalue_clearparameter(pobj, value);
+	return Ov_SetAnyValue(&pobj->v_value, value);
 }
 
 OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_OperatorInput_set(
 	OV_INSTPTR_cshmi_GetValue          pobj,
 	const OV_STRING  value
 ) {
+	OV_ANY newvalue;
 	if (	ov_string_compare(value, "") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "mousex") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "mousey") == OV_STRCMP_EQUAL
 		||	ov_string_compare(value, "textinput") == OV_STRCMP_EQUAL
 		||	ov_string_match(value, "textinput:*")){
+		newvalue.value.vartype = OV_VT_STRING;
+		newvalue.value.valueunion.val_string = value;
 		cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+		cshmi_getvalue_clearparameter(pobj, &newvalue);
 		return ov_string_setvalue(&pobj->v_OperatorInput,value);
 	}
 	ov_logfile_warning("Wrong OperatorInput set on: '%s', requested value was: '%s'. Only mousex, mousey and textinput* is allowed.", pobj->v_identifier, value);
@@ -228,7 +283,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_TemplateFBReferenceVariable_set(
 	OV_INSTPTR_cshmi_GetValue          pobj,
 	const OV_STRING  value
 ) {
+	OV_ANY newvalue;
+	newvalue.value.vartype = OV_VT_STRING;
+	newvalue.value.valueunion.val_string = value;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	cshmi_getvalue_clearparameter(pobj, &newvalue);
 	if(ov_string_compare(value, "fullqualifiedparentname") == OV_STRCMP_EQUAL){
 			return ov_string_setvalue(&pobj->v_TemplateFBReferenceVariable, "CSHMIfullqualifiedparentname");
 	}else if(ov_string_compare(value, "fullqualifiedname") == OV_STRCMP_EQUAL){
