@@ -42,7 +42,8 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     OV_UINT tempctr = 0;
     OV_INSTPTR_MessageSys_Message pMsg = NULL;
     OV_ANY tempAny;
-    OV_STRING command = NULL;
+    OV_STRING command	=	NULL;
+    OV_STRING valueCopy	=	NULL;
     OV_STRING ids_vec [2] = {"cmdr", "Value"};
     OV_STRING values_vec [2] = {NULL, NULL};
     OV_STRING empty_vec [2] = {NULL, NULL};
@@ -72,6 +73,12 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
     	return OV_ERR_BADVALUE;
 
     ov_memstack_lock();
+    valueCopy = ov_memstack_alloc(i+1); //here i holds the length of value
+    if(!valueCopy){
+    	ov_memstack_unlock();
+    	return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    memcpy(valueCopy, value, i+1);
 
     msgIdentifier = ov_memstack_alloc(sizeof(msgPrefix) + 12);
     if(!msgIdentifier){
@@ -136,8 +143,8 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgCreator_msgCreator_order_set(
 
     /*	generic part set, now build the body	*/
 
-    values.value[0] = value;
-    command = strchr(value, ';')+1;
+    values.value[0] = valueCopy;
+    command = strchr(valueCopy, ';')+1;
     *(command-1) = '\0';
     values.value[1] = strchr(command, ';')+1;
     *(values.value[1]-1) = '\0';
