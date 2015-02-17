@@ -82,7 +82,7 @@ ksStringToPercent(const KsString &org)
         if(ok) {
             return PltString::takeOwnership(res, org.len() + convert*2);
         } else {
-            delete res;
+            delete[] res;
             return KsString();
         }
     } else {
@@ -123,7 +123,7 @@ ksPathToPercent(const KsString &org)
         if(ok) {
             return PltString::takeOwnership(res, org.len() + convert*2);
         } else {
-            delete res;
+            delete[] res;
             return KsString();
         }
     } else {
