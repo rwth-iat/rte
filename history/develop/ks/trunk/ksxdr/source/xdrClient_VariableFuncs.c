@@ -168,7 +168,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetVar(
 		fncresult = OV_ERR_OK;
 	}
 
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -324,7 +324,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processSetVar(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}

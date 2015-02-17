@@ -183,7 +183,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetPP(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -352,7 +352,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetEP(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -536,7 +536,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processGetCanonicalPath(
 		}
 
 	}
-	if((thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if((thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}

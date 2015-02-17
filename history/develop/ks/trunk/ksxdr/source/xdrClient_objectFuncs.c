@@ -171,7 +171,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processCreateObject(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -326,7 +326,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processDeleteObject(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -481,7 +481,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processRenameObject(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -636,7 +636,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processLink(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
@@ -790,7 +790,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClient_processUnLink(
 	{
 		fncresult = OV_ERR_OK;
 	}
-	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= thisCl->v_dataReceived.length))
+	if(Ov_Fail(fncresult) || (thisCl->v_dataReceived.readPT - thisCl->v_dataReceived.data >= (OV_INT) thisCl->v_dataReceived.length))
 	{
 		ksbase_free_KSDATAPACKET(&thisCl->v_dataReceived);
 	}
