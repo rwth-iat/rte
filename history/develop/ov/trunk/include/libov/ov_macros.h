@@ -39,14 +39,6 @@
 #include "libov/ov_memstack.h"
 #include "libov/ov_malloc.h"
 
-//for Ov_HeapStrdup
-#ifdef OV_COMPILE_LIBOV
-#if !(OV_SYSTEM_MC164 || OV_SYSTEM_RMOS)
-#include <string.h>
-#endif
-#endif
-
-
 /*
 *	Upcast of an instance pointer of the parent class
 */
@@ -442,6 +434,7 @@
 *	Set the value of an ANY variable
 *	for example:
 *	Ov_SetAnyValue(&pObj->v_myTargetAnyvar, &pObj->v_mySourceAnyvar);
+*	Ov_SetAnyValue(&pObj->v_myTargetAnyvar, NULL);
 */
 #define Ov_SetAnyValue(pany, pvalue)										\
 	ov_variable_setanyvalue((pany), (pvalue))
@@ -561,6 +554,7 @@
 
 /**
 *	Duplicate a string on the heap
+*	Uses strdup on most platforms even if it is not part of ANSI C
 */
 #ifdef OV_COMPILE_LIBOV
 #if OV_SYSTEM_MC164 || OV_SYSTEM_RMOS
