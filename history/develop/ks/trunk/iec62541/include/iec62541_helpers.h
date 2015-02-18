@@ -10,10 +10,18 @@
 
 #include "iec62541.h"
 #include "libov/ov_path.h"
+
+#define UA_NODEID_OVROOT	(42 * 42)
+
 UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant);
 UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type);
 UA_StatusCode ov_VariantToAny(UA_Variant* pVariant, OV_ANY* pAny);
+UA_Int32 iec62541_nsOv_getNodeClass(const OV_ELEMENT* pElem);
+OV_BOOL iec62541_nsOv_nodeClassMaskMatch(const OV_ELEMENT* pElem, UA_UInt32 mask);
+
+UA_StatusCode iec62541_nsOv_fillReferenceDescription(
+		OV_ELEMENT* pElement, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst);
 
 /**
  * resolves a UA-nodeId to an OV_PATH object

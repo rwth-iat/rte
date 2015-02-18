@@ -22,6 +22,7 @@
 
 
 #include "iec62541.h"
+#include "iec62541_helpers.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_path.h"
 #include "ks_logfile.h"
@@ -83,6 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     OV_INSTPTR_iec62541_uaReferenceTypeNode branch7;
     OV_INSTPTR_iec62541_uaObjectNode	root;
     OV_INSTPTR_iec62541_uaObjectNode	obj;
+    OV_INSTPTR_iec62541_uaObjectNode	ov;
     OV_INSTPTR_iec62541_uaObjectNode	types;
     OV_INSTPTR_iec62541_uaObjectNode	dataTypes;
     OV_INSTPTR_iec62541_uaObjectNode	objects;
@@ -114,6 +116,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaNamespace0_constructor(
     CREATE_NS0_OBJECT(pinst,obj,"Root",84);
     root = obj;
     	CREATE_NS0_OBJECT(root,objects,"Objects",85);
+    	CREATE_NS0_OBJECT(root,ov,"ov",UA_NODEID_OVROOT);
     	CREATE_NS0_OBJECT(root,obj,"Types",86);
     	types = obj;
     		CREATE_NS0_OBJECT(types,obj,"DataTypes",90);

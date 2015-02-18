@@ -212,8 +212,8 @@ OV_DLLFNCEXPORT void iec62541_uaServer_startup(
     UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,0,&url,&iec62541_pUaServer->v_nodeStoreNs0);
 
     //Services on Namespace 0
-    iec62541_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_readNodes;
-    iec62541_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_iec62541_uaNamespace0)pclass_iec62541_uaNamespace0->v_pvtable)->m_browseNodes;
+    iec62541_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes;
+    iec62541_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_browseNodes;
     UA_Server_addExternalNamespace( &iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
 
 

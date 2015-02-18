@@ -31,6 +31,78 @@
 #include "libov/ov_memstack.h"
 
 
+UA_StatusCode iec62541_nsOv_fillReferenceDescription(
+		OV_ELEMENT* pElement, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst){
+	OV_INSTPTR_ov_object	pObject			=	NULL;
+	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
+	OV_STRING				path			=	NULL;
+	OV_STRING				varPath			=	NULL;
+	OV_UINT					varPathLen		=	0;
+	if(!dst){
+		return UA_STATUSCODE_BADINVALIDARGUMENT;
+	}
+	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
+	dst->nodeId.nodeId.namespaceIndex = 1;
+	if(pElement->elemtype == OV_ET_OBJECT){
+		pObject = pElement->pobj;
+	} else if(pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
+		pObject = pElement->elemunion.pobj;
+	} else {
+		return UA_STATUSCODE_BADNOTSUPPORTED;
+	}
+	ov_memstack_lock();
+	path = ov_path_getcanonicalpath(pObject, 2);
+	if(!path){
+		ov_memstack_unlock();
+		return UA_STATUSCODE_BADOUTOFMEMORY;
+	}
+	if(pElement->elemtype == OV_ET_VARIABLE){
+		varPathLen = ov_string_getlength(path) + ov_string_getlength(pElement->elemunion.pvar->v_identifier) + 2;
+		varPath = ov_memstack_alloc(varPathLen);
+		if(!varPath){
+			ov_memstack_unlock();
+			return UA_STATUSCODE_BADOUTOFMEMORY;
+		}
+		snprintf(varPath, varPathLen, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
+		path = varPath;
+	}
+	result = UA_String_copycstring(path, &(dst->nodeId.nodeId.identifier.string));
+	ov_memstack_unlock();
+
+	if(resultMask & (1<<3)){
+		if(pElement->elemtype == OV_ET_OBJECT){
+			UA_String_copycstring(pElement->pobj->v_identifier, &(dst->browseName.name));
+		} else if(pElement->elemtype == OV_ET_VARIABLE){
+			UA_String_copycstring(pElement->elemunion.pvar->v_identifier, &(dst->browseName.name));
+		}
+		dst->browseName.namespaceIndex = 1;
+	}
+	if(resultMask & (1<<4)){
+		if(pElement->elemtype == OV_ET_OBJECT){
+			UA_String_copycstring(pElement->pobj->v_identifier, &(dst->displayName.text));
+		} else if(pElement->elemtype == OV_ET_VARIABLE){
+			UA_String_copycstring(pElement->elemunion.pvar->v_identifier, &(dst->displayName.text));
+		}
+	}
+	if(resultMask & (1<<1)){
+		dst->isForward = UA_TRUE;
+	}
+	if(resultMask & (1<<2)){
+		dst->nodeClass = iec62541_nsOv_getNodeClass(pElement);
+	}
+	if(resultMask & (1<<0)){
+		dst->referenceTypeId.namespaceIndex = 0;
+		dst->referenceTypeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+		dst->referenceTypeId.identifier.numeric = 35; // remove const value
+	}
+	if(resultMask & (1<<5)){	// TODO fixme
+		dst->typeDefinition.nodeId.namespaceIndex = 0;
+		dst->typeDefinition.nodeId.identifierType = UA_NODEIDTYPE_NUMERIC;
+		dst->typeDefinition.nodeId.identifier.numeric = 0;
+	}
+	return result;
+}
+
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
 		void *ensHandle,
 		UA_RequestHeader *requestHeader,

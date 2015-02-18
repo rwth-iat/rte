@@ -164,7 +164,11 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 		case OV_VT_STRING:
 		case OV_VT_STRING_PV:
 			tempString.data = (UA_Byte*) pAny->value.valueunion.val_string;
-			tempString.length = strlen(pAny->value.valueunion.val_string);
+			if(pAny->value.valueunion.val_string){
+				tempString.length = strlen(pAny->value.valueunion.val_string);
+			} else {
+				tempString.length = 0;
+			}
 			value = &tempString;
 			vt = &UA_TYPES[UA_STRING];
 			break;
@@ -380,4 +384,52 @@ UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pe
 	}
 	*access = (*ppVtblObj)->m_getaccess(pelem->pobj, pelem, pTicket);
 	return UA_STATUSCODE_GOOD;
+}
+
+UA_Int32 iec62541_nsOv_getNodeClass(const OV_ELEMENT* pElem){
+	if(pElem->elemtype == OV_ET_OBJECT){
+		//	check further since all definitions are objects themselves
+		if(!pElem->pobj){
+			return UA_NODECLASS_UNSPECIFIED;
+		} else if(Ov_GetParent(ov_instantiation, pElem->pobj) == pclass_ov_class){
+			return UA_NODECLASS_OBJECTTYPE;
+		} else if(Ov_GetParent(ov_instantiation, pElem->pobj) == pclass_ov_variable){
+			return UA_NODECLASS_VARIABLETYPE;
+		} else if(Ov_GetParent(ov_instantiation, pElem->pobj) == pclass_ov_association){
+			return UA_NODECLASS_REFERENCETYPE;
+		} else {
+			return UA_NODECLASS_OBJECT;
+		}
+	} else if(pElem->elemtype == OV_ET_VARIABLE || pElem->elemtype == OV_ET_MEMBER) {
+		return UA_NODECLASS_VARIABLE;
+	} else {
+		return UA_NODECLASS_UNSPECIFIED;
+	}
+}
+
+OV_BOOL iec62541_nsOv_nodeClassMaskMatch(const OV_ELEMENT* pElem, UA_UInt32 mask){
+	UA_Int32 nodeClass = iec62541_nsOv_getNodeClass(pElem);
+	if(mask == 0){
+		return TRUE; //if no bit is set, all attributes should be returned
+	}
+	switch(nodeClass){
+	case UA_NODECLASS_OBJECT:
+		return ((mask & (1<<0)) ? TRUE : FALSE);
+	case UA_NODECLASS_VARIABLE:
+		return ((mask & (1<<1)) ? TRUE : FALSE);
+	case UA_NODECLASS_METHOD:
+		return ((mask & (1<<2)) ? TRUE : FALSE);
+	case UA_NODECLASS_OBJECTTYPE:
+		return ((mask & (1<<3)) ? TRUE : FALSE);
+	case UA_NODECLASS_VARIABLETYPE:
+		return ((mask & (1<<4)) ? TRUE : FALSE);
+	case UA_NODECLASS_REFERENCETYPE:
+		return ((mask & (1<<5)) ? TRUE : FALSE);
+	case UA_NODECLASS_DATATYPE:
+		return ((mask & (1<<6)) ? TRUE : FALSE);
+	case UA_NODECLASS_VIEW:
+		return ((mask & (1<<7)) ? TRUE : FALSE);
+	default:
+		return FALSE;
+	}
 }

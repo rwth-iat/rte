@@ -303,7 +303,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				ov_memstack_unlock();
 				break;
 			}
-			writeMask = 0;
+			*writeMask = 0;
 			if(path.elements[path.size-1].elemtype != OV_ET_VARIABLE){
 				if(access & OV_AC_WRITE){
 					*writeMask |= (1<<2);	/*	BrowseName	*/
