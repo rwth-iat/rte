@@ -386,7 +386,20 @@ UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pe
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_Int32 iec62541_nsOv_getNodeClass(const OV_ELEMENT* pElem){
+UA_Int32 iec62541_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
+	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
+	if(pAccess){
+		if(!pElem->pobj){
+			*pAccess = OV_AC_NONE;
+		} else {
+			Ov_GetVTablePtr(ov_object, pVtbl, pElem->pobj);
+			if(pVtbl){
+				*pAccess = pVtbl->m_getaccess(pElem->pobj, pElem, NULL);
+			} else {
+				*pAccess = OV_AC_NONE;
+			}
+		}
+	}
 	if(pElem->elemtype == OV_ET_OBJECT){
 		//	check further since all definitions are objects themselves
 		if(!pElem->pobj){
@@ -407,8 +420,8 @@ UA_Int32 iec62541_nsOv_getNodeClass(const OV_ELEMENT* pElem){
 	}
 }
 
-OV_BOOL iec62541_nsOv_nodeClassMaskMatch(const OV_ELEMENT* pElem, UA_UInt32 mask){
-	UA_Int32 nodeClass = iec62541_nsOv_getNodeClass(pElem);
+OV_BOOL iec62541_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
+	UA_Int32 nodeClass = iec62541_nsOv_getNodeClassAndAccess(pElem, pAccess);
 	if(mask == 0){
 		return TRUE; //if no bit is set, all attributes should be returned
 	}

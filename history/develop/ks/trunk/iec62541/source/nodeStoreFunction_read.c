@@ -206,7 +206,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					break;
 				}
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODECLASS];
+				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
 				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeClass;
 				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
@@ -215,6 +215,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			} else {
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
 			}
+			ov_memstack_unlock();
 			break;
 			/***************************************************************************************************************************************************
 			 * BROWSENAME and DISPLYNAME - every type of node has these two. For us they're the same
@@ -283,11 +284,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_USERWRITEMASK:
 		{
 			UA_UInt32 *writeMask;
-			writeMask = UA_UInt32_new();
-			if(!writeMask){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -300,6 +296,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			}
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			writeMask = UA_UInt32_new();
+			if(!writeMask){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				ov_memstack_unlock();
 				break;
 			}
@@ -326,11 +328,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_ISABSTRACT:
 		{
 			UA_Boolean *isAbstract;
-			isAbstract = UA_Boolean_new();
-			if(!isAbstract){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -344,14 +341,32 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			if(path.elements[path.size-1].elemtype == OV_ET_OBJECT){
 				if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_class){
+					isAbstract = UA_Boolean_new();
+					if(!isAbstract){
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						ov_memstack_unlock();
+						break;
+					}
 					if(!(Ov_StaticPtrCast(ov_class, pobj)->v_classprops & OV_CP_INSTANTIABLE)){
 						*isAbstract = UA_TRUE; /*	is instantiable is the negation of isAbstract	*/
 					} else {
 						*isAbstract = UA_FALSE;
 					}
 				} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+					isAbstract = UA_Boolean_new();
+					if(!isAbstract){
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						ov_memstack_unlock();
+						break;
+					}
 					*isAbstract = UA_FALSE;
 				} else if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
+					isAbstract = UA_Boolean_new();
+					if(!isAbstract){
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						ov_memstack_unlock();
+						break;
+					}
 					*isAbstract = UA_FALSE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
@@ -379,11 +394,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_SYMMETRIC:
 		{
 			UA_Boolean *isSymmetric;
-			isSymmetric = UA_Boolean_new();
-			if(!isSymmetric){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -397,6 +407,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			if(path.elements[path.size-1].elemtype == OV_ET_OBJECT){
 				if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_association){
+					isSymmetric = UA_Boolean_new();
+					if(!isSymmetric){
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+						break;
+					}
 					*isSymmetric = UA_FALSE;	/*	all ov_associations have a direction	*/
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
@@ -436,18 +451,18 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_EVENTNOTIFIER:
 		{
 			UA_Byte *eventNotifer;
-			eventNotifer = UA_Byte_new();
-			if(!eventNotifer){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			eventNotifer = 0;
+			eventNotifer = UA_Byte_new();
+			if(!eventNotifer){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				break;
+			}
+			*eventNotifer = 0;
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BYTE];
@@ -501,6 +516,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					break;
 				}
 				ov_memstack_unlock();
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
+				ov_memstack_unlock();
 			}
 			break;
 			/*********************************************************************************************************************************************
@@ -535,7 +553,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 							readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 						}
 					}
-					ov_memstack_unlock();
 					break;
 				case OV_ET_OBJECT:
 					/*	Variables are defined by instances of ov/variable	*/
@@ -555,6 +572,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					break;
 				}
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
 			}
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODEID];
@@ -573,11 +592,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_VALUERANK:
 		{
 			UA_Int32 *valueRank;
-			valueRank = UA_Int32_new();
-			if(!valueRank){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -596,6 +610,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				case OV_ET_VARIABLE:
 					pobj = Ov_StaticPtrCast(ov_object, path.elements[path.size-1].elemunion.pvar);
 					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+						valueRank = UA_Int32_new();
+						if(!valueRank){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							break;
+						}
 						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 						case OV_VT_ANY:
 						case OV_VT_VOID:
@@ -616,6 +635,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					break;
 				case OV_ET_OBJECT:
 					if(Ov_GetParent(ov_instantiation, pobj) == pclass_ov_variable){
+						valueRank = UA_Int32_new();
+						if(!valueRank){
+							readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+							break;
+						}
 						switch((((OV_INSTPTR_ov_variable)pobj)->v_vartype) & OV_VT_KSMASK){
 						case OV_VT_ANY:
 						case OV_VT_VOID:
@@ -638,7 +662,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADPATH);
 					break;
 				}
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
 			}
+
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
 				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
@@ -739,6 +766,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
 				}
 				ov_memstack_unlock();
+			} else {
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);
+				ov_memstack_unlock();
 			}
 		}
 		break;
@@ -750,11 +780,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_USERACCESSLEVEL:
 		{
 			UA_Byte *accessLevel;
-			accessLevel = UA_Byte_new();
-			if(!accessLevel){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -767,6 +792,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			}
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			accessLevel = UA_Byte_new();
+			if(!accessLevel){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				ov_memstack_unlock();
 				break;
 			}
@@ -796,14 +827,15 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_MINIMUMSAMPLINGINTERVAL:
 		{
 			UA_Double *interval;
-			interval = UA_Double_new();
-			if(!interval){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			interval = UA_Double_new();
+			if(!interval){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
 				ov_memstack_unlock();
 				break;
 			}
@@ -837,7 +869,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				ov_memstack_unlock();
 				break;
 			}
-			historizing = UA_FALSE;
+			historizing = UA_Boolean_new();
+			if(!historizing){
+				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				ov_memstack_unlock();
+				break;
+			}
+			*historizing = UA_FALSE;
 
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
@@ -857,11 +895,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_USEREXECUTABLE:
 		{
 			UA_Boolean *executable;
-			executable = UA_Boolean_new();
-			if(!executable){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -869,6 +902,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 				break;
 			}
 			if(path.elements[path.size-1].elemtype == OV_ET_OPERATION){
+				executable = UA_Boolean_new();
+				if(!executable){
+					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+					ov_memstack_unlock();
+					break;
+				}
 				*executable = UA_FALSE;
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];

@@ -43,10 +43,8 @@ UA_StatusCode iec62541_nsOv_fillReferenceDescription(
 	}
 	dst->nodeId.nodeId.identifierType = UA_NODEIDTYPE_STRING;
 	dst->nodeId.nodeId.namespaceIndex = 1;
-	if(pElement->elemtype == OV_ET_OBJECT){
+	if(pElement->elemtype == OV_ET_OBJECT || pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
 		pObject = pElement->pobj;
-	} else if(pElement->elemtype == OV_ET_VARIABLE || pElement->elemtype == OV_ET_MEMBER){
-		pObject = pElement->elemunion.pobj;
 	} else {
 		return UA_STATUSCODE_BADNOTSUPPORTED;
 	}
@@ -88,7 +86,7 @@ UA_StatusCode iec62541_nsOv_fillReferenceDescription(
 		dst->isForward = UA_TRUE;
 	}
 	if(resultMask & (1<<2)){
-		dst->nodeClass = iec62541_nsOv_getNodeClass(pElement);
+		dst->nodeClass = iec62541_nsOv_getNodeClassAndAccess(pElement, NULL);
 	}
 	if(resultMask & (1<<0)){
 		dst->referenceTypeId.namespaceIndex = 0;
