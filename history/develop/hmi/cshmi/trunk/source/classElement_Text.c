@@ -98,17 +98,17 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	OV_INSTPTR_cshmi_Text	pobj,
 	const OV_STRING  value
 ) {
-	OV_STRING p;
+	OV_STRING p = NULL;
 	OV_RESULT fr = OV_ERR_OK;
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	if(ov_string_compare(value, "normal") == OV_STRCMP_EQUAL){
 		//fixing common typo
 		return ov_string_setvalue(&pobj->v_fontSize,"medium");
 	}
-	fr = ov_string_setvalue(&pobj->v_fontSize,value);
+	fr = ov_string_setvalue(&pobj->v_fontSize, value);
 	if(Ov_OK(fr) && value != NULL){
-		strtod (value, &p);
-		if(*p == '\0'){
+		strtod(value, &p);
+		if(p != NULL && *p == '\0'){
 			//we had a numeric input
 			fr = ov_string_append(&pobj->v_fontSize, "px");
 		}

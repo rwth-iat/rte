@@ -593,19 +593,19 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 					ov_string_setvalue(&ParameterValue, pGetValue->v_value.value.valueunion.val_string);
 					break;
 				case OV_VT_BOOL_PV:
-					ov_string_print(&ParameterValue, "%s", (pGetValue->v_value.value.valueunion.val_bool==TRUE?"TRUE":"FALSE"));
+					ov_string_print(&ParameterValue, "%" OV_PRINT_STRING, (pGetValue->v_value.value.valueunion.val_bool==TRUE?"TRUE":"FALSE"));
 					break;
 				case OV_VT_INT_PV:
-					ov_string_print(&ParameterValue, "%i", pGetValue->v_value.value.valueunion.val_int);
+					ov_string_print(&ParameterValue, "%" OV_PRINT_INT, pGetValue->v_value.value.valueunion.val_int);
 					break;
 				case OV_VT_UINT_PV:
-					ov_string_print(&ParameterValue, "%u", pGetValue->v_value.value.valueunion.val_uint);
+					ov_string_print(&ParameterValue, "%" OV_PRINT_UINT, pGetValue->v_value.value.valueunion.val_uint);
 					break;
 				case OV_VT_SINGLE_PV:
-					ov_string_print(&ParameterValue, "%f", pGetValue->v_value.value.valueunion.val_single);
+					ov_string_print(&ParameterValue, "%" OV_PRINT_SINGLE, pGetValue->v_value.value.valueunion.val_single);
 					break;
 				case OV_VT_DOUBLE_PV:
-					ov_string_print(&ParameterValue, "%lf", pGetValue->v_value.value.valueunion.val_double);
+					ov_string_print(&ParameterValue, "%" OV_PRINT_DOUBLE, pGetValue->v_value.value.valueunion.val_double);
 					break;
 				case OV_VT_STRING_PV_VEC:
 					if(pGetValue->v_value.value.valueunion.val_string_vec.veclen==0){
@@ -623,7 +623,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 					ov_string_setvalue(&ParameterValue, NULL);
 					break;
 				default:
-					//The format of the value is not supported, so skip the precaching of the element
+					//The format of the value is not supported, so skip precaching of the element
 					Ov_HeapFree(pObj->v_ConfigCache.asJSON);
 					pObj->v_ConfigCache.asJSON = NULL;
 					pObj->v_ConfigCache.cacheDirty = FALSE;
