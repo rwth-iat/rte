@@ -70,7 +70,7 @@
  * @param this
  */
 static void cshmi_setvalue_clearparameter(OV_INSTPTR_cshmi_SetConcatValue this, const OV_STRING newvalue){
-	if(ov_string_compare(newvalue, NULL) != OV_STRCMP_EQUAL){
+	if(ov_string_compare(newvalue, NULL) == OV_STRCMP_EQUAL){
 		//do not clear the parameters if the new value is empty. A import sets all variables (even the empty ones).
 		return;
 	}
