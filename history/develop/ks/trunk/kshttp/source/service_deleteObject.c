@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -44,11 +44,11 @@
 
 /**
  * extracts the (multiple) commands for the deletion and let do ks_server_delete the job
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_deleteObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -66,10 +66,10 @@ OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* res
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "path", &match);
+	kshttp_find_arguments(&request.urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable path not found");
 		EXEC_DELETEOBJECT_RETURN fr; //400
 
 	}
@@ -81,7 +81,7 @@ OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* res
 	if(!*addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
 		EXEC_DELETEOBJECT_RETURN fr;
 	}
 
@@ -108,11 +108,11 @@ OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* res
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_DELETEOBJECT_RETURN fr;
 	}
-	fr = kshttp_print_result_array(responseBody, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(&response->contentString, request.response_format, result.results_val, result.results_len, "");
 
 	ov_memstack_unlock();
 	EXEC_DELETEOBJECT_RETURN fr;

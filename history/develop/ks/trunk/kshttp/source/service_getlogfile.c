@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -50,11 +50,11 @@
  * Syntax: /getLogfile?from=2014-01-01T13:15:00.000000&to=2016-01-01T13:15:00.000000&maxentries=10
  *
  * extracts the command for the getlogfile and let do ov_logfile_getmessages the job
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getlogfile(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -76,7 +76,7 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* respo
 
 	//process from
 	Ov_SetDynamicVectorLength(&frommatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "from", &frommatch);
+	kshttp_find_arguments(&request.urlQuery, "from", &frommatch);
 	if(frommatch.veclen == 1){
 		fr = kshttp_asciitotime(&from, frommatch.value[0]);
 	}else{
@@ -84,26 +84,26 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* respo
 		from.usecs = 0;
 	}
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": did not recognised 'from' time.");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": did not recognised 'from' time.");
 		EXEC_GETLOGFILE_RETURN fr;
 	}
 
 	//process to
 	Ov_SetDynamicVectorLength(&tomatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "to", &tomatch);
+	kshttp_find_arguments(&request.urlQuery, "to", &tomatch);
 	if(tomatch.veclen == 1){
 		fr = kshttp_asciitotime(&to, tomatch.value[0]);
 	}else{
 		ov_time_gettime(&to);
 	}
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": did not recognised 'to' time.");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": did not recognised 'to' time.");
 		EXEC_GETLOGFILE_RETURN fr;
 	}
 
 	//process maxnomessages
 	Ov_SetDynamicVectorLength(&maxentriesmatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "maxentries", &maxentriesmatch);
+	kshttp_find_arguments(&request.urlQuery, "maxentries", &maxentriesmatch);
 	if(maxentriesmatch.veclen == 1){
 		max_no_messages = atoi(maxentriesmatch.value[0]);
 	}else{
@@ -118,21 +118,21 @@ OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* respo
 	 */
 	if(Ov_Fail(fr)){
 		//general problem like memory problem
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETLOGFILE_RETURN fr;
 	}
 	ov_string_setvalue(&LoopEntryXmlString, "entry");
 	for (i=0; i < no_messages; i++){
-		if(response_format == KSX){
-			kshttp_timetoascii(&LoopEntryXmlString, &times[i], response_format);
+		if(request.response_format == KSX){
+			kshttp_timetoascii(&LoopEntryXmlString, &times[i], request.response_format);
 			ov_string_print(&LoopEntryXmlString, "entry time=\"%s\"", LoopEntryXmlString);
 		}
-		kshttp_response_part_init(&LoopEntry, response_format, LoopEntryXmlString);
-		kshttp_escapeString(&LoopEntryTimeString, &logmessages[i], response_format);
+		kshttp_response_part_init(&LoopEntry, request.response_format, LoopEntryXmlString);
+		kshttp_escapeString(&LoopEntryTimeString, &logmessages[i], request.response_format);
 		ov_string_append(&LoopEntry, LoopEntryTimeString);
-		kshttp_response_part_finalize(&LoopEntry, response_format, "entry");
-		ov_string_append(responseBody, LoopEntry);
+		kshttp_response_part_finalize(&LoopEntry, request.response_format, "entry");
+		ov_string_append(&response->contentString, LoopEntry);
 	}
 
 	ov_memstack_unlock();

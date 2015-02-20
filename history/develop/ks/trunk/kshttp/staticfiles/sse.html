@@ -3,7 +3,7 @@
 <head>
 	<meta charset="windows-1252">
 	<title>Stats of database_free</title>
-	<script type="text/javascript" src="smoothie.js"></script>
+	<script type="text/javascript" src="http://rawgit.com/joewalnes/smoothie/master/smoothie.js"></script>
 </head>
 <body>
 	<h1>Stats of database_free</h1>
@@ -34,23 +34,25 @@
 		if(ajaxRequest.readyState == 4){
 			setInterval(function() {
 				var time = new Date().getTime();
-				if(time-lastUpdate > 990){
+				if(line1 && time-lastUpdate > 990){
 					line1.append(time, lastData);
 				}
 			}, 1000);
-			if(true){
-				document.getElementsByTagName("h1")[0].innerHTML = "An error occured. EventSource in kshttp unavailable.";
-			}else if(typeof EventSource !== 'undefined'){
+			if(typeof EventSource !== 'undefined'){
 				var source = new EventSource('/getVar?path=/vendor/database_free&stream=1&format=plain');
 				source.onmessage = function(e) {
 					lastUpdate = new Date().getTime();
 					lastData = parseInt(e.data, 10);
 					line1.append(lastUpdate, lastData);
-					smoothie.start();
+					if(smoothie){
+						smoothie.start();
+					}
 				};
 				source.onerror  = function(e) {
 					source.close();
-					smoothie.stop();
+					if(smoothie){
+						smoothie.stop();
+					}
 				};
 			}else{
 				document.getElementsByTagName("h1")[0].innerHTML = "An error occured. Your browser does not support EventSource";
@@ -68,10 +70,13 @@
 	} catch(err){
 		document.getElementsByTagName("h1")[0].innerHTML = "An error occured. Perhaps this file was not served from an OV webserver.";
 	}
-	
-	var line1 = new TimeSeries();
+	if(typeof TimeSeries !== "function"){
+		document.getElementsByTagName("h1")[0].innerHTML = "Smoothie not loaded...";
+	}else{
+		var line1 = new TimeSeries();
+	}
 	var lastUpdate = 0;
 	var lastData = 0;
-    </script>
-  </body>
+	</script>
+</body>
 </html>

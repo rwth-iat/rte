@@ -161,18 +161,19 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const KSHTTP_RESPONSE
 OV_RESULT kshttp_print_result_array(OV_STRING *output, const KSHTTP_RESPONSEFORMAT response_format, OV_RESULT *results, const OV_UINT len, const OV_STRING explain_text);
 
 OV_RESULT kshttp_exec_getserver(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
-OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_setvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_createObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_deleteObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unlink(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_register(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_unregister(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
 
-OV_RESULT kshttp_exec_register(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_unregister(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
-OV_RESULT kshttp_exec_getlogfile(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format);
+OV_RESULT kshttp_exec_getvar(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_setvar(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_getep(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+
+OV_RESULT kshttp_exec_createObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_deleteObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_renameObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_link(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_unlink(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
+OV_RESULT kshttp_exec_getlogfile(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response);
 
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, const OV_TIME* time, const KSHTTP_RESPONSEFORMAT response_format);
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptime, const KSHTTP_RESPONSEFORMAT response_format);

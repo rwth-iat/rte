@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -41,7 +41,7 @@
 #define OV_COMPILE_LIBRARY_kshttp
 #endif
 
-#include "kshttp.h"
+#include "config.h"
 
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClientHandlerExtension_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler this,

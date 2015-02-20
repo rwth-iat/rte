@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -251,6 +251,9 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 			if(len > 1){
 				clientRequest->contentLength = atoi(plist[1]);
 			}
+		}else if(FALSE && ov_string_match(pallheaderslist[i], "Upgrade:*h2c*") == TRUE){
+			//perhaps this is a test if we support HTTP/2
+			//as we do not support this binary protocol we do not really test for the header
 		}
 	}
 	ov_string_freelist(pallheaderslist);

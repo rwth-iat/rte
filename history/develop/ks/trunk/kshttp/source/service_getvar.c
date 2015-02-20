@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -38,14 +38,6 @@
 
 #include "config.h"
 
-/*
-falsche ergebnisse bei: evtl behoben durch neuen code
-http://localhost:8080/getVar?path[1]=/TechUnits/cshmi/Templates/Engineering/Domainv1/Trash.SVGcontent&path[9]=.Bitmapcontent
-http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{010}%20{/TechUnits/HMIManager}%20{SHOWSHEETS}
-*/
-
-
-
 #define EXEC_GETVAR_RETURN \
 		Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&LoopEntryValue, NULL);\
@@ -56,11 +48,12 @@ http://localhost:8080/setVar?path=/TechUnits/HMIManager.Command&newvalue={1}%20{
 
 /**
  * extracts the (multiple) commands for the getVar and let do ks_server_getVar the job
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ *
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getvar(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -88,10 +81,10 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 	 */
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "path", &match);
+	kshttp_find_arguments(&request.urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable path not found");
 		EXEC_GETVAR_RETURN fr; //400
 	}
 
@@ -102,7 +95,7 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 	if(!*addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
 		EXEC_GETVAR_RETURN fr;
 	}
 
@@ -152,20 +145,20 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETVAR_RETURN result.result;
 	}
 	for (j=0; j< result.items_len;j++){
 		if(j>0){
-			kshttp_response_parts_seperate(&LoopEntryList, response_format);
+			kshttp_response_parts_seperate(&LoopEntryList, request.response_format);
 		}
 		one_result = *(result.items_val + j);
 		fr = one_result.result;
 		if(Ov_Fail(fr)){
 			lasterror = fr;
-			kshttp_response_part_begin(&LoopEntryList, response_format, "failure");
-			if(response_format == KSX){
+			kshttp_response_part_begin(&LoopEntryList, request.response_format, "failure");
+			if(request.response_format == KSX){
 				if(LoopEntryList == NULL){
 					ov_string_print(&LoopEntryList, "%i", fr);
 				}else{
@@ -178,7 +171,7 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_print(&LoopEntryList, "%sKS_ERR: %s", LoopEntryList, ov_result_getresulttext(fr));
 				}
 			}
-			kshttp_response_part_finalize(&LoopEntryList, response_format, "failure");
+			kshttp_response_part_finalize(&LoopEntryList, request.response_format, "failure");
 		}else{
 			Variable = one_result.var_current_props;
 
@@ -240,20 +233,20 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 						ov_string_setvalue(&LoopEntryValue, "");
 					}else{
-						kshttp_escapeString(&LoopEntryValue, &Variable.value.valueunion.val_string, response_format);
+						kshttp_escapeString(&LoopEntryValue, &Variable.value.valueunion.val_string, request.response_format);
 					}
 					break;
 
 				case OV_VT_TIME:
 				case OV_VT_TIME_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "time");
-					kshttp_timetoascii(&LoopEntryValue, &Variable.value.valueunion.val_time, response_format);
+					kshttp_timetoascii(&LoopEntryValue, &Variable.value.valueunion.val_time, request.response_format);
 					break;
 
 				case OV_VT_TIME_SPAN:
 				case OV_VT_TIME_SPAN_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "timespan");
-					kshttp_timespantoascii(&LoopEntryValue, &Variable.value.valueunion.val_time_span, response_format);
+					kshttp_timespantoascii(&LoopEntryValue, &Variable.value.valueunion.val_time_span, request.response_format);
 					break;
 
 				case OV_VT_STATE:
@@ -275,7 +268,7 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					lasterror = fr;
-					kshttp_print_result_array(responseBody, response_format, &fr, 1, ": bytevec");
+					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": bytevec");
 					/* todo should be base64 encoded content
 					for ( i = 0; i < Variable.value.valueunion.val_byte_vec.veclen;i++){
 						ov_string_print(&singleVecEntry, "%d", Variable.value.valueunion.val_byte_vec.value[i]);
@@ -290,16 +283,16 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "boolvec");
 					for ( i = 0; i < Variable.value.valueunion.val_bool_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "bool");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "bool");
 						if (Variable.value.valueunion.val_bool_vec.value[i] == TRUE){
 							ov_string_setvalue(&singleVecEntry, "TRUE");
 						}else{
 							ov_string_setvalue(&singleVecEntry, "FALSE");
 						}
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "bool");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "bool");
 					}
 					break;
 
@@ -308,12 +301,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "intvec");
 					for ( i = 0; i < Variable.value.valueunion.val_int_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "int");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "int");
 						ov_string_print(&singleVecEntry, "%i", Variable.value.valueunion.val_int_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "int");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "int");
 					}
 					break;
 
@@ -322,12 +315,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "uintvec");
 					for ( i = 0; i < Variable.value.valueunion.val_uint_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "uint");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "uint");
 						ov_string_print(&singleVecEntry, "%u", Variable.value.valueunion.val_uint_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "uint");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "uint");
 					}
 					break;
 
@@ -336,12 +329,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "singlevec");
 					for ( i = 0; i < Variable.value.valueunion.val_single_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "single");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "single");
 						ov_string_print(&singleVecEntry, "%g", Variable.value.valueunion.val_single_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "single");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "single");
 					}
 					break;
 
@@ -350,12 +343,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "doublevec");
 					for ( i = 0; i < Variable.value.valueunion.val_double_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "double");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "double");
 						ov_string_print(&singleVecEntry, "%1.15g", Variable.value.valueunion.val_double_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "double");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "double");
 					}
 					break;
 
@@ -364,17 +357,17 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_print(&LoopEntryTypeString, "stringvec length=\"%i\"", Variable.value.valueunion.val_string_vec.veclen);
 					for ( i = 0; i < Variable.value.valueunion.val_string_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "string");
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "string");
 						if (ov_string_compare(Variable.value.valueunion.val_string_vec.value[i], NULL) == OV_STRCMP_EQUAL){
 							//append an empty string and clear string
 							ov_string_setvalue(&singleVecEntry, "");
 						}else{
-							kshttp_escapeString(&singleVecEntry, &Variable.value.valueunion.val_string_vec.value[i], response_format);
+							kshttp_escapeString(&singleVecEntry, &Variable.value.valueunion.val_string_vec.value[i], request.response_format);
 							ov_string_append(&LoopEntryValue, singleVecEntry);
 						}
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "string");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "string");
 					}
 					break;
 
@@ -383,12 +376,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "timevec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "time");
-						kshttp_timetoascii(&singleVecEntry, &Variable.value.valueunion.val_time_vec.value[i], response_format);
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "time");
+						kshttp_timetoascii(&singleVecEntry, &Variable.value.valueunion.val_time_vec.value[i], request.response_format);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "time");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "time");
 					}
 					break;
 
@@ -397,12 +390,12 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					ov_string_setvalue(&LoopEntryTypeString, "timespanvec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
 						if(i>0){
-							kshttp_response_parts_seperate(&LoopEntryValue, response_format);
+							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
-						kshttp_response_part_begin(&LoopEntryValue, response_format, "timespan");
-						kshttp_timespantoascii(&singleVecEntry, &Variable.value.valueunion.val_time_span_vec.value[i], response_format);
+						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "timespan");
+						kshttp_timespantoascii(&singleVecEntry, &Variable.value.valueunion.val_time_span_vec.value[i], request.response_format);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
-						kshttp_response_part_finalize(&LoopEntryValue, response_format, "timespan");
+						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "timespan");
 					}
 					break;
 
@@ -425,25 +418,25 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 			}//end switch vartype
-			kshttp_response_part_begin(&LoopEntryList, response_format, "var");
-			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (response_format == KSX || response_format == JSON)){
+			kshttp_response_part_begin(&LoopEntryList, request.response_format, "var");
+			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (request.response_format == KSX || request.response_format == JSON)){
 				//get additional data if we serve ksx
-				kshttp_response_part_begin(&LoopEntryList, response_format, "value");
-				kshttp_response_part_begin(&LoopEntryList, response_format, LoopEntryTypeString);
+				kshttp_response_part_begin(&LoopEntryList, request.response_format, "value");
+				kshttp_response_part_begin(&LoopEntryList, request.response_format, LoopEntryTypeString);
 				ov_string_append(&LoopEntryList, LoopEntryValue);
 				if(Variable.value.vartype == OV_VT_STRING_VEC || Variable.value.vartype == OV_VT_STRING_PV_VEC){
 					//fixme why a string has a length attribute??? thank harry for that mess
 					ov_string_print(&LoopEntryTypeString, "stringvec");
 				}
-				kshttp_response_part_finalize(&LoopEntryList, response_format, LoopEntryTypeString);
-				kshttp_response_part_finalize(&LoopEntryList, response_format, "value");
+				kshttp_response_part_finalize(&LoopEntryList, request.response_format, LoopEntryTypeString);
+				kshttp_response_part_finalize(&LoopEntryList, request.response_format, "value");
 
-				kshttp_response_part_begin(&LoopEntryList, response_format, "timestamp");
-				kshttp_timetoascii(&singleVecEntry, &Variable.time, response_format);
+				kshttp_response_part_begin(&LoopEntryList, request.response_format, "timestamp");
+				kshttp_timetoascii(&singleVecEntry, &Variable.time, request.response_format);
 				ov_string_append(&LoopEntryList, singleVecEntry);
 
-				kshttp_response_part_finalize(&LoopEntryList, response_format, "timestamp");
-				kshttp_response_part_begin(&LoopEntryList, response_format, "state");
+				kshttp_response_part_finalize(&LoopEntryList, request.response_format, "timestamp");
+				kshttp_response_part_begin(&LoopEntryList, request.response_format, "state");
 				switch (Variable.state) {
 					case OV_ST_NOTSUPPORTED:
 						ov_string_append(&LoopEntryList, "notsupported");
@@ -463,15 +456,15 @@ OV_RESULT kshttp_exec_getvar(const OV_STRING_VEC* urlQuery, OV_STRING* responseB
 					default:
 						break;
 				}
-				kshttp_response_part_finalize(&LoopEntryList, response_format, "state");
+				kshttp_response_part_finalize(&LoopEntryList, request.response_format, "state");
 			}else{
 				ov_string_append(&LoopEntryList, LoopEntryValue);
 			}
-			kshttp_response_part_finalize(&LoopEntryList, response_format, "var");
+			kshttp_response_part_finalize(&LoopEntryList, request.response_format, "var");
 		}//end if ov_fail
 	}//end for entry
 
-	ov_string_append(responseBody, LoopEntryList);
+	ov_string_append(&response->contentString, LoopEntryList);
 
 	ov_memstack_unlock();
 	EXEC_GETVAR_RETURN lasterror;

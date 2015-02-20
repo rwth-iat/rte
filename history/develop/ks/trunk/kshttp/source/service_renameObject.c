@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -45,11 +45,11 @@
 
 /**
  * extracts the command for the renaming and let do ks_server_rename the job
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_renameObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -69,32 +69,32 @@ OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* res
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "path", &match);
+	kshttp_find_arguments(&request.urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable path not found");
 		EXEC_RENAMEOBJECT_RETURN fr; //400
 	}
 	//process factory
 	Ov_SetDynamicVectorLength(&newnamematch,0,STRING);
-	kshttp_find_arguments(urlQuery, "newname", &newnamematch);
+	kshttp_find_arguments(&request.urlQuery, "newname", &newnamematch);
 	if(newnamematch.veclen < match.veclen){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables newname found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": not enough Variables newname found");
 		EXEC_RENAMEOBJECT_RETURN fr; //400
 	}
 	//process Placement hint
 	Ov_SetDynamicVectorLength(&pmhmatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "placementHint", &pmhmatch);
+	kshttp_find_arguments(&request.urlQuery, "placementHint", &pmhmatch);
 	Ov_SetDynamicVectorLength(&pmhpathmatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "placePath", &pmhpathmatch);
+	kshttp_find_arguments(&request.urlQuery, "placePath", &pmhpathmatch);
 
 	ov_memstack_lock();
 	addrp = (OV_RENAMEOBJECT_ITEM*)ov_memstack_alloc(match.veclen*sizeof(OV_RENAMEOBJECT_ITEM));
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
 		EXEC_RENAMEOBJECT_RETURN fr;
 	}
 
@@ -144,13 +144,13 @@ OV_RESULT kshttp_exec_renameObject(const OV_STRING_VEC* urlQuery, OV_STRING* res
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_RENAMEOBJECT_RETURN result.result;
 	}
-	fr = kshttp_print_result_array(responseBody, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(&response->contentString, request.response_format, result.results_val, result.results_len, "");
 
 	ov_memstack_unlock();
-	ov_string_append(responseBody, temp);
+	ov_string_append(&response->contentString, temp);
 	EXEC_RENAMEOBJECT_RETURN fr;
 }

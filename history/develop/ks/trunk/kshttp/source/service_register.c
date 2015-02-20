@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -47,11 +47,11 @@
  * Syntax: /register?name=dieter&port=7510&ksversion=2
  *
  * extracts the command for the register and process
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_register(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_register(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -65,31 +65,31 @@ OV_RESULT kshttp_exec_register(const OV_STRING_VEC* urlQuery, OV_STRING* respons
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "name", &match);
+	kshttp_find_arguments(&request.urlQuery, "name", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable name not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable name not found");
 		EXEC_REGISTER_RETURN fr; //400
 	}else if(!ks_isvalidname(match.value[0])){
 		fr = OV_ERR_BADNAME;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Server name not valid");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Server name not valid");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
 		ov_string_setvalue(&servername, match.value[0]);
 	}
 	//process serverport
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "port", &match);
+	kshttp_find_arguments(&request.urlQuery, "port", &match);
 	if(match.veclen<1 || match.value[0] == NULL){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable port not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable port not found");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
 		serverport = atoi(match.value[0]);
 	}
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "version", &match);
+	kshttp_find_arguments(&request.urlQuery, "version", &match);
 	if(match.veclen<1 || match.value[0] == NULL){
 		serverversion = 2;
 	}else{
@@ -99,14 +99,14 @@ OV_RESULT kshttp_exec_register(const OV_STRING_VEC* urlQuery, OV_STRING* respons
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
 	if(!pManager){
 		fr = KS_ERR_NOMANAGER;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": received Manager command but no Manager here");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": received Manager command but no Manager here");
 		EXEC_REGISTER_RETURN fr;
 	}
 
 	ov_string_print(&portstr, "%lu", serverport);
 	fr = ksbase_Manager_register(servername, serverversion, KSHTTP_IDENTIFIER, portstr, 30);
 	if(Ov_Fail(fr)){
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": could not register server at manager.");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": could not register server at manager.");
 		EXEC_REGISTER_RETURN fr;
 	}
 	EXEC_REGISTER_RETURN OV_ERR_OK;

@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -55,11 +55,11 @@
  *
  *
  * extracts the command for the linking and let do ks_server_link the job
- * @param urlQuery arguments of the http get request
- * @param responseBody pointer to the result string
+ * @param request
+ * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_link(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
@@ -81,18 +81,18 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBod
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
-	kshttp_find_arguments(urlQuery, "path", &match);
+	kshttp_find_arguments(&request.urlQuery, "path", &match);
 	if(match.veclen<1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Variable path not found");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable path not found");
 		EXEC_LINK_RETURN fr; //400
 	}
 	//process element
 	Ov_SetDynamicVectorLength(&elementmatch,0,STRING);
-	kshttp_find_arguments(urlQuery, "element", &elementmatch);
+	kshttp_find_arguments(&request.urlQuery, "element", &elementmatch);
 	if(elementmatch.veclen < match.veclen){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": not enough Variables element found: ");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": not enough Variables element found: ");
 		EXEC_LINK_RETURN fr; //400
 	}
 
@@ -102,7 +102,7 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBod
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
 		EXEC_LINK_RETURN fr;
 
 	}
@@ -110,10 +110,10 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBod
 	params.items_val = addrp;
 	params.items_len = match.veclen;
 
-	kshttp_find_arguments(urlQuery, "placementHint", &placehintmatch);
-	kshttp_find_arguments(urlQuery, "placePath", &placepathmatch);
-	kshttp_find_arguments(urlQuery, "oppositePlacementHint", &oppositeplacehintmatch);
-	kshttp_find_arguments(urlQuery, "oppositePlacePath", &oppositeplacepathmatch);
+	kshttp_find_arguments(&request.urlQuery, "placementHint", &placehintmatch);
+	kshttp_find_arguments(&request.urlQuery, "placePath", &placepathmatch);
+	kshttp_find_arguments(&request.urlQuery, "oppositePlacementHint", &oppositeplacehintmatch);
+	kshttp_find_arguments(&request.urlQuery, "oppositePlacePath", &oppositeplacepathmatch);
 
 	//process multiple path requests at once
 	for(i=0;i<match.veclen;i++){
@@ -183,12 +183,12 @@ OV_RESULT kshttp_exec_link(const OV_STRING_VEC* urlQuery, OV_STRING* responseBod
 	 */
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_LINK_RETURN result.result;
 	}
 
-	fr = kshttp_print_result_array(responseBody, response_format, result.results_val, result.results_len, "");
+	fr = kshttp_print_result_array(&response->contentString, request.response_format, result.results_val, result.results_len, "");
 	ov_memstack_unlock();
 	EXEC_LINK_RETURN fr;
 }

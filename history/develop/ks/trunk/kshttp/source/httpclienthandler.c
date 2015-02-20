@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -45,46 +45,6 @@
 	#include "gzip.h"
 #endif
 
-/*** TEMP ***/
-OV_DLLFNCEXPORT OV_BOOL kshttp_httpclienthandler_stream_get(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj
-) {
-	return pobj->v_stream;
-}
-
-OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_stream_set(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj,
-		const OV_BOOL  value
-) {
-	pobj->v_stream = value;
-	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_STRING kshttp_httpclienthandler_streamrequestheader_get(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj
-) {
-	return pobj->v_streamrequestheader;
-}
-
-OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streamrequestheader_set(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj,
-		const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_streamrequestheader,value);
-}
-
-OV_DLLFNCEXPORT OV_STRING kshttp_httpclienthandler_streambuffer_get(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj
-) {
-	return pobj->v_streambuffer;
-}
-
-OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_streambuffer_set(
-		OV_INSTPTR_kshttp_httpclienthandler          pobj,
-		const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_streambuffer,value);
-}
 
 /**
  * Builds header for http communication from OV_RESULT
@@ -347,6 +307,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_analyzeRequestBody(
 	}
 	this->v_CommunicationStatus = KSHTTP_CS_REQUESTPARSED;
 
+	// the http-part of the message is valid --> we received a service-request --> increment receivedcalls
+	this->v_receivedCalls++;
+
 	//empty the buffers
 	ksbase_free_KSDATAPACKET(&pChannel->v_inData);
 
@@ -365,6 +328,8 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 	OV_INSTPTR_kshttp_httpClientHandlerExtension pExtension = NULL;
 	OV_VTBLPTR_kshttp_httpClientHandlerExtension pVtblClientHandlerExtension = NULL;
 	OV_INSTPTR_ov_class pExtensionClass = NULL;
+	OV_INSTPTR_kshttp_getvarpushhandler pPushhandler = NULL;
+	OV_STRING tempname = NULL;
 	OV_BOOL extclientfound = FALSE;
 	OV_UINT iterator;
 	OV_STRING_VEC match = {0,NULL};
@@ -431,7 +396,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				kshttp_print_result_array(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, &result, 1, ": Registering remote is not allowed/useful");
 			}else{
 				//name, port, ksversion
-				result = kshttp_exec_register(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+				result = kshttp_exec_register(this->v_ClientRequest, &this->v_ServerResponse);
 			}
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "register");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_REGISTER;
@@ -442,94 +407,104 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				result = KS_ERR_NOREMOTE;
 				kshttp_print_result_array(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, &result, 1, ": Registering remote is not allowed/useful");
 			}else{
-				result = kshttp_exec_unregister(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+				result = kshttp_exec_unregister(this->v_ClientRequest, &this->v_ServerResponse);
 			}
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unregister");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_UNREGISTER;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getVar") == OV_STRCMP_EQUAL){
 			//http GET
-			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getvar");
-			result = kshttp_exec_getvar(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
-			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getvar");
-			//stream required?
+			//server push requested?
 			kshttp_find_arguments(&this->v_ClientRequest.urlQuery, "stream", &match);
-			if(match.veclen>0){
-				result = OV_ERR_NOTIMPLEMENTED;
-				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
-			}else if(FALSE){
-				//disabled, because we are not called cyclic
+			if(match.veclen == 0){
+				kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getvar");
+				result = kshttp_exec_getvar(this->v_ClientRequest, &this->v_ServerResponse);
+				kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getvar");
 
-				//yes
+				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
+			}else{
+				//make a new push handler. This handler will send the header and hand the further connection over
+				ov_string_print(&tempname, "Event_%s", this->v_identifier);
+				result = Ov_CreateObject(kshttp_getvarpushhandler, pPushhandler, Ov_GetParent(ov_containment, this), tempname);
+				ov_string_setvalue(&tempname, NULL);
+				if(Ov_Fail(result)){
+					result = OV_ERR_TARGETGENERIC;
+				}
+				//call every second
+				ksbase_ComTask_cycInterval_set(Ov_PtrUpCast(ksbase_ComTask, pPushhandler), 1000);
+
+				//configure the pushhandler
+				pPushhandler->v_actimode = 1;
+				pPushhandler->v_responseformat = this->v_ClientRequest.response_format;
+				Ov_SetDynamicVectorValue(&pPushhandler->v_urlQuery, this->v_ClientRequest.urlQuery.value, this->v_ClientRequest.urlQuery.veclen, STRING);
+
+				//move assoc to the new object
+				Ov_Unlink(ksbase_AssocChannelClientHandler, pChannel, this);
+				result = Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pPushhandler);
+				if(Ov_Fail(result)){
+					KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pPushhandler->v_identifier, pchannel->v_identifier));
+					return result;
+				}
+
+				//configure our handler to send the header and delete itself after that
 				ov_string_setvalue(&this->v_ServerResponse.contentType, "text/event-stream");
-				//first time?
-				if(!this->v_stream){
-					//backup the header
-					ov_string_setvalue(&this->v_streamrequestheader, this->v_ClientRequest.requestHeader);
-				}
-				//is cache updated?
-				if(ov_string_compare(this->v_ServerResponse.contentString, this->v_streambuffer) != OV_STRCMP_EQUAL){
-					//ov_logfile_debug("upd %s %s", body, this->v_streambuffer);
-					//yes
-					ov_string_setvalue(&this->v_streambuffer, this->v_ServerResponse.contentString);
-					ov_string_print(&this->v_ServerResponse.contentString, "data: %s\r\n\r\n", this->v_streambuffer);
-				}else{
-					//no - set body to null
-					ov_string_setvalue(&this->v_ServerResponse.contentString, NULL);
-				}
-				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVARSTREAM;
+				//send a comment that we will deliver results soon
+				ov_string_setvalue(&this->v_ServerResponse.contentString, ": getvar push started\r\n");
+				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVARPUSH;
+
 				//deactivate compression if push is used
 				this->v_ClientRequest.compressionGzip = FALSE;
-			}else{
-				//no
-				this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETVAR;
+				//prevent closing the connection
+				this->v_ClientRequest.keepAlive = TRUE;
+				//The spec of Server-Sent Events says: "Event streams are always decoded as UTF-8. There is no way to specify another character encoding." So we have to lie here 8-/
+				ov_string_setvalue(&this->v_ServerResponse.contentEncoding, "utf-8");
 			}
 			Ov_SetDynamicVectorLength(&match,0,STRING);
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/setVar") == OV_STRCMP_EQUAL){
 			//http PUT, used in OData or PROPPATCH, used in WebDAV
 			//add Access-Control-Allow-Methods to OPTIONS if implement other Methods
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "setvar");
-			result = kshttp_exec_setvar(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_setvar(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "setvar");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_SETVAR;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getEP") == OV_STRCMP_EQUAL){
 			//http PROPFIND, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getep");
-			result = kshttp_exec_getep(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_getep(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "getep");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETEP;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/createObject") == OV_STRCMP_EQUAL){
 			//http PUT, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "createobject");
-			result = kshttp_exec_createObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_createObject(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "createobject");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_CREATEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/deleteObject") == OV_STRCMP_EQUAL){
 			//http DELETE, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "deleteobject");
-			result = kshttp_exec_deleteObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_deleteObject(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "deleteobject");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_DELETEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/renameObject") == OV_STRCMP_EQUAL){
 			//http MOVE, used in WebDAV
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "renameobject");
-			result = kshttp_exec_renameObject(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_renameObject(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "renameobject");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_RENAMEOBJECT;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/link") == OV_STRCMP_EQUAL){
 			//http LINK
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "link");
-			result = kshttp_exec_link(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_link(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "link");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_LINK;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/unlink") == OV_STRCMP_EQUAL){
 			//http UNLINK
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unlink");
-			result = kshttp_exec_unlink(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_unlink(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "unlink");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_UNLINK;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/getLogfile") == OV_STRCMP_EQUAL){
 			kshttp_printresponseheader(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "logfile");
-			result = kshttp_exec_getlogfile(&this->v_ClientRequest.urlQuery, &this->v_ServerResponse.contentString, this->v_ClientRequest.response_format);
+			result = kshttp_exec_getlogfile(this->v_ClientRequest, &this->v_ServerResponse);
 			kshttp_printresponsefooter(&this->v_ServerResponse.contentString, this->v_ClientRequest.response_format, "logfile");
 			this->v_ServerResponse.requestHandledBy = KSHTTP_RGB_GETLOGFILE;
 		}else if(ov_string_compare(this->v_ClientRequest.urlPath, "/auth") == OV_STRCMP_EQUAL){
@@ -779,13 +754,11 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpHeader(
 		return OV_ERR_OK;
 	}
 
-	//send header only if not in stream mode
-	if(this->v_ServerResponse.requestHandledBy != KSHTTP_RGB_GETVARSTREAM){
-		KS_logfile_debug(("httpclienthandler: sending header: %" OV_PRINT_INT " bytes", ov_string_getlength(this->v_ServerResponse.header)));
-		ksbase_KSDATAPACKET_append(&pChannel->v_outData, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
-		//note: this does not send the request
-		ov_string_setvalue(&this->v_ServerResponse.header, NULL);
-	}
+	KS_logfile_debug(("httpclienthandler: sending header: %" OV_PRINT_INT " bytes", ov_string_getlength(this->v_ServerResponse.header)));
+	ksbase_KSDATAPACKET_append(&pChannel->v_outData, (OV_BYTE*)this->v_ServerResponse.header, ov_string_getlength(this->v_ServerResponse.header));
+	//note: this does not send the request
+
+	ov_string_setvalue(&this->v_ServerResponse.header, NULL);
 
 	this->v_CommunicationStatus = KSHTTP_CS_RESPONSEHEADERSEND;
 	return OV_ERR_OK;
@@ -798,13 +771,6 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	OV_INSTPTR_kshttp_httpclienthandler this,
 	OV_INSTPTR_ksbase_Channel pChannel
 ){
-	//are we starting a stream?
-	if(this->v_stream == FALSE && this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_GETVARSTREAM){
-		this->v_stream = TRUE;
-		//speed the processing time down to 5ms
-		this->v_cycInterval = 5;
-	}
-
 	//in case of a HEAD request there is no need to send the body
 	if(this->v_ServerResponse.contentLength > 0){
 		KS_logfile_debug(("httpclienthandler: sending body: %" OV_PRINT_INT " bytes", this->v_ServerResponse.contentLength));
@@ -819,8 +785,11 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 	Ov_DbFree(this->v_ServerResponse.contentBinary);
 	this->v_ServerResponse.contentBinary = NULL;
 
-	//shutdown tcp connection if no keep_alive was set
-	if (this->v_ClientRequest.keepAlive == TRUE) {
+	if(this->v_ServerResponse.requestHandledBy == KSHTTP_RGB_GETVARPUSH){
+		//further communication is moved to the push object
+		pChannel->v_CloseAfterSend = FALSE;
+		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
+	}else if (this->v_ClientRequest.keepAlive == TRUE) {
 		pChannel->v_CloseAfterSend = FALSE;
 		this->v_CommunicationStatus = KSHTTP_CS_INITIAL;
 	}else{
@@ -828,6 +797,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_sendHttpBody(
 		pChannel->v_CloseAfterSend = TRUE;
 		this->v_CommunicationStatus = KSHTTP_CS_SHUTDOWN;
 	}
+
 	return OV_ERR_OK;
 }
 

@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -69,9 +69,6 @@ LIBRARY kshttp
 	IS_INSTANTIABLE;
 	COMMENT	=	"Handler for HTTP-ks clients. Processes incoming HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
 	VARIABLES
-		stream : BOOL HAS_ACCESSORS INITIALVALUE = FALSE; //are we in a stram mode
-		streamrequestheader : STRING HAS_ACCESSORS INITIALVALUE = ""; //stream variable path
-		streambuffer : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
 		ClientRequest :	C_TYPE	<KSHTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
 		ServerResponse :	C_TYPE	<KSHTTP_RESPONSE> COMMENT	=	"Structured Data for the HTTP response.";
 		CommunicationStatus : C_TYPE <KSHTTP_COMMUNICATIONSTATUS>;
@@ -102,6 +99,23 @@ LIBRARY kshttp
 	END_CLASS;
 	
 	/**
+		handles a Server-sent events (SSE)
+	*/
+	CLASS getvarpushhandler : CLASS ksbase/ClientHandler
+		IS_INSTANTIABLE;
+		COMMENT	=	"Handler for getvar push via Server-sent events (SSE).";
+		VARIABLES
+			responseformat : INT; //no accessors and no getaccess so invisible via KS
+			urlQuery[] : STRING HAS_ACCESSORS ;
+			responseSent : STRING HAS_ACCESSORS INITIALVALUE = ""; //streambuffer
+		END_VARIABLES;
+		OPERATIONS
+			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+			typemethod		:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+		END_OPERATIONS;	
+	END_CLASS;
+	
+	/**
  	*	Baseclass for clientHandler Extensions belonging to the kshttp protocol
  	*	if the http clientHandler instance cannot handle a requested operation (determined by the http urlpath)
  	*	it will iterate over all instances of this class and check if the urlpath is listed in the commandList
@@ -111,7 +125,7 @@ LIBRARY kshttp
  	CLASS	httpClientHandlerExtension			:	CLASS ksbase/baseClientHandlerExtension
 		COMMENT	=	"Baseclass for client handler extensions for the kshttp protocol";
 		VARIABLES
-			commandList []	:	STRING
+			commandList[]	:	STRING
 				COMMENT	=	"Array of commands this extension can handle for example '/getHist' or '/callservice' (wildcards '?' single char, '*' multiple chars are possible";
 		END_VARIABLES;
 		OPERATIONS

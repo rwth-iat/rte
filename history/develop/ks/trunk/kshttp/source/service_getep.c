@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2014
+ *	Copyright (C) 2015
  *	Chair of Process Control Engineering,
  *	Aachen University of Technology.
  *	All rights reserved.
@@ -42,11 +42,9 @@
 /**
  * Appends a text info to a string, if ksx is requested skipping a prefix and lowercased
  * a "_" is skipped if ksx
- * @param resultstr Pointer to a string to append
- * @param prefix String, for example KS_VT
- * @param value String, for example BOOL
- * @param response_format UINT format descriptor
- * @return
+ * @param request
+ * @param pointer to the response
+ * @return resultcode of the operation
  */
 static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const prefix, OV_STRING value, const KSHTTP_RESPONSEFORMAT response_format){
 	OV_STRING changedValue = NULL;
@@ -121,7 +119,7 @@ static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const KSHTT
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBody, const KSHTTP_RESPONSEFORMAT response_format){
+OV_RESULT kshttp_exec_getep(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;
@@ -154,22 +152,22 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 	 * Build Parameter for KS function
 	 */
 	//process path
-	kshttp_find_arguments(urlQuery, "path", &match);
+	kshttp_find_arguments(&request.urlQuery, "path", &match);
 	if(match.veclen!=1){
 		fr = OV_ERR_BADPARAM;
-		kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Path not found or multiple path given");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Path not found or multiple path given");
 		EXEC_GETEP_RETURN fr; //400
 	}
 
 	ov_string_setvalue(&params.path, match.value[0]);
 
-	kshttp_find_arguments(urlQuery, "nameMask", &match);
+	kshttp_find_arguments(&request.urlQuery, "nameMask", &match);
 	if(match.veclen > 0){
 		ov_string_setvalue(&params.name_mask, match.value[0]);
 	}else{
 		ov_string_setvalue(&params.name_mask, "*");
 	}
-	kshttp_find_arguments(urlQuery, "scopeFlags", &match);
+	kshttp_find_arguments(&request.urlQuery, "scopeFlags", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "parts") == OV_STRCMP_EQUAL){
 			params.scope_flags = KS_EPF_PARTS;
@@ -185,7 +183,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 		params.scope_flags = KS_EPF_DEFAULT;
 	}
 
-	kshttp_find_arguments(urlQuery, "requestType", &match);
+	kshttp_find_arguments(&request.urlQuery, "requestType", &match);
 	if(match.veclen == 1){
 		if(ov_string_compare(match.value[0], "OT_DOMAIN") == OV_STRCMP_EQUAL){
 			params.type_mask = KS_OT_DOMAIN;
@@ -197,7 +195,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 			params.type_mask = KS_OT_ANY;
 		}else{
 			fr = OV_ERR_BADPARAM;
-			kshttp_print_result_array(responseBody, response_format, &fr, 1, ": Requesttype not supported");
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Requesttype not supported");
 			EXEC_GETEP_RETURN fr; //400
 		}
 	}else{
@@ -205,8 +203,8 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 		params.type_mask = KS_OT_DOMAIN;
 	}
 
-	kshttp_find_arguments(urlQuery, "requestOutput", &match);
-	if(response_format == KSX || response_format == JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+	kshttp_find_arguments(&request.urlQuery, "requestOutput", &match);
+	if(request.response_format == KSX || request.response_format == JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
 	}else{
@@ -250,7 +248,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 
 	if(Ov_Fail(result.result)){
 		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(responseBody, response_format, &result.result, 1, ": general problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
 		ov_memstack_unlock();
 		EXEC_GETEP_RETURN result.result;
 	}
@@ -259,199 +257,199 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 	while(one_result != NULL){
 		//open Child item level
 		if(result.pfirst != one_result){
-			kshttp_response_parts_seperate(&temp, response_format);
+			kshttp_response_parts_seperate(&temp, request.response_format);
 		}
 		//change target output
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			kshttp_response_part_begin(&temp, response_format, "DomainEngProps");
+			kshttp_response_part_begin(&temp, request.response_format, "DomainEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultDomain, 7, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			kshttp_response_part_begin(&temp, response_format, "VariableEngProps");
+			kshttp_response_part_begin(&temp, request.response_format, "VariableEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultVariable, 8, UINT);
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			kshttp_response_part_begin(&temp, response_format, "LinkEngProps");
+			kshttp_response_part_begin(&temp, request.response_format, "LinkEngProps");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, requestOutputDefaultLink, 9, UINT);
 		}else if(anyRequested) {
-			kshttp_response_part_begin(&temp, response_format, "HistoryAndStructureUnsupported");
+			kshttp_response_part_begin(&temp, request.response_format, "HistoryAndStructureUnsupported");
 			fr = Ov_SetDynamicVectorValue(&requestOutput, NULL, 0, UINT);
 		}else{
-			kshttp_response_part_begin(&temp, response_format, "dummy");
+			kshttp_response_part_begin(&temp, request.response_format, "dummy");
 		}
 		if(Ov_Fail(fr)) {
 			//should not happen with an UINT
-			ov_string_append(responseBody, "internal memory problem");
+			ov_string_append(&response->contentString, "internal memory problem");
 			fr = OV_ERR_GENERIC;
-			kshttp_print_result_array(&message, response_format, &fr, 1, ": memory problem");
+			kshttp_print_result_array(&message, request.response_format, &fr, 1, ": memory problem");
 			EXEC_GETEP_RETURN fr; //404
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
-					(response_format == KSX || response_format == JSON))){
+					(request.response_format == KSX || request.response_format == JSON))){
 				//OP_TYPE is not displayed in ksx and json, so skip the seperator here
-				kshttp_response_parts_seperate(&temp, response_format);
+				kshttp_response_parts_seperate(&temp, request.response_format);
 			}
-			if(requestOutput.veclen > 1 && response_format==TCL){
+			if(requestOutput.veclen > 1 && request.response_format==TCL){
 				//open request item level, if we have more than one entry (OP_NAME and OP_CREATIONTIME for example)
 				//ksx returns always everything
-				//kshttp_response_part_begin(&temp, response_format, "dummy");
+				//kshttp_response_part_begin(&temp, request.response_format, "dummy");
 			}
 
 			//######################### iterate over response ###############
 			switch(requestOutput.value[i]){
 			case OP_NAME:
-				getEP_begin_RequestOutputPart(&temp, response_format, "identifier");
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "identifier");
 				ov_string_append(&temp, one_result->identifier);
-				getEP_finalize_RequestOutputPart(&temp, response_format, "identifier");
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
-				if(response_format == TCL){
+				if(request.response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
 						ov_string_append(&temp, "{");
 					}
 				}
-				getEP_begin_RequestOutputPart(&temp, response_format, "creationtime");
-				kshttp_timetoascii(&temp2, &(one_result->creation_time), response_format);
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "creationtime");
+				kshttp_timetoascii(&temp2, &(one_result->creation_time), request.response_format);
 				ov_string_append(&temp, temp2);
 				ov_string_setvalue(&temp2, NULL);
 
-				getEP_finalize_RequestOutputPart(&temp, response_format, "creationtime");
-				if(response_format == TCL){
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "creationtime");
+				if(request.response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_CLASS:
 				if(one_result->objtype & KS_OT_DOMAIN) {
-					getEP_begin_RequestOutputPart(&temp, response_format, "classIdentifier");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "classIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.domain_engineered_props.class_identifier);
-					getEP_finalize_RequestOutputPart(&temp, response_format, "classIdentifier");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "classIdentifier");
 				}else if(one_result->objtype & KS_OT_VARIABLE){
-					getEP_begin_RequestOutputPart(&temp, response_format, "type");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.vartype) {
 						case KS_VT_VOID:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "VOID", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "VOID", request.response_format);
 							break;
 						case KS_VT_BOOL:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "BOOL", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "BOOL", request.response_format);
 							break;
 						case KS_VT_INT:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "INT", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "INT", request.response_format);
 							break;
 						case KS_VT_UINT:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "UINT", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "UINT", request.response_format);
 							break;
 						case KS_VT_SINGLE:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "SINGLE", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "SINGLE", request.response_format);
 							break;
 						case KS_VT_DOUBLE:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "DOUBLE", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "DOUBLE", request.response_format);
 							break;
 						case KS_VT_STRING:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRING", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRING", request.response_format);
 							break;
 						case KS_VT_TIME:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME", request.response_format);
 							break;
 						case KS_VT_TIME_SPAN:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_SPAN", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_SPAN", request.response_format);
 							break;
 						case KS_VT_STATE:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "STATE", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "STATE", request.response_format);
 							break;
 						case KS_VT_STRUCT:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRUCT", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRUCT", request.response_format);
 							break;
 
 						case KS_VT_BYTE_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "BYTE_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "BYTE_VEC", request.response_format);
 							break;
 						case KS_VT_BOOL_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "BOOL_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "BOOL_VEC", request.response_format);
 							break;
 						case KS_VT_INT_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "INT_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "INT_VEC", request.response_format);
 							break;
 						case KS_VT_UINT_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "UINT_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "UINT_VEC", request.response_format);
 							break;
 						case KS_VT_SINGLE_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "SINGLE_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "SINGLE_VEC", request.response_format);
 							break;
 						case KS_VT_DOUBLE_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "DOUBLE_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "DOUBLE_VEC", request.response_format);
 							break;
 						case KS_VT_STRING_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRING_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "STRING_VEC", request.response_format);
 							break;
 						case KS_VT_TIME_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_VEC", request.response_format);
 							break;
 						case KS_VT_TIME_SPAN_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_SPAN_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "TIME_SPAN_VEC", request.response_format);
 							break;
 						case KS_VT_STATE_VEC:
-							getEP_print_KSmakrovalue(&temp, "KS_VT", "STATE_VEC", response_format);
+							getEP_print_KSmakrovalue(&temp, "KS_VT", "STATE_VEC", request.response_format);
 							break;
 						default:
 							ov_string_append(&temp, "unknown");
 							break;
 					}
-					getEP_finalize_RequestOutputPart(&temp, response_format, "type");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "type");
 				}else if(one_result->objtype & KS_OT_LINK){
-					getEP_begin_RequestOutputPart(&temp, response_format, "type");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "type");
 					switch (one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.linktype) {
 						case KS_LT_LOCAL_1_1:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "local-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_1");
 							}
 							break;
 						case KS_LT_LOCAL_1_MANY:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "local-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_1_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_MANY:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "local-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_LOCAL_MANY_1:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "local-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_LOCAL_MANY_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_1:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "global-1-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_1");
 							}
 							break;
 						case KS_LT_GLOBAL_1_MANY:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "global-1-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_1_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_MANY:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "global-m-m");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_MANY");
 							}
 							break;
 						case KS_LT_GLOBAL_MANY_1:
-							if(response_format == KSX){
+							if(request.response_format == KSX){
 								ov_string_append(&temp, "global-m-1");
 							}else{
 								ov_string_append(&temp, "KS_LT_GLOBAL_MANY_1");
@@ -462,12 +460,12 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 							ov_string_append(&temp, "unknown");
 							break;
 					}
-					getEP_finalize_RequestOutputPart(&temp, response_format, "type");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "type");
 				}
 				break;
 			case OP_TYPE:
 				//ksx has this information in the surrounding XML element
-				if(response_format != KSX && response_format != JSON){
+				if(request.response_format != KSX && request.response_format != JSON){
 					if(one_result->objtype == KS_OT_DOMAIN){
 						ov_string_append(&temp, "KS_OT_DOMAIN");
 					}else if(one_result->objtype == KS_OT_VARIABLE){
@@ -482,165 +480,165 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 				}
 				break;
 			case OP_COMMENT:
-				if(response_format == TCL){
+				if(request.response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
 						ov_string_append(&temp, "{");
 					}
 				}
-				getEP_begin_RequestOutputPart(&temp, response_format, "comment");
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "comment");
 				if(ov_string_getlength(one_result->comment) < KS_COMMENT_MAXLEN){
-					kshttp_escapeString(&temp2, &(one_result->comment), response_format);
+					kshttp_escapeString(&temp2, &(one_result->comment), request.response_format);
 					ov_string_append(&temp, temp2);
 					ov_string_setvalue(&temp2, NULL);
 				}
-				getEP_finalize_RequestOutputPart(&temp, response_format, "comment");
-				if(response_format == TCL){
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "comment");
+				if(request.response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_ACCESS:
-				if(response_format == TCL){
+				if(request.response_format == TCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
 						ov_string_append(&temp, "{");
 					}
 				}
-				getEP_begin_RequestOutputPart(&temp, response_format, "access");
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "access");
 				EntryFound = FALSE;
 				if(one_result->access & KS_AC_NONE){
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "NONE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "NONE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_READ){	//would be R in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "READ", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "READ", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_WRITE){	//would be W in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "WRITE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "WRITE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_INSTANTIABLE){	//would be I in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "INSTANTIABLE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "INSTANTIABLE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_PART){	//would be P in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "PART", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "PART", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_DELETEABLE){	//would be D in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "DELETEABLE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "DELETEABLE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_RENAMEABLE){	//would be N in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "RENAMEABLE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "RENAMEABLE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_LINKABLE){	//would be L in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "LINKABLE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "LINKABLE", request.response_format);
 					EntryFound = TRUE;
 				}
 				if(one_result->access & KS_AC_UNLINKABLE){	//would be U in Magellan
 					if(EntryFound == TRUE){
 						ov_string_append(&temp, " ");
 					}
-					getEP_print_KSmakrovalue(&temp, "KS_AC", "UNLINKABLE", response_format);
+					getEP_print_KSmakrovalue(&temp, "KS_AC", "UNLINKABLE", request.response_format);
 					EntryFound = TRUE;
 				}
-				getEP_finalize_RequestOutputPart(&temp, response_format, "access");
-				if(response_format == TCL){
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "access");
+				if(request.response_format == TCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_SEMANTIC:
-				getEP_begin_RequestOutputPart(&temp, response_format, "semantics");
-				if(response_format == KSX){
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "semantics");
+				if(request.response_format == KSX){
 					//could add a char info, as an additional xml element
 					ov_string_print(&temp, "%s%i", temp, one_result->semantic_flags);
 				}else{
 					//semantic_flags is a u_long (32 bit) aka UINT, but a unsigned char for flagiterator is nicer in the debugger
-					//and save enough, as we iterate only to 129
+					//and safe enough, as we iterate only to 129
 					for (flagiterator = 'a';flagiterator < 'a'+32;flagiterator++){
 						if(IsFlagSet(one_result->semantic_flags, flagiterator)){
 							ov_string_print(&temp, "%s%c", temp, flagiterator);
 						}
 					}
 				}
-				getEP_finalize_RequestOutputPart(&temp, response_format, "semantics");
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "semantics");
 				break;
 			case OP_TECHUNIT:
 				if(one_result->objtype & KS_OT_VARIABLE) {
-					getEP_begin_RequestOutputPart(&temp, response_format, "techunit");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "techunit");
 					if(ov_string_getlength(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit) < KS_TECHUNIT_MAXLEN){
-						kshttp_escapeString(&temp2, &(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit), response_format);
+						kshttp_escapeString(&temp2, &(one_result->OV_OBJ_ENGINEERED_PROPS_u.var_engineered_props.tech_unit), request.response_format);
 						ov_string_append(&temp, temp2);
 						ov_string_setvalue(&temp2, NULL);
 					}
-					getEP_finalize_RequestOutputPart(&temp, response_format, "techunit");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "techunit");
 				}
 				break;
 			case OP_ASSOCIDENT:
 				// as a view at an tasklist: could be /acplt/fb/tasklist
 				if(one_result->objtype & KS_OT_LINK) {
-					getEP_begin_RequestOutputPart(&temp, response_format, "associationIdentifier");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "associationIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.association_identifier);
-					getEP_finalize_RequestOutputPart(&temp, response_format, "associationIdentifier");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "associationIdentifier");
 				}
 				break;
 			case OP_ROLEIDENT:
 				// at a view at an tasklist on the LinkEngProps of the "taskparent": could be taskchild (not really needed on 1-m and m-1)
 				if(one_result->objtype & KS_OT_LINK) {
-					getEP_begin_RequestOutputPart(&temp, response_format, "oppositeRoleIdentifier");
+					getEP_begin_RequestOutputPart(&temp, request.response_format, "oppositeRoleIdentifier");
 					ov_string_append(&temp, one_result->OV_OBJ_ENGINEERED_PROPS_u.link_engineered_props.opposite_role_identifier);
-					getEP_finalize_RequestOutputPart(&temp, response_format, "oppositeRoleIdentifier");
+					getEP_finalize_RequestOutputPart(&temp, request.response_format, "oppositeRoleIdentifier");
 				}
 				break;
 			default:
-				getEP_begin_RequestOutputPart(&temp, response_format, "NOT_IMPLEMENTED");
+				getEP_begin_RequestOutputPart(&temp, request.response_format, "NOT_IMPLEMENTED");
 				ov_string_append(&temp, "NOT IMPLEMENTED");
 				fr = OV_ERR_NOTIMPLEMENTED;
-				getEP_finalize_RequestOutputPart(&temp, response_format, "NOT_IMPLEMENTED");
+				getEP_finalize_RequestOutputPart(&temp, request.response_format, "NOT_IMPLEMENTED");
 				break;
 			}
-			if(requestOutput.veclen > 1 && response_format==TCL){
+			if(requestOutput.veclen > 1 && request.response_format==TCL){
 				//close request item level, if we have more than one entry
-				//kshttp_response_part_finalize(&temp, response_format, "dummy");
+				//kshttp_response_part_finalize(&temp, request.response_format, "dummy");
 			}
 		}
 		//close Child item level
 		if(anyRequested && (one_result->objtype & KS_OT_DOMAIN)){
-			kshttp_response_part_finalize(&temp, response_format, "DomainEngProps");
+			kshttp_response_part_finalize(&temp, request.response_format, "DomainEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_VARIABLE)){
-			kshttp_response_part_finalize(&temp, response_format, "VariableEngProps");
+			kshttp_response_part_finalize(&temp, request.response_format, "VariableEngProps");
 		}else if(anyRequested && (one_result->objtype & KS_OT_LINK)){
-			kshttp_response_part_finalize(&temp, response_format, "LinkEngProps");
+			kshttp_response_part_finalize(&temp, request.response_format, "LinkEngProps");
 		}else if(anyRequested){
-			kshttp_response_part_finalize(&temp, response_format, "HistoryAndStructureUnsupported");
+			kshttp_response_part_finalize(&temp, request.response_format, "HistoryAndStructureUnsupported");
 		}else{
-			kshttp_response_part_finalize(&temp, response_format, "dummy");
+			kshttp_response_part_finalize(&temp, request.response_format, "dummy");
 		}
 
 		one_result = one_result->pnext;
@@ -651,7 +649,7 @@ OV_RESULT kshttp_exec_getep(const OV_STRING_VEC* urlQuery, OV_STRING* responseBo
 	ov_string_setvalue(&message, temp);
 	ov_string_setvalue(&temp, NULL);
 
-	ov_string_append(responseBody, message);
+	ov_string_append(&response->contentString, message);
 
 	EXEC_GETEP_RETURN fr;
 }
