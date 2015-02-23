@@ -656,6 +656,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 							}
 							break;
 						}
+					} else {
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
+						break;
 					}
 					break;
 				default:
@@ -751,6 +754,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 								break;
 							}
 						}
+					} else {
+						readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADTYPE);
+						break;
 					}
 					break;
 				default:
