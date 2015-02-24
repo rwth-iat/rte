@@ -48,22 +48,26 @@
 extern "C" {
 #endif
 
-/*
+/**
 *	Allocate memory on the heap
+*	you should use the macro Ov_HeapMalloc() in your code
+*
 */
 OV_DLLFNCEXPORT OV_POINTER ov_malloc(
 	OV_UINT		size
 );
 
-/*
+/**
 *	Free memory allocated in the heap
+*	you should use the macro Ov_HeapFree() in your code
 */
 OV_DLLFNCEXPORT void ov_free(
 	OV_POINTER	ptr
 );
 
-/*
+/**
 *	Reallocate memory on the heap
+*	you should use the macro Ov_HeapRealloc() in your code
 */
 OV_DLLFNCEXPORT OV_POINTER ov_realloc(
 	OV_POINTER	ptr,

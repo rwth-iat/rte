@@ -192,8 +192,9 @@ OV_BOOL ov_variable_canunload(
 	OV_INSTPTR_ov_variable		pvar
 );
 
-/*
+/**
 *	Set the value of an ANY variable
+*	You should use the macro Ov_SetAnyValue()
 */
 OV_DLLFNCEXPORT OV_RESULT ov_variable_setanyvalue(
 	OV_ANY			*pany,

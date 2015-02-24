@@ -44,8 +44,9 @@ extern "C" {
 #define	OV_VECCMP_MORE		1		/* s1 > s2 */
 #define	OV_VECCMP_LESS		-1		/* s1 < s2 */
 
-/*
+/**
 *	Set the value of a static vector variable
+*	you should use the macro Ov_SetStaticVectorValue() which is type safe and calculates the size for you
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vector_setstaticvalue(
 	OV_POINTER			pvector,
@@ -55,8 +56,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setstaticvalue(
 	const OV_VAR_TYPE	vartype
 );
 
-/*
+/**
 *	Set the value of a dynamic vector variable
+*	you can use the macro Ov_SetDynamicVectorValue() which is type safe and calculates the size for you
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 	OV_GENERIC_VEC		*pvector,
@@ -66,8 +68,14 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 	const OV_VAR_TYPE	vartype
 );
 
-/*
+/**
 *	Set the vector length of a dynamic vector variable value
+*	you should use the macro Ov_SetDynamicVectorLength() which is type safe and calculates the size for you
+*
+*	If the new veclen is bigger than the old values will survive.
+*	If the new veclen is smaller than part of the memory will be freed.
+*	If the new veclen is zero than all the memory will be freed.
+*
 */
 OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 	OV_GENERIC_VEC		*pvector,
@@ -76,8 +84,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 	const OV_VAR_TYPE	vartype
 );
 	
-/*
+/**
 *	Compare two vector variable values, result is greater than, equal to or less than zero
+*	you should use Ov_CompareVectorValues() in your code, as it calculates the size for you
 */
 OV_DLLFNCEXPORT OV_INT ov_vector_compare(
 	const OV_POINTER	pvalue1,

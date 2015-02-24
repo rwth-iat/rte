@@ -404,7 +404,8 @@ OV_DLLFNCEXPORT void ov_association_unload(
 /*
 *	Search for child with a given identifier in a 1:n association or
 *	NULL no child is found or the association is not namebinding.
-*	This generic function is not type safe. Whenever possible, use the macro Ov_SearchChild() instead!
+*	This generic function is not type safe.
+*	Whenever possible, use the macro Ov_SearchChild() or Ov_SearchChildEx() instead!
 */
 OV_DLLFNCEXPORT OV_INSTPTR_ov_object ov_association_searchchild(
 	const OV_INSTPTR_ov_association	passoc,

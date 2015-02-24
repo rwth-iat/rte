@@ -130,12 +130,14 @@
 
 /**
 *	Define an iterator for iterating over n:m associations
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_DefineIteratorNM(assoc, pit)										\
 	OV_NMLINK *(pit) = NULL
 
 /**
 *	Get first child in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetFirstChildNM(assoc, pit, pparent)								\
 	((OV_CPT_##assoc)(((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)((pparent)->v_linktable+passoc_##assoc->v_parentoffset \
@@ -144,6 +146,7 @@
 
 /**
 *	Get last child in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetLastChildNM(assoc, pit, pparent)								\
 	((OV_CPT_##assoc)(((pparent)?(((pparent)->v_linktable)?((pit)=((OV_NMHEAD*)((pparent)->v_linktable+passoc_##assoc->v_parentoffset \
@@ -152,6 +155,7 @@
 
 /**
 *	Get next child in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetNextChildNM(assoc, pit)										\
 	((OV_CPT_##assoc)((pit)?((pit)=(pit)->parent.pnext, (pit)?((pit)->child	\
@@ -159,6 +163,7 @@
 
 /**
 *	Get previous child in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetPreviousChildNM(assoc, pit)									\
 	((OV_CPT_##assoc)((pit)?((pit)=(pit)->parent.pprevious, (pit)?((pit)	\
@@ -166,6 +171,7 @@
 
 /**
 *	Get first parent in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetFirstParentNM(assoc, pit, pchild)								\
 	((OV_PPT_##assoc)(((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
@@ -174,6 +180,7 @@
 
 /**
 *	Get last parent in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetLastParentNM(assoc, pit, pchild)								\
 	((OV_PPT_##assoc)(((pchild)?(((pchild)->v_linktable)?((pit)=((OV_NMHEAD*)((pchild)->v_linktable+passoc_##assoc->v_childoffset \
@@ -182,6 +189,7 @@
 
 /**
 *	Get next parent in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetNextParentNM(assoc, pit)										\
 	((OV_PPT_##assoc)((pit)?((pit)=(pit)->child.pnext, (pit)?((pit)->parent	\
@@ -189,6 +197,7 @@
 
 /**
 *	Get previous parent in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_GetPreviousParentNM(assoc, pit)									\
 	((OV_PPT_##assoc)((pit)?((pit)=(pit)->child.pprevious, (pit)?((pit)		\
@@ -196,6 +205,7 @@
 
 /**
 *	Iterate over all child objects in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_ForEachChildNM(assoc, pit, pparent, pchild)						\
 	for(((pchild)=Ov_GetFirstChildNM(assoc, (pit), (pparent))); (pchild);	\
@@ -204,6 +214,7 @@
 /**
 *	Iterate over all child objects in an n:m association and dynamically
 *	cast to a given child class
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_ForEachChildNMEx(assoc, pit, pparent, pchild, childclass)		\
 	for(((pchild)=(OV_INSTPTR_##childclass)Ov_GetFirstChildNM(assoc, (pit),	\
@@ -213,6 +224,7 @@
 
 /**
 *	Iterate over all parent objects in an n:m association
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_ForEachParentNM(assoc, pit, pchild, pparent)						\
 	for(((pparent)=Ov_GetFirstParentNM(assoc, (pit), (pchild))); (pparent);	\
@@ -221,6 +233,7 @@
 /**
 *	Iterate over all parent objects in an n:m association and dynamically
 *	cast to a given parent class
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_ForEachParentNMEx(assoc, pit, pchild, pparent, parentclass)		\
 	for(((pparent)=(OV_INSTPTR_##parentclass)Ov_GetFirstParentNM(assoc,		\
@@ -258,13 +271,15 @@
 	(assoc, (pchild)))
 
 /**
-*	Link parent and child object, no placement hint (1:n or n:m association)
+*	Link parent and child object, no placement hint (n:m association)
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_LinkNM(assoc, pparent, pchild)									\
 	Ov_Link(assoc, (pparent), (pchild))
 
 /**
 *	Link parent and child object with given child placement hint (n:m association)
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_LinkPlacedNM(assoc, pparent, pchild, parenthint, childhint)		\
 	assoc##_link(Ov_ParentPtrUpCast(assoc, (pparent)), Ov_ChildPtrUpCast	\
@@ -272,6 +287,7 @@
 
 /**
 *	Link parent and child object with given relative placement hints (n:m association)
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_LinkRelativePlacedNM(assoc, pparent, pchild, parenthint,			\
 	prelparent, childhint, prelchild)	\
@@ -281,12 +297,13 @@
 
 /**
 *	Unlink parent and child object (1:n or n:m association)
+*	Caution: NM associations are deprecated by Prof Epple
 */
 #define Ov_UnlinkNM(assoc, pparent, pchild)									\
 	Ov_Unlink(assoc, (pparent), (pchild))
 
 /**
-*	Upcast to a pointer of a given base class (checks done at compiletime)
+*	Upcast to a pointer of a given base class (checks done at compile time)
 */
 #define Ov_PtrUpCast(class, pobj) 											\
 	((OV_INSTPTR_##class)((pobj)+(0*((pobj)->__classinfo.					\
@@ -422,8 +439,14 @@
 
 /**
 *	Set the vector length of a dynamic vector variable
+*	If the new veclen is bigger than the old values will survive.
+*	If the new veclen is smaller than part of the memory will be freed.
+*	If the new veclen is zero than all the memory will be freed.
+*
 *	for example:
 *	Ov_SetDynamicVectorLength(&pObj->v_myDynamicStringvec, 42, STRING);
+*	will free the memory:
+*	Ov_SetDynamicVectorLength(&pObj->v_myDynamicStringvec, 0, STRING);
 */
 #define Ov_SetDynamicVectorLength(pvector, veclen, type)					\
 	ov_vector_setdynamicveclen((OV_GENERIC_VEC*)(pvector), (veclen)			\
@@ -491,6 +514,11 @@
 #define Ov_DbMalloc(size)	ov_database_malloc(size)
 
 /**
+*	Reallocate memory in the database
+*/
+#define Ov_DbRealloc(ptr, size)	ov_database_realloc(ptr, size)
+
+/**
 *	Free memory allocated in the database
 */
 #define Ov_DbFree(ptr)		ov_database_free(ptr)
@@ -527,7 +555,7 @@
 #endif
 
 /**
-*	Rellocate memory on the heap
+*	Reallocate memory on the heap
 */
 #ifdef OV_COMPILE_LIBOV
 #if OV_SYSTEM_MC164

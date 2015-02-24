@@ -160,7 +160,7 @@ OV_BOOL ov_class_canunload(
 
 /**
 *	Test if a pointer to an instance of a class can be casted to another one
-*	if you want to test the object itself you can use the macro Ov_CanCastTo
+*	if you want to test the object itself you should use the macro Ov_CanCastTo()
 */
 OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	const OV_INSTPTR_ov_class	pclassfrom,
@@ -169,7 +169,7 @@ OV_DLLFNCEXPORT OV_BOOL ov_class_cancastto(
 	
 /**
 *	Create an instance of the class
-*	if the class is known to the library and you want default placing you should use the macro Ov_CreateObject
+*	if the class is known to the library and you want default placing you should use the macro Ov_CreateObject()
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	const OV_INSTPTR_ov_class	pclass,
@@ -184,6 +184,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 
 /**
 *	Create an instance of the class
+*	if the class is known to the library and you want default placing you should use the macro Ov_CreateIDedObject()
 *	the instances identifier will consist of 16 chars representing the instance's id in hex notation 
 *	and an optional given postfix
 *	this function wraps around ov_class_createobject
@@ -201,6 +202,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createIDedObject(
 
 /**
 *	Delete an instance of the class
+*	you should use Ov_DeleteObject() in your code
 */
 OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(
 	const OV_INSTPTR_ov_object	pobj

@@ -254,23 +254,26 @@ OV_DLLFNCEXPORT OV_RESULT ov_database_startup(void);
 */
 OV_DLLFNCEXPORT void ov_database_shutdown(void);
 
-/*
+/**
 *	Allocate memory in the database
+*	you should use the macro Ov_DbMalloc() in your code
 */
 OV_DLLFNCEXPORT OV_POINTER ov_database_malloc(
 	OV_UINT		size
 );
 
-/*
+/**
 *	Reallocate memory in the database
+*	you should use the macro Ov_DbRealloc() in your code
 */
 OV_DLLFNCEXPORT OV_POINTER ov_database_realloc(
 	OV_POINTER	ptr,
 	OV_UINT		size
 );
 
-/*
+/**
 *	Free memory in the database
+*	you should use the macro Ov_DbFree() in your code
 */
 OV_DLLFNCEXPORT void ov_database_free(
 	OV_POINTER	ptr
