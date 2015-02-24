@@ -436,7 +436,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 				|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 			if(pNode->elemtype == OV_ET_OBJECT){
 				linkElement.elemtype = OV_ET_NONE;
-				ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
+				ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
 				while(linkElement.elemtype != OV_ET_NONE){
 					if(flag == -2 || linkElement.elemunion.passoc == passoc){
 						if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_MANY){
@@ -469,7 +469,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 							break;
 						}
 					}
-					ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
+					ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
 				}
 			}
 		}
@@ -477,7 +477,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 				|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 			if(pNode->elemtype == OV_ET_OBJECT){
 				linkElement.elemtype = OV_ET_NONE;
-				ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
+				ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
 				while(linkElement.elemtype != OV_ET_NONE){
 					if(flag == -2 || linkElement.elemunion.passoc == passoc){
 						referencedElement.elemtype = OV_ET_OBJECT;
@@ -496,7 +496,7 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 							break;
 						}
 					}
-					ov_element_getnextpart(pNode, &linkElement, OV_ET_PARENTLINK);
+					ov_element_getnextpart(pNode, &linkElement, OV_ET_CHILDLINK);
 				}
 			}
 		}
