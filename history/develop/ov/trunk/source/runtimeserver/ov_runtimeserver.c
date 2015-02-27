@@ -845,9 +845,11 @@ int main(int argc, char **argv) {
 				{
 					perror("Error reading config file");
 					ov_logfile_free();
+					fclose(cfFile);
 					return EXIT_FAILURE;
 				}
 			}
+			fclose(cfFile);
 		}
 		/*
 		*	set port number option
