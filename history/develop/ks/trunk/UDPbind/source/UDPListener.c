@@ -240,7 +240,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			if (fd == -1) {
 #endif
 				//error. Try next protocol
-				continue;
+				freeaddrinfo(resultingaddrinfo);				continue;
 			}
 
 			if(resultingaddrinfo->ai_family == AF_INET) {
@@ -250,12 +250,13 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
 					//error. Try next protocol
-					continue;
+					freeaddrinfo(resultingaddrinfo);					continue;
 				}
 			} else {
 				//Blacklisting other than IPv4 and IPv6, should not get hit
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
 				CLOSE_SOCKET(fd);
+				freeaddrinfo(resultingaddrinfo);
 				continue;
 			}
 
@@ -266,6 +267,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 
 			//setting source address and port
 			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen)) {
+				freeaddrinfo(resultingaddrinfo);
 				continue;
 			}
 
