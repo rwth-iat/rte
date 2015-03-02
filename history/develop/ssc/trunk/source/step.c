@@ -146,10 +146,18 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
         				// link next-step to ssc-tasklist
         				pNextStep = Ov_GetParent(ssc_previousTransitions, pTransition);
-        				Ov_Link(fb_tasklist, Ov_GetPartPtr(intask, pSSC), pNextStep);
-        				pNextStep->v_actimode = FB_AM_ON;
-        				pNextStep->v_phase = SSC_PHASE_ENTRYDO;
-        				pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
+        				if(pNextStep){
+        					//ssc is correct linked
+            				Ov_Link(fb_tasklist, Ov_GetPartPtr(activeStep, pSSC), pNextStep);
+            				pNextStep->v_actimode = FB_AM_ON;
+            				pNextStep->v_phase = SSC_PHASE_ENTRYDO;
+            				pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
+        				}else{
+        					//we need to recover...
+        					pinst->v_error = TRUE;
+        					ov_string_setvalue(&pinst->v_errorDetail, "internal associations not clean. giving up.");
+        					pSSC->v_workingState = SSC_WOST_STOP;
+        				}
         			}
         		}
     		}
@@ -176,17 +184,15 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
     			/* exit */
     			Ov_Call1 (fb_task, pExit, execute, pltc);
-    			// unlink from sscHeader.intask
+    			// unlink from sscHeader.activeStep
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X = FALSE;
     			pinst->v_qualifier = SSC_QUALIFIER_ENTRY;
 
     			// find next step and execute its entry & do (in the same execution cycle)
     			// Note: this job should be done by ov_ForEachChild(fb_tasklist, ...). But it is not possible to adapt the tasklist dynamically
-//    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, Ov_GetPartPtr(intask, pSSC)));
+//    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, Ov_GetPartPtr(activeStep, pSSC)));
     			if (pNextStep != NULL){
-    				// update activeStep
-    				ov_string_setvalue(&pSSC->v_activeStep, pNextStep->v_identifier);
     				// execute nextStep entry & do
     				Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pNextStep), execute, pltc);
     			}

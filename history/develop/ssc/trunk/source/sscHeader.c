@@ -80,8 +80,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 {
 	OV_INSTPTR_ssc_sscHeader pinst = Ov_StaticPtrCast(ssc_sscHeader, pobj);
 	OV_UINT count = 0; // count of end step strings
-	int i = 0; // loop variable
-	int n = 1;
+	OV_UINT i = 0; // loop variable
+	OV_UINT n = 1;
 	OV_STRING *pEndStepList = NULL;
 	OV_INSTPTR_ssc_step pstep = NULL;
 
@@ -107,24 +107,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 		ov_string_setvalue(&(pinst->v_errorDetail),"could not set all end steps");
 		return OV_ERR_BADVALUE;
 	}
-    return ov_string_setvalue(&pobj->v_endStepName,value);
+	return ov_string_setvalue(&pobj->v_endStepName,value);
 }
-static OV_RESULT ssc_sscHeader_checkLocation(
-		OV_INSTPTR_ssc_sscHeader	pSSC
-) {
-	OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pSSC));
-	OV_INSTPTR_ov_domain pSscContainerContainer = Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, pSSC));
-
-	if ( (pSscContainer == NULL) && (pSscContainerContainer != NULL) )
-	{
-		pSSC->v_error=TRUE;
-		ov_string_setvalue(&pSSC->v_errorDetail, "ssc must be encapsulated in a functionchart.");
-		ov_logfile_error("ssc_sscHeader_constructor: ssc must be encapsulated in a functionchart.");
-		return OV_ERR_BADPLACEMENT;
-	}
-	return OV_ERR_OK;
-}
-
 
 OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
 		OV_INSTPTR_ov_object 	pobj
@@ -141,10 +125,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_constructor(
 	result = fb_functionblock_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
-
-	// check location
-	result = ssc_sscHeader_checkLocation(pinst);
-	if(Ov_Fail(result)) return result;
 
 	// create INIT- & END-step
 	result = Ov_CreateObject(ssc_step, pInitStep, pinst, "INIT");
@@ -173,7 +153,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     //OV_INSTPTR_ssc_step      pInitStep = NULL;
     OV_INSTPTR_ssc_step      pActiveStep = NULL;
     //OV_INSTPTR_fb_task       pTask = NULL;
-    OV_INSTPTR_fb_task      intask = Ov_GetPartPtr(intask, pinst);
+    OV_INSTPTR_fb_task      taskActivestep = Ov_GetPartPtr(activeStep, pinst);
     OV_INSTPTR_fb_task    pTrans = Ov_GetPartPtr(trans, pinst);
     //OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
     // helper variables
@@ -183,23 +163,15 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     // init variables
     pinst->v_error=FALSE;
     ov_string_setvalue(&pinst->v_errorDetail, NULL);
-    intask->v_actimode = FB_AM_ON;
-    intask->v_cyctime.secs = 0;
-    intask->v_cyctime.usecs = 0;
+    taskActivestep->v_actimode = FB_AM_ON;
+    taskActivestep->v_cyctime.secs = 0;
+    taskActivestep->v_cyctime.usecs = 0;
     pTrans->v_actimode = FB_AM_ON;
 
-    // check location
-    result = ssc_sscHeader_checkLocation(pinst);
-    if(Ov_Fail(result)){
-    	return;
-    }
-
-
     // find active step
-    Ov_GetFirstChildEx(fb_tasklist, intask, pActiveStep, ssc_step);
+    Ov_GetFirstChildEx(fb_tasklist, taskActivestep, pActiveStep, ssc_step);
     if (pActiveStep != NULL){
     	pActiveStep->v_actimode = FB_AM_OFF;
-   		ov_string_setvalue(&pinst->v_activeStep, pActiveStep->v_identifier);
     }
 
     /*################################
@@ -439,7 +411,7 @@ OV_DLLFNCEXPORT void ssc_sscHeader_typemethod(
     #################################*/
 
     /* Execute internal tasks */
-    Ov_Call1 (fb_task, intask, execute, pltc);
+    Ov_Call1 (fb_task, taskActivestep, execute, pltc);
     Ov_Call1 (fb_task, pTrans, execute, pltc);
 
     return;
@@ -450,7 +422,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 ) {
 	OV_INSTPTR_ssc_step      pStep = NULL;
 	OV_INSTPTR_ssc_step      pInitStep = NULL;
-	OV_INSTPTR_fb_task 		 intask = Ov_GetPartPtr(intask, pinst);
+	OV_INSTPTR_fb_task 		 taskActivestep = Ov_GetPartPtr(activeStep, pinst);
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
 	OV_INSTPTR_ssc_sscHeader pSscAction = NULL;
@@ -458,7 +430,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 	//OV_TIME *pTime;
 	//ov_time_gettime(&pTime);
 
-	//reset all steps; find and link INIT-step to intask
+	//reset all steps; find and link INIT-step to activeStep
 	Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){
 		result=Ov_Call0(ssc_step, pStep, resetStep);
 
@@ -471,7 +443,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_resetSsc(
 		ov_string_setvalue(&pinst->v_errorDetail, "no INIT-step is defined");
 		return OV_ERR_BADPATH;
 	}
-	result=Ov_Link(fb_tasklist, intask, pInitStep);
+	result=Ov_Link(fb_tasklist, taskActivestep, pInitStep);
 	if(Ov_Fail(result)){
 		return result;
 	}

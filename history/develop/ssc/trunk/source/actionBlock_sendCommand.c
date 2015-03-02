@@ -52,8 +52,8 @@ OV_RESULT ssc_getObjectFromSendCommand(
 	}else{
 		//we have a relative path
 		ov_memstack_lock();
-		//all path are relative to the containing FC
-		containerDomain = Ov_GetParent(ov_containment, activeHeader);
+		//all path are relative to the activeHeader
+		containerDomain = Ov_PtrUpCast(ov_domain, activeHeader);
 		ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
 		*pTargetObj = getrelativeobjectpointer(pathRelativeobject, nameToCheck);
 		if(*pTargetObj == NULL){

@@ -63,19 +63,23 @@
 
 LIBRARY ssc
 
-  VERSION   = "1.0";
-  AUTHOR    = "Liyong Yu, Holger Jeromin";
-  COPYRIGHT = "2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
-  COMMENT   = "ACPLT Sequential State Chart Library";
+	VERSION   = "1.0";
+	AUTHOR    = "Liyong Yu, Holger Jeromin";
+	COPYRIGHT = "2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen";
+	COMMENT   = "ACPLT Sequential State Chart Library";
 
-  /* Yu: Viele Engineeringaspekte wurden bei der Modellierung mitberücksichtig. Es wird z.B. bei jeder Instanzierung automatisch überprüft, 
-  ob ein Schritt, eine Transition an einem falschen Ort angelegt wird. Die Task-Struktur werden ebenfalls automatisch in Ordnung gebracht. 
-  Die implementierten Überprüfungen unterstützen auch dynamische Modellmanipulation. D.h. zur Laufzeit werden fortlaufend überprüft, ob die Modellstruktur in Ordnung ist.*/
-  
-  /* Konzeptionell wurde entschieden (Epple, Qurios, Krausser, Yu), dass man nicht von fb/functionchart ableiten darf. 
-  Deswegen wurde die Verwaltungsfunktion für ein SSC als eine eigenständige Klasse definiert.
-  Es kann jedoch überlegt werden, ob dieser Design noch nötig ist.*/
-  CLASS sscHeader : CLASS fb/functionblock
+	CLASS controlchart : CLASS fb/functionchart
+		IS_INSTANTIABLE;
+		COMMENT = "a Chart with ability to provide services";
+		VARIABLES
+			CMD			: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "Command input for services";
+			ORDERLIST[]	: STRING	FLAGS = "i" COMMENT = "Command list for services";
+			ORDEREXECUTOR[]	: STRING	FLAGS = "i" COMMENT = "Name of Order executor";
+		END_VARIABLES;
+	END_CLASS;
+
+	//fixme rename zu SequentialControlChart
+	CLASS sscHeader : CLASS ssc/controlchart
 		IS_INSTANTIABLE;
 		COMMENT = "SSC header";
 		VARIABLES
@@ -84,24 +88,23 @@ LIBRARY ssc
 			endStepName	    : STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the end step(s), multiple values possible via comma delimiter" INITIALVALUE = "END";
 			woStPhase       : UINT							FLAGS = "n"	COMMENT = "working state phase: 1(entry, do), 2(transition, exit))" INITIALVALUE = 1;
 			woStQualifier   : UINT							FLAGS = "n"	COMMENT = "working state qualifier: 1(entry), 2(do), 3 (exit))" INITIALVALUE = 1;
-			activeStep  	: STRING						FLAGS = "o"	COMMENT = "active step"   INITIALVALUE = "INIT";
 			workingState    : UINT							FLAGS = "o"	COMMENT = "working state: INIT: 0, START = 1, BREAK = 2, STOP = 3, TERMINATE = 4" INITIALVALUE = 0;
 			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: INIT/START/BREAK/STOP" INITIALVALUE = "INIT";
 			error			: BOOL							FLAGS = "o"	COMMENT = "error";
 			errorDetail		: STRING						FLAGS = "o"	COMMENT = "error details";
 		END_VARIABLES;
 		PARTS
-      		actions 			: CLASS ov/domain;
-      		transConds 			: CLASS ov/domain;
-      		intask	 			: CLASS fb/task;	//only the active step is linked here
-      		trans				: CLASS fb/task;
-    	END_PARTS;
-    	OPERATIONS
-        	constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-        	typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
-        	getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
-         	resetSsc		:	C_FUNCTION <SSC_FNC_RESETSSC>;
-    	END_OPERATIONS;
+			actions			: CLASS ov/domain;
+			transConds		: CLASS ov/domain;
+			activeStep		: CLASS fb/task;	//only the active step is linked here
+			trans			: CLASS fb/task;
+		END_PARTS;
+		OPERATIONS
+			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			getaccess		:	C_FUNCTION	<OV_FNC_GETACCESS>;
+			resetSsc		:	C_FUNCTION <SSC_FNC_RESETSSC>;
+		END_OPERATIONS;
   END_CLASS;
 
   CLASS step : CLASS fb/functionblock

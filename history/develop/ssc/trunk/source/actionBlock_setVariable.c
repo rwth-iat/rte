@@ -16,13 +16,14 @@
  */
 static void extractBehindSeperator(const OV_STRING inputstring, OV_STRING *pathname, OV_STRING *varname, char seperator){
 	OV_UINT len = 0;
+	OV_UINT i = 0;
 
 	if(!inputstring){
 		return;
 	}
 	ov_string_setvalue(pathname, inputstring);
 	len = ov_string_getlength(inputstring);	//todo iterate backwards, for speed :-)
-	for(int i=0 ; i<len-1 ; i++){
+	for(i = 0 ; i<len-1 ; i++){
 		if(inputstring[len-i] == seperator){
 			ov_string_setvalue(varname, &inputstring[len-i+1]);
 			(*pathname)[len-i] = '\0';
@@ -100,8 +101,8 @@ static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
 	}else{
 		//we have a relative path
 		ov_memstack_lock();
-		//all path are relative to the containing FC
-		containerDomain = Ov_GetParent(ov_containment, activeHeader);
+		//all path are relative to the activeHeader
+		containerDomain = Ov_PtrUpCast(ov_domain, activeHeader);
 		ov_string_setvalue(&pathRelativeobject, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, containerDomain), 2));
 		*pTargetObj = getrelativeobjectpointer(pathRelativeobject, targetPathname);
 		if(*pTargetObj == NULL){
@@ -175,7 +176,7 @@ OV_RESULT ssc_setNamedVariable(const OV_INSTPTR_ov_object pTargetObj, const OV_S
 		//set variable in a functionchart
 		result = fb_functionchart_setport(Ov_StaticPtrCast(fb_functionchart, pTargetObj), targetVarname, value);
 	}else{
-		//set variable in a functionblock
+		//set variable in a object
 		varElement.elemtype = OV_ET_NONE;
 		element.elemtype = OV_ET_OBJECT;
 		element.pobj = pTargetObj;
