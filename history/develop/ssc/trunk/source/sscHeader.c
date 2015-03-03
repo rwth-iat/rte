@@ -85,11 +85,11 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sscHeader_endStepName_set(
 	OV_STRING *pEndStepList = NULL;
 	OV_INSTPTR_ssc_step pstep = NULL;
 
-	pEndStepList = ov_string_split(value,",",&count);
 	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
 		//allow old INITIAL_VALUE for loading an backup
 		return OV_ERR_OK;
 	}
+	pEndStepList = ov_string_split(value,",",&count);
 
 	Ov_ForEachChildEx(ov_containment, pobj, pstep, ssc_step){
 		for(i = 0; i<count; i++){
