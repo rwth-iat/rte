@@ -481,7 +481,7 @@ OV_DLLFNCEXPORT void fb_task_execute(
 	/*
 	*	is otc >= ltc or task object off?
 	*/
-	if((ov_time_compare(&ptask->v_proctime, pltc) == OV_TIMECMP_AFTER) || (ptask->v_actimode == 0)) {
+	if((ov_time_compare(&ptask->v_proctime, pltc) == OV_TIMECMP_AFTER) || (ptask->v_actimode == FB_AM_OFF)) {
 		return;
 	}
 

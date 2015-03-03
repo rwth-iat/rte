@@ -662,6 +662,56 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
 }
 
 
+/**
+ * Gets the first connected fb_functionblock or fb_port from a given fb_functionblock / port and a variable name
+ * If a fb/port is given, the variableName will be ignored (aka can be NULL)
+ *
+ * @param this: functionblock or port to start the search
+ * @param getTarget: set to TRUE if you want a TargetObject (where the connection sets values), otherwise you get a Source (where the connection gets values from)
+ * @param variableName name of variable of an functionblock where the connection is connected
+ */
+OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
+		const OV_INSTPTR_fb_object this,
+		const OV_BOOL getTarget,
+		const OV_STRING variableName
+) {
+	OV_INSTPTR_fb_object targetObject = NULL;
+	OV_INSTPTR_fb_connection conObject = NULL;
+	OV_STRING variableNameCopy = NULL;
+
+	if(!this){
+		return NULL;
+	}
+
+	if(Ov_CanCastTo(fb_port, this)){
+		ov_string_setvalue(&variableNameCopy, "value");
+	}else if(!variableName){
+		//no port and no variable name, no success
+		return NULL;
+	}else{
+		ov_string_setvalue(&variableNameCopy, variableName);
+	}
+
+	if(getTarget == TRUE){
+		//Gets the targetObject
+		Ov_ForEachChildEx(fb_outputconnections, this, conObject, fb_connection){
+			if(ov_string_compare(conObject->v_sourceport, variableNameCopy) == OV_STRCMP_EQUAL){
+				break;
+			}
+		}
+		targetObject = Ov_GetParent(fb_inputconnections, conObject);
+	}else{
+		//Gets the sourceObject
+		Ov_ForEachChildEx(fb_inputconnections, this, conObject, fb_connection){
+			if(ov_string_compare(conObject->v_targetport, variableNameCopy) == OV_STRCMP_EQUAL){
+				break;
+			}
+		}
+		targetObject = Ov_GetParent(fb_outputconnections, conObject);
+	}
+	return targetObject;
+}
+
 /*	----------------------------------------------------------------------	*/
 /*
 *	End of file

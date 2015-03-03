@@ -16,7 +16,7 @@ PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
 COMPILER_LO = $(call lc,$(COMPILER))
 #licence check deactivated, as fb is not commercial anymore
-EXTRA_CC_FLAGS = -DFB_OEM_LICENCE=1
+EXTRA_CC_FLAGS = -DFB_OEM_LICENCE=1 -Wextra -Wno-unused-parameter
 
 %:
 	acplt_makmak -l fb $(MAKMAKOPTIONS)

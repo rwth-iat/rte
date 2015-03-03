@@ -126,7 +126,7 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
 
 	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, "execute typemethod");
 
-	pfb->v_eexreq = 0;
+	pfb->v_eexreq = FALSE;
 	ret = TRUE;
 	
 	Ov_GetVTablePtr(fb_functionblock, pfbvtable, pfb);
@@ -142,8 +142,8 @@ OV_DLLFNCEXPORT OV_BOOL fb_functionblock_execTypeMethod(
 	}
 
 	/* supervised? */
-	if( (pfb->v_maxcalctime.secs >= 0) && (pfb->v_maxcalctime.usecs >= 0) &&
-	    (pfb->v_maxcalctime.secs || pfb->v_maxcalctime.usecs) ) {
+	if( (pfb->v_maxcalctime.secs || pfb->v_maxcalctime.usecs) &&
+		(pfb->v_maxcalctime.secs >= 0) && (pfb->v_maxcalctime.usecs >= 0)	) {
 	   
 		if(ov_supervise_setjmp(jumpbuffer) == 0) {
 			if(ov_supervise_start(&pfb->v_maxcalctime, &jumpbuffer)) {

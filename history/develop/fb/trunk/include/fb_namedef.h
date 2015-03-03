@@ -185,6 +185,20 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
     OV_INSTPTR_fb_connection  *pcon               /* Pointer connection object        */
 );
 
+/**
+ * Gets the first connected fb_functionblock or fb_port from a given fb_functionblock / port and a variable name
+ * If a fb/port is given, the variableName will be ignored (aka can be NULL)
+ *
+ * @param this: functionblock or port to start the search
+ * @param getTarget: set to TRUE if you want a TargetObject (where the connection sets values), otherwise you get a Source (where the connection gets values from)
+ * @param variableName name of variable of an functionblock where the connection is connected
+ */
+OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
+		const OV_INSTPTR_fb_object this,
+		const OV_BOOL getTarget,
+		const OV_STRING variableName
+);
+
 /*
 *   Get the envinroment
 */
