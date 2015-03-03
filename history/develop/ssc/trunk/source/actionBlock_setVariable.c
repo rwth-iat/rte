@@ -138,6 +138,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
 
 	ssc_getObjectAndVarnameFromSetVariable(pinst, value, &pTargetObj, &targetVarname);
 	if(pTargetObj == NULL || targetVarname == NULL){
+		ov_string_setvalue(&targetVarname, NULL);
 		return OV_ERR_BADPARAM;
 	}
 
