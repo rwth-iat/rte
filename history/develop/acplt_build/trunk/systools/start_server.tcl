@@ -142,7 +142,8 @@ while {$k<1} {
 	}
 	if { $in1 > -1 } then {
 		puts "-----------------------------------------------------"
-		puts "ONLINE-Eingabemöglichkeit: m = load modelinstance , t = load template , ctr+c = shutdown server"
+		puts "ONLINE-Eingabemöglichkeit:"
+		puts "m = load modelinstance , t = load template , ctr+c = shutdown server"
 	}
 	after 1000
 	gets stdin in1
@@ -200,7 +201,7 @@ while {$k<1} {
 		#
 		#  Auswahl des Templateordners
 		#
-		puts "please enter the groupnumber"
+		puts "Please enter the groupnumber: "
 		gets stdin DIRNUMBER
 		# Templatenummer prüfen
 		if {[>= ${DIRNUMBER} $i] == 1} {

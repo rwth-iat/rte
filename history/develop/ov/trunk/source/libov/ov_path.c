@@ -610,7 +610,7 @@ OV_DLLFNCEXPORT OV_STRING ov_path_topercent (
 /*	----------------------------------------------------------------------	*/
 
 /*
-*	Converts percent characters in asci characters
+*	Converts percent characters in ascii characters
 *	Note: the memory for the returned string is allocated on the memory
 *	stack, use ov_memstack_lock()/unlock() outside of this function
 */
