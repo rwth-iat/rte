@@ -319,8 +319,10 @@ int main(int argc, char **argv) {
 	OV_INT 		            port = 0; /* KS_ANYPORT */
 	OV_UINT					maxAllowedJitter = 0;
 	OV_UINT					ks_maxItemsPerRequest = 0;
-	OV_UINT					ks_maxStringLength = 0;
-	OV_UINT					ks_maxVectorLength = 0;
+	OV_UINT					maxStringLength = 0;
+	OV_UINT					maxVectorLength = 0;
+	OV_UINT					maxNameLength = 0;
+	OV_UINT					maxHierarchyDepth = 0;
 	OV_ANY					tempAny = {{OV_VT_VOID, {0}}, 0, {0,0}};
 	OV_BOOL		            startup = TRUE;
 	int	   	            exit_status = EXIT_SUCCESS;
@@ -769,35 +771,69 @@ int main(int argc, char **argv) {
 						}
 						free(temp);
 					}
-					/*	KSMAXSTRLENGTH	*/
-					else if(strstr(startRead, "KSMAXSTRLENGTH")==startRead)
+					/*	MAXSTRLENGTH	*/
+					else if(strstr(startRead, "MAXSTRLENGTH")==startRead)
 					{
 						temp = readValue(startRead);
 						if(!temp || !*temp){
 							ov_logfile_free();
 							return EXIT_FAILURE;
 						}
-						ks_maxStringLength = strtoul(temp, &temp2, 0);
+						maxStringLength = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
-							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXSTRLENGTH.", line);
+							ov_logfile_error("Error parsing line %u: too many arguments for MAXSTRLENGTH.", line);
 							ov_logfile_free();
 							return EXIT_FAILURE;
 						}
 						free(temp);
 					}
-					/*	KSMAXVECLENGTH	*/
-					else if(strstr(startRead, "KSMAXVECLENGTH")==startRead)
+					/*	MAXVECLENGTH	*/
+					else if(strstr(startRead, "MAXVECLENGTH")==startRead)
 					{
 						temp = readValue(startRead);
 						if(!temp || !*temp){
 							ov_logfile_free();
 							return EXIT_FAILURE;
 						}
-						ks_maxVectorLength = strtoul(temp, &temp2, 0);
+						maxVectorLength = strtoul(temp, &temp2, 0);
 						if(*temp2)
 						{
-							ov_logfile_error("Error parsing line %u: too many arguments for KSMAXVECLENGTH.", line);
+							ov_logfile_error("Error parsing line %u: too many arguments for MAXVECLENGTH.", line);
+							ov_logfile_free();
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	MAXNAMELENGTH	*/
+					else if(strstr(startRead, "MAXNAMELENGTH")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp){
+							ov_logfile_free();
+							return EXIT_FAILURE;
+						}
+						maxNameLength = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for MAXNAMELENGTH.", line);
+							ov_logfile_free();
+							return EXIT_FAILURE;
+						}
+						free(temp);
+					}
+					/*	MAXHIERARCHYDEPTH	*/
+					else if(strstr(startRead, "MAXHIERARCHYDEPTH")==startRead)
+					{
+						temp = readValue(startRead);
+						if(!temp || !*temp){
+							ov_logfile_free();
+							return EXIT_FAILURE;
+						}
+						maxHierarchyDepth = strtoul(temp, &temp2, 0);
+						if(*temp2)
+						{
+							ov_logfile_error("Error parsing line %u: too many arguments for MAXHIERARCHYDEPTH.", line);
 							ov_logfile_free();
 							return EXIT_FAILURE;
 						}
@@ -1160,14 +1196,30 @@ HELP:		ov_server_usage();
 	 * set allowedJitter and ks-parameters
 	 */
 	tempAny.value.vartype = OV_VT_UINT;
-	tempAny.value.valueunion.val_uint = maxAllowedJitter;
-	ov_vendortree_setAllowedJitter(&tempAny, NULL);
-	tempAny.value.valueunion.val_uint = ks_maxStringLength;
-	ov_vendortree_setKsMaxStringLength(&tempAny, NULL);
-	tempAny.value.valueunion.val_uint = ks_maxVectorLength;
-	ov_vendortree_setKsMaxVectorLength(&tempAny, NULL);
-	tempAny.value.valueunion.val_uint = ks_maxItemsPerRequest;
-	ov_vendortree_setKsMaxItems(&tempAny, NULL);
+	if(maxAllowedJitter){
+		tempAny.value.valueunion.val_uint = maxAllowedJitter;
+		ov_vendortree_setAllowedJitter(&tempAny, NULL);
+	}
+	if(maxStringLength){
+		tempAny.value.valueunion.val_uint = maxStringLength;
+		ov_vendortree_setMaxStringLength(&tempAny, NULL);
+	}
+	if(maxVectorLength){
+		tempAny.value.valueunion.val_uint = maxVectorLength;
+		ov_vendortree_setMaxVectorLength(&tempAny, NULL);
+	}
+	if(maxNameLength){
+		tempAny.value.valueunion.val_uint = maxNameLength;
+		ov_vendortree_setMaxNameLength(&tempAny, NULL);
+	}
+	if(maxHierarchyDepth){
+		tempAny.value.valueunion.val_uint = maxHierarchyDepth;
+		ov_vendortree_setMaxHierarchyDepth(&tempAny, NULL);
+	}
+	if(ks_maxItemsPerRequest){
+		tempAny.value.valueunion.val_uint = ks_maxItemsPerRequest;
+		ov_vendortree_setKsMaxItems(&tempAny, NULL);
+	}
 	tempAny.value.vartype = OV_VT_VOID;
 	tempAny.value.valueunion.val_uint = 0;
 	/*

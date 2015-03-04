@@ -51,6 +51,8 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 	*	local variables
 	*/
 	OV_STRING	string;
+	OV_UINT		stringLength;
+	OV_UINT		tempMaxStringLength	=	0;
 	/*
 	*	check parameters
 	*/
@@ -74,9 +76,17 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvalue(
 		return OV_ERR_OK;
 	}
 	/*
+	 *	get strings length and check for limits
+	 */
+	stringLength = strlen(value);
+	tempMaxStringLength = ov_vendortree_MaxStringLength();
+	if(tempMaxStringLength && stringLength > tempMaxStringLength){
+		return OV_ERR_BADVALUE;
+	}
+	/*
 	*	allocate memory for new string
 	*/
-	string = ov_database_realloc(*pstring, strlen(value)+1);
+	string = ov_database_realloc(*pstring, stringLength+1);
 	if(!string) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
@@ -108,11 +118,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_setvecvalue(
 	OV_STRING		*pstring;
 	const OV_STRING	*pcurrvalue;
 	OV_RESULT		result;
+	OV_UINT			tempMaxVecLen;
 	/*
 	*	check parameters
 	*/
 	if(!pstringvec) {
 		return OV_ERR_BADPARAM;
+	}
+	tempMaxVecLen = ov_vendortree_MaxVectorLength();
+	if(tempMaxVecLen && veclen > tempMaxVecLen){
+		return OV_ERR_BADVALUE;
 	}
 	/*
 	*	set strings
@@ -230,6 +245,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 	*/
 	OV_UINT		oldlength, newlength;
 	OV_STRING	newstring;
+	OV_UINT		tempMaxStringLength;
 	/*
 	*	check parameters
 	*/
@@ -245,6 +261,10 @@ OV_DLLFNCEXPORT OV_RESULT ov_string_append(
 		oldlength = 0;
 	}
 	newlength = oldlength+strlen(appstring);
+	tempMaxStringLength = ov_vendortree_MaxStringLength();
+	if(tempMaxStringLength && newlength > tempMaxStringLength){
+		return OV_ERR_BADVALUE;
+	}
 	if(!newlength) {
 		return ov_string_setvalue(pstring, NULL);
 	}

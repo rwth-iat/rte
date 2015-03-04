@@ -83,11 +83,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicvalue(
 	*/
 	OV_POINTER	*pnewvalue;
 	OV_RESULT	result;
+	OV_UINT		tempmaxVecLen	=	0;
 	/*
 	*	check parameters
 	*/
 	if(!pvector) {
 		return OV_ERR_BADPARAM;
+	}
+	tempmaxVecLen = ov_vendortree_MaxVectorLength();
+	if(tempmaxVecLen && veclen > tempmaxVecLen){
+		return OV_ERR_BADVALUE;
 	}
 	/*
 	*	manipulate memory and set the actual vector value
@@ -150,11 +155,16 @@ OV_DLLFNCEXPORT OV_RESULT ov_vector_setdynamicveclen(
 	OV_STRING	*pstring;
 	OV_UINT		oldsize;
 	OV_POINTER	*pnewvalue;
+	OV_UINT		tempMaxVecLen	=	0;
 	/*
 	*	check parameters
 	*/
 	if(!pvector) {
 		return OV_ERR_BADPARAM;
+	}
+	tempMaxVecLen = ov_vendortree_MaxVectorLength();
+	if(tempMaxVecLen && veclen > tempMaxVecLen){
+		return OV_ERR_BADVALUE;
 	}
 	/*
 	*	manipulate memory

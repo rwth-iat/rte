@@ -66,8 +66,10 @@ static OV_STRING	cmdlineoptions = NULL;
 static OV_STRING	ksVersion = NULL;
 static OV_STRING	emptyStr = "";
 static OV_UINT		ks_maxItemsPerRequest = 0;
-static OV_UINT		ks_maxStringLength = 0;
-static OV_UINT		ks_maxVectorLength = 0;
+static OV_UINT		maxStringLength = 0;
+static OV_UINT		maxVectorLength = 0;
+static OV_UINT		maxNameLength = 255;
+static OV_UINT		maxHierarchyDepth = 64;
 static OV_UINT		ov_scheduler_allowedJitter = 0;
 static OV_UINT		ov_scheduler_numberOfExceeds = 0;
 static OV_UINT		ov_serverPID = 0;
@@ -117,8 +119,10 @@ OV_DLLVAREXPORT OV_VENDORTREE_INFO vendorinfo[OV_NUM_VENDOROBJECTS] = {
 		{ "write_db_backup",		NULL,	ov_vendortree_writebackup, NULL },
 		{ "ov_time_offset",			NULL,	ov_vendortree_gettimeoffset, ov_vendortree_settimeoffset },
 		{ "ks_maxitemsperrequest",	NULL,	ov_vendortree_getKsMaxItems, ov_vendortree_setKsMaxItems },
-		{ "ks_maxstringlength",		NULL,	ov_vendortree_getKsMaxStringLength, ov_vendortree_setKsMaxStringLength },
-		{ "ks_maxvectorlength",		NULL,	ov_vendortree_getKsMaxVectorLength, ov_vendortree_setKsMaxVectorLength },
+		{ "maxstringlength",		NULL,	ov_vendortree_getMaxStringLength, ov_vendortree_setMaxStringLength },
+		{ "maxvectorlength",		NULL,	ov_vendortree_getMaxVectorLength, ov_vendortree_setMaxVectorLength },
+		{ "maxnamelength",			NULL,	ov_vendortree_getMaxNameLength, ov_vendortree_setMaxNameLength },
+		{ "maxhierarchydepth",		NULL,	ov_vendortree_getMaxHierarchyDepth, ov_vendortree_setMaxHierarchyDepth },
 		{ "ov_scheduler_allowedjitter",	"usecs",	ov_vendortree_getAllowedJitter, ov_vendortree_setAllowedJitter },
 		{ "ov_scheduler_numexceeds",	NULL,	ov_vendortree_getNumExceeds, NULL },
 		{ "cmdline_options",		NULL,	ov_vendortree_getcmdlineoptions, NULL }
@@ -1331,66 +1335,134 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxItems(
 
 /*-----------------------------------------------------------------*/
 /*
- * Get ks_maxstringlength
+ * Get maxstringlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxStringLength(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
-	pvarcurrprops->value.valueunion.val_uint = ks_maxStringLength;
+	pvarcurrprops->value.valueunion.val_uint = maxStringLength;
 	return OV_ERR_OK;
 }
 
 /**
- * Get ks_maxstringlength as UINT
+ * Get maxstringlength as UINT
  */
-OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxStringLength() {
-	return ks_maxStringLength;
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxStringLength() {
+	return maxStringLength;
 }
 
 /**
- *	Set ks_maxstringlength
+ *	Set maxstringlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxStringLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxStringLength(
 		const OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 ) {//TODO:ticketing
 	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
-		ks_maxStringLength = pvarcurrprops->value.valueunion.val_uint;
+		maxStringLength = pvarcurrprops->value.valueunion.val_uint;
 		return OV_ERR_OK;
 	}
 	return OV_ERR_BADTYPE;
 }
 /*-----------------------------------------------------------------*/
 /*
- * Get ks_maxvectorlength
+ * Get maxvectorlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxVectorLength(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 ) {
 	pvarcurrprops->value.vartype = OV_VT_UINT;
-	pvarcurrprops->value.valueunion.val_uint = ks_maxVectorLength;
+	pvarcurrprops->value.valueunion.val_uint = maxVectorLength;
 	return OV_ERR_OK;
 }
 
 /**
- *	Get ks_maxvectorlength as UINT
+ *	Get maxvectorlength as UINT
  */
-OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxVectorLength() {
-	return ks_maxVectorLength;
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxVectorLength() {
+	return maxVectorLength;
 }
 
 /**
- *	Set ks_maxvectorlength
+ *	Set maxvectorlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxVectorLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxVectorLength(
 		const OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 ) {//TODO:ticketing
 	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
-		ks_maxVectorLength = pvarcurrprops->value.valueunion.val_uint;
+		maxVectorLength = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get maxnamelength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxNameLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = maxNameLength;
+	return OV_ERR_OK;
+}
+
+/**
+ *	Get maxnamelength as UINT
+ */
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxNameLength() {
+	return maxNameLength;
+}
+
+/**
+ *	Set maxnamelength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxNameLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		maxNameLength = pvarcurrprops->value.valueunion.val_uint;
+		return OV_ERR_OK;
+	}
+	return OV_ERR_BADTYPE;
+}
+
+/*-----------------------------------------------------------------*/
+/*
+ * Get maxhierarchydepth
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxHierarchyDepth(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {
+	pvarcurrprops->value.vartype = OV_VT_UINT;
+	pvarcurrprops->value.valueunion.val_uint = maxHierarchyDepth;
+	return OV_ERR_OK;
+}
+
+/**
+ *	Get maxhierarchydepth as UINT
+ */
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxHierarchyDepth() {
+	return maxHierarchyDepth;
+}
+
+/**
+ *	Set maxhierarchydepth
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxHierarchyDepth(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+) {//TODO:ticketing
+	if (pvarcurrprops->value.vartype == OV_VT_UINT) {
+		maxHierarchyDepth = pvarcurrprops->value.valueunion.val_uint;
 		return OV_ERR_OK;
 	}
 	return OV_ERR_BADTYPE;

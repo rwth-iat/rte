@@ -481,6 +481,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	OV_TIME					time;
 	OV_RESULT				result;
 	OV_UINT					size;
+	OV_UINT					hierarchyLevel	=	1;
+	OV_INSTPTR_ov_object	pParentObject	=	NULL;
+	OV_UINT					tempHierarchyDepth	=	0;
 	/*
 	*	check parameters
 	*/
@@ -510,6 +513,21 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	Ov_AbortIfNot(pvtable->m_constructor && pvtable->m_checkinit
 		&& pvtable->m_startup && pvtable->m_destructor
 		&& pvtable->m_shutdown);
+	/*
+	 * 	check hierarchy levels
+	 */
+	tempHierarchyDepth = ov_vendortree_MaxHierarchyDepth();
+	if(tempHierarchyDepth){
+		pParentObject = (pparent->v_pouterobject ? pparent->v_pouterobject : Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pparent)));
+		while(pParentObject){
+			hierarchyLevel++;
+			pParentObject = (pParentObject->v_pouterobject ? pParentObject->v_pouterobject : Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pParentObject)));
+		}
+		if(hierarchyLevel > tempHierarchyDepth){
+			return OV_ERR_BADPLACEMENT;
+		}
+	}
+
 	/*
 	*	assume instantiation is not successful
 	*/
