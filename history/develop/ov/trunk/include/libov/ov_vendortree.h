@@ -38,7 +38,7 @@ extern "C" {
 /*
 *	Number of objects in the vendor tree
 */
-#define	OV_NUM_VENDOROBJECTS	32
+#define	OV_NUM_VENDOROBJECTS	34
 
 /*
 *	Number of configuration bits
@@ -502,47 +502,88 @@ OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxItems(
 );
 
 /*
- * Get ks_maxstringlength
+ * Get maxstringlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxStringLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxStringLength(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
 
 /**
- * Get ks_maxstringlength as UINT
+ * Get maxstringlength as UINT
  */
-OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxStringLength();
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxStringLength();
 
 /**
- *	Set ks_maxstringlength
+ *	Set maxstringlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxStringLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxStringLength(
 		const OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
 
 /*
- * Get ks_maxvectorlength
+ * Get maxvectorlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getKsMaxVectorLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxVectorLength(
 		OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
 
 /**
- *	Get ks_maxvectorlength as UINT
+ *	Get maxvectorlength as UINT
  */
-OV_DLLFNCEXPORT OV_UINT ov_vendortree_KsMaxVectorLength();
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxVectorLength();
 
 /**
- *	Set ks_maxvectorlength
+ *	Set maxvectorlength
  */
-OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setKsMaxVectorLength(
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxVectorLength(
 		const OV_ANY			*pvarcurrprops,
 		const OV_TICKET	*pticket
 );
 
+/*
+ * Get maxnamelength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxNameLength(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/**
+ *	Get maxnamelength as UINT
+ */
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxNameLength();
+
+/**
+ *	Set maxnamelength
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxNameLength(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/*
+ * Get maxhierarchydepth
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_getMaxHierarchyDepth(
+		OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
+
+/**
+ *	Get maxhierarchydepth as UINT
+ */
+OV_DLLFNCEXPORT OV_UINT ov_vendortree_MaxHierarchyDepth();
+
+/**
+ *	Set maxhierarchydepth
+ */
+OV_DLLFNCEXPORT OV_RESULT ov_vendortree_setMaxHierarchyDepth(
+		const OV_ANY			*pvarcurrprops,
+		const OV_TICKET	*pticket
+);
 /**
  * Get ov_scheduler_allowedjitter
  */
