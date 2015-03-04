@@ -78,10 +78,9 @@ LIBRARY ssc
 		END_VARIABLES;
 	END_CLASS;
 
-	//fixme rename zu SequentialControlChart
-	CLASS sscHeader : CLASS ssc/controlchart
+	CLASS SequentialControlChart : CLASS ssc/controlchart
 		IS_INSTANTIABLE;
-		COMMENT = "SSC header";
+		COMMENT = "holds all steps and transitions and does the call logic";
 		VARIABLES
 			EN   			: UINT   						FLAGS = "i"	COMMENT = "enable execution: stop=0/start=1/break=2/reset=3" INITIALVALUE = 0;
 			initStepName	: STRING	HAS_SET_ACCESSOR 	FLAGS = "i" COMMENT = "the name of the initialization step" INITIALVALUE = "INIT";

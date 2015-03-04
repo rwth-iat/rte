@@ -32,7 +32,7 @@
 #define CC_SENDERID_VARIABLENAME "senderID"
 
 
-//fixme move to typemethod, call this typemethod even in sscheader
+//fixme move to typemethod, call this typemethod even in SequentialControlChart
 
 /**
  *	generic syntax:
@@ -69,10 +69,6 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 	anyvar.value.vartype = OV_VT_VOID;
 	orderVar.value.vartype = OV_VT_STRING;
 	orderVar.value.valueunion.val_string = NULL;
-
-	//search OCCUPY in order list
-	//yes: find OCCUPY, find object, check status
-	//no or ok: find order and set value
 
 	if(this->v_ORDEREXECUTOR.veclen != this->v_ORDERLIST.veclen){
 		//this controlchart is wrong configured

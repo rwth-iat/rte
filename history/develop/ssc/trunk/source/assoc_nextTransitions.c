@@ -40,7 +40,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 	OV_INSTPTR_ssc_transition pTrans = Ov_StaticPtrCast(ssc_transition, pchild);
 	OV_INSTPTR_fb_task pTransTaskParent = Ov_GetParent(fb_tasklist, pchild);
 	OV_INSTPTR_ssc_step pNextStep = Ov_GetParent(ssc_previousTransitions, pchild);
-	OV_INSTPTR_ssc_sscHeader pOwnSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pchild));
+	OV_INSTPTR_ssc_SequentialControlChart pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pchild));
 
 	// check if the previousStep and nextStep are the same
 	if ( pNextStep == pparent){

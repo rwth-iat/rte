@@ -4,7 +4,7 @@
 
 
 typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSSC(
-	OV_INSTPTR_ssc_sscHeader       pSSC
+	OV_INSTPTR_ssc_SequentialControlChart       pSSC
 );
 typedef OV_DLLFNCEXPORT OV_RESULT SSC_FNC_RESETSTEP(
 	OV_INSTPTR_ssc_step       pStep

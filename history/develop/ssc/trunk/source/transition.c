@@ -34,7 +34,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
 	 *   local variables
 	 */
 	OV_INSTPTR_ssc_transition pinst = Ov_StaticPtrCast(ssc_transition, pobj);
-	OV_INSTPTR_ssc_sscHeader pSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_SequentialControlChart pSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
 
 	OV_RESULT    result;
 
@@ -46,7 +46,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
 
 	// check location
 	if (pSSC == NULL){
-		ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a sscHeader.");
+		ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a SequentialControlChart.");
 		return OV_ERR_BADPLACEMENT;
 	}
 
@@ -66,7 +66,7 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 	OV_INSTPTR_ssc_step  		pPrevStep = Ov_GetParent(ssc_nextTransitions, pinst);
 	OV_INSTPTR_ssc_step  		pNextStep = Ov_GetParent(ssc_previousTransitions, pinst);
 
-	OV_INSTPTR_ssc_sscHeader	pSSC = Ov_StaticPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pinst));
+	OV_INSTPTR_ssc_SequentialControlChart	pSSC = Ov_StaticPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pinst));
 
 	// check location and links
 	if ( !pSSC){
@@ -98,7 +98,7 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_transition_getaccess(
 	/*
 	*   local variables
 	*/
-	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pobj));
+	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pobj));
 	OV_ACCESS access_code = fb_functionblock_getaccess(pobj, pelem, pticket);
 
 	/*

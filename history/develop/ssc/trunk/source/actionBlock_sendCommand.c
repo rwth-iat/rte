@@ -36,7 +36,7 @@ OV_RESULT ssc_getObjectFromSendCommand(
 ) {
 	OV_STRING pathRelativeobject = NULL;
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 	OV_INSTPTR_fb_port pFbPort;
 
@@ -162,7 +162,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	OV_INSTPTR_ssc_sendCommand pinst = Ov_StaticPtrCast(ssc_sendCommand, pfb);
 
 	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_sscHeader  	pOwnSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialControlChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_object pTargetObj = NULL;
 	OV_RESULT    			 result;
 	OV_ANY ovvariable;

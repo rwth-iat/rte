@@ -866,7 +866,7 @@ if(cshmimodel.variables.cycTime){
 }
 var scrollBackwards = false;
 if(cshmimodel.variables.scrollBackwards){
-	if("TRUE" == cshmimodel.variables.scrollBackwards.getValue()){
+	if('TRUE' == cshmimodel.variables.scrollBackwards.getValue()){
 		scrollBackwards = true;
 	}
 }

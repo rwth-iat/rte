@@ -37,7 +37,7 @@ OV_RESULT ssc_getObjectFromExecute(
 ) {
 	OV_STRING pathRelativeobject = NULL;
 	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_sscHeader activeHeader = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialControlChart activeHeader = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ov_domain containerDomain = NULL;
 
 	*pTargetObj = NULL;
@@ -104,8 +104,8 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	OV_INSTPTR_ssc_execute pinst = Ov_StaticPtrCast(ssc_execute, pfb);
 
 	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_sscHeader  	pOwnSSC = Ov_DynamicPtrCast(ssc_sscHeader, Ov_GetParent(ov_containment, pStep));
-	OV_INSTPTR_ssc_sscHeader  	pTargetSscHeader = NULL;
+	OV_INSTPTR_ssc_SequentialControlChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
+	OV_INSTPTR_ssc_SequentialControlChart  	pTargetSequentialControlChart = NULL;
 	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
 	OV_INT targetActimode = FB_AM_ON;
 	OV_INT targetCyctimeSecs = 0;
@@ -142,10 +142,10 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	pTargetObj->v_cyctime.usecs = 0;
 	pTargetObj->v_iexreq = TRUE;
 
-	if(Ov_CanCastTo(ssc_sscHeader, pTargetObj)){
-		pTargetSscHeader = Ov_StaticPtrCast(ssc_sscHeader, pTargetObj);
+	if(Ov_CanCastTo(ssc_SequentialControlChart, pTargetObj)){
+		pTargetSequentialControlChart = Ov_StaticPtrCast(ssc_SequentialControlChart, pTargetObj);
 		// activate SSC
-		pTargetSscHeader->v_EN = SSC_CMD_START;
+		pTargetSequentialControlChart->v_EN = SSC_CMD_START;
 	}
 	// execute action for once
 	Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pTargetObj), execute, pltc);
