@@ -1,10 +1,24 @@
 #ifndef TCPbind_OVT_INCLUDED
 #define TCPbind_OVT_INCLUDED
 
+#if !OV_SYSTEM_NT
+#if TCPBIND_USE_NONBLOCK_ADDRINFO
+#define _GNU_SOURCE         /* See feature_test_macros(7) */
+#endif
+#include <netdb.h>
+#include <sys/socket.h>
+#else
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x501
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
+
 /* 
 	Define your data types here. 
 */
 
 typedef struct addrinfo *OV_addrinfoPointer;
+typedef struct addrinfo OV_addrinfo;
 
 #endif

@@ -4,7 +4,7 @@
 LIBRARY TCPbind
 	VERSION   = "V0.1 (17-01-2013)";
 	AUTHOR    = "Lars Evertz";
-	COPYRIGHT = "Lehrstuhl für Prozessleittechnik 2013";
+	COPYRIGHT = "Lehrstuhl fï¿½r Prozessleittechnik 2013";
 	COMMENT   = "TCP binding for generic communications. Includes a TCPListener and a TCPChannel.";
 	
 	/**
@@ -22,6 +22,8 @@ LIBRARY TCPbind
 				INITIALVALUE	=	-1;
 			addrInfo	:	C_TYPE	<OV_addrinfoPointer>
 				COMMENT	=	"Pointer to addressinfo structure";
+			hints	:	C_TYPE	<OV_addrinfo>
+				COMMENT	=	"addressinfo structure to specify socket to be opened";
 			addrInfoReq	:	C_TYPE	<OV_POINTER>
 				COMMENT	=	"Pointer to addressinfo request structure - only used ";
 		END_VARIABLES;

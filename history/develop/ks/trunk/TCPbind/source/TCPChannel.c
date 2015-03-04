@@ -20,6 +20,11 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
+#if TCPBIND_USE_NONBLOCK_ADDRINFO
+#define _GNU_SOURCE         /* See feature_test_macros(7) */
+#include <netdb.h>
+#endif
+
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
@@ -30,11 +35,6 @@
 #include "TCPbind_config.h"
 #include "ksbase_helper.h"
 
-
-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
-#define _GNU_SOURCE         /* See feature_test_macros(7) */
-#include <netdb.h>
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,8 +49,8 @@
 #include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <netdb.h>
+#include <fcntl.h>
 #include <netinet/tcp.h>
 /*	defines if not defined in netdb.h	*/
 #ifndef NI_MAXHOST
@@ -114,13 +114,19 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	int on = 1; 	//used to disable nagle algorithm
+	KS_logfile_debug(("file %s\nline %u:\tentering OpenConnection_afterAddrinfo", __FILE__, __LINE__));
 	//check addresses (if there are several ones) and connect
+#ifdef _GNU_SOURCE
+	thisTCPCh->v_addrInfo = ((struct gaicb*)thisTCPCh->v_addrInfoReq)->ar_result;
+#endif
 	for (walk = thisTCPCh->v_addrInfo; walk != NULL; walk = walk->ai_next) {
+		KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
 		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
 		if (sockfd < 0){
-			KS_logfile_debug(("%s: address not usable", this->v_identifier));
+			KS_logfile_debug(("%s: address not usable", thisTCPCh->v_identifier));
 			continue;
 		}
+		KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
 		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
 			CLOSE_SOCKET(sockfd);
 			sockfd = -1;
@@ -139,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	}
 	if (sockfd == -1)
 	{
-		KS_logfile_info(("%s: could not establish connection", this->v_identifier));
+		KS_logfile_info(("%s: could not establish connection", thisTCPCh->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
@@ -193,22 +199,25 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	int err = 0;
 	OV_INT sentChunkSize;
 	OV_UINT sendlength = 0;
+#ifdef _GNU_SOURCE
+	OV_INT	gaiRes = 0;
 	OV_RESULT result;
+#endif
 
 	if(thisCh->v_outData.length)	//check if there is data to send
 	{
 		if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+#ifdef _GNU_SOURCE
 			if(thisCh->v_addrInfoReq){
-				gaiRes = gai_error((gaicb*)thisCh->v_addrInfoReq);
-				if(gaiRes == EAI_INPROGRESS ){
-					thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;;
+				gaiRes = gai_error((struct gaicb*)thisCh->v_addrInfoReq);
+				if(gaiRes == EAI_INPROGRESS){
+					thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
 				} else if(gaiRes != 0){
-					KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+					KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
 					thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 					return OV_ERR_GENERIC;
 				} else {
-					result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+					result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh);
 					if(Ov_Fail(result)){
 						return result;
 					}
@@ -407,6 +416,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	OV_RESULT result;
 	OV_BYTE* tempdata = NULL;
 	OV_BOOL datareceived = FALSE;
+#ifdef _GNU_SOURCE
+	OV_INT gaiRes = 0;
+#endif
 
 	OV_INSTPTR_ksbase_RootComTask RCTask = NULL;
 
@@ -419,19 +431,19 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	 **********************************************************************************************************************************************************************************/
 
 	socket = TCPbind_TCPChannel_socket_get(thisCh);
-	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+	if (thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
+#ifdef _GNU_SOURCE
 		if(thisCh->v_addrInfoReq){
-			gaiRes = gai_error((gaicb*)thisCh->v_addrInfoReq);
+			gaiRes = gai_error((struct gaicb*)thisCh->v_addrInfoReq);
 			if(gaiRes == EAI_INPROGRESS ){
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
 				return;
 			} else if(gaiRes != 0){
-				KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+				KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
 			} else {
-				result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+				result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh);
 				if(Ov_Fail(result)){
 					return;
 				}
@@ -769,11 +781,9 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		OV_STRING host,
 		OV_STRING port
 ) {
-	struct addrinfo hints;
 	int ret;
 	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
-#pragma message "Using getaddrinfo_a"
+#ifdef _GNU_SOURCE
 	struct gaicb *pAddrinfoStruct = NULL;
 	OV_INT	gaiRes;
 #endif
@@ -783,44 +793,52 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 
 	/*	close old connection	*/
 	TCPbind_TCPChannel_CloseConnection(this);
-
 	//set connection information
-	memset(&hints, 0, sizeof(struct addrinfo));
-	hints.ai_family = PF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
-	pAddrinfoStruct = ov_malloc(siezof(gaicb));
+	memset(&(thisTCPCh->v_hints), 0, sizeof(struct addrinfo));
+	thisTCPCh->v_hints.ai_family = PF_UNSPEC;
+	thisTCPCh->v_hints.ai_socktype = SOCK_STREAM;
+	KS_logfile_debug(("file %s\nline %u:\tbefore ifdef", __FILE__, __LINE__));
+#ifdef _GNU_SOURCE
+KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __LINE__));
+	pAddrinfoStruct = (struct gaicb*)ov_malloc(sizeof(struct gaicb));
 	if(pAddrinfoStruct){
 		if(thisTCPCh->v_addrInfoReq){
 			ov_free(thisTCPCh->v_addrInfoReq);
 			thisTCPCh->v_addrInfoReq = NULL;
 		}
+		KS_logfile_debug(("file %s\nline %u:\tfilling addrinfo struct", __FILE__, __LINE__));
 		thisTCPCh->v_addrInfoReq = pAddrinfoStruct;
 		pAddrinfoStruct->ar_name = host;
 		pAddrinfoStruct->ar_service = port;
-		pAddrinfoStruct->ar_request = &hints;
-		pAddrinfoStruct->ar_result = &(thisTCPCh->v_addrInfo);
-		if ((ret = getaddrinfo_a(GAI_NOWAIT, &((gaicb*)thisTCPCh->v_addrInfoReq), 1, NULL))!=0)
+		pAddrinfoStruct->ar_request = &(thisTCPCh->v_hints);
+		pAddrinfoStruct->ar_result = NULL;
+		KS_logfile_debug(("file %s\nline %u:\tissuing getaddrinfo_a", __FILE__, __LINE__));
+
+		if ((ret = getaddrinfo_a(GAI_NOWAIT, ((struct gaicb**) &(thisTCPCh->v_addrInfoReq)), 1, NULL))!=0)
 		{
 			KS_logfile_error(("%s: getaddrinfo_a failed", this->v_identifier));
 			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return OV_ERR_GENERIC;
 		}
-		gaiRes = gai_error((gaicb*)thisTCPCh->v_addrInfoReq);
+		KS_logfile_debug(("file %s\nline %u:\tchecking for completion", __FILE__, __LINE__));
+		gaiRes = gai_error((struct gaicb*)thisTCPCh->v_addrInfoReq);
 		if(gaiRes == EAI_INPROGRESS ){
+			KS_logfile_debug(("file %s\nline %u:\tgetaddrinfo_a in progress", __FILE__, __LINE__));
 			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
+			thisTCPCh->v_actimode = 1;
 			return OV_ERR_OK;
 		} else if(gaiRes != 0){
-			KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+			KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
 			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 			return OV_ERR_GENERIC;
 		}
+		KS_logfile_debug(("file %s\nline %u:\tgetaddrinfo_a run completely", __FILE__, __LINE__));
 	} else {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
 #else
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &hints, &(thisTCPCh->v_addrInfo)))!=0)
+	if ((ret = getaddrinfo(host, port, &(thisTCPCh->v_hints), &(thisTCPCh->v_addrInfo)))!=0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
