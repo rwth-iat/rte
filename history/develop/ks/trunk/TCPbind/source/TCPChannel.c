@@ -20,7 +20,6 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
-
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
@@ -31,6 +30,11 @@
 #include "TCPbind_config.h"
 #include "ksbase_helper.h"
 
+
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+#define _GNU_SOURCE         /* See feature_test_macros(7) */
+#include <netdb.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,6 +99,81 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 }
 
 /**
+ * finishes opening a connection
+ * when the getaddressinfo has succeeded open the connection etc.
+ * v_addrInfo and v_addrInfoReq are freed and NULLED afterwards
+ */
+OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
+		OV_INSTPTR_TCPbind_TCPChannel thisTCPCh
+) {
+	int sockfd = -1;
+	struct addrinfo *walk;
+	struct sockaddr_storage sa_stor;
+	socklen_t sas = sizeof(sa_stor);
+	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
+	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
+	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
+	int on = 1; 	//used to disable nagle algorithm
+	//check addresses (if there are several ones) and connect
+	for (walk = thisTCPCh->v_addrInfo; walk != NULL; walk = walk->ai_next) {
+		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+		if (sockfd < 0){
+			KS_logfile_debug(("%s: address not usable", this->v_identifier));
+			continue;
+		}
+		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
+			CLOSE_SOCKET(sockfd);
+			sockfd = -1;
+			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
+			continue;
+		}
+		break;
+	}
+
+	//free structures
+	freeaddrinfo(thisTCPCh->v_addrInfo);
+	thisTCPCh->v_addrInfo = NULL;
+	if(thisTCPCh->v_addrInfoReq){
+		ov_free(thisTCPCh->v_addrInfoReq);
+		thisTCPCh->v_addrInfoReq = NULL;
+	}
+	if (sockfd == -1)
+	{
+		KS_logfile_info(("%s: could not establish connection", this->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
+	}
+
+	//resolve connected peer
+	if( getpeername(sockfd, sa, &sas))
+	{
+		KS_logfile_error(("%s: could not resolve connected peer", thisTCPCh->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
+	}
+
+	// resolve peername
+	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
+	{
+		KS_logfile_error(("%s: could not resolve connected peer's address", thisTCPCh->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
+	}
+
+	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
+	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+	TCPbind_TCPChannel_socket_set(thisTCPCh, sockfd);
+
+	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, thisTCPCh->v_address));
+	//set time of Opening the Connection
+	ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
+
+	//disable nagle for the receivesocket
+	setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+	return OV_ERR_OK;
+}
+
+/**
  * The TCHChannel SendData function is used to trigger the sending of the outData buffer.
  * It takes a pointer to the Channel itself as parameter.
  * The SendData function will to send the complete buffer. If the buffer can be send only partially (to much data or some other reason) the rest of the outData buffer will be send by the typemethod.
@@ -114,75 +193,96 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	int err = 0;
 	OV_INT sentChunkSize;
 	OV_UINT sendlength = 0;
+	OV_RESULT result;
 
 	if(thisCh->v_outData.length)	//check if there is data to send
 	{
-		if(!thisCh->v_outData.readPT)
-			thisCh->v_outData.readPT = thisCh->v_outData.data;
-		socket = TCPbind_TCPChannel_socket_get(thisCh);
+		if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+			if(thisCh->v_addrInfoReq){
+				gaiRes = gai_error((gaicb*)thisCh->v_addrInfoReq);
+				if(gaiRes == EAI_INPROGRESS ){
+					thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;;
+				} else if(gaiRes != 0){
+					KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+					thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+					return OV_ERR_GENERIC;
+				} else {
+					result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+					if(Ov_Fail(result)){
+						return result;
+					}
+				}
 
-		//Check if socket is ok
-		if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
-			KS_logfile_info(("%s/SendData: no socket set, nothing sent",this->v_identifier));
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-			return OV_ERR_GENERIC;
-		}
+			}
+#endif
+		} else {
+			if(!thisCh->v_outData.readPT)
+				thisCh->v_outData.readPT = thisCh->v_outData.data;
+			socket = TCPbind_TCPChannel_socket_get(thisCh);
 
-		//send one chunk
+			//Check if socket is ok
+			if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
+				KS_logfile_info(("%s/SendData: no socket set, nothing sent",this->v_identifier));
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+				return OV_ERR_GENERIC;
+			}
 
-		// Zero the flags ready for using
-		FD_ZERO(&write_flags);
-		FD_SET(socket, &write_flags); // get write flags
-		waitd.tv_sec = 0;     // Set Timeout
-		waitd.tv_usec = 0;    //  do not wait
-		err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
+			//send one chunk
 
-		if (err == -1) {
-			KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-			return OV_ERR_GENERIC;
-		}
+			// Zero the flags ready for using
+			FD_ZERO(&write_flags);
+			FD_SET(socket, &write_flags); // get write flags
+			waitd.tv_sec = 0;     // Set Timeout
+			waitd.tv_usec = 0;    //  do not wait
+			err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 
-		//determine how many bytes have to be sent
-		sendlength = thisCh->v_outData.length;
-		sendlength -= (thisCh->v_outData.readPT - thisCh->v_outData.data);
-		//DEBUG
-		//KS_logfile_debug(("%s SendData: outData.length:\t%u\n\toutData.retPT\t%p\n\toutData.data\t%p", thisCh->v_identifier, thisCh->v_outData.length, thisCh->v_outData.readPT,thisCh->v_outData.data));
-		//DEBUG_END
-		if(sendlength <= 0) //nothing more to send
-		{
-			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
-			KS_logfile_debug(("no more send needed"));
-			return OV_ERR_OK;
-		}
-		//issue send command
-		KS_logfile_debug(("%s SendData: have to send %" OV_PRINT_UINT " bytes", thisCh->v_identifier, sendlength));
-		sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
+			if (err == -1) {
+				KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+				return OV_ERR_GENERIC;
+			}
+
+			//determine how many bytes have to be sent
+			sendlength = thisCh->v_outData.length;
+			sendlength -= (thisCh->v_outData.readPT - thisCh->v_outData.data);
+			//DEBUG
+			//KS_logfile_debug(("%s SendData: outData.length:\t%u\n\toutData.retPT\t%p\n\toutData.data\t%p", thisCh->v_identifier, thisCh->v_outData.length, thisCh->v_outData.readPT,thisCh->v_outData.data));
+			//DEBUG_END
+			if(sendlength <= 0) //nothing more to send
+			{
+				ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+				KS_logfile_debug(("no more send needed"));
+				return OV_ERR_OK;
+			}
+			//issue send command
+			KS_logfile_debug(("%s SendData: have to send %" OV_PRINT_UINT " bytes", thisCh->v_identifier, sendlength));
+			sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
 #if !OV_SYSTEM_NT
-		if (sentChunkSize == -1)
-		{
+			if (sentChunkSize == -1)
+			{
 #else
-		if (sentChunkSize == SOCKET_ERROR)
-		{
+			if (sentChunkSize == SOCKET_ERROR)
+			{
 #endif
 
-			KS_logfile_error(("%s: send() failed...", thisCh->v_identifier));
-			ks_logfile_print_sysMsg();
-			thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
-			return OV_ERR_GENERIC;
-		}
+				KS_logfile_error(("%s: send() failed...", thisCh->v_identifier));
+				ks_logfile_print_sysMsg();
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
+				return OV_ERR_GENERIC;
+			}
 
-		thisCh->v_outData.readPT += sentChunkSize;
+			thisCh->v_outData.readPT += sentChunkSize;
 
-		KS_logfile_debug(("%s: sent %" OV_PRINT_UINT " bytes", this->v_identifier, sentChunkSize));
+			KS_logfile_debug(("%s: sent %" OV_PRINT_UINT " bytes", this->v_identifier, sentChunkSize));
 
-		if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length)
-		{
-			ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
-			KS_logfile_debug(("%s: everything sent", thisCh->v_identifier));
+			if((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length)
+			{
+				ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
+				KS_logfile_debug(("%s: everything sent", thisCh->v_identifier));
+			}
 		}
 	}
-
 	//set time of sending
 	ov_time_gettime(&(thisCh->v_LastReceiveTime));
 	thisCh->v_actimode = 1;
@@ -217,6 +317,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 	}
 	if(this->v_actimode == 1)
 		this->v_actimode = 0;
+	this->v_addrInfo = NULL;
+	this->v_addrInfoReq = NULL;
 	//set time of creation of the connection
 	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
 
@@ -243,7 +345,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 			TCPbind_TCPChannel_socket_set(this, -1);
 			this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 		}
-
+		if(this->v_addrInfoReq){
+			ov_free(this->v_addrInfoReq);
+			this->v_addrInfoReq = NULL;
+		}
 
 		/*
 		 * when acting on the server side, delete associated ClientHandlers (they won't be used anymore)
@@ -314,7 +419,27 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	 **********************************************************************************************************************************************************************************/
 
 	socket = TCPbind_TCPChannel_socket_get(thisCh);
+	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+		if(thisCh->v_addrInfoReq){
+			gaiRes = gai_error((gaicb*)thisCh->v_addrInfoReq);
+			if(gaiRes == EAI_INPROGRESS ){
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
+				return;
+			} else if(gaiRes != 0){
+				KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+				thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+				return;
+			} else {
+				result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+				if(Ov_Fail(result)){
+					return;
+				}
+			}
 
+		}
+#endif
+	}
 	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
 	{
 		//receive data in chunks (we dont know how much it will be)
@@ -630,6 +755,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenLocalConn(
 	return TCPbind_TCPChannel_OpenConnection(this, "localhost", port);
 }
 
+
+
 /**
  * The TCHChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
  * It furthermore takes a pointer to an int used to return the socket selector.
@@ -643,17 +770,13 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		OV_STRING port
 ) {
 	struct addrinfo hints;
-	struct addrinfo *res;
 	int ret;
-	int sockfd = -1;
-	struct addrinfo *walk;
-	struct sockaddr_storage sa_stor;
-	socklen_t sas = sizeof(sa_stor);
-	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
-	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
-	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
-	int on = 1; 	//used to disable nagle algorithm
 	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+#pragma message "Using getaddrinfo_a"
+	struct gaicb *pAddrinfoStruct = NULL;
+	OV_INT	gaiRes;
+#endif
 
 	if(!host || !(*host) || !port || !(*port))
 		return OV_ERR_BADPARAM;
@@ -665,68 +788,46 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_family = PF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-
+#if __GLIBC__ >= 2 && __GLIBC_MINOR__ >= 2
+	pAddrinfoStruct = ov_malloc(siezof(gaicb));
+	if(pAddrinfoStruct){
+		if(thisTCPCh->v_addrInfoReq){
+			ov_free(thisTCPCh->v_addrInfoReq);
+			thisTCPCh->v_addrInfoReq = NULL;
+		}
+		thisTCPCh->v_addrInfoReq = pAddrinfoStruct;
+		pAddrinfoStruct->ar_name = host;
+		pAddrinfoStruct->ar_service = port;
+		pAddrinfoStruct->ar_request = &hints;
+		pAddrinfoStruct->ar_result = &(thisTCPCh->v_addrInfo);
+		if ((ret = getaddrinfo_a(GAI_NOWAIT, &((gaicb*)thisTCPCh->v_addrInfoReq), 1, NULL))!=0)
+		{
+			KS_logfile_error(("%s: getaddrinfo_a failed", this->v_identifier));
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			return OV_ERR_GENERIC;
+		}
+		gaiRes = gai_error((gaicb*)thisTCPCh->v_addrInfoReq);
+		if(gaiRes == EAI_INPROGRESS ){
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
+			return OV_ERR_OK;
+		} else if(gaiRes != 0){
+			KS_logfile_error(("%s: getaddrinfo_a failed while running", this->v_identifier));
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			return OV_ERR_GENERIC;
+		}
+	} else {
+		return OV_ERR_DBOUTOFMEMORY;
+	}
+#else
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &hints, &res))!=0)
+	if ((ret = getaddrinfo(host, port, &hints, &(thisTCPCh->v_addrInfo)))!=0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
-
-	//check addresses (if there are several ones) and connect
-	for (walk = res; walk != NULL; walk = walk->ai_next) {
-		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-		if (sockfd < 0){
-			KS_logfile_debug(("%s: address not usable", this->v_identifier));
-			continue;
-		}
-		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
-			CLOSE_SOCKET(sockfd);
-			sockfd = -1;
-			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
-			continue;
-		}
-		break;
-	}
-
-	//free structures
-	freeaddrinfo(res);
-	if (sockfd == -1)
-	{
-		KS_logfile_info(("%s: could not establish connection", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	//resolve connected peer
-	if( getpeername(sockfd, sa, &sas))
-	{
-		KS_logfile_error(("%s: could not resolve connected peer", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	// resolve peername
-	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
-	{
-		KS_logfile_error(("%s: could not resolve connected peer's address", this->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
-	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-	TCPbind_TCPChannel_socket_set(thisTCPCh, sockfd);
-
-	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, this->v_address));
-	//set time of Opening the Connection
-	ov_time_gettime(&(this->v_LastReceiveTime));
-
-	//disable nagle for the receivesocket
-	setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
-
-	return OV_ERR_OK;
+#endif
+	return TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
 }
 
 

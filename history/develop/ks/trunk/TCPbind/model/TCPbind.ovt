@@ -4,3 +4,7 @@
 /* 
 	Define your data types here. 
 */
+
+typedef struct addrinfo *OV_addrinfoPointer;
+
+#endif

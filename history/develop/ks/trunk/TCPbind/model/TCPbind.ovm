@@ -20,6 +20,10 @@ LIBRARY TCPbind
 			socket	:	INT	HAS_ACCESSORS
 				COMMENT	=	"Socket to receive and send data"
 				INITIALVALUE	=	-1;
+			addrInfo	:	C_TYPE	<OV_addrinfoPointer>
+				COMMENT	=	"Pointer to addressinfo structure";
+			addrInfoReq	:	C_TYPE	<OV_POINTER>
+				COMMENT	=	"Pointer to addressinfo request structure - only used ";
 		END_VARIABLES;
 		OPERATIONS
 			//real sending of data
