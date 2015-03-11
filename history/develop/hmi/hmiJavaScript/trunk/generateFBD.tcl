@@ -6,7 +6,8 @@ set mimetypename "mimetype"
 set encodingname "encoding"
 set webserverlib "kshttp"
 set staticfileclassname "staticfile"
-set baseovpath "/data/${webserverlib}/hmi"
+set basehttppath "/hmi"
+set baseovpath "/data/${webserverlib}${basehttppath}"
 set staticfileclass "/acplt/${webserverlib}/${staticfileclassname}"
 set fbdfilename "StaticDisplayComponent.fbd"
 
@@ -71,7 +72,7 @@ proc processDir {ovpath} {
 		
 		set percentfilename [string map {"." "%2E"} $filename]
 		set percentfilename [string map {"-" "%2D"} $percentfilename]
-		puts $out " INSTANCE  $ovpath/$percentfilename :"
+		puts $out " INSTANCE  ${ovpath}/${percentfilename} :"
 		puts $out "    CLASS ${staticfileclass};"
 		puts $out "    VARIABLE_VALUES"
 		puts -nonewline $out "        ${contentname} : INPUT  STRING = \""
@@ -131,7 +132,7 @@ proc processDir {ovpath} {
 puts -nonewline "Building FBD header..."
 set out [open ${fbdfilename} w]
 puts $out "/******************************************************************************************"
-puts $out "These are all static files if the display component of csHMI"
+puts $out "These are all static files of the display component of csHMI"
 puts $out "which have to be loaded into an OV server."
 puts $out "The webserver library ${webserverlib} will be loaded automatically."
 puts $out ""
