@@ -175,8 +175,8 @@ DLLFNCEXPORT void kshttp_httpclienthandler_mapresult2http(const KSHTTP_REQUEST r
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 	OV_INSTPTR_ksbase_ClientHandler baseClientHandler,
 	OV_INSTPTR_ksbase_Channel pChannel,
-	UNUSED KS_DATAPACKET* dataReceived,
-	UNUSED KS_DATAPACKET* answer
+	KS_DATAPACKET* dataReceived,
+	KS_DATAPACKET* answer
 ) {
 	OV_INSTPTR_kshttp_httpclienthandler this = Ov_StaticPtrCast(kshttp_httpclienthandler, baseClientHandler);
 	OV_RESULT result = OV_ERR_OK;
@@ -692,8 +692,12 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	}
 
 #ifndef KSHTTP_DISABLE_GZIP
+	//set default minimal length
+	#ifndef HTTP_MINIMAL_LENGTH_FOR_GZIP
+	#define HTTP_MINIMAL_LENGTH_FOR_GZIP 150
+	#endif
 	// check if the body length corresponds for compression
-	if (this->v_ServerResponse.contentLength >= MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.compressionGzip == TRUE &&
+	if (this->v_ServerResponse.contentLength >= HTTP_MINIMAL_LENGTH_FOR_GZIP && this->v_ClientRequest.compressionGzip == TRUE &&
 												  (ov_string_match(this->v_ServerResponse.contentType, "text/*") == TRUE
 												|| ov_string_compare(this->v_ServerResponse.contentType, "application/javascript") == OV_STRCMP_EQUAL
 												|| ov_string_match(this->v_ServerResponse.contentType, "application/xml") == TRUE

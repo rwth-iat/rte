@@ -78,10 +78,10 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_getvarpushhandler_responseSent_set(
  * we do not want to execute code. no content from the client should arrive
  */
 OV_DLLFNCEXPORT OV_RESULT kshttp_getvarpushhandler_HandleRequest(
-		UNUSED OV_INSTPTR_ksbase_ClientHandler this,
-		UNUSED OV_INSTPTR_ksbase_Channel pChannel,
-		UNUSED KS_DATAPACKET* dataReceived,
-		UNUSED KS_DATAPACKET* answer
+		OV_INSTPTR_ksbase_ClientHandler this,
+		OV_INSTPTR_ksbase_Channel pChannel,
+		KS_DATAPACKET* dataReceived,
+		KS_DATAPACKET* answer
 ) {
 	/*
 	 *   local variables

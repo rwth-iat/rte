@@ -47,11 +47,11 @@
 
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestRegister(
 		const OV_INSTPTR_ksbase_ClientBase this,
-		UNUSED const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		const OV_STRING servername,
 		const OV_UINT	version,
 		const OV_UINT port,
-		UNUSED const OV_UINT ttl,
+		const OV_UINT ttl,
 		const OV_INSTPTR_ov_domain	callbackThat,
 		void (*callback)(const OV_INSTPTR_ov_domain this, const OV_INSTPTR_ov_domain that)
 ) {
@@ -73,7 +73,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestRegister(
  */
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 		const OV_INSTPTR_ksbase_ClientBase this,
-		UNUSED const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result
 ) {
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
@@ -114,7 +114,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 		const OV_INSTPTR_ksbase_ClientBase this,
-		UNUSED const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		const OV_STRING servername,
 		const OV_UINT version,
 		const OV_INSTPTR_ov_domain	callbackThat,
@@ -135,7 +135,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 
 OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processUnRegister(
 		const OV_INSTPTR_ksbase_ClientBase this,
-		UNUSED const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
+		const OV_INSTPTR_ksbase_ClientTicketGenerator TicketGenerator,
 		OV_RESULT* result
 ) {
 	/*

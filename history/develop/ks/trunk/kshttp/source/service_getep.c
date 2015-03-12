@@ -39,6 +39,22 @@
 #include "config.h"
 #include <ctype.h> //toupper
 
+//INT for handling requestOutput
+#define OP_UNKNOWN 0
+#define OP_NAME 1
+#define OP_TYPE 2
+#define OP_COMMENT 3
+#define OP_ACCESS 4
+#define OP_SEMANTIC 5
+#define OP_CREATIONTIME 6
+#define OP_CLASS 7
+#define OP_TECHUNIT 8
+#define OP_ASSOCIDENT 9
+#define OP_ROLEIDENT 10
+#define OP_DEFAULTINTERP 11
+#define OP_SUPPORTEDINTERP 12
+#define OP_TYPEIDENT 13
+
 /**
  * Appends a text info to a string, if ksx is requested skipping a prefix and lowercased
  * a "_" is skipped if ksx

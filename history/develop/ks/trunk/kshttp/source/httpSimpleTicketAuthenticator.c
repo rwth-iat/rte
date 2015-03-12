@@ -96,8 +96,8 @@ OV_DLLFNCEXPORT void kshttp_httpSimpleTicketAuthenticator_shutdown(
 }
 
 OV_DLLFNCEXPORT OV_TICKET* kshttp_httpSimpleTicketAuthenticator_createticket(
-	void UNUSED *data,
-	UNUSED OV_TICKET_TYPE type
+	void *data,
+	OV_TICKET_TYPE type
 ) {
     /*    
     *   local variables
@@ -107,7 +107,7 @@ OV_DLLFNCEXPORT OV_TICKET* kshttp_httpSimpleTicketAuthenticator_createticket(
 }
 
 OV_DLLFNCEXPORT void kshttp_httpSimpleTicketAuthenticator_deleteticket(
-	OV_TICKET UNUSED *pticket
+	OV_TICKET *pticket
 ) {
     /*    
     *   local variables
@@ -117,8 +117,8 @@ OV_DLLFNCEXPORT void kshttp_httpSimpleTicketAuthenticator_deleteticket(
 }
 
 OV_DLLFNCEXPORT OV_BOOL kshttp_httpSimpleTicketAuthenticator_encodereply(
-	UNUSED void *data,
-	UNUSED OV_TICKET *pticket
+	void *data,
+	OV_TICKET *pticket
 ) {
     /*    
     *   local variables
@@ -128,7 +128,7 @@ OV_DLLFNCEXPORT OV_BOOL kshttp_httpSimpleTicketAuthenticator_encodereply(
 }
 
 OV_DLLFNCEXPORT OV_ACCESS kshttp_httpSimpleTicketAuthenticator_TicketGetaccess(
-	UNUSED const OV_TICKET *pticket
+	const OV_TICKET *pticket
 ) {
     /*    
     *   local variables

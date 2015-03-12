@@ -112,7 +112,7 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 			ov_time_gettime(&(psession->v_lastactivity)); // update time
 			psession->v_uncheckedaccess++; //update access count
 			//do we have to do further checks?
-			if(psession->v_securitylevel >= level && (psession->v_uncheckedaccess%RECHECK_MD5)!=0){
+			if(psession->v_securitylevel >= level && (psession->v_uncheckedaccess%KSHTTP_AUTH_RECHECK_MD5)!=0){
 				AUTHORIZE_RETURN OV_ERR_OK;
 			}
 			//we need to do further checks
@@ -155,7 +155,7 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 				// GOT info look at http://en.wikipedia.org/wiki/Digest_access_authentication
 				//HA1
 				//TODO: the send username is ignored atm, since only one user simple exists
-				ov_string_print(&temp, "%s:%s:%s", "simple", REALM, "pass");
+				ov_string_print(&temp, "%s:%s:%s", "simple", KSHTTP_AUTH_REALM, "pass");
 				md5_string(&hash, temp);
 				ov_string_setvalue(&ha1, hash);
 				//HA2
@@ -199,7 +199,7 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 		ov_string_print(reply_header, "WWW-Authenticate: Digest realm=\"%s\",\
 													    qop=\"auth\",\
 														opaque=\"\",\
-														nonce=\"%s\"\r\n", REALM, psession->v_nonce);
+														nonce=\"%s\"\r\n", KSHTTP_AUTH_REALM, psession->v_nonce);
 	} else {
 		KS_logfile_error(("Creating of auth session failed"));
 	}

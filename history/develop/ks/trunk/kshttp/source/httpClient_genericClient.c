@@ -372,7 +372,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_genericHttpClient_beginCommunication_set(
 	return kshttp_generateAndSendHttpMessage("GET", thisCl->v_serverHost, thisCl->v_serverPort, username, password, usernameProvided, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), Ov_PtrUpCast(ov_domain, thisCl), &kshttp_genericHttpClient_Callback);
 }
 
-void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain UNUSED instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
+void kshttp_genericHttpClient_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPTR_ov_domain instanceCalling){
 	OV_INSTPTR_kshttp_genericHttpClient	thisCl = Ov_DynamicPtrCast(kshttp_genericHttpClient, instanceCalling);
 	OV_RESULT result = OV_ERR_OK;
 	OV_INSTPTR_ksbase_Channel 	pChannel = NULL;
