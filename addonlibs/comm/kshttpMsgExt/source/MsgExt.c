@@ -78,8 +78,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 	const OV_INSTPTR_kshttp_httpClientHandlerExtension	pobj,
 	const OV_INSTPTR_kshttp_httpclienthandler	pClientHandler,
 	const OV_INSTPTR_ksbase_Channel	pChannel,
-	const KSHTTP_REQUEST request,
-	KSHTTP_RESPONSE *response
+	const HTTP_REQUEST request,
+	HTTP_RESPONSE *response
 ) {
 	OV_UINT iterator;
 	OV_INT commantIndex	=	-1;
@@ -141,7 +141,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 					}
 					Ov_Unlink(ksbase_AssocChannelClientHandler, pChannel, pClientHandler);
 					Try(Ov_Link(ksbase_AssocChannelDataHandler, pChannel, pNewSendExt), ("%s - could not relink channel %s - line: %u", pobj->v_identifier, pChannel->v_identifier, __LINE__), "internal error relinking channel\n");
-					pClientHandler->v_CommunicationStatus = KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED;
+					pClientHandler->v_CommunicationStatus = HTTP_CS_CHANNELRESPONSIBILITYRELEASED;
 					pChannel->v_ClientHandlerAssociated = KSBASE_CH_NOTNEEDED;
 		/*	from here on we have a different return scheme as the old client handler is currently turned off	*/
 #undef Try
@@ -154,7 +154,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 					Ov_DeleteObject(pNewMessage);	\
 				}	\
 				ov_string_setvalue(&response->contentString, answerContent);	\
-				pClientHandler->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYGENERATED;	\
+				pClientHandler->v_CommunicationStatus = HTTP_CS_RESPONSEBODYGENERATED;	\
 				Ov_Unlink(ksbase_AssocChannelDataHandler, pChannel, pNewSendExt);	\
 				if(Ov_Fail(Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pClientHandler))){	\
 					Ov_DeleteObject(pChannel);	\
@@ -179,7 +179,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 		}
 		if(Ov_GetChild(MessageSys_Message2Channel, pNewMessage) != pChannel){
 			/*	no need to hold the connection -->  return with ok Message	*/
-			pClientHandler->v_CommunicationStatus = KSHTTP_CS_RESPONSEBODYGENERATED;
+			pClientHandler->v_CommunicationStatus = HTTP_CS_RESPONSEBODYGENERATED;
 			pChannel->v_CloseAfterSend = TRUE;
 			ov_string_setvalue(&response->contentString, "Message delivered to inbox. Wait for effect. No further communication on this connection. Bye.\n");
 			return OV_ERR_OK;
