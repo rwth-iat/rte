@@ -66,7 +66,7 @@ static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const 
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
-	if(response_format == KSX || response_format == JSON){
+	if(response_format == KSX || response_format == KSJSON){
 		//kill all underscores. TIME_SPAN_VEC for example has two...
 		ov_memstack_lock();
 		changedValue = ov_memstack_alloc(ov_string_getlength(value)+1);
@@ -99,16 +99,16 @@ static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const 
 static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_begin(output, response_format, entry_type);
-	}else if(response_format == TCL){
+	}else if(response_format == KSTCL){
 		//nothing
-	}else if(response_format == JSON){
+	}else if(response_format == KSJSON){
 		kshttp_response_part_begin(output, response_format, entry_type);
 		return ov_string_append(output, "\"");
 	}
 	return OV_ERR_OK;
 }
 /**
- * finalize the sub part of an requestOutput if needed (aka non tcl)
+ * finalize the sub part of an requestOutput if needed (aka non KSTCL)
  * @param output pointer to the string to manipulate
  * @param format UINT for the type of response
  * @param entry_type string for naming the following content (xml node name in KSX)
@@ -117,9 +117,9 @@ static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, const HTTP_RES
 static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_finalize(output, response_format, entry_type);
-	}else if(response_format == TCL){
+	}else if(response_format == KSTCL){
 		//nothing
-	}else if(response_format == JSON){
+	}else if(response_format == KSJSON){
 		ov_string_append(output, "\"");
 		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}
@@ -220,7 +220,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 	}
 
 	kshttp_find_arguments(&request.urlQuery, "requestOutput", &match);
-	if(request.response_format == KSX || request.response_format == JSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
+	if(request.response_format == KSX || request.response_format == KSJSON || match.veclen == 0 || (match.veclen==1 && ov_string_compare(match.value[0], "OP_ANY") == OV_STRCMP_EQUAL )){
 		//if nothing is specified or all is requested, give all
 		anyRequested = TRUE;
 	}else{
@@ -300,11 +300,11 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
-					(request.response_format == KSX || request.response_format == JSON))){
+					(request.response_format == KSX || request.response_format == KSJSON))){
 				//OP_TYPE is not displayed in ksx and json, so skip the seperator here
 				kshttp_response_parts_seperate(&temp, request.response_format);
 			}
-			if(requestOutput.veclen > 1 && request.response_format==TCL){
+			if(requestOutput.veclen > 1 && request.response_format == KSTCL){
 				//open request item level, if we have more than one entry (OP_NAME and OP_CREATIONTIME for example)
 				//ksx returns always everything
 				//kshttp_response_part_begin(&temp, request.response_format, "dummy");
@@ -318,7 +318,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				getEP_finalize_RequestOutputPart(&temp, request.response_format, "identifier");
 				break;
 			case OP_CREATIONTIME:
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -331,7 +331,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				ov_string_setvalue(&temp2, NULL);
 
 				getEP_finalize_RequestOutputPart(&temp, request.response_format, "creationtime");
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
@@ -481,7 +481,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				break;
 			case OP_TYPE:
 				//ksx has this information in the surrounding XML element
-				if(request.response_format != KSX && request.response_format != JSON){
+				if(request.response_format != KSX && request.response_format != KSJSON){
 					if(one_result->objtype == KS_OT_DOMAIN){
 						ov_string_append(&temp, "KS_OT_DOMAIN");
 					}else if(one_result->objtype == KS_OT_VARIABLE){
@@ -496,7 +496,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				}
 				break;
 			case OP_COMMENT:
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -510,12 +510,12 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 					ov_string_setvalue(&temp2, NULL);
 				}
 				getEP_finalize_RequestOutputPart(&temp, request.response_format, "comment");
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
 			case OP_ACCESS:
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					if(temp == NULL){
 						ov_string_setvalue(&temp, "{");
 					}else{
@@ -585,7 +585,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 					EntryFound = TRUE;
 				}
 				getEP_finalize_RequestOutputPart(&temp, request.response_format, "access");
-				if(request.response_format == TCL){
+				if(request.response_format == KSTCL){
 					ov_string_append(&temp, "}");
 				}
 				break;
@@ -639,7 +639,7 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				getEP_finalize_RequestOutputPart(&temp, request.response_format, "NOT_IMPLEMENTED");
 				break;
 			}
-			if(requestOutput.veclen > 1 && request.response_format==TCL){
+			if(requestOutput.veclen > 1 && request.response_format == KSTCL){
 				//close request item level, if we have more than one entry
 				//kshttp_response_part_finalize(&temp, request.response_format, "dummy");
 			}

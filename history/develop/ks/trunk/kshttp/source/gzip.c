@@ -5,7 +5,7 @@
  *      Author: george
  */
 
-#ifndef KSHTTP_DISABLE_GZIP
+#ifndef HTTP_DISABLE_GZIP
 
 #include "config.h"
 #include "zlib.h"

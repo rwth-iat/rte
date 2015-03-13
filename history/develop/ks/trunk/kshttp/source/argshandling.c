@@ -88,9 +88,9 @@ static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, HTTP_RES
 		if(ov_string_compare(match.value[0], "ksx") == OV_STRCMP_EQUAL){
 			*response_format = KSX;
 		}else if(ov_string_compare(match.value[0], "json") == OV_STRCMP_EQUAL){
-			*response_format = JSON;
+			*response_format = KSJSON;
 		}else if(ov_string_compare(match.value[0], "tcl") == OV_STRCMP_EQUAL){
-			*response_format = TCL;
+			*response_format = KSTCL;
 		}else if(ov_string_compare(match.value[0], "plain") == OV_STRCMP_EQUAL){
 			*response_format = PLAIN;
 		}
@@ -216,13 +216,13 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 			if(ov_string_comparei(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){
 				clientRequest->response_format = PLAIN;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/tcl") == OV_STRCMP_EQUAL){
-				clientRequest->response_format = TCL;
+				clientRequest->response_format = KSTCL;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: text/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if "readable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: application/xml") == OV_STRCMP_EQUAL ||	//RFC3023: preferd if it is "unreadable by casual users"
 					ov_string_comparei(pallheaderslist[i], "Accept: text/ksx") == OV_STRCMP_EQUAL){
 				clientRequest->response_format = KSX;
 			}else if(ov_string_comparei(pallheaderslist[i], "Accept: application/json") == OV_STRCMP_EQUAL){
-				clientRequest->response_format = JSON;
+				clientRequest->response_format = KSJSON;
 			}
 		}else if(ov_string_match(pallheaderslist[i], "?ost:*") == TRUE){
 			ov_string_freelist(plist);

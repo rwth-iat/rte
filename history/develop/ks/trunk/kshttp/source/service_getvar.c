@@ -419,7 +419,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 			}//end switch vartype
 			kshttp_response_part_begin(&LoopEntryList, request.response_format, "var");
-			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (request.response_format == KSX || request.response_format == JSON)){
+			if(ov_string_compare(LoopEntryTypeString, NULL) != OV_STRCMP_EQUAL && (request.response_format == KSX || request.response_format == KSJSON)){
 				//get additional data if we serve ksx
 				kshttp_response_part_begin(&LoopEntryList, request.response_format, "value");
 				kshttp_response_part_begin(&LoopEntryList, request.response_format, LoopEntryTypeString);

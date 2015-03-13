@@ -36,6 +36,10 @@
 *
 ***********************************************************************/
 
+#ifndef KSHTTP_OVT_INCLUDED
+#define KSHTTP_OVT_INCLUDED
+
+
 /*
  * KS_HTTP identifier
  */
@@ -104,7 +108,7 @@
  *	output format for response
  **/
 typedef enum HTTP_RESPONSEFORMAT {
-	FORMATUNDEFINED=0,TCL=1,PLAIN=2,KSX=3,JSON=4,XML=5,FORMATDEFAULT=TCL
+	FORMATUNDEFINED=0,KSTCL=1,PLAIN=2,KSX=3,KSJSON=4,XML=5,FORMATDEFAULT=KSTCL
 } HTTP_RESPONSEFORMAT;
 
 typedef enum KSHTTP_RESPONSE_GENERATEDBY {
@@ -183,3 +187,5 @@ typedef struct{
 	OV_BOOL keepAlive;			/* keep alive will be used in the response */
 	KSHTTP_RESPONSE_GENERATEDBY requestHandledBy;
 } HTTP_RESPONSE;
+
+#endif

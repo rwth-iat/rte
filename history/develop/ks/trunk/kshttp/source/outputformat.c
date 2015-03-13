@@ -27,7 +27,7 @@ OV_RESULT kshttp_printresponseheader(OV_STRING* output, const HTTP_RESPONSEFORMA
 	if(response_format==KSX){
 		ov_string_setvalue(output, "<response xmlns=\"http://acplt.org/schemas/ksx/2.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://acplt.org/schemas/ksx/2.0 ksx.xsd\">\n");
 		return kshttp_response_part_begin(output, response_format, entry_type);
-	}else if(response_format==JSON){
+	}else if(response_format==KSJSON){
 		return kshttp_response_part_begin(output, response_format, entry_type);
 	}
 	return OV_ERR_OK;
@@ -47,7 +47,7 @@ OV_RESULT kshttp_printresponsefooter(OV_STRING* output, const HTTP_RESPONSEFORMA
 	if(response_format==KSX){
 		kshttp_response_part_finalize(output, response_format, entry_type);
 		kshttp_response_part_finalize(output, response_format, "response");
-	}else if(response_format==JSON){
+	}else if(response_format==KSJSON){
 		kshttp_response_part_finalize(output, response_format, "response");
 	}
 	return OV_ERR_OK;
@@ -73,7 +73,7 @@ OV_RESULT kshttp_response_part_init(OV_STRING* output, const HTTP_RESPONSEFORMAT
  * @return return code always ov_err_ok
  */
 OV_RESULT kshttp_response_part_begin(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
-	if(response_format==TCL){
+	if(response_format==KSTCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "{");
 		}else{
@@ -94,7 +94,7 @@ OV_RESULT kshttp_response_part_begin(OV_STRING* output, const HTTP_RESPONSEFORMA
 		}else{
 			ov_string_print(output, "%s<%s>", *output, entry_type);
 		}
-	}else if(response_format==JSON){
+	}else if(response_format==KSJSON){
 		if(*output == NULL){
 			ov_string_print(output, "{\"%s\": ", entry_type);
 		}else{
@@ -111,7 +111,7 @@ OV_RESULT kshttp_response_part_begin(OV_STRING* output, const HTTP_RESPONSEFORMA
  * @return return code always ov_err_ok
  */
 OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format){
-	if(response_format==TCL){
+	if(response_format==KSTCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, " ");
 		}else{
@@ -126,7 +126,7 @@ OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, const HTTP_RESPONSEF
 
 	}else if(response_format==KSX){
 		//none
-	}else if(response_format==JSON){
+	}else if(response_format==KSJSON){
 		if(*output == NULL){
 			ov_string_setvalue(output, ", ");
 		}else{
@@ -144,7 +144,7 @@ OV_RESULT kshttp_response_parts_seperate(OV_STRING* output, const HTTP_RESPONSEF
  * @return return code always ov_err_ok
  */
 OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
-	if(response_format==TCL){
+	if(response_format==KSTCL){
 		if(*output == NULL){
 			ov_string_setvalue(output, "}");
 		}else{
@@ -167,7 +167,7 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const HTTP_RESPONSEFO
 		}else{
 			ov_string_print(output, "%s</%s>\n", *output, entry_type);
 		}
-	}else if(response_format==JSON){
+	}else if(response_format==KSJSON){
 		if(*output == NULL){
 			ov_string_print(output, "}\n");
 		}else{
@@ -180,7 +180,7 @@ OV_RESULT kshttp_response_part_finalize(OV_STRING* output, const HTTP_RESPONSEFO
 /**
  * prints the info of one result or one result array
  * could be <failure> or <success> in ksx
- * clear text in tcl
+ * clear text in KSTCL
  * @param output string to append to
  * @param response_format
  * @param results one result, or one array of results
@@ -264,11 +264,11 @@ or
 }
 
 /**
- * Convert a time into a XML, TCL or plaintext timestring (local time)
+ * Convert a time into a XML, KSTCL or plaintext timestring (local time)
 */
 OV_RESULT kshttp_timetoascii(OV_STRING* timestring, const OV_TIME* time, const HTTP_RESPONSEFORMAT response_format){
 	//timetoascii has timeformat 2002/05/30 09:30:10.123456
-	//TCL needs                  2002-05-30 09:30:10.123
+	//KSTCL needs                2002-05-30 09:30:10.123
 	//XML needs                  2002-05-30T09:30:10.123456
 	//id in String               01234567890123456789012345
 
@@ -286,11 +286,11 @@ OV_RESULT kshttp_timetoascii(OV_STRING* timestring, const OV_TIME* time, const H
 }
 
 /**
- * Convert a XML, TCL or plaintext timestring into a time (local time)
+ * Convert a XML, KSTCL or plaintext timestring into a time (local time)
 */
 OV_RESULT kshttp_asciitotime(OV_TIME* time, const OV_STRING timestring){
 	//asciitotime has timeformat 2002/05/30 09:30:10.123456
-	//TCL needs                  2002-05-30 09:30:10.123
+	//KSTCL needs                2002-05-30 09:30:10.123
 	//XML needs                  2002-05-30T09:30:10.123456
 	//id in String               01234567890123456789012345
 
@@ -313,7 +313,7 @@ OV_RESULT kshttp_asciitotime(OV_TIME* time, const OV_STRING timestring){
 }
 
 /**
- * Convert a timespan into a XML, TCL or plaintext timestring
+ * Convert a timespan into a XML, KSTCL or plaintext timestring
  * XML PT42S Period: T time delimiter, 42 Seconds
  */
 OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptime, const HTTP_RESPONSEFORMAT response_format){
@@ -344,14 +344,14 @@ OV_RESULT kshttp_timespantoascii(OV_STRING* timestring, const OV_TIME_SPAN* ptim
 	return OV_ERR_OK;
 }
 
-/** escapes a String to make a valid XML/TCL String
+/** escapes a String to make a valid XML/KSTCL String
 	possible changes in XML:
 	"	&quot;
 	'	&apos;
 	<	&lt;
 	>	&gt;
 	&	&amp;
-	in TCL:
+	in KSTCL:
 	" -> \"
 	{ -> \{
 	} -> \}
@@ -374,13 +374,13 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, const H
 	if(response_format == KSX){
 		//malloc worstcase stringlength which is &quot;
 		heapString = Ov_HeapMalloc(6*ov_string_getlength(*strIn)+1);
-	}else if(response_format == TCL){
+	}else if(response_format == KSTCL){
 		//malloc worstcase stringlength which is \}
 		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn)+1);
 	}else if(response_format == PLAIN){
 		//no manipulation is done here
 		heapString = Ov_HeapMalloc(ov_string_getlength(*strIn)+1);
-	}else if(response_format == JSON){
+	}else if(response_format == KSJSON){
 		//malloc worstcase stringlength which is \}
 		heapString = Ov_HeapMalloc(2*ov_string_getlength(*strIn)+1);
 	}else{
@@ -392,7 +392,7 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, const H
 	pcOut = heapString;
 	while(*pcIn) {
 		if(*pcIn == '"'){
-			if(response_format == TCL || response_format == JSON){
+			if(response_format == KSTCL || response_format == KSJSON){
 				*pcOut = '\\';
 				pcOut++;
 				*pcOut = '"';
@@ -453,65 +453,65 @@ OV_RESULT kshttp_escapeString(OV_STRING* resultString, OV_STRING *strIn, const H
 			*pcOut = 'p';
 			pcOut++;
 			*pcOut = ';';
-		}else if(*pcIn == '\n' && response_format == TCL){
+		}else if(*pcIn == '\n' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 'n';
-		}else if(*pcIn == '\t' && response_format == TCL){
+		}else if(*pcIn == '\t' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 't';
 /*		causes more problems that it solves...
-		}else if(*pcIn == ' ' && response_format == TCL){
+		}else if(*pcIn == ' ' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = ' ';
 */
-		}else if(*pcIn == '$' && response_format == TCL){
+		}else if(*pcIn == '$' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '$';
-		}else if(*pcIn == '{' && response_format == TCL){
+		}else if(*pcIn == '{' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '{';
-		}else if(*pcIn == '}' && response_format == TCL){
+		}else if(*pcIn == '}' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '}';
-		}else if(*pcIn == '[' && response_format == TCL){
+		}else if(*pcIn == '[' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '[';
-		}else if(*pcIn == ']' && response_format == TCL){
+		}else if(*pcIn == ']' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = ']';
-		}else if(*pcIn == '\\' && response_format == TCL){
+		}else if(*pcIn == '\\' && response_format == KSTCL){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '\\';
-		}else if(*pcIn == '\\' && response_format == JSON){
+		}else if(*pcIn == '\\' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '\\';
-		}else if(*pcIn == '\t' && response_format == JSON){
+		}else if(*pcIn == '\t' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 't';
-		}else if(*pcIn == '\b' && response_format == JSON){
+		}else if(*pcIn == '\b' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 'b';
-		}else if(*pcIn == '\n' && response_format == JSON){
+		}else if(*pcIn == '\n' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 'n';
-		}else if(*pcIn == '\r' && response_format == JSON){
+		}else if(*pcIn == '\r' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = 'r';
-		}else if(*pcIn == '/' && response_format == JSON){
+		}else if(*pcIn == '/' && response_format == KSJSON){
 			*pcOut = '\\';
 			pcOut++;
 			*pcOut = '/';

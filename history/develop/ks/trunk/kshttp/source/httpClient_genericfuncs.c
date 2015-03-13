@@ -317,21 +317,6 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	return OV_ERR_OK;
 }
 
-OV_BYTE *kshttp_strnstr(OV_BYTE *haystack, OV_STRING needle, OV_UINT length){
-	OV_UINT needle_length = strlen(needle);
-	OV_UINT i;
-
-	for (i = 0; i < length; i++){
-		if (i + needle_length > length){
-			return NULL;
-		}
-		if (strncmp((char*)&haystack[i], needle, needle_length) == 0){
-			return &haystack[i];
-		}
-	}
-	return NULL;
-}
-
 /**
  * decode header of replies (params are not checked for NULL-pointers)
  * @param dataReceived
