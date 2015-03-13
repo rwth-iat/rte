@@ -80,7 +80,7 @@ OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING v
 /*
  * returns the format of the output
  */
-static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, KSHTTP_RESPONSEFORMAT *response_format){
+static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, HTTP_RESPONSEFORMAT *response_format){
 	OV_STRING_VEC match = {0,NULL};
 	//output format
 	kshttp_find_arguments(urlQuery, "format", &match);
@@ -113,7 +113,7 @@ static OV_RESULT extract_response_format(const OV_STRING_VEC* urlQuery, KSHTTP_R
  * @param serverResponse
  * @return
  */
-OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KSHTTP_RESPONSE *serverResponse)
+OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP_RESPONSE *serverResponse)
 {
 	OV_STRING* pallheaderslist=NULL;
 	OV_UINT allheaderscount = 0;
@@ -146,17 +146,17 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 		//if the server uses 1.0, use 1.0 as the response
 		ov_string_setvalue(&clientRequest->httpVersion, "1.0");
 		ov_string_setvalue(&serverResponse->httpVersion, "1.0");
-		clientRequest->keepAlive = FALSE;
+		serverResponse->keepAlive = FALSE;
 	}else if(ov_string_compare(plist[2], "HTTP/1.1") == OV_STRCMP_EQUAL){
 		//if the server uses 1.1, use 1.1 as the response
 		ov_string_setvalue(&clientRequest->httpVersion, "1.1");
 		ov_string_setvalue(&serverResponse->httpVersion, "1.1");
-		clientRequest->keepAlive = TRUE;
+		serverResponse->keepAlive = TRUE;
 	}else{
 		//with an unknown request version, answer with default HTTP version
 		ov_string_setvalue(&clientRequest->httpVersion, NULL);
 		ov_string_setvalue(&serverResponse->httpVersion, "1.1");
-		clientRequest->keepAlive = TRUE;
+		serverResponse->keepAlive = TRUE;
 	}
 
 	//rawrequest contains the vars and urlQuery (raw)
@@ -206,12 +206,11 @@ OV_RESULT kshttp_parse_http_header_from_client(KSHTTP_REQUEST *clientRequest, KS
 	for (i=1; i<allheaderscount; i++){
 		if(ov_string_match(pallheaderslist[i], "?ccept-?ncoding:*") == TRUE){
 			if(ov_string_match(pallheaderslist[i], "*gzip*") == TRUE){
-				//could be overwritten by getVar server side push support
-				clientRequest->compressionGzip = TRUE;
+				serverResponse->compressionGzip = TRUE;
 			}
 		}else if(ov_string_compare(pallheaderslist[i], "?onnection: close") == OV_STRCMP_EQUAL){
 			//scan header for Connection: close - the default behavior is keep-alive
-			clientRequest->keepAlive = FALSE;
+			serverResponse->keepAlive = FALSE;
 		}else if(ov_string_match(pallheaderslist[i], "?ccept:*") == TRUE){
 			ov_string_setvalue(&clientRequest->Accept, pallheaderslist[i]);
 			if(ov_string_comparei(pallheaderslist[i], "Accept: text/plain") == OV_STRCMP_EQUAL){

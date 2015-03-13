@@ -57,7 +57,7 @@ static OV_RESULT extract(OV_STRING search, OV_STRING start, OV_STRING end, OV_ST
 		ov_string_setvalue(&temp, NULL);\
 		return
 
-OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING urlPath){
+OV_RESULT kshttp_authorize(int level, OV_STRING request_header, OV_STRING* reply_header, OV_STRING request_method, OV_STRING urlPath){
 	OV_STRING random_number=NULL;
 	md5_hash_return hash;
 	OV_RESULT res;
@@ -83,9 +83,8 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 
 	OV_INSTPTR_kshttp_authenticatedsession psession = NULL;
 	int cnr = 0;
-	char sessionname[256];
-	OV_INSTPTR_ov_domain thisdomain = Ov_PtrUpCast(ov_domain, Ov_GetParent(ov_containment, Ov_GetParent(ov_containment, this)));
-	OV_INSTPTR_ov_domain psessions = Ov_StaticPtrCast(ov_domain, Ov_SearchChild(ov_containment, thisdomain, "sessions"));
+	OV_INSTPTR_ov_domain kshttpdomain = Ov_PtrUpCast(ov_domain, Ov_GetParent(ov_containment, Ov_GetFirstChild(ov_instantiation, pclass_kshttp_httpManagerCom)));
+	OV_INSTPTR_ov_domain psessions = Ov_SearchChildEx(ov_containment, kshttpdomain, "sessions", ov_domain);
 
 	//loose coupling with the authenticated sessions
 	//check is there was a running session available
@@ -178,18 +177,8 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 
 	//require authorization
 
-	cnr=0;
-	//generate a new session
-	do {
-		psession = NULL;
-		cnr++;
-		sprintf(sessionname, "session%i", cnr);
-		psession = (OV_INSTPTR_kshttp_authenticatedsession) Ov_SearchChild(ov_containment, psessions, sessionname);
-	} while (psession);
-
 	//create a new session
-	if (Ov_OK(Ov_CreateObject(kshttp_authenticatedsession, psession, psessions, sessionname))) {
-		ov_string_setvalue(&(psession->v_lasttcpclient), this->v_identifier);
+	if (Ov_OK(Ov_CreateIDedObject(kshttp_authenticatedsession, psession, psessions, "session"))) {
 		//srand has been called by the time of kshttp object creation
 		ov_string_print(&random_number, "%i", rand()*rand()*rand());
 		md5_string(&hash, random_number);
@@ -204,7 +193,4 @@ OV_RESULT kshttp_authorize(int level, OV_INSTPTR_kshttp_httpclienthandler this, 
 		KS_logfile_error(("Creating of auth session failed"));
 	}
 	AUTHORIZE_RETURN OV_ERR_BADAUTH; //401
-
-
-
 }

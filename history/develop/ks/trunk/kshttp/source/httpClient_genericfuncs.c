@@ -339,7 +339,7 @@ OV_BYTE *kshttp_strnstr(OV_BYTE *haystack, OV_STRING needle, OV_UINT length){
  * @param httpParseStatus
  * @return
  */
-OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, KSHTTP_RESPONSE *responseStruct, OV_UINT *httpParseStatus)
+OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESPONSE *responseStruct, OV_UINT *httpParseStatus)
 {
 	OV_STRING *pallheaderslist=NULL;
 	OV_STRING *plist=NULL;

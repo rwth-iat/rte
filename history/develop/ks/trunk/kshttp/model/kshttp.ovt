@@ -100,12 +100,12 @@
 
 
 /**
- *	KSHTTP_RESPONSEFORMAT
+ *	HTTP_RESPONSEFORMAT
  *	output format for response
  **/
-typedef enum KSHTTP_RESPONSEFORMAT {
-	FORMATUNDEFINED=0,TCL=1,PLAIN=2,KSX=3,JSON=4,FORMATDEFAULT=TCL
-} KSHTTP_RESPONSEFORMAT;
+typedef enum HTTP_RESPONSEFORMAT {
+	FORMATUNDEFINED=0,TCL=1,PLAIN=2,KSX=3,JSON=4,XML=5,FORMATDEFAULT=TCL
+} HTTP_RESPONSEFORMAT;
 
 typedef enum KSHTTP_RESPONSE_GENERATEDBY {
 	KSHTTP_RGB_NONE,
@@ -130,20 +130,20 @@ typedef enum KSHTTP_RESPONSE_GENERATEDBY {
 	KSHTTP_RGB_CLIENTHANDLEREXT
 } KSHTTP_RESPONSE_GENERATEDBY;
 
-typedef enum KSHTTP_COMMUNICATIONSTATUS{
-	KSHTTP_CS_INITIAL = 0,
-	KSHTTP_CS_REQUESTHEADERPARSED = 10,
-	KSHTTP_CS_REQUESTPARSED = 20,
-	KSHTTP_CS_RESPONSEBODYGENERATED = 30,
-	KSHTTP_CS_RESPONSEHEADERGENERATED = 40,
-	KSHTTP_CS_RESPONSEHEADERSEND = 50,
-	KSHTTP_CS_RESPONSEBODYSEND = 60,
-	KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED = 4242,
-	KSHTTP_CS_SHUTDOWN = 9999
-} KSHTTP_COMMUNICATIONSTATUS;
+typedef enum HTTP_COMMUNICATIONSTATUS{
+	HTTP_CS_INITIAL = 0,
+	HTTP_CS_REQUESTHEADERPARSED = 10,
+	HTTP_CS_REQUESTPARSED = 20,
+	HTTP_CS_RESPONSEBODYGENERATED = 30,
+	HTTP_CS_RESPONSEHEADERGENERATED = 40,
+	HTTP_CS_RESPONSEHEADERSEND = 50,
+	HTTP_CS_RESPONSEBODYSEND = 60,
+	HTTP_CS_CHANNELRESPONSIBILITYRELEASED = 4242,
+	HTTP_CS_SHUTDOWN = 9999
+} HTTP_COMMUNICATIONSTATUS;
 
 /**
- *	KSHTTP_REQUEST
+ *	HTTP_REQUEST
  *	This structure is used for decoded transmitted data.
  *	All Strings are located in the OV database, only the messageBody is in the Heap
  *	example http 1.1 GET request of /getVar?format=ksx&path[0]=/vendor/database_free&path[1]=/vendor/database_size
@@ -156,17 +156,15 @@ typedef struct{
 	OV_STRING httpVersion;		/* 1.1 */
 	OV_STRING host;				/* localhost:7509 */
 	OV_STRING_VEC urlQuery;		/* {"format", "ksx", "path[0]", "/vendor/database_free", "path[1]", "/vendor/database_size"} */
-	KSHTTP_RESPONSEFORMAT response_format /* KSX */;
+	HTTP_RESPONSEFORMAT response_format /* KSX, XML, JSON,... */;
 	OV_STRING Accept;			/* Accept: text/ksx */
-	OV_BOOL compressionGzip;	/* TRUE probably with modern browsers (can be changed while if not desired while processing!)*/
-	OV_BOOL keepAlive;			/* TRUE probably with modern browsers (can be changed while if not desired while processing!) */
 	OV_UINT headerLength;		/* 1342 for example */
 	OV_UINT contentLength;		/* 0, as we have not POST */
 	OV_BYTE* messageBody;		/* NULL, as we have not POST. Located in the Heap! */
-} KSHTTP_REQUEST;
+} HTTP_REQUEST;
 
 /**
- *	KSHTTP_RESPONSE
+ *	HTTP_RESPONSE
  *	This structure is used for decoded transmitted data.
  *	All Strings and Bytes must be located in the OV database (and will be freed except if it points to a static file)
  */
@@ -181,5 +179,7 @@ typedef struct{
 	OV_STRING contentType;		/*  */
 	OV_STRING contentEncoding;	/*  */
 	OV_BOOL transferEncodingChunked;	/* FALSE for OV Servers */
+	OV_BOOL compressionGzip;	/* compression will be used in the response */
+	OV_BOOL keepAlive;			/* keep alive will be used in the response */
 	KSHTTP_RESPONSE_GENERATEDBY requestHandledBy;
-} KSHTTP_RESPONSE;
+} HTTP_RESPONSE;

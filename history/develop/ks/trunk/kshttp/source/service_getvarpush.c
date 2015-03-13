@@ -102,8 +102,8 @@ OV_DLLFNCEXPORT void kshttp_getvarpushhandler_typemethod (
 	OV_INSTPTR_kshttp_getvarpushhandler this = Ov_StaticPtrCast(kshttp_getvarpushhandler, pobj);
 	OV_INSTPTR_ksbase_Channel pChannel = NULL;
 
-	KSHTTP_REQUEST ClientRequest;
-	KSHTTP_RESPONSE ServerResponse;
+	HTTP_REQUEST ClientRequest;
+	HTTP_RESPONSE ServerResponse;
 	OV_RESULT result = OV_ERR_OK;
 
 	//initialise the structs

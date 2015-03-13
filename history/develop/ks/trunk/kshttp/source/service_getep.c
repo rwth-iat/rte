@@ -62,7 +62,7 @@
  * @param pointer to the response
  * @return resultcode of the operation
  */
-static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const prefix, OV_STRING value, const KSHTTP_RESPONSEFORMAT response_format){
+static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const prefix, OV_STRING value, const HTTP_RESPONSEFORMAT response_format){
 	OV_STRING changedValue = NULL;
 	OV_STRING pointer = NULL;
 	OV_UINT i = 0;
@@ -96,7 +96,7 @@ static OV_RESULT getEP_print_KSmakrovalue(OV_STRING *resultstr, OV_STRING const 
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, const KSHTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
+static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_begin(output, response_format, entry_type);
 	}else if(response_format == TCL){
@@ -114,7 +114,7 @@ static OV_RESULT getEP_begin_RequestOutputPart(OV_STRING* output, const KSHTTP_R
  * @param entry_type string for naming the following content (xml node name in KSX)
  * @return return code always ov_err_ok
  */
-static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const KSHTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
+static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const HTTP_RESPONSEFORMAT response_format, const OV_STRING entry_type){
 	if(response_format == KSX){
 		return kshttp_response_part_finalize(output, response_format, entry_type);
 	}else if(response_format == TCL){
@@ -135,7 +135,7 @@ static OV_RESULT getEP_finalize_RequestOutputPart(OV_STRING* output, const KSHTT
 		ov_string_setvalue(&params.name_mask, NULL);\
 		return
 
-OV_RESULT kshttp_exec_getep(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
+OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response){
 	OV_STRING_VEC match = {0,NULL};
 
 	OV_GETEP_PAR	params;

@@ -69,9 +69,9 @@ LIBRARY kshttp
 	IS_INSTANTIABLE;
 	COMMENT	=	"Handler for HTTP-ks clients. Processes incoming HTTP-messages and calls the respective operations (GETEP, GETVAR, etc.)";
 	VARIABLES
-		ClientRequest :	C_TYPE	<KSHTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
-		ServerResponse :	C_TYPE	<KSHTTP_RESPONSE> COMMENT	=	"Structured Data for the HTTP response.";
-		CommunicationStatus : C_TYPE <KSHTTP_COMMUNICATIONSTATUS>;
+		ClientRequest :	C_TYPE	<HTTP_REQUEST> COMMENT	=	"Structured Data for the HTTP request.";
+		ServerResponse :	C_TYPE	<HTTP_RESPONSE> COMMENT	=	"Structured Data for the HTTP response.";
+		CommunicationStatus : C_TYPE <HTTP_COMMUNICATIONSTATUS>;
 	END_VARIABLES;
 	OPERATIONS
 		/**
@@ -88,9 +88,9 @@ LIBRARY kshttp
 		/**
 		 * if a httpClientHandlerExtension want to make further http communication it is recommended to use these methods
 		 */
-		analyzeRequestHeader:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
-		analyzeRequestBody	:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
-		generateHttpBody	:	C_FUNCTION	<KSHTTP_FNC_INPACKETHANDLING>;
+		analyzeRequestHeader:	C_FUNCTION	<KSHTTP_FNC_INDATAHANDLING>;
+		analyzeRequestBody	:	C_FUNCTION	<KSHTTP_FNC_INDATAHANDLING>;
+		generateHttpBody	:	C_FUNCTION	<KSHTTP_FNC_GENERATEKSBODY>;
 		generateHttpHeader	:	C_FUNCTION	<KSHTTP_FNC_GENERATEHEADER>;
 		mapresult2http		:	C_FUNCTION	<KSHTTP_FNC_RESULT2HTTP>;
 		sendHttpHeader		:	C_FUNCTION	<KSHTTP_FNC_OUTPACKETHANDLING>;
@@ -119,7 +119,7 @@ LIBRARY kshttp
  	*	Baseclass for clientHandler Extensions belonging to the kshttp protocol
  	*	if the http clientHandler instance cannot handle a requested operation (determined by the http urlpath)
  	*	it will iterate over all instances of this class and check if the urlpath is listed in the commandList
- 	*	vector. If so the handle request function is called. If this sets KSHTTP_CS_CHANNELRESPONSIBILITYRELEASED 
+ 	*	vector. If so the handle request function is called. If this sets HTTP_CS_CHANNELRESPONSIBILITYRELEASED 
  	*	the client handler will do nothing on this channel anymore (probably best to change ksbase_AssocChannelClientHandler to you)
  	*/
  	CLASS	httpClientHandlerExtension			:	CLASS ksbase/baseClientHandlerExtension
@@ -193,7 +193,7 @@ LIBRARY kshttp
 				INITIALVALUE = 0;
 			tempCallback	:	C_TYPE	<KSBASE_CALLBACKSTRUCT>
 				COMMENT	=	"Structure containing pointer to the calling instance and to the callbackfunction. Pointer to instance is only used as a parameter to the callbackfunction.";
-			ServerResponse	:	C_TYPE	<KSHTTP_RESPONSE>
+			ServerResponse	:	C_TYPE	<HTTP_RESPONSE>
 				COMMENT	=	"Structured Data for the HTTP response.";
 		END_VARIABLES;
 		OPERATIONS
@@ -261,7 +261,6 @@ LIBRARY kshttp
 			securitylevel : INT INITIALVALUE=0; //highest level of security that has been verified on this connection
 			lastactivity : TIME HAS_ACCESSORS;
 			uncheckedaccess : INT INITIALVALUE=0; //number of times the password has not been verified
-			lasttcpclient : STRING HAS_ACCESSORS INITIALVALUE=""; //last connected name of the tcp session
 		END_VARIABLES;
 	END_CLASS;
 	

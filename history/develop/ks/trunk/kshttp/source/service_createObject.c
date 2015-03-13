@@ -51,7 +51,7 @@
  * @param pointer to the response
  * @return resultcode of the operation
  */
-OV_RESULT kshttp_exec_createObject(const KSHTTP_REQUEST request, KSHTTP_RESPONSE *response){
+OV_RESULT kshttp_exec_createObject(const HTTP_REQUEST request, HTTP_RESPONSE *response){
 	/*
 	*	parameter and result objects
 	*/
