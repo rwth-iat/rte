@@ -96,7 +96,6 @@ function HMI(debug, error, warning, info, trace) {
 	this.info = info;
 	//log trace info to console
 	this.trace = trace;
-	this.initialised = false;
 	this.cyclicRequestNeeded = false;
 	
 	this.ButShowServers = null;
@@ -146,13 +145,6 @@ HMI.prototype = {
 	 * called from "load" event, when all js files are available
 	 */
 	init: function () {
-		//garantee uniq initialisation
-		if (this.initialised === true){
-			return true;
-		}else{
-			this.initialised = true;
-		}
-		
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		var ErrorDetail = "";
@@ -2088,7 +2080,7 @@ if( window.addEventListener ) {
 
 //fallback for stupid browsers (aka Google Chrome v1-v8 or so) which fires onload to early, so our init code is never called
 //
-window.setTimeout(function(){HMI.init();}, 1000);
+//window.setTimeout(function(){HMI.init();}, 1000);
 
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);

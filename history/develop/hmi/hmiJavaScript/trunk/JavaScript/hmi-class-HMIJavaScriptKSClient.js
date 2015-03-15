@@ -156,7 +156,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no path found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getEP - no valid path found, path was: "+path);
 			return null;
@@ -225,7 +224,7 @@ HMIJavaScriptKSClient.prototype = {
 			;
 			urlparameter = "http://"+Handle+"/getEP?path=" +ServerAndPath[1]+optionalurlparameter;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//todo implement requestType, requestOutput
+			//requestType, requestOutput not implemented, but any known tks.php is lacking them, too
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -270,12 +269,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no path found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
-/*		if(path.charAt(0) !== "/"){
-			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid path found, path was: "+path);
-			return null;
-		}
-		*/
 		if (!requestOutput.indexOf || requestOutput.indexOf("OP_") !== 0){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.getVar - no valid requestOutput found, requestOutput was: "+requestOutput);
 			return null;
@@ -373,7 +366,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no path found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.setVar - no valid path found, path was: "+path);
 			return null;
@@ -485,7 +477,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no newname found");
 			return null;
 		}
-		//if (oldname.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(oldname.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.renameObject - no valid oldname found, oldname was: "+oldname);
 			return null;
@@ -526,7 +517,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			urlparameter = "http://"+Handle+"/renameObject?path="+ServerAndPath[1]+"&newname="+newname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//not implemented!
+			//no known tks.php implement them!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -572,7 +563,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no classname found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.createObject - no valid path found, path was: "+path);
 			return null;
@@ -603,7 +593,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			urlparameter = "http://"+Handle+"/createObject?path="+ServerAndPath[1]+"&factory="+classname;
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//not implemented!
+			//no known tks.php implement them!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -644,7 +634,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - no path found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(path.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.deleteObject - no valid path found, path was: "+path);
 			return null;
@@ -672,6 +661,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			urlparameter = "http://"+Handle+"/deleteObject?path="+ServerAndPath[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
+			//no known tks.php implement them!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -720,7 +710,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no portnameA found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(pathA.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.linkObjects - no valid pathA found, pathA was: "+pathA);
 			return null;
@@ -753,7 +742,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			urlparameter = "http://"+Handle+"/link?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//not implemented!
+			//no known tks.php implement them!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -803,7 +792,6 @@ HMIJavaScriptKSClient.prototype = {
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no portnameA found");
 			return null;
 		}
-		//if (path.indexof("http:") === 0){}else		//ksservhttp handling here
 		if(pathA.charAt(0) !== "/"){
 			HMI.hmi_log_error("HMIJavaScriptKSClient.prototype.unlinkObjects - no valid pathA found, pathA was: "+pathA);
 			return null;
@@ -836,7 +824,7 @@ HMIJavaScriptKSClient.prototype = {
 			
 			urlparameter = "http://"+Handle+"/unlink?path="+ServerAndPath[1]+"."+portnameA+"&element="+ServerAndPathB[1];
 		}else if ("php" === HMI.HMI_Constants.ServerType){
-			//not implemented!
+			//no known tks.php implement them!
 			Handle = this.getCommunicationPoint(ServerAndPath[0]);
 			if(Handle === null){
 				return null;
@@ -908,7 +896,7 @@ HMIJavaScriptKSClient.prototype = {
 	},
 	
 	/**
-	 * finds the TCL handle or TCP Port of ksservhttp server
+	 * finds the TCL handle or TCP Port of kshttp server
 	 * usage example:
 	 *		_findCommunicationPoint("localhost/MANAGER", this._cbInit);
 	 *		_findCommunicationPoint("localhost/fb_hmi1", null);
