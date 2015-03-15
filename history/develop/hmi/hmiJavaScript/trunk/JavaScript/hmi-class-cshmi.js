@@ -980,7 +980,9 @@ cshmi.prototype = {
 		}
 		
 		if(this.initStage === true){
-			//force sync request in the init stage. The order of actions have to be fixed in the loading
+			// force sync request in the init stage.
+			// the order of actions have to be fixed in the loading
+			// for example a value can be precached and reused later
 			callerObserver = null;
 			var GetVarCbfnc = null;
 		}else{
@@ -2896,77 +2898,121 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
 		}
+		if (ChildrenType === ""){
+			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
+			return false;
+		}
 		
-		//this will be increased in a successful instantiateTemplate
-		this.ResourceList.ChildrenIterator.currentCount = 0;
+		//fixme connection creation with preventClone fails!
 		
-		//remember an old currentChild (for cascaded iterators)
-		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-		delete this.ResourceList.ChildrenIterator.currentChild;
+		//the callbacks calls the actions of this iterator
+		var GetEPIteratorCbfnc = function(Client, req){
+			if(req.status === 200){
+				//remember an old currentChild (for cascaded iterators)
+				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				//this will be increased in a successful instantiateTemplate
+				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+				
+				var response = HMI.KSClient.unescapeString(req.responseText);
+				response = HMI.KSClient.splitKsResponse(response, 1);
+				for (var i=0; i<response.length; i++){
+					var responseDictionary = Array();
+					//Variables were requested or ANY and we got a Variable right now
+					if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_TECHUNIT"] = response[i][7];
+					}
+					//Domains were requested or ANY and we got a Domain right now
+					else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
+						//todo prefix path from active fbref
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_TECHUNIT"] = response[i][7];
+					}
+					//Links were requested or ANY and we got a Link right now
+					else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_ASSOCIDENT"] = response[i][7];
+						responseDictionary["OP_ROLEIDENT"] = response[i][8];
+					}
+					//Historys were requested or ANY and we got a History right now
+					else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
+						responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
+						responseDictionary["OP_TYPEIDENT"] = response[i][9];
+					}
+					//doku possible values
+					HMI.cshmi.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+					
+					//get and execute all actions
+					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
+				}
+				//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
+				HMI.cshmi.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+				savedCurrentChild = null;
+				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+			}
+		};
+		var GetVarIteratorCbfnc = function(Client, req){
+			if(req.status === 200){
+				//remember an old currentChild (for cascaded iterators)
+				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				
+				//get a rid of external brackets 
+				var response = req.responseText.replace(/{/g, "");
+				response = response.replace(/}/g, "");
+				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
+				for (var i=0; i<responseArray.length; i++){
+					var responseDictionary = Array();
+					responseDictionary["OP_VALUE"] = responseArray[i];
+					responseDictionary["OP_NAME"] = responseArray[i];
+					
+					//doku value and name option
+					HMI.cshmi.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+					
+					//this will be increased in a successful instantiateTemplate
+					HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+					
+					//get and execute all actions
+					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
+				}
+				//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
+				HMI.cshmi.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+				savedCurrentChild = null;
+				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+			}
+		};
 		
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", null);
-			response = HMI.KSClient.splitKsResponse(response, 1);
-			for (var i=0; i<response.length; i++){
-				var responseDictionary = Array();
-				//Variables were requested or ANY and we got a Variable right now
-				if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_TECHUNIT"] = response[i][7];
-				}
-				//Domains were requested or ANY and we got a Domain right now
-				else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
-					//todo prefix path from active fbref
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_TECHUNIT"] = response[i][7];
-				}
-				//Links were requested or ANY and we got a Link right now
-				else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_ASSOCIDENT"] = response[i][7];
-					responseDictionary["OP_ROLEIDENT"] = response[i][8];
-				}
-				//Historys were requested or ANY and we got a History right now
-				else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
-					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
-					responseDictionary["OP_TYPEIDENT"] = response[i][9];
-				}
-				//doku
-				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-				
-				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-			}
-		}else if (ChildrenType === ""){
-			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
-			return false;
+			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, true);
 		}else{
 			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
@@ -2981,33 +3027,11 @@ cshmi.prototype = {
 					//todo doku
 					path = FBRef + ChildrenTypeList[i];
 				}
-				response = HMI.KSClient.getVar(path, "OP_VALUE", null);
-				if (response === false || response === null){
-					continue;
-				}
-				//get a rid of external brackets 
-				response = response.replace(/{/g, "");
-				response = response.replace(/}/g, "");
-				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
-				
-				for (var j=0; j<responseArray.length; j++){
-					var responseDictionary = Array();
-					responseDictionary["OP_VALUE"] = responseArray[j];
-					responseDictionary["OP_NAME"] = responseArray[j];
-					
-					//doku
-					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-					
-					returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-				}
+				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, true);
 			}
 		}
-		//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
-		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-		this.ResourceList.ChildrenIterator.currentCount = 0;
-		savedCurrentChild = null;
 		
-		return returnValue;
+		return true;
 	},
 	
 	/**
