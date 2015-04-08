@@ -75,7 +75,7 @@
 	@param hubFilelist
 ***********************************************************************/
 
-function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
+function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 	
 	/********************************************************************
 		We first try to find from where this hub file has been loaded.
@@ -99,7 +99,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 	var scriptAnchor = document.head || document.getElementsByTagName('head')[0];
 	var match = null;
 	var scriptNode = null;
-	var idx;
+	var idx = 0;
 	
 	/********************************************************************
 		search our scriptNode for path of the JS-files and <head> element
@@ -123,8 +123,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 			}
 		}
 		
-		if (match)
-		{
+		if (match){
 			base = match[1];
 			break;
 		};
@@ -141,7 +140,7 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 	********************************************************************/
 	
 	var node = null;
-	for ( idx in hubFilelist ){
+	for ( idx = 0 ; idx < hubFilelist.length ; idx++){
 		if (document.createElementNS !== undefined){
 			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
 		}else if (document.createElement !== undefined){
@@ -156,13 +155,22 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 			node.setAttribute("type", "text/javascript");
 		}
 		node.setAttribute("charset", "windows-1252");
+		if(		hubFilelist[idx].slice(0, "http://".length) == "http://"
+			||	hubFilelist[idx].slice(0, "https://".length) == "https://"){
+			//this is a full path
+			var srcEntry = hubFilelist[idx];
+		}else{
+			srcEntry = base+hubFilelist[idx];
+		}
 		if (node.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
-			node.src = base+hubFilelist[idx];
+			node.src = srcEntry;
 		}else{
 			//not supported by Firefox 3.6 and Chrome 5
-			node.setAttribute("src", base+hubFilelist[idx]);
+			node.setAttribute("src", srcEntry);
 		}
+		//remember the original name for later. src is manipulated by the browsers
+		node.setAttribute("data-src", hubFilelist[idx]);
 		//the code should get parsed async as soon as it is fetched, without blocking the html parser
 		if (node.async !== undefined && async === true){
 			node.async = true;
@@ -171,6 +179,26 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 			//(only if async is not supported) 
 			node.defer = true;
 		}
+		node.onload = node.onerror = function(evt){
+			if(evt.type !== "load"){
+				//disabling execution of initialisation code
+				window.alert("Fatal error: " + evt.target.src + " not loaded. ");
+				hubFilelist = null;
+			}
+			if(hubFilelist !== null){
+				var idx = hubFilelist.indexOf(evt.target.getAttribute("data-src"));
+				if(idx >= 0){
+					//we found our entry, so remove from the loadlist
+					hubFilelist.splice(idx, 1);
+				}
+				
+				if(hubFilelist.length === 0){
+					// we have everything, so execute the code
+					callFnc();
+				}
+			}
+		};
+
 		if (scriptAnchor !== null && scriptAnchor.appendChild !== undefined){
 			scriptAnchor.appendChild(node);
 			//some blackberrys kill scriptAnchor, so HMI will not work after that
@@ -194,26 +222,27 @@ function SCRIPT_HUB(hubFilePattern, hubFilelist, async) {
 	Finally let the whole strange magic commence.
 ***********************************************************************/
 
-SCRIPT_HUB(
+loadScriptUrls(
 	//	You need to specify a regular pattern for detecting this script
 	//
 	"(.*/)hmi-hub-loader.js",
 	
 	//	List of script files to load
 	[	
-		"./hmi-generic.js",
-		"./hmi-class-HMIJavaScriptKSClient.js",
-		"./hmi-class-HMIDOMParser.js",
-		"./hmi-class-gesture-click.js",
-		"./hmi-class-gesture-doubleclick.js",
-		"./hmi-class-gesture-rightclick.js",
-		"./hmi-class-gesture-move.js",
-		"./hmi-class-gesture-textinput.js",
-		"./hmi-class-cshmi.js",
+		"hmi-generic.js",
+		"hmi-class-HMIJavaScriptKSClient.js",
+		"hmi-class-HMIDOMParser.js",
+		"hmi-class-gesture-click.js",
+		"hmi-class-gesture-doubleclick.js",
+		"hmi-class-gesture-rightclick.js",
+		"hmi-class-gesture-move.js",
+		"hmi-class-gesture-textinput.js",
+		"hmi-class-cshmi.js",
 		//wheelsupport is not supported by the HMI Team and probably firefox only
-		"./hmi-class-gesture-wheelscroll.js",
-		"./hmi-class-HMI.js"
+		"hmi-class-gesture-wheelscroll.js",
+		"hmi-class-HMI.js"
 	],
+	function(){HMI.init();},
 	true
 );
 

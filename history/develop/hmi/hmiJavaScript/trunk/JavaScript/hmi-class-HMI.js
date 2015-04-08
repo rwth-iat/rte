@@ -2063,25 +2063,6 @@ if (window.location.search && -1 !== unescape(window.location.search).indexOf("t
 	HMI = new HMI(true, true, true, true, false);
 }
 
-//init HMI after all js-files are loaded (not guaranteed at construction time)
-if( window.addEventListener ) {
-	//window is the wrong place for the eventlistener, but available at the most browsers
-	//http://www.howtocreate.co.uk/tutorials/javascript/domevents
-	window.addEventListener('load',function(){HMI.init();},false);
-} else if( document.addEventListener ) {
-	//document is the right place for the eventlistener
-	//but not supported by mozilla https://bugzilla.mozilla.org/show_bug.cgi?id=99820
-	//and Webkit
-	document.addEventListener('load',function(){HMI.init();},false);
-} else if( window.attachEvent ) {
-	//Internet Explorer < 9 is a special case as usual
-	window.attachEvent('onload',function(){HMI.init();});
-}
-
-//fallback for stupid browsers (aka Google Chrome v1-v8 or so) which fires onload to early, so our init code is never called
-//
-//window.setTimeout(function(){HMI.init();}, 1000);
-
 var filedate = "$Date$";
 filedate = filedate.substring(7, filedate.length-2);
 if ("undefined" == typeof HMIdate){
