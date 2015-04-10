@@ -2898,121 +2898,77 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
 		}
-		if (ChildrenType === ""){
-			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
-			return false;
-		}
 		
-		//fixme connection creation with preventClone fails!
+		//this will be increased in a successful instantiateTemplate
+		this.ResourceList.ChildrenIterator.currentCount = 0;
 		
-		//the callbacks calls the actions of this iterator
-		var GetEPIteratorCbfnc = function(Client, req){
-			if(req.status === 200){
-				//remember an old currentChild (for cascaded iterators)
-				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
-				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
-				//this will be increased in a successful instantiateTemplate
-				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
-				
-				var response = HMI.KSClient.unescapeString(req.responseText);
-				response = HMI.KSClient.splitKsResponse(response, 1);
-				for (var i=0; i<response.length; i++){
-					var responseDictionary = Array();
-					//Variables were requested or ANY and we got a Variable right now
-					if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
-						responseDictionary["OP_NAME"] = response[i][0];
-						responseDictionary["OP_TYPE"] = response[i][1];
-						responseDictionary["OP_COMMENT"] = response[i][2];
-						responseDictionary["OP_ACCESS"] = response[i][3];
-						responseDictionary["OP_SEMANTICS"] = response[i][4];
-						responseDictionary["OP_CREATIONTIME"] = response[i][5];
-						responseDictionary["OP_CLASS"] = response[i][6];
-						responseDictionary["OP_TECHUNIT"] = response[i][7];
-					}
-					//Domains were requested or ANY and we got a Domain right now
-					else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
-						//todo prefix path from active fbref
-						responseDictionary["OP_NAME"] = response[i][0];
-						responseDictionary["OP_TYPE"] = response[i][1];
-						responseDictionary["OP_COMMENT"] = response[i][2];
-						responseDictionary["OP_ACCESS"] = response[i][3];
-						responseDictionary["OP_SEMANTICS"] = response[i][4];
-						responseDictionary["OP_CREATIONTIME"] = response[i][5];
-						responseDictionary["OP_CLASS"] = response[i][6];
-						responseDictionary["OP_TECHUNIT"] = response[i][7];
-					}
-					//Links were requested or ANY and we got a Link right now
-					else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
-						responseDictionary["OP_NAME"] = response[i][0];
-						responseDictionary["OP_TYPE"] = response[i][1];
-						responseDictionary["OP_COMMENT"] = response[i][2];
-						responseDictionary["OP_ACCESS"] = response[i][3];
-						responseDictionary["OP_SEMANTICS"] = response[i][4];
-						responseDictionary["OP_CREATIONTIME"] = response[i][5];
-						responseDictionary["OP_CLASS"] = response[i][6];
-						responseDictionary["OP_ASSOCIDENT"] = response[i][7];
-						responseDictionary["OP_ROLEIDENT"] = response[i][8];
-					}
-					//Historys were requested or ANY and we got a History right now
-					else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
-						responseDictionary["OP_NAME"] = response[i][0];
-						responseDictionary["OP_TYPE"] = response[i][1];
-						responseDictionary["OP_COMMENT"] = response[i][2];
-						responseDictionary["OP_ACCESS"] = response[i][3];
-						responseDictionary["OP_SEMANTICS"] = response[i][4];
-						responseDictionary["OP_CREATIONTIME"] = response[i][5];
-						responseDictionary["OP_CLASS"] = response[i][6];
-						responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
-						responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
-						responseDictionary["OP_TYPEIDENT"] = response[i][9];
-					}
-					//doku possible values
-					HMI.cshmi.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-					
-					//get and execute all actions
-					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-				}
-				//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
-				HMI.cshmi.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-				savedCurrentChild = null;
-				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
-			}
-		};
-		var GetVarIteratorCbfnc = function(Client, req){
-			if(req.status === 200){
-				//remember an old currentChild (for cascaded iterators)
-				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
-				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
-				
-				//get a rid of external brackets 
-				var response = req.responseText.replace(/{/g, "");
-				response = response.replace(/}/g, "");
-				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
-				for (var i=0; i<responseArray.length; i++){
-					var responseDictionary = Array();
-					responseDictionary["OP_VALUE"] = responseArray[i];
-					responseDictionary["OP_NAME"] = responseArray[i];
-					
-					//doku value and name option
-					HMI.cshmi.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-					
-					//this will be increased in a successful instantiateTemplate
-					HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
-					
-					//get and execute all actions
-					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-				}
-				//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
-				HMI.cshmi.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-				savedCurrentChild = null;
-				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
-			}
-		};
+		//remember an old currentChild (for cascaded iterators)
+		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
+		delete this.ResourceList.ChildrenIterator.currentChild;
 		
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, true);
+			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", null);
+			response = HMI.KSClient.splitKsResponse(response, 1);
+			for (var i=0; i<response.length; i++){
+				var responseDictionary = Array();
+				//Variables were requested or ANY and we got a Variable right now
+				if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_TECHUNIT"] = response[i][7];
+				}
+				//Domains were requested or ANY and we got a Domain right now
+				else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
+					//todo prefix path from active fbref
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_TECHUNIT"] = response[i][7];
+				}
+				//Links were requested or ANY and we got a Link right now
+				else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_ASSOCIDENT"] = response[i][7];
+					responseDictionary["OP_ROLEIDENT"] = response[i][8];
+				}
+				//Historys were requested or ANY and we got a History right now
+				else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
+					responseDictionary["OP_NAME"] = response[i][0];
+					responseDictionary["OP_TYPE"] = response[i][1];
+					responseDictionary["OP_COMMENT"] = response[i][2];
+					responseDictionary["OP_ACCESS"] = response[i][3];
+					responseDictionary["OP_SEMANTICS"] = response[i][4];
+					responseDictionary["OP_CREATIONTIME"] = response[i][5];
+					responseDictionary["OP_CLASS"] = response[i][6];
+					responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
+					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
+					responseDictionary["OP_TYPEIDENT"] = response[i][9];
+				}
+				//doku
+				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+				
+				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
+			}
+		}else if (ChildrenType === ""){
+			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
+			return false;
 		}else{
 			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
@@ -3027,11 +2983,33 @@ cshmi.prototype = {
 					//todo doku
 					path = FBRef + ChildrenTypeList[i];
 				}
-				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, true);
+				response = HMI.KSClient.getVar(path, "OP_VALUE", null);
+				if (response === false || response === null){
+					continue;
+				}
+				//get a rid of external brackets 
+				response = response.replace(/{/g, "");
+				response = response.replace(/}/g, "");
+				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
+				
+				for (var j=0; j<responseArray.length; j++){
+					var responseDictionary = Array();
+					responseDictionary["OP_VALUE"] = responseArray[j];
+					responseDictionary["OP_NAME"] = responseArray[j];
+					
+					//doku
+					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
+					
+					returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
+				}
 			}
 		}
+		//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
+		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
+		this.ResourceList.ChildrenIterator.currentCount = 0;
+		savedCurrentChild = null;
 		
-		return true;
+		return returnValue;
 	},
 	
 	/**
@@ -3184,7 +3162,7 @@ cshmi.prototype = {
 				}else{
 					for(var i = 0; i < Source.childNodes.length;i++){
 						// search tagName "circle" with name containing ConnectionPoint
-						if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+						if (Source.childNodes[i].tagName === "circle" && Source.childNodes[i].id.indexOf("/ConnectionPoint") !== -1){
 							SourceConnectionPoint = Source.childNodes[i];
 							break;
 						}
@@ -3217,7 +3195,7 @@ cshmi.prototype = {
 					while (domainSVG.tagName === "svg" && SourceConnectionPoint === null){
 						for(var i = 0; i < domainSVG.childNodes.length;i++){
 							// search tagName "circle" with name containing SourceConnectionPointOutsideDomain
-							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("SourceConnectionPointOutsideDomain") !== -1){
+							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("/SourceConnectionPointOutsideDomain") !== -1){
 								SourceConnectionPoint = domainSVG.childNodes[i];
 								SourceConnectionPointdirection = SourceConnectionPoint.id.slice(SourceConnectionPoint.id.indexOf("SourceConnectionPointOutsideDomain")+34);
 								break;
@@ -3235,6 +3213,8 @@ cshmi.prototype = {
 						SourceConnectionPointdirection = 0;
 					}else if(SourceConnectionPointdirection.toLowerCase() === "down"){
 						SourceConnectionPointdirection = 90;
+					}else{
+						SourceConnectionPointdirection = 0;
 					}
 					//remember the result
 					this.ResourceList.Actions["SourceConnectionPointOutsideDomain"] = new Object();
@@ -3251,7 +3231,7 @@ cshmi.prototype = {
 				}else{
 					for(var i = 0; i < Target.childNodes.length;i++){
 						// search tagName "circle" with name containing ConnectionPoint
-						if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("ConnectionPoint") !== -1){
+						if (Target.childNodes[i].tagName === "circle" && Target.childNodes[i].id.indexOf("/ConnectionPoint") !== -1){
 							TargetConnectionPoint = Target.childNodes[i];
 							break;
 						}
@@ -3283,7 +3263,7 @@ cshmi.prototype = {
 					while (domainSVG.tagName === "svg" && TargetConnectionPoint === null){
 						for(var i = 0; i < domainSVG.childNodes.length;i++){
 							// search tagName "circle" with name containing TargetConnectionPointOutsideDomain
-							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("TargetConnectionPointOutsideDomain") !== -1){
+							if (domainSVG.childNodes[i].tagName === "circle" && domainSVG.childNodes[i].id.indexOf("/TargetConnectionPointOutsideDomain") !== -1){
 								TargetConnectionPoint = domainSVG.childNodes[i];
 								TargetConnectionPointdirection = TargetConnectionPoint.id.slice(TargetConnectionPoint.id.indexOf("TargetConnectionPointOutsideDomain")+34);
 								break;
@@ -3301,6 +3281,8 @@ cshmi.prototype = {
 						TargetConnectionPointdirection = 0;
 					}else if(TargetConnectionPointdirection.toLowerCase() === "down"){
 						TargetConnectionPointdirection = 90;
+					}else{
+						TargetConnectionPointdirection = 180;
 					}
 					//remember the result
 					this.ResourceList.Actions["TargetConnectionPointOutsideDomain"] = new Object();
@@ -3361,91 +3343,121 @@ cshmi.prototype = {
 			OffsetSource += parseFloat(requestList[ObjectPath]["offset"]);
 			OffsetTarget += parseFloat(requestList[ObjectPath]["offset"]);
 			
+			VisualObject.ResourceList = new Object();
+			VisualObject.ResourceList.RoutePolyline = new Object();
+			VisualObject.ResourceList.RoutePolyline.Coords = new Object();
 			if(this.initStage === false){
 				//remember the result
-				VisualObject.ResourceList = new Object();
-				VisualObject.ResourceList.RoutePolyline = new Object();
 				VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint = SourceConnectionPoint;
 				VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection = SourceConnectionPointdirection;
 				VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint = TargetConnectionPoint;
 				VisualObject.ResourceList.RoutePolyline.TargetConnectionPointdirection = TargetConnectionPointdirection;
 				VisualObject.ResourceList.RoutePolyline.OffsetSource = OffsetSource;
 				VisualObject.ResourceList.RoutePolyline.OffsetTarget = OffsetTarget;
-				VisualObject.ResourceList.RoutePolyline.Coords = new Object();
+			}
+		}
+		
+		if (SourceConnectionPoint === null && TargetConnectionPoint === null){
+			//could not paint something
+			return false;
+		}
+		var IteratorObj = null;
+		var absoluterotate = 0;
+		var StartX = 0;
+		var StartY = 0;
+		var rotateStart = 0;
+		var EndX = 0;
+		var EndY = 0;
+		var rotateEnd = 0;
+		if (SourceConnectionPoint !== null){
+			IteratorObj = SourceConnectionPoint;
+			while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+				if(IteratorObj.getAttribute("display") === "none"){
+					//connection object is invisible, so hide us, too.
+					if(VisualObject.tagName === "polyline"){
+						VisualObject.setAttribute("points", "");
+					}else if(VisualObject.tagName === "path"){
+						VisualObject.setAttribute("d", "");
+					}
+					return true;
+				}
+			}
+			//find source rotation
+			absoluterotate = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+			if(absoluterotate < 44){
+				//nothing
+			}else if(absoluterotate < 134){
+				SourceConnectionPointdirection = (SourceConnectionPointdirection + 90) % 360;
+			}else if(absoluterotate < 226){
+				SourceConnectionPointdirection = (SourceConnectionPointdirection + 180) % 360;
+			}else if(absoluterotate < 316){
+				SourceConnectionPointdirection = (SourceConnectionPointdirection + 270) % 360;
 			}else{
-				VisualObject.ResourceList = new Object();
-				VisualObject.ResourceList.RoutePolyline = new Object();
-				VisualObject.ResourceList.RoutePolyline.Coords = new Object();
+				//nothing
 			}
-		}
-		
-		if (SourceConnectionPoint === null){
-			//could not paint something
-			return false;
-		}else if(TargetConnectionPoint === null){
-			//could not paint something
-			return false;
-		}
-		var IteratorObj = SourceConnectionPoint;
-		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-			if(IteratorObj.getAttribute("display") === "none"){
-				//connection object is invisible, so hide us, too.
-				if(VisualObject.tagName === "polyline"){
-					VisualObject.setAttribute("points", "");
-				}else if(VisualObject.tagName === "path"){
-					VisualObject.setAttribute("d", "");
+			StartX = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
+			StartY = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
+			rotateStart = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10);
+			if(TargetConnectionPoint === null){
+				//paint a dummy line into the correct direction
+				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
+				if(SourceConnectionPointdirection == 0){
+					EndX = StartX + OffsetSource/1;		EndY = StartY;					TargetConnectionPointdirection = 180;
+				}else if(SourceConnectionPointdirection == 90){
+					EndX = StartX;						EndY = StartY + OffsetSource/1;	TargetConnectionPointdirection = 270;
+				}else if(SourceConnectionPointdirection == 180){
+					EndX = StartX - OffsetSource/1;		EndY = StartY;					TargetConnectionPointdirection = 0;
+				}else if(SourceConnectionPointdirection == 270){
+					EndX = StartX;						EndY = StartY - OffsetSource/1;	TargetConnectionPointdirection = 90;
 				}
-				return true;
 			}
 		}
-		IteratorObj = TargetConnectionPoint;
-		while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
-			if(IteratorObj.getAttribute("display") === "none"){
-				//connection object is invisible, so hide us, too.
-				if(VisualObject.tagName === "polyline"){
-					VisualObject.setAttribute("points", "");
-				}else if(VisualObject.tagName === "path"){
-					VisualObject.setAttribute("d", "");
+		if(TargetConnectionPoint !== null){
+			IteratorObj = TargetConnectionPoint;
+			while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+				if(IteratorObj.getAttribute("display") === "none"){
+					//connection object is invisible, so hide us, too.
+					if(VisualObject.tagName === "polyline"){
+						VisualObject.setAttribute("points", "");
+					}else if(VisualObject.tagName === "path"){
+						VisualObject.setAttribute("d", "");
+					}
+					return true;
 				}
-				return true;
 			}
-		}
-		
-		var absoluterotate = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
-		if(absoluterotate < 44){
-			//nothing
-		}else if(absoluterotate < 134){
-			SourceConnectionPointdirection = (SourceConnectionPointdirection + 90) % 360;
-		}else if(absoluterotate < 226){
-			SourceConnectionPointdirection = (SourceConnectionPointdirection + 180) % 360;
-		}else if(absoluterotate < 316){
-			SourceConnectionPointdirection = (SourceConnectionPointdirection + 270) % 360;
-		}else{
-			//nothing
-		}
-		absoluterotate = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
-		if(absoluterotate < 44){
-			//nothing
-		}else if(absoluterotate < 134){
-			TargetConnectionPointdirection = (TargetConnectionPointdirection + 90) % 360;
-		}else if(absoluterotate < 226){
-			TargetConnectionPointdirection = (TargetConnectionPointdirection + 180) % 360;
-		}else if(absoluterotate < 316){
-			TargetConnectionPointdirection = (TargetConnectionPointdirection + 270) % 360;
-		}else{
-			//nothing
+			//find target rotation
+			absoluterotate = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10) % 360;
+			if(absoluterotate < 44){
+				//nothing
+			}else if(absoluterotate < 134){
+				TargetConnectionPointdirection = (TargetConnectionPointdirection + 90) % 360;
+			}else if(absoluterotate < 226){
+				TargetConnectionPointdirection = (TargetConnectionPointdirection + 180) % 360;
+			}else if(absoluterotate < 316){
+				TargetConnectionPointdirection = (TargetConnectionPointdirection + 270) % 360;
+			}else{
+				//nothing
+			}
+			EndX = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
+			EndY = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
+			rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
+			if(SourceConnectionPoint === null){
+				//paint a dummy line into the correct direction
+				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
+				if(TargetConnectionPointdirection == 0){
+					StartX = EndX + OffsetTarget/1;		StartY = EndY;					SourceConnectionPointdirection = 180;
+				}else if(TargetConnectionPointdirection == 90){
+					StartX = EndX;						StartY = EndY - OffsetTarget/1;	SourceConnectionPointdirection = 270;
+				}else if(TargetConnectionPointdirection == 180){
+					StartX = EndX - OffsetTarget/1;		StartY = EndY;					SourceConnectionPointdirection = 0;
+				}else if(TargetConnectionPointdirection == 270){
+					StartX = EndX;						StartY = EndY + OffsetTarget/1;	SourceConnectionPointdirection = 90;
+				}
+			}
 		}
 		absoluterotate = null;
 		
-		var StartX = parseInt(SourceConnectionPoint.getAttribute("absolutex"), 10);
-		var StartY = parseInt(SourceConnectionPoint.getAttribute("absolutey"), 10);
-		var rotateStart = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10);
-		
-		var EndX = parseInt(TargetConnectionPoint.getAttribute("absolutex"), 10);
-		var EndY = parseInt(TargetConnectionPoint.getAttribute("absolutey"), 10);
-		var rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
-		
-		//we are perhaps not at global coordinate 0,0
+		//perhaps we are not at global coordinate 0,0
 		StartX = StartX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
 		EndX = EndX - parseFloat(VisualObject.parentNode.getAttribute("absolutex"));
 		StartY = StartY - parseFloat(VisualObject.parentNode.getAttribute("absolutey"));
@@ -3988,7 +4000,7 @@ cshmi.prototype = {
 				}
 			}
 			
-			//remember manipulation result
+			//remember manipulation result. Attention: these values are stored in many FBDs, so renaming them can destroy positioning
 			VisualObject.ResourceList.RoutePolyline.Coords.StartX = StartX;
 			VisualObject.ResourceList.RoutePolyline.Coords.StartY = StartY;
 			VisualObject.ResourceList.RoutePolyline.Coords.rotateStart = rotateStart;
@@ -5004,7 +5016,7 @@ cshmi.prototype = {
 					continue loadLibrary;
 				}
 			}
-			
+			//fixme try to use loadScriptUrls from hub-loader
 			this.ResourceList.externaljsList.push(sourceListSplitted[i]);
 			var node = document.createElement("script");
 			node.type = "text/javascript";
