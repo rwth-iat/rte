@@ -3402,13 +3402,13 @@ cshmi.prototype = {
 				//paint a dummy line into the correct direction
 				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
 				if(SourceConnectionPointdirection == 0){
-					EndX = StartX + OffsetSource/1;		EndY = StartY;					TargetConnectionPointdirection = 180;
+					EndX = StartX + OffsetSource/2;		EndY = StartY;					TargetConnectionPointdirection = 180;
 				}else if(SourceConnectionPointdirection == 90){
-					EndX = StartX;						EndY = StartY + OffsetSource/1;	TargetConnectionPointdirection = 270;
+					EndX = StartX;						EndY = StartY + OffsetSource/2;	TargetConnectionPointdirection = 270;
 				}else if(SourceConnectionPointdirection == 180){
-					EndX = StartX - OffsetSource/1;		EndY = StartY;					TargetConnectionPointdirection = 0;
+					EndX = StartX - OffsetSource/2;		EndY = StartY;					TargetConnectionPointdirection = 0;
 				}else if(SourceConnectionPointdirection == 270){
-					EndX = StartX;						EndY = StartY - OffsetSource/1;	TargetConnectionPointdirection = 90;
+					EndX = StartX;						EndY = StartY - OffsetSource/2;	TargetConnectionPointdirection = 90;
 				}
 			}
 		}
@@ -3445,13 +3445,13 @@ cshmi.prototype = {
 				//paint a dummy line into the correct direction
 				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
 				if(TargetConnectionPointdirection == 0){
-					StartX = EndX + OffsetTarget/1;		StartY = EndY;					SourceConnectionPointdirection = 180;
+					StartX = EndX + OffsetTarget/2;		StartY = EndY;					SourceConnectionPointdirection = 180;
 				}else if(TargetConnectionPointdirection == 90){
-					StartX = EndX;						StartY = EndY - OffsetTarget/1;	SourceConnectionPointdirection = 270;
+					StartX = EndX;						StartY = EndY - OffsetTarget/2;	SourceConnectionPointdirection = 270;
 				}else if(TargetConnectionPointdirection == 180){
-					StartX = EndX - OffsetTarget/1;		StartY = EndY;					SourceConnectionPointdirection = 0;
+					StartX = EndX - OffsetTarget/2;		StartY = EndY;					SourceConnectionPointdirection = 0;
 				}else if(TargetConnectionPointdirection == 270){
-					StartX = EndX;						StartY = EndY + OffsetTarget/1;	SourceConnectionPointdirection = 90;
+					StartX = EndX;						StartY = EndY + OffsetTarget/2;	SourceConnectionPointdirection = 90;
 				}
 			}
 		}
@@ -3672,7 +3672,18 @@ cshmi.prototype = {
 				//to right/OUTPUT --> from left/INPUT
 				OffsetPointSourceX = StartX + OffsetSource;
 				OffsetPointSourceY = StartY;
-				if (OffsetPointSourceX >= EndX) {
+				if(OffsetPointSourceX >= EndX && StartX < EndX){
+					OffsetPointSourceX = StartX + (EndX - StartX)/2;
+					
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = (EndY+StartY)/2;
+					
+					ContrlPointTargetX = EndX - (EndX - StartX)/2;
+					ContrlPointTargetY = ContrlPointSourceY;
+					
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else if (OffsetPointSourceX >= EndX) {
 					ContrlPointSourceX = OffsetPointSourceX;
 					ContrlPointSourceY = (EndY+StartY)/2;
 					
@@ -3693,7 +3704,18 @@ cshmi.prototype = {
 				//to left/INPUT --> from right/OUTPUT
 				OffsetPointSourceX = StartX - OffsetSource;
 				OffsetPointSourceY = StartY;
-				if (OffsetPointSourceX <= EndX) {
+				if(OffsetPointSourceX <= EndX && StartX > EndX){
+					OffsetPointSourceX = StartX + (EndX - StartX)/2;
+					
+					ContrlPointSourceX = OffsetPointSourceX;
+					ContrlPointSourceY = (EndY+StartY)/2;
+					
+					ContrlPointTargetX = EndX - (EndX - StartX)/2;
+					ContrlPointTargetY = ContrlPointSourceY;
+					
+					OffsetPointTargetX = ContrlPointTargetX;
+					OffsetPointTargetY = EndY;
+				}else if (OffsetPointSourceX <= EndX) {
 					ContrlPointSourceX = OffsetPointSourceX;
 					ContrlPointSourceY = (EndY+StartY)/2;
 					
