@@ -979,10 +979,11 @@ cshmi.prototype = {
 			iterationObject = null;
 		}
 		
-		if(this.initStage === true){
+		if(this.initStage === true || this.ResourceList.ChildrenIterator.currentChild !== undefined){
 			// force sync request in the init stage.
 			// the order of actions have to be fixed in the loading
 			// for example a value can be precached and reused later
+			// force sync request with an active Iterator as the currentChild is lost at a async call
 			callerObserver = null;
 			var GetVarCbfnc = null;
 		}else{
@@ -3357,7 +3358,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		if (SourceConnectionPoint === null && TargetConnectionPoint === null){
+		if (SourceConnectionPoint === null || TargetConnectionPoint === null){
 			//could not paint something
 			return false;
 		}
@@ -3400,6 +3401,7 @@ cshmi.prototype = {
 			rotateStart = parseInt(SourceConnectionPoint.getAttribute("absoluterotate"), 10);
 			if(TargetConnectionPoint === null){
 				//paint a dummy line into the correct direction
+				/*	disabled to paint no line at the fb engineering 
 				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
 				if(SourceConnectionPointdirection == 0){
 					EndX = StartX + OffsetSource/2;		EndY = StartY;					TargetConnectionPointdirection = 180;
@@ -3410,6 +3412,7 @@ cshmi.prototype = {
 				}else if(SourceConnectionPointdirection == 270){
 					EndX = StartX;						EndY = StartY - OffsetSource/2;	TargetConnectionPointdirection = 90;
 				}
+				*/
 			}
 		}
 		if(TargetConnectionPoint !== null){
@@ -3443,6 +3446,7 @@ cshmi.prototype = {
 			rotateEnd = parseInt(TargetConnectionPoint.getAttribute("absoluterotate"), 10);
 			if(SourceConnectionPoint === null){
 				//paint a dummy line into the correct direction
+				/*	disabled to paint no line at the fb engineering
 				VisualObject.ResourceList.RoutePolyline.savingDisabled = true;
 				if(TargetConnectionPointdirection == 0){
 					StartX = EndX + OffsetTarget/2;		StartY = EndY;					SourceConnectionPointdirection = 180;
@@ -3453,6 +3457,7 @@ cshmi.prototype = {
 				}else if(TargetConnectionPointdirection == 270){
 					StartX = EndX;						StartY = EndY + OffsetTarget/2;	SourceConnectionPointdirection = 90;
 				}
+				*/
 			}
 		}
 		absoluterotate = null;

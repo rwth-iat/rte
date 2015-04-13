@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-04-10 17:37:13
+* Erstellt: 2015-04-13 17:49:28
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -1791,7 +1791,40 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "cfcview";
+      value : INPUT STRING = "iterate";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/Input/click/HideMe :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "hidePortsetterNow";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/Input/click/HideMe.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -1986,7 +2019,40 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value : INPUT STRING = "cfcview";
+      value : INPUT STRING = "iterate";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/Output/click/HideMe :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "hidePortsetterNow";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/Output/click/HideMe.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -2062,6 +2128,125 @@
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "globalvarchanged";
+      zindex : INPUT UINT = 5;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.if/testPath :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.if/testPath.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "hidePortsetterNow";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.if/testPath.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIfullqualifiedname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.then/setVisibleFalse :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "visible";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.then/setVisibleFalse.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/FCPortSetter/globalvarchanged/hideMe.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -12945,7 +13130,7 @@
       TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
-      value[85] : INPUT STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport"};
+      value[51] : INPUT STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -13105,6 +13290,364 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCPortIterator.forEachChild/NotInNotOut.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator :
+    CLASS /acplt/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.if/Is_var :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_CLASS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.if/Is_var.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[85] : INPUT STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.if/Is_In :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.if/Is_In.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "flags";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.if/Is_In.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT UINT = 256;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.then/addInputFBVar :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Engineering/internal/FCChartviewInputport";
+      x : INPUT SINGLE = 40.000000;
+      y : INPUT SINGLE = 50.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 23.000000;
+      maxTemplatesPerDirection : INPUT STRING = "";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.then/checkPortconfig.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCInputIterator.forEachChild/IN.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator :
+    CLASS /acplt/cshmi/ChildrenIterator;
+    VARIABLE_VALUES
+      ChildrenType : INPUT STRING = "OT_DOMAIN";
+      zindex : INPUT UINT = 4;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.if/Is_var :
+    CLASS /acplt/cshmi/CompareIteratedChild;
+    VARIABLE_VALUES
+      childValue : INPUT STRING = "OP_CLASS";
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.if/Is_var.withValue :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[85] : INPUT STRING = {"/fb/anyport" , "/fb/boolport" , "/fb/boolvecport" , "/fb/doubleport" , "/fb/doublevecport" , "/fb/intport" , "/fb/intvecport" , "/fb/singleport" , "/fb/singlevecport" , "/fb/stringport" , "/fb/stringvecport" , "/fb/timespanport" , "/fb/timespanvecport" , "/fb/timeport" , "/fb/timevecport" , "/fb/uintport" , "/fb/uintvecport" , "/Libraries/fb/anyport" , "/Libraries/fb/boolport" , "/Libraries/fb/boolvecport" , "/Libraries/fb/doubleport" , "/Libraries/fb/doublevecport" , "/Libraries/fb/intport" , "/Libraries/fb/intvecport" , "/Libraries/fb/singleport" , "/Libraries/fb/singlevecport" , "/Libraries/fb/stringport" , "/Libraries/fb/stringvecport" , "/Libraries/fb/timespanport" , "/Libraries/fb/timespanvecport" , "/Libraries/fb/timeport" , "/Libraries/fb/timevecport" , "/Libraries/fb/uintport" , "/Libraries/fb/uintvecport" , "/fb/anyvar" , "/fb/boolvar" , "/fb/boolvecvar" , "/fb/doublevar" , "/fb/doublevecvar" , "/fb/intvar" , "/fb/intvecvar" , "/fb/singlevar" , "/fb/singlevecvar" , "/fb/stringvar" , "/fb/stringvecvar" , "/fb/timespanvar" , "/fb/timespanvecvar" , "/fb/timevar" , "/fb/timevecvar" , "/fb/uintvar" , "/fb/uintvecvar" , "/Libraries/fb/anyvar" , "/Libraries/fb/boolvar" , "/Libraries/fb/boolvecvar" , "/Libraries/fb/doublevar" , "/Libraries/fb/doublevecvar" , "/Libraries/fb/intvar" , "/Libraries/fb/intvecvar" , "/Libraries/fb/singlevar" , "/Libraries/fb/singlevecvar" , "/Libraries/fb/stringvar" , "/Libraries/fb/stringvecvar" , "/Libraries/fb/timespanvar" , "/Libraries/fb/timespanvecvar" , "/Libraries/fb/timevar" , "/Libraries/fb/timevecvar" , "/Libraries/fb/uintvar" , "/Libraries/fb/uintvecvar" , "/acplt/fb/anyport" , "/acplt/fb/boolport" , "/acplt/fb/boolvecport" , "/acplt/fb/doubleport" , "/acplt/fb/doublevecport" , "/acplt/fb/intport" , "/acplt/fb/intvecport" , "/acplt/fb/singleport" , "/acplt/fb/singlevecport" , "/acplt/fb/stringport" , "/acplt/fb/stringvecport" , "/acplt/fb/timespanport" , "/acplt/fb/timespanvecport" , "/acplt/fb/timeport" , "/acplt/fb/timevecport" , "/acplt/fb/uintport" , "/acplt/fb/uintvecport"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.if/Is_Out :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.if/Is_Out.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "flags";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.if/Is_Out.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT UINT = 16384;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.then/addOutputFCVar :
+    CLASS /acplt/cshmi/InstantiateTemplate;
+    VARIABLE_VALUES
+      TemplateDefinition : INPUT STRING = "Engineering/internal/FCChartviewOutputport";
+      x : INPUT SINGLE = 920.000000;
+      y : INPUT SINGLE = 50.000000;
+      xOffset : INPUT SINGLE = 0.000000;
+      yOffset : INPUT SINGLE = 23.000000;
+      maxTemplatesPerDirection : INPUT STRING = "";
+      FBReference[1] : INPUT STRING = {"OP_NAME"};
+      FBVariableReference[1] : INPUT STRING = {"InputVarPath:OP_NAME"};
+      ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
+      preventClone : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      rotate : INPUT INT = 0;
+      opacity : INPUT SINGLE = 1.000000;
+      hideable : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.then/checkPortconfig.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/globalvarchanged/If_RequestReload_Iterate.then/FCOutputIterator.forEachChild/OUT.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
