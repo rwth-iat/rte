@@ -127,14 +127,13 @@ TODO:
 JavaScript:
 - check return value of gethandleid
 
-CSHMIHostServer/acplt/ov/library in FBRef ermoeglichen
 CSHMI:configvalue:myconfig in SetValue.TemplateFBVariableReferenceName
 
 var varName = responseArray[i].split(" ");
-varName[1] evtl nicht verf�gbar!
+varName[1] evtl nicht verfuegbar!
 
 - Auch das laden sollte asyncrone requests nutzen. 
-	Daf�r muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
+	Dafuer muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -306,9 +305,10 @@ cshmi.prototype = {
 		}
 		
 		//get and prepare Children in an recursive call
+		var containerObject = null;
 		if (VisualObject !== null){
 			if (VisualObject.tagName === "g" && VisualObject.id === ""){
-				var containerObject = VisualObject;
+				containerObject = VisualObject;
 				VisualObject = VisualObject.firstChild;
 			}
 			
@@ -328,7 +328,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		if (containerObject){
+		if (containerObject !== null){
 			//container "g"
 			return containerObject;
 		}else{
@@ -1247,27 +1247,27 @@ cshmi.prototype = {
 			if (FBRef === ""){
 				return false;
 			}else if (ParameterValue === "CSHMIHostServer"){
-				// is //dev:7509/server1
+				// should be //dev:7509/server1
 				var PathArray = FBRef.split("/");
 				if(PathArray.length < 2){
 					return "";
 				}
 				return "//"+PathArray[2]+"/"+PathArray[3];
 			}else if (ParameterValue === "fullqualifiedparentname" || ParameterValue === "CSHMIfullqualifiedparentname"){
-				// is //dev:7509/server1/TechUnits
+				// should be //dev:7509/server1/TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return PathArray.join("/");
 			}else if (ParameterValue === "fullqualifiedname" || ParameterValue === "CSHMIfullqualifiedname"){
-				// is //dev:7509/server1/TechUnits/add
+				// should be //dev:7509/server1/TechUnits/add
 				return FBRef;
 			}else if (ParameterValue === "absoluteparentpathname" || ParameterValue === "CSHMIabsoluteparentpathname"){
-				// is /TechUnits
+				// should be /TechUnits
 				var PathArray = FBRef.split("/");
 				PathArray.pop();
 				return HMI.KSClient._splitKSPath(PathArray.join("/"))[1];
 			}else if (ParameterValue === "absolutepathname" || ParameterValue === "CSHMIabsolutepathname"){
-				// is /TechUnits/add
+				// should be /TechUnits/add
 				return HMI.KSClient._splitKSPath(FBRef)[1];
 			}else if (ParameterValue === "identifier"){
 				//if the identifier is requested calculate this to avoid network request
@@ -2370,10 +2370,12 @@ cshmi.prototype = {
 			returnValue = PartialPath;
 		}
 		
-		if (returnValue.indexOf("//localhost") === 0){
-			//localhost in the model should not be the http-gateway or browserhost
-			return returnValue.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-		}else if (! (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/")){
+		if (returnValue.indexOf("CSHMIModelHost") === 0){
+			//CSHMIModelHost in the model should be replaced
+			return returnValue.replace("CSHMIModelHost", HMI.KSClient.ResourceList.ModelHost);
+		}else if (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/"){
+			return returnValue;
+		}else{
 			//we want to have a full path with host and server
 			
 			//default to the ModelHost
@@ -4380,68 +4382,69 @@ cshmi.prototype = {
 		}
 		if (VisualParentObject === null && HMI.HMI_Constants.UrlParameterList && HMI.HMI_Constants.UrlParameterList.FBReference && HMI.HMI_Constants.UrlParameterList.FBReference.length > 0){
 			//an url parameter is able to overwrite the FBReference
-			var FBReferenceList = [HMI.HMI_Constants.UrlParameterList.FBReference];
+			var FBReferenceName = HMI.HMI_Constants.UrlParameterList.FBReference;
+		}else if (requestList[ObjectPath]["FBReference"].indexOf(" ") !== -1){
+			HMI.hmi_log_info_onwebsite("Only the first FBReference is valid. "+ObjectPath+" has more of them.");
+			FBReferenceName = requestList[ObjectPath]["FBReference"].split(" ")[0];
 		}else{
-			FBReferenceList = requestList[ObjectPath]["FBReference"].split(" ");
+			FBReferenceName = requestList[ObjectPath]["FBReference"];
 		}
-		for (var i=0; i < FBReferenceList.length; i++) {
-			if (i > 1){
-				HMI.hmi_log_info_onwebsite("Only one FBReference is valid. "+ObjectPath+" has more of them.");
-				break;
-			}
-			if (FBReferenceList[i] !== ""){
-				if(this.ResourceList.newRebuildObject.id !== undefined){
-					//we should use a preconfigured FBref, instead of the configured one...
-					VisualObject.FBReference["default"] = this.ResourceList.newRebuildObject.id;
-					VisualObject.id = this.ResourceList.newRebuildObject.id;
-					VisualObject.setAttribute("x", this.ResourceList.newRebuildObject.x);
-					VisualObject.setAttribute("y", this.ResourceList.newRebuildObject.y);
-					
-					wasRebuildObject = true;
-					//.. but only once/here
-					this.ResourceList.newRebuildObject = Object();
-					break;
-				}
+		if (FBReferenceName !== ""){
+			if(this.ResourceList.newRebuildObject.id !== undefined){
+				//we should use a preconfigured FBref, instead of the configured one...
+				VisualObject.FBReference["default"] = this.ResourceList.newRebuildObject.id;
+				VisualObject.id = this.ResourceList.newRebuildObject.id;
+				VisualObject.setAttribute("x", this.ResourceList.newRebuildObject.x);
+				VisualObject.setAttribute("y", this.ResourceList.newRebuildObject.y);
 				
-				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceList[i]] !== undefined){
-					//something like OP_NAME or OP_VALUE was requested, so we have to find the real info from the iterator
-					
-					//getFBReference does all the magic. The later checks are to detect the NameOrigin
-					var FBRef = this._getFBReference(VisualParentObject);
-					if (FBRef === ""){
-						HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
-						return null;
-					}else if (FBRef.indexOf("//localhost") === 0){
-						//localhost in the model should not be the http-gateway
-						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
-					}
-					if (this.ResourceList.ChildrenIterator.currentChild[FBReferenceList[i]].charAt(0) === "/"){
-						// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
-						VisualObject.setAttribute("data-NameOrigin", "CurrentChildfullpath");
-					}else{
-						//In OP_NAME is a relative path (likely from a GetEP request).
-						VisualObject.setAttribute("data-NameOrigin", "FBReference/OP_NAME");
-					}
-					VisualObject.FBReference["default"] = FBRef;
-					VisualObject.id = FBRef;
-				}else{
-					//todo implement cshmihostserver
-					if(FBReferenceList[i].indexOf("CSHMIfullqualifiedname") !== -1){
-						VisualObject.FBReference["default"] = FBReferenceList[i].replace("CSHMIfullqualifiedname", this._getFBReference(VisualParentObject, false, true));
-						VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
-					}else{
-						//We have straightforward a full name of one FB Object, so save it with the default name
-						VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, FBReferenceList[i]);
-						if (FBReferenceList[i].charAt(0) === "/"){
-							//full path is given
-							VisualObject.setAttribute("data-NameOrigin", "FBReference");
-						}else{
-							//relative path is given, so complete the path with the BaseKsPath
-							VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
-						}
-					}
-					VisualObject.id = VisualObject.FBReference["default"];
+				wasRebuildObject = true;
+				//.. but only once/here
+				this.ResourceList.newRebuildObject = Object();
+			}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceName] !== undefined){
+				//something like OP_NAME or OP_VALUE was requested, so we have to find the real info from the iterator
+				
+				//getFBReference does all the magic with the iterator. The later checks are to detect the NameOrigin
+				var FBRef = this._getFBReference(VisualParentObject);
+				if (FBRef === ""){
+					HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
+					return null;
 				}
+				if (this.ResourceList.ChildrenIterator.currentChild[FBReferenceName].charAt(0) === "/"){
+					// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
+					VisualObject.setAttribute("data-NameOrigin", "CurrentChildfullpath");
+				}else{
+					//In OP_NAME is a relative path (likely from a GetEP request).
+					VisualObject.setAttribute("data-NameOrigin", "FBReference/OP_NAME");
+				}
+				VisualObject.FBReference["default"] = FBRef;
+				VisualObject.id = FBRef;
+			}else{
+				if(FBReferenceName.indexOf("CSHMIfullqualifiedname") !== -1){
+					//CSHMIfullqualifiedname can be a prefix
+					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIfullqualifiedname", this._getFBReference(VisualParentObject, false, true));
+					VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
+				}else if(FBReferenceName.indexOf("CSHMIHostServer") !== -1){
+					//for example CSHMIHostServer/acplt/ov/library only adds the host and server
+					var FBrefName = this._getFBReference(VisualParentObject, false, true);
+					var HostServer = HMI.KSClient._splitKSPath(FBrefName)[0];
+					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIHostServer", "//"+HostServer);
+					VisualObject.setAttribute("data-NameOrigin", "CSHMIHostServer+newPart");
+					FBrefName = null;
+					HostServer = null;
+				}else{
+					//We have straightforward a full name of one FB Object, so save it with the default name
+					VisualObject.FBReference["default"] = FBReferenceName;
+					if (FBReferenceName.charAt(0) === "/"){
+						//full path is given
+						VisualObject.setAttribute("data-NameOrigin", "FBReference");
+					}else{
+						//relative path is given, so complete the path with the BaseKsPath
+						VisualObject.setAttribute("data-NameOrigin", "FBReference+BaseKsPath");
+					}
+				}
+				//force a clean name and process CSHMIModelHost for example
+				VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, VisualObject.FBReference["default"]);
+				VisualObject.id = VisualObject.FBReference["default"];
 			}
 		}
 		
@@ -5841,13 +5844,14 @@ cshmi.prototype = {
 	/**
 	 * returns the FBReference
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {BOOL} giveObject should we give the targetObject?
-	 * @return {String} Path of the FBReference or ""
+	 * @param {BOOL} giveObject should we give the path and the targetObject in an array instead of the path only?
+	 * @param {BOOL} checkNoIterator do not check the iterator for a target
+	 * @return {String} Path of the FBReference or "" OR an array with the Path and the Object
 	 */
 	_getFBReference: function(VisualObject, giveObject, checkNoIterator){
 		var TemplateObject = VisualObject;
 		var resultArray = ["", null];
-		var FBRef;
+		var FBRef = "";
 		
 		//a getVar currentChild has OP_VALUE and OP_NAME set
 		if (!checkNoIterator && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
@@ -5915,6 +5919,7 @@ cshmi.prototype = {
 		if(giveObject === true){
 			return resultArray;
 		}else{
+			//the caller needs only the path
 			return resultArray[0];
 		}
 	},

@@ -153,7 +153,7 @@ LIBRARY cshmi
 				COMMENT = "Path to the TemplateDefinition (relative to the templates domain, or starting with a /)";
 			FBReference[] : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef;(//localhost is replaced with the hostname of the hmi model)";
+				COMMENT = "Path of the Reference object; example '/TechUnits/Pump47' or 'CSHMIfullqualifiedname/subpath' relating to a parent FBRef or 'CSHMIHostServer/acplt/ov/library' which reuses only the host and serverpart of the parent FBref; CSHMIModelHost is replaced with the hostname of the hmi model";
 			FBVariableReference[] : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "Path of a named reference variable object; example 'myVar:/TechUnits/Pump47.IN1'; multiple variables possible)";
