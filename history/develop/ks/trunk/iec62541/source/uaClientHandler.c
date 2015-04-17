@@ -27,7 +27,7 @@
 #include "libov/ov_macros.h"
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
-#include "ua_server.h"
+
 
 static const UA_ConnectionConfig ov_UA_ConnectionConfig_standard =
     {.protocolVersion = 0, .sendBufferSize = 65536, .recvBufferSize  = 65536,
@@ -44,7 +44,7 @@ UA_Int32 UA_Connection_init(UA_Connection *connection, UA_ConnectionConfig local
                             UA_Connection_closeCallback close, UA_Connection_writeCallback write){
 
 	connection->localConf = localConf;
-	connection->channel = UA_NULL;
+	connection->channel = NULL;
 	connection->state = UA_CONNECTION_OPENING;
 	connection->close = close;
 	connection->write = write;

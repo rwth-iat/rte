@@ -75,6 +75,16 @@ typedef UA_Int32 UA_FNC_BROWSENODES(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
+typedef UA_Int32 UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS(
+	void *ensHandle, 
+	const UA_RequestHeader *requestHeader, 
+	UA_BrowsePath *browsePath,
+	UA_UInt32 *indices, 
+	UA_UInt32 indicesSize, 
+	UA_BrowsePathResult *browsePathResults, 
+	UA_DiagnosticInfo *diagnosticInfos
+);
+
 typedef OV_DLLFNCEXPORT	OV_INSTPTR_iec62541_uaBaseNodeType UA_FNC_GETNODEPTR(
 	OV_UINT nodeId
 );

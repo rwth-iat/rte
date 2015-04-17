@@ -64,22 +64,27 @@ UA_StatusCode iec62541_nsOv_fillReferenceDescription(
 		snprintf(varPath, varPathLen, "%s.%s", path, pElement->elemunion.pvar->v_identifier);
 		path = varPath;
 	}
-	result = UA_String_copycstring(path, &(dst->nodeId.nodeId.identifier.string));
+	dst->nodeId.nodeId.identifier.string = UA_String_fromChars(path);
+	if(dst->nodeId.nodeId.identifier.string.length == -1){
+		result = UA_STATUSCODE_BADOUTOFMEMORY;
+	} else {
+		result = UA_STATUSCODE_GOOD;
+	}
 	ov_memstack_unlock();
 
 	if(resultMask & (1<<3)){
 		if(pElement->elemtype == OV_ET_OBJECT){
-			UA_String_copycstring(pElement->pobj->v_identifier, &(dst->browseName.name));
+			dst->browseName.name = UA_String_fromChars(pElement->pobj->v_identifier);
 		} else if(pElement->elemtype == OV_ET_VARIABLE){
-			UA_String_copycstring(pElement->elemunion.pvar->v_identifier, &(dst->browseName.name));
+			dst->browseName.name = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
 		}
 		dst->browseName.namespaceIndex = 1;
 	}
 	if(resultMask & (1<<4)){
 		if(pElement->elemtype == OV_ET_OBJECT){
-			UA_String_copycstring(pElement->pobj->v_identifier, &(dst->displayName.text));
+			dst->displayName.text = UA_String_fromChars(pElement->pobj->v_identifier);
 		} else if(pElement->elemtype == OV_ET_VARIABLE){
-			UA_String_copycstring(pElement->elemunion.pvar->v_identifier, &(dst->displayName.text));
+			dst->displayName.text = UA_String_fromChars(pElement->elemunion.pvar->v_identifier);
 		}
 	}
 	if(resultMask & (1<<1)){
@@ -750,7 +755,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
 		/*************************************************************************************************************
 		 * create Array
 		 ************************************************************************************************************/
-		UA_Array_new((void**) &(browseResults[indices[index]].references), refCount, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+		browseResults[indices[index]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], refCount);
 		if(!browseResults[indices[index]].references && refCount>0){
 			browseResults[indices[index]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 			ov_memstack_unlock();

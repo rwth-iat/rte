@@ -132,14 +132,16 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 	for(OV_UINT i = 0; i<indicesSize;i++){
 		if(readValueIds[indices[i]].nodeId.identifierType != UA_NODEIDTYPE_NUMERIC){
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNODEIDREJECTED;
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
+			readNodesResults[indices[i]].hasStatus = UA_TRUE;
+			readNodesResults[indices[i]].hasValue = UA_FALSE;
 			continue;
 		}
 		pNode = iec62541_uaNamespace0_getNodePtr(readValueIds[indices[i]].nodeId.identifier.numeric);
 		if(!pNode){
 			KS_logfile_debug(("uaNamespace0_readNodes: could not resolve node for numeric id %u (index %u in list). Skipping.", readValueIds[indices[i]].nodeId.identifier.numeric, i));
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADNODEIDUNKNOWN;
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
+			readNodesResults[indices[i]].hasStatus = UA_TRUE;
+			readNodesResults[indices[i]].hasValue = UA_FALSE;
 			continue;
 		}
 		switch(readValueIds[indices[i]].attributeId){
@@ -155,12 +157,14 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				nodeId->namespaceIndex = 0;
 				nodeId->identifierType = UA_NODEIDTYPE_NUMERIC;
 				nodeId->identifier.numeric = pNode->v_NodeId;
-				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODEID];
-				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeId;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_NODEID];
+				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.data = nodeId;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensions = NULL;
+				readNodesResults[indices[i]].hasStatus = UA_TRUE;
+				readNodesResults[indices[i]].hasValue = UA_TRUE;
 			}
 			break;
 		case UA_ATTRIBUTEID_NODECLASS:
@@ -173,31 +177,35 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				}
 				*nodeClass = iec62541_uaNamespace0_getNodeClass(pNode);
 				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-				readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
-				readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-				readNodesResults[indices[i]].value.storage.data.dataPtr = nodeClass;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-				readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-				readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+				readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
+				readNodesResults[indices[i]].value.arrayLength = -1;
+				readNodesResults[indices[i]].value.data = nodeClass;
+				readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+				readNodesResults[indices[i]].value.arrayDimensions = NULL;
+				readNodesResults[indices[i]].hasStatus = UA_TRUE;
+				readNodesResults[indices[i]].hasValue = UA_TRUE;
 			}
 			break;
 		case UA_ATTRIBUTEID_BROWSENAME:
 		case UA_ATTRIBUTEID_DISPLAYNAME:
 		{
-			UA_String *name;
-			name = UA_String_new();
+			UA_String *name = UA_String_new();
 			if(!name){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
+				readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
 				break;
 			}
-			UA_String_copycstring(pNode->v_identifier, name);
-			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-			readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_STRING];
-			readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-			readNodesResults[indices[i]].value.storage.data.dataPtr = name;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-			readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+			*name = UA_String_fromChars(pNode->v_identifier);
+			if(name->length == -1){
+				readNodesResults[indices[i]].status = UA_STATUSCODE_BADOUTOFMEMORY;
+			} else {
+				readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+			}
+			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_STRING];
+			readNodesResults[indices[i]].value.arrayLength = -1;
+			readNodesResults[indices[i]].value.data = name;
+			readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+			readNodesResults[indices[i]].hasStatus = UA_TRUE;
+			readNodesResults[indices[i]].hasValue = UA_TRUE;
 		}
 		break;
 		case UA_ATTRIBUTEID_DESCRIPTION:
@@ -217,12 +225,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 				if(tempPointer){
 					*writeMask = *((OV_UINT*)tempPointer);
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_UINT32];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = writeMask;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_UINT32];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = writeMask;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -246,12 +255,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*isAbstract = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = isAbstract;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = isAbstract;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -275,12 +285,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*isSymmetric = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = isSymmetric;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = isSymmetric;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -306,12 +317,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 					}
 					*eventNotifer = *((OV_UINT*)tempPointer);
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BYTE];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = eventNotifer;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BYTE];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = eventNotifer;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -324,7 +336,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 			if(readNodesResults[indices[i]].status == UA_STATUSCODE_GOOD){
 				if(tempPointer){
 					readNodesResults[indices[i]].status = ov_AnyToVariant((OV_ANY*)tempPointer, &(readNodesResults[indices[i]].value));
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -346,15 +359,18 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 					dataType->namespaceIndex = 0;
 					dataType->identifierType = UA_NODEIDTYPE_NUMERIC;
 					dataType->identifier.numeric = *((OV_UINT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_NODEID];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = dataType;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_NODEID];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = dataType;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_FALSE;
 				}
 			}
 		}
@@ -371,12 +387,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						break;
 					}
 					*valueRank = *((OV_INT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = valueRank;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = valueRank;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				}
 			}
 		}
@@ -393,12 +410,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						break;
 					}
 					*arrayDimensions = *((OV_INT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_INT32];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = arrayDimensions;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_INT32];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = arrayDimensions;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				}
 			}
 		}
@@ -416,12 +434,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						break;
 					}
 					*accessLevel = *((OV_UINT*)tempPointer);
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BYTE];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = accessLevel;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BYTE];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = accessLevel;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				}
 			}
 		}
@@ -446,12 +465,13 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 						*historizing = UA_FALSE;
 					}
 					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
-					readNodesResults[indices[i]].value.vt = &UA_TYPES[UA_BOOLEAN];
-					readNodesResults[indices[i]].value.storage.data.arrayLength = 1;
-					readNodesResults[indices[i]].value.storage.data.dataPtr = historizing;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensionsLength = 1;
-					readNodesResults[indices[i]].value.storage.data.arrayDimensions = NULL;
-					readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_VARIANT;
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_BOOLEAN];
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.data = historizing;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
+					readNodesResults[indices[i]].hasStatus = UA_TRUE;
+					readNodesResults[indices[i]].hasValue = UA_TRUE;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_GENERIC);
 				}
@@ -471,7 +491,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_readNodes(
 		}
 
 		if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD) {
-			readNodesResults[indices[i]].encodingMask = UA_DATAVALUE_ENCODINGMASK_STATUSCODE;
+			readNodesResults[indices[i]].hasStatus = UA_TRUE;
+			readNodesResults[indices[i]].hasValue = UA_FALSE;
 		}
 	}
 	return UA_STATUSCODE_GOOD;
@@ -529,11 +550,11 @@ UA_StatusCode iec62541_ns0_fillReferenceDescription(
 	dst->nodeId.nodeId.identifier.numeric = pNode->v_NodeId;
 
 	if(resultMask & (1<<3)){
-		UA_String_copycstring(pNode->v_identifier, &(dst->browseName.name));
+		dst->browseName.name = UA_String_fromChars(pNode->v_identifier);
 		dst->browseName.namespaceIndex = 0;
 	}
 	if(resultMask & (1<<4)){
-		UA_String_copycstring(pNode->v_identifier, &(dst->displayName.text));
+		dst->displayName.text = UA_String_fromChars(pNode->v_identifier);
 	}
 	if(resultMask & (1<<1)){
 		dst->isForward = UA_TRUE;
@@ -592,7 +613,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						/*|| browseDescriptions[indices[i]].referenceTypeId.identifier.numeric == UA_NODEID_References*/)
 					&& !(browseDescriptions[indices[i]].includeSubtypes == UA_TRUE)){
 				//parent reference types are empty (only Organizes supported)
-				UA_Array_new((void**) &(browseResults[indices[i]].references), 0, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+				browseResults[indices[i]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], 0);
 				browseResults[indices[i]].referencesSize = 0;
 				browseResults[indices[i]].statusCode = UA_STATUSCODE_GOOD;
 			} else {
@@ -615,7 +636,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 							refCount++;
 						}
 					}
-					UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+					browseResults[indices[i]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], refCount);
 					if(!browseResults[indices[i]].references && refCount>0){
 						browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 						break;
@@ -683,7 +704,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 							|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 						refCount++;
 					}
-					UA_Array_new((void**) &(browseResults[indices[i]].references), refCount, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+					browseResults[indices[i]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], refCount);
 					if(!browseResults[indices[i]].references && refCount>0){
 						browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 						break;
@@ -739,24 +760,27 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 			if(browseDescriptions[indices[i]].referenceTypeId.identifier.numeric == UA_NODEID_NonHierarchicalReferences
 					&& !(browseDescriptions[indices[i]].includeSubtypes == UA_TRUE)){
 				//parent reference types are empty (only HasTypeDefinition supported)
-				UA_Array_new((void**) &(browseResults[indices[i]].references), 0, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+				browseResults[indices[i]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], 0);
 				browseResults[indices[i]].referencesSize = 0;
 				browseResults[indices[i]].statusCode = UA_STATUSCODE_GOOD;
 			} else {
 				OV_INSTPTR_iec62541_uaBaseNodeType	pType = NULL;
 				UA_StatusCode						resFindTypeVar;
-				OV_UINT								Type;
-				Type =  *((OV_UINT*) iec62541_ns0Node_getValuePointer(pNode, "Type", &resFindTypeVar));
+				OV_UINT								*Type;
+				Type =  ((OV_UINT*) iec62541_ns0Node_getValuePointer(pNode, "Type", &resFindTypeVar));
 				if(resFindTypeVar != UA_STATUSCODE_GOOD){
 					browseResults[indices[i]].statusCode = resFindTypeVar;
 					break;
+				} else if(!Type){
+					browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNOTFOUND;
+					break;
 				}
-				pType = iec62541_uaNamespace0_getNodePtr(Type);
+				pType = iec62541_uaNamespace0_getNodePtr(*Type);
 				if(!pType){
 					browseResults[indices[i]].statusCode = UA_STATUSCODE_BADTYPEDEFINITIONINVALID;
 					break;
 				}
-				UA_Array_new((void**) &(browseResults[indices[i]].references), 1, &UA_TYPES[UA_REFERENCEDESCRIPTION]);
+				browseResults[indices[i]].references = UA_Array_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION], 1);
 				if(!browseResults[indices[i]].references){
 					browseResults[indices[i]].statusCode = UA_STATUSCODE_BADOUTOFMEMORY;
 					break;
@@ -772,8 +796,23 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 			browseResults[indices[i]].statusCode = UA_STATUSCODE_BADNOTSUPPORTED;
 			break;
 		}
-
+		if(browseResults[indices[i]].statusCode != UA_STATUSCODE_GOOD){
+			browseResults[indices[i]].referencesSize = 0;
+			browseResults[indices[i]].references = NULL;
+		}
 	}
 	return UA_STATUSCODE_GOOD;
 }
 
+OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_translateBrowsePathsToNodeIDs(
+	void *ensHandle,
+	const UA_RequestHeader *requestHeader,
+	UA_BrowsePath *browsePath,
+	UA_UInt32 *indices,
+	UA_UInt32 indicesSize,
+	UA_BrowsePathResult *browsePathResults,
+	UA_DiagnosticInfo *diagnosticInfos
+) {
+
+    return UA_STATUSCODE_BADNOTIMPLEMENTED;
+}

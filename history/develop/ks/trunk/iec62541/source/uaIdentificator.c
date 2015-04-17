@@ -26,7 +26,7 @@
 #include "libov/ov_result.h"
 #include "iec62541_config.h"
 #include "ks_logfile.h"
-#include "ua_transport_generated.h"
+#include "open62541.h"
 #include "ksbase_helper.h"
 
 
