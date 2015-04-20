@@ -125,7 +125,6 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	UA_Int32	iterator;
 
 	if(!((pAny->value.vartype & OV_VT_KSMASK) & OV_VT_ISVECTOR)){
-		pVariant = UA_Variant_new();
 		UA_Variant_init(pVariant);
 		switch(pAny->value.vartype & OV_VT_KSMASK){
 		/*	scalar variable	*/
@@ -212,7 +211,6 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 			} else {
 				tempString.length = 0;
 			}
-			value = &tempString;
 			pVariant->type = &UA_TYPES[UA_TYPES_STRING];
 			pVariant->data = UA_String_new();
 			if(!pVariant->data){
@@ -267,7 +265,6 @@ UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant){
 	} else {
 		/*	handle vectors	*/
 		ov_memstack_lock();
-		pVariant = UA_Variant_new();
 		UA_Variant_init(pVariant);
 		switch(pAny->value.vartype & OV_VT_KSMASK){
 		case OV_VT_BOOL_VEC:
