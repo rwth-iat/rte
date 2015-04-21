@@ -70,20 +70,20 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgSendExt_sendMessage(
     	Ov_DeleteObject(pobj);
     	return result;
     }
-    pClientHandler->v_ClientRequest.keepAlive = FALSE;
-    result = kshttp_httpclienthandler_generateHttpHeader(pClientHandler, result, NULL);
+    pClientHandler->v_ServerResponse.keepAlive = FALSE;
+    result = kshttp_httpclienthandler_generateHttpHeader(pClientHandler->v_ClientRequest, &(pClientHandler->v_ServerResponse), &(pClientHandler->v_CommunicationStatus), result, NULL);
     if(Ov_Fail(result)){
     	Ov_DeleteObject(pMsg);
     	Ov_DeleteObject(pobj);
     	return result;
     }
-    result = kshttp_httpclienthandler_sendHttpHeader(pClientHandler, pChannel);
+    result = kshttp_httpclienthandler_sendHttpHeader(pClientHandler->v_ClientRequest, &(pClientHandler->v_ServerResponse), &(pClientHandler->v_CommunicationStatus), pChannel);
     if(Ov_Fail(result)){
     	Ov_DeleteObject(pMsg);
     	Ov_DeleteObject(pobj);
     	return result;
     }
-    result = kshttp_httpclienthandler_sendHttpBody(pClientHandler, pChannel);
+    result = kshttp_httpclienthandler_sendHttpBody(pClientHandler->v_ClientRequest, &(pClientHandler->v_ServerResponse), &(pClientHandler->v_CommunicationStatus), pChannel);
     Ov_DeleteObject(pMsg);
     Ov_DeleteObject(pobj);
     return result;
