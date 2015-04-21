@@ -121,10 +121,10 @@ OV_RESULT ksxdr_initiateConnection(OV_INSTPTR_ksxdr_xdrClient this, OV_INSTPTR_k
 		if(!port)
 			return OV_ERR_BADPARAM;
 
-		if(isLocal)
+		if(isLocal){
 			result = pVtblChannel->m_OpenLocalConn(pChannel, port);
-		else
-		{
+			host="local";
+		} else {
 			if(!host)
 				return OV_ERR_BADPARAM;
 			result = pVtblChannel->m_OpenConnection(pChannel, host, port);

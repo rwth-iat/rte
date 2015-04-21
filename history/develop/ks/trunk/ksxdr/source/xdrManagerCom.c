@@ -145,6 +145,9 @@ OV_RESULT process_getPort(KS_DATAPACKET* datapacket, OV_BOOL usesStreamProtocol,
 			return result;
 		}
 		if(port){
+			if(!readVar){
+				readVar = 7509;
+			}
 			ov_memstack_lock();
 			OptValTemp = ov_memstack_alloc(12);
 			sprintf(OptValTemp, "%" OV_PRINT_UINT, readVar);
