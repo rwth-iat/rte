@@ -268,6 +268,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 #endif
 				//error. Try next protocol
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
@@ -279,6 +280,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
 					//error. Try next protocol
 					freeaddrinfo(resultingaddrinfo);
+					resultingaddrinfo = NULL;
 					continue;
 				}
 			} else {
@@ -286,6 +288,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
 				CLOSE_SOCKET(fd);
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
@@ -297,6 +300,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//setting source address and port
 			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen)) {
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
@@ -304,6 +308,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//second parameter is the maximum length to which the queue of pending connections for fd may grow
 			if (listen(fd, 5) == -1) {
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
@@ -315,6 +320,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				return;
 			}
 
@@ -324,6 +330,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				return;
 			}
 
@@ -334,9 +341,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}else if(Protocolfamily[i] == IPv6){
 				sockfds[1] = fd;
 			}
+
+			freeaddrinfo(resultingaddrinfo);
+			resultingaddrinfo = NULL;
 		//End of loop --> sockets are open
 		}
-		freeaddrinfo(resultingaddrinfo);
 
 		if(sockfds[0] == -1 && sockfds[1] == -1){
 			KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
