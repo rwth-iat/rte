@@ -29,6 +29,7 @@
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
+#include "ks_logfile.h"
 
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
@@ -978,6 +979,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		 * wtf???
 		 ****************************************************************************************************************************************************/
 		default:
+			KS_logfile_info(("iec62541: got a read-request with bad attributeid (%#08x)", readValueIds[indices[i]].attributeId));
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADATTRIBUTEIDINVALID;
 			break;
 		}

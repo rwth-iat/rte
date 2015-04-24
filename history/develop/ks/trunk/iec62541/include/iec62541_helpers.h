@@ -38,7 +38,7 @@
 UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant);
 UA_NodeId* ov_varTypeToNodeId(OV_VAR_TYPE type);
-UA_StatusCode ov_VariantToAny(UA_Variant* pVariant, OV_ANY* pAny);
+UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny);
 UA_Int32 iec62541_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess);
 OV_BOOL iec62541_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess);
 
