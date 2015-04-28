@@ -699,6 +699,9 @@ UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pe
 		*ppVtblObj = pclass_ov_object->v_pvtable;
 	}
 	*access = (*ppVtblObj)->m_getaccess(pelem->pobj, pelem, pTicket);
+	if(pTicket){
+		(*access) &= pTicket->vtbl->getaccess(pTicket);
+	}
 	return UA_STATUSCODE_GOOD;
 }
 
