@@ -337,6 +337,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 					*writeMask |= (1<<2);	/*	BrowseName	*/
 					*writeMask |= (1<<6);	/*	DisplayName	*/
 				}
+				if(access & OV_AC_RENAMEABLE){
+					*writeMask |= (1<<14);	/*	NodeId	*/
+				}
 			}
 			readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 			readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_UINT32];

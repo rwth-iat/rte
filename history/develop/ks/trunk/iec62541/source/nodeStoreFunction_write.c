@@ -149,7 +149,68 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
 			break;
 		case UA_ATTRIBUTEID_NODEID:
 			/*	for objects do a rename	*/
-			writeNodesResults[indices[index]] = UA_STATUSCODE_BADNOTWRITABLE;
+			ov_memstack_lock();
+			writeNodesResults[indices[index]] = iec62541_nodeStoreFunctions_resolveNodeIdToPath(writeValues[indices[index]].nodeId, &path);
+			if(writeNodesResults[indices[index]] != UA_STATUSCODE_GOOD){
+				ov_memstack_unlock();
+				break;
+			}
+			if(path.elements[path.size-1].elemtype == OV_ET_OBJECT){
+				pobj = path.elements[path.size-1].pobj;
+				Ov_GetVTablePtr(ov_object, pVtblObj, pobj);
+				if((!pVtblObj) || (ov_activitylock)){
+					pVtblObj = pclass_ov_object->v_pvtable;
+				}
+				access = (pVtblObj)->m_getaccess(path.elements[path.size-1].pobj, &(path.elements[path.size-1]), pTicket);
+				if(access & OV_AC_RENAMEABLE){
+					if(writeValues[indices[index]].value.hasValue == UA_TRUE) {
+						if(writeValues[indices[index]].value.value.type == &UA_TYPES[UA_TYPES_NODEID]
+						        && ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifierType == UA_NODEIDTYPE_STRING){
+							OV_PATH		newPath;
+							OV_STRING	tempString	=	NULL;
+							OV_STRING	newIdent	=	NULL;
+							OV_UINT		iterator;
+							tempString = ov_memstack_alloc(((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.length + 1);
+							if(!tempString){
+								ov_memstack_unlock();
+								writeNodesResults[indices[index]] = UA_STATUSCODE_BADOUTOFMEMORY;
+								break;
+							}
+							for(iterator = 0; iterator < ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.length; iterator++){
+								tempString[iterator] = ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.data[iterator];
+							}
+							tempString[iterator] = '\0';
+							/*	cut off the last part behind a / as it is the new identifier; the front part is the new path	*/
+							for(iterator = ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.length; iterator > 0; iterator++){
+								if(tempString[iterator] == '/'){
+									tempString[iterator] = '\0';
+									newIdent = &(tempString[iterator+1]);
+								}
+							}
+							writeNodesResults[indices[index]] = ov_resultToUaStatusCode(ov_path_resolve(&newPath, NULL, tempString, 2));
+							if(writeNodesResults[indices[index]] != UA_STATUSCODE_GOOD){
+								ov_memstack_unlock();
+								break;
+							}
+							if(Ov_CanCastTo(ov_domain, newPath.elements[newPath.size-1].pobj)){
+							writeNodesResults[indices[index]] = ov_resultToUaStatusCode(
+									ov_class_renameobject(path.elements[path.size-1].pobj, Ov_StaticPtrCast(ov_domain, newPath.elements[newPath.size-1].pobj), newIdent, OV_PMH_DEFAULT, NULL));
+							} else {
+								writeNodesResults[indices[index]] = UA_STATUSCODE_BADINVALIDARGUMENT;
+							}
+						} else {
+							writeNodesResults[indices[index]] = UA_STATUSCODE_BADINVALIDARGUMENT;
+						}
+					} else {
+						writeNodesResults[indices[index]] = UA_STATUSCODE_BADINVALIDARGUMENT;
+					}
+				} else {
+					writeNodesResults[indices[index]] = UA_STATUSCODE_BADNOTWRITABLE;
+				}
+			} else {
+				writeNodesResults[indices[index]] = UA_STATUSCODE_BADNOTWRITABLE;
+			}
+			ov_memstack_unlock();
 			break;
 		case UA_ATTRIBUTEID_BROWSENAME:
 		case UA_ATTRIBUTEID_DISPLAYNAME:
