@@ -284,7 +284,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	OV_INSTPTR_iec62541_uaClientHandler		thisCl			=	Ov_StaticPtrCast(iec62541_uaClientHandler, this);
 	UA_ByteString							tempMsg			=	{.data = dataReceived->readPT, .length = ((dataReceived->data + dataReceived->length) - dataReceived->readPT)};
 	UA_TcpMessageHeader						tempMsgHeader;
-	UA_UInt32								offset			=	0;
+	size_t									offset			=	0;
 
 	if(!iec62541_pUaServer){
 		return OV_ERR_BADFACTORY;

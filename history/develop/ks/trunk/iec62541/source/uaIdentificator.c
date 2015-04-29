@@ -55,7 +55,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 	OV_INSTPTR_iec62541_uaIdentificator thisId = Ov_StaticPtrCast(iec62541_uaIdentificator, this);
 	UA_TcpHelloMessage	testMsg;
 	UA_ByteString		msgSource = {.data = pchannel->v_inData.readPT, .length = ((pchannel->v_inData.data + pchannel->v_inData.length) - pchannel->v_inData.readPT)};
-	UA_UInt32			offset = 4;
+	size_t				offset = 4;
 	UA_UInt32			msgLength;
 	OV_UINT				iterator;
 	OV_UINT				cmpLength;
