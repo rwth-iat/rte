@@ -32,7 +32,7 @@
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteNodes(
 		void *ensHandle,
-		UA_RequestHeader *requestHeader,
+		const UA_RequestHeader *requestHeader,
 		UA_DeleteNodesItem *nodesToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -44,12 +44,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteNodes(
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteReferences(
 		void *ensHandle,
-		UA_RequestHeader *requestHeader,
+		const UA_RequestHeader *requestHeader,
 		UA_DeleteReferencesItem *referenceToDelete,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
 		UA_StatusCode deleteReferencesresults,
-		UA_DiagnosticInfo diagnosticInfos
+		UA_DiagnosticInfo *diagnosticInfos
 ) {
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }

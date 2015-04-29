@@ -34,7 +34,7 @@
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addNodes(
 		void *ensHandle,
-		UA_RequestHeader *requestHeader,
+		const UA_RequestHeader *requestHeader,
 		UA_AddNodesItem *nodesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
@@ -46,12 +46,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addNodes(
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_addReferences(
 		void *ensHandle,
-		UA_RequestHeader *requestHeader,
+		const UA_RequestHeader *requestHeader,
 		UA_AddReferencesItem* referencesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
 		UA_StatusCode *addReferencesResults,
-		UA_DiagnosticInfo diagnosticInfos
+		UA_DiagnosticInfo *diagnosticInfos
 ) {
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }

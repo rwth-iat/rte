@@ -525,7 +525,7 @@ UA_Int32 fillReferenceDescriptions_OvReferences(const UA_BrowseDescription* brow
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
 		void *ensHandle,
-		UA_RequestHeader *requestHeader,
+		const UA_RequestHeader *requestHeader,
 		UA_BrowseDescription *browseDescriptions,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
