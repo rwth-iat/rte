@@ -176,7 +176,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
 								writeNodesResults[indices[index]] = UA_STATUSCODE_BADOUTOFMEMORY;
 								break;
 							}
-							for(iterator = 0; iterator < ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.length; iterator++){
+							//referencesSize is guaranteed to be positive
+							for(iterator = 0; iterator < (OV_UINT)((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.length; iterator++){
 								tempString[iterator] = ((UA_NodeId*)writeValues[indices[index]].value.value.data)->identifier.string.data[iterator];
 							}
 							tempString[iterator] = '\0';

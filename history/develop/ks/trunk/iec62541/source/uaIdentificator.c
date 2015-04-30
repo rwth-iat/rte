@@ -64,7 +64,15 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 	KS_logfile_debug(("%s: identify called with length: %u - data\n%s", thisId->v_identifier, msgSource.length, msgSource.data));
 
 	cmpLength = ov_string_getlength(thisId->v_ident);
-	for(iterator = 0; iterator < (cmpLength - 1) && iterator < msgSource.length; iterator++){
+	if(cmpLength == 0){
+		KS_logfile_debug(("%s: ident not set", thisId->v_identifier));
+		return FALSE;
+	}
+	if(msgSource.length <= 0){
+		KS_logfile_debug(("%s: msgSource.length not positive", thisId->v_identifier));
+		return FALSE;
+	}
+	for(iterator = 0; iterator < (OV_UINT)(cmpLength - 1) && iterator < (OV_UINT)msgSource.length; iterator++){
 		if(msgSource.data[iterator] != thisId->v_ident[iterator]){
 			KS_logfile_debug(("%s: first bytes in Message do not match ident", thisId->v_identifier));
 			return FALSE;
@@ -76,7 +84,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 		return FALSE;
 	}
 
-	if(msgLength != msgSource.length){
+	if(msgLength != (OV_UINT)msgSource.length){
 		KS_logfile_debug(("%s: length field in HelloMessage Header does not match length of Message", thisId->v_identifier));
 		return FALSE;
 	}

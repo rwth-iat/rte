@@ -437,14 +437,14 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			pAny->value.valueunion.val_double =  *(UA_Double*)pVariant->data;
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_STRING]){
 			pAny->value.vartype = OV_VT_STRING;
-			if(!(UA_String*)pVariant->data || !((UA_String*)pVariant->data)->length){
+			if(!(UA_String*)pVariant->data || ((UA_String*)pVariant->data)->length <= 0){
 				pAny->value.valueunion.val_string =  NULL;
 			} else {
 				pAny->value.valueunion.val_string =  ov_memstack_alloc(((UA_String*)pVariant->data)->length + 1);
 				if(!pAny->value.valueunion.val_string){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < ((UA_String*)pVariant->data)->length; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)((UA_String*)pVariant->data)->length; iterator++){
 					pAny->value.valueunion.val_string[iterator] = ((UA_String*)pVariant->data)->data[iterator];
 				}
 				pAny->value.valueunion.val_string[iterator] = '\0';
@@ -462,13 +462,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 		/*	vectors	*/
 		if(pVariant->type == &UA_TYPES[UA_TYPES_BOOLEAN]){
 			pAny->value.vartype = OV_VT_BOOL_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_bool_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_bool_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_BOOL));
 				if(!pAny->value.valueunion.val_bool_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					if(((UA_Boolean*)pVariant->data)[iterator] == UA_TRUE){
 						pAny->value.valueunion.val_bool_vec.value[iterator] = TRUE;
 					} else {
@@ -481,13 +481,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_INT32]){
 			pAny->value.vartype = OV_VT_INT_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_int_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_int_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_INT));
 				if(!pAny->value.valueunion.val_int_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_int_vec.value[iterator] = ((UA_Int32*)pVariant->data)[iterator];
 				}
 			} else {
@@ -496,13 +496,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_INT16]){
 			pAny->value.vartype = OV_VT_INT_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_int_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_int_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_INT));
 				if(!pAny->value.valueunion.val_int_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_int_vec.value[iterator] = ((UA_Int16*)pVariant->data)[iterator];
 				}
 			} else {
@@ -511,13 +511,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_UINT32]){
 			pAny->value.vartype = OV_VT_UINT_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_uint_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_uint_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_UINT));
 				if(!pAny->value.valueunion.val_uint_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_uint_vec.value[iterator] = ((UA_UInt32*)pVariant->data)[iterator];
 				}
 			} else {
@@ -526,13 +526,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_UINT16]){
 			pAny->value.vartype = OV_VT_UINT_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_uint_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_uint_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_UINT));
 				if(!pAny->value.valueunion.val_uint_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_uint_vec.value[iterator] = ((UA_UInt16*)pVariant->data)[iterator];
 				}
 			} else {
@@ -541,13 +541,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_FLOAT]){
 			pAny->value.vartype = OV_VT_SINGLE_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_single_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_single_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_SINGLE));
 				if(!pAny->value.valueunion.val_single_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_single_vec.value[iterator] = ((UA_Float*)pVariant->data)[iterator];
 				}
 			} else {
@@ -556,13 +556,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_DOUBLE]){
 			pAny->value.vartype = OV_VT_DOUBLE_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_double_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_double_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_DOUBLE));
 				if(!pAny->value.valueunion.val_double_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_double_vec.value[iterator] = ((UA_Double*)pVariant->data)[iterator];
 				}
 			} else {
@@ -571,14 +571,14 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_STRING]){
 			pAny->value.vartype = OV_VT_STRING_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_string_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_string_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_STRING));
 				if(!pAny->value.valueunion.val_string_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
-					if(!(((UA_String*)pVariant->data)[iterator]).length){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
+					if((((UA_String*)pVariant->data)[iterator]).length <= 0){
 						pAny->value.valueunion.val_string_vec.value[iterator] =  NULL;
 					} else {
 						OV_UINT iTwo = 0;
@@ -586,7 +586,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 						if(!pAny->value.valueunion.val_string_vec.value[iterator]){
 							return UA_STATUSCODE_BADOUTOFMEMORY;
 						}
-						for(iTwo = 0; iTwo < ((UA_String*)pVariant->data)[iterator].length; iTwo++){
+						for(iTwo = 0; iTwo < (OV_UINT)((UA_String*)pVariant->data)[iterator].length; iTwo++){
 							(pAny->value.valueunion.val_string_vec.value[iterator])[iTwo] = ((UA_String*)pVariant->data)[iterator].data[iTwo];
 						}
 						(pAny->value.valueunion.val_string_vec.value[iterator])[iTwo] = '\0';
@@ -598,13 +598,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_DATETIME]){
 			pAny->value.vartype = OV_VT_TIME_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_time_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_time_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_TIME));
 				if(!pAny->value.valueunion.val_time_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_time_vec.value[iterator] = ov_1601nsTimeToOvTime(((UA_Int32*)pVariant->data)[iterator]);
 				}
 			} else {
@@ -613,13 +613,13 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
 			}
 		} else if(pVariant->type == &UA_TYPES[UA_TYPES_STATUSCODE]){
 			pAny->value.vartype = OV_VT_STATE_VEC;
-			if(pVariant->arrayLength){
+			if(pVariant->arrayLength > 0){
 				pAny->value.valueunion.val_state_vec.veclen = pVariant->arrayLength;
 				pAny->value.valueunion.val_state_vec.value = ov_memstack_alloc(pVariant->arrayLength * sizeof(OV_STATE));
 				if(!pAny->value.valueunion.val_state_vec.value){
 					return UA_STATUSCODE_BADOUTOFMEMORY;
 				}
-				for(iterator = 0; iterator < pVariant->arrayLength; iterator++){
+				for(iterator = 0; iterator < (OV_UINT)pVariant->arrayLength; iterator++){
 					pAny->value.valueunion.val_state_vec.value[iterator] = ((UA_StatusCode*)pVariant->data)[iterator];
 				}
 			} else {

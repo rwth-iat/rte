@@ -643,7 +643,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 					}
 					browseResults[indices[i]].referencesSize = refCount;
 					refCount = 0;
-					while(refCount < browseResults[indices[i]].referencesSize){
+					//referencesSize is guaranteed to be positive
+					while(refCount < (OV_UINT)browseResults[indices[i]].referencesSize){
 						if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_FORWARD)
 								|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 							Ov_ForEachChildEx(ov_containment, pNode, pChild, iec62541_uaBaseNodeType){
@@ -655,7 +656,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 							}
 						}
 					}
-					while(refCount < browseResults[indices[i]].referencesSize){
+					//referencesSize is guaranteed to be positive
+					while(refCount < (OV_UINT)browseResults[indices[i]].referencesSize){
 						if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_INVERSE)
 								|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 							pChild = Ov_DynamicPtrCast(iec62541_uaBaseNodeType, Ov_GetParent(ov_containment, pNode));
@@ -716,7 +718,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						// children
 						part.elemtype = OV_ET_NONE;
 						ov_element_getnextchild(&parent, &part);
-						while(refCount < browseResults[indices[i]].referencesSize && part.elemtype!=OV_ET_NONE){
+						//referencesSize is guaranteed to be positive
+						while(refCount < (OV_UINT)browseResults[indices[i]].referencesSize && part.elemtype!=OV_ET_NONE){
 							maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&part, browseDescriptions[indices[i]].nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								browseResults[indices[i]].statusCode =
@@ -729,7 +732,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						// parts
 						part.elemtype = OV_ET_NONE;
 						ov_element_getnextpart(&parent, &part, OV_ET_OBJECT | OV_ET_VARIABLE);
-						while(refCount < browseResults[indices[i]].referencesSize && part.elemtype!=OV_ET_NONE){
+						//referencesSize is guaranteed to be positive
+						while(refCount < (OV_UINT)browseResults[indices[i]].referencesSize && part.elemtype!=OV_ET_NONE){
 							maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&part, browseDescriptions[indices[i]].nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								browseResults[indices[i]].statusCode =
@@ -741,7 +745,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_uaNamespace0_browseNodes(
 						}
 
 					}
-					while(refCount < browseResults[indices[i]].referencesSize){
+					//referencesSize is guaranteed to be positive
+					while(refCount < (OV_UINT)browseResults[indices[i]].referencesSize){
 						if((browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_INVERSE)
 								|| (browseDescriptions[indices[i]].browseDirection == UA_BROWSEDIRECTION_BOTH)){
 							pChild = Ov_DynamicPtrCast(iec62541_uaBaseNodeType, Ov_GetParent(ov_containment, pNode));

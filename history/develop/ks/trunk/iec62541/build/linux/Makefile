@@ -9,9 +9,10 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w ksbase -w iec62541
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = -o
-EXTRA_CC_FLAGS = -I../../open62541/include -I../../open62541/src -I../../open62541/src_generated -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DDEBUG=1
+# -I../../open62541/include -I../../open62541/src -I../../open62541/src_generated 
+EXTRA_CC_FLAGS = -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DDEBUG=1 -Wextra -Wno-unused-parameter
 EXTRA_LIBS = 
-LD_FLAGS = open62541.a
+LD_FLAGS = 
 COMPILER = GCC
 PREBUILD = ../prebuild.tcl
 POSTBUILD = ../postbuild.tcl
@@ -21,8 +22,8 @@ all:
 
 %:
 	
-	cd ../../open62541 && cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE) all && $(MAKE) open62541-objects
-	ar rcs open62541.a ../../open62541/CMakeFiles/open62541-objects.dir/src/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src/server/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src_generated/*.o
+#	cd ../../open62541 && cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE) all && $(MAKE) open62541-objects
+#	ar rcs open62541.a ../../open62541/CMakeFiles/open62541-objects.dir/src/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src/server/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src_generated/*.o
 	acplt_makmak -l iec62541 $(MAKMAKOPTIONS)
 	tclsh $(PREBUILD) iec62541 $(MAKMAKOPTIONS)
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
