@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -145,6 +145,14 @@ HMI.prototype = {
 	 * called from "load" event, when all js files are available
 	 */
 	init: function () {
+		if(null == document.getElementById('idPlayground')){
+			//this is a too early call, the DOM is not ready
+			//old presto parses the JS faster than the HTML, so try again later
+			document.addEventListener("DOMContentLoaded", function(event) {
+				HMI.init();
+			});
+			return false;
+		}
 		this.hmi_log_trace("HMI.prototype.init - Start");
 		
 		var ErrorDetail = "";
