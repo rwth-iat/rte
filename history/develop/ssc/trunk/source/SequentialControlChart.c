@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
     //OV_INSTPTR_ssc_step      pInitStep = NULL;
     OV_INSTPTR_ssc_step      pActiveStep = NULL;
     //OV_INSTPTR_fb_task       pTask = NULL;
-    OV_INSTPTR_fb_task      taskActivestep = Ov_GetPartPtr(activeStep, pinst);
+    OV_INSTPTR_fb_task      taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
     OV_INSTPTR_fb_task    pTrans = Ov_GetPartPtr(trans, pinst);
     //OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
     // helper variables
@@ -422,7 +422,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 ) {
 	OV_INSTPTR_ssc_step      pStep = NULL;
 	OV_INSTPTR_ssc_step      pInitStep = NULL;
-	OV_INSTPTR_fb_task 		 taskActivestep = Ov_GetPartPtr(activeStep, pinst);
+	OV_INSTPTR_fb_task 		 taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_fb_task       pTask = NULL;
 	OV_INSTPTR_ssc_SequentialControlChart pSscAction = NULL;
@@ -430,7 +430,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	//OV_TIME *pTime;
 	//ov_time_gettime(&pTime);
 
-	//reset all steps; find and link INIT-step to activeStep
+	//reset all steps; find and link INIT-step to taskActiveStep
 	Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){
 		result=Ov_Call0(ssc_step, pStep, resetStep);
 
@@ -532,4 +532,18 @@ OV_DLLFNCEXPORT OV_ACCESS ssc_SequentialControlChart_getaccess(
 		break;
 	}
 	return access_code;
+}
+
+OV_DLLFNCEXPORT OV_STRING ssc_SequentialControlChart_activeStep_get(
+		OV_INSTPTR_ssc_SequentialControlChart          pinst
+) {
+	OV_INSTPTR_fb_task	taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
+	OV_INSTPTR_fb_task	pTaskChild = NULL;
+
+	pTaskChild = Ov_GetFirstChild(fb_tasklist, taskActivestep);
+	if(pTaskChild != NULL){
+		return pTaskChild->v_identifier;
+	}
+
+	return (OV_STRING)NULL;
 }

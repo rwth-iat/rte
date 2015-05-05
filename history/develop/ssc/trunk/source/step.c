@@ -148,7 +148,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
         				pNextStep = Ov_GetParent(ssc_previousTransitions, pTransition);
         				if(pNextStep){
         					//ssc is correct linked
-            				Ov_Link(fb_tasklist, Ov_GetPartPtr(activeStep, pSSC), pNextStep);
+            				Ov_Link(fb_tasklist, Ov_GetPartPtr(taskActiveStep, pSSC), pNextStep);
             				pNextStep->v_actimode = FB_AM_ON;
             				pNextStep->v_phase = SSC_PHASE_ENTRYDO;
             				pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
@@ -184,14 +184,14 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
 
     			/* exit */
     			Ov_Call1 (fb_task, pExit, execute, pltc);
-    			// unlink from SequentialControlChart.activeStep
+    			// unlink from SequentialControlChart.taskActiveStep
     			Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pinst), pinst);
     			pinst->v_X = FALSE;
     			pinst->v_qualifier = SSC_QUALIFIER_ENTRY;
 
     			// find next step and execute its entry & do (in the same execution cycle)
     			// Note: this job should be done by ov_ForEachChild(fb_tasklist, ...). But it is not possible to adapt the tasklist dynamically
-//    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, Ov_GetPartPtr(activeStep, pSSC)));
+//    			pNextStep=Ov_DynamicPtrCast(ssc_step, Ov_GetLastChild(fb_tasklist, Ov_GetPartPtr(taskActiveStep, pSSC)));
     			if (pNextStep != NULL){
     				// execute nextStep entry & do
     				Ov_Call1 (fb_task, Ov_DynamicPtrCast(fb_task, pNextStep), execute, pltc);

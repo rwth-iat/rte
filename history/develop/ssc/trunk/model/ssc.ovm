@@ -91,11 +91,12 @@ LIBRARY ssc
 			woStText        : STRING    					FLAGS = "o"	COMMENT = "working state text: INIT/START/BREAK/STOP" INITIALVALUE = "INIT";
 			error			: BOOL							FLAGS = "o"	COMMENT = "error";
 			errorDetail		: STRING						FLAGS = "o"	COMMENT = "error details";
+			activeStep		: STRING	IS_DERIVED	HAS_GET_ACCESSOR	FLAGS = "o"	COMMENT = "the active step name as a string";
 		END_VARIABLES;
 		PARTS
 			actions			: CLASS ov/domain;
 			transConds		: CLASS ov/domain;
-			activeStep		: CLASS fb/task;	//only the active step is linked here
+			taskActiveStep	: CLASS fb/task;	//only the active step is linked here
 			trans			: CLASS fb/task;
 		END_PARTS;
 		OPERATIONS
