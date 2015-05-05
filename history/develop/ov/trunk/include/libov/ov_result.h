@@ -36,7 +36,8 @@ extern "C" {
 #endif
 
 /*
-*	Return error string associated with an error code
+*	Return error string (as a static variable) associated with an error code
+*	no need to worry about memstack allocation
 */
 OV_DLLFNCEXPORT OV_STRING ov_result_getresulttext(
 	OV_RESULT	result
