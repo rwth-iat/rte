@@ -149,16 +149,21 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
     *   local variables
     */
     OV_INSTPTR_ssc_SequentialControlChart pinst = Ov_StaticPtrCast(ssc_SequentialControlChart, pfb);
-    //OV_INSTPTR_fb_functionchart pSscContainer = Ov_DynamicPtrCast(fb_functionchart, Ov_GetParent(ov_containment, pinst));
-    //OV_INSTPTR_ssc_step      pInitStep = NULL;
     OV_INSTPTR_ssc_step      pActiveStep = NULL;
-    //OV_INSTPTR_fb_task       pTask = NULL;
     OV_INSTPTR_fb_task      taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
     OV_INSTPTR_fb_task    pTrans = Ov_GetPartPtr(trans, pinst);
-    //OV_INSTPTR_fb_task 		 pActiveStepExit = NULL;
     // helper variables
     OV_RESULT    			 result;
     OV_BOOL	                 exitLoop = TRUE;
+
+	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pinst);
+
+	/* Init functionchart intask */
+	intask->v_actimode = FB_AM_ON;
+	intask->v_cyctime.secs = 0;
+	intask->v_cyctime.usecs = 0;
+	intask->v_proctime = *pltc;
+
 
     // init variables
     pinst->v_error=FALSE;
@@ -167,6 +172,9 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
     taskActivestep->v_cyctime.secs = 0;
     taskActivestep->v_cyctime.usecs = 0;
     pTrans->v_actimode = FB_AM_ON;
+
+	/* Trigger all connections on chart input ports */
+	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pinst));
 
     // find active step
     Ov_GetFirstChildEx(fb_tasklist, taskActivestep, pActiveStep, ssc_step);
@@ -410,11 +418,17 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
     /* END: state machine: working state
     #################################*/
 
-    /* Execute internal tasks */
-    Ov_Call1 (fb_task, taskActivestep, execute, pltc);
-    Ov_Call1 (fb_task, pTrans, execute, pltc);
+	/* Execute internal tasks */
+	Ov_Call1 (fb_task, taskActivestep, execute, pltc);
+	Ov_Call1 (fb_task, pTrans, execute, pltc);
 
-    return;
+	/* Execute internal SSC task */
+	Ov_Call1(fb_task, intask, execute, pltc);
+
+	/* Trigger all connections on chart output ports */
+	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pinst));
+
+	return;
 }
 
 OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(

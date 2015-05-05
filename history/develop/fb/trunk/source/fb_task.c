@@ -491,13 +491,13 @@ OV_DLLFNCEXPORT void fb_task_execute(
     FbSvcLog_incrIndent();
 
 	/* trigger output send connections */
-    fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)ptask );
+    fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, ptask));
     
 	/* execute the child objects */
     fb_task_execChildObjects(ptask, pltc);
 
 	/* trigger output send connections */
-	fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)ptask );
+	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, ptask));
 	
     /* Logging */
     FbSvcLog_decrIndent();

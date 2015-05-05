@@ -166,65 +166,91 @@ OV_DLLFNCEXPORT OV_ACCESS fb_object_getaccess(
 /*	----------------------------------------------------------------------	*/
 /*
 *	Trigger input get connections
+*	can be called with FBs or FCs
+*	first static variables, than dynamic variables are handled
 */
 OV_DLLFNCEXPORT void fb_object_triggerInpGetConnections(
 	OV_INSTPTR_fb_object	pfb
 ) {
-	OV_INSTPTR_fb_connection				pconn;
-	OV_VTBLPTR_fb_connection				pconnvtable;
+	OV_INSTPTR_fb_connection				pconn = NULL;
+	OV_VTBLPTR_fb_connection				pconnvtable = NULL;
+	OV_INSTPTR_fb_port						pvar = NULL;
 
-    /* Logging */
-    FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, "trigger input get connections");
+	/* Logging */
+	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, "trigger input get connections");
 
-    /* Ueber alle Input-Verbindungen */
+	/* Ueber alle Input-Verbindungen von FB und FC Variablen */
 	Ov_ForEachChild(fb_inputconnections, pfb, pconn) {
 		if(!pconn->v_sourcetrig) {
 			Ov_GetVTablePtr(fb_connection, pconnvtable, pconn);
-      
+
 			if(pconnvtable) {
-			    pconnvtable->m_trigger(pconn);
+				pconnvtable->m_trigger(pconn);
 			} else {
-			    pconn->v_on = FALSE;
-			    
-			    /* Logging */
-                FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: method table not found");
-			    ov_logfile_error("Connection %s: method table not found.", pconn->v_identifier);
+				pconn->v_on = FALSE;
+
+				/* Logging */
+				FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pconn, "ERROR: method table not found");
+				ov_logfile_error("Connection %s: method table not found.", pconn->v_identifier);
 			}
 		}
 	}
 
-    return;
+	if(Ov_CanCastTo(fb_functionchart, pfb)){
+		/* Trigger all connections on chart input ports */
+		Ov_ForEachChild (fb_variables, Ov_StaticPtrCast(fb_functionchart, pfb), pvar) {
+			if( IsFlagSet(pvar->v_flags, 'i') ) {
+				fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pvar));
+				fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pvar));
+			}
+		}
+	}
+
+	return;
 }
 
 /*	----------------------------------------------------------------------	*/
 /*
 *	Trigger output send connections
+*	can be called with FBs or FCs
+*	first static variables, than dynamic variables are handled
 */
 OV_DLLFNCEXPORT void fb_object_triggerOutSendConnections(
 	OV_INSTPTR_fb_object	pfb
 ) {
-	OV_INSTPTR_fb_connection				pconn;
-	OV_VTBLPTR_fb_connection				pconnvtable;
+	OV_INSTPTR_fb_connection				pconn = NULL;
+	OV_VTBLPTR_fb_connection				pconnvtable = NULL;
+	OV_INSTPTR_fb_port						pvar = NULL;
 
-    /* Logging */
-    FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, "trigger output send connections");
+	/* Logging */
+	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, "trigger output send connections");
 
-    /* Ueber alle Output-Verbindungen */
+	/* Ueber alle Output-Verbindungen */
 	Ov_ForEachChild(fb_outputconnections, pfb, pconn) {
 		if(pconn->v_sourcetrig) {
 			Ov_GetVTablePtr(fb_connection, pconnvtable, pconn);
-    
+
 			if(pconnvtable) {
-			    pconnvtable->m_trigger(pconn);
+				pconnvtable->m_trigger(pconn);
 			} else {
-			    pconn->v_on = FALSE;
-			    ov_logfile_error("Connection %s: method table not found.", 
-			        pconn->v_identifier);
+				pconn->v_on = FALSE;
+				ov_logfile_error("Connection %s: method table not found.",
+						pconn->v_identifier);
+			}
+		}
+	}
+
+	if(Ov_CanCastTo(fb_functionchart, pfb)){
+		/* Trigger all connections on chart output ports */
+		Ov_ForEachChild (fb_variables, Ov_StaticPtrCast(fb_functionchart, pfb), pvar) {
+			if( IsFlagSet(pvar->v_flags, 'o') ) {
+				fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pvar));
+				fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pvar));
 			}
 		}
 	}
 	
-    return;
+	return;
 }
 
 

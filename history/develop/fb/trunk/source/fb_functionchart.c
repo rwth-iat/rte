@@ -53,38 +53,23 @@ OV_DLLFNCEXPORT void fb_functionchart_typemethod(
 		OV_INSTPTR_fb_functionblock  pfb,
 		OV_TIME                     *pltc
 ) {
-	OV_INSTPTR_fb_task          intask;
-	OV_INSTPTR_fb_port          pvar;
 	OV_INSTPTR_fb_functionchart pfc = Ov_StaticPtrCast(fb_functionchart, pfb);
+	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pfc);
 
 	/* Init intask */
-	intask = &pfc->p_intask;
 	intask->v_actimode = FB_AM_ON;
 	intask->v_cyctime.secs = 0;
 	intask->v_cyctime.usecs = 0;
 	intask->v_proctime = *pltc;
 
-
-	//Todo: merge with FB code???
-
 	/* Trigger all connections on chart input ports */
-	Ov_ForEachChild (fb_variables, pfc, pvar) {
-		if( IsFlagSet(pvar->v_flags, 'i') ) {
-			fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)pvar );
-			fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)pvar );
-		}
-	}
+	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pfb));
 
 	/* Execute internal task */
 	fbchart_execIntask(intask, pltc);
 
 	/* Trigger all connections on chart output ports */
-	Ov_ForEachChild (fb_variables, pfc, pvar) {
-		if( IsFlagSet(pvar->v_flags, 'o') ) {
-			fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)pvar );
-			fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)pvar );
-		}
-	}
+	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pfb));
 }
 
 /**

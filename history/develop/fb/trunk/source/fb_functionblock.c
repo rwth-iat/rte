@@ -95,21 +95,23 @@ OV_DLLFNCEXPORT OV_ACCESS fb_functionblock_getaccess(
 /*	----------------------------------------------------------------------	*/
 /*
 *	Trigger input get connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerInpGetConnections(
 	OV_INSTPTR_fb_functionblock	pfb
 ) {
-    fb_object_triggerInpGetConnections( (OV_INSTPTR_fb_object)pfb );
+	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object,pfb));
 }
 
 /*	----------------------------------------------------------------------	*/
 /*
 *	Trigger output send connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerOutSendConnections(
 	OV_INSTPTR_fb_functionblock	pfb
 ) {
-    fb_object_triggerOutSendConnections( (OV_INSTPTR_fb_object)pfb );
+	fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object,pfb));
 }
 
 /*	----------------------------------------------------------------------	*/
@@ -238,7 +240,7 @@ OV_DLLFNCEXPORT void fb_functionblock_execute(
 	FbSvcLog_printexecitem((OV_INSTPTR_ov_object)pfb, help);
 
 	/* trigger input get connections */
-	fb_functionblock_triggerInpGetConnections(pfb);
+	fb_object_triggerInpGetConnections(Ov_PtrUpCast(fb_object, pfb));
 
 	/* test if we need to calculate new outputs */
 	if(pfb->v_iexreq || pfb->v_eexreq) {
@@ -257,7 +259,7 @@ OV_DLLFNCEXPORT void fb_functionblock_execute(
         }
         
 		/* trigger output send connections */
-		fb_functionblock_triggerOutSendConnections(pfb);
+		fb_object_triggerOutSendConnections(Ov_PtrUpCast(fb_object, pfb));
 	}
 	
 	/* execute the child objects */

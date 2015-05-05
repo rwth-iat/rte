@@ -139,6 +139,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_set_varvalue(
 
 /*
 *	Trigger input get connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerInpGetConnections(
 	OV_INSTPTR_fb_functionblock	pfb
@@ -149,6 +150,7 @@ OV_DLLFNCEXPORT void fb_object_triggerInpGetConnections(
 
 /*
 *	Trigger output send connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerOutSendConnections(
 	OV_INSTPTR_fb_functionblock	pfb
