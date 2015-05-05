@@ -225,7 +225,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 	// check input
 	if (ov_string_compare(pinst->v_variable, NULL) == OV_STRCMP_EQUAL){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "variable is not defined.");
+		ov_string_setvalue(&pinst->v_errorDetail, "Variable to set is not defined.");
 	};
 
 	ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
@@ -234,12 +234,12 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 		result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
 	}else{
 		pinst->v_error = TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "path not found");
+		ov_string_setvalue(&pinst->v_errorDetail, "Path to variable not found.");
 	}
 
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "bad parameter");
+		ov_string_print(&pinst->v_errorDetail, "Setting value to variable failed: %s",  ov_result_getresulttext(result));
 	}
 
 	ov_string_setvalue(&targetVarname,NULL);

@@ -60,14 +60,14 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_initStepName_set(
 		else
 		{
 			pinst->v_error = TRUE;
-			ov_string_setvalue(&(pinst->v_errorDetail), "step not found");
+			ov_string_setvalue(&(pinst->v_errorDetail), "Step not found.");
 			return OV_ERR_BADVALUE;
 		}
 	}
 	else
 	{
 		pinst->v_error = TRUE;
-		ov_string_setvalue(&(pinst->v_errorDetail),"init and end step can only be set when workingState = 0");
+		ov_string_setvalue(&(pinst->v_errorDetail),"Init and end step can only be set when workingState is 0.");
 		return OV_ERR_BADVALUE;
 	}
 	return ov_string_setvalue(&pobj->v_initStepName, value);
@@ -104,7 +104,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_endStepName_set(
 	if(n < count)
 	{
 		pinst->v_error = TRUE;
-		ov_string_setvalue(&(pinst->v_errorDetail),"could not set all end steps");
+		ov_string_setvalue(&(pinst->v_errorDetail),"Could not set all end steps.");
 		return OV_ERR_BADVALUE;
 	}
 	return ov_string_setvalue(&pobj->v_endStepName,value);
@@ -440,7 +440,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	}
 	if (pInitStep == NULL){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "no INIT-step is defined");
+		ov_string_setvalue(&pinst->v_errorDetail, "No INIT step is defined.");
 		return OV_ERR_BADPATH;
 	}
 	result=Ov_Link(fb_tasklist, taskActivestep, pInitStep);

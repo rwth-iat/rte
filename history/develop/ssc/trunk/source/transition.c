@@ -49,6 +49,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_transition_constructor(
 		ov_logfile_error("ssc_transition_constructor: transition must be encapsulated in a SequentialControlChart.");
 		return OV_ERR_BADPLACEMENT;
 	}
+	pinst->v_error=TRUE;
+	ov_string_setvalue(&pinst->v_errorDetail, "Not connected to a step.");
 
 	return OV_ERR_OK;
 }
@@ -71,11 +73,11 @@ OV_DLLFNCEXPORT void ssc_transition_typemethod(
 	// check location and links
 	if ( !pSSC){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "placed wrong");
+		ov_string_setvalue(&pinst->v_errorDetail, "Wrong placement.");
 		return;
 	}else if ( !pPrevStep || !pNextStep ){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "not connected to both steps");
+		ov_string_setvalue(&pinst->v_errorDetail, "Not connected to both steps.");
 		return;
 	}
 	pinst->v_error=FALSE;

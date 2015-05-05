@@ -122,7 +122,7 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	// check location
 	if (pOwnSSC == NULL){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "wrong placement");
+		ov_string_setvalue(&pinst->v_errorDetail, "Wrong placement.");
 		ov_logfile_error("ssc_execute_typemethod: action block must be placed in a step.");
 		return;
 	}

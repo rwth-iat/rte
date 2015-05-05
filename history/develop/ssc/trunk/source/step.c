@@ -155,7 +155,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
         				}else{
         					//we need to recover...
         					pinst->v_error = TRUE;
-        					ov_string_setvalue(&pinst->v_errorDetail, "internal associations not clean. giving up.");
+        					ov_string_setvalue(&pinst->v_errorDetail, "Internal associations not clean. Giving up.");
         					pSSC->v_workingState = SSC_WOST_STOP;
         				}
         			}

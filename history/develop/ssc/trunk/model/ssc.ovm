@@ -173,7 +173,7 @@ LIBRARY ssc
 	IS_INSTANTIABLE;
   	COMMENT = "action block for set variable action";
     VARIABLES
-      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name (relative to the containing Functionchart or absolute path)";
+      variable			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The variable name (relative to the SequentialControlChart, its action domain or absolute path)";
       value				: ANY 			HAS_SET_ACCESSOR FLAGS = "i"	COMMENT = "The value to be set";
     END_VARIABLES;
     OPERATIONS
@@ -187,7 +187,7 @@ LIBRARY ssc
 	IS_INSTANTIABLE;
   	COMMENT = "action block calling SSC, FB- or CFC-action once";
     VARIABLES
-      targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
+      targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the SequentialControlChart, its action domain or absolute path)";
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
@@ -199,7 +199,7 @@ LIBRARY ssc
 	IS_INSTANTIABLE;
   	COMMENT = "action block sending a command";
     VARIABLES
-      targetObject		: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the containing Functionchart or absolute path)";
+      targetObject		: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the SequentialControlChart, its action domain or absolute path)";
       command			: STRING		FLAGS = "i"	COMMENT = "Command to send";
       parameter			: STRING		FLAGS = "i"	COMMENT = "optional parameters to send";
     END_VARIABLES;

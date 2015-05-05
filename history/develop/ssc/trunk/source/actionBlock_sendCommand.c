@@ -180,7 +180,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	// check location
 	if (pOwnSSC == NULL){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "wrong placement");
+		ov_string_setvalue(&pinst->v_errorDetail, "Wrong placement.");
 		ov_logfile_error("ssc_sendCommand_typemethod: action block must be placed in a step.");
 		return;
 	}
@@ -195,7 +195,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	result = ssc_setNamedVariable(pTargetObj, "sender", &ovvariable);
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "setting sender failed");
+		ov_string_setvalue(&pinst->v_errorDetail, "Setting sender failed.");
 		return;
 	}
 	//setting command
@@ -203,7 +203,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	result = ssc_setNamedVariable(pTargetObj, "order", &ovvariable);
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "setting command failed");
+		ov_string_setvalue(&pinst->v_errorDetail, "Setting command failed.");
 		return;
 	}
 	//setting command
@@ -211,7 +211,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	result = ssc_setNamedVariable(pTargetObj, "param", &ovvariable);
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "setting command failed");
+		ov_string_setvalue(&pinst->v_errorDetail, "Setting command failed.");
 		return;
 	}
 	//freeing string variable
@@ -223,7 +223,7 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	result = ssc_setNamedVariable(pTargetObj, "start", &ovvariable);
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "setting start failed");
+		ov_string_setvalue(&pinst->v_errorDetail, "Setting start failed.");
 		return;
 	}
 
