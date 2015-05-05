@@ -75,6 +75,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 		return OV_ERR_GENERIC;
 	}
 
+	if(ov_string_compare(value, NULL) == OV_STRCMP_EQUAL){
+		//fbds have an empty value...
+		return OV_ERR_OK;
+	}
 	/*********************************************************************************************************
 	 * check for occupy status
 	 * idOfOccupancy == -1 => no occupy check needed
