@@ -76,14 +76,16 @@ OV_DLLFNCEXPORT void ssc_nextTransitions_unlink
 (const OV_PPT_ssc_nextTransitions pparent,
  const OV_CPT_ssc_nextTransitions pchild)
 {
+	OV_INSTPTR_fb_task pTransTaskParent = Ov_GetParent(fb_tasklist, pchild);
+	// unlink the transition from its taskparent
+	if (pTransTaskParent != NULL){
+		Ov_Unlink(fb_tasklist, pTransTaskParent, pchild);
+	}
 
-	// Unlink tasklist
-	Ov_Unlink(fb_tasklist, pparent, pchild);
-
-  /* Unlink */
-  ov_association_unlink (passoc_ssc_nextTransitions,
-                         Ov_PtrUpCast (ov_object, pparent),
-                         Ov_PtrUpCast (ov_object, pchild));
+	/* Unlink */
+	ov_association_unlink (passoc_ssc_nextTransitions,
+			Ov_PtrUpCast (ov_object, pparent),
+			Ov_PtrUpCast (ov_object, pchild));
 }
 
 OV_IMPL_GETACCESS(ssc_nextTransitions)

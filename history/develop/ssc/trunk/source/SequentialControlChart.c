@@ -437,8 +437,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	OV_INSTPTR_ssc_step      pStep = NULL;
 	OV_INSTPTR_ssc_step      pInitStep = NULL;
 	OV_INSTPTR_fb_task 		 taskActivestep = Ov_GetPartPtr(taskActiveStep, pinst);
+	OV_INSTPTR_fb_task       pTransTaskParent = Ov_GetParent(fb_tasklist, pInitStep);
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
-	OV_INSTPTR_fb_task       pTask = NULL;
 	OV_INSTPTR_ssc_SequentialControlChart pSscAction = NULL;
 	OV_RESULT result = OV_ERR_OK;
 	//OV_TIME *pTime;
@@ -457,6 +457,12 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 		ov_string_setvalue(&pinst->v_errorDetail, "No INIT step is defined.");
 		return OV_ERR_BADPATH;
 	}
+	//should be done with the resetStep a few lines above
+	// unlink the init step from its taskparent
+	if (pTransTaskParent != NULL){
+		Ov_Unlink(fb_tasklist, pTransTaskParent, pInitStep);
+	}
+
 	result=Ov_Link(fb_tasklist, taskActivestep, pInitStep);
 	if(Ov_Fail(result)){
 		return result;
@@ -464,19 +470,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 
 	// reset all actions (FB, CFC or SSC) under .actions folder
 	Ov_ForEachChildEx(ov_containment, Ov_GetPartPtr(actions, pinst), pFbAction, fb_functionblock){
-		// unlink from task parent
-		pTask = Ov_GetParent(fb_tasklist, pFbAction);
-		if (pTask != NULL){
-			Ov_Unlink(fb_tasklist, pTask, pFbAction);
-		}
-
-		// reset parameters
-		pFbAction->v_actimode = FB_AM_OFF;
-		pFbAction->v_cyctime.secs = 0;
-		pFbAction->v_cyctime.usecs = 0;
-		pFbAction->v_iexreq = TRUE;
-
-		// reset SSC action
+		// reset subSSC action
 		pSscAction=Ov_DynamicPtrCast(ssc_SequentialControlChart,pFbAction);
 		if (pSscAction != NULL){
 			pSscAction->v_actimode = FB_AM_ON;
@@ -486,25 +480,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 			if(Ov_Fail(result)){
 				return result;
 			}
-			pSscAction->v_actimode = FB_AM_OFF;
 		}
 	}
-
-	// TODO: reset all transition conditions under .transConds folder
-	Ov_ForEachChildEx(ov_containment, Ov_GetPartPtr(transConds, pinst), pFbAction, fb_functionblock){
-		// unlink from task parent
-		OV_INSTPTR_fb_task pTask = Ov_GetParent(fb_tasklist, pFbAction);
-		if (pTask != NULL){
-			Ov_Unlink(fb_tasklist, pTask, pFbAction);
-		}
-
-		// reset parameters
-		pFbAction->v_actimode = FB_AM_OFF;
-		pFbAction->v_cyctime.secs = 0;
-		pFbAction->v_cyctime.usecs = 0;
-		pFbAction->v_iexreq = TRUE;
-	}
-	//printf("%s: reset all steps END\n", pinst->v_identifier);
 
 	return OV_ERR_OK;
 }
