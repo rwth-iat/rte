@@ -36,6 +36,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 ) {
 	//	local Pointers
 	//
+	OV_RESULT result = OV_ERR_OK;
 
 	OV_INSTPTR_ssc_transition pTrans = Ov_StaticPtrCast(ssc_transition, pchild);
 	OV_INSTPTR_fb_task pTransTaskParent = Ov_GetParent(fb_tasklist, pchild);
@@ -53,7 +54,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_nextTransitions_link
 		Ov_Unlink(fb_tasklist, pTransTaskParent, pchild);
 	}
 	// link to local tasklist of the parent ssc
-	Ov_Link(fb_tasklist, Ov_GetPartPtr(trans, pOwnSSC), pchild);
+	result = Ov_Link(fb_tasklist, Ov_GetPartPtr(trans, pOwnSSC), pchild);
+	if(Ov_Fail(result)){
+		return result;
+	}
 
 	// activate transition
 	pTrans->v_actimode = FB_AM_ON;

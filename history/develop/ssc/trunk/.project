@@ -3,6 +3,7 @@
 	<name>ssc</name>
 	<comment></comment>
 	<projects>
+		<project>fb</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -11,7 +12,7 @@
 			<arguments>
 				<dictionary>
 					<key>?children?</key>
-					<value>?name?=outputEntries\|?children?=?name?=entry\\\\\\\|\\\|\||</value>
+					<value>?children?=?name?=entry\\\\\\\|\\\|\|?name?=outputEntries\||</value>
 				</dictionary>
 				<dictionary>
 					<key>?name?</key>

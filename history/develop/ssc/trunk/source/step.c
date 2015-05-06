@@ -86,6 +86,7 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
     OV_TIME elapsedTime;
     // helper variables
     OV_BOOL	  exitLoop=FALSE;
+    OV_RESULT result = OV_ERR_OK;
 
     // check location
     if (pSSC==NULL)
@@ -147,8 +148,17 @@ OV_DLLFNCEXPORT void ssc_step_typemethod(
         				// link next-step to ssc-tasklist
         				pNextStep = Ov_GetParent(ssc_previousTransitions, pTransition);
         				if(pNextStep){
-        					//ssc is correct linked
-            				Ov_Link(fb_tasklist, Ov_GetPartPtr(taskActiveStep, pSSC), pNextStep);
+        					//transition is correct linked
+        					if(!Ov_GetParent(fb_tasklist, pNextStep)){
+        						//ensure the next step is linked right
+        						Ov_Unlink(fb_tasklist, Ov_GetParent(fb_tasklist, pNextStep), pNextStep);
+        					}
+            				result = Ov_Link(fb_tasklist, Ov_GetPartPtr(taskActiveStep, pSSC), pNextStep);
+            				if(Ov_Fail(result)){
+            					pinst->v_error = TRUE;
+            					ov_string_setvalue(&pinst->v_errorDetail, "Internal linking failed. Giving up.");
+            					pSSC->v_workingState = SSC_WOST_STOP;
+            				}
             				pNextStep->v_actimode = FB_AM_ON;
             				pNextStep->v_phase = SSC_PHASE_ENTRYDO;
             				pNextStep->v_qualifier = SSC_QUALIFIER_ENTRY;
