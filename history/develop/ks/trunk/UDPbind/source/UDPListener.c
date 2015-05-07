@@ -461,9 +461,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 								result = pVTBLClientHandler->m_HandleRequest(pClientHandler, Ov_StaticPtrCast(ksbase_Channel, thisLi), &(thisLi->v_inData), &(thisLi->v_outData));
 								if(Ov_Fail(result))
 								{
-									ov_memstack_lock();
 									KS_logfile_error(("%s: processing of received data by %s failed: %s", thisLi->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
-									ov_memstack_unlock();
 									ksbase_free_KSDATAPACKET(&(thisLi->v_inData));
 									ksbase_free_KSDATAPACKET(&(thisLi->v_outData));
 									return;
@@ -588,9 +586,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_AssociateClientHandler(
 					result = pVTBLProtIdent->m_createClientHandler(pProtIdent, this);
 					if(Ov_Fail(result))
 					{
-						ov_memstack_lock();
 						KS_logfile_error(("ClientHandler could not be created. Reason: %s", ov_result_getresulttext(result)));
-						ov_memstack_unlock();
 						return result;
 					}
 					KS_logfile_debug(("ClientHandler created."));

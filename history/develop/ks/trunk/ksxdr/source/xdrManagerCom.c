@@ -302,9 +302,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     				result = ov_class_createIDedObject(pClIterator, Ov_PtrUpCast(ov_domain, pinst),
     						"Channel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) &pChannel);
     				if(Ov_Fail(result)){
-    					ov_memstack_lock();
     					KS_logfile_error(("%s: startup: Could not create channel. Reason: %s", pinst->v_identifier, ov_result_getresulttext(result)));
-    					ov_memstack_unlock();
     				}
     			}
     		}
@@ -323,9 +321,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_startup(
     					if(Ov_Fail(result)){
     						KS_logfile_error(("%s: startup: Generation of getport call failed.", pinst->v_identifier));
     					} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-    						ov_memstack_lock();
     						KS_logfile_error(("%s: startup: Sending getport to portmapper failed. Reason: %s", pinst->v_identifier, ov_result_getresulttext(result)));
-    						ov_memstack_unlock();
     					} else {
     						//	call the channels typemethod in a loopto receive data
     						//	do this 3 seconds tops
@@ -416,9 +412,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_shutdown(
 						if(Ov_Fail(result)){
 							KS_logfile_error(("%s: typemethod: Generation of unset call failed.", thisMngCom->v_identifier));
 						} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-							ov_memstack_lock();
 							KS_logfile_error(("%s: typemethod: Sending unset to portmapper failed. Reason: %s", thisMngCom->v_identifier, ov_result_getresulttext(result)));
-							ov_memstack_unlock();
 						}
 						pVtblChannel->m_CloseConnection(pChannel);
 						ksbase_free_KSDATAPACKET(&(pChannel->v_inData));
@@ -541,9 +535,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 							result = ov_class_createIDedObject(pClIterator, Ov_PtrUpCast(ov_domain, this),
 									"Channel", OV_PMH_DEFAULT, NULL, NULL, NULL, (OV_INSTPTR_ov_object*) &pChannel);
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
 								KS_logfile_error(("%s: typemethod: Could not create channel. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-								ov_memstack_unlock();
 							}
 						}
 					}
@@ -562,9 +554,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 								if(Ov_Fail(result)){
 									KS_logfile_error(("%s: typemethod: Generation of unset call failed.", this->v_identifier));
 								} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-									ov_memstack_lock();
 									KS_logfile_error(("%s: typemethod: Sending unset to portmapper failed. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-									ov_memstack_unlock();
 								}
 								//check for UDP
 								pClIterator = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_Channel);
@@ -579,9 +569,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 									if(Ov_Fail(result)){
 										KS_logfile_error(("%s: typemethod: Generation of set call for UDP failed.", this->v_identifier));
 									} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-										ov_memstack_lock();
 										KS_logfile_error(("%s: typemethod: Sending register for UDP to portmapper failed. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-										ov_memstack_unlock();
 									}
 								}
 								// check for TCPbind
@@ -597,9 +585,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 									if(Ov_Fail(result)){
 										KS_logfile_error(("%s: typemethod: Generation ofnset call for TCP failed.", this->v_identifier));
 									} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-										ov_memstack_lock();
 										KS_logfile_error(("%s: typemethod: Sending register for TCP to portmapper failed. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-										ov_memstack_unlock();
 									}
 								}
 								pVtblChannel->m_CloseConnection(pChannel);
@@ -627,9 +613,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				if(!xdrClient) {/*	no xdrClient in containment --> create one	*/
 					result = Ov_CreateObject(ksxdr_xdrClient, xdrClient, this, "xdrClient");
 					if(Ov_Fail(result)) {
-						ov_memstack_lock();
 						KS_logfile_error(("%s: typemethod: could not create xdrClient. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-						ov_memstack_unlock();
 						this->v_actimode = 0;
 						thisMngCom->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;
 						return;
@@ -638,9 +622,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				}
 				result = ov_string_setvalue(&xdrClient->v_ManagerPort, thisMngCom->v_ManagerPort);
 				if(Ov_Fail(result)) {
-					ov_memstack_lock();
 					KS_logfile_error(("%s: typemethod: could not set ManagerPort at xdrClient. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-					ov_memstack_unlock();
 					thisMngCom->v_Tries++;
 					return;
 				}
@@ -695,9 +677,8 @@ void ksxdr_xdrManagercom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INSTPT
 
 	result = ksxdr_xdrClient_processRegister(xdrClient, NULL, &ksResult);
 	if(Ov_Fail(result))
-	{	ov_memstack_lock();
+	{
 		KS_logfile_error(("%s: callback: error processing answer: %s", this->v_identifier, ov_result_getresulttext(result)));
-		ov_memstack_unlock();
 		this->v_RegisterState = XDR_MNGRCOM_REGISTERSTATE_ERROR;	/*	error	*/
 		return;
 	}

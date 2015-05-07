@@ -306,9 +306,7 @@ OV_DLLFNCEXPORT void kshttp_httpManagerCom_typemethod (
 					result = Ov_CreateObject(kshttp_httpClient, httpClient, this, "httpClient");
 					if(Ov_Fail(result))
 					{
-						ov_memstack_lock();
 						KS_logfile_error(("%s: typemethod: could not create httpClient. reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-						ov_memstack_unlock();
 						this->v_actimode = 0;
 						thisMngCom->v_RegisterState = HTTP_MNGRCOM_REGISTERSTATE_ERROR;
 						return;
@@ -371,9 +369,8 @@ void kshttp_httpManagerCom_Callback(OV_INSTPTR_ov_domain instanceCalled, OV_INST
 
 	result = kshttp_httpClient_processRegister(httpClient, NULL, &ksResult);
 	if(Ov_Fail(result))
-	{	ov_memstack_lock();
+	{
 		KS_logfile_error(("%s: callback: error processing answer: %s", this->v_identifier, ov_result_getresulttext(result)));
-		ov_memstack_unlock();
 		this->v_RegisterState = HTTP_MNGRCOM_REGISTERSTATE_ERROR;	/*	error	*/
 		return;
 	}

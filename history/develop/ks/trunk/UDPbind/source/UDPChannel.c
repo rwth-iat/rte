@@ -311,9 +311,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pClientHandler->v_identifier));
 						result = pVTBLClientHandler->m_HandleRequest(pClientHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result)) {
-							ov_memstack_lock();
 							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
-							ov_memstack_unlock();
 							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
@@ -346,9 +344,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 						KS_logfile_debug(("%s: handing over data to %s to handle it.", thisCh->v_identifier, pDataHandler->v_identifier));
 						result = pVTBLDataHandler->m_HandleData(pDataHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result)) {
-							ov_memstack_lock();
 							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pDataHandler->v_identifier, ov_result_getresulttext(result)));
-							ov_memstack_unlock();
 							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));

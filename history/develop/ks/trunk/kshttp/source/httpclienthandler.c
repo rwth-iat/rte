@@ -342,9 +342,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 
 					response->requestHandledBy = KSHTTP_RGB_CLIENTHANDLEREXT;
 					if(Ov_Fail(result)){
-						ov_memstack_lock();
 						KS_logfile_error(("%s: HandleRequest: processing service %s by %s failed with error %s", this->v_identifier, request.urlPath, pExtension->v_identifier, ov_result_getresulttext(result)));
-						ov_memstack_unlock();
 					}else{
 						if(*communicationStatus == HTTP_CS_CHANNELRESPONSIBILITYRELEASED){
 							//we reject every further work on this channel

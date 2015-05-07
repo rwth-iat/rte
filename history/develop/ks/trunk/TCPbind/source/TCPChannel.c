@@ -608,9 +608,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						result = pVTBLClientHandler->m_HandleRequest(pClientHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result))
 						{
-							ov_memstack_lock();
 							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
-							ov_memstack_unlock();
 							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
@@ -653,9 +651,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						result = pVTBLDataHandler->m_HandleData(pDataHandler, Ov_StaticPtrCast(ksbase_Channel, thisCh), &(thisCh->v_inData), &(thisCh->v_outData));
 						if(Ov_Fail(result))
 						{
-							ov_memstack_lock();
 							KS_logfile_error(("%s: processing of received data by %s failed: %s", thisCh->v_identifier, pDataHandler->v_identifier, ov_result_getresulttext(result)));
-							ov_memstack_unlock();
 							ksbase_free_KSDATAPACKET(&(thisCh->v_inData));
 							ksbase_free_KSDATAPACKET(&(thisCh->v_outData));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
@@ -894,9 +890,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 					result = pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this));
 					if(Ov_Fail(result))
 					{
-						ov_memstack_lock();
 						KS_logfile_error(("ClientHandler could not be created. Reason: %s", ov_result_getresulttext(result)));
-						ov_memstack_unlock();
 						return result;
 					}
 					KS_logfile_debug(("ClientHandler created."));

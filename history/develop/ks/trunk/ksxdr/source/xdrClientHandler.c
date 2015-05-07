@@ -428,9 +428,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		{
 			if(Ov_Fail(result))
 			{
-				ov_memstack_lock();
 				KS_logfile_error(("%s: HandleRequest: error checking if message is complete: %s", this->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
 				KS_logfile_error(("datapackets content: \nlength:\t%lu\ndata-begin:\t%p\ndata-end:\t%p\nread-pt:\t%p\nwrite-pt:\t%p\n\n", dataReceived->length, dataReceived->data, dataReceived->data+dataReceived->length, dataReceived->readPT, dataReceived->writePT));
 				return result;
 			}
@@ -643,9 +641,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_unregister(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -658,9 +654,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_getserver(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -673,9 +667,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_createObject(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -688,9 +680,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_deleteObject(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -703,9 +693,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_getEP(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -718,9 +706,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_getPP(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -734,9 +720,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_getCanonicalPath(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -749,9 +733,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_getVar(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -765,9 +747,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_link(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -781,9 +761,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_renameObject(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -797,9 +775,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_setVar(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -813,9 +789,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 		result = ksxdr_unlink(ProgVersion, pticket, dataReceived, &serviceAnswer, &msgState, &ksErrCode);
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			KS_logfile_error(("%s: HandleRequest: processing service %0#8x failed with error %s", this->v_identifier, procedure, ov_result_getresulttext(result)));
-			ov_memstack_unlock();
 			ksbase_free_KSDATAPACKET(&serviceAnswer);
 			ksbase_free_KSDATAPACKET(answer);
 			return result;
@@ -856,9 +830,7 @@ OV_DLLFNCEXPORT OV_RESULT ksxdr_xdrClientHandler_HandleRequest(
 					pticket, procedure, dataReceived, &beginAnswer, answer, &ksErrCode, &serviceAnswer, &extensionTakesOver);
 			if(Ov_Fail(result))
 			{
-				ov_memstack_lock();
 				KS_logfile_error(("%s: HandleRequest: processing service %0#8x by %s failed with error %s", this->v_identifier, procedure, pExtension->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
 				ksbase_free_KSDATAPACKET(&serviceAnswer);
 				ksbase_free_KSDATAPACKET(answer);
 				return result;

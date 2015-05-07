@@ -56,9 +56,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	if(!pcommunication) {
 		result = Ov_CreateObject(ov_domain, pcommunication, &(pdb->root), "communication");
 		if(Ov_Fail(result)) {
-			ov_memstack_lock();
 			ov_logfile_error("Fatal: Could not create Object 'communication': %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
 			return result;
 		}
 	}
@@ -74,9 +72,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	if(!rcTask) {
 		result = Ov_CreateObject(ksbase_RootComTask, rcTask, pcommunication, "RootComTask");
 		if(Ov_Fail(result)) {
-			ov_memstack_lock();
 			ov_logfile_error("Fatal: Could not create RootComTask: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
 			return result;
 		}
 	}
@@ -87,9 +83,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	{
 		result = Ov_CreateObject(ksbase_NoneTicketAuthenticator, pNoneAuth, pcommunication, "NoneAuthenticator");
 		if(Ov_Fail(result)) {
-			ov_memstack_lock();
 			ov_logfile_error("Fatal: Could not create NoneAuthenticator: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
 			return result;
 		}
 	}
@@ -100,9 +94,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	{
 		result = Ov_CreateObject(ksbase_NoneTicketGenerator, pNoneGenerator, pcommunication, "NoneGenerator");
 		if(Ov_Fail(result)) {
-			ov_memstack_lock();
 			ov_logfile_error("Fatal: Could not create NoneGenerator: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
 			return result;
 		}
 	}
@@ -113,9 +105,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 	result = ov_vendortree_getservername(&tempAny, NULL);
 	if(Ov_Fail(result))
 	{
-		ov_memstack_lock();
 		ov_logfile_error("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result));
-		ov_memstack_unlock();
 		return result;
 	}
 
@@ -127,9 +117,7 @@ OV_RESULT ov_library_setglobalvars_ksbase_new(void) {
 			result = Ov_CreateObject(ksbase_Manager, pManager, &(pdb->root), "servers");
 			if(Ov_Fail(result))
 			{
-				ov_memstack_lock();
 				ov_logfile_error("TCPbind library open: could not create Manager: %s", ov_result_getresulttext(result));
-				ov_memstack_unlock();
 				return result;
 			}
 		}

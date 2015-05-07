@@ -146,9 +146,7 @@ OV_DLLFNCEXPORT void ksxdr_PMAskList_typemethod (
 			if(Ov_Fail(result)){
 				KS_logfile_error(("%s: typemethod: Generation of getport call failed.", this->v_identifier));
 			} else if(Ov_Fail(pVtblChannel->m_SendData(pChannel))){
-				ov_memstack_lock();
 				KS_logfile_error(("%s: typemethod: Sending getport to portmapper failed. Reason: %s", this->v_identifier, ov_result_getresulttext(result)));
-				ov_memstack_unlock();
 				thisAskList->v_results.value[thisAskList->v_index] = 2;
 				pVtblChannel->m_CloseConnection(pChannel);
 				thisAskList->v_state = STATE_CLOSING_CONNECTION;
