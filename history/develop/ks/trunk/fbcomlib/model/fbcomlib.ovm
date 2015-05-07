@@ -91,7 +91,7 @@ LIBRARY	fbcomlib
 	
 	CLASS setVar	:	CLASS	fbcomlib/variableOperation
 		IS_INSTANTIABLE;
-		COMMENT	=	"Function block for sending a string";
+		COMMENT	=	"Function block for sending a variable";
 		VARIABLES
 			sendVar				:	ANY
 				HAS_SET_ACCESSOR
@@ -100,7 +100,7 @@ LIBRARY	fbcomlib
 			doReset				:	BOOL
 				HAS_ACCESSORS
 				FLAGS			=	"i"
-				COMMENT			=	"Reset"
+				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE;
 		END_VARIABLES;
 		PARTS
@@ -115,15 +115,15 @@ LIBRARY	fbcomlib
 
 	CLASS getVar	:	CLASS	fbcomlib/variableOperation
 		IS_INSTANTIABLE;
-		COMMENT	=	"Function block for receiving a string";
+		COMMENT	=	"Function block for receiving a variable";
 		VARIABLES
 			receivedVar			:	ANY
 				FLAGS			=	"o"
-				COMMENT			=	"The value which is read";
+				COMMENT			=	"The value which was read";
 			doReset				:	BOOL
 				HAS_ACCESSORS
 				FLAGS			=	"i"
-				COMMENT			=	"Reset"
+				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE;
 		END_VARIABLES;
 		PARTS
@@ -161,7 +161,7 @@ LIBRARY	fbcomlib
 		VARIABLES
 			value				:	ANY
 				FLAGS			=	"o"
-				COMMENT 		=	"received value";
+				COMMENT 		=	"The value which was read";
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -175,7 +175,7 @@ LIBRARY	fbcomlib
 		VARIABLES
 			value				:	ANY
 				FLAGS			=	"i"
-				COMMENT 		=	"received value";
+				COMMENT 		=	"Variable to be send";
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -193,7 +193,7 @@ LIBRARY	fbcomlib
 			doReset					:	BOOL	
 				HAS_ACCESSORS	
 				FLAGS			=	"i"
-				COMMENT			=	"Reset"
+				COMMENT			=	"Set to true to re-initalize the FB"
 				INITIALVALUE	=	FALSE; 
 			namemask				:	STRING		
 				FLAGS			=	"i"
@@ -271,7 +271,7 @@ LIBRARY	fbcomlib
 		VARIABLES
 			newpath				:	STRING
 				FLAGS			=	"i"
-				COMMENT			=	"newpath of object"
+				COMMENT			=	"new path of object"
 				INITIALVALUE	=	"/TechUnits/";
 			doReset					:	BOOL		
 				HAS_ACCESSORS	
