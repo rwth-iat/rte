@@ -151,11 +151,11 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				
 			if(pinst->v_P > 0)
 			{
-				p_begin = (OV_STRING) ov_database_malloc((pinst->v_P) * sizeof(char));
+				p_begin = (OV_STRING) Ov_DbMalloc((pinst->v_P) * sizeof(char));
 				if(p_begin == NULL)	//if allocation failed, free memory
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_database_free(p_begin);
+					Ov_DbFree(p_begin);
 					return;
 				}
 				for(i=0; i < pinst->v_P - 1; i++)
@@ -165,20 +165,20 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				if(Ov_Fail(ov_string_setvalue(&pinst->v_OUT, p_begin)))
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_database_free(p_begin);
+					Ov_DbFree(p_begin);
 					return;
 				}
 				
-				ov_database_free(p_begin);
+				Ov_DbFree(p_begin);
 			}
 				
 			if(end_length > 0)
 			{
-				p_end = (OV_STRING) ov_database_malloc((end_length + 1) * sizeof(char));
+				p_end = (OV_STRING) Ov_DbMalloc((end_length + 1) * sizeof(char));
 				if(p_end == NULL)	//if allocation failed, free memory
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_database_free(p_end);
+					Ov_DbFree(p_end);
 					return;
 				}
 				
@@ -189,10 +189,10 @@ OV_DLLFNCEXPORT void iec61131stdfb_DELETE_typemethod(
 				if(Ov_Fail(ov_string_append(&pinst->v_OUT, p_end)))
 				{
 					ov_logfile_error("%s: allocation of memory failed, no operation performed", pinst->v_identifier);
-					ov_database_free(p_end);
+					Ov_DbFree(p_end);
 					return;
 				}
-				ov_database_free(p_end);
+				Ov_DbFree(p_end);
 			}
 			else
 				if(end_length < 0)

@@ -140,9 +140,7 @@ OV_DLLFNCEXPORT OV_RESULT iec61131stdfb_CONCATVEC_constructor(OV_INSTPTR_ov_obje
     	result = Ov_SetDynamicVectorLength(&pinst->v_OUT.value.valueunion.val_##type##_vec, in1length+in2length, TYPE);	\
     	if(Ov_Fail(result))	\
     	{	\
-    		ov_memstack_lock();	\
     		ov_logfile_error("%s: Setting OUT-Vector length to %d failed. Code: %s", pinst->v_identifier, in1length+in2length, ov_result_getresulttext(result));	\
-    		ov_memstack_unlock();	\
     		return;	\
     	}	\
     	if(in1length)	\
@@ -220,9 +218,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_CONCATVEC_typemethod(
 
         	if(Ov_Fail(result))
         	{
-        		ov_memstack_lock();
         		ov_logfile_error("%s: Setting OUT-Vector length to %d failed. Code: %s", pinst->v_identifier, in1length+in2length, ov_result_getresulttext(result));
-        		ov_memstack_unlock();
         		return;
         	}
 
@@ -233,9 +229,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_CONCATVEC_typemethod(
         			result = ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[0]), pinst->v_IN1.value.valueunion.val_string);
         			if(Ov_Fail(result))
         			{
-        				ov_memstack_lock();
         				ov_logfile_error("%s: Setting string in OUT-Vector element %d failed. Code: %s", pinst->v_identifier, copieditems + 1, ov_result_getresulttext(result));
-        				ov_memstack_unlock();
         				return;
         			}
         			copieditems = 1;
@@ -247,9 +241,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_CONCATVEC_typemethod(
         				result = ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[i]), pinst->v_IN1.value.valueunion.val_string_vec.value[i]);
         				if(Ov_Fail(result))
         				{
-        					ov_memstack_lock();
         					ov_logfile_error("%s: Setting string in OUT-Vector element %d failed. Code: %s", pinst->v_identifier, copieditems + 1, ov_result_getresulttext(result));
-        					ov_memstack_unlock();
         					return;
         				}
         			}
@@ -263,9 +255,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_CONCATVEC_typemethod(
         			result = ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[copieditems]), pinst->v_IN2.value.valueunion.val_string);
         			if(Ov_Fail(result))
         			{
-        				ov_memstack_lock();
         				ov_logfile_error("%s: Setting string in OUT-Vector element %d failed. Code: %s", pinst->v_identifier, copieditems, ov_result_getresulttext(result));
-        				ov_memstack_unlock();
         				return;
         			}
         		}
@@ -276,9 +266,7 @@ OV_DLLFNCEXPORT void iec61131stdfb_CONCATVEC_typemethod(
         				result = ov_string_setvalue(&(pinst->v_OUT.value.valueunion.val_string_vec.value[i + copieditems]), pinst->v_IN2.value.valueunion.val_string_vec.value[i]);
         				if(Ov_Fail(result))
         				{
-        					ov_memstack_lock();
         					ov_logfile_error("%s: Setting string in OUT-Vector element %d failed. Code: %s", pinst->v_identifier, copieditems + 1, ov_result_getresulttext(result));
-        					ov_memstack_unlock();
         					return;
         				}
         			}
