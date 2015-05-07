@@ -180,21 +180,18 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				//the VEC cases appends in a loop
 				ov_string_setvalue(&LoopEntryValue, NULL);
 			}
-			switch (Variable.value.vartype){
+			switch (Variable.value.vartype & OV_VT_KSMASK){
 				case OV_VT_VOID:															//unused ANY with explicit no content
-				case (OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):	//  used ANY with explicit no content
 					ov_string_setvalue(&LoopEntryTypeString, "void");
 					ov_string_print(&LoopEntryValue, "%s", "");
 					break;
 
 				case OV_VT_BYTE:
-				case (OV_VT_BYTE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "byte");
 					ov_string_print(&LoopEntryValue, "%d", Variable.value.valueunion.val_byte);
 					break;
 
 				case OV_VT_BOOL:
-				case OV_VT_BOOL_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "bool");
 					if (Variable.value.valueunion.val_bool == TRUE){
 						ov_string_setvalue(&LoopEntryValue, "TRUE");
@@ -204,31 +201,26 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_INT:
-				case OV_VT_INT_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "int");
 					ov_string_print(&LoopEntryValue, "%i", Variable.value.valueunion.val_int);
 					break;
 
 				case OV_VT_UINT:
-				case OV_VT_UINT_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "uint");
 					ov_string_print(&LoopEntryValue, "%u", Variable.value.valueunion.val_uint);
 					break;
 
 				case OV_VT_SINGLE:
-				case OV_VT_SINGLE_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "single");
 					ov_string_print(&LoopEntryValue, "%g", Variable.value.valueunion.val_single);
 					break;
 
 				case OV_VT_DOUBLE:
-				case OV_VT_DOUBLE_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "double");
 					ov_string_print(&LoopEntryValue, "%1.15g", Variable.value.valueunion.val_double);
 					break;
 
 				case OV_VT_STRING:
-				case OV_VT_STRING_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "string");
 					if (ov_string_compare(Variable.value.valueunion.val_string, NULL) == OV_STRCMP_EQUAL){
 						ov_string_setvalue(&LoopEntryValue, "");
@@ -238,25 +230,21 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_TIME:
-				case OV_VT_TIME_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "time");
 					kshttp_timetoascii(&LoopEntryValue, &Variable.value.valueunion.val_time, request.response_format);
 					break;
 
 				case OV_VT_TIME_SPAN:
-				case OV_VT_TIME_SPAN_PV:
 					ov_string_setvalue(&LoopEntryTypeString, "timespan");
 					kshttp_timespantoascii(&LoopEntryValue, &Variable.value.valueunion.val_time_span, request.response_format);
 					break;
 
 				case OV_VT_STATE:
-				case (OV_VT_STATE | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "state");
 					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					break;
 
 				case OV_VT_STRUCT:
-				case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "struct");
 					ov_string_print(&LoopEntryValue, "%s", "struct datatype unsupported");
 					fr = OV_ERR_NOTIMPLEMENTED;
@@ -264,7 +252,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 
 				//****************** VEC: *******************
 				case OV_VT_BYTE_VEC:
-				case (OV_VT_BYTE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "bytevec");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					lasterror = fr;
@@ -279,7 +266,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_BOOL_VEC:
-				case OV_VT_BOOL_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "boolvec");
 					for ( i = 0; i < Variable.value.valueunion.val_bool_vec.veclen;i++){
 						if(i>0){
@@ -297,7 +283,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_INT_VEC:
-				case OV_VT_INT_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "intvec");
 					for ( i = 0; i < Variable.value.valueunion.val_int_vec.veclen;i++){
 						if(i>0){
@@ -311,7 +296,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_UINT_VEC:
-				case OV_VT_UINT_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "uintvec");
 					for ( i = 0; i < Variable.value.valueunion.val_uint_vec.veclen;i++){
 						if(i>0){
@@ -325,7 +309,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_SINGLE_VEC:
-				case OV_VT_SINGLE_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "singlevec");
 					for ( i = 0; i < Variable.value.valueunion.val_single_vec.veclen;i++){
 						if(i>0){
@@ -339,7 +322,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_DOUBLE_VEC:
-				case OV_VT_DOUBLE_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "doublevec");
 					for ( i = 0; i < Variable.value.valueunion.val_double_vec.veclen;i++){
 						if(i>0){
@@ -353,7 +335,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_STRING_VEC:
-				case OV_VT_STRING_PV_VEC:
 					ov_string_print(&LoopEntryTypeString, "stringvec length=\"%i\"", Variable.value.valueunion.val_string_vec.veclen);
 					for ( i = 0; i < Variable.value.valueunion.val_string_vec.veclen;i++){
 						if(i>0){
@@ -372,7 +353,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_TIME_VEC:
-				case OV_VT_TIME_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "timevec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_vec.veclen;i++){
 						if(i>0){
@@ -386,7 +366,6 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_TIME_SPAN_VEC:
-				case OV_VT_TIME_SPAN_PV_VEC:
 					ov_string_setvalue(&LoopEntryTypeString, "timespanvec");
 					for ( i = 0; i < Variable.value.valueunion.val_time_span_vec.veclen;i++){
 						if(i>0){
@@ -400,14 +379,12 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					break;
 
 				case OV_VT_STATE_VEC:
-				case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "statevec");
 					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					fr = OV_ERR_NOTIMPLEMENTED;
 					break;
 
 				case OV_VT_STRUCT_VEC:
-				case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 					ov_string_setvalue(&LoopEntryTypeString, "structvec");
 					ov_string_print(&LoopEntryValue, "%s", "unknown");
 					fr = OV_ERR_NOTIMPLEMENTED;

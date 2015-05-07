@@ -235,9 +235,8 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 
 		//	OV_VT_x_PV is an ANY which is set to x
 		//
-		switch (addrp->var_current_props.value.vartype){
+		switch (addrp->var_current_props.value.vartype & OV_VT_KSMASK){
 			case OV_VT_BOOL:
-			case OV_VT_BOOL_PV:
 				if (CHECK_BOOLTRUE(newvaluematch.value[i])){
 					addrp->var_current_props.value.valueunion.val_bool = TRUE;
 				}else if (CHECK_BOOLFALSE(newvaluematch.value[i])){
@@ -251,27 +250,22 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_INT:
-			case OV_VT_INT_PV:
 				addrp->var_current_props.value.valueunion.val_int = (OV_INT) strtol(newvaluematch.value[i],NULL,10);
 			break;
 
 			case OV_VT_UINT:
-			case OV_VT_UINT_PV:
 				addrp->var_current_props.value.valueunion.val_uint = (OV_UINT) strtoul(newvaluematch.value[i],NULL,10);
 			break;
 
 			case OV_VT_SINGLE:
-			case OV_VT_SINGLE_PV:
 				addrp->var_current_props.value.valueunion.val_single = (OV_SINGLE) atof(newvaluematch.value[i]);
 			break;
 
 			case OV_VT_DOUBLE:
-			case OV_VT_DOUBLE_PV:
 				addrp->var_current_props.value.valueunion.val_double = (OV_DOUBLE) atof(newvaluematch.value[i]);
 			break;
 
 			case OV_VT_STRING:
-			case OV_VT_STRING_PV:
 				//setting the content of the pointer to null,
 				//otherwise setvalue() crashes as it wants to free memory from a garbage pointer
 				//we have a new object, so no memory is allocated and the setting to NULL is save
@@ -285,7 +279,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_VOID:
-			case OV_VT_VOID | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				if(ov_string_getlength(newvaluematch.value[i]) > 0){
 					fr = OV_ERR_BADTYPE;
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable is/should be void, but a newvalue is given");
@@ -295,7 +288,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_TIME:
-			case OV_VT_TIME | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				fr = kshttp_asciitotime(&addrp->var_current_props.value.valueunion.val_time, newvaluematch.value[i]);
 				if (Ov_Fail(fr)){
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Setting time value failed");
@@ -305,7 +297,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_TIME_SPAN:
-			case OV_VT_TIME_SPAN | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP:
 				//can be 42.1241 or P42.123456S or -P23.42S
 				ov_string_setvalue(&Temp, newvaluematch.value[i]);
 				if(Temp[0] == 'P'){
@@ -322,7 +313,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_STRUCT:
-			case (OV_VT_STRUCT | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
 				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
@@ -343,7 +333,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	*/
 
 			case OV_VT_BOOL_VEC:
-			case OV_VT_BOOL_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_bool_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_bool_vec.value = NULL;
@@ -367,7 +356,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_INT_VEC:
-			case OV_VT_INT_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_int_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_int_vec.value = NULL;
@@ -379,7 +367,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_UINT_VEC:
-			case OV_VT_UINT_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_uint_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_uint_vec.value = NULL;
@@ -391,7 +378,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_SINGLE_VEC:
-			case OV_VT_SINGLE_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_single_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_single_vec.value = NULL;
@@ -403,7 +389,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_DOUBLE_VEC:
-			case OV_VT_DOUBLE_PV_VEC:
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_double_vec.veclen = 0;
 				addrp->var_current_props.value.valueunion.val_double_vec.value = NULL;
@@ -415,7 +400,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_STRING_VEC:
-			case OV_VT_STRING_PV_VEC:
 				//request could be "{hello}%20{world}"
 				pArgumentList = ov_string_split(newvaluematch.value[i], "%20", &len);
 				addrp->var_current_props.value.valueunion.val_string_vec.veclen = 0;
@@ -453,7 +437,6 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 				break;
 
 			case OV_VT_STRUCT_VEC:
-			case (OV_VT_STRUCT_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 				//deprecated as KS2.0r
 				fr = OV_ERR_NOTIMPLEMENTED;
 				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": STRUCT is deprecated with KS2.0r");
@@ -462,13 +445,10 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 
 	/*	TODO Time* VEC
 			case OV_VT_TIME_VEC:
-			case OV_VT_TIME_PV_VEC:
 
 			case OV_VT_TIME_SPAN_VEC:
-			case OV_VT_TIME_SPAN_PV_VEC:
 
 			case OV_VT_STATE_VEC:
-			case (OV_VT_STATE_VEC | OV_VT_HAS_STATE | OV_VT_HAS_TIMESTAMP):
 	*/
 			default:
 	/*				ov_logfile_error("%s:%d - GestureReaction - target: %s, Userinput (%s), DataType %u not implemented.", __FILE__, __LINE__,
