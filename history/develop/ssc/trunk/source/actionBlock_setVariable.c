@@ -127,24 +127,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
 	OV_INSTPTR_ssc_setVariable          pinst,
 	const OV_STRING  value
 ) {
-	OV_INSTPTR_ov_object pTargetObj = NULL;
-	OV_STRING targetVarname = NULL;
-
-	// check input
-	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an fbd backup
-		return ov_string_setvalue(&pinst->v_variable, value);
-	}
-
-	ssc_getObjectAndVarnameFromSetVariable(pinst, value, &pTargetObj, &targetVarname);
-	if(pTargetObj == NULL || targetVarname == NULL){
-		ov_string_setvalue(&targetVarname, NULL);
-		return OV_ERR_BADPARAM;
-	}
-
-	pinst->v_error = FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
-
+	//check this action. on loading of a FBD it is invalid till everything is loaded
+	ssc_setVariable_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
 	return ov_string_setvalue(&pinst->v_variable, value);
 }
 
@@ -201,48 +185,68 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 ) {
 	// local variables
 	OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pfb);
-	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
 	OV_RESULT    result = OV_ERR_OK;
 	OV_INSTPTR_ov_object pTargetObj = NULL;
 	OV_STRING targetVarname = NULL;
 
-
-	// init variables
-	pinst->v_cyctime.secs = 0;
-	pinst->v_cyctime.usecs = 0;
-	pinst->v_iexreq = TRUE;
-	pinst->v_error=FALSE;
-
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
-
-	// check location
-	if (pStep == NULL){
-		pinst->v_error = TRUE;
-		ov_logfile_error("ssc_actionBlock_typemethod: action block must be encapsulated in a step.");
+	// check config
+	if (ssc_setVariable_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst)) == FALSE){
 		return;
 	}
 
-	// check input
-	if (ov_string_compare(pinst->v_variable, NULL) == OV_STRCMP_EQUAL){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Variable to set is not defined.");
-	};
-
 	ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
 
-	if(pTargetObj != NULL && targetVarname != NULL){
-		result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
-	}else{
-		pinst->v_error = TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Path to variable not found.");
-	}
-
+	result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
 		ov_string_print(&pinst->v_errorDetail, "Setting value to variable failed: %s",  ov_result_getresulttext(result));
 	}
 
-	ov_string_setvalue(&targetVarname,NULL);
+	ov_string_setvalue(&targetVarname, NULL);
 
 	return;
 }
+
+
+OV_DLLFNCEXPORT OV_BOOL ssc_setVariable_checkAction(
+		OV_INSTPTR_ssc_actionBlock	pActionBlock
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_setVariable pinst = Ov_StaticPtrCast(ssc_setVariable, pActionBlock);
+	OV_INSTPTR_ov_object pTargetObj = NULL;
+	OV_STRING targetVarname = NULL;
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+
+	// check location
+	if (pStep == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "This ActionBlock is placed wrong.");
+		return FALSE;
+	}
+	// check input
+	if (ov_string_compare(pinst->v_variable, NULL) == OV_STRCMP_EQUAL){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Variable to set is not defined.");
+		return FALSE;
+	};
+
+	ssc_getObjectAndVarnameFromSetVariable(pinst, pinst->v_variable, &pTargetObj, &targetVarname);
+	if(pTargetObj == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object not found.");
+		return FALSE;
+	}
+	if(targetVarname == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object does not have the requested variable.");
+		return FALSE;
+	}
+
+	pinst->v_error = FALSE;
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
+
+	return TRUE;
+}
+

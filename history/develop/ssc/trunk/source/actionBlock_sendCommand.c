@@ -128,26 +128,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sendCommand_targetObject_set(
 		OV_INSTPTR_ssc_sendCommand          pinst,
 		const OV_STRING  value
 ) {
-	OV_INSTPTR_ov_object pTargetObj = NULL;
-
-	// check input
-	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an fbd backup
-		return ov_string_setvalue(&pinst->v_targetObject, value);
-	}
-
-	ssc_getObjectFromSendCommand(pinst, value, &pTargetObj);
-	if(pTargetObj == NULL){
-		return OV_ERR_BADPARAM;
-	}
-
-
-	// init parameters
-	pinst->v_cyctime.secs = 0;
-	pinst->v_cyctime.usecs = 0;
-	pinst->v_iexreq = TRUE;
-	pinst->v_error = FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	//check this action. on loading of a FBD it is invalid till everything is loaded
+	ssc_sendCommand_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
 
 	return ov_string_setvalue(&pinst->v_targetObject, value);
 }
@@ -166,22 +148,11 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 	OV_INSTPTR_ov_object pTargetObj = NULL;
 	OV_RESULT    			 result;
 	OV_ANY ovvariable;
-
-	// init parameters
-	pinst->v_cyctime.secs = 0;
-	pinst->v_cyctime.usecs = 0;
-	pinst->v_iexreq = TRUE;
-	pinst->v_error=FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
 	ovvariable.value.vartype = OV_VT_STRING;
 	ovvariable.value.valueunion.val_string = NULL;
 
-
-	// check location
-	if (pOwnSSC == NULL){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Wrong placement.");
-		ov_logfile_error("ssc_sendCommand_typemethod: action block must be placed in a step.");
+	// check config
+	if (ssc_execute_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst)) == FALSE){
 		return;
 	}
 
@@ -226,7 +197,42 @@ OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
 		ov_string_setvalue(&pinst->v_errorDetail, "Setting start failed.");
 		return;
 	}
-
-
 	return;
 }
+
+
+OV_DLLFNCEXPORT OV_BOOL ssc_sendCommand_checkAction(
+	OV_INSTPTR_ssc_actionBlock	pActionBlock
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ov_object pTargetObj = NULL;
+	OV_INSTPTR_ssc_sendCommand pinst = Ov_StaticPtrCast(ssc_sendCommand, pActionBlock);
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+
+	// check location
+	if (pStep == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "This ActionBlock is placed wrong.");
+		return FALSE;
+	}
+	// check input
+	if (ov_string_compare(pinst->v_targetObject, NULL) == OV_STRCMP_EQUAL){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Object to execute is not defined.");
+		return FALSE;
+	};
+
+	ssc_getObjectFromSendCommand(pinst, pinst->v_targetObject, &pTargetObj);
+	if(pTargetObj == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object not found.");
+		return FALSE;
+	}
+
+	pinst->v_error = FALSE;
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	return TRUE;
+}
+

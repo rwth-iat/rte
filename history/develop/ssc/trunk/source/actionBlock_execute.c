@@ -70,26 +70,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_execute_targetObject_set(
 		OV_INSTPTR_ssc_execute          pinst,
 		const OV_STRING  value
 ) {
-	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
-
-	// check input
-	if(ov_string_compare(value, "") == OV_STRCMP_EQUAL){
-		//allow INITIAL_VALUE for loading an fbd backup
-		return ov_string_setvalue(&pinst->v_targetObject, value);
-	}
-
-	ssc_getObjectFromExecute(pinst, value, &pTargetObj);
-	if(pTargetObj == NULL){
-		return OV_ERR_BADPARAM;
-	}
-
-	// init parameters
-	pinst->v_cyctime.secs = 0;
-	pinst->v_cyctime.usecs = 0;
-	pinst->v_iexreq = TRUE;
-	pinst->v_error = FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
-
+	//check this action. on loading of a FBD it is invalid till everything is loaded
+	ssc_execute_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
 	return ov_string_setvalue(&pinst->v_targetObject, value);
 }
 
@@ -103,8 +85,6 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	 */
 	OV_INSTPTR_ssc_execute pinst = Ov_StaticPtrCast(ssc_execute, pfb);
 
-	OV_INSTPTR_ssc_step  		pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
-	OV_INSTPTR_ssc_SequentialControlChart  	pOwnSSC = Ov_DynamicPtrCast(ssc_SequentialControlChart, Ov_GetParent(ov_containment, pStep));
 	OV_INSTPTR_ssc_SequentialControlChart  	pTargetSequentialControlChart = NULL;
 	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
 	OV_INT targetActimode = FB_AM_ON;
@@ -112,25 +92,13 @@ OV_DLLFNCEXPORT void ssc_execute_typemethod(
 	OV_INT targetCyctimeUsecs = 0;
 	OV_BOOL targetIexreq = TRUE;
 
-	// init parameters
-	pinst->v_cyctime.secs = 0;
-	pinst->v_cyctime.usecs = 0;
-	pinst->v_iexreq = TRUE;
-	pinst->v_error=FALSE;
-	ov_string_setvalue(&pinst->v_errorDetail, NULL);
-
-	// check location
-	if (pOwnSSC == NULL){
-		pinst->v_error=TRUE;
-		ov_string_setvalue(&pinst->v_errorDetail, "Wrong placement.");
-		ov_logfile_error("ssc_execute_typemethod: action block must be placed in a step.");
+	// check config
+	if (ssc_execute_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst)) == FALSE){
 		return;
 	}
 
+	//FIXME remove double find
 	ssc_getObjectFromExecute(pinst, pinst->v_targetObject, &pTargetObj);
-	if(pTargetObj == NULL){
-		return;
-	}
 
 	//save config and initialise targetObject
 	targetActimode = pTargetObj->v_actimode;
@@ -166,4 +134,39 @@ OV_DLLFNCEXPORT void ssc_execute_destructor(
 	fb_functionblock_destructor(pobj);
 
 	return;
+}
+
+OV_DLLFNCEXPORT OV_BOOL ssc_execute_checkAction(
+		OV_INSTPTR_ssc_actionBlock	pActionBlock
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_fb_functionblock pTargetObj = NULL;
+	OV_INSTPTR_ssc_execute pinst = Ov_StaticPtrCast(ssc_execute, pActionBlock);
+	OV_INSTPTR_ssc_step pStep = Ov_DynamicPtrCast(ssc_step, Ov_GetParent(ov_containment, pinst));
+
+	// check location
+	if (pStep == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "This ActionBlock is placed wrong.");
+		return FALSE;
+	}
+	// check input
+	if (ov_string_compare(pinst->v_targetObject, NULL) == OV_STRCMP_EQUAL){
+		pinst->v_error=TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Object to execute is not defined.");
+		return FALSE;
+	};
+
+	ssc_getObjectFromExecute(pinst, pinst->v_targetObject, &pTargetObj);
+	if(pTargetObj == NULL){
+		pinst->v_error = TRUE;
+		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object not found.");
+		return FALSE;
+	}
+
+	pinst->v_error = FALSE;
+	ov_string_setvalue(&pinst->v_errorDetail, NULL);
+	return TRUE;
 }

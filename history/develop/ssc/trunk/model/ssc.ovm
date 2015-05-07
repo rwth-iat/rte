@@ -166,6 +166,7 @@ LIBRARY ssc
     OPERATIONS
       constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
       getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
+      checkAction		: C_FUNCTION <SSC_FNC_CHECKACTION> IS_ABSTRACT;
     END_OPERATIONS;
   END_CLASS;
    
@@ -178,6 +179,7 @@ LIBRARY ssc
     END_VARIABLES;
     OPERATIONS
       typemethod 		: C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      checkAction		: C_FUNCTION <SSC_FNC_CHECKACTION>;
     END_OPERATIONS;
   END_CLASS;
   /* TODO: setVariable für Wertzuweisung auf einen internen FB-Eingang. */
@@ -185,12 +187,13 @@ LIBRARY ssc
   
    CLASS execute : CLASS ssc/actionBlock
 	IS_INSTANTIABLE;
-  	COMMENT = "action block calling SSC, FB- or CFC-action once";
+  	COMMENT = "action block calling SSC or FB action once";
     VARIABLES
       targetObject			: STRING 		HAS_SET_ACCESSOR FLAGS = "p"	COMMENT = "The object name (relative to the SequentialControlChart, its action domain or absolute path)";
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      checkAction		: C_FUNCTION <SSC_FNC_CHECKACTION>;
       destructor		: C_FUNCTION <OV_FNC_DESTRUCTOR>;
     END_OPERATIONS;
   END_CLASS;
@@ -205,6 +208,7 @@ LIBRARY ssc
     END_VARIABLES;
     OPERATIONS
       typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+      checkAction		: C_FUNCTION <SSC_FNC_CHECKACTION>;
     END_OPERATIONS;
   END_CLASS;
 
