@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -179,12 +179,12 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 			//(only if async is not supported) 
 			node.defer = true;
 		}
+		node.onerror = function(evt){
+			//disabling execution of initialisation code
+			window.alert("Fatal error: " + evt.target.src + " not loaded. ");
+			hubFilelist = null;
+		}
 		node.onload = node.onerror = function(evt){
-			if(evt.type !== "load"){
-				//disabling execution of initialisation code
-				window.alert("Fatal error: " + evt.target.src + " not loaded. ");
-				hubFilelist = null;
-			}
 			if(hubFilelist !== null){
 				var idx = hubFilelist.indexOf(evt.target.getAttribute("data-src"));
 				if(idx >= 0){
