@@ -53,8 +53,8 @@ int doOneServer(PltString hs, PltString filename, PltString logfile
     
     Server = GetServerByName(hs, err);
     if(err) {
-        fprintf(stderr," Can't connect to %s.\n     Error 0x%x (%s)\n\n\n",
-                                     (const char*)hs, err, GetErrorCode(err));
+        fprintf(stderr," Server '%s' nicht erreichbar: '%s'\n     Error 0x%x (%s)\n\n\n",
+                                     (const char*)hs, (const char*)filename, err, GetErrorCode(err));
         return 1;
     }
     
@@ -67,7 +67,7 @@ int doOneServer(PltString hs, PltString filename, PltString logfile
                              err, GetErrorCode(err), (const char*)filename);
             return 1;
         } else{
-            fprintf(stderr," Datenbasis '%s' gesichert. Dateiname : '%s'\n",
+            fprintf(stderr," Datenbasis '%s' gesichert. Dateiname: '%s'\n",
                             (const char*)hs, (const char*)filename);
         }
     }
@@ -107,11 +107,11 @@ int doOneServer(PltString hs, PltString filename, PltString logfile
     if(loadId) {
         err = IFBS_DBLOAD(Server, filename, logfile);
         if(err) {
-            fprintf(stderr," Fehler beim Laden der Datenbasis '%s'.\n    Nr. 0x%x (%s)\n\n",
-                             (const char*)hs, err, GetErrorCode(err));
+            fprintf(stderr," Fehler beim Laden der Datei '%s' in Server '%s'.\n    Nr. 0x%x (%s)\n\n",
+               (const char*)filename, (const char*)hs, err, GetErrorCode(err));
             return 1;
         } else{
-            fprintf(stderr," Datenbasis '%s' geladen\n\n\n", (const char*)hs);
+            fprintf(stderr," Datei '%s' in Server '%s' geladen.\n", (const char*)filename, (const char*)hs);
         }
     }
   
