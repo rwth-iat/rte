@@ -113,6 +113,11 @@ static OV_RESULT ssc_getObjectAndVarnameFromSetVariable(
 		}
 		ov_memstack_unlock();
 	}
+	if(Ov_CanCastTo(fb_port, *pTargetObj)){
+		//we have a fc port, so adjust everything
+		ov_string_setvalue(ptargetVarname, nameToCheck);
+		*pTargetObj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, *pTargetObj));
+	}
 	ov_string_setvalue(&targetPathname, NULL);
 	ov_string_setvalue(&pathRelativeobject,NULL);
 
@@ -127,9 +132,13 @@ OV_DLLFNCEXPORT OV_RESULT ssc_setVariable_variable_set(
 	OV_INSTPTR_ssc_setVariable          pinst,
 	const OV_STRING  value
 ) {
-	//check this action. on loading of a FBD it is invalid till everything is loaded
-	ssc_setVariable_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
-	return ov_string_setvalue(&pinst->v_variable, value);
+	OV_RESULT result = OV_ERR_OK;
+	result = ov_string_setvalue(&pinst->v_variable, value);
+	if(Ov_OK(result)){
+		//check this action. on loading of a FBD it is invalid till everything is loaded
+		ssc_setVariable_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
+	}
+	return result;
 }
 
 /**
@@ -238,7 +247,9 @@ OV_DLLFNCEXPORT OV_BOOL ssc_setVariable_checkAction(
 		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object not found.");
 		return FALSE;
 	}
-	if(targetVarname == NULL){
+	if(Ov_CanCastTo(fb_port, pTargetObj)){
+		//we have a fb port right here
+	}else if(targetVarname == NULL){
 		pinst->v_error = TRUE;
 		ov_string_setvalue(&pinst->v_errorDetail, "Configured Object does not have the requested variable.");
 		return FALSE;

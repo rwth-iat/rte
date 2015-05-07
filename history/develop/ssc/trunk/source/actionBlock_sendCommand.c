@@ -128,10 +128,14 @@ OV_DLLFNCEXPORT OV_RESULT ssc_sendCommand_targetObject_set(
 		OV_INSTPTR_ssc_sendCommand          pinst,
 		const OV_STRING  value
 ) {
-	//check this action. on loading of a FBD it is invalid till everything is loaded
-	ssc_sendCommand_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
+	OV_RESULT result = OV_ERR_OK;
 
-	return ov_string_setvalue(&pinst->v_targetObject, value);
+	result = ov_string_setvalue(&pinst->v_targetObject, value);
+	if(Ov_OK(result)){
+		//check this action. on loading of a FBD it is invalid till everything is loaded
+		ssc_sendCommand_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
+	}
+	return result;
 }
 
 OV_DLLFNCEXPORT void ssc_sendCommand_typemethod(
