@@ -102,9 +102,7 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 		result = Ov_CreateObject(iec62541_uaServer, pServer, pDomOpcUa, "uaServer");
 		if(Ov_Fail(result))
 		{
-			ov_memstack_lock();
 			ov_logfile_error("Fatal: could not create Identificator object - reason: %s", ov_result_getresulttext(result));
-			ov_memstack_unlock();
 			return result;
 		}
 	}
