@@ -75,8 +75,9 @@ OV_RESULT ksxdr_deleteObject(const OV_UINT version, const OV_TICKET* pticket, KS
 #if LOG_KS || LOG_KS_DEBUG
 		{
 			OV_UINT i;
-			for(i=0; i<results.results_len; i++)
+			for(i=0; i<results.results_len; i++){
 				KS_logfile_debug(("ksxdr_deleteObject: item %lu: %s", i, ov_result_getresulttext(results.results_val[0])));
+			}
 		}
 #endif
 		ov_memstack_unlock();

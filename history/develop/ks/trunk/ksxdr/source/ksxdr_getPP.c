@@ -27,16 +27,16 @@ OV_RESULT ksxdr_getPP_decodeparams(KS_DATAPACKET* dataReceived, OV_GETPP_PAR* pa
 	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &params->path, ~0);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("getPP_decodeparams: path: \n\t\t%s", params->path));
+	KS_logfile_debug(("getPP_decodeparams: path: \n\t\t%s", params->path));
 
-result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &params->type_mask);
+	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &params->type_mask);
 	if(Ov_Fail(result))
 		return result;
 
 	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &params->name_mask, ~0);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("getPP_decodeparams: name_mask: \n\t\t%s", params->name_mask));
+	KS_logfile_debug(("getPP_decodeparams: name_mask: \n\t\t%s", params->name_mask));
 
 	return KS_DATAPACKET_read_xdr_uint(dataReceived, &dummy); 	/*	getPP seems to add 4 bytes containing 0x40 everytime. I do not now what these bytes mean. libovks does not decode them	*/
 }
@@ -204,22 +204,22 @@ OV_RESULT ksxdr_getPP_encoderesults(KS_DATAPACKET* serviceAnswer, OV_GETPP_RES* 
 	switch(results->result) {
 	case OV_ERR_OK:
 		/*
-		*	serialize the array size first
-		*/
+		 *	serialize the array size first
+		 */
 		fncresult = KS_DATAPACKET_write_xdr_uint(serviceAnswer, &items_len);
 		if(Ov_Fail(fncresult)) {
 			return fncresult;
 		}
-KS_logfile_debug(("getPP_encoderesults: %d elements found", items_len));
+		KS_logfile_debug(("getPP_encoderesults: %d elements found", items_len));
 		/*
-		*	now serialize the array elements
-		*/
+		 *	now serialize the array elements
+		 */
 		pprops = results->pfirst;
 		for(i=0; i<items_len; i++) {
 			if(!pprops) {
 				return OV_ERR_GENERIC;
 			}
-KS_logfile_debug(("getPP_encoderesults: encoding element %d,\n\tidentifier: %s", i, pprops->identifier));
+			KS_logfile_debug(("getPP_encoderesults: encoding element %d,\n\tidentifier: %s", i, pprops->identifier));
 			fncresult = xdr_write_OV_OBJ_PROJECTED_PROPS(serviceAnswer, pprops);
 			if(Ov_Fail(fncresult)) {
 				return fncresult;

@@ -32,18 +32,18 @@ OV_RESULT ksxdr_getEP_decodeparams(KS_DATAPACKET* dataReceived, OV_GETEP_PAR* pa
 	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &params->path, ~0);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("getEP_decodeparams: path: \n\t\t%s", params->path));
+	KS_logfile_debug(("getEP_decodeparams: path: \n\t\t%s", params->path));
 
-result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &params->type_mask);
+	result = KS_DATAPACKET_read_xdr_OV_OBJ_TYPE(dataReceived, &params->type_mask);
 	if(Ov_Fail(result))
 		return result;
 
 	result = KS_DATAPACKET_read_xdr_string_tomemstack(dataReceived, &params->name_mask, ~0);
 	if(Ov_Fail(result))
 		return result;
-KS_logfile_debug(("getEP_decodeparams: name_mask: \n\t\t%s", params->name_mask));
+	KS_logfile_debug(("getEP_decodeparams: name_mask: \n\t\t%s", params->name_mask));
 
-return KS_DATAPACKET_read_xdr_OV_EP_FLAGS(dataReceived, &params->scope_flags);
+	return KS_DATAPACKET_read_xdr_OV_EP_FLAGS(dataReceived, &params->scope_flags);
 }
 
 /*
@@ -299,7 +299,7 @@ OV_RESULT ksxdr_getEP_encoderesults(KS_DATAPACKET* serviceAnswer, OV_GETEP_RES* 
 		if(Ov_Fail(fncresult)) {
 			return fncresult;
 		}
-KS_logfile_debug(("getEP_encoderesults: %d elements found", items_len));
+		KS_logfile_debug(("getEP_encoderesults: %d elements found", items_len));
 		/*
 		 *	now serialize the array elements
 		 */
@@ -308,7 +308,7 @@ KS_logfile_debug(("getEP_encoderesults: %d elements found", items_len));
 			if(!pprops) {
 				return OV_ERR_GENERIC;
 			}
-KS_logfile_debug(("getEP_encoderesults: encoding element %d,\n\tidentifier: %s", i, pprops->identifier));
+			KS_logfile_debug(("getEP_encoderesults: encoding element %d,\n\tidentifier: %s", i, pprops->identifier));
 			fncresult = xdr_write_OV_OBJ_ENGINEERED_PROPS(serviceAnswer, pprops);
 			if(Ov_Fail(fncresult)) {
 				return fncresult;
