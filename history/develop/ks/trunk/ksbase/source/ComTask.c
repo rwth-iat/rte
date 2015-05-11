@@ -79,9 +79,9 @@ OV_DLLFNCEXPORT OV_RESULT ksbase_ComTask_constructor(
     	Ov_Link(ksbase_AssocComTaskList,rcTask,cTask);
     	KS_logfile_debug(("Registered %s at %s", pobj->v_identifier, rcTask->v_identifier));
     }
-    else
+    else{
     	KS_logfile_warning(("%s: No RootComTask object found. Could not register.", pobj->v_identifier));
-
+    }
     //set time for next execution
     ov_time_gettime(&t);
     ts.secs = rcTask->v_cycsecs * cTask->v_cycInterval;

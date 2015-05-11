@@ -162,24 +162,23 @@ OV_DLLFNCEXPORT OV_RESULT ks_splitOneStringPath(
 
 OV_DLLFNCEXPORT OV_BOOL ks_isvalidname(OV_STRING name)
 {
-
+	OV_UINT	tempMaxLen = 0;
 	OV_UINT i = 0;
 	if(!name || !(*name))
 		return FALSE;
 
-	while(name[i] && i < KS_NAME_MAXLEN)
+	tempMaxLen = ov_vendortree_MaxNameLength();
+
+	while(name[i])
 	{
-		if(!((name[i] >= 65 && name[i] <= 90)			/*	A-Z	*/
-				|| (name[i] >= 97 && name[i] <= 122)	/*	a-z	*/
-				|| (name[i] == 95)						/*	'_'	*/
-				|| (name[i] >= 48 && name[i] <= 57)))	/*	0-9	*/
+		if(tempMaxLen && i > tempMaxLen){
+			return FALSE;
+		}
+		if(!ov_path_isvalidchar(name[i]))
 			return FALSE;
 		i++;
 	}
-	if(i < KS_NAME_MAXLEN)
-		return TRUE;
-	else
-		return FALSE;
+	return TRUE;
 }
 
 /**
