@@ -54,18 +54,14 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgSendExt_sendMessage(
     }
     result = ov_string_print(&pClientHandler->v_ServerResponse.contentString, "<msg>%s%s</msg>", headerString, pMsg->v_msgBody);
     if(Ov_Fail(result)){
-    	ov_memstack_lock();
     	ov_logfile_error("%s: could not create message String: %s", this->v_identifier, ov_result_getresulttext(result));
-    	ov_memstack_unlock();
     	Ov_DeleteObject(pMsg);
     	Ov_DeleteObject(pobj);
     	return result;
     }
     result = ov_string_setvalue(&pClientHandler->v_ServerResponse.contentType, "application/xml");
     if(Ov_Fail(result)){
-    	ov_memstack_lock();
     	ov_logfile_error("%s: could not set contentType: %s", this->v_identifier, ov_result_getresulttext(result));
-    	ov_memstack_unlock();
     	Ov_DeleteObject(pMsg);
     	Ov_DeleteObject(pobj);
     	return result;
