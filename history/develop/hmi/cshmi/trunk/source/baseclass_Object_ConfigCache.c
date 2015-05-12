@@ -156,7 +156,7 @@ static OV_STRING cshmi_Object_prepareURIencode(OV_STRING strIn){
  * @return
  */
 static OV_RESULT cshmi_Object_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
-	ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, (pElement->v_visible==TRUE?"TRUE":"FALSE"));
+	ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, pElement->v_visible==TRUE?"TRUE":"FALSE");
 	ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pElement->v_stroke==NULL?"":pElement->v_stroke);
 	ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pElement->v_fill==NULL?"":pElement->v_fill);
 	ov_string_print(strResult, "%s%%22opacity%%22:%%22%f%%22,", *strResult, pElement->v_opacity);
@@ -261,10 +261,10 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_print(&strIterate, "%s%%22height%%22:%%22%f%%22,", strIterate, pGroup->v_height);
 		ov_string_print(&strIterate, "%s%%22opacity%%22:%%22%f%%22,", strIterate, pGroup->v_opacity);
 		ov_string_print(&strIterate, "%s%%22rotate%%22:%%22%i%%22,", strIterate, pGroup->v_rotate);
-		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22,", strIterate, (pGroup->v_hideable==TRUE?"TRUE":"FALSE"));
-		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, (pGroup->v_visible==TRUE?"TRUE":"FALSE"));
-		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, ov_string_compare(pGroup->v_TemplateDefinition, "")==OV_STRCMP_EQUAL?"":pGroup->v_TemplateDefinition);
-		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pGroup->v_FBReference.veclen!=1||ov_string_compare(pGroup->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pGroup->v_FBReference.value[0]);
+		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22,", strIterate, pGroup->v_hideable==TRUE?"TRUE":"FALSE");
+		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, pGroup->v_visible==TRUE?"TRUE":"FALSE");
+		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pGroup->v_TemplateDefinition==NULL?"":pGroup->v_TemplateDefinition);
+		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pGroup->v_FBReference.veclen!=1||pGroup->v_FBReference.value[0]==NULL)?"":pGroup->v_FBReference.value[0]);
 
 		if(pGroup->v_FBVariableReference.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
@@ -308,19 +308,19 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_InstantiateTemplate){
 		pInstantiateTemplate = Ov_StaticPtrCast(cshmi_InstantiateTemplate, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_visible==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_visible==TRUE?"TRUE":"FALSE");
 		ov_string_print(&strIterate, "%s%%22stroke%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_stroke==NULL?"":pInstantiateTemplate->v_stroke);
 		ov_string_print(&strIterate, "%s%%22fill%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_fill==NULL?"":pInstantiateTemplate->v_fill);
 		ov_string_print(&strIterate, "%s%%22opacity%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_opacity);
 		ov_string_print(&strIterate, "%s%%22rotate%%22:%%22%i%%22,", strIterate, pInstantiateTemplate->v_rotate);
-		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, ov_string_compare(pInstantiateTemplate->v_TemplateDefinition, "")==OV_STRCMP_EQUAL?"":pInstantiateTemplate->v_TemplateDefinition);
+		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_TemplateDefinition==NULL?"":pInstantiateTemplate->v_TemplateDefinition);
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_y);
 		ov_string_print(&strIterate, "%s%%22xOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_xOffset);
 		ov_string_print(&strIterate, "%s%%22yOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_yOffset);
-		ov_string_print(&strIterate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterate, ov_string_compare(pInstantiateTemplate->v_maxTemplatesPerDirection, "")==OV_STRCMP_EQUAL?"":pInstantiateTemplate->v_maxTemplatesPerDirection);
-		ov_string_print(&strIterate, "%s%%22preventClone%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_preventClone==TRUE?"TRUE":"FALSE"));
-		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_FBReference.veclen!=1||ov_string_compare(pInstantiateTemplate->v_FBReference.value[0], "")==OV_STRCMP_EQUAL)?"":pInstantiateTemplate->v_FBReference.value[0]);
+		ov_string_print(&strIterate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_maxTemplatesPerDirection==NULL?"":pInstantiateTemplate->v_maxTemplatesPerDirection);
+		ov_string_print(&strIterate, "%s%%22preventClone%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_preventClone==TRUE?"TRUE":"FALSE");
+		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_FBReference.veclen!=1||pInstantiateTemplate->v_FBReference.value[0]==NULL)?"":pInstantiateTemplate->v_FBReference.value[0]);
 
 		if(pInstantiateTemplate->v_FBVariableReference.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
@@ -348,7 +348,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 		ov_string_print(&strIterate, "%s%%22ConfigValues%%22:%s,", strIterate, temp);
 
-		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22", strIterate, (pInstantiateTemplate->v_hideable==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22", strIterate, pInstantiateTemplate->v_hideable==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Rectangle){
 		pRectangle = Ov_StaticPtrCast(cshmi_Rectangle, pObj);
@@ -376,7 +376,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pText->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pText->v_y);
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, (pText->v_content==NULL?"":cshmi_Object_prepareURIencode(pText->v_content)));
+		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, pText->v_content==NULL?"":cshmi_Object_prepareURIencode(pText->v_content));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22fontSize%%22:%%22%s%%22,", strIterate, pText->v_fontSize==NULL?"":pText->v_fontSize);
 		ov_string_print(&strIterate, "%s%%22fontStyle%%22:%%22%s%%22,", strIterate, pText->v_fontStyle==NULL?"":pText->v_fontStyle);
@@ -401,7 +401,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolyline));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolyline->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolyline->v_points)));
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, pPolyline->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolyline->v_points));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolyline->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
@@ -410,7 +410,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPolygon));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, (pPolygon->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolygon->v_points)));
+		ov_string_print(&strIterate, "%s%%22points%%22:%%22%s%%22,", strIterate, pPolygon->v_points==NULL?"":cshmi_Object_prepareURIencode(pPolygon->v_points));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPolygon->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
@@ -419,7 +419,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		cshmi_Object_buildBaseElementString(&strIterate, Ov_PtrUpCast(cshmi_Element, pPath));
 		ov_memstack_lock();
-		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, (pPath->v_d==NULL?"":cshmi_Object_prepareURIencode(pPath->v_d)));
+		ov_string_print(&strIterate, "%s%%22d%%22:%%22%s%%22,", strIterate, pPath->v_d==NULL?"":cshmi_Object_prepareURIencode(pPath->v_d));
 		ov_memstack_unlock();
 		ov_string_print(&strIterate, "%s%%22strokeWidth%%22:%%22%f%%22", strIterate, pPath->v_strokeWidth);
 		ov_string_append(&strIterate, "%7D");
@@ -438,7 +438,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	//here comes the actions and conditions
 	if(pClass == pclass_cshmi_SetValue){
 		pSetValue = Ov_StaticPtrCast(cshmi_SetValue, pObj);
-		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22,", strIterate, ov_string_compare(pSetValue->v_translationSource, "")==OV_STRCMP_EQUAL?"":pSetValue->v_translationSource);
+		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22,", strIterate, pSetValue->v_translationSource==NULL?"":pSetValue->v_translationSource);
 
 		if(ov_string_compare(pSetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
 			ov_string_setvalue(&ParameterName, "ksVar");
@@ -465,11 +465,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 			ov_string_setvalue(&ParameterName, NULL);
 			ov_string_setvalue(&ParameterValue, NULL);
 		}
-		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName);
-		}else{
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
-		}
+		ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName==NULL?"":ParameterName);
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22,", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
@@ -477,11 +473,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
 		}
-		if(ov_string_compare(pSetValue->v_translationSource, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource);
-		}else{
-			ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%%22", strIterate);
-		}
+		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource==NULL?"":pSetValue->v_translationSource);
 	}else if(pClass == pclass_cshmi_SetConcatValue){
 		pSetConcatValue = Ov_StaticPtrCast(cshmi_SetConcatValue, pObj);
 		if(ov_string_compare(pSetConcatValue->v_ksVar, "") != OV_STRCMP_EQUAL){
@@ -509,11 +501,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 			ov_string_setvalue(&ParameterName, NULL);
 			ov_string_setvalue(&ParameterValue, NULL);
 		}
-		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName);
-		}else{
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
-		}
+		ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName==NULL?"":ParameterName);
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
@@ -548,11 +536,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 			ov_string_setvalue(&ParameterName, NULL);
 			ov_string_setvalue(&ParameterValue, NULL);
 		}
-		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName);
-		}else{
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
-		}
+		ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName==NULL?"":ParameterName);
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
@@ -637,11 +621,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 					return OV_ERR_NOTIMPLEMENTED;
 			}
 		}
-		if(ov_string_compare(ParameterName, NULL) != OV_STRCMP_EQUAL){
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName);
-		}else{
-			ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%%22,", strIterate);
-		}
+		ov_string_print(&strIterate, "%s%%22ParameterName%%22:%%22%s%%22,", strIterate, ParameterName==NULL?"":ParameterName);
 		if(ov_string_compare(ParameterValue, NULL) != OV_STRCMP_EQUAL){
 			ov_memstack_lock();
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%s%%22", strIterate, cshmi_Object_prepareURIencode(ParameterValue));
@@ -651,23 +631,23 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 	}else if(pClass == pclass_cshmi_ChildrenIterator){
 		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
-		ov_string_print(&strIterate, "%s%%22ChildrenIteratorParameterChildrenType%%22:%%22%s%%22", strIterate, pChildrenIterator->v_ChildrenType);
+		ov_string_print(&strIterate, "%s%%22ChildrenIteratorParameterChildrenType%%22:%%22%s%%22", strIterate, pChildrenIterator->v_ChildrenType==NULL?"":pChildrenIterator->v_ChildrenType);
 	}else if(pClass == pclass_cshmi_IfThenElse){
 		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
-		ov_string_print(&strIterate, "%s%%22IfThenElseParameterAnycond%%22:%%22%s%%22", strIterate, (pIfThenElse->v_anycond==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22IfThenElseParameterAnycond%%22:%%22%s%%22", strIterate, pIfThenElse->v_anycond==TRUE?"TRUE":"FALSE");
 	}else if(pClass == pclass_cshmi_Compare){
 		pCompare = Ov_StaticPtrCast(cshmi_Compare, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompare->v_comptype);
-		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, (pCompare->v_ignoreError==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompare->v_comptype==NULL?"":pCompare->v_comptype);
+		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompare->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_CompareIteratedChild){
 		pCompareIteratedChild = Ov_StaticPtrCast(cshmi_CompareIteratedChild, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 
-		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_comptype);
-		ov_string_print(&strIterate, "%s%%22childValue%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_childValue);
-		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, (pCompareIteratedChild->v_ignoreError==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_comptype==NULL?"":pCompareIteratedChild->v_comptype);
+		ov_string_print(&strIterate, "%s%%22childValue%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_childValue==NULL?"":pCompareIteratedChild->v_childValue);
+		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompareIteratedChild->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_TimeEvent){
 		pTimeEvent = Ov_StaticPtrCast(cshmi_TimeEvent, pObj);
@@ -705,7 +685,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_CreateObject){
 		pCreateObject = Ov_StaticPtrCast(cshmi_CreateObject, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		ov_string_print(&strIterate, "%s%%22autoRenameIfExists%%22:%%22%s%%22", strIterate, (pCreateObject->v_autoRenameIfExists==TRUE?"TRUE":"FALSE"));
+		ov_string_print(&strIterate, "%s%%22autoRenameIfExists%%22:%%22%s%%22", strIterate, pCreateObject->v_autoRenameIfExists==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Vibrate){
 		pVibrate = Ov_StaticPtrCast(cshmi_Vibrate, pObj);
