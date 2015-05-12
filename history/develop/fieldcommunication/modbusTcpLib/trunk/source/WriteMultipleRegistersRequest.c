@@ -44,7 +44,6 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_WriteMultipleRegistersRequest_handleRespo
 	operationCode = *dataToHandle;
 	dataToHandle++;
 	if((operationCode & 0x7F) == (thisReq->v_requestType)){
-		/*	we have an error	*/
 		pIOCHannel = Ov_GetChild(modbusTcpLib_requestToChannel, thisReq);
 		if(!pIOCHannel){
 			return OV_ERR_GENERIC;
@@ -156,7 +155,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_WriteMultipleRegistersRequest_sendRequest
 		if(((pIOChannel->v_address - thisReq->v_requestStartAddr)) <= thisReq->v_requestedItems){
 			if(Ov_CanCastTo(modbusTcpLib_AoRO, pIOChannel)){
 				if(Ov_StaticPtrCast(modbusTcpLib_AoRO, pIOChannel)->v_rawSwitch){
-					modbusTcpLib_Request_writeWord(Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOChannel)->v_PVRaw, &(request.writePT[pIOChannel->v_address - thisReq->v_requestStartAddr]));
+					modbusTcpLib_Request_writeWord(Ov_StaticPtrCast(modbusTcpLib_AoRO, pIOChannel)->v_FV, &(request.writePT[pIOChannel->v_address - thisReq->v_requestStartAddr]));
 				} else {
 					modbusTcpLib_Request_writeWord((OV_INT)(Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOChannel)->v_PV
 							* (Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOChannel)->v_RawHi - Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOChannel)->v_RawLo)),

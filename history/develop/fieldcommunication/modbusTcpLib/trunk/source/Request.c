@@ -23,6 +23,7 @@
 
 #include "modbusTcpLib.h"
 #include "libov/ov_macros.h"
+#include <sys/types.h>
 
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_Request_handleResponse(
@@ -37,10 +38,10 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_Request_handleResponse(
 OV_DLLFNCEXPORT OV_INT modbusTcpLib_Request_readWord(
 		OV_BYTE* pData
 ) {
-	OV_INT		temp	=	0;
-	temp = pData[0];
+	int16_t		temp	=	0;
+	temp = pData[0] & 0xFF;
 	temp <<= 8;
-	temp &= pData[1];
+	temp |= pData[1];
 	return temp;
 }
 
@@ -49,8 +50,8 @@ OV_DLLFNCEXPORT void modbusTcpLib_Request_writeWord(
 		OV_BYTE* dst
 ) {
 	data &= 0xFFFF;	// cut to word length
-	dst[0] = data & 0xFF;
-	dst[1] = (data >> 8) & 0xFF;
+	dst[1] = data & 0xFF;
+	dst[0] = (data >> 8) & 0xFF;
 	return;
 }
 
@@ -138,13 +139,14 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_Request_addItem(
 ) {
 	if(pRequest->v_requestStartAddr == -1){
 		pRequest->v_requestStartAddr = address;
+		pRequest->v_requestedItems = 1;
 	} else {
 		if(address < pRequest->v_requestStartAddr){
-			pRequest->v_requestedItems += (pRequest->v_requestStartAddr - address);
+			pRequest->v_requestedItems += (pRequest->v_requestStartAddr - address) + 1;
 			pRequest->v_requestStartAddr = address;
 		} else {
 			if(address > pRequest->v_requestStartAddr + pRequest->v_requestedItems){
-				pRequest->v_requestedItems = (address - pRequest->v_requestStartAddr);
+				pRequest->v_requestedItems = (address - pRequest->v_requestStartAddr) + 1;
 			}
 		}
 	}

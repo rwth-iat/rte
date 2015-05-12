@@ -74,6 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_Slave_ack_set(
 			if(Ov_GetParent(modbusTcpLib_errorChannels, pIOChannel) == pobj){
 				pIOChannel->v_error = FALSE;
 				pIOChannel->v_errorCode = 0;
+				modbusTcpLib_IOChannel_setErrorText(pIOChannel);
 				Ov_Unlink(modbusTcpLib_errorChannels, pobj, pIOChannel);
 			}
 		}
@@ -141,9 +142,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			Ov_ForEachChildEx(ov_containment, pinst, pAoRI, modbusTcpLib_AoRI){
 				if(Ov_GetParent(modbusTcpLib_requestToChannel, pAoRI) == NULL && Ov_GetParent(modbusTcpLib_toNextChannel, pAoRI) == NULL){
 					/*	no Request running for current IOChannel	*/
-					if(pAoRI->v_unitIdentifier == currUnitIdentifier){
+					if(pAoRI->v_unitIdentifier == currUnitIdentifier && pAoRI->v_actimode == 1){
 						if(!pReadInputRegistersRequest){
-							result = Ov_CreateIDedObject(modbusTcpLib_ReadInputRegistersRequest, pReadInputRegistersRequest, pinst, "ReadInputRegisters");
+							result = Ov_CreateIDedObject(modbusTcpLib_ReadInputRegistersRequest, pReadInputRegistersRequest, &(pinst->p_requests), "ReadInputRegisters");
 							if(Ov_Fail(result)){
 								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
@@ -187,7 +188,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						}
 					} else {
 						/*	this IOCHannel was not included in this request --> do another iteration with the right unitIdentifer	*/
-						if(nextUnitIdentifier == -1){
+						if(nextUnitIdentifier == -1 && pAoRI->v_actimode == 1){
 							nextUnitIdentifier = pAoRI->v_unitIdentifier;
 						}
 					}
@@ -196,7 +197,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			if(nextUnitIdentifier != -1){
 				currUnitIdentifier = nextUnitIdentifier;
 			}
-			pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pReadInputRegistersRequest));
+			if(pReadInputRegistersRequest && pVtblRequest){
+				pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pReadInputRegistersRequest));
+			}
 		} while(nextUnitIdentifier != -1);
 
 		/*	AoROs	*/
@@ -205,9 +208,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			Ov_ForEachChildEx(ov_containment, pinst, pAoRO, modbusTcpLib_AoRO){
 				if(Ov_GetParent(modbusTcpLib_requestToChannel, pAoRO) == NULL && Ov_GetParent(modbusTcpLib_toNextChannel, pAoRO) == NULL){
 					/*	no Request running for current IOChannel	*/
-					if(pAoRO->v_unitIdentifier == currUnitIdentifier){
+					if(pAoRO->v_unitIdentifier == currUnitIdentifier && pAoRO->v_actimode == 1){
 						if(!pWriteRegistersRequest){
-							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleRegistersRequest, pWriteRegistersRequest, pinst, "WriteRegisters");
+							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleRegistersRequest, pWriteRegistersRequest, &(pinst->p_requests), "WriteRegisters");
 							if(Ov_Fail(result)){
 								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
@@ -251,7 +254,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						}
 					} else {
 						/*	this IOCHannel was not included in this request --> do another iteration with the right unitIdentifer	*/
-						if(nextUnitIdentifier == -1){
+						if(nextUnitIdentifier == -1 && pAoRO->v_actimode == 1){
 							nextUnitIdentifier = pAoRO->v_unitIdentifier;
 						}
 					}
@@ -260,7 +263,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			if(nextUnitIdentifier != -1){
 				currUnitIdentifier = nextUnitIdentifier;
 			}
-			pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pWriteRegistersRequest));
+			if(pWriteRegistersRequest && pVtblRequest){
+				pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pWriteRegistersRequest));
+			}
 		} while(nextUnitIdentifier != -1);
 
 		/*	DIs	*/
@@ -269,9 +274,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			Ov_ForEachChildEx(ov_containment, pinst, pDI, modbusTcpLib_DI){
 				if(Ov_GetParent(modbusTcpLib_requestToChannel, pDI) == NULL && Ov_GetParent(modbusTcpLib_toNextChannel, pDI) == NULL){
 					/*	no Request running for current IOChannel	*/
-					if(pDI->v_unitIdentifier == currUnitIdentifier){
+					if(pDI->v_unitIdentifier == currUnitIdentifier && pDI->v_actimode == 1){
 						if(!pReadDIRequest){
-							result = Ov_CreateIDedObject(modbusTcpLib_ReadDiscreteInputsRequest, pReadDIRequest, pinst, "ReadDiscreteInputs");
+							result = Ov_CreateIDedObject(modbusTcpLib_ReadDiscreteInputsRequest, pReadDIRequest, &(pinst->p_requests), "ReadDiscreteInputs");
 							if(Ov_Fail(result)){
 								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
@@ -315,7 +320,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						}
 					} else {
 						/*	this IOCHannel was not included in this request --> do another iteration with the right unitIdentifer	*/
-						if(nextUnitIdentifier == -1){
+						if(nextUnitIdentifier == -1 && pDI->v_actimode == 1){
 							nextUnitIdentifier = pDI->v_unitIdentifier;
 						}
 					}
@@ -324,7 +329,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			if(nextUnitIdentifier != -1){
 				currUnitIdentifier = nextUnitIdentifier;
 			}
-			pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pReadDIRequest));
+			if(pReadDIRequest && pVtblRequest){
+				pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pReadDIRequest));
+			}
 		} while(nextUnitIdentifier != -1);
 
 		/*	DOs	*/
@@ -333,9 +340,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			Ov_ForEachChildEx(ov_containment, pinst, pDO, modbusTcpLib_DO){
 				if(Ov_GetParent(modbusTcpLib_requestToChannel, pDO) == NULL && Ov_GetParent(modbusTcpLib_toNextChannel, pDO) == NULL){
 					/*	no Request running for current IOChannel	*/
-					if(pDO->v_unitIdentifier == currUnitIdentifier){
+					if(pDO->v_unitIdentifier == currUnitIdentifier && pDO->v_actimode == 1){
 						if(!pWriteCoilsRequest){
-							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleCoilsRequest, pWriteCoilsRequest, pinst, "WriteCoils");
+							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleCoilsRequest, pWriteCoilsRequest, &(pinst->p_requests), "WriteCoils");
 							if(Ov_Fail(result)){
 								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
@@ -379,7 +386,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						}
 					} else {
 						/*	this IOCHannel was not included in this request --> do another iteration with the right unitIdentifer	*/
-						if(nextUnitIdentifier == -1){
+						if(nextUnitIdentifier == -1 && pDO->v_actimode == 1){
 							nextUnitIdentifier = pDO->v_unitIdentifier;
 						}
 					}
@@ -388,7 +395,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 			if(nextUnitIdentifier != -1){
 				currUnitIdentifier = nextUnitIdentifier;
 			}
-			pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pWriteCoilsRequest));
+			if(pWriteCoilsRequest && pVtblRequest){
+				pVtblRequest->m_sendRequest(Ov_PtrUpCast(modbusTcpLib_Request, pWriteCoilsRequest));
+			}
 		} while(nextUnitIdentifier != -1);
 
 		break;

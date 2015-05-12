@@ -27,6 +27,15 @@
 #include "libov/ov_result.h"
 #include "ksbase_helper.h"
 
+OV_DLLFNCEXPORT void modbusTcpLib_RequestDispatcher_typemethod (
+	OV_INSTPTR_ksbase_ComTask	this
+) {
+    this->v_actimode = 0;
+    Ov_Unlink(ksbase_AssocComTaskList, Ov_GetParent(ksbase_AssocComTaskList, this), this);
+	return;
+}
+
+
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		OV_INSTPTR_ksbase_DataHandler this,
 		OV_INSTPTR_ksbase_Channel pChannel,
@@ -35,12 +44,14 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 ) {
 	OV_INT requestId;
 	OV_INT protocolID;
-	OV_INT overallLength;
+	OV_INT lengthAfterHeader;
 	OV_BYTE unitIdentifier;
 	OV_UINT offset = 0;
-	OV_UINT residualPacketLength;
+	OV_UINT packetLength;
 	OV_INSTPTR_modbusTcpLib_Request pRequest = NULL;
 	OV_VTBLPTR_modbusTcpLib_Request pVtblRequest = NULL;
+	OV_INSTPTR_modbusTcpLib_IOChannel	pIOChannel	=	NULL;
+	OV_INSTPTR_modbusTcpLib_IOChannel	pNextIOChannel	=	NULL;
 	OV_RESULT result;
 
 	if(!this->v_pouterobject || !Ov_CanCastTo(modbusTcpLib_Slave, this->v_pouterobject)){
@@ -48,8 +59,8 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		ksbase_free_KSDATAPACKET(dataReceived);
 	}
 	do{
-		residualPacketLength = (dataReceived->data + dataReceived->length) - dataReceived->readPT;
-		if(residualPacketLength < 10){
+		packetLength = (dataReceived->data + dataReceived->length) - dataReceived->readPT;
+		if(packetLength < 9){
 			/*	incomplete	*/
 			return OV_ERR_OK;
 		}
@@ -58,9 +69,9 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		offset = 2;
 		protocolID = modbusTcpLib_Request_readWord(dataReceived->readPT + offset);
 		offset += 2;
-		overallLength = modbusTcpLib_Request_readWord(dataReceived->readPT + offset);
+		lengthAfterHeader = modbusTcpLib_Request_readWord(dataReceived->readPT + offset);
 		offset += 2;
-		if(residualPacketLength < overallLength + offset ){
+		if(packetLength < lengthAfterHeader + offset ){
 			/*	incomplete	*/
 			return OV_ERR_OK;
 		}
@@ -69,7 +80,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		dataReceived->readPT += offset;
 		unitIdentifier = *(dataReceived->readPT);
 		dataReceived->readPT++;
-		offset++;
+		lengthAfterHeader--;	//	The byte read last also belongs to the header
 		Ov_ForEachChildEx(ov_containment, &(Ov_StaticPtrCast(modbusTcpLib_Slave, this->v_pouterobject)->p_requests), pRequest, modbusTcpLib_Request){
 			if(pRequest->v_requestID == requestId){
 				/*	found the right request	*/
@@ -82,11 +93,18 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 					ov_logfile_error("%s: mismatch of protocolID and/or unitIdentifier", this->v_identifier);
 					break;
 				}
-				result = pVtblRequest->m_handleResponse(pRequest, overallLength - offset, dataReceived->readPT);
+				result = pVtblRequest->m_handleResponse(pRequest, lengthAfterHeader, dataReceived->readPT);	//
 				if(Ov_Fail(result)){
 					ov_memstack_lock();
 					ov_logfile_error("%s: handle Response failed with error %s", pRequest->v_identifier, ov_result_getresulttext(result));
 					ov_memstack_unlock();
+				}
+				pIOChannel = Ov_GetChild(modbusTcpLib_requestToChannel, pRequest);
+				pNextIOChannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOChannel);
+				while(pNextIOChannel){
+					Ov_Unlink(modbusTcpLib_toNextChannel, pIOChannel, pNextIOChannel);
+					pIOChannel = pNextIOChannel;
+					pNextIOChannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOChannel);
 				}
 				Ov_DeleteObject(pRequest);
 				break;
@@ -95,7 +113,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		if(!pRequest){
 			ov_logfile_error("%s: no fitting request object found", this->v_identifier);
 		}
-		dataReceived->readPT += overallLength - offset;
+		dataReceived->readPT += lengthAfterHeader+1;
 		if(dataReceived->readPT >= dataReceived->data + dataReceived->length){
 			/*	everything done	*/
 			ksbase_free_KSDATAPACKET(dataReceived);

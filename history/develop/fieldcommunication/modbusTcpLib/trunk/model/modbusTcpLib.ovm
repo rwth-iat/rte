@@ -40,6 +40,7 @@ LIBRARY modbusTcpLib
 			 *		4. The readptr of the answer data may not be altered.
 			 */
 			HandleData	:	C_FUNCTION	<KSBASE_FNC_HANDLEDATA>;
+			typemethod  : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -219,7 +220,6 @@ LIBRARY modbusTcpLib
 		IOCHannel is the baseclass for coils, registers etc.  
 	*/
 	CLASS IOChannel : CLASS fb/functionblock
-		IS_INSTANTIABLE;
 		VARIABLES
 			error	:	BOOL
 				FLAGS	=	"o"
@@ -293,12 +293,12 @@ LIBRARY modbusTcpLib
 	CLASS AoRI : CLASS modbusTcpLib/IOChannel
 		IS_INSTANTIABLE;
 		VARIABLES
-			RawHi	:	UINT
+			RawHi	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"high end of raw values"
 				INITIALVALUE	=	323767;
-			RawLo	:	UINT
+			RawLo	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"low end of raw values"
@@ -326,12 +326,12 @@ LIBRARY modbusTcpLib
 	CLASS AoRO : CLASS modbusTcpLib/IOChannel
 		IS_INSTANTIABLE;
 		VARIABLES
-			RawHi	:	UINT
+			RawHi	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"high end of raw values"
 				INITIALVALUE	=	323767;
-			RawLo	:	UINT
+			RawLo	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"low end of raw values"
@@ -346,8 +346,13 @@ LIBRARY modbusTcpLib
 				COMMENT	=	"value to set (scaled from 0.0 to 1.0)"
 				INITIALVALUE	=	0.0;
 			SPRaw	:	INT
+				HAS_SET_ACCESSOR
 				FLAGS	=	"i"
 				COMMENT	=	"raw value to set (only 2 bytes)"
+				INITIALVALUE	=	0;
+			FV		:	INT
+				FLAGS	=	"hn"
+				COMMENT	=	"Value going to the field"
 				INITIALVALUE	=	0;
 		END_VARIABLES;
 		OPERATIONS

@@ -73,8 +73,8 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_handleResponse(
 		if(pSlave){
 			pSlave->v_error = TRUE;
 		}
-		byteCount = modbusTcpLib_Request_readWord(dataToHandle);
-		dataToHandle += 2;
+		byteCount = *dataToHandle;
+		dataToHandle++;
 		if(byteCount + 2 > dataLength){
 			return OV_ERR_BADPARAM;
 		}
@@ -83,7 +83,8 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_handleResponse(
 				if(((pIOCHannel->v_address - thisReq->v_requestStartAddr) * 2) <= byteCount){
 					if(Ov_CanCastTo(modbusTcpLib_AoRI, pIOCHannel)){
 						Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PVRaw = modbusTcpLib_Request_readWord(dataToHandle + ((pIOCHannel->v_address - thisReq->v_requestStartAddr) * 2));
-						Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PV = (Ov_DynamicPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PVRaw * 1.0)
+						Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PV =
+								((Ov_DynamicPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PVRaw - Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_RawLo) * 1.0)
 								/ (OV_SINGLE)(Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_RawHi - Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_RawLo);
 						Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PVPV.value = Ov_DynamicPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PV;
 						Ov_StaticPtrCast(modbusTcpLib_AoRI, pIOCHannel)->v_PVPV.time = timestamp;
@@ -95,7 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_handleResponse(
 					modbusTcpLib_IOChannel_setErrorText(pIOCHannel);
 					Ov_LinkPlaced(modbusTcpLib_errorChannels, pSlave, pIOCHannel, OV_PMH_END);
 				}
-				pIOCHannel = Ov_GetNextChild(modbusTcpLib_toNextChannel, pIOCHannel);
+				pIOCHannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOCHannel);
 			}while(pIOCHannel);
 		}
 	} else {
@@ -152,7 +153,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_sendRequest(
 	OV_RESULT result;
 
 	ov_memstack_lock();
-	request.length = 7 + 6;
+	request.length = 7 + 5;
 	request.data = ov_memstack_alloc(request.length);
 	if(!request.data){
 		return OV_ERR_HEAPOUTOFMEMORY;
@@ -164,7 +165,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_sendRequest(
 	request.writePT += 2;
 	modbusTcpLib_Request_writeWord(0, request.writePT);	//	protocol identification; has to be 0
 	request.writePT += 2;
-	modbusTcpLib_Request_writeWord(1 + 6, request.writePT);	// number of bytes following
+	modbusTcpLib_Request_writeWord(1 + 5, request.writePT);	// number of bytes following
 	request.writePT += 2;
 	*request.writePT = (OV_BYTE)(thisReq->v_unitIdentifier & 0xFF);
 	request.writePT += 1;
@@ -183,6 +184,10 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadInputRegistersRequest_sendRequest(
 		return OV_ERR_BADPLACEMENT;
 	}
 	pSlave = Ov_DynamicPtrCast(modbusTcpLib_Slave, pDomain->v_pouterobject);
+	if(!pSlave){
+		ov_memstack_unlock();
+		return OV_ERR_GENERIC;
+	}
 	pChannel = &pSlave->p_channel;
 	Ov_GetVTablePtr(TCPbind_TCPChannel, pVtblChannel, pChannel);
 	if(!pVtblChannel){

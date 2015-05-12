@@ -26,7 +26,7 @@
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRI_RawHi_set(
     OV_INSTPTR_modbusTcpLib_AoRI          pobj,
-    const OV_UINT  value
+    const OV_INT  value
 ) {
     if(value > 0xFFFF){
     	return OV_ERR_BADVALUE;
@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRI_RawHi_set(
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRI_RawLo_set(
     OV_INSTPTR_modbusTcpLib_AoRI          pobj,
-    const OV_UINT  value
+    const OV_INT  value
 ) {
 	if(value > 0xFFFF){
 		return OV_ERR_BADVALUE;

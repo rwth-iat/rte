@@ -76,9 +76,8 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_handleResponse(
 		if(pSlave){
 			pSlave->v_error = TRUE;
 		}
-		byteCount = modbusTcpLib_Request_readWord(dataToHandle);
-		dataToHandle += 2;
-		dataToHandle += 2;
+		byteCount= *dataToHandle;
+		dataToHandle++;
 		if(byteCount + 2 > dataLength){
 			return OV_ERR_BADPARAM;
 		}
@@ -97,7 +96,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_handleResponse(
 					modbusTcpLib_IOChannel_setErrorText(pIOCHannel);
 					Ov_LinkPlaced(modbusTcpLib_errorChannels, pSlave, pIOCHannel, OV_PMH_END);
 				}
-				pIOCHannel = Ov_GetNextChild(modbusTcpLib_toNextChannel, pIOCHannel);
+				pIOCHannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOCHannel);
 			}while(pIOCHannel);
 		}
 	} else {
@@ -155,7 +154,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_sendRequest(
 	OV_RESULT result;
 
 	ov_memstack_lock();
-	request.length = 7 + 6;
+	request.length = 7 + 5;
 	request.data = ov_memstack_alloc(request.length);
 	if(!request.data){
 		return OV_ERR_HEAPOUTOFMEMORY;
@@ -167,7 +166,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_sendRequest(
 	request.writePT += 2;
 	modbusTcpLib_Request_writeWord(0, request.writePT);	//	protocol identification; has to be 0
 	request.writePT += 2;
-	modbusTcpLib_Request_writeWord(1 + 6, request.writePT);	// number of bytes following
+	modbusTcpLib_Request_writeWord(1 + 5, request.writePT);	// number of bytes following
 	request.writePT += 2;
 	*request.writePT = (OV_BYTE)(thisReq->v_unitIdentifier & 0xFF);
 	request.writePT += 1;

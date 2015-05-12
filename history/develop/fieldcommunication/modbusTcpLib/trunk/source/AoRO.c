@@ -26,7 +26,7 @@
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_RawHi_set(
     OV_INSTPTR_modbusTcpLib_AoRO          pobj,
-    const OV_UINT  value
+    const OV_INT  value
 ) {
 	if(value > 0xFFFF){
 		return OV_ERR_BADVALUE;
@@ -37,7 +37,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_RawHi_set(
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_RawLo_set(
     OV_INSTPTR_modbusTcpLib_AoRO          pobj,
-    const OV_UINT  value
+    const OV_INT  value
 ) {
 	if(value > 0xFFFF){
 		return OV_ERR_BADVALUE;
@@ -54,8 +54,23 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_SP_set(
 		return OV_ERR_BADVALUE;
 	}
     pobj->v_SP = value;
+    if(!pobj->v_rawSwitch){
+    	pobj->v_FV = (pobj->v_SP * (OV_SINGLE)(pobj->v_RawHi - pobj->v_RawLo)) + pobj->v_RawLo;
+    }
     return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_SPRaw_set(
+    OV_INSTPTR_modbusTcpLib_AoRO          pobj,
+    const OV_INT  value
+) {
+    pobj->v_SPRaw = value;
+    if(pobj->v_rawSwitch){
+    	pobj->v_FV = pobj->v_SPRaw;
+    }
+    return OV_ERR_OK;
+}
+
 
 OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_AoRO_constructor(
 	OV_INSTPTR_ov_object 	pobj
