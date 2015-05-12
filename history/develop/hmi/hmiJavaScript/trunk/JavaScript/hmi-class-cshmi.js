@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -76,7 +76,6 @@ function cshmi() {
 	this.ResourceList.Actions = Object();
 	this.ResourceList.baseKsPath = Object();
 	this.ResourceList.ChildList = Object();
-	this.ResourceList.ChildrenIterator = Object();
 	this.ResourceList.GlobalVar = Object();
 	this.ResourceList.EventInfos = Object();
 	this.ResourceList.EventInfos.EventObj = null;
@@ -262,7 +261,7 @@ cshmi.prototype = {
 		if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
 			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
-			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, false, preventNetworkRequest);
+			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, false, null, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
@@ -490,7 +489,7 @@ cshmi.prototype = {
 					
 					thisTime.triggeredObjectList.splice(i, 1);
 				}else{
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], thisTime.getVarCollection);
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], thisTime.getVarCollection, null);
 					i++;
 				}
 			}
@@ -544,7 +543,7 @@ cshmi.prototype = {
 				HMI.cshmi.toggleChildTemplates(VisualObject);
 				
 				//get and execute all actions
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
@@ -559,7 +558,7 @@ cshmi.prototype = {
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
@@ -575,7 +574,7 @@ cshmi.prototype = {
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//get and execute all actions
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
@@ -594,7 +593,7 @@ cshmi.prototype = {
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
@@ -613,7 +612,7 @@ cshmi.prototype = {
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
-				HMI.cshmi._interpreteAction(VisualObject, ObjectPath);
+				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
@@ -834,10 +833,10 @@ cshmi.prototype = {
 			//no action
 		}else if(ClickTarget !== null){
 			this.ResourceList.EventInfos.mouseRelativePosition = null;
-			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"));
+			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"), null, null);
 		}else{
 			//get and execute all actions
-			this._interpreteAction(VisualObject, ObjectPath);
+			this._interpreteAction(VisualObject, ObjectPath, null, null);
 		}
 		
 		//an later action should not interprete this event
@@ -850,9 +849,10 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param ChildrenIterator of the iterator or null
 	 * @return returnValue returnValue from the last Action
 	 */
-	_interpreteAction: function(VisualObject, ObjectPath, CyctimeObject){
+	_interpreteAction: function(VisualObject, ObjectPath, CyctimeObject, ChildrenIterator){
 		var returnValue = true;
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
 		
@@ -863,29 +863,29 @@ cshmi.prototype = {
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
 			if (varName[1].indexOf("/cshmi/SetValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "static", CyctimeObject);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "static", CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/SetConcatValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "concat", CyctimeObject);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "concat", CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/SetMathValue") !== -1){
-				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math", CyctimeObject);
+				returnValue = this._setValue(VisualObject, ObjectPath+"/"+varName[0], "math", CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/GetValue") !== -1){
 				HMI.hmi_log_info_onwebsite("GetValue Action ("+varName[1]+")"+ObjectPath+" not useful at this position");
 			}else if (varName[1].indexOf("/cshmi/RenameObject") !== -1){
-				returnValue = this._interpreteRenameObject(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteRenameObject(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/CreateObject") !== -1){
-				returnValue = this._interpreteCreateObject(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteCreateObject(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/DeleteObject") !== -1){
-				returnValue = this._interpreteDeleteObject(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteDeleteObject(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/LinkObjects") !== -1){
-				returnValue = this._interpreteLinkObjects(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteLinkObjects(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/UnlinkObjects") !== -1){
-				returnValue = this._interpreteUnlinkObjects(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteUnlinkObjects(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/IfThenElse") !== -1){
-				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0], CyctimeObject);
+				returnValue = this._interpreteIfThenElse(VisualObject, ObjectPath+"/"+varName[0], CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/ChildrenIterator") !== -1){
-				returnValue = this._interpreteChildrenIterator(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteChildrenIterator(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/InstantiateTemplate") !== -1){
-				returnValue = this._interpreteInstantiateTemplate(VisualObject, ObjectPath+"/"+varName[0]);
+				returnValue = this._interpreteInstantiateTemplate(VisualObject, ObjectPath+"/"+varName[0], ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/RoutePolyline") !== -1){
 				returnValue = this._interpreteRoutePolyline(VisualObject, ObjectPath+"/"+varName[0]);
 			}else if (varName[1].indexOf("/cshmi/RebuildObject") !== -1){
@@ -913,10 +913,11 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param callerObserver Object which hold info for the callback or null
 	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param ChildrenIterator of the iterator or null
 	 * @param forceNetworkrequest if true a value is requested from the network even if the object is not visible right now
 	 * @return {bool} false if error, null if intentionally no value, "" if no entry found, true if the request is handled by a callback
 	 */
-	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject, forceNetworkrequest){
+	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject, ChildrenIterator, forceNetworkrequest){
 		var ParameterName = "";
 		var ParameterValue = "";
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
@@ -979,11 +980,10 @@ cshmi.prototype = {
 			iterationObject = null;
 		}
 		
-		if(this.initStage === true || this.ResourceList.ChildrenIterator.currentChild !== undefined){
+		if(this.initStage === true){
 			// force sync request in the init stage.
 			// the order of actions have to be fixed in the loading
 			// for example a value can be precached and reused later
-			// force sync request with an active Iterator as the currentChild is lost at a async call
 			callerObserver = null;
 			var GetVarCbfnc = null;
 		}else{
@@ -1203,7 +1203,7 @@ cshmi.prototype = {
 						this.ResourceList.Actions["tempPath"] = new Object();
 						this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
 						this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
-						var defaultValue = this._getValue(VisualObject, "tempPath", null, null, true);
+						var defaultValue = this._getValue(VisualObject, "tempPath", null, null, null, true);
 						if (defaultValue !== false && defaultValue !== null){
 							input = window.prompt(textinputHint, defaultValue);
 						}else{
@@ -1243,45 +1243,45 @@ cshmi.prototype = {
 			}
 			return false;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
-			var FBRef = this._getFBReference(VisualObject);
-			if (FBRef === ""){
+			var FBRef = this._getFBReference(VisualObject, ChildrenIterator);
+			if (FBRef.path === ""){
 				return false;
 			}else if (ParameterValue === "CSHMIHostServer"){
 				// should be //dev:7509/server1
-				var PathArray = FBRef.split("/");
+				var PathArray = FBRef.path.split("/");
 				if(PathArray.length < 2){
 					return "";
 				}
 				return "//"+PathArray[2]+"/"+PathArray[3];
 			}else if (ParameterValue === "fullqualifiedparentname" || ParameterValue === "CSHMIfullqualifiedparentname"){
 				// should be //dev:7509/server1/TechUnits
-				var PathArray = FBRef.split("/");
+				var PathArray = FBRef.path.split("/");
 				PathArray.pop();
 				return PathArray.join("/");
 			}else if (ParameterValue === "fullqualifiedname" || ParameterValue === "CSHMIfullqualifiedname"){
 				// should be //dev:7509/server1/TechUnits/add
-				return FBRef;
+				return FBRef.path;
 			}else if (ParameterValue === "absoluteparentpathname" || ParameterValue === "CSHMIabsoluteparentpathname"){
 				// should be /TechUnits
-				var PathArray = FBRef.split("/");
+				var PathArray = FBRef.path.split("/");
 				PathArray.pop();
 				return HMI.KSClient._splitKSPath(PathArray.join("/"))[1];
 			}else if (ParameterValue === "absolutepathname" || ParameterValue === "CSHMIabsolutepathname"){
 				// should be /TechUnits/add
-				return HMI.KSClient._splitKSPath(FBRef)[1];
+				return HMI.KSClient._splitKSPath(FBRef.path)[1];
 			}else if (ParameterValue === "identifier"){
 				//if the identifier is requested calculate this to avoid network request
-				var Objectname = FBRef.split("/");
+				var Objectname = FBRef.path.split("/");
 				var identifier = Objectname[Objectname.length - 1];
 				//if we refer to an variable return this name only
 				identifier = identifier.split(".");
 				return identifier[identifier.length - 1];
 			}
 			if(ParameterValue.charAt(0) !== "/"){
-				var path = FBRef+"."+ParameterValue;
+				var path = FBRef.path+"."+ParameterValue;
 			}else{
 				//todo doku
-				path = FBRef+ParameterValue;
+				path = FBRef.path+ParameterValue;
 			}
 			if(CyctimeObject !== undefined && CyctimeObject !== null){
 				var pathArray = path.split(".");
@@ -1407,9 +1407,10 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject){
+	_setValue: function(VisualObject, ObjectPath, GetType, CyctimeObject, ChildrenIterator){
 		//get Value to set
 		if (GetType === "static"){
 			var setValueObserver = new cshmiObserver(VisualObject, ObjectPath, 1, this);
@@ -1431,13 +1432,13 @@ cshmi.prototype = {
 					}
 					NewValue = thisObserverEntry.value;
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			var thisObserverEntry = new ObserverEntry("value", ".");
 			setValueObserver.ObserverEntryArray[0] = thisObserverEntry;
 			//via getValue-part of setValue object
-			var NewValue = this._getValue(VisualObject, ObjectPath+".value", setValueObserver, CyctimeObject);
+			var NewValue = this._getValue(VisualObject, ObjectPath+".value", setValueObserver, CyctimeObject, ChildrenIterator);
 			
 			if(NewValue === true){
 				//the setVar is handled via a callback
@@ -1478,7 +1479,7 @@ cshmi.prototype = {
 					//force string to clean append
 					NewValue = NewValue + thisObserverEntry.value.toString();
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			
@@ -1489,7 +1490,7 @@ cshmi.prototype = {
 					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject, ChildrenIterator);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
@@ -1574,7 +1575,7 @@ cshmi.prototype = {
 				//force string format
 				NewValue = NewValue.toString();
 				
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue);
+				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			
@@ -1585,7 +1586,7 @@ cshmi.prototype = {
 					setValueObserver.ObserverEntryArray[i] = thisObserverEntry;
 					
 					//via getValue instance under setValue object
-					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject);
+					var NewValuePart = this._getValue(VisualObject, ObjectPath+"/"+varName[0], setValueObserver, CyctimeObject, ChildrenIterator);
 					
 					if(NewValuePart === true){
 						//the setVar is handled via a callback
@@ -1613,10 +1614,11 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
 	 * @param {String} NewValue Value to set
+	 * @param ChildrenIterator of the iterator or null
 	 * @param {Boolean} ignoreError a unconfigured setvar should not trigger a warning
 	 * @return false on error, true on success
 	 */
-	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue, ignoreError){
+	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue, ChildrenIterator, ignoreError){
 		//get info where to set the NewValue
 		
 		var ParameterName = "";
@@ -1921,7 +1923,7 @@ cshmi.prototype = {
 					//this Object was replaced with rebuildObject, so remove from callstack
 					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
 				}else{
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], null, null);
 					i++;
 				}
 			}
@@ -1957,7 +1959,7 @@ cshmi.prototype = {
 					//this Object was replaced with rebuildObject, so remove from callstack
 					this.ResourceList.globalvarChangedCallStack.splice(i, 1);
 				}else{
-					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+					this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], null, null);
 					i++;
 				}
 			}
@@ -1976,12 +1978,11 @@ cshmi.prototype = {
 			return true;
 		}else if (ParameterName === "TemplateFBReferenceVariable"){
 			var result;
-			var path;
-			var FBRef = this._getFBReference(VisualObject, true);
-			if (FBRef[0] === ""){
+			var FBRef = this._getFBReference(VisualObject, ChildrenIterator);
+			if (FBRef.path === ""){
 				return false;
 			}else if (ParameterValue === "fullqualifiedname" || ParameterValue === "CSHMIfullqualifiedname"){
-				var TemplateObject = FBRef[1];
+				var TemplateObject = FBRef.object;
 				if (TemplateObject === null){
 					return false;
 				}
@@ -1999,13 +2000,13 @@ cshmi.prototype = {
 				}
 				return false;
 			}else if(ParameterValue === "identifier"){
-				path = FBRef[0];
-				result = HMI.KSClient.renameObject(path, NewValue, null, SetVarCbfnc, true);
+				result = HMI.KSClient.renameObject(FBRef.path, NewValue, null, SetVarCbfnc, true);
 			}else{
+				var path;
 				if(ParameterValue.charAt(0) !== "/"){
-					path = FBRef[0]+"."+ParameterValue;
+					path = FBRef.path+"."+ParameterValue;
 				}else{
-					path = FBRef[0]+ParameterValue;
+					path = FBRef.path+ParameterValue;
 				}
 				
 				result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
@@ -2090,12 +2091,13 @@ cshmi.prototype = {
 	 * rename an object
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_interpreteRenameObject: function(VisualObject, ObjectPath){
+	_interpreteRenameObject: function(VisualObject, ObjectPath, ChildrenIterator){
 		//via getValue-part of RenameObject object
-		var OldName = this._getValue(VisualObject, ObjectPath+".OldName", null, null, true);
-		var NewName = this._getValue(VisualObject, ObjectPath+".NewName", null, null, true);
+		var OldName = this._getValue(VisualObject, ObjectPath+".OldName", null, null, ChildrenIterator, true);
+		var NewName = this._getValue(VisualObject, ObjectPath+".NewName", null, null, ChildrenIterator, true);
 		
 		if (OldName === false || NewName === false){
 			//getValue had an error
@@ -2137,9 +2139,10 @@ cshmi.prototype = {
 	 * creates an object
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_interpreteCreateObject: function(VisualObject, ObjectPath){
+	_interpreteCreateObject: function(VisualObject, ObjectPath, ChildrenIterator){
 		var requestList = new Object();
 		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
@@ -2159,10 +2162,10 @@ cshmi.prototype = {
 		var autoRenameIfExists = requestList[ObjectPath]["autoRenameIfExists"];
 		
 		//via getValue-part of CreateObject object
-		var targetName = this._getValue(VisualObject, ObjectPath+".Name", null, null, true);
-		var targetPlace = this._getValue(VisualObject, ObjectPath+".Place", null, null, true);
-		var targetLibrary = this._getValue(VisualObject, ObjectPath+".Library", null, null, true);
-		var targetClass = this._getValue(VisualObject, ObjectPath+".Class", null, null, true);
+		var targetName		= this._getValue(VisualObject, ObjectPath+".Name", null, null, ChildrenIterator, true);
+		var targetPlace		= this._getValue(VisualObject, ObjectPath+".Place", null, null, ChildrenIterator, true);
+		var targetLibrary	= this._getValue(VisualObject, ObjectPath+".Library", null, null, ChildrenIterator, true);
+		var targetClass		= this._getValue(VisualObject, ObjectPath+".Class", null, null, ChildrenIterator, true);
 		
 		if (targetName === false || targetPlace === false || targetLibrary === false || targetClass === false){
 			//getValue had an error
@@ -2216,11 +2219,12 @@ cshmi.prototype = {
 	 * deletes an object
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_interpreteDeleteObject: function(VisualObject, ObjectPath){
+	_interpreteDeleteObject: function(VisualObject, ObjectPath, ChildrenIterator){
 		//via getValue-part of DeleteObject object
-		var targetName = this._getValue(VisualObject, ObjectPath+".Path", null, null, true);
+		var targetName = this._getValue(VisualObject, ObjectPath+".Path", null, null, ChildrenIterator, true);
 		
 		if (targetName === false){
 			//getValue had an error
@@ -2260,13 +2264,14 @@ cshmi.prototype = {
 	 * links two objects
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_interpreteLinkObjects: function(VisualObject, ObjectPath){
+	_interpreteLinkObjects: function(VisualObject, ObjectPath, ChildrenIterator){
 		//via getValue-part of LinkObjects object
-		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, true);
-		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, true);
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association", null, null, true);
+		var ObjectA		= this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, ChildrenIterator, true);
+		var ObjectB		= this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, ChildrenIterator, true);
+		var PortNameA	= this._getValue(VisualObject, ObjectPath+".Association", null, null, ChildrenIterator, true);
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
 			//getValue had an error
@@ -2310,13 +2315,14 @@ cshmi.prototype = {
 	 * unlinks two objects
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return false on error, true on success
 	 */
-	_interpreteUnlinkObjects: function(VisualObject, ObjectPath){
+	_interpreteUnlinkObjects: function(VisualObject, ObjectPath, ChildrenIterator){
 		//via getValue-part of UnlinkObjects object
-		var ObjectA = this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, true);
-		var ObjectB = this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, true);
-		var PortNameA = this._getValue(VisualObject, ObjectPath+".Association", null, null, true);
+		var ObjectA		= this._getValue(VisualObject, ObjectPath+".ObjectA", null, null, ChildrenIterator, true);
+		var ObjectB		= this._getValue(VisualObject, ObjectPath+".ObjectB", null, null, ChildrenIterator, true);
+		var PortNameA	= this._getValue(VisualObject, ObjectPath+".Association", null, null, ChildrenIterator, true);
 		
 		if (ObjectA === false || ObjectB === false || PortNameA === false){
 			//getValue had an error
@@ -2478,9 +2484,10 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param ChildrenIterator of the iterator or null
 	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
-	_interpreteIfThenElse: function(VisualObject, ObjectPath, CyctimeObject){
+	_interpreteIfThenElse: function(VisualObject, ObjectPath, CyctimeObject, ChildrenIterator){
 		var anyCond;
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
@@ -2533,10 +2540,10 @@ cshmi.prototype = {
 				}
 			}
 			if (ConditionMatched === true){
-				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".then", CyctimeObject);
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".then", CyctimeObject, ChildrenIterator);
 				return true;
 			}else if (ConditionMatched === false){
-				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".else", CyctimeObject);
+				this.cshmiObject._interpreteAction(VisualObject, ObjectPath+".else", CyctimeObject, ChildrenIterator);
 				return true;
 			}else{
 				//this Action produced an error
@@ -2557,9 +2564,9 @@ cshmi.prototype = {
 			IfThenElseObserver.ObserverEntryArray[i] = thisObserverEntry;
 			
 			if (varName[1].indexOf("/cshmi/CompareIteratedChild") !== -1){
-				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver, CyctimeObject);
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], true, IfThenElseObserver, CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/Compare") !== -1){
-				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver, CyctimeObject);
+				ConditionMatched = this._checkCondition(VisualObject, ObjectPath+".if/"+varName[0], false, IfThenElseObserver, CyctimeObject, ChildrenIterator);
 			}else if (varName[1].indexOf("/cshmi/Confirm") !== -1){
 				ConditionMatched = this._checkConfirm(VisualObject, ObjectPath+".if/"+varName[0], IfThenElseObserver);
 			}
@@ -2585,10 +2592,11 @@ cshmi.prototype = {
 	 * @param {Boolean} CompareIteratedChild is the object a CompareIteratedChild?
 	 * @param IfThenElseObserver
 	 * @param CyctimeObject object for fetching values as a bunch or null
+	 * @param ChildrenIterator of the iterator or null
 	 * @return {Boolean} true if condition matched, false if not matched, null on error, undefined if callback is in charge
 	 */
-	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver, CyctimeObject){
-		if (CompareIteratedChild === true && this.ResourceList.ChildrenIterator.currentChild === undefined){
+	_checkCondition: function(VisualObject, ObjectPath, CompareIteratedChild, IfThenElseObserver, CyctimeObject, ChildrenIterator){
+		if (CompareIteratedChild === true && !ChildrenIterator){
 			HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not placed under a Iterator");
 			//error state, so no boolean
 			return null;
@@ -2637,13 +2645,13 @@ cshmi.prototype = {
 			}
 			thisObserverEntry = new ObserverEntry("currentChild");
 			//this is know right know, so fill it direct
-			thisObserverEntry.value = this.ResourceList.ChildrenIterator.currentChild[childValue[0]];
+			thisObserverEntry.value = ChildrenIterator.currentChild[childValue[0]];
 			thisObserverEntry.requirementsFulfilled = true;
 			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
 			
 			thisObserverEntry = new ObserverEntry("withValue", ".");
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
-			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver, CyctimeObject);
+			Value2 = this._getValue(VisualObject, ObjectPath+".withValue", checkConditionObserver, CyctimeObject, ChildrenIterator);
 			if(Value2 === true){
 				//the checkcondition is handled via a callback
 				return true;
@@ -2659,7 +2667,7 @@ cshmi.prototype = {
 		}else{
 			thisObserverEntry = new ObserverEntry("value1", ".");
 			checkConditionObserver.ObserverEntryArray[0] = thisObserverEntry;
-			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver, CyctimeObject);
+			Value1 = this._getValue(VisualObject, ObjectPath+".value1", checkConditionObserver, CyctimeObject, ChildrenIterator);
 			if(Value1 === true){
 				//the checkcondition is handled via a callback
 			}else{
@@ -2673,7 +2681,7 @@ cshmi.prototype = {
 			}
 			thisObserverEntry = new ObserverEntry("value2", ".");
 			checkConditionObserver.ObserverEntryArray[1] = thisObserverEntry;
-			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver, CyctimeObject);
+			Value2 = this._getValue(VisualObject, ObjectPath+".value2", checkConditionObserver, CyctimeObject, ChildrenIterator);
 			if(Value2 === true){
 				//the checkcondition is handled via a callback
 			}else{
@@ -2849,7 +2857,7 @@ cshmi.prototype = {
 		
 		var thisObserverEntry = new ObserverEntry("question", ".");
 		checkConfirmObserver.ObserverEntryArray[0] = thisObserverEntry;
-		question = this._getValue(VisualObject, ObjectPath+".question", checkConfirmObserver, null, null, true);
+		question = this._getValue(VisualObject, ObjectPath+".question", checkConfirmObserver, null, null, null, true);
 		if(question === true){
 			//the setVar is handled via a callback
 		}else{
@@ -2870,9 +2878,9 @@ cshmi.prototype = {
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @return {Boolean} false if an error occured, returnValue of the called actions
 	 */
-	_interpreteChildrenIterator: function(VisualObject, ObjectPath){
-		var FBRef = this._getFBReference(VisualObject);
-		if (FBRef === ""){
+	_interpreteChildrenIterator: function(VisualObject, ObjectPath, ParentChildrenIterator){
+		var FBRef = this._getFBReference(VisualObject, ParentChildrenIterator);
+		if (FBRef.path === ""){
 			HMI.hmi_log_info_onwebsite('ChildrenIterator '+ObjectPath+' could not work. Found no FBReference on a parent.');
 			return false;
 		}
@@ -2901,77 +2909,115 @@ cshmi.prototype = {
 			//the object is asked this session, so reuse the config to save communication requests
 			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
 		}
+		if (ChildrenType === ""){
+			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
+			return false;
+		}
 		
-		//this will be increased in a successful instantiateTemplate
-		this.ResourceList.ChildrenIterator.currentCount = 0;
+		var ChildrenIterator = new Object();
+		ChildrenIterator.currentChild = null;
+		ChildrenIterator.currentCount = 0;
 		
-		//remember an old currentChild (for cascaded iterators)
-		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-		delete this.ResourceList.ChildrenIterator.currentChild;
+		//the callbacks calls the actions of this iterator
+		var GetEPIteratorCbfnc = function(Client, req){
+			if(req.status === 200){
+				//remember an old currentChild (for cascaded iterators)
+				/*
+				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+				*/
+				
+				var response = HMI.KSClient.unescapeString(req.responseText);
+				response = HMI.KSClient.splitKsResponse(response, 1);
+				for (var i=0; i<response.length; i++){
+					var responseDictionary = Array();
+					//Variables were requested or ANY and we got a Variable right now
+					if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_TECHUNIT"] = response[i][7];
+					}
+					//Domains were requested or ANY and we got a Domain right now
+					else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
+						//todo prefix path from active fbref
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_TECHUNIT"] = response[i][7];
+					}
+					//Links were requested or ANY and we got a Link right now
+					else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_ASSOCIDENT"] = response[i][7];
+						responseDictionary["OP_ROLEIDENT"] = response[i][8];
+					}
+					//Historys were requested or ANY and we got a History right now
+					else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
+						responseDictionary["OP_NAME"] = response[i][0];
+						responseDictionary["OP_TYPE"] = response[i][1];
+						responseDictionary["OP_COMMENT"] = response[i][2];
+						responseDictionary["OP_ACCESS"] = response[i][3];
+						responseDictionary["OP_SEMANTICS"] = response[i][4];
+						responseDictionary["OP_CREATIONTIME"] = response[i][5];
+						responseDictionary["OP_CLASS"] = response[i][6];
+						responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
+						responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
+						responseDictionary["OP_TYPEIDENT"] = response[i][9];
+					}
+					//doku possible values
+					ChildrenIterator.currentChild = responseDictionary;
+					
+					//get and execute all actions
+					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild", null, ChildrenIterator);
+				}
+			}
+		};
+		var GetVarIteratorCbfnc = function(Client, req){
+			if(req.status === 200){
+				//remember an old currentChild (for cascaded iterators)
+				/*
+				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
+				*/
+				
+				//get a rid of external brackets 
+				var response = req.responseText.replace(/{/g, "");
+				response = response.replace(/}/g, "");
+				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
+				for (var i=0; i<responseArray.length; i++){
+					var responseDictionary = Array();
+					responseDictionary["OP_VALUE"] = responseArray[i];
+					responseDictionary["OP_NAME"] = responseArray[i];
+					
+					//doku value and name option
+					ChildrenIterator.currentChild = responseDictionary;
+					
+					//get and execute all actions
+					HMI.cshmi._interpreteAction(VisualObject, ObjectPath + ".forEachChild", null, ChildrenIterator);
+				}
+			}
+		};
 		
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP(encodeURI(FBRef), ChildrenType, "OP_ANY", null);
-			response = HMI.KSClient.splitKsResponse(response, 1);
-			for (var i=0; i<response.length; i++){
-				var responseDictionary = Array();
-				//Variables were requested or ANY and we got a Variable right now
-				if (ChildrenType === "OT_VARIABLE" || response[i][1] === "KS_OT_VARIABLE"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_TECHUNIT"] = response[i][7];
-				}
-				//Domains were requested or ANY and we got a Domain right now
-				else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
-					//todo prefix path from active fbref
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_TECHUNIT"] = response[i][7];
-				}
-				//Links were requested or ANY and we got a Link right now
-				else if (ChildrenType === "OT_LINK" || response[i][1] === "KS_OT_LINK"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_ASSOCIDENT"] = response[i][7];
-					responseDictionary["OP_ROLEIDENT"] = response[i][8];
-				}
-				//Historys were requested or ANY and we got a History right now
-				else if (ChildrenType === "OT_HISTORY" || response[i][1] === "KS_OT_HISTORY"){
-					responseDictionary["OP_NAME"] = response[i][0];
-					responseDictionary["OP_TYPE"] = response[i][1];
-					responseDictionary["OP_COMMENT"] = response[i][2];
-					responseDictionary["OP_ACCESS"] = response[i][3];
-					responseDictionary["OP_SEMANTICS"] = response[i][4];
-					responseDictionary["OP_CREATIONTIME"] = response[i][5];
-					responseDictionary["OP_CLASS"] = response[i][6];
-					responseDictionary["OP_DEFAULTINTERP"] = response[i][7];
-					responseDictionary["OP_SUPPORTEDINTERP"] = response[i][8];
-					responseDictionary["OP_TYPEIDENT"] = response[i][9];
-				}
-				//doku
-				this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-				
-				returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-			}
-		}else if (ChildrenType === ""){
-			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
-			return false;
+			var response = HMI.KSClient.getEP(encodeURI(FBRef.path), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, true);
 		}else{
 			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
@@ -2981,38 +3027,16 @@ cshmi.prototype = {
 			var response;
 			for (var i=0; i < ChildrenTypeList.length; i++) {
 				if(ChildrenTypeList[i].charAt(0) !== "/"){
-					var path = FBRef + "." + ChildrenTypeList[i];
+					var path = FBRef.path + "." + ChildrenTypeList[i];
 				}else{
 					//todo doku
-					path = FBRef + ChildrenTypeList[i];
+					path = FBRef.path + ChildrenTypeList[i];
 				}
-				response = HMI.KSClient.getVar(path, "OP_VALUE", null);
-				if (response === false || response === null){
-					continue;
-				}
-				//get a rid of external brackets 
-				response = response.replace(/{/g, "");
-				response = response.replace(/}/g, "");
-				var responseArray = HMI.KSClient.splitKsResponse(response, 1);
-				
-				for (var j=0; j<responseArray.length; j++){
-					var responseDictionary = Array();
-					responseDictionary["OP_VALUE"] = responseArray[j];
-					responseDictionary["OP_NAME"] = responseArray[j];
-					
-					//doku
-					this.ResourceList.ChildrenIterator.currentChild = responseDictionary;
-					
-					returnValue = this._interpreteAction(VisualObject, ObjectPath + ".forEachChild");
-				}
+				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, true);
 			}
 		}
-		//reset Objects, after iteration we want to have the same (or none) currentChild as before (cascaded iterators)
-		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-		this.ResourceList.ChildrenIterator.currentCount = 0;
-		savedCurrentChild = null;
 		
-		return returnValue;
+		return true;
 	},
 	
 	/**
@@ -3094,10 +3118,10 @@ cshmi.prototype = {
 			}
 			
 			//get Values (via getValue-parts)
-			var SourceBasename = this._getValue(VisualObject, ObjectPath+".SourceBasename");
-			var SourceVariablename = this._getValue(VisualObject, ObjectPath+".SourceVariablename");
-			var TargetBasename = this._getValue(VisualObject, ObjectPath+".TargetBasename");
-			var TargetVariablename = this._getValue(VisualObject, ObjectPath+".TargetVariablename");
+			var SourceBasename		= this._getValue(VisualObject, ObjectPath+".SourceBasename");
+			var SourceVariablename	= this._getValue(VisualObject, ObjectPath+".SourceVariablename");
+			var TargetBasename		= this._getValue(VisualObject, ObjectPath+".TargetBasename");
+			var TargetVariablename	= this._getValue(VisualObject, ObjectPath+".TargetVariablename");
 			
 			if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
 				//this error will never be fixed, so prevent this routing forever. But how???
@@ -3112,19 +3136,19 @@ cshmi.prototype = {
 				TargetVariablename = "";
 			}
 			
-			var FBRef = this._getFBReference(VisualObject);
+			var FBRef = this._getFBReference(VisualObject, null);
 			
 			//in DOM every object has a full server+Host name, so if the basename does not provide it, 
 			//we have to add it
 			// e.g "//dev/ov_hmidemo7/TechUnits/TU10/h_bkqwmtbbhpf"" --> use prefix "//dev/ov_hmidemo7"
 			var prefix = "";
-			if (FBRef !== ""){
+			if (FBRef.path !== ""){
 				//find the 3rd "/"
-				var slashIndexAfterHost = FBRef.indexOf("/", 2);
+				var slashIndexAfterHost = FBRef.path.indexOf("/", 2);
 				//find the 4th "/"
-				var slashIndexAfterServer = FBRef.indexOf("/", slashIndexAfterHost+1);
+				var slashIndexAfterServer = FBRef.path.indexOf("/", slashIndexAfterHost+1);
 				//only keep the String before 4th "/"
-				prefix = FBRef.slice(0, slashIndexAfterServer);
+				prefix = FBRef.path.slice(0, slashIndexAfterServer);
 			}
 			
 			if(SourceBasename.charAt(0) === "/" && SourceBasename.charAt(1) !== "/"){
@@ -3562,7 +3586,7 @@ cshmi.prototype = {
 				VisualObject.correctAllLines(VisualObject);
 				
 				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
-					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), true);
+					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), null, true);
 				}
 				VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
 			};
@@ -4048,7 +4072,7 @@ cshmi.prototype = {
 			VisualObject.correctAllLines(VisualObject);
 			if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated !== false){
 				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
-					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", true);
+					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", null, true);
 				}
 			}
 			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = false;
@@ -4201,14 +4225,15 @@ cshmi.prototype = {
 	 * Action which calls _buildSvgGroup to build a template
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
+	 * @param ChildrenIterator of the iterator or null
 	 * @return {Boolean} true on success, false if an error occured
 	 */
-	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath){
+	_interpreteInstantiateTemplate: function(VisualParentObject, ObjectPath, ChildrenIterator){
 		if(VisualParentObject.getElementById === undefined){
 			HMI.hmi_log_info_onwebsite("InstantiateTemplate is not allowed under an Element (configured here: "+ObjectPath+")");
 			return false;
 		}
-		var VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, true, false);
+		var VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, true, ChildrenIterator, false);
 		if (VisualObject !== null){
 			//remember the ObjectType on every object (needed for reloading via action)
 			VisualObject.setAttribute("data-ObjectType", "/cshmi/Template");
@@ -4233,16 +4258,17 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {Boolean} calledFromInstantiateTemplate true if called from an action
+	 * @param ChildrenIterator of the iterator or null
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	_buildSvgGroup: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, preventNetworkRequest){
+	_buildSvgGroup: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, ChildrenIterator, preventNetworkRequest){
 		var requestList = new Object();
 		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
 			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
 			//build a skeleton to preserve zindex/sequence
@@ -4293,7 +4319,7 @@ cshmi.prototype = {
 			}else{
 				PathOfTemplateDefinition = "/TechUnits/cshmi/Templates/"+requestList[ObjectPath]["TemplateDefinition"];
 			}
-			if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && this.ResourceList.ChildrenIterator.currentChild === undefined){
+			if (ObjectPath.indexOf(PathOfTemplateDefinition) === 0 && !ChildrenIterator){
 				HMI.hmi_log_info_onwebsite("Template "+ObjectPath+" is calling itself outside an iterator");
 				return null;
 			}
@@ -4337,7 +4363,7 @@ cshmi.prototype = {
 			}
 		}
 		
-		if (VisualObject === null || VisualObject === undefined || (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined)){
+		if (VisualObject === null || VisualObject === undefined || (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined)){
 			//do not use a predefined VisualObject if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 		}
@@ -4400,33 +4426,34 @@ cshmi.prototype = {
 				wasRebuildObject = true;
 				//.. but only once/here
 				this.ResourceList.newRebuildObject = Object();
-			}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBReferenceName] !== undefined){
+			}else if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild[FBReferenceName] !== undefined){
 				//something like OP_NAME or OP_VALUE was requested, so we have to find the real info from the iterator
 				
 				//getFBReference does all the magic with the iterator. The later checks are to detect the NameOrigin
-				var FBRef = this._getFBReference(VisualParentObject);
-				if (FBRef === ""){
+				var FBRef = this._getFBReference(VisualParentObject, ChildrenIterator);
+				if (FBRef.path === ""){
 					HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
 					return null;
 				}
-				if (this.ResourceList.ChildrenIterator.currentChild[FBReferenceName].charAt(0) === "/"){
+				if (ChildrenIterator.currentChild[FBReferenceName].charAt(0) === "/"){
 					// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
 					VisualObject.setAttribute("data-NameOrigin", "CurrentChildfullpath");
 				}else{
 					//In OP_NAME is a relative path (likely from a GetEP request).
 					VisualObject.setAttribute("data-NameOrigin", "FBReference/OP_NAME");
 				}
-				VisualObject.FBReference["default"] = FBRef;
-				VisualObject.id = FBRef;
+				VisualObject.FBReference["default"] = FBRef.path;
+				VisualObject.id = FBRef.path;
 			}else{
 				if(FBReferenceName.indexOf("CSHMIfullqualifiedname") !== -1){
 					//CSHMIfullqualifiedname can be a prefix
-					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIfullqualifiedname", this._getFBReference(VisualParentObject, false, true));
+					var FBrefName = this._getFBReference(VisualParentObject, null);
+					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIfullqualifiedname", FBrefName.path);
 					VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
 				}else if(FBReferenceName.indexOf("CSHMIHostServer") !== -1){
 					//for example CSHMIHostServer/acplt/ov/library only adds the host and server
-					var FBrefName = this._getFBReference(VisualParentObject, false, true);
-					var HostServer = HMI.KSClient._splitKSPath(FBrefName)[0];
+					var FBrefName = this._getFBReference(VisualParentObject, null);
+					var HostServer = HMI.KSClient._splitKSPath(FBrefName.path)[0];
 					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIHostServer", "//"+HostServer);
 					VisualObject.setAttribute("data-NameOrigin", "CSHMIHostServer+newPart");
 					FBrefName = null;
@@ -4467,24 +4494,25 @@ cshmi.prototype = {
 			}
 			
 			//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-			if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]] !== undefined){
+			if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild[FBVariableReferenceEntry[1]] !== undefined){
 				//we want to get values from the current child (e.g. myFavoriteVar:OP_NAME)
 				
-				if (this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]].charAt(0) !== "/"){
+				if (ChildrenIterator.currentChild[FBVariableReferenceEntry[1]].charAt(0) !== "/"){
 					//Value from currentChild is not a full path, so search for it in the parents
 					
-					var FBRef = this._getFBReference(VisualParentObject);
-					if (FBRef === ""){
+					var FBRef = this._getFBReference(VisualParentObject, ChildrenIterator);
+					if (FBRef.path === ""){
 						HMI.hmi_log_info_onwebsite('Template '+ObjectPath+' is wrong configured. Found no FBReference on a parent.');
 						return null;
-					}else if (FBRef.indexOf("//localhost") === 0){
+					}else if (FBRef.path.indexOf("//localhost") === 0){
+						//fixme change that to match fbreference
 						//localhost in the model should not be the http-gateway
-						FBRef = FBRef.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
+						FBRef.path = FBRef.path.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef;
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef.path;
 				}else{
 					//currentChild set a full path
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
+					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
 				}
 			}else{
 				//direct setting of a FBVariable
@@ -4513,8 +4541,8 @@ cshmi.prototype = {
 				}
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
-				if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild[Value] !== undefined){
-					VisualObject.ConfigValues[KeyValueEntry[0]] = this.ResourceList.ChildrenIterator.currentChild[Value];
+				if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild[Value] !== undefined){
+					VisualObject.ConfigValues[KeyValueEntry[0]] = ChildrenIterator.currentChild[Value];
 				}
 				else{
 					VisualObject.ConfigValues[KeyValueEntry[0]] = Value;
@@ -4581,13 +4609,13 @@ cshmi.prototype = {
 			//xy is set already, prevent resetting to wrong value
 			delete requestList[ObjectPath]["x"];
 			delete requestList[ObjectPath]["y"];
-		}else if (calledFromInstantiateTemplate === true && this.ResourceList.ChildrenIterator.currentChild !== undefined && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
+		}else if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
 			//adjust position with an offset. if there is no offset, do not change xy and do not increment the currentCount
 			if(requestList[ObjectPath]["xOffset"] !== "0" || requestList[ObjectPath]["yOffset"] !== "0"){
 				//the offsetCount must be global for all InstantiateTemplate below an iterator
-				var offsetCount = this.ResourceList.ChildrenIterator.currentCount;
+				var offsetCount = ChildrenIterator.currentCount;
 				//the next InstantiateTemplate should go to an other position
-				this.ResourceList.ChildrenIterator.currentCount++;
+				ChildrenIterator.currentCount++;
 				var offsetCountX;
 				var offsetCountY;
 				var direction = requestList[ObjectPath]["maxTemplatesPerDirection"].split(":");
@@ -4874,7 +4902,7 @@ cshmi.prototype = {
 				};
 				this.setValue = function (newValue) {
 					var setValueObjectPath = ObjectPath+"/"+varName;
-					HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue);
+					HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue, null, false);
 				};
 			};
 			
@@ -4910,7 +4938,7 @@ cshmi.prototype = {
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBVariableReference"] = FBVariableReference;
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["ConfigValues"] = ConfigValues;
 				HMI.cshmi.ResourceList.Elements["tempPath"].Parameters["FBReference"] = FBReference;
-				var VisualChildObject = HMI.cshmi._buildSvgGroup(VisualObject, "tempPath", false, false);
+				var VisualChildObject = HMI.cshmi._buildSvgGroup(VisualObject, "tempPath", false, null, false);
 				VisualObject.appendChild(VisualChildObject);
 				
 				//calculate all offset parameter to be able to display visual feedback
@@ -5125,7 +5153,7 @@ cshmi.prototype = {
 	 */
 	
 	//newwrite
-	//alle buildSvg* in eine Funktion zusammenfassen, da sehr �hnlich. Mit this.ModellVariables...
+	//alle buildSvg* in eine Funktion zusammenfassen, da sehr aehnlich. Mit this.ModellVariables...
 	
 	/**
 	 * builds SVG line object, gets the parameter via KS
@@ -5844,17 +5872,16 @@ cshmi.prototype = {
 	/**
 	 * returns the FBReference
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
-	 * @param {BOOL} giveObject should we give the path and the targetObject in an array instead of the path only?
-	 * @param {BOOL} checkNoIterator do not check the iterator for a target
-	 * @return {String} Path of the FBReference or "" OR an array with the Path and the Object
+	 * @param ChildrenIterator of the iterator or null
+	 * @return Path (or "") as .path and the Object as .object
 	 */
-	_getFBReference: function(VisualObject, giveObject, checkNoIterator){
+	_getFBReference: function(VisualObject, ChildrenIterator){
 		var TemplateObject = VisualObject;
-		var resultArray = ["", null];
+		var result = {path:"", object:null};
 		var FBRef = "";
 		
 		//a getVar currentChild has OP_VALUE and OP_NAME set
-		if (!checkNoIterator && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
+		if (ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild["OP_VALUE"] !== undefined ){
 			//we are in an GetVar-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
 			do{
@@ -5877,30 +5904,30 @@ cshmi.prototype = {
 				//only keep the String before 4th "/"
 				ServerName = FBRef.slice(0, slashIndex);
 			}
-			if (this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"].charAt(0) === "/"){
+			if (ChildrenIterator.currentChild["OP_VALUE"].charAt(0) === "/"){
 				// the iterated string begins with / so it is a fullpath (likely from a GetVar on an assoziation)
 				
 				// it could be a path to another server, so we must add the serverName
-				resultArray[0] = ServerName+this.ResourceList.ChildrenIterator.currentChild["OP_VALUE"];
-				resultArray[1] = TemplateObject;
+				result.path = ServerName+ChildrenIterator.currentChild["OP_VALUE"];
+				result.object = TemplateObject;
 			}
 			
 		//a getEP currentChild has OP_NAME set
-		}else if (!checkNoIterator && this.ResourceList.ChildrenIterator.currentChild !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
+		}else if (ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild["OP_NAME"] !== undefined ){
 			//we are in an getEP-iterator and want to read out a value from the currentchild
 			//search FBReference of root Object
 			do{
 				//FBReference found
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					FBRef = TemplateObject.FBReference["default"];
-					if (this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && this.ResourceList.ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
+					if (ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 						//we have an OV-PART, so the separator is a dot
-						resultArray[0] = FBRef+"."+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						result.path = FBRef+"."+ChildrenIterator.currentChild["OP_NAME"];
 					}else{
 						//we have no OV-PART, so the separator is a slash
-						resultArray[0] = FBRef+"/"+this.ResourceList.ChildrenIterator.currentChild["OP_NAME"];
+						result.path = FBRef+"/"+ChildrenIterator.currentChild["OP_NAME"];
 					}
-					resultArray[1] = TemplateObject;
+					result.object = TemplateObject;
 					break;
 				}
 			//loop upwards to find the Template object
@@ -5910,18 +5937,14 @@ cshmi.prototype = {
 			do{
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
 					//the name of a Template was requested
-					resultArray = [TemplateObject.FBReference["default"], TemplateObject];
+					result.path = TemplateObject.FBReference["default"];
+					result.object = TemplateObject;
 					break;
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 		}
-		if(giveObject === true){
-			return resultArray;
-		}else{
-			//the caller needs only the path
-			return resultArray[0];
-		}
+		return result;
 	},
 	
 	/**
@@ -6178,10 +6201,6 @@ cshmi.prototype = {
 	 * interprete onloadCallStack
 	 */
 	_interpreteOnloadCallStack: function(){
-		//onload code should not know, if we are in an iterator
-		var savedCurrentChild = this.ResourceList.ChildrenIterator.currentChild;
-		delete this.ResourceList.ChildrenIterator.currentChild;
-		
 		//for this objects, the init stage should be set (needed for getValue and timeevent)
 		var oldStage = this.initStage;
 		this.initStage = true;
@@ -6192,13 +6211,9 @@ cshmi.prototype = {
 				//the object was killed, so ignore
 				continue;
 			}
-			this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"]);
+			this._interpreteAction(EventObjItem["VisualObject"], EventObjItem["ObjectPath"], null, null);
 		}
 		EventObjItem = null;
-		
-		//restore currentChild status
-		this.ResourceList.ChildrenIterator.currentChild = savedCurrentChild;
-		savedCurrentChild = null;
 		
 		this.initStage = oldStage;
 		
