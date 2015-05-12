@@ -515,8 +515,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 						{
-							ov_free(thisCh->v_inData.data);
-							thisCh->v_inData.data = NULL;
+							ksbase_free_KSDATAPACKET(&thisCh->v_inData);
 						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
@@ -546,8 +545,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 						{
-							ov_free(thisCh->v_inData.data);
-							thisCh->v_inData.data = NULL;
+							ksbase_free_KSDATAPACKET(&thisCh->v_inData);
 						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
