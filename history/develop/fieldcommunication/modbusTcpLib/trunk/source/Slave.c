@@ -225,7 +225,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 								ov_memstack_unlock();
 								break;
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
+							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO);
 						}
 						Ov_GetVTablePtr(modbusTcpLib_Request, pVtblRequest, pWriteRegistersRequest);
 						if(!pVtblRequest){
@@ -291,7 +291,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 								ov_memstack_unlock();
 								break;
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
+							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI);
 						}
 						Ov_GetVTablePtr(modbusTcpLib_Request, pVtblRequest, pReadDIRequest);
 						if(!pVtblRequest){
@@ -349,15 +349,15 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 								ov_memstack_unlock();
 								break;
 							}
-							pWriteRegistersRequest->v_unitIdentifier = pDO->v_unitIdentifier;
-							result = Ov_Link(modbusTcpLib_requestToChannel, pWriteRegistersRequest, pDO);
+							pWriteCoilsRequest->v_unitIdentifier = pDO->v_unitIdentifier;
+							result = Ov_Link(modbusTcpLib_requestToChannel, pWriteCoilsRequest, pDO);
 							if(Ov_Fail(result)){
 								ov_memstack_lock();
 								ov_logfile_error("%s: Linking of first Channel to Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
 								ov_memstack_unlock();
 								break;
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
+							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO);
 						}
 						Ov_GetVTablePtr(modbusTcpLib_Request, pVtblRequest, pWriteCoilsRequest);
 						if(!pVtblRequest){

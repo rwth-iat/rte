@@ -25,6 +25,19 @@
 #include "libov/ov_macros.h"
 
 
+OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_IOChannel_address_set(
+    OV_INSTPTR_modbusTcpLib_IOChannel          pobj,
+    const OV_INT  value
+) {
+	if(pobj->v_actimode == 1
+			|| Ov_GetParent(modbusTcpLib_requestToChannel, pobj)
+			|| Ov_GetParent(modbusTcpLib_toNextChannel, pobj)){
+		return OV_ERR_NOACCESS;
+	}
+    pobj->v_address = value;
+    return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT void modbusTcpLib_IOChannel_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc

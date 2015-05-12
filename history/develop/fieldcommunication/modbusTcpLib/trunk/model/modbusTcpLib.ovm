@@ -241,6 +241,7 @@ LIBRARY modbusTcpLib
 				COMMENT	=	"ident number of slave device if it is a modbus RTU slave behind a tcp gateway. Otherwise 0xFF (255)"
 				INITIALVALUE	=	255;
 			address	:	INT
+				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"Channels address in the process image";
 		END_VARIABLES;

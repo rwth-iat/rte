@@ -81,6 +81,11 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_WriteMultipleCoilsRequest_sendRequest(
 	OV_INSTPTR_modbusTcpLib_IOChannel	pIOChannel = NULL;
 	OV_UINT	iterator;
 
+	pDomain = Ov_GetParent(ov_containment, thisReq);
+	if(!pDomain){
+		ov_memstack_unlock();
+		return OV_ERR_BADPLACEMENT;
+	}
 	pSlave = Ov_DynamicPtrCast(modbusTcpLib_Slave, pDomain->v_pouterobject);
 	ov_memstack_lock();
 	request.length = 7 + 6 + thisReq->v_requestedItems / 8;
@@ -113,6 +118,9 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_WriteMultipleCoilsRequest_sendRequest(
 	modbusTcpLib_Request_writeWord(thisReq->v_requestedItems, request.writePT);
 	request.writePT += 2;
 	*request.writePT = (OV_BYTE)((thisReq->v_requestedItems / 8) & 0xFF);
+	if(thisReq->v_requestedItems % 8){
+		(*request.writePT)++;
+	}
 	request.writePT += 1;
 	pIOChannel = Ov_GetChild(modbusTcpLib_requestToChannel, thisReq);
 	if(!pIOChannel){

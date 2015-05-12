@@ -145,7 +145,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_Request_addItem(
 			pRequest->v_requestedItems += (pRequest->v_requestStartAddr - address) + 1;
 			pRequest->v_requestStartAddr = address;
 		} else {
-			if(address > pRequest->v_requestStartAddr + pRequest->v_requestedItems){
+			if(address >= pRequest->v_requestStartAddr + pRequest->v_requestedItems){
 				pRequest->v_requestedItems = (address - pRequest->v_requestStartAddr) + 1;
 			}
 		}

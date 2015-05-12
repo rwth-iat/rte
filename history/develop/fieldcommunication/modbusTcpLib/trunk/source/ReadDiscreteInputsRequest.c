@@ -81,7 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_handleResponse(
 		if(byteCount + 2 > dataLength){
 			return OV_ERR_BADPARAM;
 		}
-		if(byteCount == thisReq->v_requestedItems / 8){
+		if(byteCount == thisReq->v_requestedItems / 8 || byteCount == (thisReq->v_requestedItems / 8) +1 ){
 			do{
 				if(((pIOCHannel->v_address - thisReq->v_requestStartAddr) / 8) <= byteCount){
 					if(Ov_CanCastTo(modbusTcpLib_DI, pIOCHannel)){
