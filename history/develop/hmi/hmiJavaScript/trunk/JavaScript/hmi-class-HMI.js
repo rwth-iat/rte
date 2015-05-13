@@ -1040,6 +1040,9 @@ HMI.prototype = {
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
 		
+		//clear old info from urlparameter (at least FBReference must be cleared) 
+		this.HMI_Constants.UrlParameterList = null;
+		
 		//prevent further interpretion of timeevents
 		this.cshmi = null;
 		
@@ -1088,6 +1091,9 @@ HMI.prototype = {
 		deleteChilds(this.Playground);
 		deleteChilds(this.ErrorOutput);
 		deleteChilds(this.InfoOutput);
+		
+		//clear old info from urlparameter (at least FBReference must be cleared)
+		this.HMI_Constants.UrlParameterList = null;
 		
 		//prevent further interpretion of timeevents
 		this.cshmi = null;
