@@ -115,6 +115,9 @@ function cshmi() {
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
 	this.cshmiOperatorRightclickClass = "cshmi-rightclick";
 	this.cshmiOperatorAftermoveClass = "cshmi-aftermove";
+	
+	//disable foreignObject for now. See comment below
+	this.useforeignObject = false;
 };
 
 
@@ -243,6 +246,19 @@ cshmi.prototype = {
 		
 		this._interpreteOnloadCallStack();
 		
+		if(false === this.useforeignObject){
+			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			for (var i = 0; i < blackboxes.length; ++i){
+				var HTMLcontentNode = document.getElementById(blackboxes[i].id+"*Div");
+				if(HTMLcontentNode){
+					//push the blackbox thing to the end
+					HMI.Playground.appendChild(HTMLcontentNode);
+					//correct position of the blackbox. absolutey are not known before
+					HTMLcontentNode.style.top = blackboxes[i].getAttribute("absolutey")+"px";
+					HTMLcontentNode.style.left = blackboxes[i].getAttribute("absolutex")+"px";
+				}
+			}
+		}
 		
 		//the DOM Tree is populated now
 		this.initStage = false;
@@ -258,9 +274,7 @@ cshmi.prototype = {
 	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
 		var VisualObject = null;
 		var Result = true;
-		if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
-			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
-		}else if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
+		if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, false, null, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
@@ -280,6 +294,8 @@ cshmi.prototype = {
 			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
 			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath, preventNetworkRequest);
+		}else if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
+			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
 			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
@@ -2642,6 +2658,14 @@ cshmi.prototype = {
 				HMI.hmi_log_info_onwebsite("CompareIteratedChild "+ObjectPath+" is not configured");
 				//error state, so no boolean
 				return null;
+			}else if(ChildrenIterator.currentChild[childValue[0]] === undefined){
+				var errormessage = "CompareIteratedChild "+ObjectPath+".childValue is wrong configured. The requested iterator does not provide this information";
+				if(childValue[0].indexOf("OP_") !== -1){
+					errormessage += ": " + childValue[0]+" is not available on variables and associations.";
+				}
+				HMI.hmi_log_info_onwebsite(errormessage);
+				//error state, so no boolean
+				return null;
 			}
 			thisObserverEntry = new ObserverEntry("currentChild");
 			//this is know right know, so fill it direct
@@ -4743,6 +4767,7 @@ cshmi.prototype = {
 				return null;
 			}
 			
+			//get via KSClient because of problems getting '{}' caused by splitKsResponse
 			//slice braces '{}' if any
 			var HTMLcontent_braces = HMI.KSClient.getVar(ObjectPath+".HTMLcontent", "OP_VALUE", null);
 			var j = 0;
@@ -4753,7 +4778,6 @@ cshmi.prototype = {
 			HTMLcontent_braces = HTMLcontent_braces.substr(0, HTMLcontent_braces.length - j);
 			requestList[ObjectPath]["HTMLcontent"] = HTMLcontent_braces;
 			
-			//get via KSClient because of problems getting '{}' caused by splitKsResponse
 			//slice braces '{}' if any
 			var jsOnload_braces = HMI.KSClient.getVar(ObjectPath+".jsOnload", "OP_VALUE", null);
 			var j = 0;
@@ -4826,54 +4850,79 @@ cshmi.prototype = {
 		var sourceList = requestList[ObjectPath]["sourceOfLibrary"];
 		var jsOnload = requestList[ObjectPath]["jsOnload"];
 		
-		var foreignObjectNode = null;
+		var HTMLcontentNode = null;
 		if(HTMLcontent !== ""){
 			//create foreignObject in <SVG>-Element
 			var SVGWidth = VisualObject.getAttribute("width");
-			var SVGLength = VisualObject.getAttribute("height");
-			var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGLength+"'>"+
-				"<body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
-			var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
-			+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
-			+HTML
-			+"</svg:svg>";
-			
-			//append foreignObject to VisualObject
-			foreignObjectNode = HMI.HMIDOMParser.parse(svgContent);
-			VisualObject.appendChild(foreignObjectNode);
-			
+			var SVGHeight = VisualObject.getAttribute("height");
+			var parentObject = null;
+			if(this.useforeignObject){
+				/* foreignObject has some problem right now:
+				 * opera presto (outdated software): interaction with html forms are not possible
+				 * chrome in spring 2015: https://code.google.com/p/chromium/issues/detail?id=463828 "canvas in positioned svg in html is drawn in 0,0 position"
+				 * MS Edge in spring 2015: https://status.modern.ie/svgforeignobjectelement Feature not available, but Status: "In Development"
+				 * Firefox in spring 2015: some small positioning glitches
+				 * 
+				 * So deactivating this for now
+				 */
+				var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGHeight+"'>"+
+					"<body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
+				var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
+				+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
+				+HTML
+				+"</svg:svg>";
+				HTMLcontentNode = HMI.HMIDOMParser.parse(svgContent);
+				
+				//append foreignObject to VisualObject
+				parentObject = VisualObject;
+			}else{
+				//build a new DIV in the pure html document
+				HTMLcontentNode = document.createElement('div');
+				HTMLcontentNode.id = VisualObject.id+"*Div";
+				HTMLcontentNode.style.width = SVGWidth+"px";
+				HTMLcontentNode.style.height = SVGHeight+"px";
+				HTMLcontentNode.innerHTML = HTMLcontent;
+				
+				//the position will be later positioned to the Playground, so this is changed to "relative"
+				HMI.Playground.style.position = "relative";
+				HTMLcontentNode.style.position = "absolute";
+				
+				//append node to document
+				parentObject = HMI.Playground;
+			}
 			
 			//if Element with class "autosize/autosizeX/autosizeY" exists, adjust width&heigth/width/height taken from Client
-			if (csHMIgetElementsByClassName(VisualObject, 'autosize').length != 0) {
-				var classList = csHMIgetElementsByClassName(VisualObject, 'autosize');
+			var classList = csHMIgetElementsByClassName(parentObject, 'autosize');
+			if (classList.length != 0) {
 				for (var i = 0; i < classList.length; ++i) {
 					//special adjustment for <canvas>-Element
 					if (classList[i].tagName.toLowerCase() === "canvas") {
-						classList[i].width = VisualObject.getAttribute("width");
-						classList[i].height = VisualObject.getAttribute("height");
+						classList[i].width = parsetInt(SVGWidth, 10);
+						classList[i].height = parsetInt(SVGHeight, 10);
 					}
-					classList[i].style.width = VisualObject.getAttribute("width")+"px";
-					classList[i].style.height = VisualObject.getAttribute("height")+"px";
+					classList[i].style.width = SVGWidth+"px";
+					classList[i].style.height = SVGHeight+"px";
 				}		
 			}
-			if (csHMIgetElementsByClassName(VisualObject, 'autosizeX').length != 0) {
-				var classListX = csHMIgetElementsByClassName(VisualObject, 'autosizeX');
+			var classListX = csHMIgetElementsByClassName(parentObject, 'autosizeX');
+			if (classListX.length != 0) {
 				for (var i = 0; i < classListX.length; ++i) {
 					if (classListX[i].tagName.toLowerCase() === "canvas") {
-						classListX[i].width = VisualObject.getAttribute("width");
+						classListX[i].width = parsetInt(SVGWidth, 10);
 					}
-					classListX[0].style.width = VisualObject.getAttribute("width")+"px";
+					classListX[0].style.width = SVGWidth+"px";
 				}
 			}
-			if (csHMIgetElementsByClassName(VisualObject, 'autosizeY').length != 0) {
-				var classListY = csHMIgetElementsByClassName(VisualObject, 'autosizeY');
+			var classListY = csHMIgetElementsByClassName(parentObject, 'autosizeY');
+			if (classListY.length != 0) {
 				for (var i = 0; i < classListY.length; ++i) {
 					if (classListY[i].tagName.toLowerCase() === "canvas") {
-						classListY[i].height = VisualObject.getAttribute("height");
+						classListY[i].height = parsetInt(SVGHeight, 10);
 					}
-					classListY[0].style.height = VisualObject.getAttribute("height")+"px";
+					classListY[0].style.height = SVGHeight+"px";
 				}
 			}
+			parentObject.appendChild(HTMLcontentNode);
 		}
 		
 		if(sourceList !== "" || jsOnload  !== ""){
@@ -4915,9 +4964,14 @@ cshmi.prototype = {
 			cshmimodel.window = window;
 			cshmimodel.variables = new Object();
 			
-			if(foreignObjectNode !== null){
-			//this is the html body node of the foreignObject
-				cshmimodel.HtmlBody = foreignObjectNode.firstChild.firstElementChild;
+			if(HTMLcontentNode !== null){
+				if(this.useforeignObject){
+					//this is the html body node of the foreignObject
+					cshmimodel.HtmlBody = HTMLcontentNode.firstChild.firstElementChild;
+				}else{
+					cshmimodel.HtmlBody = document.body;
+					cshmimodel.document = document;
+				}
 			}else{
 				cshmimodel.HtmlBody = null;
 			}
