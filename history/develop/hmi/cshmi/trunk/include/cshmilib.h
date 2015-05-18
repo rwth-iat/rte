@@ -90,4 +90,21 @@
 	Ov_HeapFree(pDownloadApplication->v_ApplicationCache.str##classname);	\
 	CSHMI_INITCLASSCACHEENTRY(classname)
 
+//fall back defines for old ov servers (they are 32 bit for sure)
+#ifndef OV_PRINT_INT
+#define OV_PRINT_INT "i"
+#endif
+#ifndef OV_PRINT_UINT
+#define OV_PRINT_UINT "lu"
+#endif
+#ifndef OV_PRINT_STRING
+#define OV_PRINT_STRING "s"
+#endif
+#ifndef OV_PRINT_SINGLE
+#define OV_PRINT_SINGLE "f"
+#endif
+#ifndef OV_PRINT_DOUBLE
+#define OV_PRINT_DOUBLE "lf"
+#endif
+
 #endif
