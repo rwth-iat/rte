@@ -3150,13 +3150,17 @@ cshmi.prototype = {
 			if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
 				//this error will never be fixed, so prevent this routing forever. But how???
 				return false;
-			}else if (SourceBasename === null){
+			}
+			if (SourceBasename === null){
 				SourceBasename = "";
-			}else if (SourceVariablename === null){
+			}
+			if (SourceVariablename === null){
 				SourceVariablename = "";
-			}else if (TargetBasename === null){
+			}
+			if (TargetBasename === null){
 				TargetBasename = "";
-			}else if (TargetVariablename === null){
+			}
+			if (TargetVariablename === null){
 				TargetVariablename = "";
 			}
 			
