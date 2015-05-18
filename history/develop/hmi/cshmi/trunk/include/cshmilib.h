@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -82,15 +82,12 @@
 #define CSHMI_ZINDEX_TOP		ULONG_MAX
 #define CSHMI_ZINDEX_DEFAULT	CSHMI_ZINDEX_TOP
 
-#ifdef __GNUC__
-#define UNUSED __attribute__ ((unused))
-#else
-#define UNUSED
-#endif
+#define CSHMI_INITCLASSCACHEENTRY(classname)	\
+	pDownloadApplication->v_ApplicationCache.str##classname = NULL;	\
+	pDownloadApplication->v_ApplicationCache.cache##classname##Dirty = TRUE
 
 #define CSHMI_EMPTYCLASSCACHEENTRY(classname)	\
 	Ov_HeapFree(pDownloadApplication->v_ApplicationCache.str##classname);	\
-	pDownloadApplication->v_ApplicationCache.str##classname = NULL;	\
-	pDownloadApplication->v_ApplicationCache.cache##classname##Dirty = TRUE
+	CSHMI_INITCLASSCACHEENTRY(classname)
 
 #endif

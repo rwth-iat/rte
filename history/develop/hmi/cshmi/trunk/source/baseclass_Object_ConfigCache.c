@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -751,12 +751,23 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 OV_DLLFNCEXPORT OV_STRING cshmi_Object_getConfigAsJSON(
 	OV_INSTPTR_cshmi_Object          pObj
 ) {
-	//update the cache if the cache is dirty (a parameter is changed) or the
-	//parent is different (the object was moved)
-	if(		pObj->v_ConfigCache.cacheDirty == TRUE
-		||	pObj->v_ConfigCache.parentObject != Ov_GetParent(ov_containment, pObj)
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
+
+	//update the cache if...
+	if(		pObj->v_ConfigCache.parentObject != Ov_GetParent(ov_containment, pObj)
 		||	ov_string_compare(pObj->v_ConfigCache.identifier, pObj->v_identifier) != OV_STRCMP_EQUAL
 	){
+		//...the parent is different (the object was moved)
+		cshmi_Object_updateConfigAsJSON(pObj);
+
+		// and clear childlist of turbo
+		pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+		if(pDownloadApplication != NULL){
+			//throw away childlist from turbo
+			CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
+		}
+	}else if(pObj->v_ConfigCache.cacheDirty == TRUE){
+		//... the cache is dirty (a parameter is changed)
 		cshmi_Object_updateConfigAsJSON(pObj);
 	}
 	return pObj->v_ConfigCache.asJSON;

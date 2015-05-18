@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -81,6 +81,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		pDom = Ov_GetParent(ov_containment, pObj);
 	OV_INSTPTR_cshmi_Object
 		pSiblingObj = NULL;
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
 	OV_UINT
 		SiblingNumber			= 0;
 	OV_RESULT	fr						= OV_ERR_OK;
@@ -93,6 +94,12 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_zindex_set(
 		return OV_ERR_OK;
 	}
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pObj));
+
+	pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+	if(pDownloadApplication != NULL){
+		//throw away childlist from turbo
+		CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
+	}
 
 	//iterate over all siblings to find target position
 	Ov_ForEachChildEx(ov_containment, pDom, pSiblingObj, cshmi_Object){
@@ -220,12 +227,19 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_constructor(
 	//
 	OV_RESULT    result;
 	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pObj);
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
 
 	/* do what the base class does first */
 	result = ov_object_constructor(pObj);
 
 	//reset own and mark class cache entry invalid
 	cshmi_Object_resetCache(pinst);
+
+	pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+	if(pDownloadApplication != NULL){
+		//throw away childlist from turbo
+		CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
+	}
 
 	return result;
 }
@@ -278,9 +292,16 @@ OV_DLLFNCEXPORT void cshmi_Object_destructor(
 	 *   local variables
 	 */
 	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pobj);
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
 
 	//reset own and mark class cache entry invalid
 	cshmi_Object_resetCache(pinst);
+
+	pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+	if(pDownloadApplication != NULL){
+		//throw away childlist from turbo
+		CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
+	}
 
 	/* destroy object */
 	ov_object_destructor(pobj);

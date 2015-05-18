@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -71,7 +71,7 @@ LIBRARY cshmi
 
 	VERSION		= "0.3";
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
-	COPYRIGHT	= "Copyright (C) 2014 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
+	COPYRIGHT	= "Copyright (C) 2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
 	COMMENT		= "CSHMI - Client-Side Human-Machine Interface";
 
 	CLASS Object : CLASS ov/domain
@@ -92,7 +92,7 @@ LIBRARY cshmi
 			startup						:	C_FUNCTION	<OV_FNC_STARTUP>;
 			shutdown					:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
-			resetCache					:	C_FUNCTION	<CSHMI_FNC_RESETCACHE>;	//marks own cache dirty
+			resetCache					:	C_FUNCTION	<CSHMI_FNC_RESETCACHE>;
 			getConfigAsJSON				:	C_FUNCTION	<CSHMI_FNC_GETCONFIGASJSON>;
 		END_OPERATIONS;
 	END_CLASS;
@@ -668,7 +668,7 @@ LIBRARY cshmi
 		VARIABLES
 			ChildrenType : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "ObjectType to iterate through (OT_DOMAIN; OT_VARIABLE; OT_LINK; OT_HISTORY; OT_STRUCTURE; OT_ANY) or name (association or vector)";
+				COMMENT = "ObjectType to iterate through (OT_DOMAIN for children; OT_VARIABLE for variables; OT_LINK for links; OT_ANY for all three at once) or a name (for iterating an association or vector)";
 		END_VARIABLES;
 		PARTS
 			forEachChild : CLASS cshmi/csContainer;
@@ -898,7 +898,7 @@ LIBRARY cshmi
 		VARIABLES
 			childValue : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "(OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT) or OP_VALUE with a getVar Vec iterator";
+				COMMENT = "Iterating childrens can be tested on (OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT); Vec-Variables and Links have only OP_VALUE or the equal OP_NAME";
 			comptype : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
