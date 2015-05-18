@@ -3083,6 +3083,11 @@ cshmi.prototype = {
 			return false;
 		}
 		
+		var SourceBasename = null;
+		var SourceVariablename = null;
+		var TargetBasename		= null;
+		var TargetVariablename	= null;
+
 		var SourceConnectionPoint = null;
 		var SourceConnectionPointdirection = 0;
 		var TargetConnectionPoint = null;
@@ -3104,12 +3109,15 @@ cshmi.prototype = {
 			}else if (TargetConnectionPoint && TargetConnectionPoint.ownerDocument === this.trashDocument){
 				//we had a connection to a deleted point
 				reuseConnection = false;
-			}else if(SourceConnectionPoint === undefined){
+			}else if(!SourceConnectionPoint || !TargetConnectionPoint){
 				//uncomplete caching
 				reuseConnection = false;
-			}else if(TargetConnectionPoint === undefined){
-				//uncomplete caching
-				reuseConnection = false;
+				SourceBasename = VisualObject.ResourceList.RoutePolyline.SourceBasename;
+				SourceVariablename = VisualObject.ResourceList.RoutePolyline.SourceVariablename;
+				TargetBasename = VisualObject.ResourceList.RoutePolyline.TargetBasename;
+				TargetVariablename = VisualObject.ResourceList.RoutePolyline.TargetVariablename;
+				SourceConnectionPoint = null;
+				TargetConnectionPoint = null;
 			}
 		}
 		if(reuseConnection == true){
@@ -3141,16 +3149,24 @@ cshmi.prototype = {
 				this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 			}
 			
-			//get Values (via getValue-parts)
-			var SourceBasename		= this._getValue(VisualObject, ObjectPath+".SourceBasename");
-			var SourceVariablename	= this._getValue(VisualObject, ObjectPath+".SourceVariablename");
-			var TargetBasename		= this._getValue(VisualObject, ObjectPath+".TargetBasename");
-			var TargetVariablename	= this._getValue(VisualObject, ObjectPath+".TargetVariablename");
-			
-			if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
-				//this error will never be fixed, so prevent this routing forever. But how???
-				return false;
+			if( SourceBasename == null || SourceVariablename == null || TargetBasename == null || TargetVariablename == null){
+				//get Values (via getValue-parts)
+				SourceBasename		= this._getValue(VisualObject, ObjectPath+".SourceBasename");
+				SourceVariablename	= this._getValue(VisualObject, ObjectPath+".SourceVariablename");
+				TargetBasename		= this._getValue(VisualObject, ObjectPath+".TargetBasename");
+				TargetVariablename	= this._getValue(VisualObject, ObjectPath+".TargetVariablename");
+				
+				if (SourceBasename === false || SourceVariablename === false || TargetBasename === false || TargetVariablename === false){
+					//this error will never be fixed, so prevent this routing forever. But how???
+					return false;
+				}
+				if (SourceBasename === null || SourceVariablename === null || TargetBasename === null || TargetVariablename === null){
+					//we are not visible right now... skip processing
+					return false;
+				}
 			}
+			
+			/*
 			if (SourceBasename === null){
 				SourceBasename = "";
 			}
@@ -3163,6 +3179,7 @@ cshmi.prototype = {
 			if (TargetVariablename === null){
 				TargetVariablename = "";
 			}
+			*/
 			
 			var FBRef = this._getFBReference(VisualObject, null);
 			
@@ -3401,7 +3418,13 @@ cshmi.prototype = {
 			VisualObject.ResourceList = new Object();
 			VisualObject.ResourceList.RoutePolyline = new Object();
 			VisualObject.ResourceList.RoutePolyline.Coords = new Object();
-			if(this.initStage === false){
+			if(SourceConnectionPoint === null || TargetConnectionPoint === null){
+				//one or both connected object is not loaded yet.
+				VisualObject.ResourceList.RoutePolyline.SourceBasename = SourceName;
+				VisualObject.ResourceList.RoutePolyline.SourceVariablename = SourceVariablename;
+				VisualObject.ResourceList.RoutePolyline.TargetBasename = TargetBasename;
+				VisualObject.ResourceList.RoutePolyline.TargetVariablename = TargetVariablename;
+			}else{
 				//remember the result
 				VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint = SourceConnectionPoint;
 				VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection = SourceConnectionPointdirection;
