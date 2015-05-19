@@ -46,7 +46,7 @@ OBJS =          clnt_raw.o \
 		rpc_comm.o \
 		svc_simp.o \
 		xdr_arra.o \
-		xrd_floa.o \
+		xdr_floa.o \
 		xdr_refe.o \
 		xdr_stdi.o \
 		svc.o \
