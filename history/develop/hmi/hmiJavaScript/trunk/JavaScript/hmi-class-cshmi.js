@@ -3166,21 +3166,6 @@ cshmi.prototype = {
 				}
 			}
 			
-			/*
-			if (SourceBasename === null){
-				SourceBasename = "";
-			}
-			if (SourceVariablename === null){
-				SourceVariablename = "";
-			}
-			if (TargetBasename === null){
-				TargetBasename = "";
-			}
-			if (TargetVariablename === null){
-				TargetVariablename = "";
-			}
-			*/
-			
 			var FBRef = this._getFBReference(VisualObject, null);
 			
 			//in DOM every object has a full server+Host name, so if the basename does not provide it, 
