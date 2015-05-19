@@ -69,5 +69,5 @@ oncrpc.dll:     $(OBJS) oncrpc.lib oncrpc.exp
     copy oncrpc.dll ..\bin
     copy oncrpc.dll ..\rpcgen
 
-.c.obj:
+%.obj: %.c
     $(cc) /I$(RPCINCLUDEPATH) $(cdebug) $(cflags) $(cvarsdll) $*.c

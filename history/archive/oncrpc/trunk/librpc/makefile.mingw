@@ -71,5 +71,5 @@ oncrpc.dll:     $(OBJS)
 	cmd /c copy oncrpc.dll ..\bin
 	cmd /c copy oncrpc.dll ..\rpcgen
 
-.c.o:
+%.o: %.c
 	$(CC) -c -I$(RPCINCLUDEPATH) $(cdebug) $(cflags) $(cvarsdll) $*.c
