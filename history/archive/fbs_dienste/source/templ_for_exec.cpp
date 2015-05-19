@@ -38,6 +38,8 @@
 
 #if (PLT_SYSTEM_LINUX == 1) || (PLT_SYSTEM_SOLARIS == 1) || defined(__MINGW32__)
 
+//Sten+Lars on 19.05.2015: adding ifdefs to compil for rpi, no idea why
+#ifndef __arm__
 template class KsArray<KsString>;
 template class KsVecValueBase<KsString>;
 template class KsVecValueBase<KsTime>;
@@ -54,6 +56,8 @@ template class PltHandle<KsSetVarItem>;
 template class PltHandle<KsString>;
 template class PltHandle<KsValue>;
 template class PltList<KsPtrHandle<KsEngProps> >;
+template class KsArray<KsSetVarItem>;
+#endif
 
 
 template class PltIterator_<PltPtrHandle<KscVariable> >;
@@ -117,7 +121,6 @@ template class PltIterator_<PltPtrHandle<KscSorterBucket> >;
 template class PltContainer_<KsLinkItem>;
 template class PltIterator<PltPtrHandle<KscSorterBucket> >;
 template class PltHandle<KsCreateObjResultItem>;
-template class KsArray<KsSetVarItem>;
 template class PltArray<KsCreateObjResultItem>;
 template class PltArrayHandle<KscSortVarPtr>;
 template class PltArray<KsCreateObjItem>;
