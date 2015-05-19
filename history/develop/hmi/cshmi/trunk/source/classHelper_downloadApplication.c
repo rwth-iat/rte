@@ -211,7 +211,9 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_domain p
 			strLen = ov_string_getlength(ResultListVec[ResultListIndex]);	\
 			if(strLen != 0){	\
 				pDownloadApplication->v_ApplicationCache.str##classname = Ov_HeapMalloc(strLen+1);	\
-				memcpy(pDownloadApplication->v_ApplicationCache.str##classname, ResultListVec[ResultListIndex], strLen+1);	\
+				if(!pDownloadApplication->v_ApplicationCache.str##classname){	\
+					memcpy(pDownloadApplication->v_ApplicationCache.str##classname, ResultListVec[ResultListIndex], strLen+1);	\
+				}	\
 			}else{	\
 				Ov_HeapFree(pDownloadApplication->v_ApplicationCache.str##classname);	\
 				pDownloadApplication->v_ApplicationCache.str##classname = NULL;	\
@@ -588,7 +590,6 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 
 	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
 	pJSON = (OV_STRING) ov_memstack_alloc(lenChildList+lenBaseKsPath+lenElements+lenActions+7);
-
 	if (!pJSON){
 		ov_logfile_debug("%d:%s Error reserving memory for concatting result: MEMSTACK full", __LINE__, __FILE__);
 		ov_string_setvalue(&strBaseKsPath, NULL);
