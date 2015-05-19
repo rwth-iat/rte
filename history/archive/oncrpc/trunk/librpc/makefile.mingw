@@ -11,47 +11,47 @@ RPCINCLUDEPATH = ..
 # you have to give the path to it here.
 RPCLIBPATH = ..\bin\\
 
-DEFINITION =    ONCRPC.DEF
+DEFINITION =    oncrpc.def
 
-OBJS =          CLNT_RAW.o \
-		XDR.o \
-		CLNT_TCP.o \
-		CLNT_UDP.o \
-		PMAP_RMT.o \
-		RPC_PROT.o \
-		SVC_AUTU.o \
-		SVC_AUTH.o \
-		SVC_RAW.o \
-		SVC_RUN.o \
-		SVC_TCP.o \
-		SVC_UDP.o \
-		XDR_MEM.o \
-		XDR_REC.o \
-		AUTH_NON.o \
-		AUTH_UNI.o \
-		AUTHUNIX.o \
-		BINDRESV.o \
-		CLNT_GEN.o \
-		CLNT_PER.o \
-		CLNT_SIM.o \
-		GET_MYAD.o \
-		GETRPCEN.o \
-		GETRPCPO.o \
-		PMAP_CLN.o \
-		PMAP_GET.o \
-		PMAP_GMA.o \
-		PMAP_PRO.o \
-		PMAP_PR.o \
-		RPC_CALL.o \
-		RPC_COMM.o \
-		SVC_SIMP.o \
-		XDR_ARRA.o \
-		XDR_FLOA.o \
-		XDR_REFE.o \
-		XDR_STDI.o \
-		SVC.o \
-		BCOPY.o \
-		NT.o
+OBJS =          clnt_raw.o \
+		xdr.o \
+		clnt_tcp.o \
+		clnt_udp.o \
+		pmap_rmt.o \
+		rpc_prot.o \
+		svc_autu.o \
+		svc_auth.o \
+		svc_raw.o \
+		svc_run.o \
+		svc_tcp.o \
+		svc_udp.o \
+		xdr_mem.o \
+		xdr_rec.o \
+		auth_non.o \
+		auth_uni.o \
+		authunix.o \
+		bindserv.o \
+		clnt_gen.o \
+		clnt_per.o \
+		clnt_sim.o \
+		get_myad.o \
+		getrpcen.o \
+		getrpcpo.o \
+		pmap_clnN.o \
+		pmap_get.o \
+		pmap_gma.o \
+		pmap_pro.o \
+		pmap_pr.o \
+		rpc_call.o \
+		rpc_comm.o \
+		svc_simp.o \
+		xdr_arra.o \
+		xrd_floa.o \
+		xdr_refe.o \
+		xdr_stdi.o \
+		svc.o \
+		bcopy.o \
+		nt.o
 
 all: oncrpc.dll oncrpc.a #portmap.exe
 
