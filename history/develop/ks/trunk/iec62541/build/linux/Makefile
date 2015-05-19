@@ -10,7 +10,7 @@ SERVERSTARTKEYS = -w ksbase -w iec62541
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = -o
 # -I../../open62541/include -I../../open62541/src -I../../open62541/src_generated 
-EXTRA_CC_FLAGS = -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DDEBUG=1 -Wextra -Wno-unused-parameter
+EXTRA_CC_FLAGS = -DLOG_KS=1 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DDEBUG=1 -Wextra -Wno-unused-parameter -Wno-declaration-after-statement
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC
@@ -26,5 +26,5 @@ all:
 #	ar rcs open62541.a ../../open62541/CMakeFiles/open62541-objects.dir/src/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src/server/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src_generated/*.o
 	acplt_makmak -l iec62541 $(MAKMAKOPTIONS)
 	tclsh $(PREBUILD) iec62541 $(MAKMAKOPTIONS)
-	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
+	$(MAKE) BIN_DIR='' MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) iec62541

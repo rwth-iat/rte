@@ -38,7 +38,7 @@ typedef void (*UA_Connection_writeCallback)(void *connection, UA_ByteStringArray
 
 extern OV_INSTPTR_iec62541_uaServer iec62541_pUaServer;
 
-void UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection, const UA_ByteString *msg);
+void UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection, UA_ByteString *msg);
 
 UA_Int32 UA_Connection_init(UA_Connection *connection, UA_ConnectionConfig localConf, void *callbackHandle,
                             UA_Connection_closeCallback close, UA_Connection_writeCallback write){
