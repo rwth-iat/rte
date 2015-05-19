@@ -37,7 +37,7 @@ OBJS =          clnt_raw.o \
 		get_myad.o \
 		getrpcen.o \
 		getrpcpo.o \
-		pmap_clnN.o \
+		pmap_cln.o \
 		pmap_get.o \
 		pmap_gma.o \
 		pmap_pro.o \
