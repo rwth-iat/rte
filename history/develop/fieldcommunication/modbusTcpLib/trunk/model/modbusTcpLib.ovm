@@ -298,7 +298,7 @@ LIBRARY modbusTcpLib
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"high end of raw values"
-				INITIALVALUE	=	323767;
+				INITIALVALUE	=	32767;
 			RawLo	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
@@ -331,7 +331,7 @@ LIBRARY modbusTcpLib
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
 				COMMENT	=	"high end of raw values"
-				INITIALVALUE	=	323767;
+				INITIALVALUE	=	32767;
 			RawLo	:	INT
 				HAS_SET_ACCESSOR
 				FLAGS	=	"p"
