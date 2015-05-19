@@ -282,12 +282,17 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
     *   local variables
     */
 	OV_INSTPTR_iec62541_uaClientHandler		thisCl			=	Ov_StaticPtrCast(iec62541_uaClientHandler, this);
-	UA_ByteString							tempMsg			=	{.data = dataReceived->readPT, .length = ((dataReceived->data + dataReceived->length) - dataReceived->readPT)};
+	UA_ByteString							tempSrcMsg		=	{.data = dataReceived->readPT, .length = ((dataReceived->data + dataReceived->length) - dataReceived->readPT)};
+	UA_ByteString							tempMsg			=	{.data = NULL, .length = -1};
 	UA_TcpMessageHeader						tempMsgHeader;
 	size_t									offset			=	0;
 
 	if(!iec62541_pUaServer){
 		return OV_ERR_BADFACTORY;
+	}
+
+	if(UA_ByteString_copy(&tempSrcMsg, &tempMsg) != UA_STATUSCODE_GOOD){
+		return OV_ERR_HEAPOUTOFMEMORY;
 	}
 
 	if(UA_TcpMessageHeader_decodeBinary(&tempMsg, &offset, &tempMsgHeader) != UA_STATUSCODE_GOOD){
@@ -310,14 +315,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	thisCl->v_connectionData.clientHandler = NULL;
 	thisCl->v_connectionData.outData = NULL;
 	thisCl->v_connectionData.inData = NULL;
-	if(tempMsg.data != NULL){
-		ksbase_free_KSDATAPACKET(dataReceived);
-	} else {
-		dataReceived->length = 0;
-		dataReceived->data = NULL;
-		dataReceived->readPT = NULL;
-		dataReceived->writePT = NULL;
-	}
+	ksbase_free_KSDATAPACKET(dataReceived);
 	return OV_ERR_OK;
 }
 
