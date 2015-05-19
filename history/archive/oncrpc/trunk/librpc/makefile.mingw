@@ -30,7 +30,7 @@ OBJS =          clnt_raw.o \
 		auth_non.o \
 		auth_uni.o \
 		authunix.o \
-		bindserv.o \
+		bindresv.o \
 		clnt_gen.o \
 		clnt_per.o \
 		clnt_sim.o \
