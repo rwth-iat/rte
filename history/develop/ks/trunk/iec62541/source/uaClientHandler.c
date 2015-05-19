@@ -310,7 +310,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaClientHandler_HandleRequest(
 	thisCl->v_connectionData.clientHandler = NULL;
 	thisCl->v_connectionData.outData = NULL;
 	thisCl->v_connectionData.inData = NULL;
-	ksbase_free_KSDATAPACKET(dataReceived);
+	if(tempMsg.data != NULL){
+		ksbase_free_KSDATAPACKET(dataReceived);
+	} else {
+		dataReceived->length = 0;
+		dataReceived->data = NULL;
+		dataReceived->readPT = NULL;
+		dataReceived->writePT = NULL;
+	}
 	return OV_ERR_OK;
 }
 
