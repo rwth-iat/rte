@@ -247,7 +247,7 @@ cshmi.prototype = {
 		this._interpreteOnloadCallStack();
 		
 		if(false === this.useforeignObject){
-			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			var blackboxes = csHMIgetElementsByClassName(null, this.cshmiBlackboxClass);
 			for (var i = 0; i < blackboxes.length; ++i){
 				var HTMLcontentNode = document.getElementById(blackboxes[i].id+"*Div");
 				if(HTMLcontentNode){
@@ -302,7 +302,7 @@ cshmi.prototype = {
 			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
-		}else if (ObjectType.indexOf("/cshmi/SetValue") !== -1 && HMI.instanceOf(VisualParentObject, "cshmi-blackbox")){
+		}else if (ObjectType.indexOf("/cshmi/SetValue") !== -1 && HMI.instanceOf(VisualParentObject, this.cshmiBlackboxClass)){
 			// SetValue is ok to be Child of Blackbox
 			return null;
 		}else if (ObjectType.indexOf("/cshmi/TranslationSource") !== -1){
@@ -1919,7 +1919,7 @@ cshmi.prototype = {
 				}
 				VisualObject.setAttribute(ParameterValue, NewValue);
 				if (ParameterValue === "width" || ParameterValue === "height"){
-					if (HMI.instanceOf(VisualObject, "cshmi-blackbox")) {
+					if (HMI.instanceOf(VisualObject, this.cshmiBlackboxClass)) {
 						var secondchild = VisualObject.firstChild.firstChild;
 						secondchild.setAttribute(ParameterValue, NewValue);
 					}
@@ -1943,7 +1943,7 @@ cshmi.prototype = {
 					i++;
 				}
 			}
-			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			var blackboxes = csHMIgetElementsByClassName(null, this.cshmiBlackboxClass);
 			
 			for (var i = 0; i < blackboxes.length; ++i){	
 				//get string of "jsOnglobalvarchanged"
@@ -1979,7 +1979,7 @@ cshmi.prototype = {
 					i++;
 				}
 			}
-			var blackboxes = csHMIgetElementsByClassName(null, "cshmi-blackbox");
+			var blackboxes = csHMIgetElementsByClassName(null, this.cshmiBlackboxClass);
 			
 			for (var i = 0; i < blackboxes.length; ++i){	
 				//get string of "jsOnglobalvarchanged"
@@ -2394,7 +2394,7 @@ cshmi.prototype = {
 		
 		if (returnValue.indexOf("CSHMIModelHost") === 0){
 			//CSHMIModelHost in the model should be replaced
-			return returnValue.replace("CSHMIModelHost", HMI.KSClient.ResourceList.ModelHost);
+			return returnValue.replace("CSHMIModelHost", "//"+HMI.KSClient.ResourceList.ModelHost);
 		}else if (returnValue.charAt(0) === "/" && returnValue.charAt(1) === "/"){
 			return returnValue;
 		}else{
@@ -4496,12 +4496,12 @@ cshmi.prototype = {
 				VisualObject.FBReference["default"] = FBRef.path;
 				VisualObject.id = FBRef.path;
 			}else{
-				if(FBReferenceName.indexOf("CSHMIfullqualifiedname") !== -1){
+				if(FBReferenceName.indexOf("CSHMIfullqualifiedname") === 0){
 					//CSHMIfullqualifiedname can be a prefix
 					var FBrefName = this._getFBReference(VisualParentObject, null);
 					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIfullqualifiedname", FBrefName.path);
 					VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
-				}else if(FBReferenceName.indexOf("CSHMIHostServer") !== -1){
+				}else if(FBReferenceName.indexOf("CSHMIHostServer") === 0){
 					//for example CSHMIHostServer/acplt/ov/library only adds the host and server
 					var FBrefName = this._getFBReference(VisualParentObject, null);
 					var HostServer = HMI.KSClient._splitKSPath(FBrefName.path)[0];
