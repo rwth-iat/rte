@@ -410,6 +410,9 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 
 		break;
 	default:
+		if(pinst->p_channel.v_ConnectionState & KSBASE_CONNSTATE_ERRORINDICATOR){
+			pinst->v_error = TRUE;
+		}
 		break;
 	}
 

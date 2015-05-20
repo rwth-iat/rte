@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_ReadDiscreteInputsRequest_handleResponse(
 		}
 		pSlave = Ov_DynamicPtrCast(modbusTcpLib_Slave, Ov_GetParent(ov_containment, thisReq)->v_pouterobject);
 		if(pSlave){
-			pSlave->v_error = TRUE;
+			pSlave->v_error = FALSE;
 		}
 		byteCount= *dataToHandle;
 		dataToHandle++;
