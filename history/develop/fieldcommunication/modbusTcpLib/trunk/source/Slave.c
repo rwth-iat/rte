@@ -146,17 +146,14 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						if(!pReadInputRegistersRequest){
 							result = Ov_CreateIDedObject(modbusTcpLib_ReadInputRegistersRequest, pReadInputRegistersRequest, &(pinst->p_requests), "ReadInputRegisters");
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
 								break;
 							}
 							pReadInputRegistersRequest->v_unitIdentifier = pAoRI->v_unitIdentifier;
 							result = Ov_Link(modbusTcpLib_requestToChannel, pReadInputRegistersRequest, pAoRI);
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of first Channel to Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
+								ov_logfile_error("%s: Linking of first Channel (%s) to Request (%s) failed with error: %s", pinst->v_identifier,
+										pAoRI->v_identifier, pReadInputRegistersRequest->v_identifier, ov_result_getresulttext(result));
 								break;
 							}
 							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
@@ -175,7 +172,8 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI)){
 								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRI);
 								if(Ov_Fail(result)){
-									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
+									ov_logfile_error("%s: Linking of Channel (%s) to previous Channel (%s) failed with error: %s", pinst->v_identifier,
+											pAoRI->v_identifier, pPrevChannel->v_identifier, ov_result_getresulttext(result));
 									break;
 								}
 								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
@@ -216,17 +214,14 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						if(!pWriteRegistersRequest){
 							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleRegistersRequest, pWriteRegistersRequest, &(pinst->p_requests), "WriteRegisters");
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
 								break;
 							}
 							pWriteRegistersRequest->v_unitIdentifier = pAoRO->v_unitIdentifier;
 							result = Ov_Link(modbusTcpLib_requestToChannel, pWriteRegistersRequest, pAoRO);
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of first Channel to Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
+								ov_logfile_error("%s: Linking of first Channel (%s) to Request (%s) failed with error: %s", pinst->v_identifier,
+										pAoRO->v_identifier, pWriteRegistersRequest->v_identifier, ov_result_getresulttext(result));
 								break;
 							}
 							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO);
@@ -245,9 +240,8 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO)){
 								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRO);
 								if(Ov_Fail(result)){
-									ov_memstack_lock();
-									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-									ov_memstack_unlock();
+									ov_logfile_error("%s: Linking of Channel (%s) to previous Channel (%s) failed with error: %s", pinst->v_identifier,
+											pAoRO->v_identifier, pPrevChannel->v_identifier, ov_result_getresulttext(result));
 									break;
 								}
 								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO);
@@ -288,17 +282,14 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						if(!pReadDIRequest){
 							result = Ov_CreateIDedObject(modbusTcpLib_ReadDiscreteInputsRequest, pReadDIRequest, &(pinst->p_requests), "ReadDiscreteInputs");
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
 								break;
 							}
 							pReadDIRequest->v_unitIdentifier = pDI->v_unitIdentifier;
 							result = Ov_Link(modbusTcpLib_requestToChannel, pReadDIRequest, pDI);
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of first Channel to Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
+								ov_logfile_error("%s: Linking of first Channel (%s) to Request (%s) failed with error: %s", pinst->v_identifier,
+										pDI->v_identifier, pReadDIRequest->v_identifier, ov_result_getresulttext(result));
 								break;
 							}
 							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI);
@@ -317,9 +308,8 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI)){
 								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDI);
 								if(Ov_Fail(result)){
-									ov_memstack_lock();
-									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-									ov_memstack_unlock();
+									ov_logfile_error("%s: Linking of Channel (%s) to previous Channel (%s) failed with error: %s", pinst->v_identifier,
+											pDI->v_identifier, pPrevChannel->v_identifier, ov_result_getresulttext(result));
 									break;
 								}
 								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI);
@@ -360,17 +350,14 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 						if(!pWriteCoilsRequest){
 							result = Ov_CreateIDedObject(modbusTcpLib_WriteMultipleCoilsRequest, pWriteCoilsRequest, &(pinst->p_requests), "WriteCoils");
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
 								ov_logfile_error("%s: creation of Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
 								break;
 							}
 							pWriteCoilsRequest->v_unitIdentifier = pDO->v_unitIdentifier;
 							result = Ov_Link(modbusTcpLib_requestToChannel, pWriteCoilsRequest, pDO);
 							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of first Channel to Request failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
+								ov_logfile_error("%s: Linking of first Channel (%s) to Request (%s) failed with error: %s", pinst->v_identifier,
+										pDO->v_identifier, pWriteCoilsRequest->v_identifier, ov_result_getresulttext(result));
 								break;
 							}
 							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO);
@@ -389,9 +376,8 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO)){
 								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDO);
 								if(Ov_Fail(result)){
-									ov_memstack_lock();
-									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-									ov_memstack_unlock();
+									ov_logfile_error("%s: Linking of Channel (%s) to previous Channel (%s) failed with error: %s", pinst->v_identifier,
+											pDO->v_identifier, pPrevChannel->v_identifier, ov_result_getresulttext(result));
 									break;
 								}
 								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO);

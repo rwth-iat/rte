@@ -26,6 +26,7 @@
 #include "libov/ov_memstack.h"
 #include "libov/ov_result.h"
 #include "ksbase_helper.h"
+#include "libov/ov_logfile.h"
 
 OV_DLLFNCEXPORT void modbusTcpLib_RequestDispatcher_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
@@ -54,6 +55,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 	OV_INSTPTR_modbusTcpLib_IOChannel	pNextIOChannel	=	NULL;
 	OV_RESULT result;
 
+//	ov_logfile_debug("%s handleData called", this->v_identifier);
 	if(!this->v_pouterobject || !Ov_CanCastTo(modbusTcpLib_Slave, this->v_pouterobject)){
 		ov_logfile_error("%s: RequestDispatchers only work as parts of modbusTcpLib/Slaves", this->v_identifier);
 		ksbase_free_KSDATAPACKET(dataReceived);
@@ -62,6 +64,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		packetLength = (dataReceived->data + dataReceived->length) - dataReceived->readPT;
 		if(packetLength < 9){
 			/*	incomplete	*/
+//			ov_logfile_debug("%s handleData: incomplete response...wait on (packetlength: %u)", this->v_identifier, packetLength);
 			return OV_ERR_OK;
 		}
 		/*	MBAP header	*/
@@ -73,6 +76,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		offset += 2;
 		if(packetLength < lengthAfterHeader + offset ){
 			/*	incomplete	*/
+//			ov_logfile_debug("%s handleData: incomplete response...wait on (packetlength: %u, lengthafterHeader: %i, offset: %u)", this->v_identifier, packetLength, lengthAfterHeader, offset);
 			return OV_ERR_OK;
 		}
 		/*	from here on we can assume that at least one complete request was received
@@ -82,7 +86,9 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		dataReceived->readPT++;
 		lengthAfterHeader--;	//	The byte read last also belongs to the header
 		Ov_ForEachChildEx(ov_containment, &(Ov_StaticPtrCast(modbusTcpLib_Slave, this->v_pouterobject)->p_requests), pRequest, modbusTcpLib_Request){
+//			ov_logfile_debug("%s HandleData: iterating %s", this->v_identifier, pRequest->v_identifier);
 			if(pRequest->v_requestID == requestId){
+//				ov_logfile_debug("%s HandleData: iterating %s - id (%i) match", this->v_identifier, pRequest->v_identifier, requestId);
 				/*	found the right request	*/
 				Ov_GetVTablePtr(modbusTcpLib_Request, pVtblRequest, pRequest);
 				if(!pVtblRequest){
@@ -95,9 +101,7 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 				}
 				result = pVtblRequest->m_handleResponse(pRequest, lengthAfterHeader, dataReceived->readPT);	//
 				if(Ov_Fail(result)){
-					ov_memstack_lock();
 					ov_logfile_error("%s: handle Response failed with error %s", pRequest->v_identifier, ov_result_getresulttext(result));
-					ov_memstack_unlock();
 				}
 				pIOChannel = Ov_GetChild(modbusTcpLib_requestToChannel, pRequest);
 				pNextIOChannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOChannel);
@@ -113,10 +117,14 @@ OV_DLLFNCEXPORT OV_RESULT modbusTcpLib_RequestDispatcher_HandleData(
 		if(!pRequest){
 			ov_logfile_error("%s: no fitting request object found", this->v_identifier);
 		}
-		dataReceived->readPT += lengthAfterHeader+1;
+		dataReceived->readPT += lengthAfterHeader;
+//		ov_logfile_debug("%s handleData: after handling: datareceived->data: %p, dataReceived->readPt: %p, dataReceived->length %u, last byte: %p, end reached: %s",
+//				this->v_identifier, dataReceived->data, dataReceived->readPT, dataReceived->length, dataReceived->data + dataReceived->length,
+//				((dataReceived->readPT >= dataReceived->data + dataReceived->length)?"YES":"NO"));
 		if(dataReceived->readPT >= dataReceived->data + dataReceived->length){
 			/*	everything done	*/
 			ksbase_free_KSDATAPACKET(dataReceived);
+//			ov_logfile_debug("%s handleData: freeing datapacket", this->v_identifier);
 			break;
 		}
 	}while(1);
