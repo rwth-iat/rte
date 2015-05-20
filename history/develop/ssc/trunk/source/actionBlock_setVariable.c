@@ -208,7 +208,7 @@ OV_DLLFNCEXPORT void ssc_setVariable_typemethod(
 	result = ssc_setNamedVariable(pTargetObj, targetVarname, &(pinst->v_value));
 	if(Ov_Fail(result)){
 		pinst->v_error=TRUE;
-		ov_string_print(&pinst->v_errorDetail, "Setting value to variable failed: %s",  ov_result_getresulttext(result));
+		ov_string_print(&pinst->v_errorDetail, "Target found, but setting value to variable failed: %s",  ov_result_getresulttext(result));
 	}
 
 	ov_string_setvalue(&targetVarname, NULL);
