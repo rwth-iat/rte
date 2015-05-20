@@ -23,6 +23,7 @@
 
 #include "modbusTcpLib.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_logfile.h"
 #include <sys/types.h>
 
 
@@ -87,7 +88,7 @@ OV_DLLFNCEXPORT OV_ACCESS modbusTcpLib_Request_getaccess(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_modbusTcpLib_Request pinst = Ov_StaticPtrCast(modbusTcpLib_Request, pobj);
+//	OV_INSTPTR_modbusTcpLib_Request pinst = Ov_StaticPtrCast(modbusTcpLib_Request, pobj);
 	/*
 	 *	switch based on the element's type
 	 */
@@ -120,7 +121,7 @@ OV_DLLFNCEXPORT void modbusTcpLib_Request_destructor(
 	if(pIOCHannel){
 		Ov_Unlink(modbusTcpLib_requestToChannel, pinst, pIOCHannel);
 		do{
-			pNextIOCHannel = Ov_GetNextChild(modbusTcpLib_toNextChannel, pIOCHannel);
+			pNextIOCHannel = Ov_GetChild(modbusTcpLib_toNextChannel, pIOCHannel);
 			if(pNextIOCHannel){
 				Ov_Unlink(modbusTcpLib_toNextChannel, pIOCHannel, pNextIOCHannel);
 			}

@@ -166,16 +166,20 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							ov_logfile_error("%s: could not get Vtable of Request %s", pinst->v_identifier, pReadInputRegistersRequest->v_identifier);
 							break;
 						}
-						pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pReadInputRegistersRequest), pAoRI->v_address);
-						if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI)){
-							result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRI);
-							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
-								break;
+						if(pReadInputRegistersRequest->v_requestStartAddr == -1
+								|| (pAoRI->v_address < pReadInputRegistersRequest->v_requestStartAddr
+										&& pAoRI->v_address > ((pReadInputRegistersRequest->v_requestStartAddr + pReadInputRegistersRequest->v_requestedItems - 125)))
+									|| ((pAoRI->v_address > pReadInputRegistersRequest->v_requestStartAddr)
+										&& (pAoRI->v_address < (pReadInputRegistersRequest->v_requestStartAddr + 125)))){
+							pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pReadInputRegistersRequest), pAoRI->v_address);
+							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI)){
+								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRI);
+								if(Ov_Fail(result)){
+									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
+									break;
+								}
+								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRI);
 						}
 						if(pReadInputRegistersRequest->v_requestedItems >= 125){
 							/*	125 registers per request tops
@@ -232,16 +236,22 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							ov_logfile_error("%s: could not get Vtable of Request %s", pinst->v_identifier, pWriteRegistersRequest->v_identifier);
 							break;
 						}
-						pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pWriteRegistersRequest), pAoRO->v_address);
-						if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO)){
-							result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRO);
-							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
-								break;
+						if(pWriteRegistersRequest->v_requestStartAddr == -1
+								|| (pAoRO->v_address < pWriteRegistersRequest->v_requestStartAddr
+										&& pAoRO->v_address > ((pWriteRegistersRequest->v_requestStartAddr + pWriteRegistersRequest->v_requestedItems - 125)))
+									|| ((pAoRO->v_address > pWriteRegistersRequest->v_requestStartAddr)
+										&& (pAoRO->v_address < (pWriteRegistersRequest->v_requestStartAddr + 125)))){
+							pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pWriteRegistersRequest), pAoRO->v_address);
+							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO)){
+								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pAoRO);
+								if(Ov_Fail(result)){
+									ov_memstack_lock();
+									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
+									ov_memstack_unlock();
+									break;
+								}
+								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO);
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pAoRO);
 						}
 						if(pWriteRegistersRequest->v_requestedItems >= 125){
 							/*	125 registers per request tops
@@ -298,16 +308,22 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							ov_logfile_error("%s: could not get Vtable of Request %s", pinst->v_identifier, pReadDIRequest->v_identifier);
 							break;
 						}
-						pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pReadDIRequest), pDI->v_address);
-						if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI)){
-							result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDI);
-							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
-								break;
+						if(pReadDIRequest->v_requestStartAddr == -1
+								|| (pDI->v_address < pReadDIRequest->v_requestStartAddr
+										&& pDI->v_address > ((pReadDIRequest->v_requestStartAddr + pReadDIRequest->v_requestedItems - 2000)))
+								|| ((pDI->v_address > pReadDIRequest->v_requestStartAddr)
+										&& (pDI->v_address < (pReadDIRequest->v_requestStartAddr + 2000)))){
+							pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pReadDIRequest), pDI->v_address);
+							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI)){
+								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDI);
+								if(Ov_Fail(result)){
+									ov_memstack_lock();
+									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
+									ov_memstack_unlock();
+									break;
+								}
+								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI);
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDI);
 						}
 						if(pReadDIRequest->v_requestedItems >= 2000){
 							/*	2000 bits per request tops
@@ -364,16 +380,22 @@ OV_DLLFNCEXPORT void modbusTcpLib_Slave_typemethod(
 							ov_logfile_error("%s: could not get Vtable of Request %s", pinst->v_identifier, pWriteCoilsRequest->v_identifier);
 							break;
 						}
-						pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pWriteCoilsRequest), pDO->v_address);
-						if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO)){
-							result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDO);
-							if(Ov_Fail(result)){
-								ov_memstack_lock();
-								ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
-								ov_memstack_unlock();
-								break;
+						if(pWriteCoilsRequest->v_requestStartAddr == -1
+								|| (pDO->v_address < pWriteCoilsRequest->v_requestStartAddr
+										&& pDO->v_address > ((pWriteCoilsRequest->v_requestStartAddr + pWriteCoilsRequest->v_requestedItems - 2000)))
+								|| ((pDO->v_address > pWriteCoilsRequest->v_requestStartAddr)
+										&& (pDO->v_address < (pWriteCoilsRequest->v_requestStartAddr + 2000)))){
+							pVtblRequest->m_addItem(Ov_PtrUpCast(modbusTcpLib_Request, pWriteCoilsRequest), pDO->v_address);
+							if(pPrevChannel != Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO)){
+								result = Ov_Link(modbusTcpLib_toNextChannel, pPrevChannel, pDO);
+								if(Ov_Fail(result)){
+									ov_memstack_lock();
+									ov_logfile_error("%s: Linking of Channel to previous Channel failed with error: %s", pinst->v_identifier, ov_result_getresulttext(result));
+									ov_memstack_unlock();
+									break;
+								}
+								pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO);
 							}
-							pPrevChannel = Ov_PtrUpCast(modbusTcpLib_IOChannel, pDO);
 						}
 						if(pWriteCoilsRequest->v_requestedItems >= 2000){
 							/*	2000 bits per request tops
