@@ -1768,7 +1768,9 @@ cshmi.prototype = {
 					//kshttp response: http status 412
 					
 					//guessing the correct Vartype
-					if(!isNumeric(NewValue)){
+					if(NewValue.toUpperCase() == "TRUE" || NewValue.toUpperCase() == "FALSE"){
+						HMI.KSClient.setVar(path, NewValue, "KS_VT_BOOL", null, false);
+					}else if(!isNumeric(NewValue)){
 						HMI.KSClient.setVar(path, NewValue, "KS_VT_STRING", null, false);
 					}else if(NewValue.indexOf(".") !== -1){
 						HMI.KSClient.setVar(path, NewValue, "KS_VT_DOUBLE", null, false);
