@@ -341,6 +341,7 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 					}
 					(*refCount)++;
 				}
+				ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE || OV_ET_MEMBER);
 			}
 		}
 	}
@@ -394,6 +395,7 @@ UA_Int32 getReferenceDescriptions_HasComponent(const UA_BrowseDescription* brows
 					}
 					(*refCount)++;
 				}
+				ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 			}
 		}
 	}
