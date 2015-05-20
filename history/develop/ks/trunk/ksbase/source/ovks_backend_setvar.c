@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT void ov_ksserver_setvar(
 			*	path is bad, skip all following relative paths
 			*/
 			while(i+1<len) {
-				if(*((pitem+1)->path_and_name) == '/') {
+				if(((pitem+1)->path_and_name) && *((pitem+1)->path_and_name) == '/') {
 					break;
 				}
 				i++;

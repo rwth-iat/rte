@@ -154,7 +154,7 @@ OV_DLLFNCEXPORT void ov_ksserver_getcanonicalpath(
 			*	path is bad, skip all following relative paths
 			*/
 			while(i+1<len) {
-				if(**(ppath+1) == '/') {
+				if(*(ppath+1) && **(ppath+1) == '/') {
 					break;
 				}
 				i++;

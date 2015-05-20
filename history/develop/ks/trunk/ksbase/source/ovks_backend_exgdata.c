@@ -163,7 +163,7 @@ OV_DLLFNCEXPORT void ov_ksserver_exgdata(
 			*	path is bad, skip all following relative paths
 			*/
 			while(i+1<getvarlen) {
-				if(**(pgetvarid+1) == '/') {
+				if(*(pgetvarid+1) && **(pgetvarid+1) == '/') {
 					break;
 				}
 				i++;
