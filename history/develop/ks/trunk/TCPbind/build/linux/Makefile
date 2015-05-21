@@ -10,7 +10,7 @@ DATABASE = database
 DATABASECREATEKEYS = 
 MAKMAKOPTIONS = -o
 #	set TCPBIND_USE_NONBLOCK_ADDRINFO to 1 to use getaddrinfo_a which is non-blocking - only works on linux with glibc > 2.2.3 
-EXTRA_CC_FLAGS = -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DTCPBIND_USE_NONBLOCK_ADDRINFO=0 -Wextra -Wno-unused-parameter
+EXTRA_CC_FLAGS = -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DTCPBIND_USE_NONBLOCK_ADDRINFO=0  -Wextra -Wno-unused-parameter -Werror
 EXTRA_LIBS = 
 #	add -lanl when using TCPBIND_USE_NONBLOCK_ADDRINFO
 LD_FLAGS =
