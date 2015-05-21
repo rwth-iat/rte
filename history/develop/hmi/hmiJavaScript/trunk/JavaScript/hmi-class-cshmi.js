@@ -126,16 +126,11 @@ function cshmi() {
 
 /*#########################################################################################################################
 TODO:
-JavaScript:
-- check return value of gethandleid
+zyklische requests fehlerfrei zusammenfassen
 
-CSHMI:configvalue:myconfig in SetValue.TemplateFBVariableReferenceName
+setvar type erlauben
 
-var varName = responseArray[i].split(" ");
-varName[1] evtl nicht verfuegbar!
-
-- Auch das laden sollte asyncrone requests nutzen. 
-	Dafuer muss die Verarbeitungsreihenfolge innerhalb eines Events jedoch fest bleiben
+überall asyncrone requests nutzen
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -1205,8 +1200,6 @@ cshmi.prototype = {
 			return "";
 		}else if (ParameterName === "OperatorInput"){
 			if(ParameterValue.indexOf("textinput") !== -1){
-				//todo idea: rebuild as html div with textarea
-				
 				var input = null;
 				var textinputHint;
 				var splittedValueParameter = ParameterValue.split(":");
@@ -2422,7 +2415,7 @@ cshmi.prototype = {
 			
 			do{
 				//test if we have reached a Template
-				if(TemplateObject.FBReference){
+				if (HMI.instanceOf(TemplateObject, this.cshmiTemplateClass)){
 					//check if the Template can resolve us the path via its BaseKsPath
 					baseKsPathTemplate = this._iterateBaseKsPathUp(TemplateObject.getAttribute("data-ModelSource"));
 					if(baseKsPathTemplate !== ""){
@@ -2436,7 +2429,7 @@ cshmi.prototype = {
 					}
 				}
 				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					//the name of a Template was requested
+					//we want to find the host and server from the parent FBreference
 					if (TemplateObject.FBReference["default"].indexOf("//") === 0){
 						var FBRef = TemplateObject.FBReference["default"];
 						
@@ -2535,8 +2528,6 @@ cshmi.prototype = {
 		//newwrite
 		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
-		
-		//todo bei UND verknuepfung kann man evtl fruehzeitig eine loesung haben
 		var IfThenElseObserver = new cshmiObserver(VisualObject, ObjectPath, responseArray.length, this);
 		IfThenElseObserver.triggerActivity = function(){
 			var ConditionMatched = null;
@@ -2971,7 +2962,6 @@ cshmi.prototype = {
 					}
 					//Domains were requested or ANY and we got a Domain right now
 					else if (ChildrenType === "OT_DOMAIN" || response[i][1] === "KS_OT_DOMAIN"){
-						//todo prefix path from active fbref
 						responseDictionary["OP_NAME"] = response[i][0];
 						responseDictionary["OP_TYPE"] = response[i][1];
 						responseDictionary["OP_COMMENT"] = response[i][2];
@@ -3106,10 +3096,10 @@ cshmi.prototype = {
 			SourceConnectionPoint = VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint;
 			TargetConnectionPoint = VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint;
 			if (SourceConnectionPoint && SourceConnectionPoint.ownerDocument === this.trashDocument){
-				//we had a connection to a deleted point
+				//we had a connection to a deleted point, so search for it again
 				reuseConnection = false;
 			}else if (TargetConnectionPoint && TargetConnectionPoint.ownerDocument === this.trashDocument){
-				//we had a connection to a deleted point
+				//we had a connection to a deleted point, so search for it again
 				reuseConnection = false;
 			}else if(!SourceConnectionPoint || !TargetConnectionPoint){
 				//uncomplete caching
@@ -4315,7 +4305,6 @@ cshmi.prototype = {
 			return VisualObject;
 		}else{
 			requestList[ObjectPath] = new Object();
-			//todo: if called from henson we should handle a templatedef but they have no width
 			requestList[ObjectPath]["x"] = null;
 			requestList[ObjectPath]["y"] = null;
 			requestList[ObjectPath]["visible"] = null;
