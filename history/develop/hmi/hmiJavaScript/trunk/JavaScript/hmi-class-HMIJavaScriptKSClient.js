@@ -137,18 +137,18 @@ HMIJavaScriptKSClient.prototype = {
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', 'OP_NAME', this._cbGetServers);
 	 *		this.getEP(null, '/servers', 'OT_DOMAIN', ['OP_NAME', 'OP_CLASS'], this._cbGetServers);
 	 * @param path of object to query
-	 * @param requestType = OT_DOMAIN type of KS Object to query (OT_DOMAIN, OT_VARIABLE, OT_LINK or OT_ANY)
-	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_COMMENT, OP_ACCESS, OP_SEMANTIC, OP_CREATIONTIME, OP_CLASS or OT_ANY)
+	 * @param requestType = OT_DOMAIN type of KS Object to query ("OT_DOMAIN", "OT_VARIABLE", "OT_LINK" or "OT_ANY")
+	 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_COMMENT", "OP_ACCESS", "OP_SEMANTIC", "OP_CREATIONTIME", "OP_CLASS" or "OT_ANY")
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return "{fb_hmi1} {fb_hmi2} {fb_hmi3} {MANAGER} {fb_hmi4} {fb_hmi5}" or null or true (if callback used)
 	 */
 	getEP: function(path, requestType, requestOutput, cbfnc, async, responseFormat) {
-		if(requestType === undefined){
+		if(requestType === undefined || requestType === null){
 			requestType = "OT_DOMAIN";
 		}
-		if(requestOutput === undefined){
+		if(!requestOutput){
 			requestOutput = "OP_NAME";
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getEP - Start: "+path);
@@ -254,14 +254,14 @@ HMIJavaScriptKSClient.prototype = {
 	 *		this.getVar(null, '/TechUnits/HMIManager.CommandReturn', this._cbGetSheets);
 	 * 
 	 * @param path of the variable to fetch, multiple path possible via an Array (used in GraphicDescription+StyleDescription)
-	 * @param requestOutput Array of interesting objects properties (OP_NAME, OP_TYPE, OP_VALUE, OP_TIMESTAMP or OP_STATE)
+	 * @param requestOutput Array of interesting objects properties ("OP_NAME", "OP_TYPE", "OP_VALUE", "OP_TIMESTAMP" or "OP_STATE")
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return "{{/TechUnits/HMIManager}}", response: "{/TechUnits/Sheet1}" or "TksS-0042::KS_ERR_BADPATH {{/Libraries/hmi/Manager.instance KS_ERR_BADPATH}}"
 	 */
 	getVar: function(path, requestOutput, cbfnc, async, responseFormat) {
-		if(requestOutput === undefined){
+		if(!requestOutput){
 			requestOutput = "OP_VALUE";
 		}
 		HMI.hmi_log_trace("HMIJavaScriptKSClient.prototype.getVar - Start: "+path);
@@ -357,7 +357,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param {String} type variable type (for example "KS_VT_STRING") to set, null if no change
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return "" or null
 	 */
 	setVar: function(path, value, type, cbfnc, async, responseFormat) {
@@ -464,7 +464,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param newname (optional with full path) of the object
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return true, "" or null
 	 */
 	renameObject: function(oldname, newname, cbfnc, async, responseFormat) {
@@ -550,7 +550,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return true, "" or null
 	 */
 	createObject: function(path, classname, cbfnc, async, responseFormat) {
@@ -625,7 +625,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param path ob the object to delete
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return true, "" or null
 	 */
 	deleteObject: function(path, cbfnc, async, responseFormat) {
@@ -693,7 +693,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return true, "" or null
 	 */
 	linkObjects: function(pathA, pathB, portnameA, cbfnc, async, responseFormat) {
@@ -775,7 +775,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param classname full class name of the new object
 	 * @param cbfnc callback function
 	 * @param async request async communication
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return true, "" or null
 	 */
 	unlinkObjects: function(pathA, pathB, portnameA, cbfnc, async, responseFormat) {
@@ -852,7 +852,7 @@ HMIJavaScriptKSClient.prototype = {
 	
 	/**
 	 * @param {String} HostAndServername Host and Servername concat with a slash
-	 * @return {String} TKS Handle or "Server:port" for kshttpof the requested Server or null
+	 * @return {String} TKS Handle or "Server:port" for kshttp of the requested Server or null
 	 * @todo add timeout für unused deleteCommunicationPoint
 	 */
 	getCommunicationPoint: function(HostAndServername) {
@@ -1264,7 +1264,7 @@ HMIJavaScriptKSClient.prototype = {
 	 * @param async request async communication
 	 * @param urlparameter the URL of the request
 	 * @param cbfnc Name of the callack function or null
-	 * @param responseFormat Mime-Type of requested response
+	 * @param responseFormat Mime-Type of requested response (probably "text/tcl", "text/ksx", "text/plain" used)
 	 * @return if no cbfnc submitted returnvalue of request or false on an communication error
 	 */
 	_sendRequest: function(Client, method, async, urlparameter, cbfnc, responseFormat) {
@@ -1592,7 +1592,10 @@ HMIJavaScriptKSClient.prototype = {
 			FullKSpath = Array(FullKSpath);
 		}
 		for(var i=0;i<FullKSpath.length;i++){
-			if(FullKSpath[i].charAt(0) === "/" && FullKSpath[i].charAt(1) === "/"){
+			if(!FullKSpath[i]){
+				//no valid input
+				resultArray.push("");
+			}else if(FullKSpath[i].charAt(0) === "/" && FullKSpath[i].charAt(1) === "/"){
 				//full path
 				
 				//find the 3rd "/"
@@ -1624,8 +1627,8 @@ HMIJavaScriptKSClient.prototype = {
 				//relativ path allowed, if not the first entry
 				resultArray.push(FullKSpath[i]);
 			}else{
-				//ups kaputt
-				resultArray = Array(null, "");
+				//no valid input
+				resultArray.push("");
 			}
 		}
 		return resultArray;
