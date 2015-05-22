@@ -72,7 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_HandleRequest(
 			if(Ov_Fail(result)) return result;
 			//empty the buffers
 			ksbase_free_KSDATAPACKET(&pChannel->v_inData);
-			// the http-part of the message is valid --> we received a service-request --> increment receivedcalls
+			// the http-part of the message is valid --> we received a service-request --> increment receivedCalls
 			this->v_receivedCalls++;
 			//no break wanted
 		case HTTP_CS_REQUESTPARSED :
@@ -226,9 +226,9 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				}
 				//call every second
 				ksbase_ComTask_cycInterval_set(Ov_PtrUpCast(ksbase_ComTask, pPushhandler), 1000);
+				ksbase_ComTask_actimode_set(Ov_PtrUpCast(ksbase_ComTask, pPushhandler), 1);
 
 				//configure the pushhandler
-				pPushhandler->v_actimode = 1;
 				pPushhandler->v_responseformat = request.response_format;
 				Ov_SetDynamicVectorValue(&pPushhandler->v_urlQuery, request.urlQuery.value, request.urlQuery.veclen, STRING);
 

@@ -58,9 +58,23 @@
 				document.getElementsByTagName("h1")[0].innerHTML = "An error occured. Your browser does not support EventSource";
 			}
 			if(typeof SmoothieChart === "function"){
-				var smoothie = new SmoothieChart({ grid: { strokeStyle: 'rgb(125, 0, 0)', fillStyle: 'rgb(60, 0, 0)', lineWidth: 1, millisPerLine: 2000, verticalSections: 6 }, millisPerPixel: 500, maxValue: parseInt(ajaxRequest.responseText, 10), minValue: 0});
+				var smoothie = new SmoothieChart({ 
+					grid: { 
+						sharpLines:true,
+						strokeStyle: 'rgb(125, 0, 0)',
+						fillStyle: 'rgb(60, 0, 0)',
+						lineWidth: 1,
+						millisPerLine: 30000,
+						verticalSections: 2
+					}, 
+					interpolation:'step',
+					timestampFormatter:SmoothieChart.timeFormatter,
+					millisPerPixel:500, 
+					maxValue:parseInt(ajaxRequest.responseText, 10), 
+					minValue:0
+				});
 				smoothie.addTimeSeries(line1, { strokeStyle: 'rgb(0, 255, 0)', fillStyle: 'rgba(0, 255, 0, 0.4)', lineWidth: 3 });
-				smoothie.streamTo(document.getElementById('mycanvas'), 1000);
+				smoothie.streamTo(document.getElementById('mycanvas'), 200);
 			}
 		}
 	}

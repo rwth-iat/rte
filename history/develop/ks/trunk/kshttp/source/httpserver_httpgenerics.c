@@ -278,8 +278,10 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	}
 #endif
 
-	//append content length
-	ov_string_print(&response->header, "%sContent-Length: %i\r\n", response->header, response->contentLength);
+	if(response->requestHandledBy != KSHTTP_RGB_GETVARPUSH){
+		//append content length
+		ov_string_print(&response->header, "%sContent-Length: %i\r\n", response->header, response->contentLength);
+	}
 
 	if(ov_string_compare(additionalHeaders, "") != OV_STRCMP_EQUAL){
 		ov_string_append(&response->header, additionalHeaders);

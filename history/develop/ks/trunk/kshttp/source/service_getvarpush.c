@@ -44,38 +44,8 @@
 
 #include "config.h"
 
-OV_DLLFNCEXPORT OV_STRING* kshttp_getvarpushhandler_urlQuery_get(
-		OV_INSTPTR_kshttp_getvarpushhandler          pobj,
-		OV_UINT *pveclen
-) {
-	*pveclen = pobj->v_urlQuery.veclen;
-	return pobj->v_urlQuery.value;
-}
-
-OV_DLLFNCEXPORT OV_RESULT kshttp_getvarpushhandler_urlQuery_set(
-		OV_INSTPTR_kshttp_getvarpushhandler          pobj,
-		const OV_STRING*  value,
-		const OV_UINT veclen
-) {
-	return Ov_SetDynamicVectorValue(&pobj->v_urlQuery,value,veclen,STRING);
-}
-
-OV_DLLFNCEXPORT OV_STRING kshttp_getvarpushhandler_responseSent_get(
-		OV_INSTPTR_kshttp_getvarpushhandler          pobj
-) {
-	return pobj->v_responseSent;
-}
-
-OV_DLLFNCEXPORT OV_RESULT kshttp_getvarpushhandler_responseSent_set(
-		OV_INSTPTR_kshttp_getvarpushhandler          pobj,
-		const OV_STRING  value
-) {
-	return ov_string_setvalue(&pobj->v_responseSent,value);
-}
-
-
 /**
- * we do not want to execute code. no content from the client should arrive
+ * we do not want to execute code if client is sending something. No content from the client should arrive.
  */
 OV_DLLFNCEXPORT OV_RESULT kshttp_getvarpushhandler_HandleRequest(
 		OV_INSTPTR_ksbase_ClientHandler this,
@@ -104,7 +74,6 @@ OV_DLLFNCEXPORT void kshttp_getvarpushhandler_typemethod (
 
 	HTTP_REQUEST ClientRequest;
 	HTTP_RESPONSE ServerResponse;
-	OV_RESULT result = OV_ERR_OK;
 
 	//initialise the structs
 	ServerResponse.contentString = NULL;
@@ -115,24 +84,24 @@ OV_DLLFNCEXPORT void kshttp_getvarpushhandler_typemethod (
 	ClientRequest.response_format = this->v_responseformat;
 	Ov_SetDynamicVectorValue(&ClientRequest.urlQuery, this->v_urlQuery.value, this->v_urlQuery.veclen, STRING);
 
+	ov_string_setvalue(&ServerResponse.contentString, "data:");
 	kshttp_printresponseheader(&ServerResponse.contentString, ClientRequest.response_format, "getvar");
-	result = kshttp_exec_getvar(ClientRequest, &ServerResponse);
+	(void)kshttp_exec_getvar(ClientRequest, &ServerResponse);
 	kshttp_printresponsefooter(&ServerResponse.contentString, ClientRequest.response_format, "getvar");
-	ov_string_append(&ServerResponse.contentString, "\r\n");
+	ov_string_append(&ServerResponse.contentString, "\r\n\r\n");
 
-	ServerResponse.contentLength = ov_string_getlength(ServerResponse.contentString);
+	//todo zeilenumbruch in vorhandenen Daten?
 
-	//todo zeilenumbruch???
-	//content length leer lassen???
-	//result prüfen?
 
 	if(ov_string_compare(this->v_responseSent, ServerResponse.contentString) != OV_STRCMP_EQUAL){
 		//we have new data, so send
 		pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, this);
-		ksbase_KSDATAPACKET_append(&pChannel->v_outData, (OV_BYTE*)ServerResponse.contentString, ServerResponse.contentLength);
+		ksbase_KSDATAPACKET_append(&pChannel->v_outData, (OV_BYTE*)ServerResponse.contentString, ov_string_getlength(ServerResponse.contentString));
 
 		//remember this response
 		ov_string_setvalue(&this->v_responseSent, ServerResponse.contentString);
+
+		this->v_receivedCalls++;
 	}
 
 	//cleanup

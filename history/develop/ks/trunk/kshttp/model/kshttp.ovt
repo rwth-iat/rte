@@ -163,8 +163,8 @@ typedef struct{
 	HTTP_RESPONSEFORMAT response_format /* KSX, XML, JSON,... */;
 	OV_STRING Accept;			/* Accept: text/ksx */
 	OV_UINT headerLength;		/* 1342 for example */
-	OV_UINT contentLength;		/* 0, as we have not POST */
-	OV_BYTE* messageBody;		/* NULL, as we have not POST. Located in the Heap! */
+	OV_UINT contentLength;		/* length of the messageBody */
+	OV_BYTE* messageBody;		/* located in the Heap! */
 } HTTP_REQUEST;
 
 /**
@@ -179,7 +179,7 @@ typedef struct{
 	OV_STRING header;			/* the full http header */
 	OV_STRING contentString; 	/* convenience contentString will be moved to contentBinary in generateHttpHeader */
 	OV_BYTE* contentBinary; 	/* content send from the server back to the client */
-	OV_UINT contentLength;		/* Length of the Binary */
+	OV_UINT contentLength;		/* length of the contentBinary */
 	OV_STRING contentType;		/*  */
 	OV_STRING contentEncoding;	/*  */
 	OV_BOOL transferEncodingChunked;	/* FALSE for OV Servers */
