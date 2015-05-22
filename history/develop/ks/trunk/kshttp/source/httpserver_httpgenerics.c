@@ -329,91 +329,91 @@ DLLFNCEXPORT void kshttp_httpclienthandler_mapresult2http(const HTTP_REQUEST req
 		break;
 	case OV_ERR_BADNAME:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_400_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADNAME: %s%s", HTTP_400_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADPARAM:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_400_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADPARAM: %s%s", HTTP_400_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADAUTH:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_401_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADAUTH: %s%s", HTTP_401_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_NOACCESS:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_403_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_NOACCESS: %s%s", HTTP_403_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADPATH:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_404_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADPATH: %s%s", HTTP_404_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADVALUE:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_406_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADVALUE: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_NOTIMPLEMENTED:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_501_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_NOTIMPLEMENTED: %s%s", HTTP_501_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_GENERIC:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_503_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_GENERIC: %s%s", HTTP_503_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_BADTYPE:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_412_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_BADTYPE: %s%s", HTTP_412_BODY, tmp_body);
 		}
 		break;
 	case OV_ERR_ALREADYEXISTS:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_409_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_ALREADYEXISTS: %s%s", HTTP_409_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_NOMANAGER:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_406_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_NOMANAGER: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_NOREMOTE:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_406_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_NOREMOTE: %s%s", HTTP_406_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_SERVERUNKNOWN:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_404_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_SERVERUNKNOWN: %s%s", HTTP_404_BODY, tmp_body);
 		}
 		break;
 	case KS_ERR_TARGETGENERIC:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_413_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR_TARGETGENERIC: %s%s", HTTP_413_BODY, tmp_body);
 		}
 		break;
 	default:
 		ov_string_print(&response->header, "HTTP/%s %s%s", response->httpVersion, HTTP_503_HEADER, tmp_header);
-		if(request.response_format == KSTCL || request.response_format == KSX || request.response_format == PLAIN){
+		if(request.response_format == KSTCL || request.response_format == PLAIN){
 			ov_string_print(&response->contentString, "KS_ERR (unknown): %s%s", HTTP_503_BODY, tmp_body);
 		}
 		break;
