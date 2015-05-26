@@ -128,7 +128,6 @@ function HMI(debug, error, warning, info, trace) {
 	this.smoothHeaderTimeID = null;
 	this.autoKeepHeader = false;
 	this.HeaderIsVisible = true;
-	this.WebmagellanPath = null;
 	
 	//the modern firebugconsole wants to be activated
 	if (window.loadFirebugConsole){
@@ -516,45 +515,6 @@ HMI.prototype = {
 			DateOutput = null;
 			HMIdate = null;
 			dateTextNode = null;
-		}
-		
-		//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		//try to search for webmagellan and provide a link
-		var ksmagellanPath = new Array("/magellan", "/webmagellan", "/webksmagellan");
-		var path = ksmagellanPath.shift();
-		while(allowLocalRequests !== false && this.WebmagellanPath === null && path !== undefined){
-			req = new XMLHttpRequest();
-			req.open("GET", path, false);
-			req.send(null);
-			
-			if (req.status == 200 && req.responseText && req.responseText.length > 300 && req.responseText.indexOf("Not Found") == -1){
-				this.WebmagellanPath = path;
-			}
-			path = ksmagellanPath.shift();
-		}
-		req = null;
-		path = null;
-		
-		if (this.WebmagellanPath !== null){
-			var MagellanLink;
-			if (document.createElementNS){
-				MagellanLink = document.createElementNS(this.HMI_Constants.NAMESPACE_XHTML, 'a');
-			}else{
-				MagellanLink = document.createElement('a');
-			}
-			if (HMI.InputHost.value.length === 0){
-				MagellanLink.href = this.WebmagellanPath;
-				MagellanLink.style.display = 'none';
-			}else{
-				MagellanLink.href = this.WebmagellanPath + '?cmd=start&arg1='+HMI.InputHost.value;
-			}
-			MagellanLink.target = 'TargetWebmagellan';
-			MagellanLink.id = 'idWebmagellan';
-			MagellanLink.style.paddingRight = '10px';
-			MagellanLink.appendChild(document.createTextNode('See in Webmagellan'));
-			
-			document.getElementById("idBookmark").parentNode.insertBefore(MagellanLink, document.getElementById("idBookmark").parentNode.firstChild);
-			MagellanLink = null;
 		}
 		
 		//make deep links work
@@ -1067,14 +1027,6 @@ HMI.prototype = {
 		
 		//present a "deep link" to the state
 		this.updateDeepLink();
-		
-		//correct magellan URL
-		//
-		if (this.WebmagellanPath !== null){
-			document.getElementById("idWebmagellan").style.display = '';
-			//todo gefälscher host dings
-			document.getElementById("idWebmagellan").href = HMI.WebmagellanPath + (HMI.InputHost.value.length !== 0 ? '?cmd=start&arg1='+this.getHostname() : "");
-		}
 		
 		this.hmi_log_trace("HMI.prototype.showServers - End");
 	},
