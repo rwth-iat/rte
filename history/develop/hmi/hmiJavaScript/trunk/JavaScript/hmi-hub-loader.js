@@ -71,11 +71,15 @@
 	<script> elements in the current document's DOM tree.
 	Supported XML-based languages are HTML, XHTML.
 	
+	@param loadScriptlist
+	@param callFnc
+	@param async
 	@param hubFilePattern
-	@param hubFilelist
+	@param mimetype
+	@return will return true, if the callFnc is executed, false if this will called async, null on error
 ***********************************************************************/
 
-function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
+function loadScriptUrls(loadScriptlist, callFnc, async, hubFilePattern, mimetype) {
 	
 	/********************************************************************
 		We first try to find from where this hub file has been loaded.
@@ -98,69 +102,93 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 	var base = "";
 	var scriptAnchor = document.head || document.getElementsByTagName('head')[0];
 	var match = null;
-	var scriptNode = null;
+	var existingScriptNode = null;
+	var existingScriptNodeUrl = null;
 	var idx = 0;
 	
 	/********************************************************************
-		search our scriptNode for path of the JS-files and <head> element
+		search our existingScriptNode for path of the JS-files and <head> element
 	********************************************************************/
-	for ( idx = 0; hubFilePattern !== null && idx < scripts.length; ++idx ) {
-		scriptNode = scripts[idx];
+	for ( idx = 0; idx < scripts.length; ++idx ) {
+		existingScriptNode = scripts[idx];
 		match = null;
-		
-		if (scriptNode.src !== undefined){
+		if (existingScriptNode.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
 			//opera sometimes gets the Filename as "hmi%2fhub%2floader.js". Fixed with decodeURI
 			//
-			//TODO: prevent scripts from dublicate loading
-			//
-			match = p.exec(decodeURI(scriptNode.src));
-		}else if (scriptNode.getAttribute !== undefined && (scriptNode.getAttribute("src") !== null || scriptNode.getAttribute("src") !== "") ){
-			match = p.exec(scriptNode.getAttribute("src"));
-		}else if(scriptNode.hasAttributeNS !== undefined && scriptNode.getAttributeNS !== undefined){
-			if (scriptNode.hasAttributeNS("http://www.w3.org/1999/xlink", "href") ){
-				match = p.exec(scriptNode.getAttributeNS("http://www.w3.org/1999/xlink", "href"));
+			existingScriptNodeUrl = decodeURI(existingScriptNode.src);
+		}else if (existingScriptNode.getAttribute !== undefined && (existingScriptNode.getAttribute("src") !== null || existingScriptNode.getAttribute("src") !== "") ){
+			existingScriptNodeUrl = existingScriptNode.getAttribute("src");
+		}else if(existingScriptNode.hasAttributeNS !== undefined && existingScriptNode.getAttributeNS !== undefined){
+			if (existingScriptNode.hasAttributeNS("http://www.w3.org/1999/xlink", "href") ){
+				existingScriptNodeUrl = existingScriptNode.getAttributeNS("http://www.w3.org/1999/xlink", "href");
+			}
+		}
+		if(hubFilePattern){
+			match = p.exec(existingScriptNodeUrl);
+			if (match){
+				base = match[1];
 			}
 		}
 		
-		if (match){
-			base = match[1];
-			break;
-		};
-	};
+		//search if a requested url is already loaded in the browser
+		for (var intidx = 0 ; intidx < loadScriptlist.length ; ){
+			if (loadScriptlist[intidx] === existingScriptNodeUrl){
+				//remove the url from the Filelist
+				loadScriptlist.splice(intidx, 1);
+			}else{
+				intidx++
+			}
+		}
+	}
 	
-	if (base === null)
-	{
-		window.alert("Fatal error: script hub loader unable to locate base in document");
-		return false;
-	};
+	if(loadScriptlist.length === 0){
+		var executeFncIfReady = function(){
+			var scripts = document.getElementsByTagName("script");
+			for ( var idx = 0; idx < scripts.length; ++idx ) {
+				if(scripts[idx].hasAttribute("data-transferstatus")){
+					//we are not ready yet, try again later
+					window.setTimeout(executeFncIfReady, 200);
+					return;
+				}
+			}
+			callFnc();
+		};
+		// nothing to do, so execute the code after a few ms to wait for the dom load
+		window.setTimeout(executeFncIfReady, 100);
+		
+		return true;
+	}
 
 	/********************************************************************
 		Decide on the proper way of creating a script element.
 	********************************************************************/
 	
 	var node = null;
-	for ( idx = 0 ; idx < hubFilelist.length ; idx++){
+	for ( idx = 0 ; idx < loadScriptlist.length ; idx++){
 		if (document.createElementNS !== undefined){
 			node = document.createElementNS("http://www.w3.org/1999/xhtml", "script");
 		}else if (document.createElement !== undefined){
 			node = document.createElement("script");
 		}else{
 			window.alert("Fatal error: script hub loader unable to create new script node in document");
-			return false;
+			return null;
 		}
 		if (node.type !== undefined){
 			node.type = "text/javascript";
 		}else{
 			node.setAttribute("type", "text/javascript");
 		}
-		node.setAttribute("charset", "windows-1252");
-		if(		hubFilelist[idx].slice(0, "http://".length) == "http://"
-			||	hubFilelist[idx].slice(0, "https://".length) == "https://"){
-			//this is a full path
-			var srcEntry = hubFilelist[idx];
+		if(mimetype){
+			node.setAttribute("charset", mimetype);
+		}
+		if(		loadScriptlist[idx].indexOf("http://") === 0
+			||	loadScriptlist[idx].indexOf("https://") === 0
+			||	!base){
+			//this is a full path or base path is not known (so just try)
+			var srcEntry = loadScriptlist[idx];
 		}else{
-			srcEntry = base+hubFilelist[idx];
+			srcEntry = base+loadScriptlist[idx];
 		}
 		if (node.src !== undefined){
 			//defined in W3C DOM Level 2 HTML (HTML4 and XHTML1.0) so probable usable in XHTML 1.1
@@ -170,7 +198,9 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 			node.setAttribute("src", srcEntry);
 		}
 		//remember the original name for later. src is manipulated by the browsers
-		node.setAttribute("data-src", hubFilelist[idx]);
+		node.setAttribute("data-src", loadScriptlist[idx]);
+		node.setAttribute("data-transferstatus", "loading");
+		
 		//the code should get parsed async as soon as it is fetched, without blocking the html parser
 		if (node.async !== undefined && async === true){
 			node.async = true;
@@ -179,20 +209,26 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 			//(only if async is not supported) 
 			node.defer = true;
 		}
-		node.onerror = function(evt){
-			//disabling execution of initialisation code
-			window.alert("Fatal error: " + evt.target.src + " not loaded. ");
-			hubFilelist = null;
-		}
 		node.onload = node.onerror = function(evt){
-			if(hubFilelist !== null){
-				var idx = hubFilelist.indexOf(evt.target.getAttribute("data-src"));
+			if(evt.type !== "load"){
+				if(typeof HMI !== "undefined" && HMI && HMI.hmi_log_onwebsite){
+					HMI.hmi_log_onwebsite("Loading "+evt.target.src+" failed.");
+				}
+			}else{
+				if(typeof HMI !== "undefined" && HMI && HMI.hmi_log_info){
+					HMI.hmi_log_info("Success in loading script: "+evt.target.src);
+				}
+			}
+			if(loadScriptlist !== null){
+				var idx = loadScriptlist.indexOf(evt.target.getAttribute("data-src"));
 				if(idx >= 0){
-					//we found our entry, so remove from the loadlist
-					hubFilelist.splice(idx, 1);
+					//we found our entry, so remove it from the loadlist
+					loadScriptlist.splice(idx, 1);
+					//mark this node as ready
+					evt.target.removeAttribute("data-transferstatus")
 				}
 				
-				if(hubFilelist.length === 0){
+				if(loadScriptlist.length === 0){
 					// we have everything, so execute the code
 					callFnc();
 				}
@@ -211,10 +247,10 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 			}
 		}else{
 			window.alert("Fatal error: script hub loader unable to append new script node into document");
-			return false;
+			return null;
 		}
 	}
-	return true;
+	return false;
 }
 
 
@@ -223,10 +259,6 @@ function loadScriptUrls(hubFilePattern, hubFilelist, callFnc, async) {
 ***********************************************************************/
 
 loadScriptUrls(
-	//	You need to specify a regular pattern for detecting this script
-	//
-	"(.*/)hmi-hub-loader.js",
-	
 	//	List of script files to load
 	[	
 		"hmi-generic.js",
@@ -243,7 +275,11 @@ loadScriptUrls(
 		"hmi-class-HMI.js"
 	],
 	function(){HMI.init();},
-	true
+	true,
+	//	a regular pattern for detecting this script the basepath
+	//
+	"(.*/)hmi-hub-loader.js",
+	"windows-1252"
 );
 
 var HMIdate;	//this is the first file, so the var declaration is allowed

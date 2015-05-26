@@ -87,8 +87,6 @@ function cshmi() {
 	this.ResourceList.newRebuildObject = Object();
 	this.ResourceList.cyclicEventList = Object();
 	
-	this.ResourceList.externaljsList = null;
-	
 	this.trashDocument = null;
 	if(HMI.svgDocument.implementation && HMI.svgDocument.implementation.createDocument){
 		//todo this magic prevents garbage collection!?
@@ -126,6 +124,8 @@ function cshmi() {
 
 /*#########################################################################################################################
 TODO:
+iterator fixen!
+
 zyklische requests fehlerfrei zusammenfassen
 
 setvar type erlauben
@@ -5114,67 +5114,20 @@ cshmi.prototype = {
 			VisualObject.ResourceList.cshmimodel = cshmimodel;
 		}
 		
-		var sourceListSplitted = sourceList.split(" ");
-		this.ResourceList.externaljsList = Array();
-		
-		loadLibrary:
-		//externe (via http erreichbare) Bibliotheken in head anhaengen
-		for(var i = 0; i < sourceListSplitted.length; ++i){
-			if(sourceListSplitted[i] === ""){
-				continue;
-			}
-			//append only if same JS-library is not already loaded
-			var scripts = document.getElementsByTagName('script');
-			
-			for (var j = 0; j < scripts.length; ++j) {
-				if (sourceListSplitted[i] === scripts[j].src){
-					continue loadLibrary;
-				}
-			}
-			//fixme try to use loadScriptUrls from hub-loader
-			this.ResourceList.externaljsList.push(sourceListSplitted[i]);
-			var node = document.createElement("script");
-			node.type = "text/javascript";
-			node.src = sourceListSplitted[i];
-			node.async = false;
-			node.onload = node.onerror = function(evt){
-				if(evt.type !== "load"){
-					HMI.hmi_log_onwebsite("loading "+evt.target.src+" requested from "+ObjectPath+" failed.");
-					//disabling execution of onload code
-					HMI.cshmi.ResourceList.externaljsList = null;
-				}else{
-					HMI.hmi_log_info("success in loading script: event type: "+evt.type+": "+evt.target.src);
-				}
-				if(HMI.cshmi.ResourceList.externaljsList !== null){
-					var idx = HMI.cshmi.ResourceList.externaljsList.indexOf(evt.target.getAttribute("src"));
-					if(idx >= 0){
-						//we found our entry, so remove from the loadlist
-						HMI.cshmi.ResourceList.externaljsList.splice(idx, 1);
-					}
-					
-					if(HMI.cshmi.ResourceList.externaljsList.length === 0 && jsOnload !== ""){
-						// we have everything, so execute the jsOnload
-						HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-					}
-				}
-			};
-
-			var head = document.head || document.getElementsByTagName('head')[0];
-			head.appendChild(node);
+		var sourceListSplitted = sourceList.trim().split(" ");
+		if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
+			//remove the entry
+			sourceListSplitted.pop();
 		}
 		
-		if(jsOnload !== "" && sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
-			//we have to wait for the DOMTree to load and had no libraries
-			
-			var preserveThis = this;
-			window.setTimeout(function(){
-				if (HMI.cshmi !== preserveThis){
-					//the active cshmi display is not "our" one, cancel Timeout
-					return true;
-				}
-				HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload");
-			}, 100);
-		}
+		//load scripts and call jsonload script on load (or direct, if no source was requested)
+		var result = loadScriptUrls(
+			sourceListSplitted, 
+			function(){HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload")}, 
+			true,
+			null,
+			null
+		);
 		
 		return VisualObject;
 	},
