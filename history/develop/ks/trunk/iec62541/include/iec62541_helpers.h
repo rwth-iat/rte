@@ -34,6 +34,7 @@
 //#define UA_NODEID_HasNotifier					48
 //#define UA_NODEID_HasOrderedComponent			49
 
+UA_Logger ov_UAlogger_new(void);
 
 UA_StatusCode ov_resultToUaStatusCode(OV_RESULT result);
 UA_StatusCode ov_AnyToVariant(OV_ANY* pAny, UA_Variant* pVariant);
@@ -44,10 +45,10 @@ OV_BOOL iec62541_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA
 
 UA_StatusCode iec62541_nsOv_fillReferenceDescription(
 		OV_ELEMENT* pElement, UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst);
-
+/*
 UA_StatusCode iec62541_ns0_fillReferenceDescription(
 		OV_INSTPTR_iec62541_uaBaseNodeType pNode, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst);
-
+*/
 /**
  * resolves a UA-nodeId to an OV_PATH object
  * the nodeId has to be of type STRING
@@ -57,5 +58,9 @@ UA_StatusCode iec62541_ns0_fillReferenceDescription(
 UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath);
 
 UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access);
+
+UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
+
+OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer();
 
 #endif /* IEC62541_HELPERS_H_ */

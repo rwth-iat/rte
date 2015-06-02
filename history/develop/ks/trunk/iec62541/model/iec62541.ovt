@@ -39,4 +39,6 @@ typedef struct ov_UA_Connection {
 	KS_DATAPACKET* outData;
 } ov_UA_Connection;
 
+typedef UA_Server* OV_PTR_UA_Server;
+
 #endif

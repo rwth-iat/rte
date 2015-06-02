@@ -85,10 +85,26 @@ typedef UA_Int32 UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS(
 	UA_DiagnosticInfo *diagnosticInfos
 );
 
-typedef OV_DLLFNCEXPORT	OV_INSTPTR_iec62541_uaBaseNodeType UA_FNC_GETNODEPTR(
-	OV_UINT nodeId
+typedef UA_StatusCode UA_FNC_STARTNL(
+	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	UA_Logger *logger
 );
-	
+
+typedef UA_Int32 UA_FNC_NLGETWORK(
+	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	UA_WorkItem** items, 
+	UA_UInt16 timeout
+);
+
+typedef UA_Int32 UA_FNC_STOPNL(
+	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	UA_WorkItem** items
+);
+
+typedef void UA_FNC_DELETENL(
+	OV_INSTPTR_iec62541_ovNetworkLayer this
+);
+
 	
 #endif
 

@@ -162,8 +162,7 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 				}
 			} else {	//	ov root-node --> bridge node in ns0
 				if(fillDescription){
-					*statusCode =
-							iec62541_ns0_fillReferenceDescription(iec62541_uaNamespace0_getNodePtr(UA_NODEID_OVROOT), UA_NODEID_Organizes, resultMask, &(dst)[*refCount]);
+					*statusCode = UA_STATUSCODE_BADNOTIMPLEMENTED;
 				}
 				(*refCount)++;
 			}

@@ -3,11 +3,11 @@
 *
 *   FILE
 *   ----
-*   uaObjectTypeNode.c
+*   networkLayerToConnection.c
 *
 *   History
 *   -------
-*   2014-10-24   File created
+*   2015-06-02   File created
 *
 *******************************************************************************
 *
@@ -22,6 +22,11 @@
 
 
 #include "iec62541.h"
+#include "libov/ov_association.h"
+
 #include "libov/ov_macros.h"
 
+OV_IMPL_LINK(iec62541_networkLayerToConnection)
+OV_IMPL_UNLINK(iec62541_networkLayerToConnection)
+OV_IMPL_GETACCESS(iec62541_networkLayerToConnection)
 

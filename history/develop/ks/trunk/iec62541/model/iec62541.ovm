@@ -7,18 +7,35 @@ LIBRARY iec62541
 	COPYRIGHT = "";
 	COMMENT   = "";
 	
-	CLASS uaServer		:	CLASS ov/domain
+	CLASS uaServer		:	CLASS ksbase/ComTask
 		IS_INSTANTIABLE;
 		COMMENT = "Holds all necessarry data for a server - singleton. can only be instantiated once";
 		VARIABLES
-			endpointName		:	STRING
-				HAS_SET_ACCESSOR
-				COMMENT			=	"Name of the endpoint this server represents"
-				INITIALVALUE	=	"OV_UA";
-			endpointUrl			:	C_TYPE	<UA_String>;
-			serverData			:	C_TYPE	<UA_Server>
+			LoginEnableAnonymous	:	BOOL
+				HAS_ACCESSORS
+				IS_DERIVED;
+ 			LoginEnableUsernamePassword	:	BOOL
+ 				HAS_ACCESSORS
+ 				IS_DERIVED;
+    		LoginUsernames []	:	STRING
+    			HAS_ACCESSORS
+    			IS_DERIVED;
+    		LoginPasswords []	:	STRING
+    			HAS_ACCESSORS
+    			IS_DERIVED;
+    		LoginLoginsCount	:	UINT
+    			HAS_GET_ACCESSOR
+    			IS_DERIVED;
+			ApplicationURI	:	STRING
+				HAS_ACCESSORS
+				IS_DERIVED;
+    		ApplicationName	:	STRING
+    			HAS_ACCESSORS
+    			IS_DERIVED;
+			serverConfig		:	C_TYPE	<UA_ServerConfig>
+				COMMENT =	"Stack-specific representation of server configuration";
+			serverData			:	C_TYPE	<OV_PTR_UA_Server>
 				COMMENT	=	"Stack-specific representation of server data";
-			nodeStoreNs0		:	C_TYPE	<UA_ExternalNodeStore>;
 			nodeStoreNsOV		:	C_TYPE	<UA_ExternalNodeStore>;
 		END_VARIABLES;	
 		OPERATIONS
@@ -27,116 +44,10 @@ LIBRARY iec62541
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;
+			typemethod			:	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
-	
-	CLASS uaNamespace0		:	CLASS ov/domain
-		IS_INSTANTIABLE;
-		COMMENT = "Holds the 0 namespace of the uaServer - singleton. can only be instantiated once";
-		VARIABLES
-			
-		END_VARIABLES;	
-		OPERATIONS
-			constructor		:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
-			startup			:	C_FUNCTION	<OV_FNC_STARTUP>;
-			getNodePtr		:	C_FUNCTION	<UA_FNC_GETNODEPTR>;
-			addNodes		:	C_FUNCTION	<UA_FNC_ADDNODES>;
-			addReferences	:	C_FUNCTION	<UA_FNC_ADDREFERENCES>;
-			deleteNodes		:	C_FUNCTION	<UA_FNC_DELETENODES>;
-			deleteReferences :	C_FUNCTION	<UA_FNC_DELETEREFERENCES>;
-			readNodes		:	C_FUNCTION	<UA_FNC_READNODES>;
-			writeNodes		:	C_FUNCTION	<UA_FNC_WRITENODES>;
-			browseNodes		:	C_FUNCTION	<UA_FNC_BROWSENODES>;
-			translateBrowsePathsToNodeIDs	:	C_FUNCTION	<UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS>;
-		END_OPERATIONS;
-	END_CLASS;
-	
-	
-	
-	CLASS uaBaseNodeType	:	CLASS ov/domain
-		VARIABLES
-			NodeId		:	UINT;	/*	used in the findNode function , BrowseName and DisplayName mirror the objects identifier	*/	
-			WriteMask	:	UINT;
-		END_VARIABLES;	
-		OPERATIONS
-			getaccess	:	C_FUNCTION <OV_FNC_GETACCESS>;
-		END_OPERATIONS;
-	END_CLASS;
-	
-	CLASS uaReferenceTypeNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			IsAbstract	:	BOOL
-				INITIALVALUE	=	FALSE;
-			Symmetric	:	BOOL
-				INITIALVALUE	=	FALSE;	
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaReferenceNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			Type	:	UINT
-				INITIALVALUE	=	31;	
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaObjectNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			EventNotifier	:	UINT
-				INITIALVALUE	=	0;
-			Type	:	UINT
-				INITIALVALUE	=	58;
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaObjectTypeNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			IsAbstract	:	BOOL
-				INITIALVALUE	=	FALSE;	
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaVariableNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			Value		:	ANY;
-			DataType	:	UINT;
-			ValueRank	:	INT;
-			ArrayDimensions	:	INT
-				INITIALVALUE	=	0;
-			AccessLevel	:	UINT
-				INITIALVALUE	=	1; /*	read access	*/
-			Historizing	:	BOOL
-				INITIALVALUE	=	FALSE;
-			Type	:	UINT
-				INITIALVALUE	=	63;
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaVariableTypeNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			Value		:	ANY;
-			DataType	:	UINT;
-			ValueRank	:	INT;
-			ArrayDimensions	:	INT
-				INITIALVALUE	=	0;
-			IsAbstract	:	BOOL
-				INITIALVALUE	=	FALSE;		
-		END_VARIABLES;	
-	END_CLASS;
-	
-	CLASS uaDataTypeNode	:	CLASS	iec62541/uaBaseNodeType
-		IS_INSTANTIABLE;
-		VARIABLES
-			IsAbstract	:	BOOL
-				INITIALVALUE	=	FALSE;		
-		END_VARIABLES;	
-	END_CLASS;
-	
+
 	/**
 	 *	Checks whether received data complies with a OPC UA opening of a connection
 	 *	criteria are:	1.	"HEL" in first three bytes of message
@@ -166,12 +77,22 @@ LIBRARY iec62541
 	END_CLASS;
 	
 	/**
-		Documentation of uaClientHandler.
+		Documentation of uaConnection.
 	*/
-	CLASS uaClientHandler : CLASS ksbase/ClientHandler
+	CLASS uaConnection : CLASS ksbase/ClientHandler
 		IS_INSTANTIABLE;
 		VARIABLES
-			serverProtocolVersion	:	UINT
+			connection			:	C_TYPE	<UA_Connection>
+				COMMENT			=	"Connection data for this connection";
+			workNext			:	BOOL
+				COMMENT			=	"If TRUE this connection has some work for the networkLayer"
+				INITIALVALUE	=	FALSE;
+			closeConn			:	BOOL
+				COMMENT			=	"If TRUE this conenction needs to be closed"
+				INITIALVALUE	=	FALSE;	
+			buffer				:	C_TYPE	<UA_ByteString>
+				COMMENT			=	"Buffer to exchange date with the open62541-stack";	
+		/*	serverProtocolVersion	:	UINT
 				IS_DERIVED
 				HAS_ACCESSORS
 				COMMENT			= "Latest version of OPC UA TCP protocol supported by this server";
@@ -217,12 +138,13 @@ LIBRARY iec62541
 				COMMENT			= "URL this clients wants to connect to"
 				INITIALVALUE	= "";
 			connectionData		:	C_TYPE <ov_UA_Connection>;
+			*/
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
 			destructor			:	C_FUNCTION <OV_FNC_DESTRUCTOR>;
-			startup			:	C_FUNCTION <OV_FNC_STARTUP>;
-			shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			/**
 			 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
 			 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
@@ -231,7 +153,35 @@ LIBRARY iec62541
 			 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
 			 *		4. The readptr of the answer data may not be altered.
 			 */
-			HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+			HandleRequest		:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;
+			typemethod			:	C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+		Documentation of ovNetworkLayer.
+	*/
+	CLASS ovNetworkLayer : CLASS ov/object
+		IS_INSTANTIABLE;
+		VARIABLES
+		discoveryUrl	:	STRING
+			IS_DERIVED
+			HAS_GET_ACCESSOR
+			COMMENT		=	"Url for this server";
+		discoveryUrlInternal	:	C_TYPE	<UA_String>;
+		localConfig		:	C_TYPE <UA_ConnectionConfig>
+			COMMENT		=	"Configuration of connection";
+		END_VARIABLES;
+		OPERATIONS
+			constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			destructor			:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
+			startup				:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
+			start				:	C_FUNCTION	<UA_FNC_STARTNL>;
+			getWork				:	C_FUNCTION	<UA_FNC_NLGETWORK>;
+			stop				:	C_FUNCTION	<UA_FNC_STOPNL>;
+			delete				:	C_FUNCTION	<UA_FNC_DELETENL>;
 		END_OPERATIONS;
 	END_CLASS;
 	
@@ -271,14 +221,11 @@ LIBRARY iec62541
 		Add associations and their documentation here.
 		Association syntax is:
 	*/
-	ASSOCIATION Reference1 : ONE_TO_MANY
-		PARENT node1		: CLASS iec62541/uaBaseNodeType;
-		CHILD  reference1	: CLASS iec62541/uaReferenceNode;
+	
+	ASSOCIATION networkLayerToConnection : ONE_TO_MANY
+		PARENT networkLayer		: CLASS iec62541/ovNetworkLayer;
+		CHILD  connection	: CLASS iec62541/uaConnection;
 	END_ASSOCIATION;
 	
-	ASSOCIATION Reference2 : ONE_TO_MANY
-		PARENT node2		: CLASS iec62541/uaBaseNodeType;
-		CHILD  reference2	: CLASS iec62541/uaReferenceNode;
-	END_ASSOCIATION;
-	
+
 END_LIBRARY;

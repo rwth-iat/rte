@@ -25,10 +25,74 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
 #include "iec62541_config.h"
+#include "iec62541_helpers.h"
 #include "ks_logfile.h"
 #include "open62541.h"
 #include "ksbase_helper.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT read_xdr_uint(UA_ByteString data, OV_UINT* offset, OV_UINT* value)
+{
+	if(!data.data)
+		return OV_ERR_GENERIC;
+	if(!value || !offset)
+		return OV_ERR_BADPARAM;
+	if(data.length < 4){
+		return OV_ERR_BADVALUE;
+	}
+	if(*offset <= (OV_UINT) (data.length - 4))
+	{
+		/*	shift left is defined as multiplication with powers of 2
+		 * so it does the same independent of endianess of host system	*/
+		*value = (OV_UINT)(((data.data[*offset+3]) << 24)
+		                 | ((data.data[*offset+2]) << 16)
+		                 | ((data.data[*offset+1]) << 8)
+		                 | ((data.data[*offset+0])));
+		*offset += 4;
+		return OV_ERR_OK;
+	}
+
+	return OV_ERR_GENERIC;
+}
+
+OV_DLLFNCEXPORT OV_RESULT read_xdr_string_tomemstack(UA_ByteString data, OV_UINT* offset, OV_STRING* value, OV_UINT* len)
+{
+	unsigned int i = 0;
+	OV_UINT length = 0;
+
+	if(!data.data)
+		return OV_ERR_GENERIC;
+	if(!value || !offset)
+		return OV_ERR_BADPARAM;
+
+	if(Ov_Fail(read_xdr_uint(data, offset, &length)))
+		return OV_ERR_GENERIC;
+	if(data.length < 0 || length > (OV_UINT)data.length){
+		return OV_ERR_BADVALUE;
+	}
+	if(*offset <= (OV_UINT) (data.length - length))
+	{
+		*value = ov_memstack_alloc(length+1);
+		if(!(*value))
+			return OV_ERR_HEAPOUTOFMEMORY;
+
+		//copy it to the buffer
+		for(i=0; i<length; i++)
+			(*value)[i] = data.data[*offset + i];
+		(*value)[length] = '\0';
+
+		//xdrs are aligned in 4byte blocks
+		while(length%4)
+			length++;
+		*offset += length;
+		if(len)
+			*len = length;
+		return OV_ERR_OK;
+	}
+	if(len)
+		*len = 0;
+	return OV_ERR_GENERIC;
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -53,13 +117,13 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
 	OV_INSTPTR_iec62541_uaIdentificator thisId = Ov_StaticPtrCast(iec62541_uaIdentificator, this);
-	UA_TcpHelloMessage	testMsg;
 	UA_ByteString		msgSource = {.data = pchannel->v_inData.readPT, .length = ((pchannel->v_inData.data + pchannel->v_inData.length) - pchannel->v_inData.readPT)};
-	size_t				offset = 4;
-	UA_UInt32			msgLength;
+	OV_UINT				offset = 4;
+	OV_UINT				msgLength;
+	OV_UINT				dummy;
 	OV_UINT				iterator;
 	OV_UINT				cmpLength;
-
+	OV_STRING			tempStr = NULL;
 
 	KS_logfile_debug(("%s: identify called with length: %u - data\n%s", thisId->v_identifier, msgSource.length, msgSource.data));
 
@@ -79,7 +143,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 		}
 	}
 
-	if(UA_UInt32_decodeBinary(&msgSource, &offset, &msgLength) != UA_STATUSCODE_GOOD){
+	if(read_xdr_uint(msgSource, &offset, &msgLength) != OV_ERR_OK){
 		KS_logfile_debug(("%s: could not decode length in HelloMessage header", thisId->v_identifier));
 		return FALSE;
 	}
@@ -88,17 +152,44 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 		KS_logfile_debug(("%s: length field in HelloMessage Header does not match length of Message", thisId->v_identifier));
 		return FALSE;
 	}
-
-	if(UA_TcpHelloMessage_decodeBinary(&msgSource, &offset, &testMsg) == UA_STATUSCODE_GOOD){
-		KS_logfile_debug(("%s: HelloMessage successfully decoded", thisId->v_identifier));
-		return TRUE;
-	} else {
-		KS_logfile_debug(("%s: could not decode HelloMessage", thisId->v_identifier));
+/*	this is a hello message.....
+ *	UA_TYPES_UINT32, protocolVersion
+	UA_TYPES_UINT32, receiveBufferSize
+	UA_TYPES_UINT32, sendBufferSize
+	UA_TYPES_UINT32, maxMessageSize
+	UA_TYPES_UINT32, maxChunkCount
+	UA_TYPES_STRING, endpointUrl
+ * 	*/
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK /*|| dummy == 0*/){
+		KS_logfile_debug(("%s: could not decode protocolVersion in HelloMessage header (or == 0)", thisId->v_identifier));
 		return FALSE;
 	}
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
+		KS_logfile_debug(("%s: could not decode receiveBufferSize in HelloMessage header (or == 0)", thisId->v_identifier));
+		return FALSE;
+	}
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
+		KS_logfile_debug(("%s: could not decode sendBufferSize in HelloMessage header (or == 0)", thisId->v_identifier));
+		return FALSE;
+	}
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
+		KS_logfile_debug(("%s: could not decode maxMessageSize in HelloMessage header (or == 0)", thisId->v_identifier));
+		return FALSE;
+	}
+	if(read_xdr_uint(msgSource, &offset, &dummy) != OV_ERR_OK || dummy == 0){
+		KS_logfile_debug(("%s: could not decode maxChunkCount in HelloMessage header (or == 0)", thisId->v_identifier));
+		return FALSE;
+	}
+	ov_memstack_lock();
+	if(read_xdr_string_tomemstack(msgSource, &offset, &tempStr, &dummy) != OV_ERR_OK || dummy == 0){
+		ov_memstack_unlock();
+		KS_logfile_debug(("%s: could not decode endpointUrl in HelloMessage header (or length mismatch)", thisId->v_identifier));
+		return FALSE;
+	}
+	ov_memstack_unlock();
+	return TRUE;
 }
 
-static OV_UINT UAClientHandlerNamecounter = 0;
 
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
@@ -107,21 +198,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_createClientHandler (
     /*    
     *   local variables
     */
-	OV_INSTPTR_iec62541_uaClientHandler pClientHandler = NULL;
+	OV_INSTPTR_iec62541_uaConnection pClientHandler = NULL;
 
-	char CHNameBuffer[32]; //"OPC_UAClientHandler + length MAXINT + '\0' + 1 Byte spare
 	OV_RESULT result;
 	KS_logfile_debug(("%s: creating uaClientHandler...", this->v_identifier));
 
-	//get first free "OPC_UAClientHandler"-name
-	do {
-		pClientHandler = NULL;
-		UAClientHandlerNamecounter++;
-		sprintf(CHNameBuffer, "OPC_UAClientHandler%" OV_PRINT_UINT, UAClientHandlerNamecounter);
-		pClientHandler	= (OV_INSTPTR_iec62541_uaClientHandler) Ov_SearchChild(ov_containment, Ov_StaticPtrCast(ov_domain, this), CHNameBuffer);
-	} while (pClientHandler);
-
-	result = Ov_CreateObject(iec62541_uaClientHandler, pClientHandler, this, CHNameBuffer);
+	result = Ov_CreateIDedObject(iec62541_uaConnection, pClientHandler, this, "OPC_UAClientHandler");
 	if(Ov_OK(result))
 	{
 		KS_logfile_debug(("%s: ClientHandler created: %s", this->v_identifier, pClientHandler->v_identifier));
@@ -138,6 +220,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_createClientHandler (
 			{
 				KS_logfile_error(("%s: could not set ClientHandler %s's sourceAdr. reason: %s", this->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
 			}
+		}
+		result = Ov_Link(iec62541_networkLayerToConnection, getOvNetworkLayer(), pClientHandler);
+		if(Ov_Fail(result))
+		{
+			KS_logfile_error(("%s: could not link ClientHandler %s to networkLayer %s", this->v_identifier, pClientHandler->v_identifier, getOvNetworkLayer()->v_identifier));
+			return result;
+		} else {
 			return OV_ERR_OK;
 		}
 	}

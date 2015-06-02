@@ -1,5 +1,10 @@
-/*
- * Copyright (C) 2014 the contributors as stated in the AUTHORS file
+/* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES 
+ * visit http://open62541.org/ for information about this software
+ * Git-Revision: v0.1.0-RC4-31-g1a03d02
+ */
+ 
+ /*
+ * Copyright (C) 2015 the contributors as stated in the AUTHORS file
  *
  * This file is part of open62541. open62541 is free software: you can
  * redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -13,8 +18,6 @@
  * details.
  */
 
-/* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES */
-
 #ifndef OPEN62541_H_
 #define OPEN62541_H_
 
@@ -25,6 +28,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/src_generated/ua_config.h" ***********************************/
 
 /* Buid options and configuration (set by cmake) */
 
@@ -56,13 +60,14 @@ extern "C" {
 
 /*	Define your own htoleXX and leXXtoh here if needed.
 	Otherwise the ones defined in endian.h are used		*/
-//	#define htole16(x) x
-//	#define htole32(x) x
-//	#define htole64(x) x
-//	#define le16toh(x) x
-//	#define le32toh(x) x
-//	#define le64toh(x) x
+//	#define htole16(x)	{...}(x)
+//	#define htole32(x)	{...}(x)
+//	#define htole64(x)	{...}(x)
+//	#define le16toh(x)	{...}(x)
+//	#define le32toh(x)	{...}(x)
+//	#define le64toh(x)	{...}(x)
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_statuscodes.h" ***********************************/
 
 enum UA_StatusCode {
 	UA_STATUSCODE_GOOD = 0x00,
@@ -284,6 +289,7 @@ enum UA_StatusCode {
 	UA_STATUSCODE_BADMAXCONNECTIONSREACHED = 0x80b70000 // The operation could not be finished because all available connections are in use.
 };
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_types.h" ***********************************/
 /*
  * Copyright (C) 2014 the contributors as stated in the AUTHORS file
  *
@@ -542,16 +548,12 @@ typedef struct UA_DiagnosticInfo {
     struct UA_DiagnosticInfo *innerDiagnosticInfo;
 } UA_DiagnosticInfo;
 
-#ifndef SWIG
 #define UA_TYPE_HANDLING_FUNCTIONS(TYPE)                             \
     TYPE UA_EXPORT * TYPE##_new(void);                               \
     void UA_EXPORT TYPE##_init(TYPE * p);                            \
     void UA_EXPORT TYPE##_delete(TYPE * p);                          \
     void UA_EXPORT TYPE##_deleteMembers(TYPE * p);                   \
     UA_StatusCode UA_EXPORT TYPE##_copy(const TYPE *src, TYPE *dst);
-#else
-#define UA_TYPE_HANDLING_FUNCTIONS(TYPE)
-#endif
 
 /* Functions for all types */
 UA_TYPE_HANDLING_FUNCTIONS(UA_Boolean)
@@ -600,25 +602,23 @@ UA_TYPE_HANDLING_FUNCTIONS(UA_DiagnosticInfo)
 /* Custom functions for the builtin datatypes */
 /**********************************************/
 
-#ifdef __cplusplus
-#define CPP_ONLY(STR) STR
-#else
-#define CPP_ONLY(STR)
-#endif
-
 /* String */
 /** Copy a (zero terminated) char-array into a UA_String. Memory for the string data is
     allocated. If the memory cannot be allocated, a null-string is returned. */
-UA_String UA_EXPORT UA_String_fromChars(char const *src);
+UA_String UA_EXPORT UA_String_fromChars(char const src[]);
+
 #define UA_STRING_ALLOC(CHARS) UA_String_fromChars(CHARS)
-#define UA_STRING(CHARS) (const UA_String) {sizeof(CHARS)-1, (UA_Byte*)CHARS }
+#define UA_STRING(CHARS) (UA_String) {strlen(CHARS), (UA_Byte*)CHARS }
 #define UA_STRING_NULL (UA_String) {-1, (UA_Byte*)0 }
 
 /** Printf a char-array into a UA_String. Memory for the string data is allocated. */
-UA_StatusCode UA_EXPORT UA_String_copyprintf(char const *fmt, UA_String *dst, ...);
+UA_StatusCode UA_EXPORT UA_String_copyprintf(char const fmt[], UA_String *dst, ...);
 
 /** Compares two strings */
 UA_Boolean UA_EXPORT UA_String_equal(const UA_String *string1, const UA_String *string2);
+
+/** Compares an UA String with a char array */
+UA_Boolean UA_EXPORT UA_String_equalchars(const UA_String *string1, char *charString);
 
 /* DateTime */
 /** Returns the current time */
@@ -647,6 +647,7 @@ UA_Boolean UA_EXPORT UA_Guid_equal(const UA_Guid *g1, const UA_Guid *g2);
 UA_Guid UA_EXPORT UA_Guid_random(UA_UInt32 *seed);
 
 /* ByteString */
+#define UA_BYTESTRING_NULL (UA_ByteString) {-1, (UA_Byte*)0 }
 #define UA_ByteString_equal(string1, string2) \
     UA_String_equal((const UA_String*) string1, (const UA_String*)string2)
 
@@ -660,56 +661,23 @@ UA_Boolean UA_EXPORT UA_NodeId_equal(const UA_NodeId *n1, const UA_NodeId *n2);
 /** Is the nodeid a null-nodeid? */
 UA_Boolean UA_EXPORT UA_NodeId_isNull(const UA_NodeId *p);
 
-#ifndef __cplusplus
-#define UA_NODEID_NUMERIC(NS_INDEX, NUMERICID) (UA_NodeId) {           \
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_NUMERIC,                       \
-        .identifier.numeric = NUMERICID }
+UA_NodeId UA_EXPORT UA_NodeId_fromInteger(UA_UInt16 nsIndex, UA_Int32 identifier);
+UA_NodeId UA_EXPORT UA_NodeId_fromCharString(UA_UInt16 nsIndex, char identifier[]);
+UA_NodeId UA_EXPORT UA_NodeId_fromCharStringCopy(UA_UInt16 nsIndex, char const identifier[]);
+UA_NodeId UA_EXPORT UA_NodeId_fromString(UA_UInt16 nsIndex, UA_String identifier);
+UA_NodeId UA_EXPORT UA_NodeId_fromStringCopy(UA_UInt16 nsIndex, UA_String identifier);
+UA_NodeId UA_EXPORT UA_NodeId_fromGuid(UA_UInt16 nsIndex, UA_Guid identifier);
+UA_NodeId UA_EXPORT UA_NodeId_fromCharByteString(UA_UInt16 nsIndex, char identifier[]);
+UA_NodeId UA_EXPORT UA_NodeId_fromCharByteStringCopy(UA_UInt16 nsIndex, char const identifier[]);
+UA_NodeId UA_EXPORT UA_NodeId_fromByteString(UA_UInt16 nsIndex, UA_ByteString identifier);
+UA_NodeId UA_EXPORT UA_NodeId_fromByteStringCopy(UA_UInt16 nsIndex, UA_ByteString identifier);
 
-#define UA_NODEID_STRING(NS_INDEX, CHARS) (const UA_NodeId) {          \
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_STRING,                        \
-        .identifier.string = UA_STRING(CHARS) }
-    
-#define UA_NODEID_STRING_ALLOC(NS_INDEX, CHARS) (const UA_NodeId) {    \
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_STRING,                        \
-        .identifier.string = UA_STRING_ALLOC(CHARS) }
-
-#define UA_NODEID_GUID(NS_INDEX, GUID) (UA_NodeId) {                   \
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_GUID,                          \
-        .identifier.guid = GUID }
-
-#define UA_NODEID_BYTESTRING(NS_INDEX, CHARS) (const UA_NodeId) {      \
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_BYTESTRING,                    \
-        .identifier.byteString = UA_STRING(CHARS) }
-
-#define UA_NODEID_BYTESTRING_ALLOC(NS_INDEX, CHARS) (const UA_NodeId) {\
-        .namespaceIndex = NS_INDEX,                                    \
-        .identifierType = UA_NODEIDTYPE_BYTESTRING,                    \
-        .identifier.byteString = UA_STRING_ALLOC(CHARS) }
-#else
-#define UA_NODEID_NUMERIC(NS_INDEX, NUMERICID) (UA_NodeId) {    \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_NUMERIC, NUMERICID }
-
-#define UA_NODEID_STRING(NS_INDEX, CHARS) (const UA_NodeId) {           \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_STRING, UA_STRING(CHARS) }
-
-#define UA_NODEID_STRING_ALLOC(NS_INDEX, CHARS) (const UA_NodeId) {     \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_STRING, UA_STRING_ALLOC(CHARS) }
-
-#define UA_NODEID_GUID(NS_INDEX, GUID) (UA_NodeId) {    \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_GUID, GUID }
-
-#define UA_NODEID_BYTESTRING(NS_INDEX, CHARS) (const UA_NodeId) {       \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_BYTESTRING, UA_STRING(CHARS) }
-
-#define UA_NODEID_BYTESTRING_ALLOC(NS_INDEX, CHARS) (const UA_NodeId) { \
-        NS_INDEX, UA_NodeId::UA_NODEIDTYPE_BYTESTRING, UA_STRING_ALLOC(CHARS) }
-#endif
-
+#define UA_NODEID_NUMERIC(NS_INDEX, NUMERICID) UA_NodeId_fromInteger(NS_INDEX, NUMERICID)
+#define UA_NODEID_STRING(NS_INDEX, CHARS) UA_NodeId_fromCharString(NS_INDEX, CHARS)
+#define UA_NODEID_STRING_ALLOC(NS_INDEX, CHARS) UA_NodeId_fromCharStringCopy(NS_INDEX, CHARS)
+#define UA_NODEID_GUID(NS_INDEX, GUID) UA_NodeId_fromGuid(NS_INDEX, GUID)
+#define UA_NODEID_BYTESTRING(NS_INDEX, CHARS) UA_NodeId_fromCharByteString(NS_INDEX, CHARS)
+#define UA_NODEID_BYTESTRING_ALLOC(NS_INDEX, CHARS) UA_NodeId_fromCharStringCopy(NS_INDEX, CHARS)
 #define UA_NODEID_NULL UA_NODEID_NUMERIC(0,0)
 
 /* ExpandedNodeId */
@@ -727,9 +695,9 @@ UA_Boolean UA_EXPORT UA_ExpandedNodeId_isNull(const UA_ExpandedNodeId *p);
         .namespaceIndex = NS_INDEX, .name = UA_STRING_ALLOC(CHARS) }
 
 /* LocalizedText */
-#define UA_LOCALIZEDTEXT(LOCALE, TEXT) (const UA_LocalizedText) {     \
+#define UA_LOCALIZEDTEXT(LOCALE, TEXT) (const UA_LocalizedText) {       \
         .locale = UA_STRING(LOCALE), .text = UA_STRING(TEXT) }
-#define UA_LOCALIZEDTEXT_ALLOC(LOCALE, TEXT) (UA_LocalizedText) {             \
+#define UA_LOCALIZEDTEXT_ALLOC(LOCALE, TEXT) (UA_LocalizedText) {       \
         .locale = UA_STRING_ALLOC(LOCALE), .text = UA_STRING_ALLOC(TEXT) }
 
 /* Variant */
@@ -741,7 +709,7 @@ UA_Boolean UA_EXPORT UA_ExpandedNodeId_isNull(const UA_ExpandedNodeId *p);
  * @param v The variant
  * @return Does the variant contain a scalar value.
  */
-UA_Boolean UA_EXPORT UA_Variant_isScalar(UA_Variant *v);
+UA_Boolean UA_EXPORT UA_Variant_isScalar(const UA_Variant *v);
     
 /**
  * Set the variant to a scalar value that already resides in memory. The value takes on the
@@ -790,33 +758,35 @@ UA_StatusCode UA_EXPORT UA_Variant_setArrayCopy(UA_Variant *v, const void *array
                                                 const UA_DataType *type);
 
 /**
- * Copy the variant, but use only a subset of the (multidimensional) array. Returns an error code if
- * the variant is no array or if the indicated range does not fit.
+ * Copy the variant, but use only a subset of the (multidimensional) array into a variant. Returns
+ * an error code if the variant is not an array or if the indicated range does not fit.
  */
 UA_StatusCode UA_EXPORT UA_Variant_copyRange(const UA_Variant *src, UA_Variant *dst, UA_NumericRange range);
 
 /**
- * Insert a range of data into an existing variant of the dimensionality. This overwrites data in
- * the variant. The inserted data is managed by the variant (members are deleted with it).
+ * Insert a range of data into an existing variant. The data array can't be reused afterwards if it
+ * contains types without a fixed size (e.g. strings) since they take on the lifetime of the
+ * variant.
  *
  * @param v The variant
- * @param data The data array. Obviously the type must match the variant and the length the range.
+ * @param dataArray The data array. The type must match the variant
+ * @param dataarraySize The length of the data array. This is checked to match the range size.
  * @param range The range of where the new data is inserted
  * @return Indicates whether the operation succeeded or returns an error code
  */
-UA_StatusCode UA_EXPORT UA_Variant_setRange(UA_Variant *v, void *data, const UA_NumericRange range);
+UA_StatusCode UA_EXPORT UA_Variant_setRange(UA_Variant *v, void *dataArray, UA_Int32 dataArraySize,
+                                            const UA_NumericRange range);
 
 /**
- * Copies the variant and inserts data from the range. The inserted data is managed by the variant
- * (members are deleted with it).
+ * Deep-copy a range of data into an existing variant.
  *
- * @param src The source variant
- * @param dst The target variant
- * @param data The data array. Obviously the type must match the variant and the length the range.
+ * @param v The variant
+ * @param dataArray The data array. The type must match the variant
+ * @param dataarraySize The length of the data array. This is checked to match the range size.
  * @param range The range of where the new data is inserted
  * @return Indicates whether the operation succeeded or returns an error code
  */
-UA_StatusCode UA_EXPORT UA_Variant_setCopyRange(const UA_Variant *src, UA_Variant *dst, void *data,
+UA_StatusCode UA_EXPORT UA_Variant_setRangeCopy(UA_Variant *v, const void *dataArray, UA_Int32 dataArraySize,
                                                 const UA_NumericRange range);
 
 /****************************/
@@ -840,8 +810,8 @@ typedef struct {
                                                   namespace may contain members from the same
                                                   namespace or ns0 only.*/
     UA_Byte padding UA_BITFIELD(5); /**< How much padding is there before this member element? For
-                                         arrays this is split into 2 bytes padding for for the
-                                         length index (max 4 bytes) and 3 bytes padding for the
+                                         arrays this is split into 2 bytes padding before the
+                                         length index (max 4 bytes) and 3 bytes padding before the
                                          pointer (max 8 bytes) */
     UA_Boolean isArray UA_BITFIELD(1); ///< The member is an array of the given type
 } UA_DataTypeMember;
@@ -850,7 +820,7 @@ struct UA_DataType {
     UA_NodeId typeId; ///< The nodeid of the type
     ptrdiff_t memSize UA_BITFIELD(16); ///< Size of the struct in memory
     UA_UInt16 typeIndex UA_BITFIELD(13); ///< Index of the type in the datatypetable
-    UA_Boolean namespaceZero UA_BITFIELD(1); ///< The type is defined in namespace zero.
+    UA_Boolean namespaceZero UA_BITFIELD(1); ///< The type is defined in namespace zero
     UA_Boolean fixedSize UA_BITFIELD(1); ///< The type (and its members) contains no pointers
     UA_Boolean zeroCopyable UA_BITFIELD(1); ///< Can the type be copied directly off the stream?
     UA_Byte membersSize; ///< How many members does the type have?
@@ -968,11 +938,12 @@ typedef enum {
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/src_generated/ua_nodeids.h" ***********************************/
 /**********************************************************
  * C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/src_generated/ua_nodeids.hgen -- do not modify
  **********************************************************
  * Generated from C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/tools/schema/NodeIds.csv with script C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/tools/generate_nodeids.py
- * on host SPECTRE by user lars at 2015-04-17 10:13:36
+ * on host SPECTRE by user lars at 2015-05-06 12:57:37
  **********************************************************/
  
 
@@ -1668,13 +1639,14 @@ typedef enum {
 #define UA_NS0ID_DOUBLECOMPLEXNUMBERTYPE 12172 // DataType
 #define UA_NS0ID_HASMODELPARENT 50 // ReferenceType
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/src_generated/ua_types_generated.h" ***********************************/
 /**
 * @file ua_types_generated.h
 *
 * @brief Autogenerated data types
 *
 * Generated from Opc.Ua.Types.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/tools/generate_datatypes.py
-* on host SPECTRE by user lars at 2015-04-17 10:13:36
+* on host SPECTRE by user lars at 2015-05-06 12:57:37
 */
 
 
@@ -1693,7 +1665,7 @@ extern "C" {
 * @{
 */
 
-#define UA_TYPES_COUNT 117
+#define UA_TYPES_COUNT 122
 
 extern UA_EXPORT const UA_DataType *UA_TYPES;
 
@@ -1769,7 +1741,7 @@ typedef struct {
     UA_ExpandedNodeId targetId;
 } UA_ReferenceNode;
 #define UA_TYPES_REFERENCENODE 27
-#define UA_ReferenceNode_new() UA_new(&UA_TYPES[UA_TYPES_REFERENCENODE])
+#define UA_ReferenceNode_new() (UA_ReferenceNode*)UA_new(&UA_TYPES[UA_TYPES_REFERENCENODE])
 #define UA_ReferenceNode_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REFERENCENODE])
 #define UA_ReferenceNode_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REFERENCENODE])
 #define UA_ReferenceNode_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REFERENCENODE])
@@ -1807,7 +1779,7 @@ typedef struct {
     UA_String *discoveryUrls;
 } UA_ApplicationDescription;
 #define UA_TYPES_APPLICATIONDESCRIPTION 29
-#define UA_ApplicationDescription_new() UA_new(&UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION])
+#define UA_ApplicationDescription_new() (UA_ApplicationDescription*)UA_new(&UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION])
 #define UA_ApplicationDescription_init(p) UA_init(p, &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION])
 #define UA_ApplicationDescription_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION])
 #define UA_ApplicationDescription_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION])
@@ -1827,7 +1799,7 @@ typedef struct {
     UA_ExtensionObject additionalHeader;
 } UA_RequestHeader;
 #define UA_TYPES_REQUESTHEADER 30
-#define UA_RequestHeader_new() UA_new(&UA_TYPES[UA_TYPES_REQUESTHEADER])
+#define UA_RequestHeader_new() (UA_RequestHeader*)UA_new(&UA_TYPES[UA_TYPES_REQUESTHEADER])
 #define UA_RequestHeader_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REQUESTHEADER])
 #define UA_RequestHeader_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REQUESTHEADER])
 #define UA_RequestHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REQUESTHEADER])
@@ -1847,7 +1819,7 @@ typedef struct {
     UA_ExtensionObject additionalHeader;
 } UA_ResponseHeader;
 #define UA_TYPES_RESPONSEHEADER 31
-#define UA_ResponseHeader_new() UA_new(&UA_TYPES[UA_TYPES_RESPONSEHEADER])
+#define UA_ResponseHeader_new() (UA_ResponseHeader*)UA_new(&UA_TYPES[UA_TYPES_RESPONSEHEADER])
 #define UA_ResponseHeader_init(p) UA_init(p, &UA_TYPES[UA_TYPES_RESPONSEHEADER])
 #define UA_ResponseHeader_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_RESPONSEHEADER])
 #define UA_ResponseHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_RESPONSEHEADER])
@@ -1866,7 +1838,7 @@ typedef struct {
     UA_String *serverUris;
 } UA_FindServersRequest;
 #define UA_TYPES_FINDSERVERSREQUEST 32
-#define UA_FindServersRequest_new() UA_new(&UA_TYPES[UA_TYPES_FINDSERVERSREQUEST])
+#define UA_FindServersRequest_new() (UA_FindServersRequest*)UA_new(&UA_TYPES[UA_TYPES_FINDSERVERSREQUEST])
 #define UA_FindServersRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_FINDSERVERSREQUEST])
 #define UA_FindServersRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_FINDSERVERSREQUEST])
 #define UA_FindServersRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_FINDSERVERSREQUEST])
@@ -1882,7 +1854,7 @@ typedef struct {
     UA_ApplicationDescription *servers;
 } UA_FindServersResponse;
 #define UA_TYPES_FINDSERVERSRESPONSE 33
-#define UA_FindServersResponse_new() UA_new(&UA_TYPES[UA_TYPES_FINDSERVERSRESPONSE])
+#define UA_FindServersResponse_new() (UA_FindServersResponse*)UA_new(&UA_TYPES[UA_TYPES_FINDSERVERSRESPONSE])
 #define UA_FindServersResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_FINDSERVERSRESPONSE])
 #define UA_FindServersResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_FINDSERVERSRESPONSE])
 #define UA_FindServersResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_FINDSERVERSRESPONSE])
@@ -1934,7 +1906,7 @@ typedef struct {
     UA_String securityPolicyUri;
 } UA_UserTokenPolicy;
 #define UA_TYPES_USERTOKENPOLICY 36
-#define UA_UserTokenPolicy_new() UA_new(&UA_TYPES[UA_TYPES_USERTOKENPOLICY])
+#define UA_UserTokenPolicy_new() (UA_UserTokenPolicy*)UA_new(&UA_TYPES[UA_TYPES_USERTOKENPOLICY])
 #define UA_UserTokenPolicy_init(p) UA_init(p, &UA_TYPES[UA_TYPES_USERTOKENPOLICY])
 #define UA_UserTokenPolicy_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_USERTOKENPOLICY])
 #define UA_UserTokenPolicy_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_USERTOKENPOLICY])
@@ -1956,7 +1928,7 @@ typedef struct {
     UA_Byte securityLevel;
 } UA_EndpointDescription;
 #define UA_TYPES_ENDPOINTDESCRIPTION 37
-#define UA_EndpointDescription_new() UA_new(&UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION])
+#define UA_EndpointDescription_new() (UA_EndpointDescription*)UA_new(&UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION])
 #define UA_EndpointDescription_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION])
 #define UA_EndpointDescription_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION])
 #define UA_EndpointDescription_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION])
@@ -1975,7 +1947,7 @@ typedef struct {
     UA_String *profileUris;
 } UA_GetEndpointsRequest;
 #define UA_TYPES_GETENDPOINTSREQUEST 38
-#define UA_GetEndpointsRequest_new() UA_new(&UA_TYPES[UA_TYPES_GETENDPOINTSREQUEST])
+#define UA_GetEndpointsRequest_new() (UA_GetEndpointsRequest*)UA_new(&UA_TYPES[UA_TYPES_GETENDPOINTSREQUEST])
 #define UA_GetEndpointsRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_GETENDPOINTSREQUEST])
 #define UA_GetEndpointsRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_GETENDPOINTSREQUEST])
 #define UA_GetEndpointsRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_GETENDPOINTSREQUEST])
@@ -1991,7 +1963,7 @@ typedef struct {
     UA_EndpointDescription *endpoints;
 } UA_GetEndpointsResponse;
 #define UA_TYPES_GETENDPOINTSRESPONSE 39
-#define UA_GetEndpointsResponse_new() UA_new(&UA_TYPES[UA_TYPES_GETENDPOINTSRESPONSE])
+#define UA_GetEndpointsResponse_new() (UA_GetEndpointsResponse*)UA_new(&UA_TYPES[UA_TYPES_GETENDPOINTSRESPONSE])
 #define UA_GetEndpointsResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_GETENDPOINTSRESPONSE])
 #define UA_GetEndpointsResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_GETENDPOINTSRESPONSE])
 #define UA_GetEndpointsResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_GETENDPOINTSRESPONSE])
@@ -2023,7 +1995,7 @@ typedef struct {
     UA_UInt32 revisedLifetime;
 } UA_ChannelSecurityToken;
 #define UA_TYPES_CHANNELSECURITYTOKEN 41
-#define UA_ChannelSecurityToken_new() UA_new(&UA_TYPES[UA_TYPES_CHANNELSECURITYTOKEN])
+#define UA_ChannelSecurityToken_new() (UA_ChannelSecurityToken*)UA_new(&UA_TYPES[UA_TYPES_CHANNELSECURITYTOKEN])
 #define UA_ChannelSecurityToken_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CHANNELSECURITYTOKEN])
 #define UA_ChannelSecurityToken_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CHANNELSECURITYTOKEN])
 #define UA_ChannelSecurityToken_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CHANNELSECURITYTOKEN])
@@ -2042,7 +2014,7 @@ typedef struct {
     UA_UInt32 requestedLifetime;
 } UA_OpenSecureChannelRequest;
 #define UA_TYPES_OPENSECURECHANNELREQUEST 42
-#define UA_OpenSecureChannelRequest_new() UA_new(&UA_TYPES[UA_TYPES_OPENSECURECHANNELREQUEST])
+#define UA_OpenSecureChannelRequest_new() (UA_OpenSecureChannelRequest*)UA_new(&UA_TYPES[UA_TYPES_OPENSECURECHANNELREQUEST])
 #define UA_OpenSecureChannelRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELREQUEST])
 #define UA_OpenSecureChannelRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELREQUEST])
 #define UA_OpenSecureChannelRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELREQUEST])
@@ -2059,7 +2031,7 @@ typedef struct {
     UA_ByteString serverNonce;
 } UA_OpenSecureChannelResponse;
 #define UA_TYPES_OPENSECURECHANNELRESPONSE 43
-#define UA_OpenSecureChannelResponse_new() UA_new(&UA_TYPES[UA_TYPES_OPENSECURECHANNELRESPONSE])
+#define UA_OpenSecureChannelResponse_new() (UA_OpenSecureChannelResponse*)UA_new(&UA_TYPES[UA_TYPES_OPENSECURECHANNELRESPONSE])
 #define UA_OpenSecureChannelResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELRESPONSE])
 #define UA_OpenSecureChannelResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELRESPONSE])
 #define UA_OpenSecureChannelResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_OPENSECURECHANNELRESPONSE])
@@ -2073,7 +2045,7 @@ typedef struct {
     UA_RequestHeader requestHeader;
 } UA_CloseSecureChannelRequest;
 #define UA_TYPES_CLOSESECURECHANNELREQUEST 44
-#define UA_CloseSecureChannelRequest_new() UA_new(&UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST])
+#define UA_CloseSecureChannelRequest_new() (UA_CloseSecureChannelRequest*)UA_new(&UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST])
 #define UA_CloseSecureChannelRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST])
 #define UA_CloseSecureChannelRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST])
 #define UA_CloseSecureChannelRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELREQUEST])
@@ -2087,7 +2059,7 @@ typedef struct {
     UA_ResponseHeader responseHeader;
 } UA_CloseSecureChannelResponse;
 #define UA_TYPES_CLOSESECURECHANNELRESPONSE 45
-#define UA_CloseSecureChannelResponse_new() UA_new(&UA_TYPES[UA_TYPES_CLOSESECURECHANNELRESPONSE])
+#define UA_CloseSecureChannelResponse_new() (UA_CloseSecureChannelResponse*)UA_new(&UA_TYPES[UA_TYPES_CLOSESECURECHANNELRESPONSE])
 #define UA_CloseSecureChannelResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELRESPONSE])
 #define UA_CloseSecureChannelResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELRESPONSE])
 #define UA_CloseSecureChannelResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CLOSESECURECHANNELRESPONSE])
@@ -2102,7 +2074,7 @@ typedef struct {
     UA_ByteString signature;
 } UA_SignedSoftwareCertificate;
 #define UA_TYPES_SIGNEDSOFTWARECERTIFICATE 46
-#define UA_SignedSoftwareCertificate_new() UA_new(&UA_TYPES[UA_TYPES_SIGNEDSOFTWARECERTIFICATE])
+#define UA_SignedSoftwareCertificate_new() (UA_SignedSoftwareCertificate*)UA_new(&UA_TYPES[UA_TYPES_SIGNEDSOFTWARECERTIFICATE])
 #define UA_SignedSoftwareCertificate_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SIGNEDSOFTWARECERTIFICATE])
 #define UA_SignedSoftwareCertificate_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SIGNEDSOFTWARECERTIFICATE])
 #define UA_SignedSoftwareCertificate_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SIGNEDSOFTWARECERTIFICATE])
@@ -2117,7 +2089,7 @@ typedef struct {
     UA_ByteString signature;
 } UA_SignatureData;
 #define UA_TYPES_SIGNATUREDATA 47
-#define UA_SignatureData_new() UA_new(&UA_TYPES[UA_TYPES_SIGNATUREDATA])
+#define UA_SignatureData_new() (UA_SignatureData*)UA_new(&UA_TYPES[UA_TYPES_SIGNATUREDATA])
 #define UA_SignatureData_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SIGNATUREDATA])
 #define UA_SignatureData_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SIGNATUREDATA])
 #define UA_SignatureData_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SIGNATUREDATA])
@@ -2139,7 +2111,7 @@ typedef struct {
     UA_UInt32 maxResponseMessageSize;
 } UA_CreateSessionRequest;
 #define UA_TYPES_CREATESESSIONREQUEST 48
-#define UA_CreateSessionRequest_new() UA_new(&UA_TYPES[UA_TYPES_CREATESESSIONREQUEST])
+#define UA_CreateSessionRequest_new() (UA_CreateSessionRequest*)UA_new(&UA_TYPES[UA_TYPES_CREATESESSIONREQUEST])
 #define UA_CreateSessionRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATESESSIONREQUEST])
 #define UA_CreateSessionRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATESESSIONREQUEST])
 #define UA_CreateSessionRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATESESSIONREQUEST])
@@ -2164,7 +2136,7 @@ typedef struct {
     UA_UInt32 maxRequestMessageSize;
 } UA_CreateSessionResponse;
 #define UA_TYPES_CREATESESSIONRESPONSE 49
-#define UA_CreateSessionResponse_new() UA_new(&UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
+#define UA_CreateSessionResponse_new() (UA_CreateSessionResponse*)UA_new(&UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
 #define UA_CreateSessionResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
 #define UA_CreateSessionResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
 #define UA_CreateSessionResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
@@ -2172,6 +2144,51 @@ typedef struct {
 #define UA_CreateSessionResponse_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
 #define UA_CreateSessionResponse_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE], dst, offset)
 #define UA_CreateSessionResponse_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_CREATESESSIONRESPONSE])
+
+/** @brief A base type for a user identity token. */
+typedef struct {
+    UA_String policyId;
+} UA_UserIdentityToken;
+#define UA_TYPES_USERIDENTITYTOKEN 50
+#define UA_UserIdentityToken_new() (UA_UserIdentityToken*)UA_new(&UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_init(p) UA_init(p, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_copy(src, dst) UA_copy(src, dst, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+#define UA_UserIdentityToken_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN], dst, offset)
+#define UA_UserIdentityToken_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_USERIDENTITYTOKEN])
+
+/** @brief A token representing an anonymous user. */
+typedef struct {
+    UA_String policyId;
+} UA_AnonymousIdentityToken;
+#define UA_TYPES_ANONYMOUSIDENTITYTOKEN 51
+#define UA_AnonymousIdentityToken_new() (UA_AnonymousIdentityToken*)UA_new(&UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_copy(src, dst) UA_copy(src, dst, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+#define UA_AnonymousIdentityToken_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN], dst, offset)
+#define UA_AnonymousIdentityToken_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_ANONYMOUSIDENTITYTOKEN])
+
+/** @brief A token representing a user identified by a user name and password. */
+typedef struct {
+    UA_String policyId;
+    UA_String userName;
+    UA_ByteString password;
+    UA_String encryptionAlgorithm;
+} UA_UserNameIdentityToken;
+#define UA_TYPES_USERNAMEIDENTITYTOKEN 52
+#define UA_UserNameIdentityToken_new() (UA_UserNameIdentityToken*)UA_new(&UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_init(p) UA_init(p, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_copy(src, dst) UA_copy(src, dst, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
+#define UA_UserNameIdentityToken_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN], dst, offset)
+#define UA_UserNameIdentityToken_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_USERNAMEIDENTITYTOKEN])
 
 /** @brief Activates a session with the server. */
 typedef struct {
@@ -2184,8 +2201,8 @@ typedef struct {
     UA_ExtensionObject userIdentityToken;
     UA_SignatureData userTokenSignature;
 } UA_ActivateSessionRequest;
-#define UA_TYPES_ACTIVATESESSIONREQUEST 50
-#define UA_ActivateSessionRequest_new() UA_new(&UA_TYPES[UA_TYPES_ACTIVATESESSIONREQUEST])
+#define UA_TYPES_ACTIVATESESSIONREQUEST 53
+#define UA_ActivateSessionRequest_new() (UA_ActivateSessionRequest*)UA_new(&UA_TYPES[UA_TYPES_ACTIVATESESSIONREQUEST])
 #define UA_ActivateSessionRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONREQUEST])
 #define UA_ActivateSessionRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONREQUEST])
 #define UA_ActivateSessionRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONREQUEST])
@@ -2203,8 +2220,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_ActivateSessionResponse;
-#define UA_TYPES_ACTIVATESESSIONRESPONSE 51
-#define UA_ActivateSessionResponse_new() UA_new(&UA_TYPES[UA_TYPES_ACTIVATESESSIONRESPONSE])
+#define UA_TYPES_ACTIVATESESSIONRESPONSE 54
+#define UA_ActivateSessionResponse_new() (UA_ActivateSessionResponse*)UA_new(&UA_TYPES[UA_TYPES_ACTIVATESESSIONRESPONSE])
 #define UA_ActivateSessionResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONRESPONSE])
 #define UA_ActivateSessionResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONRESPONSE])
 #define UA_ActivateSessionResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ACTIVATESESSIONRESPONSE])
@@ -2218,8 +2235,8 @@ typedef struct {
     UA_RequestHeader requestHeader;
     UA_Boolean deleteSubscriptions;
 } UA_CloseSessionRequest;
-#define UA_TYPES_CLOSESESSIONREQUEST 52
-#define UA_CloseSessionRequest_new() UA_new(&UA_TYPES[UA_TYPES_CLOSESESSIONREQUEST])
+#define UA_TYPES_CLOSESESSIONREQUEST 55
+#define UA_CloseSessionRequest_new() (UA_CloseSessionRequest*)UA_new(&UA_TYPES[UA_TYPES_CLOSESESSIONREQUEST])
 #define UA_CloseSessionRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CLOSESESSIONREQUEST])
 #define UA_CloseSessionRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CLOSESESSIONREQUEST])
 #define UA_CloseSessionRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CLOSESESSIONREQUEST])
@@ -2232,8 +2249,8 @@ typedef struct {
 typedef struct {
     UA_ResponseHeader responseHeader;
 } UA_CloseSessionResponse;
-#define UA_TYPES_CLOSESESSIONRESPONSE 53
-#define UA_CloseSessionResponse_new() UA_new(&UA_TYPES[UA_TYPES_CLOSESESSIONRESPONSE])
+#define UA_TYPES_CLOSESESSIONRESPONSE 56
+#define UA_CloseSessionResponse_new() (UA_CloseSessionResponse*)UA_new(&UA_TYPES[UA_TYPES_CLOSESESSIONRESPONSE])
 #define UA_CloseSessionResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CLOSESESSIONRESPONSE])
 #define UA_CloseSessionResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CLOSESESSIONRESPONSE])
 #define UA_CloseSessionResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CLOSESESSIONRESPONSE])
@@ -2277,7 +2294,7 @@ typedef enum {
     UA_NODEATTRIBUTESMASK_REFERENCETYPE = 1371236,
     UA_NODEATTRIBUTESMASK_VIEW = 1335532
 } UA_NodeAttributesMask;
-#define UA_TYPES_NODEATTRIBUTESMASK 54
+#define UA_TYPES_NODEATTRIBUTESMASK 57
 #define UA_NodeAttributesMask_new (UA_NodeAttributesMask*)UA_Int32_new
 #define UA_NodeAttributesMask_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_NodeAttributesMask_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -2295,8 +2312,8 @@ typedef struct {
     UA_UInt32 writeMask;
     UA_UInt32 userWriteMask;
 } UA_NodeAttributes;
-#define UA_TYPES_NODEATTRIBUTES 55
-#define UA_NodeAttributes_new() UA_new(&UA_TYPES[UA_TYPES_NODEATTRIBUTES])
+#define UA_TYPES_NODEATTRIBUTES 58
+#define UA_NodeAttributes_new() (UA_NodeAttributes*)UA_new(&UA_TYPES[UA_TYPES_NODEATTRIBUTES])
 #define UA_NodeAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_NODEATTRIBUTES])
 #define UA_NodeAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_NODEATTRIBUTES])
 #define UA_NodeAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_NODEATTRIBUTES])
@@ -2314,8 +2331,8 @@ typedef struct {
     UA_UInt32 userWriteMask;
     UA_Byte eventNotifier;
 } UA_ObjectAttributes;
-#define UA_TYPES_OBJECTATTRIBUTES 56
-#define UA_ObjectAttributes_new() UA_new(&UA_TYPES[UA_TYPES_OBJECTATTRIBUTES])
+#define UA_TYPES_OBJECTATTRIBUTES 59
+#define UA_ObjectAttributes_new() (UA_ObjectAttributes*)UA_new(&UA_TYPES[UA_TYPES_OBJECTATTRIBUTES])
 #define UA_ObjectAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_OBJECTATTRIBUTES])
 #define UA_ObjectAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_OBJECTATTRIBUTES])
 #define UA_ObjectAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_OBJECTATTRIBUTES])
@@ -2341,8 +2358,8 @@ typedef struct {
     UA_Double minimumSamplingInterval;
     UA_Boolean historizing;
 } UA_VariableAttributes;
-#define UA_TYPES_VARIABLEATTRIBUTES 57
-#define UA_VariableAttributes_new() UA_new(&UA_TYPES[UA_TYPES_VARIABLEATTRIBUTES])
+#define UA_TYPES_VARIABLEATTRIBUTES 60
+#define UA_VariableAttributes_new() (UA_VariableAttributes*)UA_new(&UA_TYPES[UA_TYPES_VARIABLEATTRIBUTES])
 #define UA_VariableAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_VARIABLEATTRIBUTES])
 #define UA_VariableAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_VARIABLEATTRIBUTES])
 #define UA_VariableAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_VARIABLEATTRIBUTES])
@@ -2360,8 +2377,8 @@ typedef struct {
     UA_UInt32 userWriteMask;
     UA_Boolean isAbstract;
 } UA_ObjectTypeAttributes;
-#define UA_TYPES_OBJECTTYPEATTRIBUTES 58
-#define UA_ObjectTypeAttributes_new() UA_new(&UA_TYPES[UA_TYPES_OBJECTTYPEATTRIBUTES])
+#define UA_TYPES_OBJECTTYPEATTRIBUTES 61
+#define UA_ObjectTypeAttributes_new() (UA_ObjectTypeAttributes*)UA_new(&UA_TYPES[UA_TYPES_OBJECTTYPEATTRIBUTES])
 #define UA_ObjectTypeAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_OBJECTTYPEATTRIBUTES])
 #define UA_ObjectTypeAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_OBJECTTYPEATTRIBUTES])
 #define UA_ObjectTypeAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_OBJECTTYPEATTRIBUTES])
@@ -2381,8 +2398,8 @@ typedef struct {
     UA_Boolean symmetric;
     UA_LocalizedText inverseName;
 } UA_ReferenceTypeAttributes;
-#define UA_TYPES_REFERENCETYPEATTRIBUTES 59
-#define UA_ReferenceTypeAttributes_new() UA_new(&UA_TYPES[UA_TYPES_REFERENCETYPEATTRIBUTES])
+#define UA_TYPES_REFERENCETYPEATTRIBUTES 62
+#define UA_ReferenceTypeAttributes_new() (UA_ReferenceTypeAttributes*)UA_new(&UA_TYPES[UA_TYPES_REFERENCETYPEATTRIBUTES])
 #define UA_ReferenceTypeAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REFERENCETYPEATTRIBUTES])
 #define UA_ReferenceTypeAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REFERENCETYPEATTRIBUTES])
 #define UA_ReferenceTypeAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REFERENCETYPEATTRIBUTES])
@@ -2401,8 +2418,8 @@ typedef struct {
     UA_Boolean containsNoLoops;
     UA_Byte eventNotifier;
 } UA_ViewAttributes;
-#define UA_TYPES_VIEWATTRIBUTES 60
-#define UA_ViewAttributes_new() UA_new(&UA_TYPES[UA_TYPES_VIEWATTRIBUTES])
+#define UA_TYPES_VIEWATTRIBUTES 63
+#define UA_ViewAttributes_new() (UA_ViewAttributes*)UA_new(&UA_TYPES[UA_TYPES_VIEWATTRIBUTES])
 #define UA_ViewAttributes_init(p) UA_init(p, &UA_TYPES[UA_TYPES_VIEWATTRIBUTES])
 #define UA_ViewAttributes_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_VIEWATTRIBUTES])
 #define UA_ViewAttributes_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_VIEWATTRIBUTES])
@@ -2421,8 +2438,8 @@ typedef struct {
     UA_ExtensionObject nodeAttributes;
     UA_ExpandedNodeId typeDefinition;
 } UA_AddNodesItem;
-#define UA_TYPES_ADDNODESITEM 61
-#define UA_AddNodesItem_new() UA_new(&UA_TYPES[UA_TYPES_ADDNODESITEM])
+#define UA_TYPES_ADDNODESITEM 64
+#define UA_AddNodesItem_new() (UA_AddNodesItem*)UA_new(&UA_TYPES[UA_TYPES_ADDNODESITEM])
 #define UA_AddNodesItem_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDNODESITEM])
 #define UA_AddNodesItem_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDNODESITEM])
 #define UA_AddNodesItem_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDNODESITEM])
@@ -2436,8 +2453,8 @@ typedef struct {
     UA_StatusCode statusCode;
     UA_NodeId addedNodeId;
 } UA_AddNodesResult;
-#define UA_TYPES_ADDNODESRESULT 62
-#define UA_AddNodesResult_new() UA_new(&UA_TYPES[UA_TYPES_ADDNODESRESULT])
+#define UA_TYPES_ADDNODESRESULT 65
+#define UA_AddNodesResult_new() (UA_AddNodesResult*)UA_new(&UA_TYPES[UA_TYPES_ADDNODESRESULT])
 #define UA_AddNodesResult_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDNODESRESULT])
 #define UA_AddNodesResult_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDNODESRESULT])
 #define UA_AddNodesResult_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDNODESRESULT])
@@ -2452,8 +2469,8 @@ typedef struct {
     UA_Int32 nodesToAddSize;
     UA_AddNodesItem *nodesToAdd;
 } UA_AddNodesRequest;
-#define UA_TYPES_ADDNODESREQUEST 63
-#define UA_AddNodesRequest_new() UA_new(&UA_TYPES[UA_TYPES_ADDNODESREQUEST])
+#define UA_TYPES_ADDNODESREQUEST 66
+#define UA_AddNodesRequest_new() (UA_AddNodesRequest*)UA_new(&UA_TYPES[UA_TYPES_ADDNODESREQUEST])
 #define UA_AddNodesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDNODESREQUEST])
 #define UA_AddNodesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDNODESREQUEST])
 #define UA_AddNodesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDNODESREQUEST])
@@ -2470,8 +2487,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_AddNodesResponse;
-#define UA_TYPES_ADDNODESRESPONSE 64
-#define UA_AddNodesResponse_new() UA_new(&UA_TYPES[UA_TYPES_ADDNODESRESPONSE])
+#define UA_TYPES_ADDNODESRESPONSE 67
+#define UA_AddNodesResponse_new() (UA_AddNodesResponse*)UA_new(&UA_TYPES[UA_TYPES_ADDNODESRESPONSE])
 #define UA_AddNodesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDNODESRESPONSE])
 #define UA_AddNodesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDNODESRESPONSE])
 #define UA_AddNodesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDNODESRESPONSE])
@@ -2489,8 +2506,8 @@ typedef struct {
     UA_ExpandedNodeId targetNodeId;
     UA_NodeClass targetNodeClass;
 } UA_AddReferencesItem;
-#define UA_TYPES_ADDREFERENCESITEM 65
-#define UA_AddReferencesItem_new() UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESITEM])
+#define UA_TYPES_ADDREFERENCESITEM 68
+#define UA_AddReferencesItem_new() (UA_AddReferencesItem*)UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESITEM])
 #define UA_AddReferencesItem_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDREFERENCESITEM])
 #define UA_AddReferencesItem_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDREFERENCESITEM])
 #define UA_AddReferencesItem_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDREFERENCESITEM])
@@ -2505,8 +2522,8 @@ typedef struct {
     UA_Int32 referencesToAddSize;
     UA_AddReferencesItem *referencesToAdd;
 } UA_AddReferencesRequest;
-#define UA_TYPES_ADDREFERENCESREQUEST 66
-#define UA_AddReferencesRequest_new() UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST])
+#define UA_TYPES_ADDREFERENCESREQUEST 69
+#define UA_AddReferencesRequest_new() (UA_AddReferencesRequest*)UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST])
 #define UA_AddReferencesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST])
 #define UA_AddReferencesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST])
 #define UA_AddReferencesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST])
@@ -2523,8 +2540,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_AddReferencesResponse;
-#define UA_TYPES_ADDREFERENCESRESPONSE 67
-#define UA_AddReferencesResponse_new() UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE])
+#define UA_TYPES_ADDREFERENCESRESPONSE 70
+#define UA_AddReferencesResponse_new() (UA_AddReferencesResponse*)UA_new(&UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE])
 #define UA_AddReferencesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE])
 #define UA_AddReferencesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE])
 #define UA_AddReferencesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE])
@@ -2538,8 +2555,8 @@ typedef struct {
     UA_NodeId nodeId;
     UA_Boolean deleteTargetReferences;
 } UA_DeleteNodesItem;
-#define UA_TYPES_DELETENODESITEM 68
-#define UA_DeleteNodesItem_new() UA_new(&UA_TYPES[UA_TYPES_DELETENODESITEM])
+#define UA_TYPES_DELETENODESITEM 71
+#define UA_DeleteNodesItem_new() (UA_DeleteNodesItem*)UA_new(&UA_TYPES[UA_TYPES_DELETENODESITEM])
 #define UA_DeleteNodesItem_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETENODESITEM])
 #define UA_DeleteNodesItem_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETENODESITEM])
 #define UA_DeleteNodesItem_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETENODESITEM])
@@ -2554,8 +2571,8 @@ typedef struct {
     UA_Int32 nodesToDeleteSize;
     UA_DeleteNodesItem *nodesToDelete;
 } UA_DeleteNodesRequest;
-#define UA_TYPES_DELETENODESREQUEST 69
-#define UA_DeleteNodesRequest_new() UA_new(&UA_TYPES[UA_TYPES_DELETENODESREQUEST])
+#define UA_TYPES_DELETENODESREQUEST 72
+#define UA_DeleteNodesRequest_new() (UA_DeleteNodesRequest*)UA_new(&UA_TYPES[UA_TYPES_DELETENODESREQUEST])
 #define UA_DeleteNodesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETENODESREQUEST])
 #define UA_DeleteNodesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETENODESREQUEST])
 #define UA_DeleteNodesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETENODESREQUEST])
@@ -2572,8 +2589,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_DeleteNodesResponse;
-#define UA_TYPES_DELETENODESRESPONSE 70
-#define UA_DeleteNodesResponse_new() UA_new(&UA_TYPES[UA_TYPES_DELETENODESRESPONSE])
+#define UA_TYPES_DELETENODESRESPONSE 73
+#define UA_DeleteNodesResponse_new() (UA_DeleteNodesResponse*)UA_new(&UA_TYPES[UA_TYPES_DELETENODESRESPONSE])
 #define UA_DeleteNodesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETENODESRESPONSE])
 #define UA_DeleteNodesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETENODESRESPONSE])
 #define UA_DeleteNodesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETENODESRESPONSE])
@@ -2590,8 +2607,8 @@ typedef struct {
     UA_ExpandedNodeId targetNodeId;
     UA_Boolean deleteBidirectional;
 } UA_DeleteReferencesItem;
-#define UA_TYPES_DELETEREFERENCESITEM 71
-#define UA_DeleteReferencesItem_new() UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESITEM])
+#define UA_TYPES_DELETEREFERENCESITEM 74
+#define UA_DeleteReferencesItem_new() (UA_DeleteReferencesItem*)UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESITEM])
 #define UA_DeleteReferencesItem_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESITEM])
 #define UA_DeleteReferencesItem_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESITEM])
 #define UA_DeleteReferencesItem_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESITEM])
@@ -2606,8 +2623,8 @@ typedef struct {
     UA_Int32 referencesToDeleteSize;
     UA_DeleteReferencesItem *referencesToDelete;
 } UA_DeleteReferencesRequest;
-#define UA_TYPES_DELETEREFERENCESREQUEST 72
-#define UA_DeleteReferencesRequest_new() UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST])
+#define UA_TYPES_DELETEREFERENCESREQUEST 75
+#define UA_DeleteReferencesRequest_new() (UA_DeleteReferencesRequest*)UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST])
 #define UA_DeleteReferencesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST])
 #define UA_DeleteReferencesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST])
 #define UA_DeleteReferencesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST])
@@ -2624,8 +2641,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_DeleteReferencesResponse;
-#define UA_TYPES_DELETEREFERENCESRESPONSE 73
-#define UA_DeleteReferencesResponse_new() UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE])
+#define UA_TYPES_DELETEREFERENCESRESPONSE 76
+#define UA_DeleteReferencesResponse_new() (UA_DeleteReferencesResponse*)UA_new(&UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE])
 #define UA_DeleteReferencesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE])
 #define UA_DeleteReferencesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE])
 #define UA_DeleteReferencesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE])
@@ -2640,7 +2657,7 @@ typedef enum {
     UA_BROWSEDIRECTION_INVERSE = 1,
     UA_BROWSEDIRECTION_BOTH = 2
 } UA_BrowseDirection;
-#define UA_TYPES_BROWSEDIRECTION 74
+#define UA_TYPES_BROWSEDIRECTION 77
 #define UA_BrowseDirection_new (UA_BrowseDirection*)UA_Int32_new
 #define UA_BrowseDirection_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_BrowseDirection_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -2656,8 +2673,8 @@ typedef struct {
     UA_DateTime timestamp;
     UA_UInt32 viewVersion;
 } UA_ViewDescription;
-#define UA_TYPES_VIEWDESCRIPTION 75
-#define UA_ViewDescription_new() UA_new(&UA_TYPES[UA_TYPES_VIEWDESCRIPTION])
+#define UA_TYPES_VIEWDESCRIPTION 78
+#define UA_ViewDescription_new() (UA_ViewDescription*)UA_new(&UA_TYPES[UA_TYPES_VIEWDESCRIPTION])
 #define UA_ViewDescription_init(p) UA_init(p, &UA_TYPES[UA_TYPES_VIEWDESCRIPTION])
 #define UA_ViewDescription_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_VIEWDESCRIPTION])
 #define UA_ViewDescription_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_VIEWDESCRIPTION])
@@ -2675,8 +2692,8 @@ typedef struct {
     UA_UInt32 nodeClassMask;
     UA_UInt32 resultMask;
 } UA_BrowseDescription;
-#define UA_TYPES_BROWSEDESCRIPTION 76
-#define UA_BrowseDescription_new() UA_new(&UA_TYPES[UA_TYPES_BROWSEDESCRIPTION])
+#define UA_TYPES_BROWSEDESCRIPTION 79
+#define UA_BrowseDescription_new() (UA_BrowseDescription*)UA_new(&UA_TYPES[UA_TYPES_BROWSEDESCRIPTION])
 #define UA_BrowseDescription_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSEDESCRIPTION])
 #define UA_BrowseDescription_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSEDESCRIPTION])
 #define UA_BrowseDescription_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSEDESCRIPTION])
@@ -2698,7 +2715,7 @@ typedef enum {
     UA_BROWSERESULTMASK_REFERENCETYPEINFO = 3,
     UA_BROWSERESULTMASK_TARGETINFO = 60
 } UA_BrowseResultMask;
-#define UA_TYPES_BROWSERESULTMASK 77
+#define UA_TYPES_BROWSERESULTMASK 80
 #define UA_BrowseResultMask_new (UA_BrowseResultMask*)UA_Int32_new
 #define UA_BrowseResultMask_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_BrowseResultMask_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -2718,8 +2735,8 @@ typedef struct {
     UA_NodeClass nodeClass;
     UA_ExpandedNodeId typeDefinition;
 } UA_ReferenceDescription;
-#define UA_TYPES_REFERENCEDESCRIPTION 78
-#define UA_ReferenceDescription_new() UA_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION])
+#define UA_TYPES_REFERENCEDESCRIPTION 81
+#define UA_ReferenceDescription_new() (UA_ReferenceDescription*)UA_new(&UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION])
 #define UA_ReferenceDescription_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION])
 #define UA_ReferenceDescription_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION])
 #define UA_ReferenceDescription_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REFERENCEDESCRIPTION])
@@ -2735,8 +2752,8 @@ typedef struct {
     UA_Int32 referencesSize;
     UA_ReferenceDescription *references;
 } UA_BrowseResult;
-#define UA_TYPES_BROWSERESULT 79
-#define UA_BrowseResult_new() UA_new(&UA_TYPES[UA_TYPES_BROWSERESULT])
+#define UA_TYPES_BROWSERESULT 82
+#define UA_BrowseResult_new() (UA_BrowseResult*)UA_new(&UA_TYPES[UA_TYPES_BROWSERESULT])
 #define UA_BrowseResult_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSERESULT])
 #define UA_BrowseResult_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSERESULT])
 #define UA_BrowseResult_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSERESULT])
@@ -2753,8 +2770,8 @@ typedef struct {
     UA_Int32 nodesToBrowseSize;
     UA_BrowseDescription *nodesToBrowse;
 } UA_BrowseRequest;
-#define UA_TYPES_BROWSEREQUEST 80
-#define UA_BrowseRequest_new() UA_new(&UA_TYPES[UA_TYPES_BROWSEREQUEST])
+#define UA_TYPES_BROWSEREQUEST 83
+#define UA_BrowseRequest_new() (UA_BrowseRequest*)UA_new(&UA_TYPES[UA_TYPES_BROWSEREQUEST])
 #define UA_BrowseRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSEREQUEST])
 #define UA_BrowseRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSEREQUEST])
 #define UA_BrowseRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSEREQUEST])
@@ -2771,8 +2788,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_BrowseResponse;
-#define UA_TYPES_BROWSERESPONSE 81
-#define UA_BrowseResponse_new() UA_new(&UA_TYPES[UA_TYPES_BROWSERESPONSE])
+#define UA_TYPES_BROWSERESPONSE 84
+#define UA_BrowseResponse_new() (UA_BrowseResponse*)UA_new(&UA_TYPES[UA_TYPES_BROWSERESPONSE])
 #define UA_BrowseResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSERESPONSE])
 #define UA_BrowseResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSERESPONSE])
 #define UA_BrowseResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSERESPONSE])
@@ -2781,6 +2798,41 @@ typedef struct {
 #define UA_BrowseResponse_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_BROWSERESPONSE], dst, offset)
 #define UA_BrowseResponse_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_BROWSERESPONSE])
 
+/** @brief Continues one or more browse operations. */
+typedef struct {
+    UA_RequestHeader requestHeader;
+    UA_Boolean releaseContinuationPoints;
+    UA_Int32 continuationPointsSize;
+    UA_ByteString *continuationPoints;
+} UA_BrowseNextRequest;
+#define UA_TYPES_BROWSENEXTREQUEST 85
+#define UA_BrowseNextRequest_new() (UA_BrowseNextRequest*)UA_new(&UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_copy(src, dst) UA_copy(src, dst, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+#define UA_BrowseNextRequest_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST], dst, offset)
+#define UA_BrowseNextRequest_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST])
+
+/** @brief Continues one or more browse operations. */
+typedef struct {
+    UA_ResponseHeader responseHeader;
+    UA_Int32 resultsSize;
+    UA_BrowseResult *results;
+    UA_Int32 diagnosticInfosSize;
+    UA_DiagnosticInfo *diagnosticInfos;
+} UA_BrowseNextResponse;
+#define UA_TYPES_BROWSENEXTRESPONSE 86
+#define UA_BrowseNextResponse_new() (UA_BrowseNextResponse*)UA_new(&UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_copy(src, dst) UA_copy(src, dst, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+#define UA_BrowseNextResponse_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE], dst, offset)
+#define UA_BrowseNextResponse_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE])
+
 /** @brief An element in a relative path. */
 typedef struct {
     UA_NodeId referenceTypeId;
@@ -2788,8 +2840,8 @@ typedef struct {
     UA_Boolean includeSubtypes;
     UA_QualifiedName targetName;
 } UA_RelativePathElement;
-#define UA_TYPES_RELATIVEPATHELEMENT 82
-#define UA_RelativePathElement_new() UA_new(&UA_TYPES[UA_TYPES_RELATIVEPATHELEMENT])
+#define UA_TYPES_RELATIVEPATHELEMENT 87
+#define UA_RelativePathElement_new() (UA_RelativePathElement*)UA_new(&UA_TYPES[UA_TYPES_RELATIVEPATHELEMENT])
 #define UA_RelativePathElement_init(p) UA_init(p, &UA_TYPES[UA_TYPES_RELATIVEPATHELEMENT])
 #define UA_RelativePathElement_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_RELATIVEPATHELEMENT])
 #define UA_RelativePathElement_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_RELATIVEPATHELEMENT])
@@ -2803,8 +2855,8 @@ typedef struct {
     UA_Int32 elementsSize;
     UA_RelativePathElement *elements;
 } UA_RelativePath;
-#define UA_TYPES_RELATIVEPATH 83
-#define UA_RelativePath_new() UA_new(&UA_TYPES[UA_TYPES_RELATIVEPATH])
+#define UA_TYPES_RELATIVEPATH 88
+#define UA_RelativePath_new() (UA_RelativePath*)UA_new(&UA_TYPES[UA_TYPES_RELATIVEPATH])
 #define UA_RelativePath_init(p) UA_init(p, &UA_TYPES[UA_TYPES_RELATIVEPATH])
 #define UA_RelativePath_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_RELATIVEPATH])
 #define UA_RelativePath_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_RELATIVEPATH])
@@ -2818,8 +2870,8 @@ typedef struct {
     UA_NodeId startingNode;
     UA_RelativePath relativePath;
 } UA_BrowsePath;
-#define UA_TYPES_BROWSEPATH 84
-#define UA_BrowsePath_new() UA_new(&UA_TYPES[UA_TYPES_BROWSEPATH])
+#define UA_TYPES_BROWSEPATH 89
+#define UA_BrowsePath_new() (UA_BrowsePath*)UA_new(&UA_TYPES[UA_TYPES_BROWSEPATH])
 #define UA_BrowsePath_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSEPATH])
 #define UA_BrowsePath_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSEPATH])
 #define UA_BrowsePath_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSEPATH])
@@ -2833,8 +2885,8 @@ typedef struct {
     UA_ExpandedNodeId targetId;
     UA_UInt32 remainingPathIndex;
 } UA_BrowsePathTarget;
-#define UA_TYPES_BROWSEPATHTARGET 85
-#define UA_BrowsePathTarget_new() UA_new(&UA_TYPES[UA_TYPES_BROWSEPATHTARGET])
+#define UA_TYPES_BROWSEPATHTARGET 90
+#define UA_BrowsePathTarget_new() (UA_BrowsePathTarget*)UA_new(&UA_TYPES[UA_TYPES_BROWSEPATHTARGET])
 #define UA_BrowsePathTarget_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSEPATHTARGET])
 #define UA_BrowsePathTarget_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSEPATHTARGET])
 #define UA_BrowsePathTarget_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSEPATHTARGET])
@@ -2849,8 +2901,8 @@ typedef struct {
     UA_Int32 targetsSize;
     UA_BrowsePathTarget *targets;
 } UA_BrowsePathResult;
-#define UA_TYPES_BROWSEPATHRESULT 86
-#define UA_BrowsePathResult_new() UA_new(&UA_TYPES[UA_TYPES_BROWSEPATHRESULT])
+#define UA_TYPES_BROWSEPATHRESULT 91
+#define UA_BrowsePathResult_new() (UA_BrowsePathResult*)UA_new(&UA_TYPES[UA_TYPES_BROWSEPATHRESULT])
 #define UA_BrowsePathResult_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BROWSEPATHRESULT])
 #define UA_BrowsePathResult_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BROWSEPATHRESULT])
 #define UA_BrowsePathResult_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BROWSEPATHRESULT])
@@ -2865,8 +2917,8 @@ typedef struct {
     UA_Int32 browsePathsSize;
     UA_BrowsePath *browsePaths;
 } UA_TranslateBrowsePathsToNodeIdsRequest;
-#define UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST 87
-#define UA_TranslateBrowsePathsToNodeIdsRequest_new() UA_new(&UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST])
+#define UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST 92
+#define UA_TranslateBrowsePathsToNodeIdsRequest_new() (UA_TranslateBrowsePathsToNodeIdsRequest*)UA_new(&UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST])
 #define UA_TranslateBrowsePathsToNodeIdsRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST])
 #define UA_TranslateBrowsePathsToNodeIdsRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST])
 #define UA_TranslateBrowsePathsToNodeIdsRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST])
@@ -2883,8 +2935,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_TranslateBrowsePathsToNodeIdsResponse;
-#define UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE 88
-#define UA_TranslateBrowsePathsToNodeIdsResponse_new() UA_new(&UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE])
+#define UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE 93
+#define UA_TranslateBrowsePathsToNodeIdsResponse_new() (UA_TranslateBrowsePathsToNodeIdsResponse*)UA_new(&UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE])
 #define UA_TranslateBrowsePathsToNodeIdsResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE])
 #define UA_TranslateBrowsePathsToNodeIdsResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE])
 #define UA_TranslateBrowsePathsToNodeIdsResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE])
@@ -2899,8 +2951,8 @@ typedef struct {
     UA_Int32 nodesToRegisterSize;
     UA_NodeId *nodesToRegister;
 } UA_RegisterNodesRequest;
-#define UA_TYPES_REGISTERNODESREQUEST 89
-#define UA_RegisterNodesRequest_new() UA_new(&UA_TYPES[UA_TYPES_REGISTERNODESREQUEST])
+#define UA_TYPES_REGISTERNODESREQUEST 94
+#define UA_RegisterNodesRequest_new() (UA_RegisterNodesRequest*)UA_new(&UA_TYPES[UA_TYPES_REGISTERNODESREQUEST])
 #define UA_RegisterNodesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REGISTERNODESREQUEST])
 #define UA_RegisterNodesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REGISTERNODESREQUEST])
 #define UA_RegisterNodesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REGISTERNODESREQUEST])
@@ -2915,8 +2967,8 @@ typedef struct {
     UA_Int32 registeredNodeIdsSize;
     UA_NodeId *registeredNodeIds;
 } UA_RegisterNodesResponse;
-#define UA_TYPES_REGISTERNODESRESPONSE 90
-#define UA_RegisterNodesResponse_new() UA_new(&UA_TYPES[UA_TYPES_REGISTERNODESRESPONSE])
+#define UA_TYPES_REGISTERNODESRESPONSE 95
+#define UA_RegisterNodesResponse_new() (UA_RegisterNodesResponse*)UA_new(&UA_TYPES[UA_TYPES_REGISTERNODESRESPONSE])
 #define UA_RegisterNodesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_REGISTERNODESRESPONSE])
 #define UA_RegisterNodesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_REGISTERNODESRESPONSE])
 #define UA_RegisterNodesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_REGISTERNODESRESPONSE])
@@ -2931,8 +2983,8 @@ typedef struct {
     UA_Int32 nodesToUnregisterSize;
     UA_NodeId *nodesToUnregister;
 } UA_UnregisterNodesRequest;
-#define UA_TYPES_UNREGISTERNODESREQUEST 91
-#define UA_UnregisterNodesRequest_new() UA_new(&UA_TYPES[UA_TYPES_UNREGISTERNODESREQUEST])
+#define UA_TYPES_UNREGISTERNODESREQUEST 96
+#define UA_UnregisterNodesRequest_new() (UA_UnregisterNodesRequest*)UA_new(&UA_TYPES[UA_TYPES_UNREGISTERNODESREQUEST])
 #define UA_UnregisterNodesRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESREQUEST])
 #define UA_UnregisterNodesRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESREQUEST])
 #define UA_UnregisterNodesRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESREQUEST])
@@ -2945,8 +2997,8 @@ typedef struct {
 typedef struct {
     UA_ResponseHeader responseHeader;
 } UA_UnregisterNodesResponse;
-#define UA_TYPES_UNREGISTERNODESRESPONSE 92
-#define UA_UnregisterNodesResponse_new() UA_new(&UA_TYPES[UA_TYPES_UNREGISTERNODESRESPONSE])
+#define UA_TYPES_UNREGISTERNODESRESPONSE 97
+#define UA_UnregisterNodesResponse_new() (UA_UnregisterNodesResponse*)UA_new(&UA_TYPES[UA_TYPES_UNREGISTERNODESRESPONSE])
 #define UA_UnregisterNodesResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESRESPONSE])
 #define UA_UnregisterNodesResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESRESPONSE])
 #define UA_UnregisterNodesResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_UNREGISTERNODESRESPONSE])
@@ -2961,7 +3013,7 @@ typedef enum {
     UA_TIMESTAMPSTORETURN_BOTH = 2,
     UA_TIMESTAMPSTORETURN_NEITHER = 3
 } UA_TimestampsToReturn;
-#define UA_TYPES_TIMESTAMPSTORETURN 93
+#define UA_TYPES_TIMESTAMPSTORETURN 98
 #define UA_TimestampsToReturn_new (UA_TimestampsToReturn*)UA_Int32_new
 #define UA_TimestampsToReturn_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_TimestampsToReturn_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -2977,8 +3029,8 @@ typedef struct {
     UA_String indexRange;
     UA_QualifiedName dataEncoding;
 } UA_ReadValueId;
-#define UA_TYPES_READVALUEID 94
-#define UA_ReadValueId_new() UA_new(&UA_TYPES[UA_TYPES_READVALUEID])
+#define UA_TYPES_READVALUEID 99
+#define UA_ReadValueId_new() (UA_ReadValueId*)UA_new(&UA_TYPES[UA_TYPES_READVALUEID])
 #define UA_ReadValueId_init(p) UA_init(p, &UA_TYPES[UA_TYPES_READVALUEID])
 #define UA_ReadValueId_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_READVALUEID])
 #define UA_ReadValueId_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_READVALUEID])
@@ -2994,8 +3046,8 @@ typedef struct {
     UA_Int32 nodesToReadSize;
     UA_ReadValueId *nodesToRead;
 } UA_ReadRequest;
-#define UA_TYPES_READREQUEST 95
-#define UA_ReadRequest_new() UA_new(&UA_TYPES[UA_TYPES_READREQUEST])
+#define UA_TYPES_READREQUEST 100
+#define UA_ReadRequest_new() (UA_ReadRequest*)UA_new(&UA_TYPES[UA_TYPES_READREQUEST])
 #define UA_ReadRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_READREQUEST])
 #define UA_ReadRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_READREQUEST])
 #define UA_ReadRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_READREQUEST])
@@ -3011,8 +3063,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_ReadResponse;
-#define UA_TYPES_READRESPONSE 96
-#define UA_ReadResponse_new() UA_new(&UA_TYPES[UA_TYPES_READRESPONSE])
+#define UA_TYPES_READRESPONSE 101
+#define UA_ReadResponse_new() (UA_ReadResponse*)UA_new(&UA_TYPES[UA_TYPES_READRESPONSE])
 #define UA_ReadResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_READRESPONSE])
 #define UA_ReadResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_READRESPONSE])
 #define UA_ReadResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_READRESPONSE])
@@ -3027,8 +3079,8 @@ typedef struct {
     UA_String indexRange;
     UA_DataValue value;
 } UA_WriteValue;
-#define UA_TYPES_WRITEVALUE 97
-#define UA_WriteValue_new() UA_new(&UA_TYPES[UA_TYPES_WRITEVALUE])
+#define UA_TYPES_WRITEVALUE 102
+#define UA_WriteValue_new() (UA_WriteValue*)UA_new(&UA_TYPES[UA_TYPES_WRITEVALUE])
 #define UA_WriteValue_init(p) UA_init(p, &UA_TYPES[UA_TYPES_WRITEVALUE])
 #define UA_WriteValue_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_WRITEVALUE])
 #define UA_WriteValue_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_WRITEVALUE])
@@ -3042,8 +3094,8 @@ typedef struct {
     UA_Int32 nodesToWriteSize;
     UA_WriteValue *nodesToWrite;
 } UA_WriteRequest;
-#define UA_TYPES_WRITEREQUEST 98
-#define UA_WriteRequest_new() UA_new(&UA_TYPES[UA_TYPES_WRITEREQUEST])
+#define UA_TYPES_WRITEREQUEST 103
+#define UA_WriteRequest_new() (UA_WriteRequest*)UA_new(&UA_TYPES[UA_TYPES_WRITEREQUEST])
 #define UA_WriteRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_WRITEREQUEST])
 #define UA_WriteRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_WRITEREQUEST])
 #define UA_WriteRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_WRITEREQUEST])
@@ -3059,8 +3111,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_WriteResponse;
-#define UA_TYPES_WRITERESPONSE 99
-#define UA_WriteResponse_new() UA_new(&UA_TYPES[UA_TYPES_WRITERESPONSE])
+#define UA_TYPES_WRITERESPONSE 104
+#define UA_WriteResponse_new() (UA_WriteResponse*)UA_new(&UA_TYPES[UA_TYPES_WRITERESPONSE])
 #define UA_WriteResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_WRITERESPONSE])
 #define UA_WriteResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_WRITERESPONSE])
 #define UA_WriteResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_WRITERESPONSE])
@@ -3074,7 +3126,7 @@ typedef enum {
     UA_MONITORINGMODE_SAMPLING = 1,
     UA_MONITORINGMODE_REPORTING = 2
 } UA_MonitoringMode;
-#define UA_TYPES_MONITORINGMODE 100
+#define UA_TYPES_MONITORINGMODE 105
 #define UA_MonitoringMode_new (UA_MonitoringMode*)UA_Int32_new
 #define UA_MonitoringMode_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_MonitoringMode_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -3091,8 +3143,8 @@ typedef struct {
     UA_UInt32 queueSize;
     UA_Boolean discardOldest;
 } UA_MonitoringParameters;
-#define UA_TYPES_MONITORINGPARAMETERS 101
-#define UA_MonitoringParameters_new() UA_new(&UA_TYPES[UA_TYPES_MONITORINGPARAMETERS])
+#define UA_TYPES_MONITORINGPARAMETERS 106
+#define UA_MonitoringParameters_new() (UA_MonitoringParameters*)UA_new(&UA_TYPES[UA_TYPES_MONITORINGPARAMETERS])
 #define UA_MonitoringParameters_init(p) UA_init(p, &UA_TYPES[UA_TYPES_MONITORINGPARAMETERS])
 #define UA_MonitoringParameters_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_MONITORINGPARAMETERS])
 #define UA_MonitoringParameters_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_MONITORINGPARAMETERS])
@@ -3106,8 +3158,8 @@ typedef struct {
     UA_MonitoringMode monitoringMode;
     UA_MonitoringParameters requestedParameters;
 } UA_MonitoredItemCreateRequest;
-#define UA_TYPES_MONITOREDITEMCREATEREQUEST 102
-#define UA_MonitoredItemCreateRequest_new() UA_new(&UA_TYPES[UA_TYPES_MONITOREDITEMCREATEREQUEST])
+#define UA_TYPES_MONITOREDITEMCREATEREQUEST 107
+#define UA_MonitoredItemCreateRequest_new() (UA_MonitoredItemCreateRequest*)UA_new(&UA_TYPES[UA_TYPES_MONITOREDITEMCREATEREQUEST])
 #define UA_MonitoredItemCreateRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATEREQUEST])
 #define UA_MonitoredItemCreateRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATEREQUEST])
 #define UA_MonitoredItemCreateRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATEREQUEST])
@@ -3123,8 +3175,8 @@ typedef struct {
     UA_UInt32 revisedQueueSize;
     UA_ExtensionObject filterResult;
 } UA_MonitoredItemCreateResult;
-#define UA_TYPES_MONITOREDITEMCREATERESULT 103
-#define UA_MonitoredItemCreateResult_new() UA_new(&UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT])
+#define UA_TYPES_MONITOREDITEMCREATERESULT 108
+#define UA_MonitoredItemCreateResult_new() (UA_MonitoredItemCreateResult*)UA_new(&UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT])
 #define UA_MonitoredItemCreateResult_init(p) UA_init(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT])
 #define UA_MonitoredItemCreateResult_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT])
 #define UA_MonitoredItemCreateResult_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_MONITOREDITEMCREATERESULT])
@@ -3140,8 +3192,8 @@ typedef struct {
     UA_Int32 itemsToCreateSize;
     UA_MonitoredItemCreateRequest *itemsToCreate;
 } UA_CreateMonitoredItemsRequest;
-#define UA_TYPES_CREATEMONITOREDITEMSREQUEST 104
-#define UA_CreateMonitoredItemsRequest_new() UA_new(&UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSREQUEST])
+#define UA_TYPES_CREATEMONITOREDITEMSREQUEST 109
+#define UA_CreateMonitoredItemsRequest_new() (UA_CreateMonitoredItemsRequest*)UA_new(&UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSREQUEST])
 #define UA_CreateMonitoredItemsRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSREQUEST])
 #define UA_CreateMonitoredItemsRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSREQUEST])
 #define UA_CreateMonitoredItemsRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSREQUEST])
@@ -3157,8 +3209,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_CreateMonitoredItemsResponse;
-#define UA_TYPES_CREATEMONITOREDITEMSRESPONSE 105
-#define UA_CreateMonitoredItemsResponse_new() UA_new(&UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSRESPONSE])
+#define UA_TYPES_CREATEMONITOREDITEMSRESPONSE 110
+#define UA_CreateMonitoredItemsResponse_new() (UA_CreateMonitoredItemsResponse*)UA_new(&UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSRESPONSE])
 #define UA_CreateMonitoredItemsResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSRESPONSE])
 #define UA_CreateMonitoredItemsResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSRESPONSE])
 #define UA_CreateMonitoredItemsResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATEMONITOREDITEMSRESPONSE])
@@ -3176,8 +3228,8 @@ typedef struct {
     UA_Boolean publishingEnabled;
     UA_Byte priority;
 } UA_CreateSubscriptionRequest;
-#define UA_TYPES_CREATESUBSCRIPTIONREQUEST 106
-#define UA_CreateSubscriptionRequest_new() UA_new(&UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONREQUEST])
+#define UA_TYPES_CREATESUBSCRIPTIONREQUEST 111
+#define UA_CreateSubscriptionRequest_new() (UA_CreateSubscriptionRequest*)UA_new(&UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONREQUEST])
 #define UA_CreateSubscriptionRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONREQUEST])
 #define UA_CreateSubscriptionRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONREQUEST])
 #define UA_CreateSubscriptionRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONREQUEST])
@@ -3193,8 +3245,8 @@ typedef struct {
     UA_UInt32 revisedLifetimeCount;
     UA_UInt32 revisedMaxKeepAliveCount;
 } UA_CreateSubscriptionResponse;
-#define UA_TYPES_CREATESUBSCRIPTIONRESPONSE 107
-#define UA_CreateSubscriptionResponse_new() UA_new(&UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONRESPONSE])
+#define UA_TYPES_CREATESUBSCRIPTIONRESPONSE 112
+#define UA_CreateSubscriptionResponse_new() (UA_CreateSubscriptionResponse*)UA_new(&UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONRESPONSE])
 #define UA_CreateSubscriptionResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONRESPONSE])
 #define UA_CreateSubscriptionResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONRESPONSE])
 #define UA_CreateSubscriptionResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_CREATESUBSCRIPTIONRESPONSE])
@@ -3209,8 +3261,8 @@ typedef struct {
     UA_Int32 subscriptionIdsSize;
     UA_UInt32 *subscriptionIds;
 } UA_SetPublishingModeRequest;
-#define UA_TYPES_SETPUBLISHINGMODEREQUEST 108
-#define UA_SetPublishingModeRequest_new() UA_new(&UA_TYPES[UA_TYPES_SETPUBLISHINGMODEREQUEST])
+#define UA_TYPES_SETPUBLISHINGMODEREQUEST 113
+#define UA_SetPublishingModeRequest_new() (UA_SetPublishingModeRequest*)UA_new(&UA_TYPES[UA_TYPES_SETPUBLISHINGMODEREQUEST])
 #define UA_SetPublishingModeRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODEREQUEST])
 #define UA_SetPublishingModeRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODEREQUEST])
 #define UA_SetPublishingModeRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODEREQUEST])
@@ -3226,8 +3278,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_SetPublishingModeResponse;
-#define UA_TYPES_SETPUBLISHINGMODERESPONSE 109
-#define UA_SetPublishingModeResponse_new() UA_new(&UA_TYPES[UA_TYPES_SETPUBLISHINGMODERESPONSE])
+#define UA_TYPES_SETPUBLISHINGMODERESPONSE 114
+#define UA_SetPublishingModeResponse_new() (UA_SetPublishingModeResponse*)UA_new(&UA_TYPES[UA_TYPES_SETPUBLISHINGMODERESPONSE])
 #define UA_SetPublishingModeResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODERESPONSE])
 #define UA_SetPublishingModeResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODERESPONSE])
 #define UA_SetPublishingModeResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SETPUBLISHINGMODERESPONSE])
@@ -3242,8 +3294,8 @@ typedef struct {
     UA_Int32 notificationDataSize;
     UA_ExtensionObject *notificationData;
 } UA_NotificationMessage;
-#define UA_TYPES_NOTIFICATIONMESSAGE 110
-#define UA_NotificationMessage_new() UA_new(&UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE])
+#define UA_TYPES_NOTIFICATIONMESSAGE 115
+#define UA_NotificationMessage_new() (UA_NotificationMessage*)UA_new(&UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE])
 #define UA_NotificationMessage_init(p) UA_init(p, &UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE])
 #define UA_NotificationMessage_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE])
 #define UA_NotificationMessage_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_NOTIFICATIONMESSAGE])
@@ -3256,8 +3308,8 @@ typedef struct {
     UA_UInt32 subscriptionId;
     UA_UInt32 sequenceNumber;
 } UA_SubscriptionAcknowledgement;
-#define UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT 111
-#define UA_SubscriptionAcknowledgement_new() UA_new(&UA_TYPES[UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT])
+#define UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT 116
+#define UA_SubscriptionAcknowledgement_new() (UA_SubscriptionAcknowledgement*)UA_new(&UA_TYPES[UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT])
 #define UA_SubscriptionAcknowledgement_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT])
 #define UA_SubscriptionAcknowledgement_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT])
 #define UA_SubscriptionAcknowledgement_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SUBSCRIPTIONACKNOWLEDGEMENT])
@@ -3271,8 +3323,8 @@ typedef struct {
     UA_Int32 subscriptionAcknowledgementsSize;
     UA_SubscriptionAcknowledgement *subscriptionAcknowledgements;
 } UA_PublishRequest;
-#define UA_TYPES_PUBLISHREQUEST 112
-#define UA_PublishRequest_new() UA_new(&UA_TYPES[UA_TYPES_PUBLISHREQUEST])
+#define UA_TYPES_PUBLISHREQUEST 117
+#define UA_PublishRequest_new() (UA_PublishRequest*)UA_new(&UA_TYPES[UA_TYPES_PUBLISHREQUEST])
 #define UA_PublishRequest_init(p) UA_init(p, &UA_TYPES[UA_TYPES_PUBLISHREQUEST])
 #define UA_PublishRequest_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_PUBLISHREQUEST])
 #define UA_PublishRequest_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_PUBLISHREQUEST])
@@ -3293,8 +3345,8 @@ typedef struct {
     UA_Int32 diagnosticInfosSize;
     UA_DiagnosticInfo *diagnosticInfos;
 } UA_PublishResponse;
-#define UA_TYPES_PUBLISHRESPONSE 113
-#define UA_PublishResponse_new() UA_new(&UA_TYPES[UA_TYPES_PUBLISHRESPONSE])
+#define UA_TYPES_PUBLISHRESPONSE 118
+#define UA_PublishResponse_new() (UA_PublishResponse*)UA_new(&UA_TYPES[UA_TYPES_PUBLISHRESPONSE])
 #define UA_PublishResponse_init(p) UA_init(p, &UA_TYPES[UA_TYPES_PUBLISHRESPONSE])
 #define UA_PublishResponse_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_PUBLISHRESPONSE])
 #define UA_PublishResponse_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_PUBLISHRESPONSE])
@@ -3311,8 +3363,8 @@ typedef struct {
     UA_String buildNumber;
     UA_DateTime buildDate;
 } UA_BuildInfo;
-#define UA_TYPES_BUILDINFO 114
-#define UA_BuildInfo_new() UA_new(&UA_TYPES[UA_TYPES_BUILDINFO])
+#define UA_TYPES_BUILDINFO 119
+#define UA_BuildInfo_new() (UA_BuildInfo*)UA_new(&UA_TYPES[UA_TYPES_BUILDINFO])
 #define UA_BuildInfo_init(p) UA_init(p, &UA_TYPES[UA_TYPES_BUILDINFO])
 #define UA_BuildInfo_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_BUILDINFO])
 #define UA_BuildInfo_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_BUILDINFO])
@@ -3331,7 +3383,7 @@ typedef enum {
     UA_SERVERSTATE_COMMUNICATIONFAULT = 6,
     UA_SERVERSTATE_UNKNOWN = 7
 } UA_ServerState;
-#define UA_TYPES_SERVERSTATE 115
+#define UA_TYPES_SERVERSTATE 120
 #define UA_ServerState_new (UA_ServerState*)UA_Int32_new
 #define UA_ServerState_init(p) UA_Int32_init((UA_Int32*)p)
 #define UA_ServerState_delete(p) UA_Int32_delete((UA_Int32*)p)
@@ -3349,8 +3401,8 @@ typedef struct {
     UA_UInt32 secondsTillShutdown;
     UA_LocalizedText shutdownReason;
 } UA_ServerStatusDataType;
-#define UA_TYPES_SERVERSTATUSDATATYPE 116
-#define UA_ServerStatusDataType_new() UA_new(&UA_TYPES[UA_TYPES_SERVERSTATUSDATATYPE])
+#define UA_TYPES_SERVERSTATUSDATATYPE 121
+#define UA_ServerStatusDataType_new() (UA_ServerStatusDataType*)UA_new(&UA_TYPES[UA_TYPES_SERVERSTATUSDATATYPE])
 #define UA_ServerStatusDataType_init(p) UA_init(p, &UA_TYPES[UA_TYPES_SERVERSTATUSDATATYPE])
 #define UA_ServerStatusDataType_delete(p) UA_delete(p, &UA_TYPES[UA_TYPES_SERVERSTATUSDATATYPE])
 #define UA_ServerStatusDataType_deleteMembers(p) UA_deleteMembers(p, &UA_TYPES[UA_TYPES_SERVERSTATUSDATATYPE])
@@ -3365,6 +3417,7 @@ typedef struct {
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_connection.h" ***********************************/
 /*
  * Copyright (C) 2014 the contributors as stated in the AUTHORS file
  *
@@ -3392,17 +3445,10 @@ extern "C" {
  * @{
  */
 
-/** Used for zero-copy communication. The array of bytestrings is sent over the
-   network as a single buffer. */
-typedef struct UA_ByteStringArray {
-    UA_UInt32      stringsSize;
-    UA_ByteString *strings;
-} UA_ByteStringArray;
-
 typedef enum UA_ConnectionState {
-    UA_CONNECTION_OPENING, ///< The port is open, but we haven't received a HEL
-    UA_CONNECTION_ESTABLISHED, ///< The port is open and the connection configured
-    UA_CONNECTION_CLOSING, ///< The port has been closed and the connection will be deleted
+    UA_CONNECTION_OPENING, ///< The socket is open, but the HEL/ACK handshake is not done
+    UA_CONNECTION_ESTABLISHED, ///< The socket is open and the connection configured
+    UA_CONNECTION_CLOSED, ///< The socket has been closed and the connection will be deleted
 } UA_ConnectionState;
 
 typedef struct UA_ConnectionConfig {
@@ -3419,18 +3465,42 @@ extern const UA_EXPORT UA_ConnectionConfig UA_ConnectionConfig_standard;
 struct UA_SecureChannel;
 typedef struct UA_SecureChannel UA_SecureChannel;
 
-typedef struct UA_Connection {
-    UA_ConnectionState  state;
+struct UA_Connection;
+typedef struct UA_Connection UA_Connection;
+
+/**
+ * The connection to a single client (or server). The connection is defined independent of the
+ * underlying network layer implementation. This allows a plugging-in custom implementations (e.g.
+ * an embedded TCP stack)
+ */
+struct UA_Connection {
+    UA_ConnectionState state;
     UA_ConnectionConfig localConf;
     UA_ConnectionConfig remoteConf;
-    UA_SecureChannel   *channel;
-    void (*write)(void *connection, UA_ByteStringArray buf);
-    void (*close)(void *connection);
-    UA_ByteString incompleteMessage;
-} UA_Connection;
+    UA_SecureChannel *channel; ///> The securechannel that is attached to this connection (or null)
+    UA_Int32 sockfd; ///> Most connectivity solutions run on sockets. Having the socket id here simplifies the design.
+    void *handle; ///> A pointer to the networklayer
+    UA_ByteString incompleteMessage; ///> Half-received messages (tcp is a streaming protocol) get stored here
+    UA_StatusCode (*getBuffer)(UA_Connection *connection, UA_ByteString *buf, size_t minSize); ///> Attach the data array to the buffer. Fails if minSize is larger than remoteConf allows
+    void (*releaseBuffer)(UA_Connection *connection, UA_ByteString *buf); ///> Release the buffer
+    UA_StatusCode (*write)(UA_Connection *connection, const UA_ByteString *buf); ///> The bytestrings cannot be reused after sending!
+   /**
+     * Receive a message from the remote connection
+	 * @param connection The connection
+	 * @param response The response string. It is allocated by the connection and needs to be freed with connection->releaseBuffer
+     * @param timeout Timeout of the recv operation in milliseconds
+     * @return Returns UA_STATUSCODE_BADCOMMUNICATIONERROR if the recv operation can be repeated, UA_STATUSCODE_GOOD if it succeeded and
+     * UA_STATUSCODE_BADCONNECTIONCLOSED if the connection was closed.
+	 */
+    UA_StatusCode (*recv)(UA_Connection *connection, UA_ByteString *response, UA_UInt32 timeout);
+    void (*close)(UA_Connection *connection);
+};
+
+void UA_EXPORT UA_Connection_init(UA_Connection *connection);
+void UA_EXPORT UA_Connection_deleteMembers(UA_Connection *connection);
 
 void UA_EXPORT UA_Connection_detachSecureChannel(UA_Connection *connection);
-// void UA_Connection_attachSecureChannel(UA_Connection *connection);
+void UA_EXPORT UA_Connection_attachSecureChannel(UA_Connection *connection, UA_SecureChannel *channel);
 
 /** Returns a string of complete message (the length entry is decoded for that).
     If the received message is incomplete, it is retained in the connection. */
@@ -3442,6 +3512,7 @@ UA_ByteString UA_EXPORT UA_Connection_completeMessages(UA_Connection *connection
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_log.h" ***********************************/
 /*
  * Copyright (C) 2014 the contributors as stated in the AUTHORS file
  *
@@ -3464,8 +3535,6 @@ extern "C" {
 
 
 /**
- * @ingroup server
- *
  * @defgroup logging Logging
  *
  * @brief Custom logging solutions can be "plugged in" with this interface
@@ -3473,63 +3542,64 @@ extern "C" {
  * @{
  */
 
-typedef enum UA_LoggerCategory {
-    UA_LOGGERCATEGORY_COMMUNICATION,
-    UA_LOGGERCATEGORY_SERVER,
-    UA_LOGGERCATEGORY_USERLAND
-} UA_LoggerCategory;
+typedef enum {
+    UA_LOGLEVEL_TRACE,
+    UA_LOGLEVEL_DEBUG,
+    UA_LOGLEVEL_INFO,
+    UA_LOGLEVEL_WARNING,
+    UA_LOGLEVEL_ERROR,
+    UA_LOGLEVEL_FATAL
+} UA_LogLevel;
 
-extern UA_EXPORT const char *UA_LoggerCategoryNames[3];
-
-typedef struct UA_Logger {
-    void (*log_trace)(UA_LoggerCategory category, const char *msg, ...);
-    void (*log_debug)(UA_LoggerCategory category, const char *msg, ...);
-    void (*log_info)(UA_LoggerCategory category, const char *msg, ...);
-    void (*log_warning)(UA_LoggerCategory category, const char *msg, ...);
-    void (*log_error)(UA_LoggerCategory category, const char *msg, ...);
-    void (*log_fatal)(UA_LoggerCategory category, const char *msg, ...);
-} UA_Logger;
+typedef enum {
+    UA_LOGCATEGORY_COMMUNICATION,
+    UA_LOGCATEGORY_SERVER,
+    UA_LOGCATEGORY_CLIENT,
+    UA_LOGCATEGORY_USERLAND
+} UA_LogCategory;
+    
+typedef void (*UA_Logger)(UA_LogLevel level, UA_LogCategory category, const char *msg, ...);
 
 #if UA_LOGLEVEL <= 100
-#define UA_LOG_TRACE(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_trace) LOGGER.log_trace(CATEGORY, MSG); } while(0)
+#define UA_LOG_TRACE(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_TRACE, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_TRACE(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_TRACE(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 #if UA_LOGLEVEL <= 200
-#define UA_LOG_DEBUG(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_debug) LOGGER.log_debug(CATEGORY, MSG); } while(0)
+#define UA_LOG_DEBUG(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_DEBUG, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_DEBUG(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_DEBUG(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 #if UA_LOGLEVEL <= 300
-#define UA_LOG_INFO(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_info) LOGGER.log_info(CATEGORY, MSG); } while(0)
+#define UA_LOG_INFO(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_INFO, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_INFO(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_INFO(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 #if UA_LOGLEVEL <= 400
-#define UA_LOG_WARNING(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_warning) LOGGER.log_warning(CATEGORY, MSG); } while(0)
+#define UA_LOG_WARNING(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_WARNING, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_WARNING(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_WARNING(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 #if UA_LOGLEVEL <= 500
-#define UA_LOG_ERROR(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_error) LOGGER.log_error(CATEGORY, MSG); } while(0)
+#define UA_LOG_ERROR(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_ERROR, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_ERROR(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_ERROR(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 #if UA_LOGLEVEL <= 600
-#define UA_LOG_FATAL(LOGGER, CATEGORY, MSG...) do { \
-        if(LOGGER.log_fatal) LOGGER.log_fatal(CATEGORY, MSG); } while(0)
+#define UA_LOG_FATAL(LOGGER, CATEGORY, ...) do { \
+        if(LOGGER) LOGGER(UA_LOGLEVEL_FATAL, CATEGORY, __VA_ARGS__); } while(0)
 #else
-#define UA_LOG_FATAL(LOGGER, CATEGORY, MSG...) do {} while(0)
+#define UA_LOG_FATAL(LOGGER, CATEGORY, ...) do {} while(0)
 #endif
 
 /** @} */
@@ -3538,6 +3608,7 @@ typedef struct UA_Logger {
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_server.h" ***********************************/
  /*
  * Copyright (C) 2014 the contributors as stated in the AUTHORS file
  *
@@ -3565,15 +3636,30 @@ extern "C" {
  * @{
  */
 
+typedef struct UA_ServerConfig {
+    UA_Boolean  Login_enableAnonymous;
+
+    UA_Boolean  Login_enableUsernamePassword;
+    char**      Login_usernames;
+    char**      Login_passwords;
+    UA_UInt32   Login_loginsCount;
+
+    char*       Application_applicationURI;
+    char*       Application_applicationName;
+} UA_ServerConfig;
+
+extern UA_EXPORT const UA_ServerConfig UA_ServerConfig_standard;
+
 struct UA_Server;
 typedef struct UA_Server UA_Server;
 
-UA_Server UA_EXPORT * UA_Server_new(void);
+UA_Server UA_EXPORT * UA_Server_new(UA_ServerConfig config);
 void UA_EXPORT UA_Server_setServerCertificate(UA_Server *server, UA_ByteString certificate);
 void UA_EXPORT UA_Server_delete(UA_Server *server);
 
 /** Sets the logger used by the server */
 void UA_EXPORT UA_Server_setLogger(UA_Server *server, UA_Logger logger);
+UA_Logger UA_EXPORT UA_Server_getLogger(UA_Server *server);
 
 /**
  * Runs the main loop of the server. In each iteration, this calls into the
@@ -3591,22 +3677,67 @@ void UA_EXPORT UA_Server_setLogger(UA_Server *server, UA_Logger logger);
  */
 UA_StatusCode UA_EXPORT UA_Server_run(UA_Server *server, UA_UInt16 nThreads, UA_Boolean *running);
 
-/** @brief A datasource is the interface to interact with a local data provider.
- *
- * Implementors of datasources need to provide functions for the callbacks in
- * this structure. After every read, the handle needs to be released to indicate
- * that the pointer is no longer accessed. As a rule, datasources are never
- * copied, but only their content. The only way to write into a datasource is
- * via the write-service.
+/**
+ * The prologue part of UA_Server_run (no need to use if you call UA_Server_run)
+ */
+UA_StatusCode UA_EXPORT UA_Server_run_startup(UA_Server *server, UA_UInt16 nThreads, UA_Boolean *running);
+/**
+ * The epilogue part of UA_Server_run (no need to use if you call UA_Server_run)
+ */
+UA_StatusCode UA_EXPORT UA_Server_run_shutdown(UA_Server *server, UA_UInt16 nThreads);
+/**
+ * One iteration of UA_Server_run (no need to use if you call UA_Server_run)
+ */
+UA_StatusCode UA_EXPORT UA_Server_run_getAndProcessWork(UA_Server *server, UA_Boolean *running);
+
+
+/**
+ * Datasources are the interface to local data providers. Implementors of datasources need to
+ * provide functions for the callbacks in this structure. After every read, the handle needs to be
+ * released to indicate that the pointer is no longer accessed. As a rule, datasources are never
+ * copied, but only their content. The only way to write into a datasource is via the write-service.
  *
  * It is expected that the read and release callbacks are implemented. The write
  * callback can be set to null.
- **/
+ */
 typedef struct {
-    void *handle;
-    UA_StatusCode (*read)(void *handle, UA_Boolean sourceTimeStamp, UA_DataValue *value);
+    void *handle; ///> A custom pointer to reuse the same datasource functions for multiple sources
+
+    /**
+     * Read current data from the data source
+     *
+     * @param handle An optional pointer to user-defined data for the specific data source
+     * @param includeSourceTimeStamp If true, then the datasource is expected to set the source
+     *        timestamp in the returned value
+     * @param range If not null, then the datasource shall return only a selection of the (nonscalar)
+     *        data. Set UA_STATUSCODE_BADINDEXRANGEINVALID in the value if this does not apply.
+     * @param value The (non-null) DataValue that is returned to the client. The data source sets the
+     *        read data, the result status and optionally a sourcetimestamp.
+     * @return Returns a status code for logging. Error codes intended for the original caller are set
+     *         in the value. If an error is returned, then no releasing of the value is done.
+     */
+    UA_StatusCode (*read)(void *handle, UA_Boolean includeSourceTimeStamp, const UA_NumericRange *range,
+                          UA_DataValue *value);
+
+    /**
+     * Release data that was allocated during a read (and/or release locks in the data source)
+     *
+     * @param handle An optional pointer to user-defined data for the specific data source
+     * @param value The DataValue that was used for a successful read.
+     */
     void (*release)(void *handle, UA_DataValue *value);
-    UA_StatusCode (*write)(void *handle, const UA_Variant *data);
+
+    /**
+     * Write into a data source. The write member of UA_DataSource can be empty if the operation
+     * is unsupported.
+     *
+     * @param handle An optional pointer to user-defined data for the specific data source
+     * @param data The data to be written into the data source
+     * @param range An optional data range. If the data source is scalar or does not support writing
+     *        of ranges, then an error code is returned.
+     * @return Returns a status code that is returned to the user
+     */
+    UA_StatusCode (*write)(void *handle, const UA_Variant *data, const UA_NumericRange *range);
 } UA_DataSource;
 
 /** @brief Add a new namespace to the server. Returns the index of the new namespace */
@@ -3620,26 +3751,32 @@ UA_Server_addVariableNode(UA_Server *server, UA_Variant *value, const UA_Qualifi
                           UA_NodeId nodeId, const UA_NodeId parentNodeId, const UA_NodeId referenceTypeId);
 
 UA_StatusCode UA_EXPORT
+UA_Server_addObjectNode(UA_Server *server, const UA_QualifiedName browseName,
+                        UA_NodeId nodeId, const UA_NodeId parentNodeId, const UA_NodeId referenceTypeId,
+                        const UA_NodeId typeDefinition);
+
+UA_StatusCode UA_EXPORT
 UA_Server_addDataSourceVariableNode(UA_Server *server, UA_DataSource dataSource,
                                     const UA_QualifiedName browseName, UA_NodeId nodeId,
                                     const UA_NodeId parentNodeId, const UA_NodeId referenceTypeId);
 
-/** Work that is run in the main loop (singlethreaded) or dispatched to a worker
-    thread. */
+/** Work that is run in the main loop (singlethreaded) or dispatched to a worker thread */
 typedef struct UA_WorkItem {
     enum {
         UA_WORKITEMTYPE_NOTHING,
-        UA_WORKITEMTYPE_BINARYNETWORKMESSAGE,
+        UA_WORKITEMTYPE_CLOSECONNECTION,
+        UA_WORKITEMTYPE_BINARYMESSAGE,
         UA_WORKITEMTYPE_METHODCALL,
         UA_WORKITEMTYPE_DELAYEDMETHODCALL,
     } type;
     union {
+        UA_Connection *closeConnection;
         struct {
             UA_Connection *connection;
             UA_ByteString message;
-        } binaryNetworkMessage;
+        } binaryMessage;
         struct {
-            void * data;
+            void *data;
             void (*method)(UA_Server *server, void *data);
         } methodCall;
     } work;
@@ -3672,7 +3809,7 @@ UA_Server_addTimedWorkItem(UA_Server *server, const UA_WorkItem *work,
  *        freed but copied to an internal representation.
  *
  * @param interval The work that is executed repeatedly with the given interval
- *        (in 100ns). If work with the same repetition interval already exists,
+ *        (in ms). If work with the same repetition interval already exists,
  *        the first execution might occur sooner.
  *
  * @param resultWorkGuid Upon success, the pointed value is set to the guid of
@@ -3713,7 +3850,7 @@ typedef struct {
      *
      * @param workItems When the returned integer is positive, *workItems points
      * to an array of WorkItems of the returned size.
-     * @param timeout The timeout during which an event must arrive.
+     * @param timeout The timeout during which an event must arrive in microseconds
      * @return The size of the returned workItems array. If the result is
      * negative, an error has occured.
      */
@@ -3821,9 +3958,9 @@ typedef struct UA_ExternalNodeStore {
 	UA_ExternalNodeStore_delete destroy;
 } UA_ExternalNodeStore;
 
-/* UA_StatusCode UA_EXPORT */
-/* UA_Server_addExternalNamespace(UA_Server *server, UA_UInt16 namespaceIndex, const UA_String *url, UA_ExternalNodeStore *nodeStore); */
 
+UA_StatusCode UA_EXPORT
+UA_Server_addExternalNamespace(UA_Server *server, UA_UInt16 namespaceIndex, const UA_String *url, UA_ExternalNodeStore *nodeStore);
 /** @} */
 
 #endif /* external nodestore */
@@ -3832,44 +3969,38 @@ typedef struct UA_ExternalNodeStore {
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/include/ua_client.h" ***********************************/
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-/**
- * The client networklayer can handle only a single connection. The networklayer
- * is only concerned with getting messages to the client and receiving them.
- */
-typedef struct {
-    void *nlHandle;
-
-    UA_StatusCode (*connect)(const UA_String endpointUrl, void **resultHandle);
-    void (*disconnect)(void *handle);
-    void (*destroy)(void *handle);
-    UA_StatusCode (*send)(void *handle, UA_ByteStringArray gather_buf);
-    // the response buffer exists on the heap. the size shall correspond the the connection settings
-    UA_StatusCode (*awaitResponse)(void *handle, UA_ByteString *response, UA_UInt32 timeout);
-} UA_ClientNetworkLayer;
-
 struct UA_Client;
 typedef struct UA_Client UA_Client;
 
+/**
+ * The client networklayer is defined by a single function that fills a UA_Connection struct after
+ * successfully connecting.
+ */
+typedef UA_Connection (*UA_ConnectClientConnection)(char *endpointUrl, UA_Logger *logger);
+
 typedef struct UA_ClientConfig {
-    UA_Int32 timeout; //sync resonse timeout
+    UA_Int32 timeout; //sync response timeout
+    UA_Int32 secureChannelLifeTime; // lifetime in ms (then the channel needs to be renewed)
+    UA_Int32 timeToRenewSecureChannel; //time in ms  before expiration to renew the secure channel
+    UA_ConnectionConfig localConnectionConfig;
 } UA_ClientConfig;
 
-extern const UA_ClientConfig UA_ClientConfig_standard;
+extern UA_EXPORT const UA_ClientConfig UA_ClientConfig_standard;
+UA_Client UA_EXPORT * UA_Client_new(UA_ClientConfig config, UA_Logger logger);
 
-UA_Client UA_EXPORT * UA_Client_new(UA_ClientConfig config);
+UA_EXPORT void UA_Client_delete(UA_Client* client);
 
-void UA_Client_delete(UA_Client* client);
-
-UA_StatusCode UA_EXPORT UA_Client_connect(UA_Client *client, UA_ConnectionConfig conf,
-                                          UA_ClientNetworkLayer networkLayer, char *endpointUrl);
-
+UA_StatusCode UA_EXPORT UA_Client_connect(UA_Client *client, UA_ConnectClientConnection connFunc, char *endpointUrl);
 UA_StatusCode UA_EXPORT UA_Client_disconnect(UA_Client *client);
+
+UA_StatusCode UA_EXPORT UA_Client_renewSecureChannel(UA_Client *client);
 
 /* Attribute Service Set */
 UA_ReadResponse UA_EXPORT UA_Client_read(UA_Client *client, UA_ReadRequest *request);
@@ -3877,6 +4008,7 @@ UA_WriteResponse UA_EXPORT UA_Client_write(UA_Client *client, UA_WriteRequest *r
 
 /* View Service Set */    
 UA_BrowseResponse UA_EXPORT UA_Client_browse(UA_Client *client, UA_BrowseRequest *request);
+UA_BrowseNextResponse UA_EXPORT UA_Client_browseNext(UA_Client *client, UA_BrowseNextRequest *request);
 UA_TranslateBrowsePathsToNodeIdsResponse UA_EXPORT
     UA_Client_translateTranslateBrowsePathsToNodeIds(UA_Client *client,
                                                      UA_TranslateBrowsePathsToNodeIdsRequest *request);
@@ -3894,6 +4026,7 @@ UA_DeleteReferencesResponse UA_EXPORT
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/examples/networklayer_tcp.h" ***********************************/
 /*
  * This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
@@ -3909,13 +4042,14 @@ extern "C" {
 #endif
 
 /** @brief Create the TCP networklayer and listen to the specified port */
-UA_ServerNetworkLayer ServerNetworkLayerTCP_new(UA_ConnectionConfig conf, UA_UInt32 port);
-UA_ClientNetworkLayer ClientNetworkLayerTCP_new(UA_ConnectionConfig conf);
+UA_EXPORT UA_ServerNetworkLayer ServerNetworkLayerTCP_new(UA_ConnectionConfig conf, UA_UInt32 port);
+UA_EXPORT UA_Connection ClientNetworkLayerTCP_connect(char *endpointUrl, UA_Logger *logger);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
+/*********************************** amalgamated original file "C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/examples/logger_stdout.h" ***********************************/
 /*
  * This work is licensed under a Creative Commons CCZero 1.0 Universal License.
  * See http://creativecommons.org/publicdomain/zero/1.0/ for more information.
@@ -3930,1763 +4064,11 @@ UA_ClientNetworkLayer ClientNetworkLayerTCP_new(UA_ConnectionConfig conf);
 #endif
 
 /** Initialises the logger for the current thread. */
-UA_Logger Logger_Stdout_new(void);
+UA_EXPORT UA_Logger Logger_Stdout_new(void);
 
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
-#ifndef UA_CONFIG_H_
-#define UA_CONFIG_H_
-
-/* Buid options and configuration (set by cmake) */
-
-#define UA_LOGLEVEL 300
-/* #undef UA_MULTITHREADING */
-
-/* Function Export */
-#ifdef _WIN32
-#  ifdef UA_DYNAMIC_LINKING
-#    ifdef __GNUC__
-#      define UA_EXPORT __attribute__ ((dllexport))
-#    else
-#      define UA_EXPORT __declspec(dllexport)
-#    endif
-#  else
-#    ifdef __GNUC__
-#      define UA_EXPORT __attribute__ ((dllexport))
-#    else
-#      define UA_EXPORT __declspec(dllimport)
-#    endif
-#  endif
-#else
-#  if __GNUC__ || __clang__
-#    define UA_EXPORT __attribute__ ((visibility ("default")))
-#  else
-#    define UA_EXPORT
-#  endif
-#endif
-
-/*	Define your own htoleXX and leXXtoh here if needed.
-	Otherwise the ones defined in endian.h are used		*/
-//	#define htole16(x)
-//	#define htole32(x)
-//	#define htole64(x)
-//	#define le16toh(x)
-//	#define le32toh(x)
-//	#define le64toh(x)
-
-#endif /* UA_CONFIG_H_ */
-#ifndef UA_UTIL_H_
-#define UA_UTIL_H_
-
-#ifndef __USE_POSIX
-# define __USE_POSIX
-#endif
-#ifndef _POSIX_SOURCE
-# define _POSIX_SOURCE
-# define _POSIX_C_SOURCE 199309L
-#endif
-#ifndef _BSD_SOURCE
-# define _BSD_SOURCE
-#endif
-#ifndef _DEFAULT_SOURCE
-# define _DEFAULT_SOURCE
-#endif
-
-/*********************/
-/* Memory Management */
-/*********************/
-
-#include <stdlib.h> // malloc, free
-#include <string.h> // memcpy
-#include <assert.h> // assert
-
-#ifdef _WIN32
-# include <malloc.h>
-#else
-# include <alloca.h>
-#endif
-
-#define UA_NULL ((void *)0)
-
-// subtract from nodeids to get from the encoding to the content
-#define UA_ENCODINGOFFSET_XML 1
-#define UA_ENCODINGOFFSET_BINARY 2
-
-#define UA_assert(ignore) assert(ignore)
-
-/* Replace the macros with functions for custom allocators if necessary */
-#define UA_free(ptr) free(ptr)
-#define UA_malloc(size) malloc(size)
-#define UA_calloc(num, size) calloc(num, size)
-#define UA_realloc(ptr, size) realloc(ptr, size)
-#define UA_memcpy(dst, src, size) memcpy(dst, src, size)
-#define UA_memset(ptr, value, size) memset(ptr, value, size)
-
-#ifdef _WIN32
-# define UA_alloca(SIZE) _alloca(SIZE)
-#else
-# define UA_alloca(SIZE) alloca(SIZE)
-#endif
-
-/********************/
-/* System Libraries */
-/********************/
-
-#include <stdarg.h> // va_start, va_end
-#include <time.h>
-#include <stdio.h> // printf
-#include <inttypes.h>
-
-#ifdef _WIN32
-# include <winsock2.h> //needed for amalgation
-# include <windows.h>
-# undef SLIST_ENTRY
-# define RAND(SEED) (UA_UInt32)rand()
-#else
-# if !(defined htole16 && defined htole32 && defined htole64 && defined le16toh && defined le32toh && defined le64toh)
-#  include <endian.h>
-#  if !(defined htole16 && defined htole32 && defined htole64 && defined le16toh && defined le32toh && defined le64toh)
-#   if ( __BYTE_ORDER != __LITTLE_ENDIAN )
-#    error "Host byte order is not little-endian and no appropriate conversion functions are defined. (Have a look at ua_config.h)"
-#   else
-#    define htole16(x) x
-#    define htole32(x) x
-#    define htole64(x) x
-#    define le16toh(x) x
-#    define le32toh(x) x
-#    define le64toh(x) x
-#   endif
-#  endif
-# endif
-# include <sys/time.h>
-# define RAND(SEED) (UA_UInt32)rand_r(SEED)
-#endif
-
-/*************************/
-/* External Dependencies */
-/*************************/
-
-
-#ifdef UA_MULTITHREADING
-# define _LGPL_SOURCE
-# include <urcu.h>
-# include <urcu/wfcqueue.h>
-# include <urcu/compiler.h> // for caa_container_of
-# include <urcu/uatomic.h>
-# include <urcu/rculfhash.h>
-#endif
-
-#endif /* UA_UTIL_H_ */
-
-
-/* Buid options and configuration (set by cmake) */
-
-#define UA_LOGLEVEL 300
-/* #undef UA_MULTITHREADING */
-
-/* Function Export */
-#ifdef _WIN32
-#  ifdef UA_DYNAMIC_LINKING
-#    ifdef __GNUC__
-#      define UA_EXPORT __attribute__ ((dllexport))
-#    else
-#      define UA_EXPORT __declspec(dllexport)
-#    endif
-#  else
-#    ifdef __GNUC__
-#      define UA_EXPORT __attribute__ ((dllexport))
-#    else
-#      define UA_EXPORT __declspec(dllimport)
-#    endif
-#  endif
-#else
-#  if __GNUC__ || __clang__
-#    define UA_EXPORT __attribute__ ((visibility ("default")))
-#  else
-#    define UA_EXPORT
-#  endif
-#endif
-
-/*	Define your own htoleXX and leXXtoh here if needed.
-	Otherwise the ones defined in endian.h are used		*/
-//	#define htole16(x)
-//	#define htole32(x)
-//	#define htole64(x)
-//	#define le16toh(x)
-//	#define le32toh(x)
-//	#define le64toh(x)
-
-/*	$OpenBSD: queue.h,v 1.38 2013/07/03 15:05:21 fgsch Exp $	*/
-/*	$NetBSD: queue.h,v 1.11 1996/05/16 05:17:14 mycroft Exp $	*/
-
-/*
- * Copyright (c) 1991, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)queue.h	8.5 (Berkeley) 8/20/94
- */
-
-#ifndef	_SYS_QUEUE_H_
-#define	_SYS_QUEUE_H_
-
-/*
- * This file defines five types of data structures: singly-linked lists,
- * lists, simple queues, tail queues, and circular queues.
- *
- *
- * A singly-linked list is headed by a single forward pointer. The elements
- * are singly linked for minimum space and pointer manipulation overhead at
- * the expense of O(n) removal for arbitrary elements. New elements can be
- * added to the list after an existing element or at the head of the list.
- * Elements being removed from the head of the list should use the explicit
- * macro for this purpose for optimum efficiency. A singly-linked list may
- * only be traversed in the forward direction.  Singly-linked lists are ideal
- * for applications with large datasets and few or no removals or for
- * implementing a LIFO queue.
- *
- * A list is headed by a single forward pointer (or an array of forward
- * pointers for a hash table header). The elements are doubly linked
- * so that an arbitrary element can be removed without a need to
- * traverse the list. New elements can be added to the list before
- * or after an existing element or at the head of the list. A list
- * may only be traversed in the forward direction.
- *
- * A simple queue is headed by a pair of pointers, one the head of the
- * list and the other to the tail of the list. The elements are singly
- * linked to save space, so elements can only be removed from the
- * head of the list. New elements can be added to the list before or after
- * an existing element, at the head of the list, or at the end of the
- * list. A simple queue may only be traversed in the forward direction.
- *
- * A tail queue is headed by a pair of pointers, one to the head of the
- * list and the other to the tail of the list. The elements are doubly
- * linked so that an arbitrary element can be removed without a need to
- * traverse the list. New elements can be added to the list before or
- * after an existing element, at the head of the list, or at the end of
- * the list. A tail queue may be traversed in either direction.
- *
- * A circle queue is headed by a pair of pointers, one to the head of the
- * list and the other to the tail of the list. The elements are doubly
- * linked so that an arbitrary element can be removed without a need to
- * traverse the list. New elements can be added to the list before or after
- * an existing element, at the head of the list, or at the end of the list.
- * A circle queue may be traversed in either direction, but has a more
- * complex end of list detection.
- *
- * For details on the use of these macros, see the queue(3) manual page.
- */
-
-#if defined(QUEUE_MACRO_DEBUG) || (defined(_KERNEL) && defined(DIAGNOSTIC))
-#define _Q_INVALIDATE(a) (a) = ((void *)-1)
-#else
-#define _Q_INVALIDATE(a)
-#endif
-
-/*
- * Singly-linked List definitions.
- */
-#define SLIST_HEAD(name, type)						\
-struct name {								\
-	struct type *slh_first;	/* first element */			\
-}
-
-#define	SLIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
-
-#define SLIST_ENTRY(type)						\
-struct {								\
-	struct type *sle_next;	/* next element */			\
-}
-
-/*
- * Singly-linked List access methods.
- */
-#define	SLIST_FIRST(head)	((head)->slh_first)
-#define	SLIST_END(head)		NULL
-#define	SLIST_EMPTY(head)	(SLIST_FIRST(head) == SLIST_END(head))
-#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
-
-#define	SLIST_FOREACH(var, head, field)					\
-	for((var) = SLIST_FIRST(head);					\
-	    (var) != SLIST_END(head);					\
-	    (var) = SLIST_NEXT(var, field))
-
-#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SLIST_FIRST(head);				\
-	    (var) && ((tvar) = SLIST_NEXT(var, field), 1);		\
-	    (var) = (tvar))
-
-/*
- * Singly-linked List functions.
- */
-#define	SLIST_INIT(head) {						\
-	SLIST_FIRST(head) = SLIST_END(head);				\
-}
-
-#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
-	(elm)->field.sle_next = (slistelm)->field.sle_next;		\
-	(slistelm)->field.sle_next = (elm);				\
-} while (0)
-
-#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.sle_next = (head)->slh_first;			\
-	(head)->slh_first = (elm);					\
-} while (0)
-
-#define	SLIST_REMOVE_AFTER(elm, field) do {				\
-	(elm)->field.sle_next = (elm)->field.sle_next->field.sle_next;	\
-} while (0)
-
-#define	SLIST_REMOVE_HEAD(head, field) do {				\
-	(head)->slh_first = (head)->slh_first->field.sle_next;		\
-} while (0)
-
-#define SLIST_REMOVE(head, elm, type, field) do {			\
-	if ((head)->slh_first == (elm)) {				\
-		SLIST_REMOVE_HEAD((head), field);			\
-	} else {							\
-		struct type *curelm = (head)->slh_first;		\
-									\
-		while (curelm->field.sle_next != (elm))			\
-			curelm = curelm->field.sle_next;		\
-		curelm->field.sle_next =				\
-		    curelm->field.sle_next->field.sle_next;		\
-		_Q_INVALIDATE((elm)->field.sle_next);			\
-	}								\
-} while (0)
-
-/*
- * List definitions.
- */
-#define LIST_HEAD(name, type)						\
-struct name {								\
-	struct type *lh_first;	/* first element */			\
-}
-
-#define LIST_HEAD_INITIALIZER(head)					\
-	{ NULL }
-
-#define LIST_ENTRY(type)						\
-struct {								\
-	struct type *le_next;	/* next element */			\
-	struct type **le_prev;	/* address of previous next element */	\
-}
-
-/*
- * List access methods
- */
-#define	LIST_FIRST(head)		((head)->lh_first)
-#define	LIST_END(head)			NULL
-#define	LIST_EMPTY(head)		(LIST_FIRST(head) == LIST_END(head))
-#define	LIST_NEXT(elm, field)		((elm)->field.le_next)
-
-#define LIST_FOREACH(var, head, field)					\
-	for((var) = LIST_FIRST(head);					\
-	    (var)!= LIST_END(head);					\
-	    (var) = LIST_NEXT(var, field))
-
-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = LIST_FIRST(head);				\
-	    (var) && ((tvar) = LIST_NEXT(var, field), 1);		\
-	    (var) = (tvar))
-
-/*
- * List functions.
- */
-#define	LIST_INIT(head) do {						\
-	LIST_FIRST(head) = LIST_END(head);				\
-} while (0)
-
-#define LIST_INSERT_AFTER(listelm, elm, field) do {			\
-	if (((elm)->field.le_next = (listelm)->field.le_next) != NULL)	\
-		(listelm)->field.le_next->field.le_prev =		\
-		    &(elm)->field.le_next;				\
-	(listelm)->field.le_next = (elm);				\
-	(elm)->field.le_prev = &(listelm)->field.le_next;		\
-} while (0)
-
-#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-	(elm)->field.le_next = (listelm);				\
-	*(listelm)->field.le_prev = (elm);				\
-	(listelm)->field.le_prev = &(elm)->field.le_next;		\
-} while (0)
-
-#define LIST_INSERT_HEAD(head, elm, field) do {				\
-	if (((elm)->field.le_next = (head)->lh_first) != NULL)		\
-		(head)->lh_first->field.le_prev = &(elm)->field.le_next;\
-	(head)->lh_first = (elm);					\
-	(elm)->field.le_prev = &(head)->lh_first;			\
-} while (0)
-
-#define LIST_REMOVE(elm, field) do {					\
-	if ((elm)->field.le_next != NULL)				\
-		(elm)->field.le_next->field.le_prev =			\
-		    (elm)->field.le_prev;				\
-	*(elm)->field.le_prev = (elm)->field.le_next;			\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
-
-#define LIST_REPLACE(elm, elm2, field) do {				\
-	if (((elm2)->field.le_next = (elm)->field.le_next) != NULL)	\
-		(elm2)->field.le_next->field.le_prev =			\
-		    &(elm2)->field.le_next;				\
-	(elm2)->field.le_prev = (elm)->field.le_prev;			\
-	*(elm2)->field.le_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.le_prev);				\
-	_Q_INVALIDATE((elm)->field.le_next);				\
-} while (0)
-
-/*
- * Simple queue definitions.
- */
-#define SIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqh_first;	/* first element */			\
-	struct type **sqh_last;	/* addr of last next element */		\
-}
-
-#define SIMPLEQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).sqh_first }
-
-#define SIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqe_next;	/* next element */			\
-}
-
-/*
- * Simple queue access methods.
- */
-#define	SIMPLEQ_FIRST(head)	    ((head)->sqh_first)
-#define	SIMPLEQ_END(head)	    NULL
-#define	SIMPLEQ_EMPTY(head)	    (SIMPLEQ_FIRST(head) == SIMPLEQ_END(head))
-#define	SIMPLEQ_NEXT(elm, field)    ((elm)->field.sqe_next)
-
-#define SIMPLEQ_FOREACH(var, head, field)				\
-	for((var) = SIMPLEQ_FIRST(head);				\
-	    (var) != SIMPLEQ_END(head);					\
-	    (var) = SIMPLEQ_NEXT(var, field))
-
-#define	SIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = SIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = SIMPLEQ_NEXT(var, field), 1);		\
-	    (var) = (tvar))
-
-/*
- * Simple queue functions.
- */
-#define	SIMPLEQ_INIT(head) do {						\
-	(head)->sqh_first = NULL;					\
-	(head)->sqh_last = &(head)->sqh_first;				\
-} while (0)
-
-#define SIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (head)->sqh_first) == NULL)	\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(head)->sqh_first = (elm);					\
-} while (0)
-
-#define SIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqe_next = NULL;					\
-	*(head)->sqh_last = (elm);					\
-	(head)->sqh_last = &(elm)->field.sqe_next;			\
-} while (0)
-
-#define SIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqe_next = (listelm)->field.sqe_next) == NULL)\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-	(listelm)->field.sqe_next = (elm);				\
-} while (0)
-
-#define SIMPLEQ_REMOVE_HEAD(head, field) do {			\
-	if (((head)->sqh_first = (head)->sqh_first->field.sqe_next) == NULL) \
-		(head)->sqh_last = &(head)->sqh_first;			\
-} while (0)
-
-#define SIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqe_next = (elm)->field.sqe_next->field.sqe_next) \
-	    == NULL)							\
-		(head)->sqh_last = &(elm)->field.sqe_next;		\
-} while (0)
-
-/*
- * XOR Simple queue definitions.
- */
-#define XSIMPLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *sqx_first;	/* first element */			\
-	struct type **sqx_last;	/* addr of last next element */		\
-	unsigned long sqx_cookie;					\
-}
-
-#define XSIMPLEQ_ENTRY(type)						\
-struct {								\
-	struct type *sqx_next;	/* next element */			\
-}
-
-/*
- * XOR Simple queue access methods.
- */
-#define XSIMPLEQ_XOR(head, ptr)	    ((__typeof(ptr))((head)->sqx_cookie ^ \
-					(unsigned long)(ptr)))
-#define	XSIMPLEQ_FIRST(head)	    XSIMPLEQ_XOR(head, ((head)->sqx_first))
-#define	XSIMPLEQ_END(head)	    NULL
-#define	XSIMPLEQ_EMPTY(head)	    (XSIMPLEQ_FIRST(head) == XSIMPLEQ_END(head))
-#define	XSIMPLEQ_NEXT(head, elm, field)    XSIMPLEQ_XOR(head, ((elm)->field.sqx_next))
-
-
-#define XSIMPLEQ_FOREACH(var, head, field)				\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) != XSIMPLEQ_END(head);				\
-	    (var) = XSIMPLEQ_NEXT(head, var, field))
-
-#define	XSIMPLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = XSIMPLEQ_FIRST(head);				\
-	    (var) && ((tvar) = XSIMPLEQ_NEXT(head, var, field), 1);	\
-	    (var) = (tvar))
-
-/*
- * XOR Simple queue functions.
- */
-#define	XSIMPLEQ_INIT(head) do {					\
-	arc4random_buf(&(head)->sqx_cookie, sizeof((head)->sqx_cookie)); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, NULL);			\
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first);	\
-} while (0)
-
-#define XSIMPLEQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = (head)->sqx_first) ==		\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(head)->sqx_first = XSIMPLEQ_XOR(head, (elm));			\
-} while (0)
-
-#define XSIMPLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.sqx_next = XSIMPLEQ_XOR(head, NULL);		\
-	*(XSIMPLEQ_XOR(head, (head)->sqx_last)) = XSIMPLEQ_XOR(head, (elm)); \
-	(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);	\
-} while (0)
-
-#define XSIMPLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.sqx_next = (listelm)->field.sqx_next) ==	\
-	    XSIMPLEQ_XOR(head, NULL))					\
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(elm)->field.sqx_next); \
-	(listelm)->field.sqx_next = XSIMPLEQ_XOR(head, (elm));		\
-} while (0)
-
-#define XSIMPLEQ_REMOVE_HEAD(head, field) do {				\
-	if (((head)->sqx_first = XSIMPLEQ_XOR(head,			\
-	    (head)->sqx_first)->field.sqx_next) == XSIMPLEQ_XOR(head, NULL)) \
-		(head)->sqx_last = XSIMPLEQ_XOR(head, &(head)->sqx_first); \
-} while (0)
-
-#define XSIMPLEQ_REMOVE_AFTER(head, elm, field) do {			\
-	if (((elm)->field.sqx_next = XSIMPLEQ_XOR(head,			\
-	    (elm)->field.sqx_next)->field.sqx_next)			\
-	    == XSIMPLEQ_XOR(head, NULL))				\
-		(head)->sqx_last = 					\
-		    XSIMPLEQ_XOR(head, &(elm)->field.sqx_next);		\
-} while (0)
-
-
-/*
- * Tail queue definitions.
- */
-#define TAILQ_HEAD(name, type)						\
-struct name {								\
-	struct type *tqh_first;	/* first element */			\
-	struct type **tqh_last;	/* addr of last next element */		\
-}
-
-#define TAILQ_HEAD_INITIALIZER(head)					\
-	{ NULL, &(head).tqh_first }
-
-#define TAILQ_ENTRY(type)						\
-struct {								\
-	struct type *tqe_next;	/* next element */			\
-	struct type **tqe_prev;	/* address of previous next element */	\
-}
-
-/*
- * tail queue access methods
- */
-#define	TAILQ_FIRST(head)		((head)->tqh_first)
-#define	TAILQ_END(head)			NULL
-#define	TAILQ_NEXT(elm, field)		((elm)->field.tqe_next)
-#define TAILQ_LAST(head, headname)					\
-	(*(((struct headname *)((head)->tqh_last))->tqh_last))
-/* XXX */
-#define TAILQ_PREV(elm, headname, field)				\
-	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
-#define	TAILQ_EMPTY(head)						\
-	(TAILQ_FIRST(head) == TAILQ_END(head))
-
-#define TAILQ_FOREACH(var, head, field)					\
-	for((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_NEXT(var, field))
-
-#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = TAILQ_FIRST(head);					\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_NEXT(var, field), 1);			\
-	    (var) = (tvar))
-
-
-#define TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-	for((var) = TAILQ_LAST(head, headname);				\
-	    (var) != TAILQ_END(head);					\
-	    (var) = TAILQ_PREV(var, headname, field))
-
-#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = TAILQ_LAST(head, headname);			\
-	    (var) != TAILQ_END(head) &&					\
-	    ((tvar) = TAILQ_PREV(var, headname, field), 1);		\
-	    (var) = (tvar))
-
-/*
- * Tail queue functions.
- */
-#define	TAILQ_INIT(head) do {						\
-	(head)->tqh_first = NULL;					\
-	(head)->tqh_last = &(head)->tqh_first;				\
-} while (0)
-
-#define TAILQ_INSERT_HEAD(head, elm, field) do {			\
-	if (((elm)->field.tqe_next = (head)->tqh_first) != NULL)	\
-		(head)->tqh_first->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(head)->tqh_first = (elm);					\
-	(elm)->field.tqe_prev = &(head)->tqh_first;			\
-} while (0)
-
-#define TAILQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.tqe_next = NULL;					\
-	(elm)->field.tqe_prev = (head)->tqh_last;			\
-	*(head)->tqh_last = (elm);					\
-	(head)->tqh_last = &(elm)->field.tqe_next;			\
-} while (0)
-
-#define TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	if (((elm)->field.tqe_next = (listelm)->field.tqe_next) != NULL)\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    &(elm)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm)->field.tqe_next;		\
-	(listelm)->field.tqe_next = (elm);				\
-	(elm)->field.tqe_prev = &(listelm)->field.tqe_next;		\
-} while (0)
-
-#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
-	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
-	(elm)->field.tqe_next = (listelm);				\
-	*(listelm)->field.tqe_prev = (elm);				\
-	(listelm)->field.tqe_prev = &(elm)->field.tqe_next;		\
-} while (0)
-
-#define TAILQ_REMOVE(head, elm, field) do {				\
-	if (((elm)->field.tqe_next) != NULL)				\
-		(elm)->field.tqe_next->field.tqe_prev =			\
-		    (elm)->field.tqe_prev;				\
-	else								\
-		(head)->tqh_last = (elm)->field.tqe_prev;		\
-	*(elm)->field.tqe_prev = (elm)->field.tqe_next;			\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
-
-#define TAILQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.tqe_next = (elm)->field.tqe_next) != NULL)	\
-		(elm2)->field.tqe_next->field.tqe_prev =		\
-		    &(elm2)->field.tqe_next;				\
-	else								\
-		(head)->tqh_last = &(elm2)->field.tqe_next;		\
-	(elm2)->field.tqe_prev = (elm)->field.tqe_prev;			\
-	*(elm2)->field.tqe_prev = (elm2);				\
-	_Q_INVALIDATE((elm)->field.tqe_prev);				\
-	_Q_INVALIDATE((elm)->field.tqe_next);				\
-} while (0)
-
-/*
- * Circular queue definitions.
- */
-#define CIRCLEQ_HEAD(name, type)					\
-struct name {								\
-	struct type *cqh_first;		/* first element */		\
-	struct type *cqh_last;		/* last element */		\
-}
-
-#define CIRCLEQ_HEAD_INITIALIZER(head)					\
-	{ CIRCLEQ_END(&head), CIRCLEQ_END(&head) }
-
-#define CIRCLEQ_ENTRY(type)						\
-struct {								\
-	struct type *cqe_next;		/* next element */		\
-	struct type *cqe_prev;		/* previous element */		\
-}
-
-/*
- * Circular queue access methods
- */
-#define	CIRCLEQ_FIRST(head)		((head)->cqh_first)
-#define	CIRCLEQ_LAST(head)		((head)->cqh_last)
-#define	CIRCLEQ_END(head)		((void *)(head))
-#define	CIRCLEQ_NEXT(elm, field)	((elm)->field.cqe_next)
-#define	CIRCLEQ_PREV(elm, field)	((elm)->field.cqe_prev)
-#define	CIRCLEQ_EMPTY(head)						\
-	(CIRCLEQ_FIRST(head) == CIRCLEQ_END(head))
-
-#define CIRCLEQ_FOREACH(var, head, field)				\
-	for((var) = CIRCLEQ_FIRST(head);				\
-	    (var) != CIRCLEQ_END(head);					\
-	    (var) = CIRCLEQ_NEXT(var, field))
-
-#define	CIRCLEQ_FOREACH_SAFE(var, head, field, tvar)			\
-	for ((var) = CIRCLEQ_FIRST(head);				\
-	    (var) != CIRCLEQ_END(head) &&				\
-	    ((tvar) = CIRCLEQ_NEXT(var, field), 1);			\
-	    (var) = (tvar))
-
-#define CIRCLEQ_FOREACH_REVERSE(var, head, field)			\
-	for((var) = CIRCLEQ_LAST(head);					\
-	    (var) != CIRCLEQ_END(head);					\
-	    (var) = CIRCLEQ_PREV(var, field))
-
-#define	CIRCLEQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-	for ((var) = CIRCLEQ_LAST(head, headname);			\
-	    (var) != CIRCLEQ_END(head) && 				\
-	    ((tvar) = CIRCLEQ_PREV(var, headname, field), 1);		\
-	    (var) = (tvar))
-
-/*
- * Circular queue functions.
- */
-#define	CIRCLEQ_INIT(head) do {						\
-	(head)->cqh_first = CIRCLEQ_END(head);				\
-	(head)->cqh_last = CIRCLEQ_END(head);				\
-} while (0)
-
-#define CIRCLEQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-	(elm)->field.cqe_next = (listelm)->field.cqe_next;		\
-	(elm)->field.cqe_prev = (listelm);				\
-	if ((listelm)->field.cqe_next == CIRCLEQ_END(head))		\
-		(head)->cqh_last = (elm);				\
-	else								\
-		(listelm)->field.cqe_next->field.cqe_prev = (elm);	\
-	(listelm)->field.cqe_next = (elm);				\
-} while (0)
-
-#define CIRCLEQ_INSERT_BEFORE(head, listelm, elm, field) do {		\
-	(elm)->field.cqe_next = (listelm);				\
-	(elm)->field.cqe_prev = (listelm)->field.cqe_prev;		\
-	if ((listelm)->field.cqe_prev == CIRCLEQ_END(head))		\
-		(head)->cqh_first = (elm);				\
-	else								\
-		(listelm)->field.cqe_prev->field.cqe_next = (elm);	\
-	(listelm)->field.cqe_prev = (elm);				\
-} while (0)
-
-#define CIRCLEQ_INSERT_HEAD(head, elm, field) do {			\
-	(elm)->field.cqe_next = (head)->cqh_first;			\
-	(elm)->field.cqe_prev = CIRCLEQ_END(head);			\
-	if ((head)->cqh_last == CIRCLEQ_END(head))			\
-		(head)->cqh_last = (elm);				\
-	else								\
-		(head)->cqh_first->field.cqe_prev = (elm);		\
-	(head)->cqh_first = (elm);					\
-} while (0)
-
-#define CIRCLEQ_INSERT_TAIL(head, elm, field) do {			\
-	(elm)->field.cqe_next = CIRCLEQ_END(head);			\
-	(elm)->field.cqe_prev = (head)->cqh_last;			\
-	if ((head)->cqh_first == CIRCLEQ_END(head))			\
-		(head)->cqh_first = (elm);				\
-	else								\
-		(head)->cqh_last->field.cqe_next = (elm);		\
-	(head)->cqh_last = (elm);					\
-} while (0)
-
-#define	CIRCLEQ_REMOVE(head, elm, field) do {				\
-	if ((elm)->field.cqe_next == CIRCLEQ_END(head))			\
-		(head)->cqh_last = (elm)->field.cqe_prev;		\
-	else								\
-		(elm)->field.cqe_next->field.cqe_prev =			\
-		    (elm)->field.cqe_prev;				\
-	if ((elm)->field.cqe_prev == CIRCLEQ_END(head))			\
-		(head)->cqh_first = (elm)->field.cqe_next;		\
-	else								\
-		(elm)->field.cqe_prev->field.cqe_next =			\
-		    (elm)->field.cqe_next;				\
-	_Q_INVALIDATE((elm)->field.cqe_prev);				\
-	_Q_INVALIDATE((elm)->field.cqe_next);				\
-} while (0)
-
-#define CIRCLEQ_REPLACE(head, elm, elm2, field) do {			\
-	if (((elm2)->field.cqe_next = (elm)->field.cqe_next) ==		\
-	    CIRCLEQ_END(head))						\
-		(head)->cqh_last = (elm2);				\
-	else								\
-		(elm2)->field.cqe_next->field.cqe_prev = (elm2);	\
-	if (((elm2)->field.cqe_prev = (elm)->field.cqe_prev) ==		\
-	    CIRCLEQ_END(head))						\
-		(head)->cqh_first = (elm2);				\
-	else								\
-		(elm2)->field.cqe_prev->field.cqe_next = (elm2);	\
-	_Q_INVALIDATE((elm)->field.cqe_prev);				\
-	_Q_INVALIDATE((elm)->field.cqe_next);				\
-} while (0)
-
-#endif	/* !_SYS_QUEUE_H_ */
-/**
-* @file ua_transport_generated.h
-*
-* @brief Autogenerated data types
-*
-* Generated from Custom.Opc.Ua.Transport.bsd with script C:/AcpltDevelopmentKit/acplt/dev/open62541WrapperProject/open62541/tools/generate_datatypes.py
-* on host SPECTRE by user lars at 2015-04-17 10:13:36
-*/
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-/**
-* @ingroup types
-*
-* @defgroup ua_transport_generated Autogenerated ua_transport Types
-*
-* @brief Data structures that are autogenerated from an XML-Schema.
-*
-* @{
-*/
-
-#define UA_TRANSPORT_COUNT 10
-
-extern UA_EXPORT const UA_DataType *UA_TRANSPORT;
-
-
-/** @brief Message Type and whether the message contains the final chunk */
-typedef enum {
-    UA_MESSAGETYPEANDFINAL_ACKF = 1179337537,
-    UA_MESSAGETYPEANDFINAL_CLOF = 1179601987,
-    UA_MESSAGETYPEANDFINAL_HELF = 1179403592,
-    UA_MESSAGETYPEANDFINAL_MSGF = 1179079501,
-    UA_MESSAGETYPEANDFINAL_OPNF = 1179537487
-} UA_MessageTypeAndFinal;
-#define UA_TRANSPORT_MESSAGETYPEANDFINAL 0
-#define UA_MessageTypeAndFinal_new (UA_MessageTypeAndFinal*)UA_Int32_new
-#define UA_MessageTypeAndFinal_init(p) UA_Int32_init((UA_Int32*)p)
-#define UA_MessageTypeAndFinal_delete(p) UA_Int32_delete((UA_Int32*)p)
-#define UA_MessageTypeAndFinal_deleteMembers(p) UA_Int32_deleteMembers((UA_Int32*)p)
-#define UA_MessageTypeAndFinal_copy(src, dst) UA_Int32_copy((const UA_Int32*)src, (UA_Int32*)dst)
-#define UA_MessageTypeAndFinal_calcSizeBinary(p) UA_Int32_calcSizeBinary((UA_Int32*)p)
-#define UA_MessageTypeAndFinal_encodeBinary(src, dst, offset) UA_Int32_encodeBinary((UA_Int32*)src, dst, offset)
-#define UA_MessageTypeAndFinal_decodeBinary(src, offset, dst) UA_Int32_decodeBinary(src, offset, (UA_Int32*)dst)
-
-/** @brief TCP Header */
-typedef struct {
-    UA_UInt32 messageTypeAndFinal;
-    UA_UInt32 messageSize;
-} UA_TcpMessageHeader;
-#define UA_TRANSPORT_TCPMESSAGEHEADER 1
-#define UA_TcpMessageHeader_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-#define UA_TcpMessageHeader_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER], dst, offset)
-#define UA_TcpMessageHeader_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPMESSAGEHEADER])
-
-/** @brief Hello Message */
-typedef struct {
-    UA_UInt32 protocolVersion;
-    UA_UInt32 receiveBufferSize;
-    UA_UInt32 sendBufferSize;
-    UA_UInt32 maxMessageSize;
-    UA_UInt32 maxChunkCount;
-    UA_String endpointUrl;
-} UA_TcpHelloMessage;
-#define UA_TRANSPORT_TCPHELLOMESSAGE 2
-#define UA_TcpHelloMessage_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-#define UA_TcpHelloMessage_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE], dst, offset)
-#define UA_TcpHelloMessage_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPHELLOMESSAGE])
-
-/** @brief Acknowledge Message */
-typedef struct {
-    UA_UInt32 protocolVersion;
-    UA_UInt32 receiveBufferSize;
-    UA_UInt32 sendBufferSize;
-    UA_UInt32 maxMessageSize;
-    UA_UInt32 maxChunkCount;
-} UA_TcpAcknowledgeMessage;
-#define UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE 3
-#define UA_TcpAcknowledgeMessage_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-#define UA_TcpAcknowledgeMessage_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE], dst, offset)
-#define UA_TcpAcknowledgeMessage_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_TCPACKNOWLEDGEMESSAGE])
-
-/** @brief Secure Layer Sequence Header */
-typedef struct {
-    UA_TcpMessageHeader messageHeader;
-    UA_UInt32 secureChannelId;
-} UA_SecureConversationMessageHeader;
-#define UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER 4
-#define UA_SecureConversationMessageHeader_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-#define UA_SecureConversationMessageHeader_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER], dst, offset)
-#define UA_SecureConversationMessageHeader_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEHEADER])
-
-/** @brief Security Header */
-typedef struct {
-    UA_ByteString securityPolicyUri;
-    UA_ByteString senderCertificate;
-    UA_ByteString receiverCertificateThumbprint;
-} UA_AsymmetricAlgorithmSecurityHeader;
-#define UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER 5
-#define UA_AsymmetricAlgorithmSecurityHeader_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-#define UA_AsymmetricAlgorithmSecurityHeader_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER], dst, offset)
-#define UA_AsymmetricAlgorithmSecurityHeader_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_ASYMMETRICALGORITHMSECURITYHEADER])
-
-/** @brief Secure Layer Symmetric Algorithm Header */
-typedef struct {
-    UA_UInt32 tokenId;
-} UA_SymmetricAlgorithmSecurityHeader;
-#define UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER 6
-#define UA_SymmetricAlgorithmSecurityHeader_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-#define UA_SymmetricAlgorithmSecurityHeader_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER], dst, offset)
-#define UA_SymmetricAlgorithmSecurityHeader_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_SYMMETRICALGORITHMSECURITYHEADER])
-
-/** @brief Secure Layer Sequence Header */
-typedef struct {
-    UA_UInt32 sequenceNumber;
-    UA_UInt32 requestId;
-} UA_SequenceHeader;
-#define UA_TRANSPORT_SEQUENCEHEADER 7
-#define UA_SequenceHeader_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-#define UA_SequenceHeader_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER], dst, offset)
-#define UA_SequenceHeader_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_SEQUENCEHEADER])
-
-/** @brief Secure Conversation Message Footer */
-typedef struct {
-    UA_Int32 paddingSize;
-    UA_Byte *padding;
-    UA_Byte signature;
-} UA_SecureConversationMessageFooter;
-#define UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER 8
-#define UA_SecureConversationMessageFooter_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-#define UA_SecureConversationMessageFooter_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER], dst, offset)
-#define UA_SecureConversationMessageFooter_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEFOOTER])
-
-/** @brief Secure Conversation Message Abort Body */
-typedef struct {
-    UA_UInt32 error;
-    UA_String reason;
-} UA_SecureConversationMessageAbortBody;
-#define UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY 9
-#define UA_SecureConversationMessageAbortBody_new() UA_new(&UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_init(p) UA_init(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_delete(p) UA_delete(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_deleteMembers(p) UA_deleteMembers(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_copy(src, dst) UA_copy(src, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_calcSizeBinary(p) UA_calcSizeBinary(p, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-#define UA_SecureConversationMessageAbortBody_encodeBinary(src, dst, offset) UA_encodeBinary(src, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY], dst, offset)
-#define UA_SecureConversationMessageAbortBody_decodeBinary(src, offset, dst) UA_decodeBinary(src, offset, dst, &UA_TRANSPORT[UA_TRANSPORT_SECURECONVERSATIONMESSAGEABORTBODY])
-
-/// @} /* end of group */
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
-
-
-/**
- * @ingroup types
- *
- * @defgroup encoding_binary Binary Encoding
- *
- * @brief Functions for binary en- and decoding of built-in datatypes as defined
- * in the standard. The encoding of the remaining datatypes is autogenerated
- * from XML descriptions.
- *
- * All datatypes have similar functions with a common postfix. DO NOT CALL THESE
- * FUNCTIONS WITH NULL-POINTERS IF IT IS NOT EXPLICITLY PERMITTED.
- *
- * - _calcSize: Returns the size of the (encoded) variable in bytes. This length
- *   is used to allocate the bytestring for later encoding.
- *
- * - _encode: Encodes a variable into a bytestring. If an error occurs
- *   (indicated by the return value), the bytestring may be left in an
- *   inconsistent state.
- *
- * - _decode: Decodes a variable stored in a bytestring. The destination is
- *   cleaned up (init) before decoding into it. If an error occurs (indicated by
- *   the return value), the destination is cleaned up (deleteMembers, but no
- *   init) before returning.
- *
- * @{
- */
-
-#define UA_TYPE_BINARY_ENCODING(TYPE)                                   \
-    size_t TYPE##_calcSizeBinary(TYPE const *p);                        \
-    UA_StatusCode TYPE##_encodeBinary(TYPE const *src, UA_ByteString *dst, size_t *offset); \
-    UA_StatusCode TYPE##_decodeBinary(UA_ByteString const *src, size_t *offset, TYPE *dst);
-
-UA_TYPE_BINARY_ENCODING(UA_Boolean)
-UA_TYPE_BINARY_ENCODING(UA_SByte)
-UA_TYPE_BINARY_ENCODING(UA_Byte)
-UA_TYPE_BINARY_ENCODING(UA_Int16)
-UA_TYPE_BINARY_ENCODING(UA_UInt16)
-UA_TYPE_BINARY_ENCODING(UA_Int32)
-UA_TYPE_BINARY_ENCODING(UA_UInt32)
-UA_TYPE_BINARY_ENCODING(UA_Int64)
-UA_TYPE_BINARY_ENCODING(UA_UInt64)
-UA_TYPE_BINARY_ENCODING(UA_Float)
-UA_TYPE_BINARY_ENCODING(UA_Double)
-UA_TYPE_BINARY_ENCODING(UA_String)
-UA_TYPE_BINARY_ENCODING(UA_DateTime)
-UA_TYPE_BINARY_ENCODING(UA_Guid)
-UA_TYPE_BINARY_ENCODING(UA_ByteString)
-UA_TYPE_BINARY_ENCODING(UA_XmlElement)
-UA_TYPE_BINARY_ENCODING(UA_NodeId)
-UA_TYPE_BINARY_ENCODING(UA_ExpandedNodeId)
-UA_TYPE_BINARY_ENCODING(UA_StatusCode)
-UA_TYPE_BINARY_ENCODING(UA_QualifiedName)
-UA_TYPE_BINARY_ENCODING(UA_LocalizedText)
-UA_TYPE_BINARY_ENCODING(UA_ExtensionObject)
-UA_TYPE_BINARY_ENCODING(UA_DataValue)
-UA_TYPE_BINARY_ENCODING(UA_Variant)
-UA_TYPE_BINARY_ENCODING(UA_DiagnosticInfo)
-
-size_t UA_calcSizeBinary(const void *p, const UA_DataType *dataType);
-UA_StatusCode UA_encodeBinary(const void *src, const UA_DataType *dataType, UA_ByteString *dst, size_t *offset);
-UA_StatusCode UA_decodeBinary(const UA_ByteString *src, size_t *offset, void *dst, const UA_DataType *dataType);
-
-size_t UA_Array_calcSizeBinary(const void *p, UA_Int32 noElements, const UA_DataType *dataType);
-UA_StatusCode UA_Array_encodeBinary(const void *src, UA_Int32 noElements, const UA_DataType *dataType,
-                                    UA_ByteString *dst, size_t *offset);
-UA_StatusCode UA_Array_decodeBinary(const UA_ByteString *src, size_t *offset, UA_Int32 noElements,
-                                    void **dst, const UA_DataType *dataType);
-
-/// @} /* end of group */
-
-
-
-/**
- *  @ingroup communication
- *
- * @{
- */
-
-struct UA_Session;
-typedef struct UA_Session UA_Session;
-
-struct UA_SecureChannel {
-    UA_MessageSecurityMode  securityMode;
-    UA_ChannelSecurityToken securityToken; // the channelId is contained in the securityToken
-    UA_AsymmetricAlgorithmSecurityHeader clientAsymAlgSettings;
-    UA_AsymmetricAlgorithmSecurityHeader serverAsymAlgSettings;
-    UA_ByteString  clientNonce;
-    UA_ByteString  serverNonce;
-    UA_UInt32      requestId;
-    UA_UInt32      sequenceNumber;
-    UA_Connection *connection; // make this more generic when http connections exist
-    UA_Session    *session;
-};
-
-void UA_SecureChannel_init(UA_SecureChannel *channel);
-void UA_SecureChannel_deleteMembers(UA_SecureChannel *channel);
-void UA_SecureChannel_delete(UA_SecureChannel *channel);
-UA_Boolean UA_SecureChannel_compare(UA_SecureChannel *sc1, UA_SecureChannel *sc2);
-
-UA_StatusCode UA_SecureChannel_generateNonce(UA_ByteString *nonce);
-UA_StatusCode UA_SecureChannel_updateRequestId(UA_SecureChannel *channel, UA_UInt32 requestId);
-UA_StatusCode UA_SecureChannel_updateSequenceNumber(UA_SecureChannel *channel, UA_UInt32 sequenceNumber);
-
-void UA_Connection_attachSecureChannel(UA_Connection *connection, UA_SecureChannel *channel);
-void UA_SecureChannel_attachSession(UA_SecureChannel *channel, UA_Session *session);
-void UA_SecureChannel_detachSession(UA_SecureChannel *channel);
-
-/** @} */
-
-
-
-/**
- *  @ingroup communication
- *
- * @{
- */
-
-struct UA_Session {
-    UA_ApplicationDescription clientDescription;
-    UA_String         sessionName;
-    UA_NodeId         authenticationToken;
-    UA_NodeId         sessionId;
-    UA_UInt32         maxRequestMessageSize;
-    UA_UInt32         maxResponseMessageSize;
-    UA_Int64          timeout;
-    UA_DateTime       validTill;
-    UA_SecureChannel *channel;
-};
-
-extern UA_Session anonymousSession; ///< If anonymous access is allowed, this session is used internally (Session ID: 0)
-extern UA_Session adminSession; ///< Local access to the services (for startup and maintenance) uses this Session with all possible access rights (Session ID: 1)
-
-UA_Session * UA_Session_new(void);
-void UA_Session_init(UA_Session *session);
-void UA_Session_delete(UA_Session *session);
-void UA_Session_deleteMembers(UA_Session *session);
-
-/** Compares two session objects */
-UA_Boolean UA_Session_compare(UA_Session *session1, UA_Session *session2);
-
-/** If any activity on a session happens, the timeout must be extended */
-UA_StatusCode UA_Session_updateLifetime(UA_Session *session);
-/** Set up the point in time till the session is valid */
-UA_StatusCode UA_Session_setExpirationDate(UA_Session *session);
-/** Gets the sessions pending lifetime (calculated from the timeout which was set) */
-UA_StatusCode UA_Session_getPendingLifetime(UA_Session *session, UA_Double *pendingLifetime);
-
-void UA_Session_detachSecureChannel(UA_Session *session);
-
-/** @} */
-
-
-
-#define UA_STANDARD_NODEMEMBERS                 \
-    UA_NodeId nodeId;                           \
-    UA_NodeClass nodeClass;                     \
-    UA_QualifiedName browseName;                \
-    UA_LocalizedText displayName;               \
-    UA_LocalizedText description;               \
-    UA_UInt32 writeMask;                        \
-    UA_UInt32 userWriteMask;                    \
-    UA_Int32 referencesSize;                    \
-    UA_ReferenceNode *references;
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-} UA_Node;
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Byte eventNotifier;
-} UA_ObjectNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_ObjectNode)
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Boolean isAbstract;
-} UA_ObjectTypeNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_ObjectTypeNode)
-
-typedef enum {
-    UA_VALUESOURCE_VARIANT,
-    UA_VALUESOURCE_DATASOURCE
-} UA_ValueSource;
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Int32 valueRank; /**< n >= 1: the value is an array with the specified number of dimensions.
-                             n = 0: the value is an array with one or more dimensions.
-                             n = -1: the value is a scalar.
-                             n = -2: the value can be a scalar or an array with any number of dimensions.
-                             n = -3:  the value can be a scalar or a one dimensional array. */
-    UA_ValueSource valueSource;
-    union {
-        UA_Variant variant;
-        UA_DataSource dataSource;
-    } value;
-    /* <--- similar to variabletypenodes up to there--->*/
-    UA_Byte accessLevel;
-    UA_Byte userAccessLevel;
-    UA_Double minimumSamplingInterval;
-    UA_Boolean historizing;
-} UA_VariableNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_VariableNode)
-/** Make a copy but leave out the references and the variable */
-UA_StatusCode UA_VariableNode_copyWithoutRefsAndVariable(const UA_VariableNode *src, UA_VariableNode *dst);
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Int32 valueRank;
-    UA_ValueSource valueSource;
-    union {
-        UA_Variant variant;
-        UA_DataSource dataSource;
-    } value;
-    /* <--- similar to variablenodes up to there--->*/
-    UA_Boolean isAbstract;
-} UA_VariableTypeNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_VariableTypeNode)
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Boolean isAbstract;
-    UA_Boolean symmetric;
-    UA_LocalizedText inverseName;
-} UA_ReferenceTypeNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_ReferenceTypeNode)
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Boolean executable;
-    UA_Boolean userExecutable;
-} UA_MethodNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_MethodNode)
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Boolean containsNoLoops;
-    UA_Byte eventNotifier;
-} UA_ViewNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_ViewNode)
-
-typedef struct {
-    UA_STANDARD_NODEMEMBERS
-    UA_Boolean isAbstract;
-} UA_DataTypeNode;
-UA_TYPE_HANDLING_FUNCTIONS(UA_DataTypeNode)
-
-
-
-/**
- * @ingroup server
- *
- * @defgroup nodestore NodeStore
- *
- * @brief Stores the nodes in the address space. Internally, it is based on a
- * hash-map that maps nodes to their nodeid.
- *
- * Nodes need to be allocated on the heap before adding them to the nodestore
- * with. When adding, the node is copied to a new (managed) location in the
- * nodestore and the original memory is freed. The nodes in the nodestore are
- * immutable. To change the content of a node, it needs to be replaced as a
- * whole.
- *
- * Every node you _get from the nodestore needs to be _released when it is no
- * longer needed. In the background, reference counting is used to know if
- * somebody still uses the node in multi-threaded environments.
- *
- * @{
- */
-
-struct UA_NodeStore;
-typedef struct UA_NodeStore UA_NodeStore;
-
-/** Create a new namespace */
-UA_NodeStore * UA_NodeStore_new(void);
-
-/** Delete the namespace and all nodes in it */
-void UA_NodeStore_delete(UA_NodeStore *ns);
-
-/**
- * Inserts a new node into the namespace. If the nodeid is zero, then a fresh
- * numeric nodeid from namespace 1 is assigned. The memory of the original node
- * is freed and the content is moved to a managed (immutable) node. If inserted
- * is not NULL, then a pointer to the managed node is returned (and must be
- * released).
- */
-UA_StatusCode UA_NodeStore_insert(UA_NodeStore *ns, UA_Node *node, const UA_Node **inserted);
-
-/**
- * Replace an existing node in the nodestore. If the node was already replaced,
- * UA_STATUSCODE_BADINTERNALERROR is returned. If inserted is not NULL, a
- * pointer to the managed (immutable) node is returned.
- */
-UA_StatusCode UA_NodeStore_replace(UA_NodeStore *ns, const UA_Node *oldNode, UA_Node *node, const UA_Node **inserted);
-
-/**
- * Remove a node from the namespace. Always succeeds, even if the node was not
- * found.
- */
-UA_StatusCode UA_NodeStore_remove(UA_NodeStore *ns, const UA_NodeId *nodeid);
-
-/**
- * Retrieve a node (read-only) from the namespace. Nodes are immutable. They
- * can only be replaced. After the Node is no longer used, the locked entry
- * needs to be released.
- */
-const UA_Node * UA_NodeStore_get(const UA_NodeStore *ns, const UA_NodeId *nodeid);
-
-/**
- * Release a managed node. Do never insert a node that isn't stored in a
- * namespace.
- */
-void UA_NodeStore_release(const UA_Node *managed);
-
-/**
- * A function that can be evaluated on all entries in a namespace via
- * UA_NodeStore_iterate. Note that the visitor is read-only on the nodes.
- */
-typedef void (*UA_NodeStore_nodeVisitor)(const UA_Node *node);
-
-/** Iterate over all nodes in a namespace. */
-void UA_NodeStore_iterate(const UA_NodeStore *ns, UA_NodeStore_nodeVisitor visitor);
-
-/** @} */
-
-
-
-typedef struct UA_SessionManager {
-    LIST_HEAD(session_list, session_list_entry) sessions; // doubly-linked list of sessions
-    UA_UInt32    maxSessionCount;
-    UA_Int32     lastSessionId;
-    UA_UInt32    currentSessionCount;
-    UA_DateTime  maxSessionLifeTime;
-} UA_SessionManager;
-
-UA_StatusCode UA_SessionManager_init(UA_SessionManager *sessionManager, UA_UInt32 maxSessionCount,
-                                    UA_UInt32 maxSessionLifeTime, UA_UInt32 startSessionId);
-
-void UA_SessionManager_deleteMembers(UA_SessionManager *sessionManager);
-
-UA_StatusCode UA_SessionManager_createSession(UA_SessionManager *sessionManager,
-                                              UA_SecureChannel *channel, const UA_CreateSessionRequest *request, UA_Session **session);
-
-UA_StatusCode UA_SessionManager_removeSession(UA_SessionManager *sessionManager,
-                                              const UA_NodeId *sessionId);
-
-/** Finds the session which is identified by the sessionId */
-UA_StatusCode UA_SessionManager_getSessionById(UA_SessionManager *sessionManager,
-                                               const UA_NodeId *sessionId, UA_Session **session);
-
-UA_StatusCode UA_SessionManager_getSessionByToken(UA_SessionManager *sessionManager,
-                                                  const UA_NodeId *token, UA_Session **session);
-
-//UA_Int32 UA_SessionManager_updateSessions();
-//UA_Int32 UA_SessionManager_generateToken(UA_Session session, UA_Int32 requestedLifeTime, SecurityTokenRequestType requestType, UA_ChannelSecurityToken* newToken);
-
-
-
-typedef struct UA_SecureChannelManager {
-    LIST_HEAD(channel_list, channel_list_entry) channels; // doubly-linked list of channels
-    UA_Int32    maxChannelCount;
-    UA_DateTime maxChannelLifetime;
-    UA_MessageSecurityMode securityMode;
-    UA_DateTime channelLifeTime;
-    UA_Int32    lastChannelId;
-    UA_UInt32   lastTokenId;
-} UA_SecureChannelManager;
-
-UA_StatusCode UA_SecureChannelManager_init(UA_SecureChannelManager *cm, UA_UInt32 maxChannelCount,
-                                           UA_UInt32 tokenLifetime, UA_UInt32 startChannelId,
-                                           UA_UInt32 startTokenId);
-void UA_SecureChannelManager_deleteMembers(UA_SecureChannelManager *cm);
-UA_StatusCode UA_SecureChannelManager_open(UA_SecureChannelManager *cm, UA_Connection *conn,
-                                           const UA_OpenSecureChannelRequest *request,
-                                           UA_OpenSecureChannelResponse *response);
-UA_StatusCode UA_SecureChannelManager_renew(UA_SecureChannelManager *cm, UA_Connection *conn,
-                                            const UA_OpenSecureChannelRequest *request,
-                                            UA_OpenSecureChannelResponse *response);
-UA_SecureChannel * UA_SecureChannelManager_get(UA_SecureChannelManager *cm, UA_UInt32 channelId);
-UA_StatusCode UA_SecureChannelManager_close(UA_SecureChannelManager *cm, UA_UInt32 channelId);
-
-
-
-/** Mapping of namespace-id and url to an external nodestore. For namespaces
-    that have no mapping defined, the internal nodestore is used by default. */
-typedef struct UA_ExternalNamespace {
-	UA_UInt16 index;
-	UA_String url;
-	UA_ExternalNodeStore externalNodeStore;
-} UA_ExternalNamespace;
-
-// forward declarations
-struct UA_TimedWork;
-typedef struct UA_TimedWork UA_TimedWork;
-
-struct UA_DelayedWork;
-typedef struct UA_DelayedWork UA_DelayedWork;
-
-struct UA_Server {
-    UA_ApplicationDescription description;
-    UA_Int32 endpointDescriptionsSize;
-    UA_EndpointDescription *endpointDescriptions;
-
-    UA_ByteString serverCertificate;
-    UA_SecureChannelManager secureChannelManager;
-    UA_SessionManager sessionManager;
-    UA_Logger logger;
-
-    UA_NodeStore *nodestore;
-    UA_Int32 namespacesSize;
-    UA_String *namespaces;
-    UA_Int32 externalNamespacesSize;
-    UA_ExternalNamespace *externalNamespaces;
-
-    UA_Int32 nlsSize;
-    UA_ServerNetworkLayer *nls;
-
-    UA_UInt32 random_seed;
-
-#ifdef UA_MULTITHREADING
-    UA_Boolean *running;
-    UA_UInt16 nThreads;
-    UA_UInt32 **workerCounters;
-    UA_DelayedWork *delayedWork;
-
-    // worker threads wait on the queue
-	struct cds_wfcq_head dispatchQueue_head;
-	struct cds_wfcq_tail dispatchQueue_tail;
-    pthread_cond_t dispatchQueue_condition; // so the workers don't spin if the queue is empty
-#endif
-
-    LIST_HEAD(UA_TimedWorkList, UA_TimedWork) timedWork;
-
-    UA_DateTime startTime;
-    UA_DateTime buildDate;
-};
-
-void UA_Server_processBinaryMessage(UA_Server *server, UA_Connection *connection, UA_ByteString *msg);
-
-UA_AddNodesResult UA_Server_addNodeWithSession(UA_Server *server, UA_Session *session, UA_Node *node,
-                                               const UA_ExpandedNodeId *parentNodeId,
-                                               const UA_NodeId *referenceTypeId);
-
-UA_AddNodesResult UA_Server_addNode(UA_Server *server, UA_Node *node, const UA_ExpandedNodeId *parentNodeId,
-                                    const UA_NodeId *referenceTypeId);
-
-UA_StatusCode UA_Server_addReferenceWithSession(UA_Server *server, UA_Session *session, const UA_AddReferencesItem *item);
-
-void UA_Server_deleteTimedWork(UA_Server *server);
-
-#define ADDREFERENCE(NODEID, REFTYPE_NODEID, TARGET_EXPNODEID) do {     \
-        UA_AddReferencesItem item;                                      \
-        UA_AddReferencesItem_init(&item);                               \
-        item.sourceNodeId = NODEID;                                     \
-        item.referenceTypeId = REFTYPE_NODEID;                          \
-        item.isForward = UA_TRUE;                                       \
-        item.targetNodeId = TARGET_EXPNODEID;                           \
-        UA_Server_addReference(server, &item);                          \
-    } while(0)
-
-
-
-/**
- * @ingroup server
- * @defgroup services Services
- *
- * @brief The UA services that can be called from a remote user
- *
- * @{
- */
-
-/**
- * @name Discovery Service Set
- *
- * This Service Set defines Services used to discover the Endpoints implemented
- * by a Server and to read the security configuration for those Endpoints.
- *
- * @{
- */
-// Service_FindServers
-void Service_FindServers(UA_Server                    *server,
-                          const UA_FindServersRequest *request,
-                          UA_FindServersResponse      *response);
-/**
- * Returns the Endpoints supported by a Server and all of the configuration
- * information required to establish a SecureChannel and a Session.
- */
-void Service_GetEndpoints(UA_Server *server, const UA_GetEndpointsRequest *request,
-                          UA_GetEndpointsResponse *response);
-// Service_RegisterServer
-/** @} */
-
-/**
- * @name SecureChannel Service Set
- *
- * This Service Set defines Services used to open a communication channel that
- * ensures the confidentiality and Integrity of all Messages exchanged with the
- * Server.
- *
- * @{
- */
-
-/**
- * Open or renew a SecureChannel that can be used to ensure Confidentiality and
- * Integrity for Message exchange during a Session.
- */
-void Service_OpenSecureChannel(UA_Server *server, UA_Connection *connection,
-                               const UA_OpenSecureChannelRequest *request,
-                               UA_OpenSecureChannelResponse *response);
-
-/** Used to terminate a SecureChannel. */
-void Service_CloseSecureChannel(UA_Server *server, UA_Int32 channelId);
-
-/** @} */
-
-/**
- * @name Session Service Set
- *
- * This Service Set defines Services for an application layer connection
- * establishment in the context of a Session.
- *
- * @{
- */
-
-/**
- * Used by an OPC UA Client to create a Session and the Server returns two
- * values which uniquely identify the Session. The first value is the sessionId
- * which is used to identify the Session in the audit logs and in the Server’s
- * address space. The second is the authenticationToken which is used to
- * associate an incoming request with a Session.
- */
-void Service_CreateSession(UA_Server *server, UA_SecureChannel *channel,
-                           const UA_CreateSessionRequest *request, UA_CreateSessionResponse *response);
-
-/**
- * Used by the Client to submit its SoftwareCertificates to the Server for
- * validation and to specify the identity of the user associated with the
- * Session. This Service request shall be issued by the Client before it issues
- * any other Service request after CreateSession. Failure to do so shall cause
- * the Server to close the Session.
- */
-void Service_ActivateSession(UA_Server *server, UA_SecureChannel *channel,
-                             const UA_ActivateSessionRequest *request, UA_ActivateSessionResponse *response);
-
-/** Used to terminate a Session. */
-void Service_CloseSession(UA_Server *server, const UA_CloseSessionRequest *request,
-                          UA_CloseSessionResponse *response);
-// Service_Cancel
-/** @} */
-
-/**
- * @name NodeManagement Service Set
- *
- * This Service Set defines Services to add and delete AddressSpace Nodes and References between
- * them. All added Nodes continue to exist in the AddressSpace even if the Client that created them
- * disconnects from the Server.
- *
- * @{
- */
-
-/** Used to add one or more Nodes into the AddressSpace hierarchy. */
-void Service_AddNodes(UA_Server *server, UA_Session *session, const UA_AddNodesRequest *request,
-                      UA_AddNodesResponse *response);
-
-/** Used to add one or more References to one or more Nodes. */
-void Service_AddReferences(UA_Server *server, UA_Session *session, const UA_AddReferencesRequest *request,
-                           UA_AddReferencesResponse *response);
-
-/** Used to delete one or more Nodes from the AddressSpace. */
-void Service_DeleteNodes(UA_Server *server, UA_Session *session, const UA_DeleteNodesRequest *request,
-                         UA_DeleteNodesResponse *response);
-
-/** Used to delete one or more References of a Node. */
-void Service_DeleteReferences(UA_Server *server, UA_Session *session, const UA_DeleteReferencesRequest *request,
-                              UA_DeleteReferencesResponse *response);
-
-/** @} */
-
-/**
- * @name View Service Set
- *
- * Clients use the browse Services of the View Service Set to navigate through
- * the AddressSpace or through a View which is a subset of the AddressSpace.
- *
- * @{
- */
-
-/**
- * Used to discover the References of a specified Node. The browse can be
- * further limited by the use of a View. This Browse Service also supports a
- * primitive filtering capability.
- */
-void Service_Browse(UA_Server *server, UA_Session *session,
-                    const UA_BrowseRequest *request, UA_BrowseResponse *response);
-
-/** Used to translate textual node paths to their respective ids. */
-void Service_TranslateBrowsePathsToNodeIds(UA_Server *server, UA_Session *session,
-                                           const UA_TranslateBrowsePathsToNodeIdsRequest *request,
-                                           UA_TranslateBrowsePathsToNodeIdsResponse *response);
-// Service_BrowseNext
-
-// Service_RegisterNodes
-void Service_RegisterNodes(UA_Server *server, UA_Session *session, const UA_RegisterNodesRequest *request,
-                           UA_RegisterNodesResponse *response);
-// Service_UnregisterNodes
-void Service_UnregisterNodes(UA_Server *server, UA_Session *session, const UA_UnregisterNodesRequest *request,
-                             UA_UnregisterNodesResponse *response);
-/** @} */
-
-/**
- * @name Query Service Set
- *
- * This Service Set is used to issue a Query to a Server. OPC UA Query is
- * generic in that it provides an underlying storage mechanism independent Query
- * capability that can be used to access a wide variety of OPC UA data stores
- * and information management systems. OPC UA Query permits a Client to access
- * data maintained by a Server without any knowledge of the logical schema used
- * for internal storage of the data. Knowledge of the AddressSpace is
- * sufficient.
- *
- * @{
- */
-// Service_QueryFirst
-// Service_QueryNext
-/** @} */
-
-/**
- * @name Attribute Service Set
- *
- * This Service Set provides Services to access Attributes that are part of
- * Nodes.
- *
- * @{
- */
-
-/**
- * Used to read one or more Attributes of one or more Nodes. For constructed
- * Attribute values whose elements are indexed, such as an array, this Service
- * allows Clients to read the entire set of indexed values as a composite, to
- * read individual elements or to read ranges of elements of the composite.
- */
-void Service_Read(UA_Server *server, UA_Session *session, const UA_ReadRequest *request,
-                  UA_ReadResponse *response);
-// Service_HistoryRead
-
-/**
- * Used to write one or more Attributes of one or more Nodes. For constructed
- * Attribute values whose elements are indexed, such as an array, this Service
- * allows Clients to write the entire set of indexed values as a composite, to
- * write individual elements or to write ranges of elements of the composite.
- */
-void Service_Write(UA_Server *server, UA_Session *session, const UA_WriteRequest *request,
-                   UA_WriteResponse *response);
-// Service_HistoryUpdate
-/** @} */
-
-/**
- * @name Method Service Set
- *
- * The Method Service Set defines the means to invoke methods. A method shall be
- * a component of an Object.
- *
- * @{
- */
-// Service_Call
-/** @} */
-
-/**
- * @name MonitoredItem Service Set
- *
- * Clients define MonitoredItems to subscribe to data and Events. Each
- * MonitoredItem identifies the item to be monitored and the Subscription to use
- * to send Notifications. The item to be monitored may be any Node Attribute.
- *
- * @{
- */
-
-/*
- * Used to create and add one or more MonitoredItems to a Subscription. A
- * MonitoredItem is deleted automatically by the Server when the Subscription is
- * deleted. Deleting a MonitoredItem causes its entire set of triggered item
- * links to be deleted, but has no effect on the MonitoredItems referenced by
- * the triggered items.
- */
-/* UA_Int32 Service_CreateMonitoredItems(UA_Server *server, UA_Session *session, */
-/*                                       const UA_CreateMonitoredItemsRequest *request, */
-/*                                       UA_CreateMonitoredItemsResponse *response); */
-// Service_ModifyMonitoredItems
-// Service_SetMonitoringMode
-// Service_SetTriggering
-// Service_DeleteMonitoredItems
-/** @} */
-
-/**
- * @name Subscription Service Set
- *
- * Subscriptions are used to report Notifications to the Client.
- *
- * @{
- */
-// Service_CreateSubscription
-/* UA_Int32 Service_CreateSubscription(UA_Server *server, UA_Session *session, */
-/*                                     const UA_CreateSubscriptionRequest *request, */
-/*                                     UA_CreateSubscriptionResponse *response); */
-// Service_ModifySubscription
-// Service_SetPublishingMode
-/* UA_Int32 Service_SetPublishingMode(UA_Server *server, UA_Session *session, */
-/*                                    const UA_SetPublishingModeRequest *request, */
-/*                                    UA_SetPublishingModeResponse *response); */
-
-/* UA_Int32 Service_Publish(UA_Server *server, UA_Session *session, */
-/*                          const UA_PublishRequest *request, */
-/*                          UA_PublishResponse *response); */
-
-// Service_Republish
-// Service_TransferSubscription
-// Service_DeleteSubscription
-/** @} */
-/** @} */
-
 
 #endif /* OPEN62541_H_ */
