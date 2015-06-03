@@ -25,6 +25,7 @@
 #include "libov/ov_macros.h"
 #include "libov/ov_vendortree.h"
 #include "libov/ov_memstack.h"
+#include "libov/ov_result.h"
 #include "iec62541_helpers.h"
 #include "ks_logfile.h"
 #include "open62541.h"
@@ -106,6 +107,17 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	UA_String url;
 	UA_AddReferencesItem item;
 	UA_AddReferencesItem_init(&item);
+	OV_STRING tempStackString = NULL;
+	UA_Int32 port;
+	UA_Int32 ksPort;
+	OV_INSTPTR_ov_library	pLibrary	=	NULL;
+	OV_INSTPTR_ov_class		pClass		=	NULL;
+	OV_INSTPTR_ov_object	pListener	=	NULL;
+	OV_INSTPTR_ov_association	pAssoc	=	NULL;
+	OV_RESULT		result;
+	OV_ELEMENT		parent;
+	OV_ELEMENT		child;
+
 
 	pinst->v_serverData = UA_Server_new(pinst->v_serverConfig);
 	logger = ov_UAlogger_new();
@@ -113,8 +125,67 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	certificate = loadCertificate();
 	UA_Server_setServerCertificate(pinst->v_serverData, certificate);
 	UA_ByteString_deleteMembers(&certificate);
-/*	determine port....	*/
-	UA_Server_addNetworkLayer(pinst->v_serverData, ServerNetworkLayerOV_new(UA_ConnectionConfig_standard, 0));
+
+	/*	determine port....	*/
+	ov_memstack_lock();
+	tempStackString = ov_vendortree_getcmdlineoption_value("UA_Port");
+	ksPort = ov_vendortree_getport();
+	if(!tempStackString){
+		port = ksPort;
+	} else {
+		port = strtol(tempStackString, NULL, 10);
+	}
+	ov_memstack_unlock();
+	if(port == -1){
+		//	no port specified in either way --> use OPC-UA standard 16664
+		port = 16664;
+	}
+	if(port != ksPort){
+		Ov_ForEachChildEx(ov_instantiation, pclass_ov_library, pLibrary, ov_library){
+			if(ov_string_compare(pLibrary->v_identifier, "TCPbind") == OV_STRCMP_EQUAL){
+				break;
+			}
+		}
+		if(!pLibrary){
+			ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPbind library", pinst->v_identifier);
+		}
+		pClass = Ov_StaticPtrCast(ov_class, Ov_SearchChild(ov_containment, pLibrary, "TCPListener"));
+		if(pClass){
+			result = ov_class_createIDedObject(pClass, Ov_PtrUpCast(ov_domain, pinst), "TCPListener", OV_PMH_DEFAULT, NULL, NULL, NULL, &pListener);
+			if(Ov_OK(result)){
+				parent.elemtype = OV_ET_OBJECT;
+				parent.pobj = pListener;
+				child.elemtype = OV_ET_NONE;
+				result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "port");
+				if(Ov_OK(result)){
+					*((OV_INT*)child.pvalue) = port;
+				} else {
+					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find port variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+				}
+				parent.elemtype = OV_ET_OBJECT;
+				parent.pobj = pListener;
+				child.elemtype = OV_ET_NONE;
+				result = ov_element_searchpart(&parent, &child, OV_ET_VARIABLE, "actimode");
+				if(Ov_OK(result)){
+					*((OV_INT*)child.pvalue) = 1;
+				} else {
+					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find actimode variable. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+				}
+				pAssoc = Ov_StaticPtrCast(ov_association, Ov_SearchChild(ov_containment, pLibrary, "AssocSpecificClientHandler"));
+				if(pAssoc){
+					result = ov_association_link(pAssoc, pListener, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaIdentificator), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
+				} else {
+					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find association class");
+				}
+			} else {
+				ov_logfile_error("%s: something went wrong while creating the specific Listener - could not create object. reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+			}
+		} else {
+			ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find TCPListener class", pinst->v_identifier);
+		}
+	}
+
+	UA_Server_addNetworkLayer(pinst->v_serverData, ServerNetworkLayerOV_new(UA_ConnectionConfig_standard, port));
 
 	url = UA_String_fromChars("iec62541-ov.acplt.org");
 

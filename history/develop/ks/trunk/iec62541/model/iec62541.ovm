@@ -5,7 +5,7 @@ LIBRARY iec62541
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "";
 	COPYRIGHT = "";
-	COMMENT   = "";
+	COMMENT   = "Implements an OPC-UA server with access to the models in the ov system. Commandline Options: UA_CertPath - Path to the server certificate file. Absolute or relative to the config file; UA_Port - specify the portNumber on which the UA-Server will listen.";
 	
 	CLASS uaServer		:	CLASS ksbase/ComTask
 		IS_INSTANTIABLE;
@@ -92,53 +92,6 @@ LIBRARY iec62541
 				INITIALVALUE	=	FALSE;	
 			buffer				:	C_TYPE	<UA_ByteString>
 				COMMENT			=	"Buffer to exchange date with the open62541-stack";	
-		/*	serverProtocolVersion	:	UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Latest version of OPC UA TCP protocol supported by this server";
-			serverReceiveBufferSize	:	UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Largest message (chunk) this server can receive";
-			serverSendBufferSize	: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Largest message (chunk) this server will send";
-			serverMaxMessageSize	: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Maximum size for any response message sent to this server";
-			serverMaxChunkCount		: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Maximum number of chunks this server can handle";
-			serverEndpointUrl []	: STRING
-				COMMENT			= "URL this clients wants to connect to";			
-			clientProtocolVersion	:	UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Latest version of OPC UA TCP protocol supported by the client";
-			clientReceiveBufferSize	:	UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Largest message (chunk) the client can receive";
-			clientSendBufferSize	: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Largest message (chunk) the client will send";
-			clientMaxMessageSize	: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Maximum size for any response message sent to this client";
-			clientMaxChunkCount		: UINT
-				IS_DERIVED
-				HAS_ACCESSORS
-				COMMENT			= "Maximum number of chunks this client can handle";
-			clientEndpointUrl		: STRING
-				COMMENT			= "URL this clients wants to connect to"
-				INITIALVALUE	= "";
-			connectionData		:	C_TYPE <ov_UA_Connection>;
-			*/
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;

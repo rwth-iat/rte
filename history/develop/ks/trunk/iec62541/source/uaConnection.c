@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_destructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+//    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what */
 
@@ -115,7 +115,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+//    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what the base class does first */
     ksbase_ClientHandler_startup(pobj);
@@ -132,7 +132,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+//    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what */
 

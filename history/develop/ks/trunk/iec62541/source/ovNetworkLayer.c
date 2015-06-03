@@ -43,9 +43,13 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     	return nl;
     }
 
-//    char hostname[256];
-//    gethostname(hostname, 255);
-    UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), "localhost", 7509);
+    char hostname[256];
+    gethostname(hostname, 255);
+    if(*hostname){
+    UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), hostname, port);
+    } else {
+    	UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), "localhost", port);
+    }
 
     pNetworkLayer->v_localConfig = conf;
     Ov_GetVTablePtr(iec62541_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
@@ -107,7 +111,7 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_destructor(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
 
     /* do what */
 
@@ -140,7 +144,7 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
 
     /* do what */
     pOVNetworkLayer = NULL;
