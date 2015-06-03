@@ -128,13 +128,16 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	iec62541_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
 	iec62541_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_writeNodes;
 	UA_Server_addExternalNamespace(iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
-	UA_Server_run_startup(iec62541_pUaServer->v_serverData, 1, &UA_ServerRun);
 	/*	add reference to ov root	*/
-	item.sourceNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ROOTFOLDER);
+	item.sourceNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
 	item.referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
 	item.isForward = UA_TRUE;
 	item.targetNodeId = UA_EXPANDEDNODEID_NUMERIC(1, 0);
-	UA_Server_addReference(pinst->v_serverData, &item);
+	if(UA_Server_addReference(pinst->v_serverData, &item) != UA_STATUSCODE_GOOD){
+		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
+	}
+	UA_Server_run_startup(iec62541_pUaServer->v_serverData, 1, &UA_ServerRun);
+
 	return;
 }
 

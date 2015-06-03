@@ -1,6 +1,6 @@
 /* THIS IS A SINGLE-FILE DISTRIBUTION CONCATENATED FROM THE OPEN62541 SOURCES 
  * visit http://open62541.org/ for information about this software
- * Git-Revision: v0.1.0-RC4-31-g1a03d02
+ * Git-Revision: v0.1.0-RC4-31-g1a03d02-dirty
  */
  
  /*
@@ -1622,7 +1622,7 @@ void Service_CloseSecureChannel(UA_Server *server, UA_Int32 channelId);
 /**
  * Used by an OPC UA Client to create a Session and the Server returns two
  * values which uniquely identify the Session. The first value is the sessionId
- * which is used to identify the Session in the audit logs and in the Serverâ€™s
+ * which is used to identify the Session in the audit logs and in the Server’s
  * address space. The second is the authenticationToken which is used to
  * associate an incoming request with a Session.
  */
@@ -1692,7 +1692,7 @@ void Service_Browse(UA_Server *server, UA_Session *session, const UA_BrowseReque
 
 /**
  * Used to request the next set of Browse or BrowseNext response information
- * that is too large to be sent in a single response. â€œToo largeâ€� in this
+ * that is too large to be sent in a single response. “Too large” in this
  * context means that the Server is not able to return a larger response or that
  * the number of results to return exceeds the maximum number of results to
  * return that was specified by the Client in the original Browse request.
@@ -5640,9 +5640,10 @@ UA_Server_addExternalNamespace(UA_Server *server, UA_UInt16 namespaceIndex, cons
 		return UA_STATUSCODE_BADARGUMENTSMISSING;
 	}
 	//do not allow double indices
-//	if(server->externalNamespaces->index == namespaceIndex){
-//		return UA_STATUSCODE_BADINDEXRANGEINVALID;
-//	}
+	for(UA_UInt32 i = 0; i < server->externalNamespacesSize; i++){
+		if(server->externalNamespaces[i].index == namespaceIndex)
+			return UA_STATUSCODE_BADINDEXRANGEINVALID;
+	}
     server->externalNamespaces = UA_realloc(server->externalNamespaces, sizeof(UA_ExternalNamespace) * (server->externalNamespacesSize+1));
     server->externalNamespaces[server->externalNamespacesSize].externalNodeStore = *nodeStore;
     server->externalNamespaces[server->externalNamespacesSize].index = namespaceIndex;
@@ -9727,7 +9728,7 @@ static UA_StatusCode fillrefdescr(UA_NodeStore *ns, const UA_Node *curr, UA_Refe
 
 /* Tests if the node is relevant to the browse request and shall be returned. If
    so, it is retrieved from the Nodestore. If not, null is returned. */
-static const UA_Node *relevant_node(UA_NodeStore *ns, const UA_BrowseDescription *descr,
+static const UA_Node *relevant_node(UA_Server *server, UA_NodeStore *ns, const UA_BrowseDescription *descr,
                                     UA_Boolean return_all, UA_ReferenceNode *reference,
                                     UA_NodeId *relevant, size_t relevant_count)
 {
@@ -9744,9 +9745,82 @@ static const UA_Node *relevant_node(UA_NodeStore *ns, const UA_BrowseDescription
         return UA_NULL;
     }
 is_relevant: ;
+#ifdef UA_EXTERNAL_NAMESPACES
+	const UA_Node *node = NULL;
+	UA_Boolean isExternal = UA_FALSE;
+	size_t nsIndex;
+	for(nsIndex = 0; nsIndex < server->externalNamespacesSize; nsIndex++) {
+		if(reference->targetId.nodeId.namespaceIndex != server->externalNamespaces[nsIndex].index)
+			continue;
+		else{
+			isExternal = UA_TRUE;
+			break;
+		}
+	}
+	if(isExternal == UA_FALSE){
+		node = UA_NodeStore_get(ns, &reference->targetId.nodeId);
+	} else {
+		/*	prepare a read request in the external nodestore	*/
+		UA_ExternalNodeStore *ens = &server->externalNamespaces[nsIndex].externalNodeStore;
+		UA_ReadValueId *readValueIds = UA_Array_new(&UA_TYPES[UA_TYPES_READVALUEID], 6);
+		UA_UInt32 *indices = UA_Array_new(&UA_TYPES[UA_TYPES_UINT32], 6);
+		UA_UInt32 indicesSize = 6;
+		UA_DataValue *readNodesResults = UA_Array_new(&UA_TYPES[UA_TYPES_DATAVALUE], 6);
+		UA_DiagnosticInfo *diagnosticInfos = UA_Array_new(&UA_TYPES[UA_TYPES_DIAGNOSTICINFO], 6);
+		for(UA_UInt32 i = 0; i<6; i++){
+			readValueIds[i].nodeId = reference->targetId.nodeId;
+			UA_String_init(&(readValueIds[i].indexRange));
+		    UA_QualifiedName_init(&(readValueIds[i].dataEncoding));
+		    indices[i] = i;
+		    UA_DataValue_init(&(readNodesResults[i]));
+		    UA_DiagnosticInfo_init(&(diagnosticInfos[i]));
+		}
+		readValueIds[0].attributeId = UA_ATTRIBUTEID_NODECLASS;
+		readValueIds[1].attributeId = UA_ATTRIBUTEID_BROWSENAME;
+		readValueIds[2].attributeId = UA_ATTRIBUTEID_DISPLAYNAME;
+		readValueIds[3].attributeId = UA_ATTRIBUTEID_DESCRIPTION;
+		readValueIds[4].attributeId = UA_ATTRIBUTEID_WRITEMASK;
+		readValueIds[5].attributeId = UA_ATTRIBUTEID_USERWRITEMASK;
+
+		ens->readNodes(ens->ensHandle, NULL, readValueIds,
+				indices, indicesSize, readNodesResults, UA_FALSE, diagnosticInfos);
+		/*	create and fill a dummy nodeStructure	*/
+		UA_Node *tempNode = (UA_Node*) UA_ObjectNode_new();
+		UA_NodeId_copy(&(reference->targetId.nodeId), &(tempNode->nodeId));
+		if(readNodesResults[0].status == UA_STATUSCODE_GOOD){
+			UA_NodeClass_copy((UA_NodeClass*)readNodesResults[0].value.data, &(tempNode->nodeClass));
+		}
+		if(readNodesResults[1].status == UA_STATUSCODE_GOOD){
+			UA_QualifiedName_copy((UA_QualifiedName*)readNodesResults[1].value.data, &(tempNode->browseName));
+		}
+		if(readNodesResults[2].status == UA_STATUSCODE_GOOD){
+			UA_LocalizedText_copy((UA_LocalizedText*)readNodesResults[2].value.data, &(tempNode->displayName));
+		}
+		if(readNodesResults[3].status == UA_STATUSCODE_GOOD){
+			UA_LocalizedText_copy((UA_LocalizedText*)readNodesResults[3].value.data, &(tempNode->description));
+		}
+		if(readNodesResults[4].status == UA_STATUSCODE_GOOD){
+			UA_UInt32_copy((UA_UInt32*)readNodesResults[4].value.data, &(tempNode->writeMask));
+		}
+		if(readNodesResults[5].status == UA_STATUSCODE_GOOD){
+			UA_UInt32_copy((UA_UInt32*)readNodesResults[5].value.data, &(tempNode->userWriteMask));
+		}
+		UA_Array_delete(readValueIds, &UA_TYPES[UA_TYPES_READVALUEID], 6);
+		UA_Array_delete(indices, &UA_TYPES[UA_TYPES_UINT32], 6);
+		UA_Array_delete(readNodesResults, &UA_TYPES[UA_TYPES_DATAVALUE], 6);
+		UA_Array_delete(diagnosticInfos, &UA_TYPES[UA_TYPES_DIAGNOSTICINFO], 6);
+		node = tempNode;
+	}
+#else
     const UA_Node *node = UA_NodeStore_get(ns, &reference->targetId.nodeId);
+#endif
     if(node && descr->nodeClassMask != 0 && (node->nodeClass & descr->nodeClassMask) == 0) {
-        UA_NodeStore_release(node);
+#ifdef UA_EXTERNAL_NAMESPACES
+    	if(isExternal == UA_TRUE){
+    		;
+    	} else
+#endif
+    	UA_NodeStore_release(node);
         return UA_NULL;
     }
     return node;
@@ -9838,7 +9912,7 @@ static void removeCp(struct ContinuationPointEntry *cp, UA_Session* session){
  * @param maxrefs The maximum number of references the client has requested
  * @param result The entry in the request
  */
-static void browse(UA_Session *session, UA_NodeStore *ns, struct ContinuationPointEntry *cp,
+static void browse(UA_Server *server, UA_Session *session, UA_NodeStore *ns, struct ContinuationPointEntry *cp,
                    const UA_BrowseDescription *descr, UA_UInt32 maxrefs, UA_BrowseResult *result) {
     UA_UInt32 continuationIndex = 0;
     size_t referencesCount = 0;
@@ -9915,7 +9989,7 @@ static void browse(UA_Session *session, UA_NodeStore *ns, struct ContinuationPoi
     /* loop over the node's references */
     size_t skipped = 0;
     for(; referencesIndex < node->referencesSize && referencesCount < real_maxrefs; referencesIndex++) {
-        const UA_Node *current = relevant_node(ns, descr, all_refs, &node->references[referencesIndex],
+        const UA_Node *current = relevant_node(server, ns, descr, all_refs, &node->references[referencesIndex],
                                                relevant_refs, relevant_refs_size);
         if(!current)
             continue;
@@ -10032,7 +10106,7 @@ void Service_Browse(UA_Server *server, UA_Session *session, const UA_BrowseReque
 #ifdef UA_EXTERNAL_NAMESPACES
         if(!isExternal[i])
 #endif
-            browse(session, server->nodestore, UA_NULL, &request->nodesToBrowse[i],
+            browse(server, session, server->nodestore, UA_NULL, &request->nodesToBrowse[i],
                    request->requestedMaxReferencesPerNode, &response->results[i]);
     }
 }
@@ -10056,7 +10130,7 @@ void Service_BrowseNext(UA_Server *server, UA_Session *session, const UA_BrowseN
            struct ContinuationPointEntry *cp;
            LIST_FOREACH(cp, &session->continuationPoints, pointers) {
                if(UA_ByteString_equal(&cp->identifier, &request->continuationPoints[i])) {
-                   browse(session, server->nodestore, cp, UA_NULL, 0, &response->results[i]);
+                   browse(server, session, server->nodestore, cp, UA_NULL, 0, &response->results[i]);
                    break;
                }
            }

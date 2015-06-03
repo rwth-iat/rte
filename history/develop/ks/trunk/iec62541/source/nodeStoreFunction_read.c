@@ -260,12 +260,26 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			if(access & OV_AC_READ){
 				if(pobj){
-					value.value.vartype = OV_VT_STRING;
-					value.value.valueunion.val_string = pobj->v_identifier;
-					readNodesResults[indices[i]].status = ov_AnyToVariant(&value, &(readNodesResults[indices[i]].value));
+					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
+					if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_BROWSENAME){
+						UA_QualifiedName* qName = UA_QualifiedName_new();
+						qName->name = UA_String_fromChars(pobj->v_identifier);
+						qName->namespaceIndex = 1;
+						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_QUALIFIEDNAME];
+						readNodesResults[indices[i]].value.data = qName;
+					} else {
+						UA_LocalizedText* lText = UA_LocalizedText_new();
+						lText->locale = UA_String_fromChars("en");
+						lText->text = UA_String_fromChars(pobj->v_identifier);
+						readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_LOCALIZEDTEXT];
+						readNodesResults[indices[i]].value.data = lText;
+					}
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
 					readNodesResults[indices[i]].hasStatus = UA_TRUE;
 					readNodesResults[indices[i]].hasValue = UA_TRUE;
-					value = emptyAny;
+					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				} else {
 					readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_BADOBJTYPE);
 				}
@@ -291,12 +305,22 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			}
 			if(access & OV_AC_READ){
 				if(pobj){
-					value.value.vartype = OV_VT_STRING;
-					value.value.valueunion.val_string = pVtblObj->m_getcomment(pobj, &(path.elements[path.size-1]));
-					readNodesResults[indices[i]].status = ov_AnyToVariant(&value, &(readNodesResults[indices[i]].value));
+					OV_STRING tempString = pVtblObj->m_getcomment(pobj, &(path.elements[path.size-1]));
+					UA_LocalizedText* lText = UA_LocalizedText_new();
+					lText->locale = UA_String_fromChars("en");
+					if(tempString){
+						lText->text = UA_String_fromChars(tempString);
+					} else {
+						lText->text = UA_String_fromChars("");
+					}
+					readNodesResults[indices[i]].value.type = &UA_TYPES[UA_TYPES_LOCALIZEDTEXT];
+					readNodesResults[indices[i]].value.data = lText;
+					readNodesResults[indices[i]].value.arrayLength = -1;
+					readNodesResults[indices[i]].value.arrayDimensionsSize = -1;
+					readNodesResults[indices[i]].value.arrayDimensions = NULL;
 					readNodesResults[indices[i]].hasStatus = UA_TRUE;
 					readNodesResults[indices[i]].hasValue = UA_TRUE;
-					value = emptyAny;
+					readNodesResults[indices[i]].status = UA_STATUSCODE_GOOD;
 				}
 			} else {
 				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_NOACCESS);

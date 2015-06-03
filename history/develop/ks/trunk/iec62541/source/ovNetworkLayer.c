@@ -144,7 +144,7 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
 
     /* do what */
     pOVNetworkLayer = NULL;
-    UA_String_delete(&(pOVNetworkLayer->v_discoveryUrlInternal));
+   // UA_String_delete(&(pOVNetworkLayer->v_discoveryUrlInternal));
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 

@@ -10,7 +10,7 @@ SERVERSTARTKEYS = -w ksbase -w iec62541
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = -o
 #  -I../../open62541/src_generated -I../../open62541/include -I../../open62541/deps -I../../open62541/src 
-EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1 -DUA_EXTERNAL_NAMESPACE=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 -DDEBUG=1 -Wextra -Wno-unused-parameter -Wno-declaration-after-statement
+EXTRA_CC_FLAGS = -DPLT_USE_WINSOCK2=1 -DUA_EXTERNAL_NAMESPACE=1 -DUA_EXTERNAL_NAMESPACES=1 -DLOG_KS=0 -DLOG_KS_ERROR=1 -DLOG_KS_WARNING=1 -DSTATIC_LINKING=1 -DLOG_UA=1 -DLOG_UA_TO_OV=1 -DDEBUG=1 -Wextra -Wno-unused-parameter -Wno-declaration-after-statement
 EXTRA_LIBS = 
 LD_FLAGS = -lws2_32
 COMPILER = GCC
