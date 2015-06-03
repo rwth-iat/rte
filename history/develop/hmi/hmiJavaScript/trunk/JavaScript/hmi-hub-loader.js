@@ -183,7 +183,8 @@ function loadScriptUrls(loadScriptlist, callFnc, async, hubFilePattern, mimetype
 			node.setAttribute("charset", mimetype);
 		}
 		if(		loadScriptlist[idx].indexOf("http://") === 0
-			||	loadScriptlist[idx].indexOf("https://") === 0
+				||	loadScriptlist[idx].indexOf("https://") === 0
+				||	loadScriptlist[idx].indexOf("//") === 0
 			||	!base){
 			//this is a full path or base path is not known (so just try)
 			var srcEntry = loadScriptlist[idx];
@@ -201,13 +202,16 @@ function loadScriptUrls(loadScriptlist, callFnc, async, hubFilePattern, mimetype
 		node.setAttribute("data-src", loadScriptlist[idx]);
 		node.setAttribute("data-transferstatus", "loading");
 		
-		//the code should get parsed async as soon as it is fetched, without blocking the html parser
+		//some code could get parsed async as soon as it is fetched, without blocking the browser
 		if (node.async !== undefined && async === true){
 			node.async = true;
 		}else if (node.defer !== undefined && async === true){
 			//the code should get parsed as soon the html parser is ready, without him
 			//(only if async is not supported) 
 			node.defer = true;
+		}else if(node.async !== undefined && async !== true){
+			//Firefox 4 no longer enforces execution in insertion order if async is unset
+			node.async = false;
 		}
 		node.onload = node.onerror = function(evt){
 			if(evt.type !== "load"){

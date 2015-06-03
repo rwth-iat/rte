@@ -5124,7 +5124,7 @@ cshmi.prototype = {
 		var result = loadScriptUrls(
 			sourceListSplitted, 
 			function(){HMI.cshmi._executeScript(VisualObject, ObjectPath, jsOnload, "jsOnload")}, 
-			true,
+			false,
 			null,
 			null
 		);
