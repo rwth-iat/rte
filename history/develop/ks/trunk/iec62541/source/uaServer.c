@@ -29,6 +29,7 @@
 #include "iec62541_helpers.h"
 #include "ks_logfile.h"
 #include "open62541.h"
+#include <errno.h>
 
 #define ADDREFERENCE(NODEID, REFTYPE_NODEID, TARGET_EXPNODEID) do {     \
         UA_AddReferencesItem item;                                      \
