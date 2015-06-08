@@ -47,6 +47,9 @@ static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, const UA_
 }
 
 static void ov_ua_connection_closeConnection(UA_Connection *connection) {
+	if(connection->state == UA_CONNECTION_CLOSED)
+		return;
+	connection->state = UA_CONNECTION_CLOSED;
 	/*	delete the channel object	*/
 	if(connection->handle){
 		OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, Ov_StaticPtrCast(iec62541_uaConnection, connection->handle));
