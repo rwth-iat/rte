@@ -26,5 +26,5 @@ all:
 #	ar rcs open62541.a ../../open62541/CMakeFiles/open62541-objects.dir/src/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src/server/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src_generated/*.o
 	acplt_makmak -l iec62541 $(MAKMAKOPTIONS)
 	tclsh $(PREBUILD) iec62541 $(MAKMAKOPTIONS)
-	$(MAKE) BIN_DIR='' MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
+	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) iec62541
