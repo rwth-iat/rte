@@ -146,7 +146,7 @@ cshmi.prototype = {
 	instanciateCshmi: function(Host, Server, ObjectPath) {
 		//fill cache if possible
 		if (typeof JSON === 'object' && typeof JSON.parse === 'function'){
-			var response = HMI.KSClient.getVar("/TechUnits/cshmi/turbo.asJSON");
+			var response = HMI.KSClient.getVar("//"+Host+"/"+Server+"/TechUnits/cshmi/turbo.asJSON");
 			if (response && response !== "" && response !== "{}" && response !== "{{}}" && response !== "{{{}}}" && response.indexOf("KS_ERR") === -1){
 				if(response.charAt(1) == "{"){
 					//tcl wraps two braces
@@ -177,6 +177,8 @@ cshmi.prototype = {
 					this.ResourceList.ChildList = responseJSON.ChildList;
 				}
 				responseJSON = null;
+			}else if(response.indexOf("KS_ERR") === -1){
+				HMI.hmi_log_info("Parsing Cache was empty. Skipping. See http://"+HMI.KSClient.getCommunicationPoint(Host+"/"+Server)+"/getLogfile?format=ksx&maxentries=5 for details.");
 			}
 		}
 		
