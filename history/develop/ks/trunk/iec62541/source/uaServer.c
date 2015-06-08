@@ -210,7 +210,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 
 static void iec62541_uaServer_stopServer(OV_INSTPTR_iec62541_uaServer pinst){
 	UA_Server_run_shutdown(iec62541_pUaServer->v_serverData, 1);
-//	UA_Server_delete(pinst->v_serverData);
+	UA_Server_delete(pinst->v_serverData);
 	return;
 }
 
