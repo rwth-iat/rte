@@ -198,6 +198,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	iec62541_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
 	iec62541_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_writeNodes;
 	UA_Server_addExternalNamespace(iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
+	UA_String_delete(&url);
 	/*	add reference to ov root	*/
 	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(1, 0)) != UA_STATUSCODE_GOOD){
