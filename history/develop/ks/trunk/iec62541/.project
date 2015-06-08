@@ -3,6 +3,7 @@
 	<name>iec62541</name>
 	<comment></comment>
 	<projects>
+		<project>ksbase</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
