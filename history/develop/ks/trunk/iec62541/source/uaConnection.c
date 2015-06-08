@@ -48,6 +48,13 @@ static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, const UA_
 
 static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 	/*	delete the channel object	*/
+	if(connection->handle){
+		OV_INSTPTR_ksbase_Channel pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, Ov_StaticPtrCast(iec62541_uaConnection, connection->handle));
+		Ov_DeleteObject(Ov_StaticPtrCast(iec62541_uaConnection, connection->handle));
+		if(pChannel){
+			Ov_DeleteObject(pChannel);
+		}
+	}
 	Ov_HeapFree(connection);
 	connection = NULL;
 }
@@ -120,13 +127,12 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_startup(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+//  OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what the base class does first */
     ksbase_ClientHandler_startup(pobj);
 
     /* do what */
-    pinst->v_actimode = 1;
 
     return;
 }
@@ -137,10 +143,10 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_shutdown(
     /*    
     *   local variables
     */
-//    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what */
-
+    pinst->v_connection->handle = NULL;
     /* set the object's state to "shut down" */
     ksbase_ClientHandler_shutdown(pobj);
 
@@ -179,14 +185,5 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_typemethod (
     /*
     *   local variables
     */
-	OV_INSTPTR_iec62541_uaConnection	pThis	=	Ov_StaticPtrCast(iec62541_uaConnection, this);
-	OV_INSTPTR_ksbase_Channel			pChannel	=	NULL;
-	if(!pThis->v_connection){
-		pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, pThis);
-		Ov_DeleteObject(pThis);
-		if(pChannel){
-			Ov_DeleteObject(pChannel);
-		}
-	}
-    return;
+
 }
