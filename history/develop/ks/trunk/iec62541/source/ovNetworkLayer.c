@@ -223,10 +223,10 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 			if(pConnection->v_closeConn != TRUE){
 				newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
 				newJobs[counter].job.binaryMessage.message = pConnection->v_buffer;
-				newJobs[counter].job.binaryMessage.connection = &(pConnection->v_connection);
+				newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
 			} else {
 				newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
-				newJobs[counter].job.closeConnection = &(pConnection->v_connection);
+				newJobs[counter].job.closeConnection = pConnection->v_connection;
 			}
 			pConnection->v_workNext = FALSE;
 			counter++;

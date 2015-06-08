@@ -82,7 +82,7 @@ LIBRARY iec62541
 	CLASS uaConnection : CLASS ksbase/ClientHandler
 		IS_INSTANTIABLE;
 		VARIABLES
-			connection			:	C_TYPE	<UA_Connection>
+			connection			:	C_TYPE	<UA_ConnectionPTR>
 				COMMENT			=	"Connection data for this connection";
 			workNext			:	BOOL
 				COMMENT			=	"If TRUE this connection has some work for the networkLayer"

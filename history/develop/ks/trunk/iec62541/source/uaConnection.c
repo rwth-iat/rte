@@ -48,8 +48,8 @@ static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, const UA_
 
 static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 	/*	delete the channel object	*/
-	OV_INSTPTR_iec62541_uaConnection pConnection = (OV_INSTPTR_iec62541_uaConnection)(connection->handle);
-	Ov_DeleteObject(Ov_GetParent(ksbase_AssocChannelClientHandler, pConnection));
+	Ov_HeapFree(connection);
+	connection = NULL;
 }
 
 /*****************************/
@@ -80,15 +80,20 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_constructor(
          return result;
 
     /* do what */
-    UA_Connection_init(&(pinst->v_connection));
-    pinst->v_connection.sockfd = 0;
-    pinst->v_connection.handle = pobj;
-    pinst->v_connection.localConf = getOvNetworkLayer()->v_localConfig;
-    pinst->v_connection.write = ov_ua_connection_write;
-    pinst->v_connection.close = ov_ua_connection_closeConnection;
-    pinst->v_connection.getBuffer = GetMallocedBuffer;
-    pinst->v_connection.releaseBuffer = ReleaseMallocedBuffer;
-    pinst->v_connection.state = UA_CONNECTION_OPENING;
+    pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
+    if(!pinst->v_connection){
+    	ov_logfile_error("%s: could not allocate memory for UA_Connection. Aborting");
+    	return OV_ERR_HEAPOUTOFMEMORY;
+    }
+    UA_Connection_init(pinst->v_connection);
+    pinst->v_connection->sockfd = 0;
+    pinst->v_connection->handle = pobj;
+    pinst->v_connection->localConf = getOvNetworkLayer()->v_localConfig;
+    pinst->v_connection->write = ov_ua_connection_write;
+    pinst->v_connection->close = ov_ua_connection_closeConnection;
+    pinst->v_connection->getBuffer = GetMallocedBuffer;
+    pinst->v_connection->releaseBuffer = ReleaseMallocedBuffer;
+    pinst->v_connection->state = UA_CONNECTION_OPENING;
 
     return OV_ERR_OK;
 }
@@ -115,13 +120,13 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_startup(
     /*    
     *   local variables
     */
-//    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+    OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
 
     /* do what the base class does first */
     ksbase_ClientHandler_startup(pobj);
 
     /* do what */
-
+    pinst->v_actimode = 1;
 
     return;
 }
@@ -162,7 +167,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
 	temp.length = dataReceived->length;
 	temp.data = dataReceived->data;
 	UA_ByteString_copy(&temp, received);
-	pConnection->v_buffer = UA_Connection_completeMessages(&(pConnection->v_connection), *received);
+	pConnection->v_buffer = UA_Connection_completeMessages(pConnection->v_connection, *received);
 	pConnection->v_workNext = TRUE;
 	ksbase_free_KSDATAPACKET(dataReceived);
     return OV_ERR_OK;
@@ -174,6 +179,14 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_typemethod (
     /*
     *   local variables
     */
-
+	OV_INSTPTR_iec62541_uaConnection	pThis	=	Ov_StaticPtrCast(iec62541_uaConnection, this);
+	OV_INSTPTR_ksbase_Channel			pChannel	=	NULL;
+	if(!pThis->v_connection){
+		pChannel = Ov_GetParent(ksbase_AssocChannelClientHandler, pThis);
+		Ov_DeleteObject(pThis);
+		if(pChannel){
+			Ov_DeleteObject(pChannel);
+		}
+	}
     return;
 }

@@ -32,13 +32,15 @@ struct UA_NodeStore {
 	It will be cast back to ov_UA_Connection by the free and appen functions as they are
 	the connection callbacks.
 */
-typedef struct ov_UA_Connection {
+/*typedef struct ov_UA_Connection {
 	UA_Connection connection;
 	OV_INSTPTR_ksbase_ClientHandler clientHandler;
 	KS_DATAPACKET* inData;
 	KS_DATAPACKET* outData;
 } ov_UA_Connection;
+*/
 
+typedef UA_Connection* UA_ConnectionPTR;
 typedef UA_Server* OV_PTR_UA_Server;
 
 #endif
