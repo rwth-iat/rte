@@ -170,7 +170,7 @@
 		example: <code>/getServer?format=ksx&servername=MANAGER</code><br>
 		example: <code>/getServer?format=ksx&servername=MANAGER&serverversion=2</code><br>
 		
-		<script type="text/javascript" >
+		<script type="text/javascript">
 		var CommandPlayground = document.getElementById("idCommandPlayground");
 		var OutputformatSelect = document.getElementById("idOutputformatSelect");
 		var Servicelist = document.getElementById("idServicelist");
@@ -185,6 +185,7 @@
 		var PlaygroundOutput = document.getElementById("idPlaygroundOutput");
 		
 		var prepareWebpage = function(){
+			"use strict";
 			//show playground
 			if (true || -1 !== window.location.protocol.indexOf('http') && window.XMLHttpRequest){
 				//show playground
@@ -195,25 +196,29 @@
 				//test HMI and other services if transfered via http
 				if(!!window.XMLHttpRequest){
 					var HmiNode = document.getElementById("idHmi");
-					var req = new XMLHttpRequest();
-					req.open("GET", "/getEP?requestType=OT_DOMAIN&path=/data/kshttp", true);
-					req.setRequestHeader("Accept", "text/ksx");
-					req.onreadystatechange = function(evt){
+					var request = new XMLHttpRequest();
+					request.open("GET", "/getEP?requestType=OT_DOMAIN&path=/data/kshttp", true);
+					request.setRequestHeader("Accept", "text/ksx");
+					request.onreadystatechange = function(evt){
+						var req = null;
 						if (!evt){
-							var req = this;
+							req = this;
 						}else{
 							req = evt.target;
 						}
 						if( req.readyState === 4 && req.status === 200){
-							var listDomainEngProps = req.responseXML.getElementsByTagName("DomainEngProps")
-							var listServices = Array();
-							for(var i = 0; i < listDomainEngProps.length;i++){
-								var DomainEngPropsClass = listDomainEngProps[i].getElementsByTagName("classIdentifier");
+							var listDomainEngProps = req.responseXML.getElementsByTagName("DomainEngProps");
+							var listServices = [];
+							var i = 0;
+							var DomainEngPropsClass = "";
+							var DomainEngPropsId = "";
+							for(i = 0; i < listDomainEngProps.length;i++){
+								DomainEngPropsClass = listDomainEngProps[i].getElementsByTagName("classIdentifier");
 								if(DomainEngPropsClass && DomainEngPropsClass.length === 1 && DomainEngPropsClass[0].textContent == '/acplt/ov/domain'){
-									var DomainEngPropsId = listDomainEngProps[i].getElementsByTagName("identifier");
+									DomainEngPropsId = listDomainEngProps[i].getElementsByTagName("identifier");
 									if(DomainEngPropsId && DomainEngPropsId.length === 1){
 										if(DomainEngPropsId[0].textContent === 'hmi'){
-											HmiNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
+											HmiNode.innerHTML = "<h1>Human-Machine Interface</h1><p>A <a href='/hmi/'>HMI service</a> is available on this server.</p>";
 										}else{
 											listServices.push(DomainEngPropsId[0].textContent);
 										}
@@ -222,8 +227,8 @@
 							}
 							if(listServices.length > 0){
 								var ServicesNode = document.getElementById("idServices");
-								var ServicesHtml = "<h1>Services</h1><p>There are the following other services available on this server:</p><ul>";
-								for (var i = 0; i < listServices.length; i++){
+								var ServicesHtml = "<h1>Services</h1><p>There are the following non HMI services available on this server:</p><ul>";
+								for (i = 0; i < listServices.length; i++){
 									ServicesHtml += "<li><a href='/"+listServices[i]+"/'>"+listServices[i]+"</a></li>";
 								}
 								ServicesHtml += "</ul></p>";
@@ -231,23 +236,16 @@
 							}
 						}
 					};
-					req.timeout = 1000;
-					try{
-						req.send(null);
-						if(req.status == 200){
-							HmiNode.innerHTML = "<h1>Human-Machine Interface</h1><p>An <a href='/hmi/'>HMI Service</a> is available on this server.</p>";
-						}
-					}catch(e){
-						//do nothing
-					};
+					request.timeout = 1000;
 				}
 			}
 		};
 		window.onload = prepareWebpage;
 		Servicelist.onchange = function(evt){
+			"use strict";
 			PathtextLabel.firstChild.nodeValue = "Path:";
 			PathtextLabel.style.display = "inline";
-			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
+			if(Servicelist.options[Servicelist.options.selectedIndex].value === "none"){
 				SecondtextLabel.style.display = "none";
 				SpanGetepRequestType.style.display = "none";
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "getEP"){
@@ -311,6 +309,7 @@
 			calculateUrl();
 		};
 		Submitbutton.onclick = document.getElementsByTagName("form")[0].onsubmit = function(evt){
+			"use strict";
 			var req = new XMLHttpRequest();
 			req.open("GET", Urldisplay.value, true);
 			req.timeout = 10000;
@@ -324,6 +323,7 @@
 			return false;
 		};
 		var calculateUrl = function(){
+			"use strict";
 			var urlstring = "/"+Servicelist.options[Servicelist.options.selectedIndex].value+"?format="+OutputformatSelect.options[OutputformatSelect.options.selectedIndex].value;
 			if(Servicelist.options[Servicelist.options.selectedIndex].value == "none"){
 				//nothing selected
@@ -335,7 +335,7 @@
 				urlstring += "&path="+PathInput.value;
 			}else if(Servicelist.options[Servicelist.options.selectedIndex].value == "setVar"){
 				urlstring += "&path="+PathInput.value;
-				if(escape){
+				if(typeof escape === "function"){
 					//escape is evil, but we need latin1 support
 					urlstring += "&newvalue="+escape(SecondtextInput.value);
 				}else{
@@ -362,19 +362,21 @@
 			}
 			Urldisplay.value = urlstring;
 			return urlstring;
-		}
+		};
 		OutputformatSelect.onchange = calculateUrl;
 		PathInput.onkeyup = PathInput.onchange = calculateUrl;
 		SecondtextInput.onkeyup = SecondtextInput.onchange = calculateUrl;
 		GetepRequestTypeSelect.onchange = calculateUrl;
 		var RequestStatehandler = function(evt){
+			"use strict";
+			var req = null;
 			if (!evt){
-				var req = this;
+				req = this;
 			}else{
 				req = evt.target;
 			}
-			if( req.readyState == 4 ){
-				if(req.status == 0){
+			if( req.readyState === 4 ){
+				if(req.status === 0){
 					PlaygroundOutput.innerHTML = "The request failed. Timeout?";
 				}else{
 					PlaygroundOutput.innerHTML = req.responseText;
@@ -382,7 +384,8 @@
 				//adjust height to the line count
 				var ResponseArray = req.responseText.split(String.fromCharCode(10));
 				var maxlength = 0;
-				for (var i = 0;i<ResponseArray.length;i++){
+				var i = 0;
+				for(i = 0;i<ResponseArray.length;i++){
 					if(ResponseArray[i].length > maxlength){
 						maxlength = ResponseArray[i].length;
 					}
@@ -403,12 +406,12 @@
 					Submitbutton.style.backgroundColor = "red";
 					Submitbutton.value = "error received";
 				}
-				var timeoutID = window.setTimeout(function(){
+				timeoutID = window.setTimeout(function(){
 					Submitbutton.value = "send request";
 					Submitbutton.style.backgroundColor = "";
 				},1500);
 			}
-		}
+		};
 		//init url
 		calculateUrl();
 		
@@ -422,20 +425,23 @@
 		var activeRequestPath = "";
 		
 		PathInput.onkeydown = PathInput.onmousedown = function(evt){
+			"use strict";
 			//no change, so we need no request
 			if (activeRequestPath === PathInput.value) return;
 			window.clearTimeout(timeoutID);
 			autofillmagicXHR.abort();
-		}
+		};
 		
 		PathInput.onkeyup = PathInput.onmouseup = function(evt){
+			"use strict";
 			//no change, so we need no request
 			if (activeRequestPath === PathInput.value) return;
 			
 			//################## insert information
 			var insertautofillinformation = function(evt){
+				var req = null;
 				if (!evt){
-					var req = this;
+					req = this;
 				}else{
 					req = evt.target;
 				}
@@ -447,10 +453,14 @@
 							pathdirentries.removeChild(pathdirentries.firstChild);
 						}
 					}
-					for (var i=0;i < resultlist.length;i++){
-						var access = resultlist[i].getElementsByTagName("access")[0].textContent;
-						var newPath = requestBasePath;
-						var labelname = "";
+					var i = 0;
+					var access = null;
+					var newPath = null;
+					var labelname = "";
+					var newOption = null;
+					for (i = 0;i < resultlist.length;i++){
+						access = resultlist[i].getElementsByTagName("access")[0].textContent;
+						newPath = requestBasePath;
 						if(requestBasePath === "/"){
 							//no need to append a slash or dot at the root domain
 							labelname = "child";
@@ -462,19 +472,19 @@
 							newPath += "/";
 							labelname = "child";
 						}
-						var newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
-						var newOption = new Option(newPath);
+						newPath = newPath + resultlist[i].getElementsByTagName("identifier")[0].textContent.trim();
+						newOption = new Option(newPath);
 						newOption.label = labelname;
 						pathdirentries.appendChild(newOption);
 					}
 					//############### Parts and Variables
-					var resultlist = req.responseXML.getElementsByTagName("VariableEngProps");
+					resultlist = req.responseXML.getElementsByTagName("VariableEngProps");
 					if(resultlist.length !== 0){
 						while (pathvarentries.firstChild) {
 							pathvarentries.removeChild(pathvarentries.firstChild);
 						}
 					}
-					for (var i=0;i < resultlist.length;i++){
+					for (i = 0;i < resultlist.length;i++){
 						access = resultlist[i].getElementsByTagName("access")[0].textContent;
 						newPath = requestBasePath;
 						if(access.indexOf("part") !== -1){
@@ -496,10 +506,11 @@
 			var requestautofillinformation = function(evt){
 				var lastSlash = PathInput.value.lastIndexOf("/");
 				var lastDot = PathInput.value.lastIndexOf(".");
+				var requestMask = "";
 				if(lastSlash > lastDot){
 					//our basepath is something like /TechUnits/add1
 					requestBasePath = PathInput.value.substring(0, lastSlash);
-					var requestMask = PathInput.value.substring(lastSlash+1)+"*";
+					requestMask = PathInput.value.substring(lastSlash+1)+"*";
 				}else if(lastSlash < lastDot){
 					//our basepath is a part like /TechUnits/setvar.value
 					requestBasePath = PathInput.value.substring(0, lastDot);
@@ -527,7 +538,7 @@
 			window.clearTimeout(timeoutID);
 			autofillmagicXHR.abort();
 			timeoutID = window.setTimeout(requestautofillinformation , 300);
-		}
+		};
 		</script>
 	</body>
 </html>
