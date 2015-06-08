@@ -92,13 +92,13 @@ typedef UA_StatusCode UA_FNC_STARTNL(
 
 typedef UA_Int32 UA_FNC_NLGETWORK(
 	OV_INSTPTR_iec62541_ovNetworkLayer this, 
-	UA_WorkItem** items, 
+	UA_Job** jobs, 
 	UA_UInt16 timeout
 );
 
 typedef UA_Int32 UA_FNC_STOPNL(
 	OV_INSTPTR_iec62541_ovNetworkLayer this, 
-	UA_WorkItem** items
+	UA_Job** jobs
 );
 
 typedef void UA_FNC_DELETENL(

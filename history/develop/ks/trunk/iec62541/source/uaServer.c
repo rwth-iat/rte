@@ -105,8 +105,6 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	UA_Logger logger;
 	UA_ByteString certificate;
 	UA_String url;
-	UA_AddReferencesItem item;
-	UA_AddReferencesItem_init(&item);
 	OV_STRING tempStackString = NULL;
 	UA_Int32 port;
 	UA_Int32 ksPort;
@@ -200,11 +198,8 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	iec62541_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_writeNodes;
 	UA_Server_addExternalNamespace(iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
 	/*	add reference to ov root	*/
-	item.sourceNodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER);
-	item.referenceTypeId = UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES);
-	item.isForward = UA_TRUE;
-	item.targetNodeId = UA_EXPANDEDNODEID_NUMERIC(1, 0);
-	if(UA_Server_addReference(pinst->v_serverData, &item) != UA_STATUSCODE_GOOD){
+	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
+			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(1, 0)) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
 	}
 	UA_Server_run_startup(iec62541_pUaServer->v_serverData, 1, &UA_ServerRun);
@@ -214,7 +209,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 
 static void iec62541_uaServer_stopServer(OV_INSTPTR_iec62541_uaServer pinst){
 	UA_Server_run_shutdown(iec62541_pUaServer->v_serverData, 1);
-	UA_Server_delete(pinst->v_serverData);
+//	UA_Server_delete(pinst->v_serverData);
 	return;
 }
 
@@ -521,6 +516,6 @@ OV_DLLFNCEXPORT void iec62541_uaServer_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
 	OV_INSTPTR_iec62541_uaServer thisServer = Ov_StaticPtrCast(iec62541_uaServer, this);
-	UA_Server_run_getAndProcessWork(thisServer->v_serverData, &UA_ServerRun);
+	UA_Server_run_mainloop(thisServer->v_serverData, &UA_ServerRun);
     return;
 }

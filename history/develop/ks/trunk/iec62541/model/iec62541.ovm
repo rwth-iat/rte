@@ -132,7 +132,7 @@ LIBRARY iec62541
 			shutdown			:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			getaccess			:	C_FUNCTION	<OV_FNC_GETACCESS>;
 			start				:	C_FUNCTION	<UA_FNC_STARTNL>;
-			getWork				:	C_FUNCTION	<UA_FNC_NLGETWORK>;
+			getJobs				:	C_FUNCTION	<UA_FNC_NLGETWORK>;
 			stop				:	C_FUNCTION	<UA_FNC_STOPNL>;
 			delete				:	C_FUNCTION	<UA_FNC_DELETENL>;
 		END_OPERATIONS;

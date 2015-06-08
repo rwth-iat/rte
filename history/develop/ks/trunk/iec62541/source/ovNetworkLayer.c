@@ -55,8 +55,8 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     Ov_GetVTablePtr(iec62541_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
     nl.nlHandle = pNetworkLayer;
     nl.start = (UA_StatusCode (*)(void*, UA_Logger *logger))pVtblNetworkLayer->m_start;
-    nl.getWork = (UA_Int32 (*)(void*, UA_WorkItem**, UA_UInt16))pVtblNetworkLayer->m_getWork;
-    nl.stop = (UA_Int32 (*)(void*, UA_WorkItem**))pVtblNetworkLayer->m_stop;
+    nl.getJobs = (UA_Int32 (*)(void*, UA_Job**, UA_UInt16))pVtblNetworkLayer->m_getJobs;
+    nl.stop = (UA_Int32 (*)(void*, UA_Job**))pVtblNetworkLayer->m_stop;
     nl.free = (void (*)(void*))pVtblNetworkLayer->m_delete;
     nl.discoveryUrl = &(pNetworkLayer->v_discoveryUrlInternal);
     return nl;
@@ -193,15 +193,15 @@ OV_DLLFNCEXPORT UA_StatusCode iec62541_ovNetworkLayer_start(
     return (UA_StatusCode)0;
 }
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getWork(
+OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 	OV_INSTPTR_iec62541_ovNetworkLayer this, 
-	UA_WorkItem** items, 
+	UA_Job** jobs,
 	UA_UInt16 timeout
 ) {
 
 	OV_INSTPTR_iec62541_uaConnection	pConnection	=	NULL;
 	OV_UINT								counter		=	0;
-	UA_WorkItem 						*newItems	=	NULL;
+	UA_Job		 						*newJobs	=	NULL;
 
 	/*	count work items	*/
 	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
@@ -211,9 +211,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getWork(
 
 	}
 
-	newItems = malloc(sizeof(UA_WorkItem)*(counter+1));
-	if(!newItems){
-		items = NULL;
+	newJobs = malloc(sizeof(UA_Job)*(counter+1));
+	if(!newJobs){
+		jobs = NULL;
 		return 0;
 	}
 	/*	iterate and collect work	*/
@@ -221,28 +221,28 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getWork(
 	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
 			if(pConnection->v_closeConn != TRUE){
-				newItems[counter].type = UA_WORKITEMTYPE_BINARYMESSAGE;
-				newItems[counter].work.binaryMessage.message = pConnection->v_buffer;
-				newItems[counter].work.binaryMessage.connection = &(pConnection->v_connection);
+				newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
+				newJobs[counter].job.binaryMessage.message = pConnection->v_buffer;
+				newJobs[counter].job.binaryMessage.connection = &(pConnection->v_connection);
 			} else {
-				newItems[counter].type = UA_WORKITEMTYPE_CLOSECONNECTION;
-				newItems[counter].work.closeConnection = &(pConnection->v_connection);
+				newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
+				newJobs[counter].job.closeConnection = &(pConnection->v_connection);
 			}
 			pConnection->v_workNext = FALSE;
 			counter++;
 		}
 	}
 	if(counter == 0) {
-		free(newItems);
-		*items = NULL;
+		free(newJobs);
+		*jobs = NULL;
 	} else
-		*items = newItems;
+		*jobs = newJobs;
 	return counter;
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
 	OV_INSTPTR_iec62541_ovNetworkLayer this, 
-	UA_WorkItem** items
+	UA_Job** jobs
 ) {
 
     return (UA_Int32)0;
