@@ -25,12 +25,6 @@
 #include "fb_namedef.h"
 #include "libov/ov_element.h"
 
-#define CC_OCCUPANCY_ORDEROCCUPY "OCCUPY"
-#define CC_OCCUPANCY_ORDERFREE "FREE"
-#define CC_OCCUPY_VARIABLENAME "occupiedBy"
-#define CC_SENDERID_VARIABLENAME "senderID"
-
-
 //fixme move to typemethod, call this typemethod even in SequentialControlChart
 
 /**
@@ -165,7 +159,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 	 *********************************************************************************************************/
 	ov_string_setvalue(&orderVar.value.valueunion.val_string, commandparts[0]);
 	// this is optional, so no check on return value)
-	ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), CC_SENDERID_VARIABLENAME, &orderVar);
+	(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), CC_SENDERID_VARIABLENAME, &orderVar);
 	ov_string_setvalue(&orderVar.value.valueunion.val_string, NULL);
 
 	/*********************************************************************************************************
@@ -178,7 +172,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 				//found it
 				ov_string_setvalue(&orderVar.value.valueunion.val_string, commandparts[1]);
 				//we want to have the execution of the order optional! If this fails, we parse the params nevertheless
-				ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), this->v_ORDEREXECUTOR.value[iterator], &orderVar);
+				(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), this->v_ORDEREXECUTOR.value[iterator], &orderVar);
 				ov_string_setvalue(&orderVar.value.valueunion.val_string, NULL);
 				if(		ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDEROCCUPY) == OV_STRCMP_EQUAL
 					||	ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDERFREE) == OV_STRCMP_EQUAL){
@@ -204,7 +198,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 		}
 		orderVar.value.valueunion.val_string = keyvalue[1];	//in heap mem
 		//we want to skip an unsuccessful set, so no result check
-		ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), keyvalue[0], &orderVar);
+		(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), keyvalue[0], &orderVar);
 	}
 
 	ov_string_freelist(commandparts);

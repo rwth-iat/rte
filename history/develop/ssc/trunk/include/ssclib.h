@@ -69,9 +69,10 @@
 
 // TODO:  Cmd mapping
 
-/***********************************************************************
-	Enumerations
-***********************************************************************/
+#define CC_OCCUPANCY_ORDEROCCUPY "OCCUPY"
+#define CC_OCCUPANCY_ORDERFREE "FREE"
+#define CC_OCCUPY_VARIABLENAME "occupiedBy"
+#define CC_SENDERID_VARIABLENAME "senderID"
 
 /***********************************************************************
 	command

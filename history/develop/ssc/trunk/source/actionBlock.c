@@ -100,9 +100,10 @@ OV_DLLFNCEXPORT OV_RESULT ssc_actionBlock_constructor(
 	}
 
 	// link to corresponding taskparent
-	//todo bald haben wir nur noch einen task!
+	//todo entry, do, exit auf entry reduzieren
 	ssc_actionBlock_actionQualifier_set(pinst, pinst->v_actionQualifier);
 
+	// init variables
 	pinst->v_cyctime.secs = 0;
 	pinst->v_cyctime.usecs = 0;
 	pinst->v_iexreq = TRUE;

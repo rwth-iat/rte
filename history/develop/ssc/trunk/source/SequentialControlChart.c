@@ -441,8 +441,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 	OV_INSTPTR_fb_functionblock pFbAction=NULL;
 	OV_INSTPTR_ssc_SequentialControlChart pSscAction = NULL;
 	OV_RESULT result = OV_ERR_OK;
-	//OV_TIME *pTime;
-	//ov_time_gettime(&pTime);
+	OV_ANY orderVar;
+	OV_UINT iterator = 0;
 
 	//reset all steps; find and link INIT-step to taskActiveStep
 	Ov_ForEachChildEx(ov_containment, pinst, pStep, ssc_step){
@@ -481,6 +481,16 @@ OV_DLLFNCEXPORT OV_RESULT ssc_SequentialControlChart_resetSsc(
 				return result;
 			}
 		}
+	}
+
+	// clear senderID if this exists
+	orderVar.value.vartype = OV_VT_STRING;
+	orderVar.value.valueunion.val_string = NULL;
+	(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), CC_SENDERID_VARIABLENAME, &orderVar);
+
+	//clear all variables which are references with the ORDEREXECUTOR to get rid of old commands
+	for(iterator = 0;iterator < pinst->v_ORDEREXECUTOR.veclen;iterator++){
+		(void)ssc_setNamedVariable(Ov_PtrUpCast(ov_object, pinst), pinst->v_ORDEREXECUTOR.value[iterator], &orderVar);
 	}
 
 	return OV_ERR_OK;
