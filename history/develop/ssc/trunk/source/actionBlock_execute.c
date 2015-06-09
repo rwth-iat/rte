@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_execute_targetObject_set(
 	result = ov_string_setvalue(&pinst->v_targetObject, value);
 	if(Ov_OK(result)){
 		//check this action. on loading of a FBD it is invalid till everything is loaded
-		ssc_execute_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
+		(void)ssc_execute_checkAction(Ov_PtrUpCast(ssc_actionBlock, pinst));
 	}
 	return result;
 }

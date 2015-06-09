@@ -180,8 +180,8 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 				//we want to have the execution of the order optional! If this fails, we parse the params nevertheless
 				ssc_setNamedVariable(Ov_PtrUpCast(ov_object, this), this->v_ORDEREXECUTOR.value[iterator], &orderVar);
 				ov_string_setvalue(&orderVar.value.valueunion.val_string, NULL);
-				if(		ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDEROCCUPY) != OV_STRCMP_EQUAL
-					||	ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDERFREE) != OV_STRCMP_EQUAL){
+				if(		ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDEROCCUPY) == OV_STRCMP_EQUAL
+					||	ov_string_compare(commandparts[1], CC_OCCUPANCY_ORDERFREE) == OV_STRCMP_EQUAL){
 					//after occupy and free no params are allowed
 					ov_string_freelist(commandparts);
 					return OV_ERR_OK;
