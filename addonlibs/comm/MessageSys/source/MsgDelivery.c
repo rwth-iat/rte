@@ -201,9 +201,13 @@ OV_DLLFNCEXPORT void MessageSys_MsgDelivery_typemethod(
 				} else if(sendingInstance->v_status == KSAPI_COMMON_INTERNALERROR) {
 					ov_logfile_info("MessageDelivery/typeMethod: An error occured in the sendingprocess, CurrentMessage wasn't sent");
 					Ov_DeleteObject(msg);
+					ksapi_KSApiCommon_Reset_set(Ov_PtrUpCast(ksapi_KSApiCommon, sendingInstance), TRUE);
+					ksapi_KSApiCommon_Reset_set(Ov_PtrUpCast(ksapi_KSApiCommon, sendingInstance), FALSE);
 				} else if(sendingInstance->v_status ==KSAPI_COMMON_EXTERNALERROR) {
 					ov_logfile_info("MessageDelivery/typeMethod: Error between ksClient-Object and receiver-side, CurrentMessage wasn't delivered");
 					Ov_DeleteObject(msg);
+					ksapi_KSApiCommon_Reset_set(Ov_PtrUpCast(ksapi_KSApiCommon, sendingInstance), TRUE);
+					ksapi_KSApiCommon_Reset_set(Ov_PtrUpCast(ksapi_KSApiCommon, sendingInstance), FALSE);
 				} else if(sendingInstance->v_status == KSAPI_COMMON_WAITINGFORANSWER) {
 					ov_time_gettime(&tTemp);
 					if(tTemp.secs > (this->v_sendTime.secs + this->v_sendTimeOut)) {
