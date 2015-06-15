@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-05-20 16:11:13
+* Erstellt: 2015-06-15 13:06:25
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -19807,7 +19807,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoActionTable/InfoWindow/CreateNewAction/ListOfActions/Execute/click/Create_SetVal :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
-      autoRenameIfExists : INPUT BOOL = FALSE;
+      autoRenameIfExists : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
@@ -19969,7 +19969,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoActionTable/InfoWindow/CreateNewAction/ListOfActions/SendCommand/click/Create_SetVal :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
-      autoRenameIfExists : INPUT BOOL = FALSE;
+      autoRenameIfExists : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;

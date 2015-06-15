@@ -591,7 +591,7 @@ OV_DLLFNCEXPORT OV_STRING cshmi_downloadApplication_asJSON_get(
 	//we need space for all 4 strings, two times 3 Bytes and a null byte terminator
 	pJSON = (OV_STRING) ov_memstack_alloc(lenChildList+lenBaseKsPath+lenElements+lenActions+7);
 	if (!pJSON){
-		ov_logfile_debug("%d:%s Error reserving memory for concatting result: MEMSTACK full", __LINE__, __FILE__);
+		ov_logfile_debug("%d:%s Error reserving memory for concating result: MEMSTACK full", __LINE__, __FILE__);
 		ov_string_setvalue(&strBaseKsPath, NULL);
 		ov_string_setvalue(&strActions, NULL);
 		ov_string_setvalue(&strElements, NULL);

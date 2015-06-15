@@ -157,8 +157,8 @@ static OV_STRING cshmi_Object_prepareURIencode(OV_STRING strIn){
  */
 static OV_RESULT cshmi_Object_buildBaseElementString(OV_STRING*strResult, OV_INSTPTR_cshmi_Element pElement){
 	ov_string_print(strResult, "%s%%22visible%%22:%%22%s%%22,", *strResult, pElement->v_visible==TRUE?"TRUE":"FALSE");
-	ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pElement->v_stroke==NULL?"":pElement->v_stroke);
-	ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pElement->v_fill==NULL?"":pElement->v_fill);
+	ov_string_print(strResult, "%s%%22stroke%%22:%%22%s%%22,", *strResult, pElement->v_stroke==NULL?"":cshmi_Object_prepareURIencode(pElement->v_stroke));
+	ov_string_print(strResult, "%s%%22fill%%22:%%22%s%%22,", *strResult, pElement->v_fill==NULL?"":cshmi_Object_prepareURIencode(pElement->v_fill));
 	ov_string_print(strResult, "%s%%22opacity%%22:%%22%f%%22,", *strResult, pElement->v_opacity);
 	ov_string_print(strResult, "%s%%22rotate%%22:%%22%i%%22,", *strResult, pElement->v_rotate);
 	return OV_ERR_OK;
@@ -263,17 +263,17 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_print(&strIterate, "%s%%22rotate%%22:%%22%i%%22,", strIterate, pGroup->v_rotate);
 		ov_string_print(&strIterate, "%s%%22hideable%%22:%%22%s%%22,", strIterate, pGroup->v_hideable==TRUE?"TRUE":"FALSE");
 		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, pGroup->v_visible==TRUE?"TRUE":"FALSE");
-		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pGroup->v_TemplateDefinition==NULL?"":pGroup->v_TemplateDefinition);
-		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pGroup->v_FBReference.veclen!=1||pGroup->v_FBReference.value[0]==NULL)?"":pGroup->v_FBReference.value[0]);
+		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pGroup->v_TemplateDefinition==NULL?"":cshmi_Object_prepareURIencode(pGroup->v_TemplateDefinition));
+		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pGroup->v_FBReference.veclen!=1||pGroup->v_FBReference.value[0]==NULL)?"":cshmi_Object_prepareURIencode(pGroup->v_FBReference.value[0]));
 
 		if(pGroup->v_FBVariableReference.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
 		}else if(pGroup->v_FBVariableReference.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pGroup->v_FBVariableReference.value[0]);
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pGroup->v_FBVariableReference.value[0]));
 		}else{
-			ov_string_print(&temp, "%%22%s", pGroup->v_FBVariableReference.value[0]);
+			ov_string_print(&temp, "%%22%s", cshmi_Object_prepareURIencode(pGroup->v_FBVariableReference.value[0]));
 			for(i = 1; i < pGroup->v_FBVariableReference.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pGroup->v_FBVariableReference.value[i]);
+				ov_string_print(&temp, "%s %s", temp, cshmi_Object_prepareURIencode(pGroup->v_FBVariableReference.value[i]));
 			}
 			ov_string_append(&temp, "%22");
 		}
@@ -309,27 +309,27 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		pInstantiateTemplate = Ov_StaticPtrCast(cshmi_InstantiateTemplate, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		ov_string_print(&strIterate, "%s%%22visible%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_visible==TRUE?"TRUE":"FALSE");
-		ov_string_print(&strIterate, "%s%%22stroke%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_stroke==NULL?"":pInstantiateTemplate->v_stroke);
-		ov_string_print(&strIterate, "%s%%22fill%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_fill==NULL?"":pInstantiateTemplate->v_fill);
+		ov_string_print(&strIterate, "%s%%22stroke%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_stroke==NULL?"":cshmi_Object_prepareURIencode(pInstantiateTemplate->v_stroke));
+		ov_string_print(&strIterate, "%s%%22fill%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_fill==NULL?"":cshmi_Object_prepareURIencode(pInstantiateTemplate->v_fill));
 		ov_string_print(&strIterate, "%s%%22opacity%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_opacity);
 		ov_string_print(&strIterate, "%s%%22rotate%%22:%%22%i%%22,", strIterate, pInstantiateTemplate->v_rotate);
-		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_TemplateDefinition==NULL?"":pInstantiateTemplate->v_TemplateDefinition);
+		ov_string_print(&strIterate, "%s%%22TemplateDefinition%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_TemplateDefinition==NULL?"":cshmi_Object_prepareURIencode(pInstantiateTemplate->v_TemplateDefinition));
 		ov_string_print(&strIterate, "%s%%22x%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_x);
 		ov_string_print(&strIterate, "%s%%22y%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_y);
 		ov_string_print(&strIterate, "%s%%22xOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_xOffset);
 		ov_string_print(&strIterate, "%s%%22yOffset%%22:%%22%f%%22,", strIterate, pInstantiateTemplate->v_yOffset);
-		ov_string_print(&strIterate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_maxTemplatesPerDirection==NULL?"":pInstantiateTemplate->v_maxTemplatesPerDirection);
+		ov_string_print(&strIterate, "%s%%22maxTemplatesPerDirection%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_maxTemplatesPerDirection==NULL?"":cshmi_Object_prepareURIencode(pInstantiateTemplate->v_maxTemplatesPerDirection));
 		ov_string_print(&strIterate, "%s%%22preventClone%%22:%%22%s%%22,", strIterate, pInstantiateTemplate->v_preventClone==TRUE?"TRUE":"FALSE");
-		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_FBReference.veclen!=1||pInstantiateTemplate->v_FBReference.value[0]==NULL)?"":pInstantiateTemplate->v_FBReference.value[0]);
+		ov_string_print(&strIterate, "%s%%22FBReference%%22:%%22%s%%22,", strIterate, (pInstantiateTemplate->v_FBReference.veclen!=1||pInstantiateTemplate->v_FBReference.value[0]==NULL)?"":cshmi_Object_prepareURIencode(pInstantiateTemplate->v_FBReference.value[0]));
 
 		if(pInstantiateTemplate->v_FBVariableReference.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
 		}else if(pInstantiateTemplate->v_FBVariableReference.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pInstantiateTemplate->v_FBVariableReference.value[0]);
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pInstantiateTemplate->v_FBVariableReference.value[0]));
 		}else{
-			ov_string_print(&temp, "%%22%s", pInstantiateTemplate->v_FBVariableReference.value[0]);
+			ov_string_print(&temp, "%%22%s", cshmi_Object_prepareURIencode(pInstantiateTemplate->v_FBVariableReference.value[0]));
 			for(i = 1; i < pInstantiateTemplate->v_FBVariableReference.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pInstantiateTemplate->v_FBVariableReference.value[i]);
+				ov_string_print(&temp, "%s %s", temp, cshmi_Object_prepareURIencode(pInstantiateTemplate->v_FBVariableReference.value[i]));
 			}
 			ov_string_append(&temp, "%22");
 		}
@@ -338,11 +338,11 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		if(pInstantiateTemplate->v_ConfigValues.veclen == 0){
 			ov_string_setvalue(&temp, "%22%22");
 		}else if(pInstantiateTemplate->v_ConfigValues.veclen == 1){
-			ov_string_print(&temp, "%%22%s%%22", pInstantiateTemplate->v_ConfigValues.value[0]);
+			ov_string_print(&temp, "%%22%s%%22", cshmi_Object_prepareURIencode(pInstantiateTemplate->v_ConfigValues.value[0]));
 		}else{
-			ov_string_print(&temp, "%%22%s", pInstantiateTemplate->v_ConfigValues.value[0]);
+			ov_string_print(&temp, "%%22%s", cshmi_Object_prepareURIencode(pInstantiateTemplate->v_ConfigValues.value[0]));
 			for(i = 1; i < pInstantiateTemplate->v_ConfigValues.veclen;i++){
-				ov_string_print(&temp, "%s %s", temp, pInstantiateTemplate->v_ConfigValues.value[i]);
+				ov_string_print(&temp, "%s %s", temp, cshmi_Object_prepareURIencode(pInstantiateTemplate->v_ConfigValues.value[i]));
 			}
 			ov_string_append(&temp, "%22");
 		}
@@ -378,12 +378,12 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_memstack_lock();
 		ov_string_print(&strIterate, "%s%%22content%%22:%%22%s%%22,", strIterate, pText->v_content==NULL?"":cshmi_Object_prepareURIencode(pText->v_content));
 		ov_memstack_unlock();
-		ov_string_print(&strIterate, "%s%%22fontSize%%22:%%22%s%%22,", strIterate, pText->v_fontSize==NULL?"":pText->v_fontSize);
-		ov_string_print(&strIterate, "%s%%22fontStyle%%22:%%22%s%%22,", strIterate, pText->v_fontStyle==NULL?"":pText->v_fontStyle);
-		ov_string_print(&strIterate, "%s%%22fontWeight%%22:%%22%s%%22,", strIterate, pText->v_fontWeight==NULL?"":pText->v_fontWeight);
-		ov_string_print(&strIterate, "%s%%22fontFamily%%22:%%22%s%%22,", strIterate, pText->v_fontFamily==NULL?"":pText->v_fontFamily);
-		ov_string_print(&strIterate, "%s%%22horAlignment%%22:%%22%s%%22,", strIterate, pText->v_horAlignment==NULL?"":pText->v_horAlignment);
-		ov_string_print(&strIterate, "%s%%22verAlignment%%22:%%22%s%%22,", strIterate, pText->v_verAlignment==NULL?"":pText->v_verAlignment);
+		ov_string_print(&strIterate, "%s%%22fontSize%%22:%%22%s%%22,", strIterate, pText->v_fontSize==NULL?"":cshmi_Object_prepareURIencode(pText->v_fontSize));
+		ov_string_print(&strIterate, "%s%%22fontFamily%%22:%%22%s%%22,", strIterate, pText->v_fontFamily==NULL?"":cshmi_Object_prepareURIencode(pText->v_fontFamily));
+		ov_string_print(&strIterate, "%s%%22fontStyle%%22:%%22%s%%22,", strIterate, pText->v_fontStyle==NULL?"":pText->v_fontStyle);	//this is a white list of know values
+		ov_string_print(&strIterate, "%s%%22fontWeight%%22:%%22%s%%22,", strIterate, pText->v_fontWeight==NULL?"":pText->v_fontWeight);	//this is a white list of know values
+		ov_string_print(&strIterate, "%s%%22horAlignment%%22:%%22%s%%22,", strIterate, pText->v_horAlignment==NULL?"":pText->v_horAlignment);	//this is a white list of know values
+		ov_string_print(&strIterate, "%s%%22verAlignment%%22:%%22%s%%22,", strIterate, pText->v_verAlignment==NULL?"":pText->v_verAlignment);	//this is a white list of know values
 		ov_string_print(&strIterate, "%s%%22trimToLength%%22:%%22%i%%22", strIterate, pText->v_trimToLength);
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_Line){
@@ -438,7 +438,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	//here comes the actions and conditions
 	if(pClass == pclass_cshmi_SetValue){
 		pSetValue = Ov_StaticPtrCast(cshmi_SetValue, pObj);
-		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22,", strIterate, pSetValue->v_translationSource==NULL?"":pSetValue->v_translationSource);
+		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22,", strIterate, pSetValue->v_translationSource==NULL?"":cshmi_Object_prepareURIencode(pSetValue->v_translationSource));
 
 		if(ov_string_compare(pSetValue->v_ksVar, "") != OV_STRCMP_EQUAL){
 			ov_string_setvalue(&ParameterName, "ksVar");
@@ -473,7 +473,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}else{
 			ov_string_print(&strIterate, "%s%%22ParameterValue%%22:%%22%%22,", strIterate);
 		}
-		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource==NULL?"":pSetValue->v_translationSource);
+		ov_string_print(&strIterate, "%s%%22translationSource%%22:%%22%s%%22", strIterate, pSetValue->v_translationSource==NULL?"":cshmi_Object_prepareURIencode(pSetValue->v_translationSource));
 	}else if(pClass == pclass_cshmi_SetConcatValue){
 		pSetConcatValue = Ov_StaticPtrCast(cshmi_SetConcatValue, pObj);
 		if(ov_string_compare(pSetConcatValue->v_ksVar, "") != OV_STRCMP_EQUAL){
@@ -631,14 +631,14 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		}
 	}else if(pClass == pclass_cshmi_ChildrenIterator){
 		pChildrenIterator = Ov_StaticPtrCast(cshmi_ChildrenIterator, pObj);
-		ov_string_print(&strIterate, "%s%%22ChildrenIteratorParameterChildrenType%%22:%%22%s%%22", strIterate, pChildrenIterator->v_ChildrenType==NULL?"":pChildrenIterator->v_ChildrenType);
+		ov_string_print(&strIterate, "%s%%22ChildrenIteratorParameterChildrenType%%22:%%22%s%%22", strIterate, pChildrenIterator->v_ChildrenType==NULL?"":cshmi_Object_prepareURIencode(pChildrenIterator->v_ChildrenType));
 	}else if(pClass == pclass_cshmi_IfThenElse){
 		pIfThenElse = Ov_StaticPtrCast(cshmi_IfThenElse, pObj);
 		ov_string_print(&strIterate, "%s%%22IfThenElseParameterAnycond%%22:%%22%s%%22", strIterate, pIfThenElse->v_anycond==TRUE?"TRUE":"FALSE");
 	}else if(pClass == pclass_cshmi_Compare){
 		pCompare = Ov_StaticPtrCast(cshmi_Compare, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompare->v_comptype==NULL?"":pCompare->v_comptype);
+		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompare->v_comptype==NULL?"":pCompare->v_comptype);	//this is a white list, no need to escape
 		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompare->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_CompareIteratedChild){
@@ -646,7 +646,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 
 		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_comptype==NULL?"":pCompareIteratedChild->v_comptype);
-		ov_string_print(&strIterate, "%s%%22childValue%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_childValue==NULL?"":pCompareIteratedChild->v_childValue);
+		ov_string_print(&strIterate, "%s%%22childValue%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_childValue==NULL?"":pCompareIteratedChild->v_childValue);	//this is a white list
 		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompareIteratedChild->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_TimeEvent){
@@ -706,7 +706,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 				ov_memstack_unlock();
 			}
 		}
-		ov_string_print(&strIterate, "%s%%22pattern%%22:%%5B%s%%5D", strIterate, temp);
+		ov_string_print(&strIterate, "%s%%22pattern%%22:%%5B%s%%5D", strIterate, cshmi_Object_prepareURIencode(temp));
 		ov_string_append(&strIterate, "%7D");
 	}else{
 		//The object type is not supported, so skip the precaching of the element
