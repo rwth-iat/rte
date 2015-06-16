@@ -1,5 +1,6 @@
 #include "ov.ovm"
 #include "fb.ovm"
+#include "ssc.ovm"
 
 LIBRARY SSChelper
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
@@ -109,6 +110,29 @@ LIBRARY SSChelper
 			start : BOOL HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "startsignal" ;
 			
 			command : STRING FLAGS = "o" COMMENT = "command";
+			
+			// Add variables here. The syntax is:
+			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
+			// Example:
+			// varName : STRING HAS_GET_ACCESSOR COMMENT="Description of varname.";
+			// Example for a fb/functionblock based class
+			// inputNAme : UINT HAS_SET_ACCESSOR FLAGS = "i" COMMENT = "Input of type UINT" INITIALVALUE = 5;
+		END_VARIABLES;
+		OPERATIONS
+			// Declare functions here. You may use your own function types, e.g. MY_FUNC,
+			// if MY_FUNC is declared in SSChelper.ovf. Implement the functions in decoder.c.
+			// fb/functionblock based classes have to implement typemethod
+			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS setVar : CLASS fb/functionblock
+		IS_INSTANTIABLE;
+		VARIABLES
+			path : STRING  FLAGS = "i" COMMENT = "Path to target";
+			var : ANY  FLAGS = "i" COMMENT = "var";
+			port : STRING  FLAGS = "i" COMMENT = "Nanme of the port";
+		
 			
 			// Add variables here. The syntax is:
 			// <Variable name> : <Datatype> [<Accessors>] [<FLAGS>] [<Comment>] [<INITIALVALUE>]
