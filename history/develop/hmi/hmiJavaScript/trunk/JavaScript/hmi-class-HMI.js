@@ -216,7 +216,7 @@ HMI.prototype = {
 				addEventSimple(HMI.PossSheets, "change", 
 					function () {
 						if(HMI.PossSheets.selectedIndex >= 0){
-							HMI.showSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
+							HMI.showOneSheet(HMI.getHostname(), HMI.PossServers.options[HMI.PossServers.selectedIndex].value, HMI.PossSheets.options[HMI.PossSheets.selectedIndex].value);
 						}
 					}
 				);
@@ -634,7 +634,7 @@ HMI.prototype = {
 				this.HMI_Constants.UrlParameterList = UrlParameterList;
 				
 				//spaces in objectname are encoded as %20 within OV
-				HMI.showSheet(Host, UrlParameterList.Server, encodeURI(UrlParameterList.Sheet));
+				HMI.showOneSheet(Host, UrlParameterList.Server, encodeURI(UrlParameterList.Sheet));
 				
 				HMI.ButShowServers.value = "Reload Serverlist";
 			}else if (	UrlParameterList.Server
@@ -1078,7 +1078,7 @@ HMI.prototype = {
 			if (SheetList.length === 1){
 				//selecting the option does not trigger the EventListener
 				HMI.PossSheets.selectedIndex = 1;
-				HMI.showSheet(Host, Server, SheetList[0]);
+				HMI.showOneSheet(Host, Server, SheetList[0]);
 			}
 			HMI.PossSheets.disabled = false;
 			if(HMI.PossServers.length > 1){
@@ -1098,8 +1098,8 @@ HMI.prototype = {
 	 * clears active display and loads a new sheet from server
 	 * @param {String} Sheet Name of sheet to load
 	 */
-	showSheet: function (Host, Server, Sheet) {
-		this.hmi_log_trace("HMI.prototype.showSheet - Start with Sheet: "+Sheet);
+	showOneSheet: function (Host, Server, Sheet) {
+		this.hmi_log_trace("HMI.prototype.showOneSheet - Start with Sheet: "+Sheet);
 		
 		//present a "deep link" to the state
 		this.updateDeepLink();
@@ -1160,7 +1160,7 @@ HMI.prototype = {
 			HMI.Throbber.style.display = "none";
 		}
 		
-		this.hmi_log_trace("HMI.prototype.showSheet - End");
+		this.hmi_log_trace("HMI.prototype.showOneSheet - End");
 	},
 	
 	/**
