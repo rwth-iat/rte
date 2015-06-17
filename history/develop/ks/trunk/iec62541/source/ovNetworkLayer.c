@@ -27,6 +27,32 @@
 
 static OV_INSTPTR_iec62541_ovNetworkLayer pOVNetworkLayer	=	NULL;
 
+void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection){
+	UA_ConnectionPTRPTR tempPtr = NULL;
+	if(pOVNetworkLayer){
+		pOVNetworkLayer->v_connsToDeleteCount++;
+		tempPtr = Ov_HeapRealloc((pOVNetworkLayer->v_connsToDelete), (pOVNetworkLayer->v_connsToDeleteCount * sizeof(UA_ConnectionPTR)));
+		if(!(tempPtr)){
+			ov_logfile_error("addConnToDelete: could not realloc delete list -- this item will be lost");
+			pOVNetworkLayer->v_connsToDeleteCount--;
+			return;
+		}
+		pOVNetworkLayer->v_connsToDelete = tempPtr;
+		pOVNetworkLayer->v_connsToDelete[pOVNetworkLayer->v_connsToDeleteCount - 1] = connection;
+	}
+}
+
+static void freeConnsToDelete(UA_Server *server, OV_INSTPTR_iec62541_ovNetworkLayer pNetworkLayer) {
+    OV_INT i;
+	for(i=0;i < pNetworkLayer->v_connsToDeleteCount; i++) {
+        UA_Connection_deleteMembers(pNetworkLayer->v_connsToDelete[i]);
+        Ov_HeapFree(pNetworkLayer->v_connsToDelete[i]);
+    }
+	pNetworkLayer->v_connsToDeleteCount = 0;
+	Ov_HeapFree(pNetworkLayer->v_connsToDelete);
+	pNetworkLayer->v_connsToDelete = NULL;
+}
+
 OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer(){
 	return pOVNetworkLayer;
 }
@@ -101,7 +127,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_ovNetworkLayer_constructor(
     		return OV_ERR_ALREADYEXISTS;
     	}
     }
-
     return OV_ERR_OK;
 }
 
@@ -134,7 +159,8 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_startup(
 
     /* do what */
     pOVNetworkLayer = pinst;
-
+    pinst->v_connsToDelete = NULL;
+    pinst->v_connsToDeleteCount = 0;
     return;
 }
 
@@ -210,7 +236,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		}
 
 	}
-
+	if(this->v_connsToDeleteCount > 0){
+		counter++;
+	}
 	newJobs = malloc(sizeof(UA_Job)*(counter+1));
 	if(!newJobs){
 		jobs = NULL;
@@ -232,11 +260,23 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 			counter++;
 		}
 	}
+
+	/* add the delayed job that frees the connections */
+	if(this->v_connsToDeleteCount > 0) {
+		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;
+		newJobs[counter].job.methodCall.data = this;
+		newJobs[counter].job.methodCall.method = (void (*)(UA_Server *server, void *data))freeConnsToDelete;
+		counter++;
+	}
+
 	if(counter == 0) {
 		free(newJobs);
 		*jobs = NULL;
-	} else
+	} else {
 		*jobs = newJobs;
+	}
+
+
 	return counter;
 }
 

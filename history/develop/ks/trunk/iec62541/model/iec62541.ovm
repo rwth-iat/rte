@@ -124,6 +124,11 @@ LIBRARY iec62541
 		discoveryUrlInternal	:	C_TYPE	<UA_String>;
 		localConfig		:	C_TYPE <UA_ConnectionConfig>
 			COMMENT		=	"Configuration of connection";
+		connsToDelete	:	C_TYPE <UA_ConnectionPTRPTR>
+			COMMENT		=	"List of Connections to delete";
+		connsToDeleteCount	:	INT
+			COMMENT		=	"Number of Connections to delete"
+			INITIALVALUE	=	0;
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;

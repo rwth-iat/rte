@@ -41,6 +41,7 @@ struct UA_NodeStore {
 */
 
 typedef UA_Connection* UA_ConnectionPTR;
+typedef UA_Connection** UA_ConnectionPTRPTR;
 typedef UA_Server* OV_PTR_UA_Server;
 
 #endif

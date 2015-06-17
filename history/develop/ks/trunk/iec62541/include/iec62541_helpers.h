@@ -62,5 +62,6 @@ UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pe
 UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port);
 
 OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer();
+void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection);
 
 #endif /* IEC62541_HELPERS_H_ */
