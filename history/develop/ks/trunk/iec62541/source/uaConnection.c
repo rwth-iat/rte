@@ -23,6 +23,7 @@
 #include <stddef.h>
 #include "iec62541.h"
 #include "libov/ov_macros.h"
+#include "libov/ov_result.h"
 #include "iec62541_helpers.h"
 #include "ksbase_helper.h"
 
@@ -74,6 +75,23 @@ static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf)
     UA_ByteString_deleteMembers(buf);
 }
 
+static OV_RESULT create_UA_Connection(OV_INSTPTR_iec62541_uaConnection pinst){
+	 pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
+	    if(!pinst->v_connection){
+	    	ov_logfile_error("%s: could not allocate memory for UA_Connection. Aborting", pinst->v_identifier);
+	    	return OV_ERR_HEAPOUTOFMEMORY;
+	    }
+	    UA_Connection_init(pinst->v_connection);
+	    pinst->v_connection->sockfd = 0;
+	    pinst->v_connection->handle = pinst;
+	    pinst->v_connection->localConf = getOvNetworkLayer()->v_localConfig;
+	    pinst->v_connection->write = ov_ua_connection_write;
+	    pinst->v_connection->close = ov_ua_connection_closeConnection;
+	    pinst->v_connection->getBuffer = GetMallocedBuffer;
+	    pinst->v_connection->releaseBuffer = ReleaseMallocedBuffer;
+	    pinst->v_connection->state = UA_CONNECTION_OPENING;
+	    return OV_ERR_OK;
+}
 
 OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_constructor(
 	OV_INSTPTR_ov_object 	pobj
@@ -90,22 +108,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_constructor(
          return result;
 
     /* do what */
-    pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
-    if(!pinst->v_connection){
-    	ov_logfile_error("%s: could not allocate memory for UA_Connection. Aborting");
-    	return OV_ERR_HEAPOUTOFMEMORY;
-    }
-    UA_Connection_init(pinst->v_connection);
-    pinst->v_connection->sockfd = 0;
-    pinst->v_connection->handle = pobj;
-    pinst->v_connection->localConf = getOvNetworkLayer()->v_localConfig;
-    pinst->v_connection->write = ov_ua_connection_write;
-    pinst->v_connection->close = ov_ua_connection_closeConnection;
-    pinst->v_connection->getBuffer = GetMallocedBuffer;
-    pinst->v_connection->releaseBuffer = ReleaseMallocedBuffer;
-    pinst->v_connection->state = UA_CONNECTION_OPENING;
-
-    return OV_ERR_OK;
+    pinst->v_connection = NULL;
+    return result;
 }
 
 OV_DLLFNCEXPORT void iec62541_uaConnection_destructor(
@@ -130,13 +134,17 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_startup(
     /*    
     *   local variables
     */
-//  OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+	OV_INSTPTR_iec62541_uaConnection pinst = Ov_StaticPtrCast(iec62541_uaConnection, pobj);
+	OV_RESULT result;
 
     /* do what the base class does first */
     ksbase_ClientHandler_startup(pobj);
 
     /* do what */
-
+    result = create_UA_Connection(pinst);
+    if(Ov_Fail(result)){
+    	ov_logfile_error("%s - startup: failed to create UA_Connection. Reason: %s", pinst->v_identifier, ov_result_getresulttext(result));
+    }
     return;
 }
 
@@ -168,6 +176,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
 	OV_INSTPTR_iec62541_uaConnection	pConnection	=	Ov_StaticPtrCast(iec62541_uaConnection, this);
 	UA_ByteString						temp;
 	UA_ByteString						*received	=	NULL;
+	OV_RESULT							result;
 
 	received = UA_ByteString_new();
 	if(!received){
@@ -176,6 +185,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
 	temp.length = dataReceived->length;
 	temp.data = dataReceived->data;
 	UA_ByteString_copy(&temp, received);
+	if(pConnection->v_connection == NULL){
+		result = create_UA_Connection(pConnection);
+		if(Ov_Fail(result)){
+			ov_logfile_error("%s - HandleRequest: failed to create UA_Connection. Reason: %s", pConnection->v_identifier, ov_result_getresulttext(result));
+			UA_ByteString_delete(received);
+			return result;
+		}
+	}
 	pConnection->v_buffer = UA_Connection_completeMessages(pConnection->v_connection, *received);
 	pConnection->v_workNext = TRUE;
 	ksbase_free_KSDATAPACKET(dataReceived);
