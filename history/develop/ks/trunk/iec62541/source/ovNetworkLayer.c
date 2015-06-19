@@ -24,6 +24,7 @@
 #include "iec62541.h"
 #include "libov/ov_macros.h"
 #include "ks_logfile.h"
+#include "ksbase_helper.h"
 
 static OV_INSTPTR_iec62541_ovNetworkLayer pOVNetworkLayer	=	NULL;
 
@@ -66,6 +67,7 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
 
     result = Ov_CreateIDedObject(iec62541_ovNetworkLayer, pNetworkLayer, Ov_StaticPtrCast(ov_domain, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaServer)), "ovNetworkLayer");
     if(Ov_Fail(result)){
+    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not Create ov_NetworkLayer instance.");
     	return nl;
     }
 
@@ -76,15 +78,21 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     } else {
     	UA_String_copyprintf("opc.tcp://%s:%d", &(pNetworkLayer->v_discoveryUrlInternal), "localhost", port);
     }
+    //UA_String_copy(&(pNetworkLayer->v_discoveryUrlInternal), &nl.discoveryUrl);
 
+    pNetworkLayer->v_messageBuffer = (UA_ByteString){.length = conf.maxMessageSize, .data = Ov_HeapMalloc(conf.maxMessageSize)};
+    if(!(pNetworkLayer->v_messageBuffer.data)){
+    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for message buffer.");
+    	return nl;
+    }
     pNetworkLayer->v_localConfig = conf;
     Ov_GetVTablePtr(iec62541_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
-    nl.nlHandle = pNetworkLayer;
-    nl.start = (UA_StatusCode (*)(void*, UA_Logger *logger))pVtblNetworkLayer->m_start;
-    nl.getJobs = (UA_Int32 (*)(void*, UA_Job**, UA_UInt16))pVtblNetworkLayer->m_getJobs;
-    nl.stop = (UA_Int32 (*)(void*, UA_Job**))pVtblNetworkLayer->m_stop;
-    nl.free = (void (*)(void*))pVtblNetworkLayer->m_delete;
-    nl.discoveryUrl = &(pNetworkLayer->v_discoveryUrlInternal);
+    nl.handle = pNetworkLayer;
+    nl.start = pVtblNetworkLayer->m_start;
+    nl.getJobs = pVtblNetworkLayer->m_getJobs;
+    nl.stop = pVtblNetworkLayer->m_stop;
+    nl.deleteMembers = pVtblNetworkLayer->m_delete;
+    nl.discoveryUrl = pNetworkLayer->v_discoveryUrlInternal;
     return nl;
 }
 
@@ -212,7 +220,7 @@ OV_DLLFNCEXPORT OV_ACCESS iec62541_ovNetworkLayer_getaccess(
 }
 
 OV_DLLFNCEXPORT UA_StatusCode iec62541_ovNetworkLayer_start(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl,
 	UA_Logger *logger
 ) {
 
@@ -220,7 +228,7 @@ OV_DLLFNCEXPORT UA_StatusCode iec62541_ovNetworkLayer_start(
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs,
 	UA_UInt16 timeout
 ) {
@@ -228,6 +236,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 	OV_INSTPTR_iec62541_uaConnection	pConnection	=	NULL;
 	OV_UINT								counter		=	0;
 	UA_Job		 						*newJobs	=	NULL;
+	OV_INSTPTR_iec62541_ovNetworkLayer	this		=	Ov_StaticPtrCast(iec62541_ovNetworkLayer, nl->handle);
 
 	/*	count work items	*/
 	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
@@ -244,13 +253,16 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		jobs = NULL;
 		return 0;
 	}
+
 	/*	iterate and collect work	*/
 	counter = 0;
 	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
 			if(pConnection->v_closeConn != TRUE){
 				newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
-				newJobs[counter].job.binaryMessage.message = pConnection->v_buffer;
+				UA_ByteString_newMembers(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
+				memcpy(newJobs[counter].job.binaryMessage.message.data, pConnection->v_buffer.data, pConnection->v_buffer.length);
+				ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
 				newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
 			} else {
 				newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
@@ -276,12 +288,11 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		*jobs = newJobs;
 	}
 
-
 	return counter;
 }
 
 OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs
 ) {
 
@@ -289,8 +300,9 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
 }
 
 OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_delete(
-	OV_INSTPTR_iec62541_ovNetworkLayer this
+	struct UA_ServerNetworkLayer *nl
 ) {
+	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);
 	Ov_DeleteObject(pOVNetworkLayer);
 	pOVNetworkLayer = NULL;
     return;

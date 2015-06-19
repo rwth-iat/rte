@@ -86,23 +86,23 @@ typedef UA_Int32 UA_FNC_TRANSLATEBROWSEPATHSTONODEIDS(
 );
 
 typedef UA_StatusCode UA_FNC_STARTNL(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl, 
 	UA_Logger *logger
 );
 
 typedef UA_Int32 UA_FNC_NLGETWORK(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl, 
 	UA_Job** jobs, 
 	UA_UInt16 timeout
 );
 
 typedef UA_Int32 UA_FNC_STOPNL(
-	OV_INSTPTR_iec62541_ovNetworkLayer this, 
+	struct UA_ServerNetworkLayer *nl, 
 	UA_Job** jobs
 );
 
 typedef void UA_FNC_DELETENL(
-	OV_INSTPTR_iec62541_ovNetworkLayer this
+	struct UA_ServerNetworkLayer *nl
 );
 
 	

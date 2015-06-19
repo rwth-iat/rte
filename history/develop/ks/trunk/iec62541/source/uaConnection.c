@@ -26,16 +26,17 @@
 #include "libov/ov_result.h"
 #include "iec62541_helpers.h"
 #include "ksbase_helper.h"
+#include "open62541.h"
 
 /*	callback functions	*/
 
-static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, const UA_ByteString *buf) {
+static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, UA_ByteString *buf, size_t buflen) {
     OV_INSTPTR_iec62541_uaConnection	pConnection = (OV_INSTPTR_iec62541_uaConnection)(connection->handle);
     OV_INSTPTR_ksbase_Channel			pChannel	=	Ov_GetParent(ksbase_AssocChannelClientHandler, pConnection);
     OV_VTBLPTR_ksbase_Channel			pVtblChannel	=	NULL;
     OV_RESULT	result;
 
-    result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), buf->data, buf->length);
+    result = ksbase_KSDATAPACKET_append(&(pChannel->v_outData), buf->data, buflen);
     if(Ov_Fail(result)){
     	return ov_resultToUaStatusCode(result);
     }
@@ -66,12 +67,15 @@ static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 /* Generic Buffer Management */
 /*****************************/
 
-static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, UA_ByteString *buf, size_t minSize) {
-    return UA_ByteString_newMembers(buf, minSize);
+static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
+	//*buf = Ov_StaticPtrCast(iec62541_ovNetworkLayer, connection->handle)->v_messageBuffer;
+	return UA_ByteString_newMembers(buf, connection->remoteConf.recvBufferSize);
+	//return UA_STATUSCODE_GOOD;
 }
 
 static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
-    UA_ByteString_deleteMembers(buf);
+	UA_ByteString_deleteMembers(buf);
+	return;
 }
 
 static OV_RESULT create_UA_Connection(OV_INSTPTR_iec62541_uaConnection pinst){
@@ -192,7 +196,11 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
 			return result;
 		}
 	}
-	pConnection->v_buffer = UA_Connection_completeMessages(pConnection->v_connection, *received);
+	temp = UA_Connection_completeMessages(pConnection->v_connection, *received);
+	if(temp.length > 0){
+		ksbase_KSDATAPACKET_append(&(pConnection->v_buffer), temp.data, temp.length);
+	}
+	UA_ByteString_deleteMembers(&temp);
 	pConnection->v_workNext = TRUE;
 	ksbase_free_KSDATAPACKET(dataReceived);
     return OV_ERR_OK;
