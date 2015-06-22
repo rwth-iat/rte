@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-06-08 13:02:11
+* Erstellt: 2015-06-22 15:04:29
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : pandix
@@ -2178,7 +2178,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_Sensor.then/Inst_ActuatorWithSensor :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Pandix/Actuator";
+      TemplateDefinition : INPUT STRING = "Pandix/ActuatorOrSensor";
       x : INPUT SINGLE = 100.000000;
       y : INPUT SINGLE = 200.000000;
       xOffset : INPUT SINGLE = 100.000000;
@@ -2890,7 +2890,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/internal/activeView/onload/PandixIterator.forEachChild/If_Actuator.then/Inst_Actuator :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Pandix/Actuator";
+      TemplateDefinition : INPUT STRING = "Pandix/ActuatorOrSensor";
       x : INPUT SINGLE = 500.000000;
       y : INPUT SINGLE = 100.000000;
       xOffset : INPUT SINGLE = 100.000000;
@@ -40287,7 +40287,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 100.000000;
@@ -40298,7 +40298,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -40307,7 +40307,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/Save_ConcatPos :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/Save_ConcatPos :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40322,7 +40322,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/Save_ConcatPos/getPath :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/Save_ConcatPos/getPath :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40339,7 +40339,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/Save_ConcatPos/getPoint :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/Save_ConcatPos/getPoint :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40356,7 +40356,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/Save_ConcatPos/getXPos :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/Save_ConcatPos/getXPos :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40373,7 +40373,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -40382,7 +40382,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40390,7 +40390,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
@@ -40400,7 +40400,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40417,7 +40417,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40434,7 +40434,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40442,7 +40442,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.then/Set_X_FromRef :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.then/Set_X_FromRef :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40458,7 +40458,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.then/Set_X_FromRef.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.then/Set_X_FromRef.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40475,7 +40475,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40483,7 +40483,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.else/Save_XPos :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.else/Save_XPos :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40499,7 +40499,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Xpos_notNull.else/Save_XPos.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Xpos_notNull.else/Save_XPos.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40516,7 +40516,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -40525,7 +40525,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40533,7 +40533,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
@@ -40543,7 +40543,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40560,7 +40560,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40577,7 +40577,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40585,7 +40585,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.then/Set_Y_FromRef :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.then/Set_Y_FromRef :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40601,7 +40601,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.then/Set_Y_FromRef.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.then/Set_Y_FromRef.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40618,7 +40618,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -40626,7 +40626,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.else/Save_YPos :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.else/Save_YPos :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40642,7 +40642,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/onload/If_Ypos_notNull.else/Save_YPos.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/onload/If_Ypos_notNull.else/Save_YPos.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40659,34 +40659,16 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/Header :
-    CLASS /acplt/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = -30.000000;
-      y : INPUT SINGLE = -20.000000;
-      width : INPUT SINGLE = 60.000000;
-      height : INPUT SINGLE = 40.000000;
-      strokeWidth : INPUT SINGLE = 2.000000;
-      visible : INPUT BOOL = FALSE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "white";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "aftermove";
-      zindex : INPUT UINT = 2;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_absX :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_absX :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40702,7 +40684,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_absX.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_absX.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40719,7 +40701,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_refX :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_refX :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40735,7 +40717,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_refX.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_refX.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40752,7 +40734,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_absY :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_absY :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40768,7 +40750,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_absY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_absY.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40785,7 +40767,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_refY :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_refY :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40801,7 +40783,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/aftermove/Set_refY.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/aftermove/Set_refY.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -40818,7 +40800,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/Ellipse :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/Ellipse :
     CLASS /acplt/cshmi/Ellipse;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
@@ -40831,12 +40813,12 @@
       fill : INPUT STRING = "white";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 3;
+      zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/Line :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/Line :
     CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
       x1 : INPUT SINGLE = -30.000000;
@@ -40849,16 +40831,97 @@
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelOben :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = -10.000000;
+      content : INPUT STRING = "";
+      fontSize : INPUT STRING = "10px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "middle";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 0;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelOben :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelOben/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelOben/onload/Set :
+    CLASS /acplt/cshmi/SetConcatValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelOben/onload/Set/Get_FirstPart :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "FunctionCode";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelOben/onload/Set/Get_SecondPart :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "SignalCode";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelUnten :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = -10.000000;
+      y : INPUT SINGLE = 10.000000;
       content : INPUT STRING = "";
       fontSize : INPUT STRING = "10px";
       fontStyle : INPUT STRING = "normal";
@@ -40877,7 +40940,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelOben/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelUnten/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -40886,88 +40949,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelOben/onload/Set :
-    CLASS /acplt/cshmi/SetConcatValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "content";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelOben/onload/Set/Get_FirstPart :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "PCEInitial";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelOben/onload/Set/Get_SecondPart :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/VAL.SoftwareSignalType";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelUnten :
-    CLASS /acplt/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 10.000000;
-      content : INPUT STRING = "";
-      fontSize : INPUT STRING = "10px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "middle";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 0;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 6;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelUnten/onload :
-    CLASS /acplt/cshmi/ClientEvent;
-    VARIABLE_VALUES
-      type : INPUT STRING = "onload";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelUnten/onload/set :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelUnten/onload/set :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -40983,7 +40965,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/LabelUnten/onload/set.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/LabelUnten/onload/set.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41000,11 +40982,28 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/ConnectionPointDown :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/ConnectionPointDown :
     CLASS /acplt/cshmi/Circle;
     VARIABLE_VALUES
       cx : INPUT SINGLE = 0.000000;
       cy : INPUT SINGLE = 20.000000;
+      r : INPUT SINGLE = 1.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
+      visible : INPUT BOOL = FALSE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "none";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 6;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/ConnectionPointUp :
+    CLASS /acplt/cshmi/Circle;
+    VARIABLE_VALUES
+      cx : INPUT SINGLE = 0.000000;
+      cy : INPUT SINGLE = -20.000000;
       r : INPUT SINGLE = 1.000000;
       strokeWidth : INPUT SINGLE = 1.000000;
       visible : INPUT BOOL = FALSE;
@@ -41017,24 +41016,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/ConnectionPointUp :
-    CLASS /acplt/cshmi/Circle;
-    VARIABLE_VALUES
-      cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = -20.000000;
-      r : INPUT SINGLE = 1.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = FALSE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 8;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor :
     CLASS /acplt/cshmi/Polyline;
     VARIABLE_VALUES
       points : INPUT STRING = "";
@@ -41044,12 +41026,12 @@
       fill : INPUT STRING = "none";
       opacity : INPUT SINGLE = 1.000000;
       rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 9;
+      zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 0.500000;
@@ -41058,7 +41040,76 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.if/compare :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.if/compare.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "ActType";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.if/compare.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "Actuator";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route :
     CLASS /acplt/cshmi/RoutePolyline;
     VARIABLE_VALUES
       offset : INPUT SINGLE = 5.000000;
@@ -41068,7 +41119,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.SourceBasename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.SourceBasename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41085,7 +41136,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.TargetBasename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.TargetBasename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41102,7 +41153,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.SourceVariablename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.SourceVariablename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41119,7 +41170,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.TargetVariablename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.TargetVariablename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41136,7 +41187,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.RoutingString :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.RoutingString :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41152,7 +41203,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route.RoutingString.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.then/Route.RoutingString.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41169,17 +41220,25 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor :
-    CLASS /acplt/cshmi/RoutePolyline;
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else :
+    CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
-      offset : INPUT SINGLE = 5.000000;
-      gridWidth : INPUT SINGLE = 5.000000;
-      zindex : INPUT UINT = 1;
+      zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.SourceBasename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor :
+    CLASS /acplt/cshmi/RoutePolyline;
+    VARIABLE_VALUES
+      offset : INPUT SINGLE = 5.000000;
+      gridWidth : INPUT SINGLE = 5.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.SourceBasename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41196,7 +41255,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.TargetBasename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.TargetBasename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41204,7 +41263,7 @@
       globalVar : INPUT STRING = "";
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "/P.measurementPoint";
+      TemplateFBReferenceVariable : INPUT STRING = "/P1.measurementPoint";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -41213,7 +41272,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.SourceVariablename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.SourceVariablename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41230,7 +41289,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.TargetVariablename :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.TargetVariablename :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41247,7 +41306,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.RoutingString :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.RoutingString :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41263,7 +41322,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/time/Route2Sensor.RoutingString.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/time/route_Actuator_or_Sensor.else/Route2Sensor.RoutingString.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41280,7 +41339,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -41289,7 +41348,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/onload/Set_title :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/onload/Set_title :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41305,7 +41364,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/onload/Set_title.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/onload/Set_title.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41322,7 +41381,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/onload/Set_Cursor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/onload/Set_Cursor :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41338,7 +41397,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/onload/Set_Cursor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/onload/Set_Cursor.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41355,7 +41414,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseover :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseover :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "mouseover";
@@ -41364,7 +41423,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseover/Set_StrokeColor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseover/Set_StrokeColor :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41380,7 +41439,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseover/Set_StrokeColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseover/Set_StrokeColor.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41397,7 +41456,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseover/Set_StrokeWidth :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseover/Set_StrokeWidth :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41413,7 +41472,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseover/Set_StrokeWidth.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseover/Set_StrokeWidth.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41430,7 +41489,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseout :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseout :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "mouseout";
@@ -41439,7 +41498,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseout/Reset_StrokeColor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseout/Reset_StrokeColor :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41455,7 +41514,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseout/Reset_StrokeColor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseout/Reset_StrokeColor.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41472,7 +41531,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseout/Reset_StrokeWidth :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseout/Reset_StrokeWidth :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41488,7 +41547,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/polyline/mouseout/Reset_StrokeWidth.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/lineToActorOrSensor/mouseout/Reset_StrokeWidth.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41505,16 +41564,16 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
-      zindex : INPUT UINT = 10;
+      zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -41523,7 +41582,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41531,7 +41590,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -41541,7 +41600,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41558,7 +41617,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41575,7 +41634,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41583,7 +41642,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.then/Inst_GeneralConfigOptions :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.then/Inst_GeneralConfigOptions :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
       TemplateDefinition : INPUT STRING = "Pandix/internal/GeneralConfigOptions";
@@ -41607,7 +41666,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_ConfigMode.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_ConfigMode.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41615,7 +41674,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -41624,7 +41683,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41632,7 +41691,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -41642,7 +41701,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41659,7 +41718,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41676,7 +41735,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41684,7 +41743,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -41693,7 +41752,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41701,7 +41760,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.if/Confirm :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.if/Confirm :
     CLASS /acplt/cshmi/Confirm;
     VARIABLE_VALUES
       ignoreError : INPUT BOOL = FALSE;
@@ -41710,7 +41769,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.if/Confirm.question :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.if/Confirm.question :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41727,7 +41786,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41735,7 +41794,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.then/Delete :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.then/Delete :
     CLASS /acplt/cshmi/DeleteObject;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41743,7 +41802,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.then/Delete.Path :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.then/Delete.Path :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41760,7 +41819,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.then/Set_RequestReload :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.then/Set_RequestReload :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41776,7 +41835,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.then/Set_RequestReload.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.then/Set_RequestReload.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41793,7 +41852,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.then/Confirm.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.then/Confirm.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41801,7 +41860,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_DeleteMode.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_DeleteMode.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41809,7 +41868,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -41818,7 +41877,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41826,7 +41885,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -41836,7 +41895,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41853,7 +41912,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41870,7 +41929,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare_Sensor :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare_Sensor :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -41880,7 +41939,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare_Sensor.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare_Sensor.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41897,7 +41956,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.if/compare_Sensor.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.if/compare_Sensor.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41914,7 +41973,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -41922,7 +41981,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/Set_AssocType :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/Set_AssocType :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -41938,7 +41997,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/Set_AssocType.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/Set_AssocType.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41955,7 +42014,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/Set_LinkPartnerB :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/Set_LinkPartnerB :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41970,7 +42029,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/Set_LinkPartnerB/Get_Fullname :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/Set_LinkPartnerB/Get_Fullname :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -41987,7 +42046,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/Set_LinkPartnerB/Value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/Set_LinkPartnerB/Value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42004,7 +42063,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/GotLinkPartner :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/GotLinkPartner :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -42020,7 +42079,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.then/GotLinkPartner.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.then/GotLinkPartner.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42037,7 +42096,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/click/If_LinkModeSensor.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/click/If_LinkModeSensor.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42045,16 +42104,16 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "globalvarchanged";
-      zindex : INPUT UINT = 11;
+      zindex : INPUT UINT = 10;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -42063,7 +42122,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42071,7 +42130,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.if/If_Rebuild_True :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.if/If_Rebuild_True :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -42081,7 +42140,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42098,7 +42157,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.if/If_Rebuild_True.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42115,7 +42174,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42123,7 +42182,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.then/Reset :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.then/Reset :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -42139,7 +42198,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.then/Reset.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.then/Reset.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42156,7 +42215,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.then/Rebuild :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.then/Rebuild :
     CLASS /acplt/cshmi/RebuildObject;
     VARIABLE_VALUES
       zindex : INPUT UINT = 1;
@@ -42164,7 +42223,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/If_Rebuild.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/If_Rebuild.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42172,7 +42231,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -42181,7 +42240,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42189,7 +42248,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/GotPartner :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/GotPartner :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -42199,7 +42258,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/GotPartner.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/GotPartner.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42216,7 +42275,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/GotPartner.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/GotPartner.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42233,7 +42292,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/LinkPartnerA :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/LinkPartnerA :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -42243,7 +42302,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/LinkPartnerA.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/LinkPartnerA.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42260,7 +42319,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/LinkPartnerA.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/LinkPartnerA.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42277,7 +42336,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/ModeVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/ModeVar :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -42287,7 +42346,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/ModeVar.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/ModeVar.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42304,7 +42363,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.if/ModeVar.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.if/ModeVar.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42321,7 +42380,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -42329,7 +42388,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/Reset :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/Reset :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -42345,7 +42404,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/Reset.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/Reset.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42362,7 +42421,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/ChangeModeVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/ChangeModeVar :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -42378,7 +42437,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/ChangeModeVar.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/ChangeModeVar.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42395,7 +42454,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/SetPathToAct :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/SetPathToAct :
     CLASS /acplt/cshmi/SetConcatValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42410,7 +42469,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/SetPathToAct/ActuatorName :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/SetPathToAct/ActuatorName :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42427,7 +42486,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/SetPathToAct/actuationInputPoint :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/SetPathToAct/actuationInputPoint :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42444,7 +42503,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/LinkObject :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/LinkObject :
     CLASS /acplt/cshmi/LinkObjects;
     VARIABLE_VALUES
       zindex : INPUT UINT = 3;
@@ -42452,7 +42511,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/LinkObject.ObjectA :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/LinkObject.ObjectA :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42469,7 +42528,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/LinkObject.ObjectB :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/LinkObject.ObjectB :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42486,7 +42545,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/LinkObject.Association :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/LinkObject.Association :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -42503,7 +42562,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.then/Rebuild :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.then/Rebuild :
     CLASS /acplt/cshmi/RebuildObject;
     VARIABLE_VALUES
       zindex : INPUT UINT = 4;
@@ -42511,7 +42570,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Actuator/globalvarchanged/GotLinkPartner.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Pandix/ActuatorOrSensor/globalvarchanged/GotLinkPartner.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -49612,56 +49671,13 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Sensor :
-    CLASS /acplt/cshmi/TemplateDefinition;
-    VARIABLE_VALUES
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 100.000000;
-      comment : INPUT STRING = "";
-      zindex : INPUT UINT = 21;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Sensor/Polyline :
-    CLASS /acplt/cshmi/Polyline;
-    VARIABLE_VALUES
-      points : INPUT STRING = "-10,0 10,0 0,0 0,20";
-      strokeWidth : INPUT SINGLE = 2.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Pandix/Sensor/ConnectionPointUp :
-    CLASS /acplt/cshmi/Circle;
-    VARIABLE_VALUES
-      cx : INPUT SINGLE = 0.000000;
-      cy : INPUT SINGLE = 0.000000;
-      r : INPUT SINGLE = 1.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = FALSE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "none";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
  INSTANCE  /TechUnits/cshmi/Templates/Pandix/FlowpathAnalyser :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 500.000000;
       height : INPUT SINGLE = 500.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 22;
+      zindex : INPUT UINT = 21;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -50633,7 +50649,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 23;
+      zindex : INPUT UINT = 22;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -51322,7 +51338,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 24;
+      zindex : INPUT UINT = 23;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -51856,7 +51872,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 25;
+      zindex : INPUT UINT = 24;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -53614,7 +53630,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 26;
+      zindex : INPUT UINT = 25;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -55372,7 +55388,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 27;
+      zindex : INPUT UINT = 26;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
@@ -57044,7 +57060,7 @@
       width : INPUT SINGLE = 1.000000;
       height : INPUT SINGLE = 1.000000;
       comment : INPUT STRING = "";
-      zindex : INPUT UINT = 28;
+      zindex : INPUT UINT = 27;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
