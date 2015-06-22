@@ -92,6 +92,8 @@ LIBRARY cshmi
 			startup						:	C_FUNCTION	<OV_FNC_STARTUP>;
 			shutdown					:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
 			destructor					:	C_FUNCTION	<OV_FNC_DESTRUCTOR>;
+			/* INFORMATION: if your ov server has no rename, you could comment the following line. Renaming/moving an object can corrupt the turbo. Creating or deleting one arbitrary object will clear the cache */
+			rename						:	C_FUNCTION	<OV_FNC_RENAME>;
 			resetCache					:	C_FUNCTION	<CSHMI_FNC_RESETCACHE>;
 			getConfigAsJSON				:	C_FUNCTION	<CSHMI_FNC_GETCONFIGASJSON>;
 		END_OPERATIONS;

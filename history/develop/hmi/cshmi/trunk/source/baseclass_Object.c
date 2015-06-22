@@ -264,6 +264,26 @@ OV_DLLFNCEXPORT void cshmi_Object_startup(
 	return;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT cshmi_Object_rename(
+		OV_INSTPTR_ov_object	pobj,
+		OV_STRING				newid,
+		OV_INSTPTR_ov_domain	pnewparent
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
+
+	pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
+	if(pDownloadApplication != NULL){
+		//throw away childlist from turbo
+		CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
+	}
+
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT void cshmi_Object_shutdown(
 		OV_INSTPTR_ov_object 	pobj
 ) {
