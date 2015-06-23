@@ -28,6 +28,19 @@
 #include "ksbase_helper.h"
 #include "open62541.h"
 
+/*****************************/
+/* Generic Buffer Management */
+/*****************************/
+
+static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
+	*buf = getOvNetworkLayer()->v_sendBuffer;
+	return UA_STATUSCODE_GOOD;
+}
+
+static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
+	return;
+}
+
 /*	callback functions	*/
 
 static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, UA_ByteString *buf, size_t buflen) {
@@ -40,6 +53,7 @@ static UA_StatusCode ov_ua_connection_write(UA_Connection *connection, UA_ByteSt
     if(Ov_Fail(result)){
     	return ov_resultToUaStatusCode(result);
     }
+    ReleaseMallocedBuffer(connection, buf);
     Ov_GetVTablePtr(ksbase_Channel, pVtblChannel, pChannel);
     if(!pVtblChannel){
     	return UA_STATUSCODE_BADNOTFOUND;
@@ -60,23 +74,12 @@ static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 			Ov_DeleteObject(pChannel);
 		}
 	}
+	/*	add to delete list	*/
+	iec62541_ovNetworklayer_addConnToDelete(connection);
 	connection = NULL;
 }
 
-/*****************************/
-/* Generic Buffer Management */
-/*****************************/
 
-static UA_StatusCode GetMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
-	//*buf = Ov_StaticPtrCast(iec62541_ovNetworkLayer, connection->handle)->v_messageBuffer;
-	return UA_ByteString_newMembers(buf, connection->remoteConf.recvBufferSize);
-	//return UA_STATUSCODE_GOOD;
-}
-
-static void ReleaseMallocedBuffer(UA_Connection *connection, UA_ByteString *buf) {
-	UA_ByteString_deleteMembers(buf);
-	return;
-}
 
 static OV_RESULT create_UA_Connection(OV_INSTPTR_iec62541_uaConnection pinst){
 	 pinst->v_connection = Ov_HeapMalloc(sizeof(UA_Connection));
@@ -161,6 +164,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_shutdown(
 
     /* do what */
     pinst->v_connection->handle = NULL;
+    iec62541_ovNetworklayer_addConnToDelete(pinst->v_connection);
     /* set the object's state to "shut down" */
     ksbase_ClientHandler_shutdown(pobj);
 

@@ -81,24 +81,25 @@ static UA_ByteString loadCertificate(void) {
 		}
 	}
 	ov_memstack_unlock();
-	fp=fopen(tempstring, "rb");
-	ov_string_setvalue(&tempstring, NULL);
-	if(!fp) {
-        errno = 0; // we read errno also from the tcp layer...
-        return certificate;
-    }
+	if(tempstring){
+		fp=fopen(tempstring, "rb");
+		ov_string_setvalue(&tempstring, NULL);
+		if(!fp) {
+			errno = 0; // we read errno also from the tcp layer...
+			return certificate;
+		}
 
-    fseek(fp, 0, SEEK_END);
-    certificate.length = ftell(fp);
-    certificate.data = malloc(certificate.length*sizeof(UA_Byte));
-	if(!certificate.data)
-		return certificate;
+		fseek(fp, 0, SEEK_END);
+		certificate.length = ftell(fp);
+		certificate.data = malloc(certificate.length*sizeof(UA_Byte));
+		if(!certificate.data)
+			return certificate;
 
-    fseek(fp, 0, SEEK_SET);
-    if(fread(certificate.data, sizeof(UA_Byte), certificate.length, fp) < (size_t)certificate.length)
-        UA_ByteString_deleteMembers(&certificate); // error reading the cert
-    fclose(fp);
-
+		fseek(fp, 0, SEEK_SET);
+		if(fread(certificate.data, sizeof(UA_Byte), certificate.length, fp) < (size_t)certificate.length)
+			UA_ByteString_deleteMembers(&certificate); // error reading the cert
+		fclose(fp);
+	}
     return certificate;
 }
 

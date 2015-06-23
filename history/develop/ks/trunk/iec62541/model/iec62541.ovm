@@ -91,7 +91,7 @@ LIBRARY iec62541
 				COMMENT			=	"If TRUE this conenction needs to be closed"
 				INITIALVALUE	=	FALSE;	
 			buffer				:	C_TYPE	<KS_DATAPACKET>
-				COMMENT			=	"Buffer to exchange date with the open62541-stack";	
+				COMMENT			=	"Buffer to exchange date with the open62541-stack";
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
@@ -129,8 +129,10 @@ LIBRARY iec62541
 		connsToDeleteCount	:	INT
 			COMMENT		=	"Number of Connections to delete"
 			INITIALVALUE	=	0;
-		messageBuffer	:	C_TYPE	<UA_ByteString>
-			COMMENT		=	"Receive buffer for messages (central buffer minimizes allocations)";
+	/*	messageBuffer	:	C_TYPE	<UA_ByteString>
+			COMMENT		=	"Receive buffer for messages (central buffer minimizes allocations)";*/
+		sendBuffer		:	C_TYPE	<UA_ByteString>
+			COMMENT			=	"Buffer for messages to send. Static.";	
 		END_VARIABLES;
 		OPERATIONS
 			constructor			:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;

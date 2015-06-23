@@ -46,7 +46,7 @@ void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection){
 static void freeConnsToDelete(UA_Server *server, OV_INSTPTR_iec62541_ovNetworkLayer pNetworkLayer) {
     OV_INT i;
 	for(i=0;i < pNetworkLayer->v_connsToDeleteCount; i++) {
-        UA_Connection_deleteMembers(pNetworkLayer->v_connsToDelete[i]);
+		UA_Connection_deleteMembers(pNetworkLayer->v_connsToDelete[i]);
         Ov_HeapFree(pNetworkLayer->v_connsToDelete[i]);
     }
 	pNetworkLayer->v_connsToDeleteCount = 0;
@@ -80,9 +80,14 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     }
     //UA_String_copy(&(pNetworkLayer->v_discoveryUrlInternal), &nl.discoveryUrl);
 
-    pNetworkLayer->v_messageBuffer = (UA_ByteString){.length = conf.maxMessageSize, .data = Ov_HeapMalloc(conf.maxMessageSize)};
-    if(!(pNetworkLayer->v_messageBuffer.data)){
-    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for message buffer.");
+//    pNetworkLayer->v_messageBuffer = (UA_ByteString){.length = conf.maxMessageSize, .data = Ov_HeapMalloc(conf.maxMessageSize)};
+//    if(!(pNetworkLayer->v_messageBuffer.data)){
+//    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for message buffer.");
+//    	return nl;
+//    }
+    UA_ByteString_newMembers(&(pNetworkLayer->v_sendBuffer), conf.maxMessageSize);
+    if(!pNetworkLayer->v_sendBuffer.data){
+    	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not allocate memory for send buffer.");
     	return nl;
     }
     pNetworkLayer->v_localConfig = conf;
@@ -178,11 +183,11 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
     /*    
     *   local variables
     */
-//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
 
     /* do what */
     pOVNetworkLayer = NULL;
-   // UA_String_delete(&(pOVNetworkLayer->v_discoveryUrlInternal));
+    // UA_String_delete(&(pOVNetworkLayer->v_discoveryUrlInternal));
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
@@ -302,7 +307,8 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
 OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_delete(
 	struct UA_ServerNetworkLayer *nl
 ) {
-	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);
+//	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);
+	UA_ByteString_deleteMembers(&(pOVNetworkLayer->v_sendBuffer));
 	Ov_DeleteObject(pOVNetworkLayer);
 	pOVNetworkLayer = NULL;
     return;
