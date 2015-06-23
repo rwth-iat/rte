@@ -136,7 +136,7 @@ OV_DLLFNCEXPORT void ov_logfile_alert(
 /**
 *	Get messages from the logfile
 *	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
-*	is able to scan from oldest to newst messages or vice versa (by switching to/from times)
+*	is able to scan from oldest to newest messages or vice versa (by switching to/from times)
 *	@param from
 *	@param to
 *	@param max_no_messages

@@ -282,6 +282,7 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 	ov_time_gettime(&timebuf[bufidx]);
 	bufidx++;
 	if(bufidx == OV_LOGFILE_MAXMSGS) {
+		//we are wrapped around and have to start the index again
 		bufidx = 0;
 	}
 #if OV_SYSTEM_NT
@@ -319,11 +320,11 @@ OV_DLLFNCEXPORT void ov_logfile_print(
 	*/
 	if(logfile) {
 		fprintf(logfile, "%s\n", output);
-	/*
-	 *	added to handle output for eclipse consoles on windows and file output on linux
-	 * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
-	 *	we need to see whether this has performance issues
-	*/
+		/*
+		 *	added to handle output for eclipse consoles on windows and file output on linux
+		 * 	workaround for the bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173732
+		 *	we need to see whether this has performance issues
+		*/
 		fflush(logfile);
 	}
 #endif
@@ -465,7 +466,7 @@ OV_DLLFNCEXPORT void ov_logfile_alert(
 /**
 *	Get messages from the logfile
 *	Note: you must call ov_memstack_lock() and ov_memstack_unlock() outside
-*	is able to scan from oldest to newst messages or vice versa (by switching to/from times)
+*	is able to scan from oldest to newest messages or vice versa (by switching to/from times)
 *	@param from
 *	@param to
 *	@param max_no_messages
@@ -488,6 +489,19 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 	OV_BOOL		mark[OV_LOGFILE_MAXMSGS];
 	OV_INT		step;
 	OV_UINT		start;
+
+	if(bufidx == OV_LOGFILE_MAXMSGS) {
+		//no logfile used till now
+		*no_messages = 0;
+		if(messages) {
+			*messages = NULL;
+		}
+		if(times) {
+			*times = NULL;
+		}
+		return;
+	}
+
 	/*
 	*	determine whether to scan from oldest to newst messages
 	*	or vice versa
@@ -587,8 +601,8 @@ OV_DLLFNCEXPORT void ov_logfile_free() {
 		//no logfile used till now
 		return;
 	}
-	//bufidx is the next free entry
-	for(runindex = 0;runindex < bufidx;runindex++){
+	//free all pointers. Will be initialized on first usage in ov_logfile_print, so setting to NULL not needed.
+	for(runindex = 0;runindex < OV_LOGFILE_MAXMSGS;runindex++){
 		Ov_HeapFree(msgbuf[runindex]);
 	}
 	bufidx = OV_LOGFILE_MAXMSGS;
