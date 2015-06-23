@@ -471,6 +471,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			//check if data arrived
 			if((err > 0) && FD_ISSET(socket, &read_flags))
 			{
+				KS_logfile_debug(("%s: typemethod: realloc %u bytes", this->v_identifier, thisCh->v_inData.length + TCPbind_CHUNKSIZE));
 				//Data arrived
 				//reallocate memory for receiving data. Note the temp-pointer: if realloc fails, the original pointer is NOT freed
 				tempdata = ov_realloc(thisCh->v_inData.data, thisCh->v_inData.length + TCPbind_CHUNKSIZE);
@@ -514,8 +515,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-						{
-							ksbase_free_KSDATAPACKET(&thisCh->v_inData);
+						{	/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
+							Ov_HeapFree(thisCh->v_inData.data);
 						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
@@ -544,8 +545,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-						{
-							ksbase_free_KSDATAPACKET(&thisCh->v_inData);
+						{/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
+							Ov_HeapFree(thisCh->v_inData.data);
 						}
 						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
 						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
