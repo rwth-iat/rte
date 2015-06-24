@@ -20,7 +20,7 @@
       TemplateDefinition : INPUT STRING = "GraphPlotter/DynamicTxtIn";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[9] : INPUT STRING = {"legend1:data" , "legend2:data" , "legend2:data2" , "figureHeight:500" , "zoomHeight:200" , "enableOverview:TRUE" , "zoomWidth:500", "updateTime:1000" , "pointsNum:500"};
+      ConfigValues[9] : INPUT STRING = {"legend1:data" , "legend2:data" , "legend2:data2" , "figureHeight:500" , "zoomHeight:200" , "zoomWidth:500" , "enableOverview:TRUE" , "updateTime:1000" , "pointsNum:500"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
