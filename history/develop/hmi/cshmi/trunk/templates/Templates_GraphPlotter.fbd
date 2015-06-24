@@ -438,7 +438,7 @@ return xmlDoc;
 							}
 					}
 					if(data[0].data.length> maxnumpoints){
-						for (var i = 0; i < splitallData.length-1; i++) {
+						for (var i = 0; i < data[i].data.length; i++) {
 							if ( (!isNaN(data[i].data[data[i].data.length-1][0])) && (!isNaN(data[i].data[data[i].data.length-1][1])) ) {
 								data[i].data = data[i].data.splice(1);
 							}
@@ -2187,7 +2187,7 @@ return xmlDoc;
 							}
 					}
 					if(data[0].data.length> maxnumpoints){
-						for (var i = 0; i < splitallData.length-1; i++) {
+						for (var i = 0; i < data[i].data.length; i++) {
 							if ( (!isNaN(data[i].data[data[i].data.length-1][0])) && (!isNaN(data[i].data[data[i].data.length-1][1])) ) {
 								data[i].data = data[i].data.splice(1);
 							}
@@ -3933,7 +3933,7 @@ return xmlDoc;
 				}
 		}
 		if(data[0].data.length> maxnumpoints){
-			for (var i = 0; i < splitallData.length-1; i++) {
+			for (var i = 0; i < data[i].data.length; i++) {
 				if (!isNaN(data[i].data[0][1])) {
 					data[i].data = data[i].data.splice(1);
 				}
@@ -5603,7 +5603,7 @@ $(document).ready(function () {
 				}
 		}
 		if(data[0].data.length> maxnumpoints){
-			for (var i = 0; i < splitallData.length-1; i++) {
+			for (var i = 0; i < data[i].data.length; i++) {
 				if (!isNaN(data[i].data[0][1])) {
 					data[i].data = data[i].data.splice(1);
 				}
