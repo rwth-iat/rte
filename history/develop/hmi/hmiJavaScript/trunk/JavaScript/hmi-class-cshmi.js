@@ -418,10 +418,11 @@ cshmi.prototype = {
 			return true;
 		}
 		
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		var requestList = new Object();
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
-			requestList[ObjectPath] = new Object();
+		//get the information if the config of the object is known through the turbo
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
+		}else{
 			requestList[ObjectPath]["cyctime"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
@@ -432,10 +433,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
-
-		}else{
-			//the object was asked this session, so reuse the config to save communication requests
-			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}
 		var cyctime = requestList[ObjectPath]["cyctime"];
 		
@@ -933,8 +930,11 @@ cshmi.prototype = {
 	_getValue: function(VisualObject, ObjectPath, callerObserver, CyctimeObject, ChildrenIterator, forceNetworkrequest){
 		var ParameterName = "";
 		var ParameterValue = "";
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+		//get the information if the config of the object is known through the turbo
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
+			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
+		}else{
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ksVar"] = null;
@@ -971,10 +971,6 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
-			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
 		}
 		
 		var preventNetworkRequest = false;
@@ -1635,8 +1631,14 @@ cshmi.prototype = {
 		var ParameterName = "";
 		var ParameterValue = "";
 		var TranslationSourcePath = "";
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+		//get the information if the config of the object is known through the turbo
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
+			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
+			if (GetType === "static"){
+				TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
+			}
+		}else{
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ksVar"] = null;
@@ -1679,19 +1681,12 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath].ParameterName = ParameterName;
 			this.ResourceList.Actions[ObjectPath].ParameterValue = ParameterValue;
 			this.ResourceList.Actions[ObjectPath].translationSource = TranslationSourcePath;
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			ParameterName = this.ResourceList.Actions[ObjectPath].ParameterName;
-			ParameterValue = this.ResourceList.Actions[ObjectPath].ParameterValue;
-			if (GetType === "static"){
-				TranslationSourcePath = this.ResourceList.Actions[ObjectPath].translationSource;
-			}
 		}
 		//translate if needed
 		if (TranslationSourcePath !== ""){
 			var TranslationMapping = new Object();
 			if (this.ResourceList.Actions && this.ResourceList.Actions[TranslationSourcePath] !== undefined){
-				//the object is asked this session, so reuse the config to save communication requests
+				//get the information if the config of the object is known through the turbo
 				if(this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMappingRaw){
 					var TranslationListArray = this.ResourceList.Actions[TranslationSourcePath].Parameters.TranslationMappingRaw;
 					var KeyValueEntry = null;
@@ -1796,7 +1791,7 @@ cshmi.prototype = {
 			if (ParameterValue === "strokeWidth"){
 				VisualObject.setAttribute("stroke-width", NewValue);
 			}else if (ParameterValue === "content"){
-				this._setSvgText(VisualObject, NewValue, VisualObject.getAttribute("trimToLength"));
+				this._setSvgText(VisualObject, NewValue, VisualObject.getAttribute("data-trimToLength"));
 			}else if (ParameterValue === "trimToLength"){
 				this._setSvgText(VisualObject, null, NewValue);
 			}else if (ParameterValue === "title"){
@@ -2502,8 +2497,10 @@ cshmi.prototype = {
 	 */
 	_interpreteIfThenElse: function(VisualObject, ObjectPath, CyctimeObject, ChildrenIterator){
 		var anyCond;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+		//get the information if the config of the object is known through the turbo
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond;
+		}else{
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["anycond"] = null;
@@ -2521,9 +2518,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond = anyCond;
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			anyCond = this.ResourceList.Actions[ObjectPath].IfThenElseParameterAnycond;
 		}
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath+".if", this);
 		
@@ -2905,8 +2899,10 @@ cshmi.prototype = {
 		}
 		
 		var ChildrenType;
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
-		if (!(this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined)){
+		//get the information if the config of the object is known through the turbo
+		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
+			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
+		}else{
 			var requestList = new Object();
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ChildrenType"] = null;
@@ -2924,9 +2920,6 @@ cshmi.prototype = {
 			//we have asked the object successful, so remember the result
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType = ChildrenType;
-		}else{
-			//the object is asked this session, so reuse the config to save communication requests
-			ChildrenType = this.ResourceList.Actions[ObjectPath].ChildrenIteratorParameterChildrenType;
 		}
 		if (ChildrenType === ""){
 			HMI.hmi_log_info_onwebsite("ChildrenIterator "+ObjectPath+" is not configured.");
@@ -3115,7 +3108,6 @@ cshmi.prototype = {
 			}
 		}
 		if(reuseConnection == true){
-			//the object is asked this session, so reuse the config to save communication requests
 			SourceConnectionPoint = VisualObject.ResourceList.RoutePolyline.SourceConnectionPoint;
 			SourceConnectionPointdirection = VisualObject.ResourceList.RoutePolyline.SourceConnectionPointdirection;
 			TargetConnectionPoint = VisualObject.ResourceList.RoutePolyline.TargetConnectionPoint;
@@ -3126,7 +3118,6 @@ cshmi.prototype = {
 			var requestList = new Object();
 			//This caching is model config specific, not instance specific
 			if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
-				//the object is asked this session, so reuse the config to save communication requests
 				requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 			}else{
 				requestList[ObjectPath] = new Object();
@@ -3364,7 +3355,7 @@ cshmi.prototype = {
 			if (SourceBase === null){
 				//skip
 			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined){
-				//there is already an incomming connection for this Object
+				//there is already an incoming connection for this Object
 				SourceBase.ResourceList.ConnectionFromCount += 1;
 				OffsetSource = SourceBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{
@@ -3378,7 +3369,7 @@ cshmi.prototype = {
 			if (TargetBase === null){
 				//skip
 			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined){
-				//there is already an incomming connection for this Object
+				//there is already an incoming connection for this Object
 				TargetBase.ResourceList.ConnectionFromCount += 1;
 				OffsetTarget = TargetBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
 			}else{
@@ -4294,9 +4285,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgGroup: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, ChildrenIterator, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
@@ -4355,9 +4345,8 @@ cshmi.prototype = {
 			
 			//we have an template to fill
 			var requestListTemplate = new Object();
-			//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+			//get the information if the config of the object is known through the turbo
 			if (this.ResourceList.Elements && this.ResourceList.Elements[PathOfTemplateDefinition] !== undefined){
-				//the object is asked this session, so reuse the config to save communication requests
 				requestListTemplate[PathOfTemplateDefinition] = this.ResourceList.Elements[PathOfTemplateDefinition].Parameters;
 			}else{
 				requestListTemplate[PathOfTemplateDefinition] = new Object();
@@ -4747,9 +4736,8 @@ cshmi.prototype = {
 	 */
 	_buildBlackbox: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5176,9 +5164,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgLine: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5249,9 +5236,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgPolyline: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5316,9 +5302,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgPolygon: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5383,9 +5368,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgPath: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5493,9 +5477,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgText: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5581,9 +5564,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgCircle: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5649,9 +5631,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgEllipse: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5725,9 +5706,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgRect: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
@@ -5793,9 +5773,8 @@ cshmi.prototype = {
 	 */
 	_buildSvgImage: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//if the Object was scanned earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
+		//get the information if the config of the object is known through the turbo
 		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			//the object is asked this session, so reuse the config to save communication requests
 			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
