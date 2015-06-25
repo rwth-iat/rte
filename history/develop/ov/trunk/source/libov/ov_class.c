@@ -490,13 +490,15 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	if(!ppobj || !pclass || !pparent || !identifier) {
 		return OV_ERR_BADPARAM;
 	}
-	if(!Ov_DynamicPtrCast(ov_class, pclass)) {
+	//protect us for wrong objects from static casts. Ov_CanCastTo checks the real inheritance associations.
+	if(!Ov_CanCastTo(ov_class, pclass)) {
 		return OV_ERR_BADFACTORY;
 	}
 	if(!(pclass->v_classprops & OV_CP_INSTANTIABLE)) {
 		return OV_ERR_BADFACTORY;
 	}
-	if(!Ov_DynamicPtrCast(ov_domain, pparent)) {
+	//protect us for wrong objects from static casts. Ov_CanCastTo checks the real inheritance associations.
+	if(!Ov_CanCastTo(ov_domain, pparent)) {
 		return OV_ERR_BADPARAM;
 	}
 	if(!ov_object_identifierok(identifier)) {
@@ -541,7 +543,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		size = pclass->v_size;
 	}
 	
-	pobj = (OV_INSTPTR_ov_object)ov_database_malloc(size);
+	pobj = (OV_INSTPTR_ov_object)Ov_DbMalloc(size);
 	if(!pobj) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
@@ -554,7 +556,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	result = ov_class_createobject_preinit(pclass, pobj, identifier, &time, NULL);
 	if(Ov_Fail(result)) {
 		ov_class_deleteobject_cleanupinst(pobj);
-		ov_database_free(pobj);
+		Ov_DbFree(pobj);
 		return result;
 	}
 	/*
@@ -563,7 +565,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 	result = Ov_LinkRelativePlaced(ov_containment, pparent, pobj, hint, prelobj);
 	if(Ov_Fail(result)) {
 		ov_class_deleteobject_cleanupinst(pobj);
-		ov_database_free(pobj);
+		Ov_DbFree(pobj);
 		return result;
 	}
 	/*
@@ -575,7 +577,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		*	construction failed, delete object
 		*/
 		ov_class_deleteobject_cleanupinst(pobj);
-		ov_database_free(pobj);
+		Ov_DbFree(pobj);
 		return result;
 	}
 	/*
@@ -586,7 +588,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		if(Ov_Fail(result) && (!ov_activitylock)) {
 			pvtable->m_destructor(pobj);
 			ov_class_deleteobject_cleanupinst(pobj);
-			ov_database_free(pobj);
+			Ov_DbFree(pobj);
 			return result;
 		}
 	}
@@ -604,7 +606,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_createobject(
 		*/
 		pvtable->m_destructor(pobj);
 		ov_class_deleteobject_cleanupinst(pobj);
-		ov_database_free(pobj);
+		Ov_DbFree(pobj);
 		return result;
 	}
 	/*
@@ -710,7 +712,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_deleteobject(
 	/*
 	*	free the memory used for the object
 	*/
-	ov_database_free(pobj);
+	Ov_DbFree(pobj);
 	/*
 	*	finished
 	*/
@@ -850,7 +852,7 @@ OV_RESULT ov_class_createobject_preinit(
 	/*
 	*	allocate database memory for the association table and clear it
 	*/
-	pobj->v_linktable = (OV_ATBLPTR)ov_database_malloc(pclass->v_linktablesize);
+	pobj->v_linktable = (OV_ATBLPTR)Ov_DbMalloc(pclass->v_linktablesize);
 	if(!pobj->v_linktable) {
 		return OV_ERR_DBOUTOFMEMORY;
 	}
@@ -952,7 +954,7 @@ void ov_class_deleteobject_cleanupinst(
 	/*
 	*	local variables
 	*/
-	OV_INSTPTR_ov_class		pclass = Ov_GetParent(ov_instantiation, pobj);
+	OV_INSTPTR_ov_class		pclass = Ov_GetClassPtr(pobj);
 	OV_INSTPTR_ov_domain		pparent = Ov_GetParent(ov_containment, pobj);
 	OV_INSTPTR_ov_object		pobj2 = NULL;
 	OV_INSTPTR_ov_association 	passoc;
@@ -1045,7 +1047,7 @@ void ov_class_deleteobject_cleanupinst(
 								Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
 							} else {
 								if(((OV_GENERIC_VEC*)child.pvalue)->value) {
-									ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
+									Ov_DbFree(((OV_GENERIC_VEC*)child.pvalue)->value);
 								}
 							}
 							break;
@@ -1152,7 +1154,7 @@ void ov_class_deleteobject_cleanupinst(
 	/*
 	*	free association table
 	*/
-	ov_database_free(pobj->v_linktable);
+	Ov_DbFree(pobj->v_linktable);
 	pobj->v_linktable = NULL;
 
 	return;
@@ -1224,7 +1226,7 @@ void ov_class_deleteobject_cleanupstaticinst(
 						Ov_WarnIf(((OV_GENERIC_VEC*)pvalue)->value);
 					} else {
 						if(((OV_GENERIC_VEC*)pvalue)->value) {
-							ov_database_free(((OV_GENERIC_VEC*)pvalue)->value);
+							Ov_DbFree(((OV_GENERIC_VEC*)pvalue)->value);
 						}
 					}
 					break;
@@ -1299,7 +1301,7 @@ void ov_class_deleteobject_cleanupstruct(
 					Ov_WarnIf(((OV_GENERIC_VEC*)child.pvalue)->value);
 				} else {
 					if(((OV_GENERIC_VEC*)child.pvalue)->value) {
-						ov_database_free(((OV_GENERIC_VEC*)child.pvalue)->value);
+						Ov_DbFree(((OV_GENERIC_VEC*)child.pvalue)->value);
 					}
 				}
 				break;
