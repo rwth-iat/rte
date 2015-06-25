@@ -260,11 +260,15 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
 
        			// START to BREAK
     			if (pinst->v_EN == SSC_CMD_BREAK){
-    				pinst->v_workingState= SSC_WOST_BREAK;
+    				pinst->v_workingState = SSC_WOST_BREAK;
     			}else
     			// START to STOP
     			if (pinst->v_EN == SSC_CMD_STOP){
-    				pinst->v_workingState= SSC_WOST_STOP;
+    				pinst->v_workingState = SSC_WOST_STOP;
+    			}else
+    			// START to RESET
+    			if (pinst->v_EN == SSC_CMD_RESET){
+    				pinst->v_workingState = SSC_WOST_TERMINATE;
     			}
 
        			/* start/exit */
@@ -321,6 +325,10 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
            		if (pinst->v_EN == SSC_CMD_START){
            			pinst->v_workingState= SSC_WOST_START;
            		}
+           		// BREAK to RESET
+           		if (pinst->v_EN == SSC_CMD_RESET){
+           			pinst->v_workingState = SSC_WOST_TERMINATE;
+           		}
 
            		// generic part
            		if (pinst->v_workingState != SSC_WOST_BREAK){
@@ -351,13 +359,14 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
         		// execute exit-actions of the end step
         		if (pActiveStep == NULL)					// step specific
         		{
-        			// TODO: ERROR
-        			return;
+        			pinst->v_error = TRUE;
+        			ov_string_setvalue(&pinst->v_errorDetail, "Internal Error (active Step unset)");
+        		}else{
+        			//Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pActiveStep), execute, pltc);
+        			//Frage: Warum funktionier hier der Aufruf von execute nicht?
+        			//Ov_Call1 (ssc_step, pActiveStep, typemethod, pltc);
+        			Ov_Call1 (fb_functionblock, pActiveStep, typemethod, pltc);
         		}
-      		    //Ov_Call1 (fb_task, Ov_PtrUpCast(fb_task, pActiveStep), execute, pltc);
-        		//Frage: Warum funktionier hier der Aufruf von execute nicht?
-        		//Ov_Call1 (ssc_step, pActiveStep, typemethod, pltc);
-        		Ov_Call1 (fb_functionblock, pActiveStep, typemethod, pltc);
 
         		ov_string_setvalue(&pinst->v_woStText, "STOP");
 
@@ -379,6 +388,10 @@ OV_DLLFNCEXPORT void ssc_SequentialControlChart_typemethod(
            	// STOP to START
         	if (pinst->v_EN == SSC_CMD_START){
         		pinst->v_workingState= SSC_WOST_START;
+        	}
+        	// STOP to RESET
+        	if (pinst->v_EN == SSC_CMD_RESET){
+        		pinst->v_workingState = SSC_WOST_TERMINATE;
         	}
 
         	// generic part
