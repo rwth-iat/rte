@@ -87,9 +87,6 @@ LIBRARY iec62541
 			workNext			:	BOOL
 				COMMENT			=	"If TRUE this connection has some work for the networkLayer"
 				INITIALVALUE	=	FALSE;
-			closeConn			:	BOOL
-				COMMENT			=	"If TRUE this conenction needs to be closed"
-				INITIALVALUE	=	FALSE;	
 			buffer				:	C_TYPE	<KS_DATAPACKET>
 				COMMENT			=	"Buffer to exchange date with the open62541-stack";
 		END_VARIABLES;
@@ -124,6 +121,11 @@ LIBRARY iec62541
 		discoveryUrlInternal	:	C_TYPE	<UA_String>;
 		localConfig		:	C_TYPE <UA_ConnectionConfig>
 			COMMENT		=	"Configuration of connection";
+		connsToClose	:	C_TYPE <UA_ConnectionPTRPTR>
+			COMMENT		=	"List of Connections to close";
+		connsToCloseCount	:	INT
+			COMMENT		=	"Number of Connections to close"
+			INITIALVALUE	=	0;
 		connsToDelete	:	C_TYPE <UA_ConnectionPTRPTR>
 			COMMENT		=	"List of Connections to delete";
 		connsToDeleteCount	:	INT

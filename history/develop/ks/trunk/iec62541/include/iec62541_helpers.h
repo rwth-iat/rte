@@ -63,5 +63,6 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
 
 OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer();
 void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection);
+void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection);
 
 #endif /* IEC62541_HELPERS_H_ */

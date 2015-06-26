@@ -43,6 +43,21 @@ void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection){
 	}
 }
 
+void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection){
+	UA_ConnectionPTRPTR tempPtr = NULL;
+	if(pOVNetworkLayer){
+		pOVNetworkLayer->v_connsToCloseCount++;
+		tempPtr = Ov_HeapRealloc((pOVNetworkLayer->v_connsToClose), (pOVNetworkLayer->v_connsToCloseCount * sizeof(UA_ConnectionPTR)));
+		if(!(tempPtr)){
+			ov_logfile_error("addConnToClose: could not realloc delete list -- this item will be lost");
+			pOVNetworkLayer->v_connsToCloseCount--;
+			return;
+		}
+		pOVNetworkLayer->v_connsToClose = tempPtr;
+		pOVNetworkLayer->v_connsToClose[pOVNetworkLayer->v_connsToCloseCount - 1] = connection;
+	}
+}
+
 static void freeConnsToDelete(UA_Server *server, OV_INSTPTR_iec62541_ovNetworkLayer pNetworkLayer) {
     OV_INT i;
 	for(i=0;i < pNetworkLayer->v_connsToDeleteCount; i++) {
@@ -173,6 +188,8 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_startup(
     pOVNetworkLayer = pinst;
     pinst->v_connsToDelete = NULL;
     pinst->v_connsToDeleteCount = 0;
+    pinst->v_connsToClose = NULL;
+    pinst->v_connsToCloseCount = 0;
     return;
 }
 
@@ -239,6 +256,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 
 	OV_INSTPTR_iec62541_uaConnection	pConnection	=	NULL;
 	OV_UINT								counter		=	0;
+	OV_UINT								closeConnCounter	=	0;
 	UA_Job		 						*newJobs	=	NULL;
 	OV_INSTPTR_iec62541_ovNetworkLayer	this		=	Ov_StaticPtrCast(iec62541_ovNetworkLayer, nl->handle);
 
@@ -249,9 +267,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		}
 
 	}
+
+	counter += this->v_connsToCloseCount;
 	if(this->v_connsToDeleteCount > 0){
 		counter++;
 	}
+
 	newJobs = malloc(sizeof(UA_Job)*(counter+1));
 	if(!newJobs){
 		jobs = NULL;
@@ -262,21 +283,24 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 	counter = 0;
 	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
-			if(pConnection->v_closeConn != TRUE){
-				newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
-				UA_ByteString_newMembers(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
-				memcpy(newJobs[counter].job.binaryMessage.message.data, pConnection->v_buffer.data, pConnection->v_buffer.length);
-				ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
-				newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
-			} else {
-				newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
-				newJobs[counter].job.closeConnection = pConnection->v_connection;
-			}
+			newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
+			UA_ByteString_newMembers(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
+			memcpy(newJobs[counter].job.binaryMessage.message.data, pConnection->v_buffer.data, pConnection->v_buffer.length);
+			ksbase_free_KSDATAPACKET(&(pConnection->v_buffer));
+			newJobs[counter].job.binaryMessage.connection = pConnection->v_connection;
 			pConnection->v_workNext = FALSE;
 			counter++;
 		}
 	}
 
+	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
+		newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
+		newJobs[counter].job.closeConnection = this->v_connsToClose[closeConnCounter];
+		counter++;
+	}
+	ov_free(this->v_connsToClose);
+	this->v_connsToClose = NULL;
+	this->v_connsToCloseCount = 0;
 	/* add the delayed job that frees the connections */
 	if(this->v_connsToDeleteCount > 0) {
 		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;

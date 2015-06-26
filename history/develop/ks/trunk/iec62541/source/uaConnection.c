@@ -164,8 +164,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_shutdown(
 
     /* do what */
     pinst->v_connection->handle = NULL;
-    pinst->v_closeConn	= TRUE;
-    iec62541_ovNetworklayer_addConnToDelete(pinst->v_connection);
+    iec62541_ovNetworklayer_addConnToClose(pinst->v_connection);
     /* set the object's state to "shut down" */
     ksbase_ClientHandler_shutdown(pobj);
 
