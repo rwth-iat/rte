@@ -114,10 +114,23 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	int on = 1; 	//used to disable nagle algorithm
+#if OV_SYSTEM_NT
+	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
+#endif
+
 	KS_logfile_debug(("file %s\nline %u:\tentering OpenConnection_afterAddrinfo", __FILE__, __LINE__));
 	//check addresses (if there are several ones) and connect
 #ifdef _GNU_SOURCE
 	thisTCPCh->v_addrInfo = ((struct gaicb*)thisTCPCh->v_addrInfoReq)->ar_result;
+#endif
+#if OV_SYSTEM_NT
+	//opt in for faster localhost connections on new windows hosts. This has to be before connect
+//old includes does not have this new define
+#ifndef SIO_LOOPBACK_FAST_PATH
+#define SIO_LOOPBACK_FAST_PATH 0x98000010
+#endif
+	//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
+	(void)WSAIoctl(sockfd, SIO_LOOPBACK_FAST_PATH, &on, sizeof(on), NULL, 0, &NumberOfBytesReturned, 0, 0);
 #endif
 	for (walk = thisTCPCh->v_addrInfo; walk != NULL; walk = walk->ai_next) {
 		KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
@@ -175,7 +188,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
 
 	//disable nagle for the receivesocket
-	setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+	(void)setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
 	return OV_ERR_OK;
 }
 

@@ -190,6 +190,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	char opt_on = 1;
 	SOCKET fd = 0;
 	SOCKET cfd = 0;
+	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
 #else
 	int opt_on = 1;
 	int fd = 0;
@@ -303,6 +304,15 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				resultingaddrinfo = NULL;
 				continue;
 			}
+#if OV_SYSTEM_NT
+			//opt in for faster localhost connections on new windows hosts. This has to be before listen
+//old includes does not have this new define
+#ifndef SIO_LOOPBACK_FAST_PATH
+#define SIO_LOOPBACK_FAST_PATH 0x98000010
+#endif
+			//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
+			(void)WSAIoctl(cfd, SIO_LOOPBACK_FAST_PATH, &on, sizeof(on), NULL, 0, &NumberOfBytesReturned, 0, 0);
+#endif
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
 			//second parameter is the maximum length to which the queue of pending connections for fd may grow
@@ -423,7 +433,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
 
 					//disable nagle for the receivesocket
-					setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+					(void)setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
 
 					//create receiving TCPChannel
 					if (Ov_OK(Ov_CreateIDedObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), "TCPChannel"))){
