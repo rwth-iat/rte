@@ -49,7 +49,7 @@ OV_RESULT ov_library_setglobalvars_kshttpMsgExt_new(void) {
 	pDelivery = Ov_StaticPtrCast(MessageSys_MsgDelivery, Ov_GetFirstChild(ov_instantiation, pclass_MessageSys_MsgDelivery));
 	if(pDelivery){
 		result =  Ov_CreateObject(kshttpMsgExt_MsgExt, pMsgExt, pDelivery, "kshttpMessageExtension");
-		if(Ov_Fail(result)){
+		if(Ov_Fail(result) && result != OV_ERR_ALREADYEXISTS){
 			return result;
 		}
 	}
