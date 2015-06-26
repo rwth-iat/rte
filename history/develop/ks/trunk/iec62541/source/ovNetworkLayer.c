@@ -46,8 +46,7 @@ void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection){
 static void freeConnsToDelete(UA_Server *server, OV_INSTPTR_iec62541_ovNetworkLayer pNetworkLayer) {
     OV_INT i;
 	for(i=0;i < pNetworkLayer->v_connsToDeleteCount; i++) {
-		UA_Connection_deleteMembers(pNetworkLayer->v_connsToDelete[i]);
-        Ov_HeapFree(pNetworkLayer->v_connsToDelete[i]);
+		Ov_HeapFree(pNetworkLayer->v_connsToDelete[i]);
     }
 	pNetworkLayer->v_connsToDeleteCount = 0;
 	Ov_HeapFree(pNetworkLayer->v_connsToDelete);
