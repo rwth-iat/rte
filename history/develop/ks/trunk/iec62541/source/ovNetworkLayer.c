@@ -183,7 +183,7 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
 
     /* do what */
     pOVNetworkLayer = NULL;
