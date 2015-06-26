@@ -34,7 +34,7 @@
 		<span id="idHmi"></span>
 		<span id="idServices"></span>
 		<h2>Supported KS commands</h2>
-		<form action="">
+		<form action="#">
 			<fieldset id="idCommandPlayground" style="display:none;">
 				<legend>Command playground</legend>
 				<div>
@@ -85,8 +85,7 @@
 				<textarea readonly id="idPlaygroundOutput">Reply will be displayed here</textarea>
 			</fieldset>
 		</form>
-		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. 
-		It is possible to select KSX with the 
+		<p>This server can generate answers in a TCL or KSX syntax. The TCL syntax is default. It is possible to select KSX with the 
 		<a href="http://tools.ietf.org/html/rfc7231#section-5.3.2">HTTP accept header</a>
 		<code>Accept: text/ksx</code> or as a parameter in the GET request argument <code>&amp;format=ksx</code>.</p>
 		
@@ -105,27 +104,24 @@
 		example: <code>/setVar?format=ksx&amp;path=/TechUnits/bla.VecIntVariable&amp;newvalue={1}%20{10}</code><br>
 		
 		<h3>GetEP</h3>
-		<p>Gets the engineering properties of an object. It has a few optional parameters:
-			<ul>
-				<li><code>requestType</code> filters some type of result: childrens (default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</li>
-				<li><code>nameMask</code> filters for names (<code>?</code> is an arbitrary character, <code>*</code> is an arbitrary amount of any characters). Default is <code>*</code></li>
-				<li><code>scopeFlags</code> filters for the scope (<code>children</code> are normal children, <code>parts</code> are some hard wired objects). Default is no restriction</li>
-				<li><code>requestOutput</code> a list of answser columns: <code>OP_NAME</code>, <code></code>, <code>OP_TYPE</code>, <code>OP_COMMENT</code>, <code>OP_ACCESS</code>, <code>OP_SEMANTIC</code>, <code>OP_CREATIONTIME</code>, <code>OP_CLASS</code>, <code>OP_TECHUNIT</code>, <code>OP_ASSOCIDENT</code>, <code>OP_ROLEIDENT</code>. Default is all of them in this order.</li>
-			</ul>
-			</p>
-			example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
-			example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code>
-		</p>
+		<p>Gets the engineering properties of an object. It has a few optional parameters:</p>
+		<ul>
+			<li><code>requestType</code> filters some type of result: childrens (default, <code>OT_DOMAIN</code>), variables (<code>OT_VARIABLE</code>), links (<code>OT_LINK</code>) or all (<code>OT_ANY</code>)</li>
+			<li><code>nameMask</code> filters for names (<code>?</code> is an arbitrary character, <code>*</code> is an arbitrary amount of any characters). Default is <code>*</code></li>
+			<li><code>scopeFlags</code> filters for the scope (<code>children</code> are normal children, <code>parts</code> are some hard wired objects). Default is no restriction</li>
+			<li><code>requestOutput</code> a list of answser columns: <code>OP_NAME</code>, <code></code>, <code>OP_TYPE</code>, <code>OP_COMMENT</code>, <code>OP_ACCESS</code>, <code>OP_SEMANTIC</code>, <code>OP_CREATIONTIME</code>, <code>OP_CLASS</code>, <code>OP_TECHUNIT</code>, <code>OP_ASSOCIDENT</code>, <code>OP_ROLEIDENT</code>. Default is all of them in this order.</li>
+		</ul>
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1</code><br>
+		example: <code>/getEP?format=ksx&amp;path=/TechUnits/add1&amp;requestType=OT_ANY</code>
 		
 		<h3>createObject</h3>
-		<p>Instantiates new objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
-			<ul>
-				<li><code>placementHint</code> defines the placement of the new object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
-				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
-			</ul>
-			example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
-			example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
-		</p>
+		<p>Instantiates new objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:</p>
+		<ul>
+			<li><code>placementHint</code> defines the placement of the new object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+		</ul>
+		example: <code>/createObject?format=ksx&amp;path=/TechUnits/add1&amp;factory=/acplt/iec61131stdfb/add</code><br>
+		example: <code>/createObject?format=ksx&amp;Path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2&amp;factory=/acplt/iec61131stdfb/add</code><br>
 		
 		<h3>deleteObject</h3>
 		<p>Deletes objects.</p>
@@ -133,27 +129,25 @@
 		example: <code>/deleteObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/add2</code><br>
 		
 		<h3>renameObject</h3>
-		<p>Renames objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:
-			<ul>
-				<li><code>placementHint</code> defines the placement of the object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
-				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
-			</ul>
-			example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
-			example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
-		</p>
+		<p>Renames objects. Note: The indexes of the parts are not relevant, only the order matters. It has optional parameters:</p>
+		<ul>
+			<li><code>placementHint</code> defines the placement of the object in the parent domain: <code>PMH_DEFAULT</code> = <code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+		</ul>
+		example: <code>/renameObject?format=ksx&amp;path=/TechUnits/add1&amp;newname=/TechUnits/add2</code><br>
+		example: <code>/renameObject?format=ksx&amp;path[1]=/TechUnits/add1&amp;path[2]=/TechUnits/sub1&amp;newname[1]=/TechUnits/add2&amp;newname[2]=/TechUnits/sub2</code><br>
 		
 		<h3>linkObject</h3>
-		<p>Links two pairs of objects with an OV association. It has optional parameters:
-			<ul>
-				<li><code>placementHint</code> defines the placement of the object in the association: <code>PMH_DEFAULT</code>=<code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
-				<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
-			</ul>
-			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
-			equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
-			example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
-			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEGIN</code><br>
-			example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEFORE&amp;placePath=/TechUnits/sub1</code><br>
-		</p>
+		<p>Links two pairs of objects with an OV association. It has optional parameters:</p>
+		<ul>
+			<li><code>placementHint</code> defines the placement of the object in the association: <code>PMH_DEFAULT</code>=<code>PMH_END</code>, <code>PMH_BEGIN</code>, <code>PMH_BEFORE</code>, <code>PMH_AFTER</code></li>
+			<li><code>placePath</code> defines the path of the partner if the Hint was <code>PMH_BEFORE</code> or <code>PMH_AFTER</code></li>
+		</ul>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask</code><br>
+		equivalent: <code>/link?format=ksx&amp;path=/Tasks/UrTask.taskchild&amp;element=/TechUnits/add1</code><br>
+		example: <code>/link?format=ksx&amp;path[0]=/TechUnits/add1.taskparent&amp;element[0]=/Tasks/UrTask&amp;path[1]=/TechUnits/add2.taskparent&amp;element[1]=/Tasks/UrTask</code><br>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEGIN</code><br>
+		example: <code>/link?format=ksx&amp;path=/TechUnits/add1.taskparent&amp;element=/Tasks/UrTask&amp;placementHint=BEFORE&amp;placePath=/TechUnits/sub1</code><br>
 		
 		<h3>unlinkObject</h3>
 		<p>Unlinks two pairs of objects with an OV association.</p>
@@ -167,8 +161,8 @@
 		
 		<h3>getServer</h3>
 		<p>Gives TCP Port of a Server (if this server is the KS-MANAGER).</p>
-		example: <code>/getServer?format=ksx&servername=MANAGER</code><br>
-		example: <code>/getServer?format=ksx&servername=MANAGER&serverversion=2</code><br>
+		example: <code>/getServer?format=ksx&amp;servername=MANAGER</code><br>
+		example: <code>/getServer?format=ksx&amp;servername=MANAGER&amp;serverversion=2</code><br>
 		
 		<script type="text/javascript">
 		var CommandPlayground = document.getElementById("idCommandPlayground");
@@ -237,6 +231,7 @@
 						}
 					};
 					request.timeout = 1000;
+					request.send();
 				}
 			}
 		};
