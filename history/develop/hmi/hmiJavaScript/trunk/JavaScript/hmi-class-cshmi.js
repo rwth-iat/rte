@@ -273,6 +273,7 @@ cshmi.prototype = {
 		var Result = true;
 		if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
 			VisualObject = this._buildSvgGroup(VisualParentObject, ObjectPath, false, null, preventNetworkRequest);
+		
 		}else if (ObjectType.indexOf("/cshmi/Path") !== -1){
 			VisualObject = this._buildSvgPath(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Line") !== -1){
@@ -291,14 +292,17 @@ cshmi.prototype = {
 			VisualObject = this._buildSvgRect(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/Image") !== -1){
 			VisualObject = this._buildSvgImage(VisualParentObject, ObjectPath, preventNetworkRequest);
+		
 		}else if (ObjectType.indexOf("/cshmi/Blackbox") !== -1){
 			VisualObject = this._buildBlackbox(VisualParentObject, ObjectPath, preventNetworkRequest);
+		
 		}else if (ObjectType.indexOf("/cshmi/ClientEvent") !== -1){
 			Result = this._interpreteClientEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/TimeEvent") !== -1){
 			Result = this._interpreteTimeEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
 		}else if (ObjectType.indexOf("/cshmi/OperatorEvent") !== -1){
 			Result = this._interpreteOperatorEvent(VisualParentObject, ObjectPath, preventNetworkRequest);
+		
 		}else if (ObjectType.indexOf("/cshmi/SetValue") !== -1 && HMI.instanceOf(VisualParentObject, this.cshmiBlackboxClass)){
 			// SetValue is ok to be Child of Blackbox
 			return null;
@@ -1336,11 +1340,11 @@ cshmi.prototype = {
 		}else if (ParameterName === "TemplateFBVariableReferenceName"){
 			var TemplateObject = VisualObject;
 			do{
-				if(TemplateObject.FBVariableReference && TemplateObject.FBVariableReference[ParameterValue] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBVariableReference && TemplateObject.ResourceList.FBVariableReference[ParameterValue] !== undefined){
 					//a FBVariableReferenceName was requested
-					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
+					if (TemplateObject.ResourceList.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						var path = TemplateObject.FBVariableReference[ParameterValue];
+						var path = TemplateObject.ResourceList.FBVariableReference[ParameterValue];
 						if(CyctimeObject !== undefined && CyctimeObject !== null){
 							var pathArray = path.split(".");
 							var variablename = pathArray.pop();
@@ -1395,9 +1399,9 @@ cshmi.prototype = {
 		}else if (ParameterName === "TemplateConfigValues"){
 			var TemplateObject = VisualObject;
 			do{
-				if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[ParameterValue] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.ConfigValues && TemplateObject.ResourceList.ConfigValues[ParameterValue] !== undefined){
 					//this is a ConfigValue and has valid data for us
-					return TemplateObject.ConfigValues[ParameterValue];
+					return TemplateObject.ResourceList.ConfigValues[ParameterValue];
 				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
@@ -1994,12 +1998,12 @@ cshmi.prototype = {
 				if (TemplateObject === null){
 					return false;
 				}
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+				if(TemplateObject.ResourceList.FBReference && TemplateObject.ResourceList.FBReference !== undefined){
 					if(NewValue === ""){
 						HMI.hmi_log_info_onwebsite(ObjectPath+": Tried to set FBReference to the empty string. Aborted.");
 						return false;
 					}
-					TemplateObject.FBReference["default"] = NewValue;
+					TemplateObject.ResourceList.FBReference = NewValue;
 					TemplateObject.id = NewValue;
 					if(TemplateObject.parentNode === HMI.Playground){
 						HMI.updateDeepLink("&FBReference="+NewValue);
@@ -2027,11 +2031,11 @@ cshmi.prototype = {
 			//TemplateFBReferenceVariable
 			var TemplateObject = VisualObject;
 			do{
-				if(TemplateObject.FBVariableReference && TemplateObject.FBVariableReference[ParameterValue] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBVariableReference && TemplateObject.ResourceList.FBVariableReference[ParameterValue] !== undefined){
 					//a FBVariableReferenceName was requested
-					if (TemplateObject.FBVariableReference[ParameterValue].charAt(0) === "/"){
+					if (TemplateObject.ResourceList.FBVariableReference[ParameterValue].charAt(0) === "/"){
 						//String begins with / so it is a fullpath
-						var path = TemplateObject.FBVariableReference[ParameterValue];
+						var path = TemplateObject.ResourceList.FBVariableReference[ParameterValue];
 						result = HMI.KSClient.setVar(path, NewValue, null, SetVarCbfnc, true);
 						if (result !== true){
 							return false;
@@ -2054,35 +2058,37 @@ cshmi.prototype = {
 			//a target to use if no config value is found
 			var BackupTarget = null;
 			do{
-				if(TemplateObject.ConfigValues && TemplateObject.ConfigValues[ParameterValue] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.ConfigValues && TemplateObject.ResourceList.ConfigValues[ParameterValue] !== undefined){
 					//we found a configValue in a parent object with the same name => overwrite it
-					TemplateObject.ConfigValues[ParameterValue] = NewValue;
+					TemplateObject.ResourceList.ConfigValues[ParameterValue] = NewValue;
 					return true;
 				}
 				
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
 					if(BackupTarget === null){
 						//we have the first hit, remember
 						BackupTarget = TemplateObject;
 					}
 				}
-				for (var item in TemplateObject.FBVariableReference){
-					if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
-						if(BackupTarget === null){
-							//we have the first hit, remember
-							BackupTarget = TemplateObject;
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBVariableReference){
+					for (var item in TemplateObject.ResourceList.FBVariableReference){
+						if(typeof item == "string" && typeof TemplateObject.FBVariableReference[item] == "string"){
+							if(BackupTarget === null){
+								//we have the first hit, remember
+								BackupTarget = TemplateObject;
+							}
 						}
-					}
-				};
+					};
+				}
 			//loop upwards to find the Template object
 			}while( (TemplateObject = TemplateObject.parentNode) && TemplateObject !== null && TemplateObject.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG);  //the = is no typo here!
 			
 			//we did not found a configValue with this name => save on first template with FBRef or FBVarRef
-			if(BackupTarget !== null && BackupTarget.ConfigValues){
-				BackupTarget.ConfigValues[ParameterValue] = NewValue;
+			if(BackupTarget !== null && BackupTarget.ResourceList && BackupTarget.ResourceList.ConfigValues){
+				BackupTarget.ResourceList.ConfigValues[ParameterValue] = NewValue;
 				return true;
-			}else if(HMI.Playground.firstChild && HMI.Playground.firstChild.ConfigValues){
-				HMI.Playground.firstChild.ConfigValues[ParameterValue] = NewValue;
+			}else if(HMI.Playground.firstChild && HMI.Playground.firstChild.ResourceList && HMI.Playground.firstChild.ResourceList.ConfigValues){
+				HMI.Playground.firstChild.ResourceList.ConfigValues[ParameterValue] = NewValue;
 				return true;
 			}
 			
@@ -2425,10 +2431,10 @@ cshmi.prototype = {
 						}
 					}
 				}
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
 					//we want to find the host and server from the parent FBreference
-					if (TemplateObject.FBReference["default"].indexOf("//") === 0){
-						var FBRef = TemplateObject.FBReference["default"];
+					if (TemplateObject.ResourceList.FBReference.indexOf("//") === 0){
+						var FBRef = TemplateObject.ResourceList.FBReference;
 						
 						//find the 3rd "/"
 						var slashIndex = FBRef.indexOf("/", 2);
@@ -3028,7 +3034,7 @@ cshmi.prototype = {
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP(encodeURI(FBRef.path), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, true);
+			var response = HMI.KSClient.getEP(encodeURI(FBRef.path), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, false);
 		}else{
 			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
@@ -3043,7 +3049,7 @@ cshmi.prototype = {
 					//todo doku
 					path = FBRef.path + ChildrenTypeList[i];
 				}
-				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, true);
+				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, false);
 			}
 		}
 		
@@ -4124,7 +4130,7 @@ cshmi.prototype = {
 		
 		var ObjectPath = VisualObject.getAttribute("data-ModelSource");
 		var ObjectType = VisualObject.getAttribute("data-ObjectType");
-		if(VisualObject.FBReference && VisualObject.FBReference["default"] !== undefined && VisualObject.FBReference["default"] !== ""){
+		if(VisualObject.ResourceList.FBReference && VisualObject.ResourceList.FBReference !== undefined && VisualObject.ResourceList.FBReference !== ""){
 			//save a (perhaps changed) FBref for later rebuilding of the template
 			this.ResourceList.newRebuildObject.id = VisualObject.id;
 			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
@@ -4411,9 +4417,9 @@ cshmi.prototype = {
 		
 		//###########################################################################
 		//parametrise templateDefinition with the config
-		VisualObject.FBReference = Object();
-		VisualObject.FBVariableReference = Object();
-		VisualObject.ConfigValues = Object();
+		VisualObject.ResourceList = new Object();
+		VisualObject.ResourceList.FBVariableReference = Object();
+		VisualObject.ResourceList.ConfigValues = Object();
 		
 		
 		////////////////////////////////////////////////////////////////////////////
@@ -4436,7 +4442,7 @@ cshmi.prototype = {
 		if (FBReferenceName !== ""){
 			if(this.ResourceList.newRebuildObject.id !== undefined){
 				//we should use a preconfigured FBref, instead of the configured one...
-				VisualObject.FBReference["default"] = this.ResourceList.newRebuildObject.id;
+				VisualObject.ResourceList.FBReference = this.ResourceList.newRebuildObject.id;
 				VisualObject.id = this.ResourceList.newRebuildObject.id;
 				VisualObject.setAttribute("x", this.ResourceList.newRebuildObject.x);
 				VisualObject.setAttribute("y", this.ResourceList.newRebuildObject.y);
@@ -4460,25 +4466,25 @@ cshmi.prototype = {
 					//In OP_NAME is a relative path (likely from a GetEP request).
 					VisualObject.setAttribute("data-NameOrigin", "FBReference/OP_NAME");
 				}
-				VisualObject.FBReference["default"] = FBRef.path;
+				VisualObject.ResourceList.FBReference = FBRef.path;
 				VisualObject.id = FBRef.path;
 			}else{
 				if(FBReferenceName.indexOf("CSHMIfullqualifiedname") === 0){
 					//CSHMIfullqualifiedname can be a prefix
 					var FBrefName = this._getFBReference(VisualParentObject, null);
-					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIfullqualifiedname", FBrefName.path);
+					VisualObject.ResourceList.FBReference = FBReferenceName.replace("CSHMIfullqualifiedname", FBrefName.path);
 					VisualObject.setAttribute("data-NameOrigin", "fullqualifiedname+newPart");
 				}else if(FBReferenceName.indexOf("CSHMIHostServer") === 0){
 					//for example CSHMIHostServer/acplt/ov/library only adds the host and server
 					var FBrefName = this._getFBReference(VisualParentObject, null);
 					var HostServer = HMI.KSClient._splitKSPath(FBrefName.path)[0];
-					VisualObject.FBReference["default"] = FBReferenceName.replace("CSHMIHostServer", "//"+HostServer);
+					VisualObject.ResourceList.FBReference = FBReferenceName.replace("CSHMIHostServer", "//"+HostServer);
 					VisualObject.setAttribute("data-NameOrigin", "CSHMIHostServer+newPart");
 					FBrefName = null;
 					HostServer = null;
 				}else{
 					//We have straightforward a full name of one FB Object, so save it with the default name
-					VisualObject.FBReference["default"] = FBReferenceName;
+					VisualObject.ResourceList.FBReference = FBReferenceName;
 					if (FBReferenceName.charAt(0) === "/"){
 						//full path is given
 						VisualObject.setAttribute("data-NameOrigin", "FBReference");
@@ -4488,8 +4494,8 @@ cshmi.prototype = {
 					}
 				}
 				//force a clean name and process CSHMIModelHost for example
-				VisualObject.FBReference["default"] = this._generateFullKsPath(VisualObject, ObjectPath, VisualObject.FBReference["default"]);
-				VisualObject.id = VisualObject.FBReference["default"];
+				VisualObject.ResourceList.FBReference = this._generateFullKsPath(VisualObject, ObjectPath, VisualObject.ResourceList.FBReference);
+				VisualObject.id = VisualObject.ResourceList.FBReference;
 			}
 		}
 		
@@ -4527,15 +4533,15 @@ cshmi.prototype = {
 						//localhost in the model should not be the http-gateway
 						FBRef.path = FBRef.path.replace(/localhost/, HMI.KSClient.ResourceList.ModelHost);
 					}
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef.path;
+					VisualObject.ResourceList.FBVariableReference[FBVariableReferenceEntry[0]] = FBRef.path;
 				}else{
 					//currentChild set a full path
-					VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
+					VisualObject.ResourceList.FBVariableReference[FBVariableReferenceEntry[0]] = ChildrenIterator.currentChild[FBVariableReferenceEntry[1]];
 				}
 			}else{
 				//direct setting of a FBVariable
 				FBVariableReferenceEntry[1] = this._generateFullKsPath(VisualObject, ObjectPath, FBVariableReferenceEntry[1]);
-				VisualObject.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
+				VisualObject.ResourceList.FBVariableReference[FBVariableReferenceEntry[0]] = FBVariableReferenceEntry[1];
 			}
 		}
 		
@@ -4560,26 +4566,26 @@ cshmi.prototype = {
 				//check if we want to get values from the current child (e.g. OP_NAME)
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
 				if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild[Value] !== undefined){
-					VisualObject.ConfigValues[KeyValueEntry[0]] = ChildrenIterator.currentChild[Value];
+					VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]] = ChildrenIterator.currentChild[Value];
 				}
 				else{
-					VisualObject.ConfigValues[KeyValueEntry[0]] = Value;
+					VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]] = Value;
 				}
 				//doku
 				if(KeyValueEntry[0].toLowerCase() === "name"){
 					//if an template has the configValue Name:Dieter, this should be the local object id
-					VisualObject.id = VisualParentObject.id + "/" + VisualObject.ConfigValues[KeyValueEntry[0]];
+					VisualObject.id = VisualParentObject.id + "/" + VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]];
 					VisualObject.setAttribute("data-NameOrigin", "Parent+ConfigValue");
 				}
 				if(KeyValueEntry[0].toLowerCase() === "fullqualifiedname"){
 					//if an template has the configValue fullqualifiedname:Dieter, this should be the global object id
-					VisualObject.id = VisualObject.ConfigValues[KeyValueEntry[0]];
+					VisualObject.id = VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]];
 					VisualObject.setAttribute("data-NameOrigin", "ConfigValueFQN");
 				}
 				lastEntry = KeyValueEntry[0];
 			}else if (KeyValueEntry.length === 1 && lastEntry !== null){
 				//we had something like "pumpcolor:yellow pumpname:N 18", so need to add the " 18" to the last entry
-				VisualObject.ConfigValues[lastEntry] = VisualObject.ConfigValues[lastEntry]+" "+KeyValueEntry[0];
+				VisualObject.ResourceList.ConfigValues[lastEntry] = VisualObject.ResourceList.ConfigValues[lastEntry]+" "+KeyValueEntry[0];
 			}
 		}
 		
@@ -5877,8 +5883,8 @@ cshmi.prototype = {
 			//search FBReference of root Object
 			do{
 				//FBReference found
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					FBRef = TemplateObject.FBReference["default"];
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+					FBRef = TemplateObject.ResourceList.FBReference;
 					break;
 				}
 			//loop upwards to find the Template object
@@ -5909,8 +5915,8 @@ cshmi.prototype = {
 			//search FBReference of root Object
 			do{
 				//FBReference found
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
-					FBRef = TemplateObject.FBReference["default"];
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+					FBRef = TemplateObject.ResourceList.FBReference;
 					if (ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 						//we have an OV-PART, so the separator is a dot
 						result.path = FBRef+"."+ChildrenIterator.currentChild["OP_NAME"];
@@ -5926,9 +5932,9 @@ cshmi.prototype = {
 		}else{
 			//no active iterator, so plain FBReference
 			do{
-				if(TemplateObject.FBReference && TemplateObject.FBReference["default"] !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
 					//the name of a Template was requested
-					result.path = TemplateObject.FBReference["default"];
+					result.path = TemplateObject.ResourceList.FBReference;
 					result.object = TemplateObject;
 					break;
 				}
