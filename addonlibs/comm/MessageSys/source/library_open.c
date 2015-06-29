@@ -78,16 +78,15 @@ OV_RESULT ov_library_setglobalvars_MessageSys_new(void) {
 	domain = (OV_INSTPTR_ov_domain)ov_path_getobjectpointer(COMPATH, 2);
 	MsgSysDelivery=Ov_DynamicPtrCast(MessageSys_MsgDelivery, Ov_SearchChild(ov_containment,domain,"MessageSys"));
 	if(MsgSysDelivery==NULL){
-	result = Ov_CreateObject(MessageSys_MsgDelivery, MsgSysDelivery, domain, "MessageSys");
-	if(Ov_Fail(result) && (result != OV_ERR_ALREADYEXISTS)){
-		ov_memstack_lock();
-		ov_logfile_error("messageSys: Fatal: Couldn't create Object 'MessageSys' Reason: %s", ov_result_getresulttext(result));
-		ov_memstack_unlock();
-		return result;
-	}
-	if(Ov_OK(result))
-		MsgSysDelivery->v_cycInterval = 1;
-
+		result = Ov_CreateObject(MessageSys_MsgDelivery, MsgSysDelivery, domain, "MessageSys");
+		if(Ov_Fail(result) && (result != OV_ERR_ALREADYEXISTS)){
+			ov_memstack_lock();
+			ov_logfile_error("messageSys: Fatal: Couldn't create Object 'MessageSys' Reason: %s", ov_result_getresulttext(result));
+			ov_memstack_unlock();
+			return result;
+		}
+		if(Ov_OK(result))
+			MsgSysDelivery->v_cycInterval = 1;
 	}
 	/*	create protocol identificator for msgs	*/
 	pIdentificator = Ov_StaticPtrCast(MessageSys_msgIdentificator, Ov_SearchChild(ov_containment, MsgSysDelivery, "Identificator"));
