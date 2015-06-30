@@ -167,7 +167,7 @@ OV_DLLFNCEXPORT void iec62541_uaConnection_shutdown(
     iec62541_ovNetworklayer_addConnToClose(pinst->v_connection);
     /* set the object's state to "shut down" */
     ksbase_ClientHandler_shutdown(pobj);
-
+    ksbase_free_KSDATAPACKET(&(pinst->v_buffer));
     return;
 }
 

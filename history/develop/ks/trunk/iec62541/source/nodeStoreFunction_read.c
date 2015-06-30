@@ -934,11 +934,6 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_HISTORIZING:
 		{
 			UA_Boolean *historizing;
-			historizing = UA_Boolean_new();
-			if(!historizing){
-				readNodesResults[indices[i]].status = ov_resultToUaStatusCode(OV_ERR_HEAPOUTOFMEMORY);
-				break;
-			}
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
