@@ -207,7 +207,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
 	UA_ByteString_deleteMembers(&temp);
 	pConnection->v_workNext = TRUE;
 	ksbase_free_KSDATAPACKET(dataReceived);
-    return OV_ERR_OK;
+    UA_ByteString_delete(received);
+	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT void iec62541_uaConnection_typemethod (
