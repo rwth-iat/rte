@@ -103,6 +103,10 @@ static UA_ByteString loadCertificate(void) {
     return certificate;
 }
 
+static UA_Int32 iec62541_uaServer_destroyNodeStore(void *ensHandle){
+	return 0;
+}
+
 static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	UA_Logger logger;
 	UA_ByteString certificate;
@@ -198,6 +202,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	iec62541_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes;
 	iec62541_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
 	iec62541_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_writeNodes;
+	iec62541_pUaServer->v_nodeStoreNsOV.destroy = iec62541_uaServer_destroyNodeStore;
 	UA_Server_addExternalNamespace(iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
 	UA_String_deleteMembers(&url);
 	/*	add reference to ov root	*/

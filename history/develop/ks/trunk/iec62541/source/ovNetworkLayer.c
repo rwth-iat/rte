@@ -298,7 +298,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		newJobs[counter].job.closeConnection = this->v_connsToClose[closeConnCounter];
 		counter++;
 	}
-	ov_free(this->v_connsToClose);
+	Ov_HeapFree(this->v_connsToClose);
 	this->v_connsToClose = NULL;
 	this->v_connsToCloseCount = 0;
 	/* add the delayed job that frees the connections */
