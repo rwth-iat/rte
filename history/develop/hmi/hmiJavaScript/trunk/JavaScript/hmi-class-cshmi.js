@@ -1093,6 +1093,12 @@ cshmi.prototype = {
 					}
 				} 
 				return "";
+			}else if (ParameterValue === "trimToLength"){
+				if(VisualObject.hasAttribute("data-trimToLength")){
+					return VisualObject.getAttribute("data-trimToLength");
+				}else{
+					return "0";
+				}
 			}else if (ParameterValue === "fontSize"){
 				return VisualObject.getAttribute("font-size");
 			}else if (ParameterValue === "fontStyle"){
@@ -1998,7 +2004,7 @@ cshmi.prototype = {
 				if (TemplateObject === null){
 					return false;
 				}
-				if(TemplateObject.ResourceList.FBReference && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					if(NewValue === ""){
 						HMI.hmi_log_info_onwebsite(ObjectPath+": Tried to set FBReference to the empty string. Aborted.");
 						return false;
@@ -2064,7 +2070,7 @@ cshmi.prototype = {
 					return true;
 				}
 				
-				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					if(BackupTarget === null){
 						//we have the first hit, remember
 						BackupTarget = TemplateObject;
@@ -2431,7 +2437,7 @@ cshmi.prototype = {
 						}
 					}
 				}
-				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					//we want to find the host and server from the parent FBreference
 					if (TemplateObject.ResourceList.FBReference.indexOf("//") === 0){
 						var FBRef = TemplateObject.ResourceList.FBReference;
@@ -4130,7 +4136,7 @@ cshmi.prototype = {
 		
 		var ObjectPath = VisualObject.getAttribute("data-ModelSource");
 		var ObjectType = VisualObject.getAttribute("data-ObjectType");
-		if(VisualObject.ResourceList.FBReference && VisualObject.ResourceList.FBReference !== undefined && VisualObject.ResourceList.FBReference !== ""){
+		if(VisualObject.ResourceList && VisualObject.ResourceList.FBReference){
 			//save a (perhaps changed) FBref for later rebuilding of the template
 			this.ResourceList.newRebuildObject.id = VisualObject.id;
 			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
@@ -4412,12 +4418,12 @@ cshmi.prototype = {
 		}
 		
 		//the VPO is needed in generateFullKsPath
-		//fixme wenn ich nicht im DOM bin, dann kann ein zwischen group-objekt ein problem sein, da der parentNode im onload null ist
 		VisualObject.VisualParentObject = VisualParentObject;
 		
 		//###########################################################################
 		//parametrise templateDefinition with the config
 		VisualObject.ResourceList = new Object();
+		VisualObject.ResourceList.FBReference = null;
 		VisualObject.ResourceList.FBVariableReference = Object();
 		VisualObject.ResourceList.ConfigValues = Object();
 		
@@ -4589,9 +4595,12 @@ cshmi.prototype = {
 			}
 		}
 		
+		//mark object for preventClone. id has to be unique in the DOM (so searching for id results in the first object), name does not
 		VisualObject.setAttribute("name", VisualObject.id);
+		
 		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
 			if(requestList[ObjectPath]["preventClone"] === "TRUE"){
+				//search all object named the same
 				if(HMI.svgDocument.querySelectorAll){
 					var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
 				}else{
@@ -4603,8 +4612,8 @@ cshmi.prototype = {
 							CloneCandidates.push();
 						}
 					}
-					CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
 				}
+				//search and compare candidates
 				for (var i = 0; i < CloneCandidates.length; ++i) {
 					if(CloneCandidates[i].getAttribute("data-TemplateModelSource") === PathOfTemplateDefinition){
 						//we should prevent a clone and we would produce one, abort
@@ -5883,7 +5892,7 @@ cshmi.prototype = {
 			//search FBReference of root Object
 			do{
 				//FBReference found
-				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					FBRef = TemplateObject.ResourceList.FBReference;
 					break;
 				}
@@ -5915,7 +5924,7 @@ cshmi.prototype = {
 			//search FBReference of root Object
 			do{
 				//FBReference found
-				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					FBRef = TemplateObject.ResourceList.FBReference;
 					if (ChildrenIterator.currentChild["OP_ACCESS"] !== undefined && ChildrenIterator.currentChild["OP_ACCESS"].indexOf("KS_AC_PART") !== -1){
 						//we have an OV-PART, so the separator is a dot
@@ -5932,7 +5941,7 @@ cshmi.prototype = {
 		}else{
 			//no active iterator, so plain FBReference
 			do{
-				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference !== undefined){
+				if(TemplateObject.ResourceList && TemplateObject.ResourceList.FBReference){
 					//the name of a Template was requested
 					result.path = TemplateObject.ResourceList.FBReference;
 					result.object = TemplateObject;
@@ -6327,7 +6336,7 @@ cshmi.prototype = {
 		if(trimToLength > 0 && isNumeric(NewText)){
 			//we have a numeric NewText
 			if(NewText.indexOf(".") === -1){
-				//INT or UINT
+				//INT or UINT, we have no way to show a shorter version... 8-/
 				trimmedContent = NewText;
 				this._setTitle(VisualObject, "");
 			}else{
@@ -6363,7 +6372,7 @@ cshmi.prototype = {
 		}
 		
 		//remember config
-		VisualObject.setAttribute("trimToLength", trimToLength);
+		VisualObject.setAttribute("data-trimToLength", trimToLength);
 	},
 	
 	/**
