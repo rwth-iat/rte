@@ -639,6 +639,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		pCompare = Ov_StaticPtrCast(cshmi_Compare, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
 		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompare->v_comptype==NULL?"":pCompare->v_comptype);	//this is a white list, no need to escape
+		ov_string_print(&strIterate, "%s%%22ignoreCase%%22:%%22%s%%22,", strIterate, pCompare->v_ignoreCase==TRUE?"TRUE":"FALSE");
 		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompare->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_CompareIteratedChild){
@@ -647,6 +648,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 
 		ov_string_print(&strIterate, "%s%%22comptype%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_comptype==NULL?"":pCompareIteratedChild->v_comptype);
 		ov_string_print(&strIterate, "%s%%22childValue%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_childValue==NULL?"":pCompareIteratedChild->v_childValue);	//this is a white list
+		ov_string_print(&strIterate, "%s%%22ignoreCase%%22:%%22%s%%22,", strIterate, pCompareIteratedChild->v_ignoreCase==TRUE?"TRUE":"FALSE");
 		ov_string_print(&strIterate, "%s%%22ignoreError%%22:%%22%s%%22", strIterate, pCompareIteratedChild->v_ignoreError==TRUE?"TRUE":"FALSE");
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_TimeEvent){

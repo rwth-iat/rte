@@ -89,3 +89,11 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_comptype_set(
 	}
 }
 
+OV_DLLFNCEXPORT OV_RESULT cshmi_Compare_ignoreCase_set(
+	OV_INSTPTR_cshmi_Compare          pobj,
+	const OV_BOOL  value
+) {
+	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
+	pobj->v_ignoreCase = value;
+	return OV_ERR_OK;
+}

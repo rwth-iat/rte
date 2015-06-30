@@ -456,7 +456,7 @@ LIBRARY cshmi
 				INITIALVALUE = "auto";
 			trimToLength : INT
 				HAS_SET_ACCESSOR
-				COMMENT = "Trim text (0 deactivate, negative values trims left)"
+				COMMENT = "Trim text (0 deactivate, negative values trims left); decimal places of numbers will be shortened"
 				INITIALVALUE = 0;
 		END_VARIABLES;
 		OPERATIONS
@@ -555,10 +555,10 @@ LIBRARY cshmi
 				COMMENT = "NOT IMPLEMENTED and hidden! the (relative) path to the element"; //Name support like routePolyline
 			globalVar : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "name of the global variable (is resetted on reloading)";
+				COMMENT = "name of the global variable (is cleared on refresh of the browser or other display component)";
 			persistentGlobalVar : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "name of the persistent global variable (survives reloading)";
+				COMMENT = "name of the persistent global variable (survives a refresh of the browser or other display component)";
 			OperatorInput : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "Value from the user; example 'mousex', 'textinput', 'textinput:question', 'textinput:question:suggestedValue', 'textinput:question:TemplateFBReferenceVariable:IN1'";
@@ -596,10 +596,10 @@ LIBRARY cshmi
 				COMMENT = "NOT IMPLEMENTED and hidden! the (relative) path to the element";
 			globalVar : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "name of the global variable (is resetted on reloading)";
+				COMMENT = "name of the global variable (is cleared on refresh of the browser or other display component)";
 			persistentGlobalVar : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "name of the persistent global variable (survives reloading)";
+				COMMENT = "name of the persistent global variable (survives a refresh of the browser or other display component)";
 			TemplateFBReferenceVariable : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "name of a variable of a referenced FB object; example 'IN1' or setting a new FBRef with 'fullqualifiedname' for the full name of the FBref";
@@ -886,6 +886,10 @@ LIBRARY cshmi
 				HAS_SET_ACCESSOR
 				COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
 				INITIALVALUE = "==";
+			ignoreCase : BOOL
+				HAS_SET_ACCESSOR
+				COMMENT = "ignore case sensitivity for string comparison"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		PARTS
 			value1 : CLASS cshmi/GetValue;
@@ -900,11 +904,15 @@ LIBRARY cshmi
 		VARIABLES
 			childValue : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "Iterating childrens can be tested on (OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT); Vec-Variables and Links have only OP_VALUE or the equal OP_NAME";
+				COMMENT = "Iterating childrens can be tested on (OP_NAME; OP_TYPE; OP_COMMENT; OP_ACCESS; OP_SEMANTICS; OP_CREATIONTIME; OP_CLASS; OP_TECHUNIT; OP_ASSOCIDENT; OP_ROLEIDENT; OP_DEFAULTINTERP; OP_SUPPORTEDINTERP; OP_TYPEIDENT); Vector-Variables and Links have only OP_VALUE or the equal OP_NAME";
 			comptype : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "comparison type ('<','<=','==','!=','>=','>')"
 				INITIALVALUE = "==";
+			ignoreCase : BOOL
+				HAS_SET_ACCESSOR
+				COMMENT = "ignore case sensitivity for string comparison"
+				INITIALVALUE = FALSE;
 		END_VARIABLES;
 		PARTS
 			withValue : CLASS cshmi/GetValue;
