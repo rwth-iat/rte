@@ -427,6 +427,7 @@ cshmi.prototype = {
 		if (this.ResourceList.Actions && this.ResourceList.Actions[ObjectPath] !== undefined){
 			requestList[ObjectPath] = this.ResourceList.Actions[ObjectPath].Parameters;
 		}else{
+			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["cyctime"] = null;
 			
 			var successCode = this._requestVariablesArray(requestList);
@@ -441,7 +442,6 @@ cshmi.prototype = {
 		var cyctime = requestList[ObjectPath]["cyctime"];
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
-			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
 			if (parseFloat(requestList[ObjectPath]["cyctime"]) === 0 ){
 				//zero disables
 				return true;
@@ -451,6 +451,7 @@ cshmi.prototype = {
 				nextcyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
 			}
 			var preserveThis = this;
+			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
 			this.ResourceList.TimeeventCallStack[cyctime].triggeredObjectList = Array();
 			this.ResourceList.TimeeventCallStack[cyctime].getVarCollection = Object();
 			this.ResourceList.TimeeventCallStack[cyctime].timeoutID = window.setTimeout(function() {
@@ -993,10 +994,11 @@ cshmi.prototype = {
 			iterationObject = null;
 		}
 		
-		if(this.initStage === true){
+		if(this.initStage === true || ChildrenIterator){
 			// force sync request in the init stage.
 			// the order of actions have to be fixed in the loading
 			// for example a value can be precached and reused later
+			// force sync request with an active Iterator as the currentChild is lost at a async call
 			callerObserver = null;
 			var GetVarCbfnc = null;
 		}else{
@@ -3037,10 +3039,11 @@ cshmi.prototype = {
 			}
 		};
 		
+		var async = true;
 		var returnValue = true;
 		if (ChildrenType.indexOf("OT_") !== -1){
 			//GetEP requested
-			var response = HMI.KSClient.getEP(encodeURI(FBRef.path), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, false);
+			var response = HMI.KSClient.getEP(encodeURI(FBRef.path), ChildrenType, "OP_ANY", GetEPIteratorCbfnc, async);
 		}else{
 			//GetVar on a (vector?)-value requested
 			//doku multiple values possible
@@ -3055,7 +3058,7 @@ cshmi.prototype = {
 					//todo doku
 					path = FBRef.path + ChildrenTypeList[i];
 				}
-				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, false);
+				response = HMI.KSClient.getVar(path, "OP_VALUE", GetVarIteratorCbfnc, async);
 			}
 		}
 		
@@ -4595,34 +4598,6 @@ cshmi.prototype = {
 			}
 		}
 		
-		//mark object for preventClone. id has to be unique in the DOM (so searching for id results in the first object), name does not
-		VisualObject.setAttribute("name", VisualObject.id);
-		
-		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
-			if(requestList[ObjectPath]["preventClone"] === "TRUE"){
-				//search all object named the same
-				if(HMI.svgDocument.querySelectorAll){
-					var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
-				}else{
-					//shim the queryselector if not available
-					CloneCandidates = Array();
-					var ComponentChilds = HMI.Playground.firstChild.getElementsByTagName("svg");
-					for(var i = 0;i < ComponentChilds.length;i++){
-						if(ComponentChilds[i].getAttribute("name") == VisualObject.id){
-							CloneCandidates.push();
-						}
-					}
-				}
-				//search and compare candidates
-				for (var i = 0; i < CloneCandidates.length; ++i) {
-					if(CloneCandidates[i].getAttribute("data-TemplateModelSource") === PathOfTemplateDefinition){
-						//we should prevent a clone and we would produce one, abort
-						return null;
-					}
-				}
-			}
-		}
-		
 		VisualObject.setAttribute("overflow", "visible");
 		
 		if (calledFromInstantiateTemplate === true){
@@ -4642,7 +4617,7 @@ cshmi.prototype = {
 			//xy is set already, prevent resetting to wrong value
 			delete requestList[ObjectPath]["x"];
 			delete requestList[ObjectPath]["y"];
-		}else if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
+		}else if (calledFromInstantiateTemplate === true && ChildrenIterator && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
 			//adjust position with an offset. if there is no offset, do not change xy and do not increment the currentCount
 			if(requestList[ObjectPath]["xOffset"] !== "0" || requestList[ObjectPath]["yOffset"] !== "0"){
 				//the offsetCount must be global for all InstantiateTemplate below an iterator
@@ -4701,6 +4676,34 @@ cshmi.prototype = {
 			//width and height comes from the TemplateDefinition
 			VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
 			VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
+		}
+		
+		//mark object for preventClone. id has to be unique in the DOM (so searching for id results in the first object), name does not
+		VisualObject.setAttribute("name", VisualObject.id);
+		
+		if(calledFromInstantiateTemplate && requestList[ObjectPath]["preventClone"] !== undefined){
+			if(requestList[ObjectPath]["preventClone"] === "TRUE"){
+				//search all object named the same
+				if(HMI.svgDocument.querySelectorAll){
+					var CloneCandidates = HMI.svgDocument.querySelectorAll('[name="'+VisualObject.id+'"]');
+				}else{
+					//shim the queryselector if not available
+					CloneCandidates = Array();
+					var ComponentChilds = HMI.Playground.firstChild.getElementsByTagName("svg");
+					for(var i = 0;i < ComponentChilds.length;i++){
+						if(ComponentChilds[i].getAttribute("name") == VisualObject.id){
+							CloneCandidates.push();
+						}
+					}
+				}
+				//search and compare candidates
+				for (var i = 0; i < CloneCandidates.length; ++i) {
+					if(CloneCandidates[i].getAttribute("data-TemplateModelSource") === PathOfTemplateDefinition){
+						//we should prevent a clone and we would produce one, abort
+						return null;
+					}
+				}
+			}
 		}
 		
 		//instance order is lost on zindex manipulation (dom reordering)
