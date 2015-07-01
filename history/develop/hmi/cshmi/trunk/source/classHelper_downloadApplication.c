@@ -211,7 +211,7 @@ static OV_RESULT cshmi_downloadApplication_buildChildList(OV_INSTPTR_ov_domain p
 			strLen = ov_string_getlength(ResultListVec[ResultListIndex]);	\
 			if(strLen != 0){	\
 				pDownloadApplication->v_ApplicationCache.str##classname = Ov_HeapMalloc(strLen+1);	\
-				if(!pDownloadApplication->v_ApplicationCache.str##classname){	\
+				if(pDownloadApplication->v_ApplicationCache.str##classname != NULL){	\
 					memcpy(pDownloadApplication->v_ApplicationCache.str##classname, ResultListVec[ResultListIndex], strLen+1);	\
 				}	\
 			}else{	\

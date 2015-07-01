@@ -274,10 +274,40 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_rename(
 	 *   local variables
 	 */
 	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
+	OV_INSTPTR_cshmi_Object pinst = Ov_StaticPtrCast(cshmi_Object, pobj);
+
+	//reset own and mark class cache entry invalid
+	cshmi_Object_resetCache(pinst);
 
 	pDownloadApplication =  Ov_StaticPtrCast(cshmi_downloadApplication, Ov_GetFirstChild(ov_instantiation, pclass_cshmi_downloadApplication));
 	if(pDownloadApplication != NULL){
-		//throw away childlist from turbo
+		//throw away all informations from turbo as they could be children of us. Each object has an additional cache which detects if it is really affected by this renaming
+		CSHMI_EMPTYCLASSCACHEENTRY(Group);
+		CSHMI_EMPTYCLASSCACHEENTRY(TemplateDefinition);
+		CSHMI_EMPTYCLASSCACHEENTRY(InstantiateTemplate);
+		CSHMI_EMPTYCLASSCACHEENTRY(Rectangle);
+		CSHMI_EMPTYCLASSCACHEENTRY(Circle);
+		CSHMI_EMPTYCLASSCACHEENTRY(Text);
+		CSHMI_EMPTYCLASSCACHEENTRY(Line);
+		CSHMI_EMPTYCLASSCACHEENTRY(Polyline);
+		CSHMI_EMPTYCLASSCACHEENTRY(Polygon);
+		CSHMI_EMPTYCLASSCACHEENTRY(Path);
+		CSHMI_EMPTYCLASSCACHEENTRY(Ellipse);
+
+		CSHMI_EMPTYCLASSCACHEENTRY(SetValue);
+		CSHMI_EMPTYCLASSCACHEENTRY(SetConcatValue);
+		CSHMI_EMPTYCLASSCACHEENTRY(SetMathValue);
+		CSHMI_EMPTYCLASSCACHEENTRY(GetValue);
+		CSHMI_EMPTYCLASSCACHEENTRY(ChildrenIterator);
+		CSHMI_EMPTYCLASSCACHEENTRY(IfThenElse);
+		CSHMI_EMPTYCLASSCACHEENTRY(Compare);
+		CSHMI_EMPTYCLASSCACHEENTRY(CompareIteratedChild);
+		CSHMI_EMPTYCLASSCACHEENTRY(TimeEvent);
+		CSHMI_EMPTYCLASSCACHEENTRY(RoutePolyline);
+		CSHMI_EMPTYCLASSCACHEENTRY(TranslationSource);
+		CSHMI_EMPTYCLASSCACHEENTRY(CreateObject);
+		CSHMI_EMPTYCLASSCACHEENTRY(Vibrate);
+
 		CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
 	}
 
@@ -296,6 +326,7 @@ OV_DLLFNCEXPORT void cshmi_Object_shutdown(
 	Ov_HeapFree(pinst->v_ConfigCache.asJSON);
 	pinst->v_ConfigCache.asJSON = NULL;
 	pinst->v_ConfigCache.cacheDirty = TRUE;
+
 	ov_string_setvalue(&pinst->v_ConfigCache.identifier, NULL);
 
 	/* set the object's state to "shut down" */

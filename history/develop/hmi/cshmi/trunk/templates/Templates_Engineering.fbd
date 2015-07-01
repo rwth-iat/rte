@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-06-15 13:06:25
+* Erstellt: 2015-07-01 14:40:00
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -5347,7 +5347,7 @@
       fontSize : INPUT STRING = "11.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "bold";
-      fontFamily : INPUT STRING = "'serif";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
       horAlignment : INPUT STRING = "start";
       verAlignment : INPUT STRING = "auto";
       trimToLength : INPUT INT = 0;
@@ -6728,7 +6728,7 @@
       fontSize : INPUT STRING = "11.2px";
       fontStyle : INPUT STRING = "normal";
       fontWeight : INPUT STRING = "bold";
-      fontFamily : INPUT STRING = "'serif";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
       horAlignment : INPUT STRING = "start";
       verAlignment : INPUT STRING = "auto";
       trimToLength : INPUT INT = 0;
@@ -11992,7 +11992,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"objectname:OP_NAME"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -12171,7 +12171,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"objectpath:OP_NAME"};
       ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -12350,7 +12350,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"objectpath:OP_NAME"};
       ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -12459,7 +12459,7 @@
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[0] : INPUT STRING = {};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -13719,7 +13719,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"objectpath:OP_NAME"};
       ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -13898,7 +13898,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[1] : INPUT STRING = {"objectpath:OP_NAME"};
       ConfigValues[4] : INPUT STRING = {"objectname:OP_NAME" , "ValueOfClass:FC" , "objectclass:OP_CLASS" , "objectcomment:OP_COMMENT"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -28521,7 +28521,7 @@
       FBReference[1] : INPUT STRING = {"OP_NAME"};
       FBVariableReference[0] : INPUT STRING = {};
       ConfigValues[1] : INPUT STRING = {"objectclass:OP_CLASS"};
-      preventClone : INPUT BOOL = FALSE;
+      preventClone : INPUT BOOL = TRUE;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "black";
       fill : INPUT STRING = "none";
@@ -31597,7 +31597,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isInput :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isInputViaSemantics :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
@@ -31608,7 +31608,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isInput.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/inputs.if/isInputViaSemantics.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -31847,7 +31847,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInput :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInputViaFlags :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -31857,7 +31857,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInput.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInputViaFlags.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -31874,7 +31874,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInput.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/InputIterator.forEachChild/FCInputs.then/isInput.if/isInputViaFlags.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -31973,7 +31973,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/outputs.if/isOutput :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/outputs.if/isOutputViaSemantics :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
@@ -31984,7 +31984,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/outputs.if/isOutput.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/outputs.if/isOutputViaSemantics.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -32139,7 +32139,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutput :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutputViaFlags :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -32149,7 +32149,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutput.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutputViaFlags.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -32166,7 +32166,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutput.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/FBv1/onload/OutputIterator.forEachChild/FCOutputs.then/isOutput.if/isOutputViaFlags.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";

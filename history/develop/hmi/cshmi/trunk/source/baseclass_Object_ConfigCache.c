@@ -612,7 +612,9 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 					pObj->v_ConfigCache.asJSON = NULL;
 					pObj->v_ConfigCache.cacheDirty = FALSE;
 					pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
-					ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
+					ov_memstack_lock();
+					ov_string_setvalue(&pObj->v_ConfigCache.identifier, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj),2));
+					ov_memstack_unlock();
 
 					ov_string_setvalue(&ParameterName, NULL);
 					ov_string_setvalue(&ParameterValue, NULL);
@@ -717,7 +719,9 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 		pObj->v_ConfigCache.asJSON = NULL;
 		pObj->v_ConfigCache.cacheDirty = FALSE;
 		pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
-		ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
+		ov_memstack_lock();
+		ov_string_setvalue(&pObj->v_ConfigCache.identifier, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj),2));
+		ov_memstack_unlock();
 
 		ov_string_setvalue(&ParameterName, NULL);
 		ov_string_setvalue(&ParameterValue, NULL);
@@ -741,7 +745,9 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}
 	pObj->v_ConfigCache.cacheDirty = FALSE;
 	pObj->v_ConfigCache.parentObject = Ov_GetParent(ov_containment, pObj);
-	ov_string_setvalue(&pObj->v_ConfigCache.identifier, pObj->v_identifier);
+	ov_memstack_lock();
+	ov_string_setvalue(&pObj->v_ConfigCache.identifier, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj),2));
+	ov_memstack_unlock();
 	ov_string_setvalue(&ParameterName, NULL);
 	ov_string_setvalue(&ParameterValue, NULL);
 	ov_string_setvalue(&temp, NULL);
@@ -754,10 +760,15 @@ OV_DLLFNCEXPORT OV_STRING cshmi_Object_getConfigAsJSON(
 	OV_INSTPTR_cshmi_Object          pObj
 ) {
 	OV_INSTPTR_cshmi_downloadApplication pDownloadApplication = NULL;
+	OV_STRING fullpathname = NULL;
+
+	ov_memstack_lock();
+	ov_string_setvalue(&fullpathname, ov_path_getcanonicalpath(Ov_PtrUpCast(ov_object, pObj),2));
+	ov_memstack_unlock();
 
 	//update the cache if...
 	if(		pObj->v_ConfigCache.parentObject != Ov_GetParent(ov_containment, pObj)
-		||	ov_string_compare(pObj->v_ConfigCache.identifier, pObj->v_identifier) != OV_STRCMP_EQUAL
+		||	ov_string_compare(pObj->v_ConfigCache.identifier, fullpathname) != OV_STRCMP_EQUAL
 	){
 		//...the parent is different (the object was moved)
 		cshmi_Object_updateConfigAsJSON(pObj);
@@ -769,9 +780,10 @@ OV_DLLFNCEXPORT OV_STRING cshmi_Object_getConfigAsJSON(
 			CSHMI_EMPTYCLASSCACHEENTRY(Childlist);
 		}
 	}else if(pObj->v_ConfigCache.cacheDirty == TRUE){
-		//... the cache is dirty (a parameter is changed)
+		//... the cache is dirty (a parameter has changed)
 		cshmi_Object_updateConfigAsJSON(pObj);
 	}
+	ov_string_setvalue(&fullpathname, NULL);
 	return pObj->v_ConfigCache.asJSON;
 }
 
@@ -807,6 +819,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Object_resetCache(
 		CSHMI_EMPTYCLASSCACHEENTRY(Path);
 	}else if(Ov_CanCastTo(cshmi_Ellipse, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(Ellipse);
+
 	}else if(Ov_CanCastTo(cshmi_SetValue, pobj)){
 		CSHMI_EMPTYCLASSCACHEENTRY(SetValue);
 	}else if(Ov_CanCastTo(cshmi_SetConcatValue, pobj)){

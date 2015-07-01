@@ -45,7 +45,7 @@
 typedef struct{
 	OV_BOOL cacheDirty;			//status of this cache. Will be set TRUE on a variable change of all objects
 	OV_STRING asJSON;			//own config as JSON in heap. Will be updated on request of downloadApplication singleton
-	OV_STRING identifier;		//holds the name of the object, to detect renaming
+	OV_STRING identifier;		//holds the full name of the object, to detect renaming of its own or a parent
 	OV_POINTER parentObject;	//holds the pointer to the parent, to detect moving
 } CSHMI_INSTANCECACHE;
 
