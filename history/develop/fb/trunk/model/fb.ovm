@@ -192,8 +192,10 @@ LIBRARY fb
         END_VARIABLES;
         OPERATIONS
             constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
-            setvar : C_FUNCTION <OV_FNC_SETVAR>;
+            getflags    : C_FUNCTION <OV_FNC_GETFLAGS>;
             getcomment : C_FUNCTION <OV_FNC_GETCOMMENT>;
+            gettechunit: C_FUNCTION <OV_FNC_GETTECHUNIT>; /* but gettechunit is not called with a getEP request on objects*/
+            setvar : C_FUNCTION <OV_FNC_SETVAR>;
         END_OPERATIONS;
     END_CLASS;
     

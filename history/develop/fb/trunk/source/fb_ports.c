@@ -128,3 +128,37 @@ OV_DLLFNCEXPORT OV_STRING fb_port_getcomment(
 	}
 	return ov_object_getcomment(pobj, pelem);
 }
+
+
+OV_DLLFNCEXPORT OV_UINT fb_port_getflags(
+		OV_INSTPTR_ov_object 	pobj,
+		const OV_ELEMENT		*pelem
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_fb_port pinst = Ov_StaticPtrCast(fb_port, pobj);
+
+	switch(pelem->elemtype) {
+	case OV_ET_OBJECT:
+		return pinst->v_flags;
+	}
+	return ov_object_getflags(pobj, pelem);
+}
+
+/* but Techunits is not called with a getEP request on objects*/
+OV_DLLFNCEXPORT OV_STRING fb_port_gettechunit(
+		OV_INSTPTR_ov_object 	pobj,
+		const OV_ELEMENT		*pelem
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_fb_port pinst = Ov_StaticPtrCast(fb_port, pobj);
+
+	switch(pelem->elemtype) {
+	case OV_ET_OBJECT:
+		return pinst->v_unit;
+	}
+	return ov_object_gettechunit(pobj, pelem);
+}
