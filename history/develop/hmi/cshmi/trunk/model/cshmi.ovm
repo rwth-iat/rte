@@ -720,7 +720,7 @@ LIBRARY cshmi
 			preventClone : BOOL
 				HAS_SET_ACCESSOR
 				COMMENT = "do not instanciate duplicate identical objects"
-				INITIALVALUE = FALSE;
+				INITIALVALUE = TRUE;
 			visible : BOOL
 				HAS_SET_ACCESSOR
 				COMMENT = "the element is visible"
