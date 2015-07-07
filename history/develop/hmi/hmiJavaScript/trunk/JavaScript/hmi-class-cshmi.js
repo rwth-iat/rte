@@ -124,8 +124,6 @@ function cshmi() {
 
 /*#########################################################################################################################
 TODO:
-iterator fixen!
-
 zyklische requests fehlerfrei zusammenfassen
 
 setvar type erlauben
@@ -2942,7 +2940,7 @@ cshmi.prototype = {
 		
 		var ChildrenIterator = new Object();
 		ChildrenIterator.currentChild = null;
-		ChildrenIterator.currentCount = 0;
+		ChildrenIterator.currentCount = new Object();
 		
 		//the callbacks calls the actions of this iterator
 		var GetEPIteratorCbfnc = function(Client, req){
@@ -2951,7 +2949,7 @@ cshmi.prototype = {
 				/*
 				var savedCurrentChild = HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
 				delete HMI.cshmi.ResourceList.ChildrenIterator.currentChild;
-				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = 0;
+				HMI.cshmi.ResourceList.ChildrenIterator.currentCount = new Object();
 				*/
 				
 				var response = HMI.KSClient.unescapeString(req.responseText);
@@ -4568,7 +4566,7 @@ cshmi.prototype = {
 			KeyValueEntry = ConfigValueList[i].split(":");
 			if (KeyValueEntry.length >= 2){
 				if (KeyValueEntry.length > 2){
-					var Value = KeyValueEntry.slice(1).join(":");
+					var Value = KeyValueEntry.slice(1).join(":"); // KeyValueEntry could be "buttoncontent:hello:welt" so we want "hello:welt"
 				}else{
 					Value = KeyValueEntry[1];
 				}
@@ -4576,8 +4574,7 @@ cshmi.prototype = {
 				//if instantiateTemplate is not called within a childreniterator, the currentChild is undefined
 				if (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined && ChildrenIterator.currentChild[Value] !== undefined){
 					VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]] = ChildrenIterator.currentChild[Value];
-				}
-				else{
+				}else{
 					VisualObject.ResourceList.ConfigValues[KeyValueEntry[0]] = Value;
 				}
 				//doku
@@ -4604,8 +4601,6 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiTemplateActionClass);
 		}
 		
-		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
-		
 		/////////////////////////////////////////////////////////////////////////////
 		//Iterator position changing
 		
@@ -4620,10 +4615,22 @@ cshmi.prototype = {
 		}else if (calledFromInstantiateTemplate === true && ChildrenIterator && requestList[ObjectPath]["maxTemplatesPerDirection"] !== undefined && requestList[ObjectPath]["xOffset"] !== undefined && requestList[ObjectPath]["yOffset"] !== undefined ){
 			//adjust position with an offset. if there is no offset, do not change xy and do not increment the currentCount
 			if(requestList[ObjectPath]["xOffset"] !== "0" || requestList[ObjectPath]["yOffset"] !== "0"){
-				//the offsetCount must be global for all InstantiateTemplate below an iterator
-				var offsetCount = ChildrenIterator.currentCount;
-				//the next InstantiateTemplate should go to an other position
-				ChildrenIterator.currentCount++;
+				//the offsetCount must be global for all InstantiateTemplate with the same xy coordinates below an iterator
+				//todo docu
+				var iteratorID = "x"+parseInt(requestList[ObjectPath]["x"], 10) + "y" + parseInt(requestList[ObjectPath]["y"], 10);
+				var offsetCount = 0;
+				
+				if(ChildrenIterator.currentCount[iteratorID]){
+					//we have a iterator value
+					offsetCount = ChildrenIterator.currentCount[iteratorID];
+					//the next InstantiateTemplate should go to an other position
+					ChildrenIterator.currentCount[iteratorID]++;
+				}else{
+					//we are the first instance for this iterator group
+					ChildrenIterator.currentCount[iteratorID] = 1;
+				}
+				VisualObject.setAttribute("data-iteratorID", iteratorID);
+				
 				var offsetCountX;
 				var offsetCountY;
 				var direction = requestList[ObjectPath]["maxTemplatesPerDirection"].split(":");
@@ -4705,6 +4712,9 @@ cshmi.prototype = {
 				}
 			}
 		}
+		
+		//start magic with "hidable" attribute
+		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
 		
 		//instance order is lost on zindex manipulation (dom reordering)
 		//so build a second childNodes-like collection for preserving ordering
