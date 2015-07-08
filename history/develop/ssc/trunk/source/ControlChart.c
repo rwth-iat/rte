@@ -63,6 +63,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 	orderVar.value.vartype = OV_VT_STRING;
 	orderVar.value.valueunion.val_string = NULL;
 
+
 	if(this->v_ORDEREXECUTOR.veclen != this->v_ORDERLIST.veclen){
 		//this controlchart is wrong configured
 		return OV_ERR_GENERIC;
@@ -90,6 +91,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 			if(ov_string_compare(this->v_ORDEREXECUTOR.value[iterator], pvar->v_identifier) == OV_STRCMP_EQUAL){
 				break;
 			}
+
 		}
 		pFbObject = fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pvar), TRUE, NULL);
 		pOccupystatusHolder = Ov_DynamicPtrCast(fb_functionblock, pFbObject);
@@ -207,4 +209,33 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 
 	return OV_ERR_OK;
 }
+OV_DLLFNCEXPORT void ssc_controlchart_typemethod(
+	OV_INSTPTR_fb_functionblock	pfb,
+	OV_TIME						*pltc
+) {
+    /*
+    *   local variables
+    */
+    OV_INSTPTR_ssc_controlchart pinst = Ov_StaticPtrCast(ssc_controlchart, pfb);
+	OV_UINT    iterator = 0;
+	OV_INSTPTR_fb_intport en=NULL;
+	OV_INSTPTR_fb_stringport stringport=NULL;
+	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pinst);
 
+	en=Ov_DynamicPtrCast(fb_intport,Ov_SearchChild(ov_containment,pinst,"EN"));
+	if(en!=NULL){
+		if(en->v_value==3){
+			for(iterator = 0;iterator < pinst->v_ORDEREXECUTOR.veclen;iterator++){
+				stringport=Ov_DynamicPtrCast(fb_stringport,Ov_SearchChild(ov_containment,pinst,pinst->v_ORDEREXECUTOR.value[iterator]));
+				if(stringport!=NULL){
+					ov_string_setvalue(&stringport->v_value,"");
+				}
+
+
+
+				}
+		}
+	}
+	Ov_Call1(fb_task, intask, execute, pltc);
+    return;
+}

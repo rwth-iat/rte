@@ -76,6 +76,9 @@ LIBRARY ssc
 			ORDERLIST[]	: STRING	FLAGS = "i" COMMENT = "Command list for services";
 			ORDEREXECUTOR[]	: STRING	FLAGS = "i" COMMENT = "Name of Order executor";
 		END_VARIABLES;
+			OPERATIONS
+			typemethod		:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
 	END_CLASS;
 
 	CLASS SequentialControlChart : CLASS ssc/controlchart
