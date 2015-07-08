@@ -209,33 +209,33 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 
 	return OV_ERR_OK;
 }
+
 OV_DLLFNCEXPORT void ssc_controlchart_typemethod(
 	OV_INSTPTR_fb_functionblock	pfb,
 	OV_TIME						*pltc
 ) {
-    /*
-    *   local variables
-    */
-    OV_INSTPTR_ssc_controlchart pinst = Ov_StaticPtrCast(ssc_controlchart, pfb);
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_ssc_controlchart pinst = Ov_StaticPtrCast(ssc_controlchart, pfb);
 	OV_UINT    iterator = 0;
 	OV_INSTPTR_fb_intport en=NULL;
 	OV_INSTPTR_fb_stringport stringport=NULL;
-	OV_INSTPTR_fb_task          intask = Ov_GetPartPtr(intask, pinst);
 
 	en=Ov_DynamicPtrCast(fb_intport,Ov_SearchChild(ov_containment,pinst,"EN"));
 	if(en!=NULL){
-		if(en->v_value==3){
+		if(en->v_value == SSC_CMD_RESET){
 			for(iterator = 0;iterator < pinst->v_ORDEREXECUTOR.veclen;iterator++){
 				stringport=Ov_DynamicPtrCast(fb_stringport,Ov_SearchChild(ov_containment,pinst,pinst->v_ORDEREXECUTOR.value[iterator]));
 				if(stringport!=NULL){
 					ov_string_setvalue(&stringport->v_value,"");
 				}
-
-
-
-				}
+			}
 		}
 	}
-	Ov_Call1(fb_task, intask, execute, pltc);
-    return;
+
+	/* Trigger all connections and internal tasks */
+	fb_functionchart_typemethod(pfb, pltc);
+
+	return;
 }
