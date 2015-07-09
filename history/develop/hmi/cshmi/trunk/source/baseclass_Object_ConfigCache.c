@@ -656,7 +656,7 @@ static OV_RESULT cshmi_Object_updateConfigAsJSON(
 	}else if(pClass == pclass_cshmi_TimeEvent){
 		pTimeEvent = Ov_StaticPtrCast(cshmi_TimeEvent, pObj);
 		ov_string_append(&strIterate, "%22Parameters%22:%7B");
-		ov_string_print(&strIterate, "%s%%22cyctime%%22:%%22%f%%22", strIterate, pTimeEvent->v_cyctime);
+		ov_string_print(&strIterate, "%s%%22cyctime%%22:%%22%g%%22", strIterate, pTimeEvent->v_cyctime);
 		ov_string_append(&strIterate, "%7D");
 	}else if(pClass == pclass_cshmi_RoutePolyline){
 		pRoutePolyline = Ov_StaticPtrCast(cshmi_RoutePolyline, pObj);

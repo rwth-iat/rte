@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-07-07 16:46:46
+* Erstellt: 2015-07-09 13:32:11
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -19207,7 +19207,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoActionTable/InfoWindow/onload/EntryActions.forEachChild/InstSFCInfo :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableCell";
+      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableRow";
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 12.000000;
       xOffset : INPUT SINGLE = 0.000000;
@@ -19248,7 +19248,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoActionTable/InfoWindow/onload/DoActions.forEachChild/InstSFCInfo :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableCell";
+      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableRow";
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 12.000000;
       xOffset : INPUT SINGLE = 0.000000;
@@ -19289,7 +19289,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscStep/InfoActionTable/InfoWindow/onload/ExitActions.forEachChild/InstSFCInfo :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableCell";
+      TemplateDefinition : INPUT STRING = "Engineering/internal/SscActionTableRow";
       x : INPUT SINGLE = 0.000000;
       y : INPUT SINGLE = 12.000000;
       xOffset : INPUT SINGLE = 0.000000;
@@ -25688,7 +25688,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 1.000000;
@@ -25699,7 +25699,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -25708,7 +25708,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/CorrectY :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/CorrectY :
     CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25723,7 +25723,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/CorrectY/add_ActionCounter :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/CorrectY/add_ActionCounter :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25740,7 +25740,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/CorrectY/mul_Height :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/CorrectY/mul_Height :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25757,7 +25757,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/CorrectY/add_Offset :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/CorrectY/add_Offset :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25774,7 +25774,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/ActionCounterPlusOne :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/ActionCounterPlusOne :
     CLASS /acplt/cshmi/SetMathValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25789,7 +25789,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/ActionCounterPlusOne/add_OldActionCounter :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/ActionCounterPlusOne/add_OldActionCounter :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25806,7 +25806,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/ActionCounterPlusOne/add_one :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/ActionCounterPlusOne/add_one :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25823,7 +25823,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/cacheclass :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/cacheclass :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -25839,7 +25839,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/onload/cacheclass.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/onload/cacheclass.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25856,7 +25856,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -25876,7 +25876,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -25894,7 +25894,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 2.000000;
@@ -25903,7 +25903,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -25912,7 +25912,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -25920,7 +25920,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -25930,7 +25930,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25947,7 +25947,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -25964,7 +25964,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -25972,7 +25972,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.then/Set_red :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.then/Set_red :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -25988,7 +25988,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.then/Set_red.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.then/Set_red.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26005,7 +26005,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.then/Set_Title :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.then/Set_Title :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26021,7 +26021,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.then/Set_Title.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.then/Set_Title.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26038,7 +26038,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26046,7 +26046,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.else/Set_black :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.else/Set_black :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26062,7 +26062,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.else/Set_black.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.else/Set_black.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26079,7 +26079,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.else/Reset_Title :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.else/Reset_Title :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26095,7 +26095,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/rect/CheckError/If_True.else/Reset_Title.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/rect/CheckError/If_True.else/Reset_Title.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26112,7 +26112,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 9.000000;
@@ -26135,7 +26135,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -26144,7 +26144,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -26153,7 +26153,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26161,7 +26161,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -26171,7 +26171,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26188,7 +26188,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.if/isVar.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26205,7 +26205,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26213,7 +26213,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26229,7 +26229,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26246,7 +26246,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetTitle :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26262,7 +26262,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.then/SetTitle.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26279,7 +26279,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSetVar.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSetVar.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26287,7 +26287,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -26296,7 +26296,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26304,7 +26304,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -26314,7 +26314,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26331,7 +26331,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.if/isExecute.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26348,7 +26348,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26356,7 +26356,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26372,7 +26372,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26389,7 +26389,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetTitle :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26405,7 +26405,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.then/SetTitle.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26422,7 +26422,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassExecute.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassExecute.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26430,7 +26430,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -26439,7 +26439,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26447,7 +26447,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -26457,7 +26457,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26474,7 +26474,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.if/isCommand.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26491,7 +26491,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26499,7 +26499,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26515,7 +26515,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26532,7 +26532,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetTitle :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26548,7 +26548,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.then/SetTitle.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26565,7 +26565,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/classnameText/onload/checkClassSendcommand.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26573,7 +26573,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -26582,7 +26582,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -26591,7 +26591,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/onload/SetCursor :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/onload/SetCursor :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26607,7 +26607,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ClassIdentifierchar/onload/SetCursor.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ClassIdentifierchar/onload/SetCursor.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26624,7 +26624,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 15.000000;
@@ -26644,7 +26644,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -26662,7 +26662,854 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText :
+    CLASS /acplt/cshmi/Text;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 5.000000;
+      y : INPUT SINGLE = 6.000000;
+      content : INPUT STRING = "loading...";
+      fontSize : INPUT STRING = "11px";
+      fontStyle : INPUT STRING = "normal";
+      fontWeight : INPUT STRING = "normal";
+      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
+      horAlignment : INPUT STRING = "start";
+      verAlignment : INPUT STRING = "middle";
+      trimToLength : INPUT INT = 19;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "none";
+      fill : INPUT STRING = "black";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate :
+    CLASS /acplt/cshmi/TimeEvent;
+    VARIABLE_VALUES
+      cyctime : INPUT SINGLE = 2.000000;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "variable";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassSetVar.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "targetObject";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isVar.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isVar.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isCommand :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isCommand.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isCommand.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "CSHMIabsolutepathname";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.then/SetTrim :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "trimToLength";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.then/SetTrim.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT INT = -18;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/nameOfTargetText/onload/checkClassUnknown.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "doubleclick";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.if/isVar.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.if/isVar.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.then/SetVariable :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "variable";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.then/SetVariable.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "textinput:Please enter the name of the target variable:TemplateFBReferenceVariable:variable";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassSetVar.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isCommand :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isCommand.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.if/isCommand.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.then/SetTargetobject :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "targetObject";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.then/SetTargetobject.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "textinput:Please enter the name of the target object:TemplateFBReferenceVariable:targetObject";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/target/doubleclick/checkClassExecuteOrCommand.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand :
+    CLASS /acplt/cshmi/Group;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 115.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 12.000000;
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      hideable : INPUT BOOL = FALSE;
+      visible : INPUT BOOL = TRUE;
+      TemplateDefinition : INPUT STRING = "";
+      FBReference[0] : INPUT STRING = {};
+      FBVariableReference[0] : INPUT STRING = {};
+      ConfigValues[0] : INPUT STRING = {};
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/rect :
+    CLASS /acplt/cshmi/Rectangle;
+    VARIABLE_VALUES
+      x : INPUT SINGLE = 0.000000;
+      y : INPUT SINGLE = 0.000000;
+      width : INPUT SINGLE = 100.000000;
+      height : INPUT SINGLE = 12.000000;
+      strokeWidth : INPUT SINGLE = 1.000000;
+      visible : INPUT BOOL = TRUE;
+      stroke : INPUT STRING = "black";
+      fill : INPUT STRING = "white";
+      opacity : INPUT SINGLE = 1.000000;
+      rotate : INPUT INT = 0;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 5.000000;
@@ -26685,7 +27532,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 2.000000;
@@ -26694,7 +27541,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -26703,7 +27550,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26711,7 +27558,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -26721,7 +27568,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26738,7 +27585,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.if/isVar.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -26755,7 +27602,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -26763,7 +27610,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -26779,614 +27626,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.then/SetContent.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "variable";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassSetVar.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = TRUE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isExecute.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.if/isCommand.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then/SetContent :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "content";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.then/SetContent.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "targetObject";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/nameOfTargetText/cycupdate/checkClassExecuteOrCommand.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick :
-    CLASS /acplt/cshmi/OperatorEvent;
-    VARIABLE_VALUES
-      type : INPUT STRING = "doubleclick";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.if/isVar :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.if/isVar.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.if/isVar.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.then/SetVariable :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "variable";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.then/SetVariable.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "textinput:Please enter the name of the target variable:TemplateFBReferenceVariable:variable";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassSetVar.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = TRUE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isExecute :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isExecute.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isExecute.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isCommand :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isCommand.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.if/isCommand.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.then/SetTargetobject :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "targetObject";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.then/SetTargetobject.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "textinput:Please enter the name of the target object:TemplateFBReferenceVariable:targetObject";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/target/doubleclick/checkClassExecuteOrCommand.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand :
-    CLASS /acplt/cshmi/Group;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 115.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 12.000000;
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      hideable : INPUT BOOL = FALSE;
-      visible : INPUT BOOL = TRUE;
-      TemplateDefinition : INPUT STRING = "";
-      FBReference[0] : INPUT STRING = {};
-      FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[0] : INPUT STRING = {};
-      zindex : INPUT UINT = 3;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/rect :
-    CLASS /acplt/cshmi/Rectangle;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 0.000000;
-      y : INPUT SINGLE = 0.000000;
-      width : INPUT SINGLE = 100.000000;
-      height : INPUT SINGLE = 12.000000;
-      strokeWidth : INPUT SINGLE = 1.000000;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "black";
-      fill : INPUT STRING = "white";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText :
-    CLASS /acplt/cshmi/Text;
-    VARIABLE_VALUES
-      x : INPUT SINGLE = 10.000000;
-      y : INPUT SINGLE = 6.000000;
-      content : INPUT STRING = "loading...";
-      fontSize : INPUT STRING = "11px";
-      fontStyle : INPUT STRING = "normal";
-      fontWeight : INPUT STRING = "normal";
-      fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
-      horAlignment : INPUT STRING = "start";
-      verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 13;
-      visible : INPUT BOOL = TRUE;
-      stroke : INPUT STRING = "none";
-      fill : INPUT STRING = "black";
-      opacity : INPUT SINGLE = 1.000000;
-      rotate : INPUT INT = 0;
-      zindex : INPUT UINT = 1;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate :
-    CLASS /acplt/cshmi/TimeEvent;
-    VARIABLE_VALUES
-      cyctime : INPUT SINGLE = 2.000000;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.if/isVar.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then/SetContent :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "content";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27403,7 +27643,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSetVar.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27411,7 +27651,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -27420,7 +27660,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27428,7 +27668,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -27438,7 +27678,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27455,7 +27695,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.if/isCommand.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27472,7 +27712,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27480,7 +27720,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -27496,7 +27736,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27513,7 +27753,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/cycupdate/checkClassSendcommand.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27521,16 +27761,16 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick :
-    CLASS /acplt/cshmi/OperatorEvent;
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload :
+    CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
-      type : INPUT STRING = "doubleclick";
-      zindex : INPUT UINT = 2;
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -27539,7 +27779,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27547,17 +27787,17 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isVar :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
+      comptype : INPUT STRING = "!=";
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isVar.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27574,7 +27814,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isVar.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27591,7 +27831,95 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isCommand :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isCommand.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isCommand.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27599,7 +27927,126 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.then/SetValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT STRING = "has wrong type:";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/ValueOrCommandText/onload/checkClassUnknown.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "doubleclick";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.if/isVar.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.then/SetValue :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -27615,7 +28062,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.then/SetValue.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.then/SetValue.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27632,7 +28079,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSetVar.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSetVar.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27640,7 +28087,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -27649,7 +28096,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27657,7 +28104,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -27667,7 +28114,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27684,7 +28131,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.if/isCommand.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27701,7 +28148,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27709,7 +28156,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.then/setCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.then/setCommand :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -27725,7 +28172,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.then/setCommand.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.then/setCommand.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27742,7 +28189,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/doubleclick/checkClassSendcommand.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/doubleclick/checkClassSendcommand.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27750,7 +28197,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -27759,7 +28206,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -27768,7 +28215,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27776,7 +28223,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.if/isExecute :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.if/isExecute :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -27786,7 +28233,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.if/isExecute.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.if/isExecute.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27803,7 +28250,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.if/isExecute.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.if/isExecute.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27820,7 +28267,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27828,7 +28275,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -27844,7 +28291,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27861,7 +28308,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/ValueOrCommand/onload/checkClassExecute.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/ValueOrCommand/onload/checkClassExecute.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27869,7 +28316,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 215.000000;
@@ -27889,7 +28336,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/rect :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/rect :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -27907,7 +28354,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/rect/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/rect/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -27916,10 +28363,10 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
-      x : INPUT SINGLE = 10.000000;
+      x : INPUT SINGLE = 5.000000;
       y : INPUT SINGLE = 6.000000;
       content : INPUT STRING = "loading...";
       fontSize : INPUT STRING = "11px";
@@ -27928,7 +28375,7 @@
       fontFamily : INPUT STRING = "'Times New Roman',Times,serif";
       horAlignment : INPUT STRING = "start";
       verAlignment : INPUT STRING = "middle";
-      trimToLength : INPUT INT = 12;
+      trimToLength : INPUT INT = 40;
       visible : INPUT BOOL = TRUE;
       stroke : INPUT STRING = "none";
       fill : INPUT STRING = "black";
@@ -27939,7 +28386,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 2.000000;
@@ -27948,7 +28395,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -27957,7 +28404,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -27965,7 +28412,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
@@ -27975,7 +28422,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -27992,7 +28439,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.if/isCommand.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28009,7 +28456,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -28017,7 +28464,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.then/SetContent :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.then/SetContent :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -28033,7 +28480,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.then/SetContent.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.then/SetContent.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28050,7 +28497,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/ParameterText/cycupdate/checkClassSendcommand.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/cycupdate/checkClassSendcommand.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -28058,87 +28505,43 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
-      zindex : INPUT UINT = 2;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = TRUE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isExecute :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isExecute.value1 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "objectclass";
-      value : INPUT VOID = ;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isExecute.value2 :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isVar :
-    CLASS /acplt/cshmi/Compare;
-    VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
-      ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isVar.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isVar.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28155,7 +28558,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.if/isVar.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isVar.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28172,92 +28575,17 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.then :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.then/SetContent :
-    CLASS /acplt/cshmi/SetValue;
-    VARIABLE_VALUES
-      translationSource : INPUT STRING = "";
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "visible";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.then/SetContent.value :
-    CLASS /acplt/cshmi/GetValue;
-    VARIABLE_VALUES
-      ksVar : INPUT STRING = "";
-      elemVar : INPUT STRING = "";
-      globalVar : INPUT STRING = "";
-      persistentGlobalVar : INPUT STRING = "";
-      OperatorInput : INPUT STRING = "";
-      TemplateFBReferenceVariable : INPUT STRING = "";
-      TemplateFBVariableReferenceName : INPUT STRING = "";
-      TemplateConfigValues : INPUT STRING = "";
-      value : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/onload/checkClassVarOrExecute.else :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick :
-    CLASS /acplt/cshmi/OperatorEvent;
-    VARIABLE_VALUES
-      type : INPUT STRING = "doubleclick";
-      zindex : INPUT UINT = 3;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand :
-    CLASS /acplt/cshmi/IfThenElse;
-    VARIABLE_VALUES
-      anycond : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.if :
-    CLASS /acplt/cshmi/csContainer;
-    VARIABLE_VALUES
-      zindex : INPUT UINT = 0;
-      baseKsPath : INPUT STRING = "";
-    END_VARIABLE_VALUES;
- END_INSTANCE;
-
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.if/isCommand :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isCommand :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
-      comptype : INPUT STRING = "==";
+      comptype : INPUT STRING = "!=";
       ignoreError : INPUT BOOL = FALSE;
-      zindex : INPUT UINT = 0;
+      zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.if/isCommand.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isCommand.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28274,7 +28602,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.if/isCommand.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isCommand.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28291,7 +28619,51 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "!=";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -28299,7 +28671,289 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.then/setParameter :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "content";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/ParameterText/onload/checkClassUnknown.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload :
+    CLASS /acplt/cshmi/ClientEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "onload";
+      zindex : INPUT UINT = 2;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = TRUE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isExecute :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isExecute.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isExecute.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/execute" , "/Libraries/ssc/execute"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isVar :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isVar.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.if/isVar.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/setVariable" , "/Libraries/ssc/setVariable"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.then/SetContent :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "visible";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.then/SetContent.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/onload/checkClassVarOrExecute.else :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "doubleclick";
+      zindex : INPUT UINT = 3;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand :
+    CLASS /acplt/cshmi/IfThenElse;
+    VARIABLE_VALUES
+      anycond : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.if :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.if/isCommand :
+    CLASS /acplt/cshmi/Compare;
+    VARIABLE_VALUES
+      comptype : INPUT STRING = "==";
+      ignoreError : INPUT BOOL = FALSE;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.if/isCommand.value1 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "objectclass";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.if/isCommand.value2 :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value[2] : INPUT STRING = {"/acplt/ssc/sendCommand" , "/Libraries/ssc/sendCommand"};
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.then :
+    CLASS /acplt/cshmi/csContainer;
+    VARIABLE_VALUES
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.then/setParameter :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -28315,7 +28969,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.then/setParameter.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.then/setParameter.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -28332,7 +28986,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/Parameter/doubleclick/checkClassSendcommand.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/Parameter/doubleclick/checkClassSendcommand.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -28340,7 +28994,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableCell/DeleteFunction :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SscActionTableRow/DeleteFunction :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
