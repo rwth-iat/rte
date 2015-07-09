@@ -1280,6 +1280,13 @@ HMIJavaScriptKSClient.prototype = {
 			
 			//only send POST to non tcl servers!
 			
+			/*
+			if(async){
+				urlparameter +="&async=true";
+			}else{
+				urlparameter +="&async=false";
+			}
+			*/
 			req.open(method, urlparameter, async);
 			
 			if ("kshttp" !== HMI.HMI_Constants.ServerType){
@@ -1425,7 +1432,7 @@ HMIJavaScriptKSClient.prototype = {
 			returns the KS Response as an Array, or an empty Array
 			if the optional argument recursionDepth is > 0,  
 	*********************************/
-	splitKsResponse: function (response, recursionDepth) {
+	splitKsResponse: function (response, recursionDepth, ignoreError) {
 		//Checking if optional argument is set, else set to default: 0
 		if (recursionDepth === undefined){
 			recursionDepth = 0;
@@ -1442,7 +1449,7 @@ HMIJavaScriptKSClient.prototype = {
 			return Array();
 		}else if (response === "{{}}"){
 			return Array("");
-		}else if (response.indexOf("KS_ERR") !== -1){
+		}else if (ignoreError === false && response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}
 
@@ -1488,7 +1495,7 @@ HMIJavaScriptKSClient.prototype = {
 				currentArrayElement = response.slice(startIndexOfCurrentString+1, indexOfNextClosedBracket);
 
 				if (recursionDepth > 0){
-					currentArrayElement = this.splitKsResponse(currentArrayElement, recursionDepth-1);
+					currentArrayElement = this.splitKsResponse(currentArrayElement, recursionDepth-1, ignoreError);
 				}
 				//get a rid of the remaining brackets because we are done with this element 
 				//e.g "{/TechUnits/Pump1}"

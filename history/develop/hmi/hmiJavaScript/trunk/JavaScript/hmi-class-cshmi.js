@@ -124,10 +124,7 @@ function cshmi() {
 
 /*#########################################################################################################################
 TODO:
-zyklische requests fehlerfrei zusammenfassen
-
 setvar type erlauben
-
 überall asyncrone requests nutzen
 #########################################################################################################################*/
 
@@ -437,16 +434,17 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 		}
-		var cyctime = requestList[ObjectPath]["cyctime"];
+		var cyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
-			if (parseFloat(requestList[ObjectPath]["cyctime"]) === 0 ){
+			if (cyctime === 0 ){
 				//zero disables
 				return true;
-			}else if (this.initStage === true && parseFloat(requestList[ObjectPath]["cyctime"]) > 1 ){
+			}else if (this.initStage === true && cyctime > 1 ){
+				//we dont want to wait too long for the first action
 				var nextcyctime = 1;
 			}else{
-				nextcyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
+				nextcyctime = cyctime;
 			}
 			var preserveThis = this;
 			this.ResourceList.TimeeventCallStack[cyctime] = new Object();
@@ -491,7 +489,11 @@ cshmi.prototype = {
 					thisTime.getVarCollection[objectname][variablename] = null;
 				}
 			}
-			this._requestVariablesArray(thisTime.getVarCollection, true);
+			var successCode = this._requestVariablesArray(thisTime.getVarCollection, true);
+			if (successCode === false){
+				//we have no good values, so clear the Collection
+				thisTime.getVarCollection = Object();
+			}
 			
 			for (var i = 0; i < thisTime.triggeredObjectList.length;){
 				var EventObjItem = thisTime.triggeredObjectList[i];
@@ -1032,8 +1034,10 @@ cshmi.prototype = {
 					objectname = "";
 					variablename = path;
 				}
+				//prevent cyclic fetching
 				if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
-					delete CyctimeObject[objectname][variablename];
+					//problem: if we remove this entry, a doublicate request (which has no preventNetworkRequest) is left without a value
+					//delete CyctimeObject[objectname][variablename];
 				}
 			}
 			//intentionally no value
@@ -1315,7 +1319,8 @@ cshmi.prototype = {
 				if(preventNetworkRequest === true){
 					//prevent cyclic fetching
 					if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
-						delete CyctimeObject[objectname][variablename];
+						//problem: if we remove this entry, a doublicate request (which has no preventNetworkRequest) is left without a value
+						//delete CyctimeObject[objectname][variablename];
 					}
 					//intentionally no value
 					return null;
@@ -1366,7 +1371,8 @@ cshmi.prototype = {
 							if(preventNetworkRequest === true){
 								//prevent cyclic fetching
 								if(CyctimeObject[objectname] === undefined && CyctimeObject[objectname][variablename] !== undefined || CyctimeObject[objectname][variablename] !== undefined){
-									delete CyctimeObject[objectname][variablename];
+									//problem: if we remove this entry, a doublicate request (which has no preventNetworkRequest) is left without a value
+									//delete CyctimeObject[objectname][variablename];
 								}
 								//intentionally no value
 								return null;
@@ -6121,33 +6127,41 @@ cshmi.prototype = {
 		if(VariableCount === 0){
 			return true;
 		}
+		
 		var response = HMI.KSClient.getVar(requestArray, "OP_VALUE", null);
+		var responseClean;
 		if (response === false || response === null){
 			//communication error
 			return false;
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && (response.match(/KS_ERR_BADPATH/g)||[]).length - 1 === VariableCount){
-			//TCL gives one global KS_ERR and one for each error
-			//"TksS-0335::KS_ERR_BADPATH {{/TechUnits/VesselCurrent.width KS_ERR_BADPATH} {.height KS_ERR_BADPATH} {.hideable KS_ERR_BADPATH}}"
-			
-			//all our variables gave an error, so it is an server problem and no model problem, will be reported in caller function
-			return false;
-		}else if (response.indexOf("KS_ERR_BADPATH") !== -1){
-			if(ignoreError === false){
-				HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to export your server.");
+		}else if (response.indexOf("KS_ERR_BADPATH") !== -1 && ignoreError !== true){
+			if(ignoreError !== false){
+				HMI.hmi_log_onwebsite("Sorry, your cshmi server is not supported, because the base model was changed. Please upgrade to the newest cshmi library. Don't forget to backup your server into FBD.");
 			}
 			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
 			return false;
-		}else if (response.indexOf("KS_ERR") !== -1){
+		}else if (response.indexOf("KS_ERR") !== -1 && (response.match(/KS_ERR/g) || []).length - 1 === VariableCount){
+			//TCL format gives one global KS_ERR and one for each error
+			//"TksS-0335::KS_ERR_BADPATH {{/TechUnits/VesselCurrent.width KS_ERR_BADPATH} {.height KS_ERR_BADPATH} {.hideable KS_ERR_BADPATH}}"
+			//"KS_ERR_BADPATH: error 404: path not found {0} {KS_ERR: bad path} {KS_ERR: bad path} {KS_ERR: bad path} {KS_ERR: bad path} {0} {0} {FALSE} {1}"
+			
+			//all our variables gave an error, nothing to recover
 			HMI.hmi_log_error("cshmi._requestVariablesArray of "+requestArray+" failed: "+response);
 			return false;
+		}else if (response.indexOf("KS_ERR") !== -1){
+			//only some requests had a problem. Try to extract the good values!
+			var responseClean = response.substr(response.indexOf("{"));
+		}else{
+			responseClean = response;
 		}
-		var responseArray = HMI.KSClient.splitKsResponse(response);
+		var responseArray = HMI.KSClient.splitKsResponse(responseClean, 0, true);
 		
 		//fill request object with the result
 		var i = 0;
 		for (var ovObjName in requestList) {
 			for (var ksVarName in requestList[ovObjName]) {
-				requestList[ovObjName][ksVarName] = responseArray[i];
+				if(responseArray[i].indexOf("KS_ERR") === -1){
+					requestList[ovObjName][ksVarName] = responseArray[i];
+				}
 				i++;
 			}
 		}
@@ -6360,11 +6374,13 @@ cshmi.prototype = {
 				this._setTitle(VisualObject, NewText);
 			}
 		}else if((trimToLength > 0) && (contentLength > trimToLength)){
-			trimmedContent = NewText.substr(0, trimToLength);
+			//shorten the string one char more, as we need space for the Ellipsis
+			trimmedContent = NewText.substr(0, trimToLength-1);
 			trimFromRight = true;
 			this._setTitle(VisualObject, NewText);
 		}else if((trimToLength < 0) && (contentLength > -trimToLength)){
-			trimmedContent = NewText.substr(contentLength + trimToLength);
+			//shorten the string one char more, as we need space for the Ellipsis
+			trimmedContent = NewText.substr(contentLength + trimToLength-1);
 			trimFromRight = false;
 			this._setTitle(VisualObject, NewText);
 		}else{
