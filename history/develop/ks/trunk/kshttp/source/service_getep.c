@@ -594,10 +594,10 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 				if(request.response_format == KSX){
 					//could add a char info, as an additional xml element
 					ov_string_print(&temp, "%s%i", temp, one_result->semantic_flags);
-				}else{
+				}else if(one_result->semantic_flags != 0){
 					//semantic_flags is a u_long (32 bit) aka UINT, but a unsigned char for flagiterator is nicer in the debugger
-					//and safe enough, as we iterate only to 129
-					for (flagiterator = 'a';flagiterator < 'a'+32;flagiterator++){
+					//and safe enough, as the ov_ovmscanner.lex generated this from 'a' (97) to 'z' (122)
+					for (flagiterator = 'a';flagiterator <= 'z';flagiterator++){
 						if(IsFlagSet(one_result->semantic_flags, flagiterator)){
 							ov_string_print(&temp, "%s%c", temp, flagiterator);
 						}
