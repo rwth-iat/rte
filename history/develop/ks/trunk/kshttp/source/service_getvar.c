@@ -95,7 +95,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	if(!*addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
 		EXEC_GETVAR_RETURN fr;
 	}
 
@@ -144,8 +144,8 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	 */
 
 	if(Ov_Fail(result.result)){
-		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
+		//memory problem or NOACCESS
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": NOACCESS or memory problem");
 		ov_memstack_unlock();
 		EXEC_GETVAR_RETURN result.result;
 	}
@@ -157,21 +157,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 		fr = one_result.result;
 		if(Ov_Fail(fr)){
 			lasterror = fr;
-			kshttp_response_part_begin(&LoopEntryList, request.response_format, "failure");
-			if(request.response_format == KSX){
-				if(LoopEntryList == NULL){
-					ov_string_print(&LoopEntryList, "%i", fr);
-				}else{
-					ov_string_print(&LoopEntryList, "%s%i", LoopEntryList, fr);
-				}
-			}else{
-				if(LoopEntryList == NULL){
-					ov_string_print(&LoopEntryList, "KS_ERR: %s", ov_result_getresulttext(fr));
-				}else{
-					ov_string_print(&LoopEntryList, "%sKS_ERR: %s", LoopEntryList, ov_result_getresulttext(fr));
-				}
-			}
-			kshttp_response_part_finalize(&LoopEntryList, request.response_format, "failure");
+			kshttp_print_result_array(&LoopEntryList, request.response_format, &fr, 1, "");
 		}else{
 			Variable = one_result.var_current_props;
 

@@ -298,6 +298,55 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpHeader(
 	return OV_ERR_OK;
 }
 
+DLLFNCEXPORT OV_STRING kshttp_mapresult2string(OV_RESULT const result){
+	switch (result){
+	case KS_ERR_OK:
+		return "KS_ERR_OK";
+	case KS_ERR_GENERIC:
+		return "KS_ERR_GENERIC";
+	case KS_ERR_TARGETGENERIC:
+		return 	"KS_ERR_TARGETGENERIC";
+	case KS_ERR_BADAUTH:
+		return "KS_ERR_BADAUTH";
+	case KS_ERR_UNKNOWNAUTH:
+		return "KS_ERR_UNKNOWNAUTH";
+	case KS_ERR_NOTIMPLEMENTED:
+		return "KS_ERR_NOTIMPLEMENTED";
+	case KS_ERR_BADPARAM:
+		return "KS_ERR_BADPARAM";
+	case KS_ERR_BADOBJTYPE:
+		return "KS_ERR_BADOBJTYPE";
+	case KS_ERR_BADNAME:
+		return "KS_ERR_BADNAME";
+	case KS_ERR_BADPATH:
+		return "KS_ERR_BADPATH";
+	case KS_ERR_BADMASK:
+		return "KS_ERR_BADMASK";
+	case KS_ERR_NOACCESS:
+		return "KS_ERR_NOACCESS";
+	case KS_ERR_BADTYPE:
+		return "KS_ERR_BADTYPE";
+	case KS_ERR_BADSELECTOR:
+		return "KS_ERR_BADSELECTOR";
+	case KS_ERR_BADVALUE:
+		return "KS_ERR_BADVALUE";
+	case KS_ERR_BADFACTORY:
+		return "KS_ERR_BADFACTORY";
+	case KS_ERR_ALREADYEXISTS:
+		return "KS_ERR_ALREADYEXISTS";
+	case KS_ERR_BADINITPARAM:
+		return "KS_ERR_BADINITPARAM";
+	case KS_ERR_BADPLACEMENT:
+		return "KS_ERR_BADPLACEMENT";
+	case KS_ERR_CANTMOVE:
+		return "KS_ERR_CANTMOVE";
+	default:
+		return "KS_ERR";
+	}
+
+
+
+}
 
 /**
  * Builds header for http communication from OV_RESULT

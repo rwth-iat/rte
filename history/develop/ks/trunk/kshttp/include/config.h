@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -116,3 +116,5 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESP
 OV_RESULT kshttp_decodeTransferEncodingChunked(OV_BYTE *rawHTTPmessage, OV_BYTE **entityBody, OV_UINT *contentLength, OV_UINT receivedlength, OV_UINT *httpParseStatus);
 OV_RESULT kshttp_encodebase64(OV_STRING * strBase64string, OV_STRING input);
 OV_BYTE *kshttp_strnstr(OV_BYTE *haystack, OV_STRING needle, OV_UINT length);
+
+DLLFNCEXPORT OV_STRING kshttp_mapresult2string(OV_RESULT const result);

@@ -138,7 +138,7 @@ OV_RESULT kshttp_exec_getserver(const HTTP_REQUEST request, HTTP_RESPONSE *respo
 		}
 		else
 		{/*	not all values set...how can this happen?	*/
-			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": weird: getserverdata returned unknown error. i don't know how this can happen");
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": weird: getserverdata returned unknown error. I don't know how this can happen");
 			EXEC_GETSERVER_RETURN KS_ERR_TARGETGENERIC; //400
 		}
 	}

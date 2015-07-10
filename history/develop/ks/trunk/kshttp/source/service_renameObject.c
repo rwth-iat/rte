@@ -94,7 +94,7 @@ OV_RESULT kshttp_exec_renameObject(const HTTP_REQUEST request, HTTP_RESPONSE *re
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
 		EXEC_RENAMEOBJECT_RETURN fr;
 	}
 
@@ -143,8 +143,8 @@ OV_RESULT kshttp_exec_renameObject(const HTTP_REQUEST request, HTTP_RESPONSE *re
 	 * Parse result from KS function
 	 */
 	if(Ov_Fail(result.result)){
-		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
+		//memory problem or NOACCESS
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": NOACCESS or memory problem");
 		ov_memstack_unlock();
 		EXEC_RENAMEOBJECT_RETURN result.result;
 	}

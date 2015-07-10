@@ -122,7 +122,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	if(!addrp) {
 		ov_memstack_unlock();
 		fr = OV_ERR_TARGETGENERIC;
-		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
 		EXEC_SETVAR_RETURN fr;
 	}
 
@@ -144,7 +144,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 		if(!*addrpGet) {
 			ov_memstack_unlock();
 			fr = OV_ERR_TARGETGENERIC;
-			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": memory problem");
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": internal memory problem");
 			EXEC_SETVAR_RETURN fr;
 		}
 		paramsGet.identifiers_val = addrpGet;
@@ -159,10 +159,10 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 		ov_ksserver_getvar(2, pticket, &paramsGet, &resultGet);
 
 		if(Ov_Fail(resultGet.result)){
-			//general problem like memory problem or NOACCESS
-			kshttp_print_result_array(&response->contentString, request.response_format, &resultGet.result, 1, ": general problem with get");
+			//memory problem or NOACCESS
+			kshttp_print_result_array(&response->contentString, request.response_format, &resultGet.result, 1, ": NOACCESS or memory problem with fetching the variable type");
 			ov_memstack_unlock();
-			EXEC_SETVAR_RETURN fr;
+			EXEC_SETVAR_RETURN resultGet.result;
 		}
 	}
 
@@ -173,7 +173,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 			one_resultGet = *(resultGet.items_val + i);
 			if(Ov_Fail(one_resultGet.result)){
 				fr = one_resultGet.result;
-				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": problem with get (Is the path to the variable valid?)");
+				kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": problem with fetching the variable type (Is the path to the variable valid?)");
 				ov_memstack_unlock();
 				EXEC_SETVAR_RETURN fr;
 			}
@@ -476,8 +476,8 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 	 */
 
 	if(Ov_Fail(result.result)){
-		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
+		//memory problem or NOACCESS
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": NOACCESS or memory problem");
 		ov_memstack_unlock();
 		EXEC_SETVAR_RETURN result.result;
 	}

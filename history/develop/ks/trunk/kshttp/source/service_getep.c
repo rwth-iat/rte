@@ -263,8 +263,8 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 	pticket->vtbl->deleteticket(pticket);
 
 	if(Ov_Fail(result.result)){
-		//general problem like memory problem or NOACCESS
-		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, ": general problem");
+		//getEP is only valid for one target, so this variable hold all possible errors, not only NOACCESS like the other services
+		kshttp_print_result_array(&response->contentString, request.response_format, &result.result, 1, "");
 		ov_memstack_unlock();
 		EXEC_GETEP_RETURN result.result;
 	}
@@ -295,8 +295,8 @@ OV_RESULT kshttp_exec_getep(const HTTP_REQUEST request, HTTP_RESPONSE *response)
 			//should not happen with an UINT
 			ov_string_append(&response->contentString, "internal memory problem");
 			fr = OV_ERR_GENERIC;
-			kshttp_print_result_array(&message, request.response_format, &fr, 1, ": memory problem");
-			EXEC_GETEP_RETURN fr; //404
+			kshttp_print_result_array(&message, request.response_format, &fr, 1, ": internal memory problem");
+			EXEC_GETEP_RETURN fr; //503
 		}
 		for (i=0;i < requestOutput.veclen;i++){
 			if(i >= 1 && !(requestOutput.value[i] == OP_TYPE &&
