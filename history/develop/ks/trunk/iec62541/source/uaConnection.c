@@ -180,32 +180,32 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaConnection_HandleRequest(
     */
 	OV_INSTPTR_iec62541_uaConnection	pConnection	=	Ov_StaticPtrCast(iec62541_uaConnection, this);
 	UA_ByteString						temp;
-	UA_ByteString						*received	=	NULL;
+	UA_ByteString						received;
 	OV_RESULT							result;
 
-	received = UA_ByteString_new();
-	if(!received){
-		return OV_ERR_HEAPOUTOFMEMORY;
-	}
+
 	temp.length = dataReceived->length;
 	temp.data = dataReceived->data;
-	UA_ByteString_copy(&temp, received);
+	if(UA_ByteString_copy(&temp, &received) != UA_STATUSCODE_GOOD){
+		return OV_ERR_HEAPOUTOFMEMORY;
+	}
+	temp.length = 0;
+	temp.data = NULL;
 	if(pConnection->v_connection == NULL){
 		result = create_UA_Connection(pConnection);
 		if(Ov_Fail(result)){
 			ov_logfile_error("%s - HandleRequest: failed to create UA_Connection. Reason: %s", pConnection->v_identifier, ov_result_getresulttext(result));
-			UA_ByteString_delete(received);
+			UA_ByteString_deleteMembers(&received);
 			return result;
 		}
 	}
-	temp = UA_Connection_completeMessages(pConnection->v_connection, *received);
+	temp = UA_Connection_completeMessages(pConnection->v_connection, received);
 	if(temp.length > 0){
 		ksbase_KSDATAPACKET_append(&(pConnection->v_buffer), temp.data, temp.length);
 	}
 	UA_ByteString_deleteMembers(&temp);
 	pConnection->v_workNext = TRUE;
 	ksbase_free_KSDATAPACKET(dataReceived);
-    UA_ByteString_delete(received);
 	return OV_ERR_OK;
 }
 

@@ -43,7 +43,7 @@ void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection){
 	}
 }
 
-static void FreeConnection(UA_Server *server, UA_Connection *pConn) {
+static void FreeConnection(UA_Server *server, void *pConn) {
    	Ov_HeapFree(pConn);
 }
 
@@ -274,6 +274,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;
 		newJobs[counter].job.methodCall.method = FreeConnection;
 		newJobs[counter].job.methodCall.data = this->v_connsToClose[closeConnCounter];
+		counter++;
 	}
 	Ov_HeapFree(this->v_connsToClose);
 	this->v_connsToClose = NULL;
