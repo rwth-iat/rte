@@ -522,8 +522,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				if(err < TCPbind_CHUNKSIZE)
 				{
 					//last part received or closed/failure
-					if(err == 0)
-					{
+					if(err == 0 && !datareceived)
+					{	// connection closed (0 bytes received and there is nothing in the buffer)
 						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
 						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 						TCPbind_TCPChannel_socket_set(thisCh, -1);
