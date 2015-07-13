@@ -413,6 +413,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     	}
     }
     pinst->v_serverConfig = UA_ServerConfig_standard;
+    pinst->v_serverConfig.Application_applicationName = NULL;
+    pinst->v_serverConfig.Application_applicationURI = NULL;
     ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationName), "acplt-iec62541");
     ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationURI), "urn:acplt:open62541:acplt-iec2541Server");
     pinst->v_serverConfig.Login_loginsCount = 2;

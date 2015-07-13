@@ -120,6 +120,7 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 			|| (browseDescription->browseDirection == UA_BROWSEDIRECTION_BOTH)){
 		// children
 		childPart.elemtype = OV_ET_NONE;
+		childPart.pobj = NULL;
 		ov_element_getnextchild(pNode, &childPart);
 		while(childPart.elemtype!=OV_ET_NONE){
 			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
@@ -133,6 +134,7 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 		}
 		// parts
 		childPart.elemtype = OV_ET_NONE;
+		childPart.pobj = NULL;
 		ov_element_getnextpart(pNode, &childPart, OV_ET_OBJECT | OV_ET_VARIABLE);
 		while(childPart.elemtype!=OV_ET_NONE){
 			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
