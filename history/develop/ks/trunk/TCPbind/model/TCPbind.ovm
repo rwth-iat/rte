@@ -18,7 +18,7 @@ LIBRARY TCPbind
 		FLAGS	=	"v";
 		VARIABLES
 			socket	:	INT	HAS_ACCESSORS
-				COMMENT	=	"Socket to receive and send data"
+				COMMENT	=	"Socket to receive and send data (-1 is a non valid socket)"
 				INITIALVALUE	=	-1;
 			addrInfo	:	C_TYPE	<OV_addrinfoPointer>
 				COMMENT	=	"Pointer to addressinfo structure";
@@ -52,7 +52,7 @@ LIBRARY TCPbind
 		FLAGS	=	"v";
 		VARIABLES
 			socket [2]	:	INT	
-				COMMENT	=	"listening on socket(s) (IPv4 and IPv6)";
+				COMMENT	=	"listening on socket(s) (IPv4 and IPv6; (-1 is a non valid socket) ";
 			SocketState	:	UINT
 				COMMENT	=	"State of the socket: 0 - closed; 1 - opening; 2 - open; 4 - closing; 128 - indicates error; 255 generic error"
 				INITIALVALUE	=	0;

@@ -79,13 +79,15 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 		OV_INSTPTR_TCPbind_TCPChannel          pobj,
 		const OV_INT  value
 ) {
-	OV_INT socket;
+	OV_INT activesocket;
+	TCPBIND_SOCKET socket;
 
-	socket = TCPbind_TCPChannel_socket_get(pobj);
-	if(socket >= 0 && socket != value)
+	activesocket = TCPbind_TCPChannel_socket_get(pobj);
+	if(activesocket >= 0 && activesocket != value)
 	{
-		CLOSE_SOCKET(socket);
-		KS_logfile_debug(("TCPChannel/socket %s closing socket %d", pobj->v_identifier, socket));
+		OV_TCPBIND_SETINT2SOCKET(activesocket, socket);
+		TCPBIND_CLOSE_SOCKET(socket);
+		KS_logfile_debug(("TCPChannel/socket %s closing socket %d", pobj->v_identifier, activesocket));
 	}
 	pobj->v_socket = value;
 	if(pobj->v_socket < 0)
@@ -106,14 +108,14 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 		OV_INSTPTR_TCPbind_TCPChannel thisTCPCh
 ) {
-	int sockfd = -1;
 	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
 	socklen_t sas = sizeof(sa_stor);
 	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
-	int on = 1; 	//used to disable nagle algorithm
+	int opt_on = 1;
+	TCPBIND_SOCKET sockfd = TCPBIND_INVALID_SOCKET;
 #if OV_SYSTEM_NT
 	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
 #endif
@@ -123,6 +125,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 #ifdef _GNU_SOURCE
 	thisTCPCh->v_addrInfo = ((struct gaicb*)thisTCPCh->v_addrInfoReq)->ar_result;
 #endif
+
 #if OV_SYSTEM_NT
 	//opt in for faster localhost connections on new windows hosts. This has to be before connect
 //old includes does not have this new define
@@ -130,19 +133,20 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 #define SIO_LOOPBACK_FAST_PATH 0x98000010
 #endif
 	//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
-	(void)WSAIoctl(sockfd, SIO_LOOPBACK_FAST_PATH, &on, sizeof(on), NULL, 0, &NumberOfBytesReturned, 0, 0);
+	(void)WSAIoctl(sockfd, SIO_LOOPBACK_FAST_PATH, &opt_on, sizeof(opt_on), NULL, 0, &NumberOfBytesReturned, 0, 0);
 #endif
+
 	for (walk = thisTCPCh->v_addrInfo; walk != NULL; walk = walk->ai_next) {
 		KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
 		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-		if (sockfd < 0){
+		if (sockfd == TCPBIND_INVALID_SOCKET){
 			KS_logfile_debug(("%s: address not usable", thisTCPCh->v_identifier));
 			continue;
 		}
 		KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
-		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) != 0) {
-			CLOSE_SOCKET(sockfd);
-			sockfd = -1;
+		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
+			TCPBIND_CLOSE_SOCKET(sockfd);
+			sockfd = TCPBIND_INVALID_SOCKET;
 			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
 			continue;
 		}
@@ -156,7 +160,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 		ov_free(thisTCPCh->v_addrInfoReq);
 		thisTCPCh->v_addrInfoReq = NULL;
 	}
-	if (sockfd == -1)
+	if (sockfd == TCPBIND_INVALID_SOCKET)
 	{
 		KS_logfile_info(("%s: could not establish connection", thisTCPCh->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -164,7 +168,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	}
 
 	//resolve connected peer
-	if( getpeername(sockfd, sa, &sas))
+	if(getpeername(sockfd, sa, &sas) == TCPBIND_SOCKET_ERROR)
 	{
 		KS_logfile_error(("%s: could not resolve connected peer", thisTCPCh->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -172,7 +176,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	}
 
 	// resolve peername
-	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags))
+	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags) != 0)
 	{
 		KS_logfile_error(("%s: could not resolve connected peer's address", thisTCPCh->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -188,7 +192,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 	ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
 
 	//disable nagle for the receivesocket
-	(void)setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+	(void)setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&opt_on, sizeof(opt_on));
 	return OV_ERR_OK;
 }
 
@@ -206,7 +210,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	 *   local variables
 	 */
 	OV_INSTPTR_TCPbind_TCPChannel thisCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
-	OV_INT socket = -1;
+	TCPBIND_SOCKET socket = TCPBIND_INVALID_SOCKET;
 	fd_set write_flags;
 	struct timeval waitd;
 	int err = 0;
@@ -244,7 +248,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			socket = TCPbind_TCPChannel_socket_get(thisCh);
 
 			//Check if socket is ok
-			if (socket < 0 || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
+			if (socket == TCPBIND_INVALID_SOCKET || thisCh->v_ConnectionState == TCPbind_CONNSTATE_CLOSED) { // check if the socket might be OK.
 				KS_logfile_info(("%s/SendData: no socket set, nothing sent",this->v_identifier));
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 				return OV_ERR_GENERIC;
@@ -259,7 +263,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			waitd.tv_usec = 0;    //  do not wait
 			err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 
-			if (err == -1) {
+			if (err == TCPBIND_SOCKET_ERROR) {
 				KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 				return OV_ERR_GENERIC;
@@ -280,14 +284,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			//issue send command
 			KS_logfile_debug(("%s SendData: have to send %" OV_PRINT_UINT " bytes", thisCh->v_identifier, sendlength));
 			sentChunkSize = send(socket, (char*)thisCh->v_outData.readPT, sendlength, 0);
-#if !OV_SYSTEM_NT
-			if (sentChunkSize == -1)
-			{
-#else
-			if (sentChunkSize == SOCKET_ERROR)
-			{
-#endif
-
+			if (sentChunkSize == TCPBIND_SOCKET_ERROR){
 				KS_logfile_error(("%s: send() failed...", thisCh->v_identifier));
 				ks_logfile_print_sysMsg();
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_SENDERROR;
@@ -356,45 +353,40 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_shutdown(
 	OV_INSTPTR_TCPbind_TCPChannel this = Ov_StaticPtrCast(TCPbind_TCPChannel, pobj);
 	OV_INSTPTR_ksbase_ClientHandler pClientHandler = NULL;
 	int socket;
-	/* do what */
 
-		KS_logfile_debug(("TCPChannel/shutdown: %s", pobj->v_identifier));
-		socket = TCPbind_TCPChannel_socket_get(this);
-		if(socket >= 0)
+	KS_logfile_debug(("TCPChannel/shutdown: %s", pobj->v_identifier));
+	socket = TCPbind_TCPChannel_socket_get(this);
+	if(socket >= 0)
+	{
+		TCPBIND_CLOSE_SOCKET(socket);
+		KS_logfile_debug(("TCPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
+		TCPbind_TCPChannel_socket_set(this, -1);
+		this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+	}
+	if(this->v_addrInfoReq){
+		ov_free(this->v_addrInfoReq);
+		this->v_addrInfoReq = NULL;
+	}
+
+	/*
+	 * when acting on the server side, delete associated ClientHandlers (they won't be used anymore)
+	 *  and then delete oneself (connections to a server are not static)
+	 */
+
+	if(this->v_ClientHandlerAssociated == KSBASE_CH_ASSOCIATED)
+	{
+		pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
+		if(pClientHandler)
 		{
-			CLOSE_SOCKET(socket);
-			KS_logfile_debug(("TCPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
-			TCPbind_TCPChannel_socket_set(this, -1);
-			this->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+			Ov_DeleteObject(pClientHandler);
 		}
-		if(this->v_addrInfoReq){
-			ov_free(this->v_addrInfoReq);
-			this->v_addrInfoReq = NULL;
-		}
+		this->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
+	}
 
-		/*
-		 * when acting on the server side, delete associated ClientHandlers (they won't be used anymore)
-		 *  and then delete oneself (connections to a server are not static)
-		 */
-
-		if(this->v_ClientHandlerAssociated == KSBASE_CH_ASSOCIATED)
-		{
-			pClientHandler = Ov_GetChild(ksbase_AssocChannelClientHandler, this);
-			if(pClientHandler)
-			{
-				Ov_DeleteObject(pClientHandler);
-			}
-			this->v_ClientHandlerAssociated = KSBASE_CH_NOTASSOCATIED;
-		}
-
-		/*
-		 * call baseclass' shutdown
-		 */
-		ksbase_Channel_shutdown(pobj);
-
-
-
-
+	/*
+	 * call baseclass' shutdown
+	 */
+	ksbase_Channel_shutdown(pobj);
 	return;
 
 }
@@ -419,7 +411,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	OV_VTBLPTR_ksbase_ClientHandler pVTBLClientHandler = NULL;
 	OV_INSTPTR_ksbase_DataHandler pDataHandler = NULL;
 	OV_VTBLPTR_ksbase_DataHandler pVTBLDataHandler = NULL;
-	OV_INT socket = -1;
+	TCPBIND_SOCKET socket = TCPBIND_INVALID_SOCKET;
+	int intsocket = -1;
 	fd_set read_flags;
 	struct timeval waitd;
 	int err = 0;
@@ -443,7 +436,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	 *	Handle incoming data
 	 **********************************************************************************************************************************************************************************/
 
-	socket = TCPbind_TCPChannel_socket_get(thisCh);
+	intsocket = TCPbind_TCPChannel_socket_get(thisCh);
+	OV_TCPBIND_SETINT2SOCKET(intsocket, socket);
 	if (thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
 #ifdef _GNU_SOURCE
 		if(thisCh->v_addrInfoReq){
@@ -465,7 +459,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 		}
 #endif
 	}
-	if (socket >= 0 && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
+	if (socket != TCPBIND_INVALID_SOCKET && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
 	{
 		//receive data in chunks (we dont know how much it will be)
 		do
@@ -476,7 +470,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 
 			waitd.tv_usec = 0;    //  do not wait
 			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
-			if(err)
+			if(err == TCPBIND_SOCKET_ERROR)
 			{
 				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
 			}
@@ -519,65 +513,56 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				}
 
 				err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
-				if(err < TCPbind_CHUNKSIZE)
-				{
-					//last part received or closed/failure
-					if(err == 0 && !datareceived)
-					{	// connection closed (0 bytes received and there is nothing in the buffer)
-						KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
-						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-						TCPbind_TCPChannel_socket_set(thisCh, -1);
-						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-						{	/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
-							Ov_HeapFree(thisCh->v_inData.data);
-						}
-						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
-						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
-								&& !thisCh->v_inData.length)
-						{
-							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
-							Ov_DeleteObject(thisCh);
-
-						}
-						else
-						{
-							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
-							thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
-							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						}
-						break;
+				if (err == TCPBIND_SOCKET_ERROR){
+					KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
+					TCPBIND_CLOSE_SOCKET(socket);
+					TCPbind_TCPChannel_socket_set(thisCh, -1);
+					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+					if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
+					{/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
+						Ov_HeapFree(thisCh->v_inData.data);
 					}
-#if !OV_SYSTEM_NT
-					else if (err == -1)
-#else
-					else if (err == SOCKET_ERROR)
-#endif
+					/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+					if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+							&& !thisCh->v_inData.length)
 					{
-						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
-						CLOSE_SOCKET(socket);
-						TCPbind_TCPChannel_socket_set(thisCh, -1);
-						thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
-						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-						{/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
-							Ov_HeapFree(thisCh->v_inData.data);
-						}
-						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
-						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
-								&& !thisCh->v_inData.length)
-						{
-							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
-							Ov_DeleteObject(thisCh);
-						}
-						else
-						{
-							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
-							thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
-							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						}
-
-						return;
+						KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+						Ov_DeleteObject(thisCh);
 					}
+					else
+					{
+						KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+						thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+					}
+					return;
+				}
 
+				//last part received or closed
+				if(err == 0 && !datareceived)
+				{	// connection closed (0 bytes received and there is nothing in the buffer)
+					KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
+					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
+					TCPbind_TCPChannel_socket_set(thisCh, -1);
+					if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
+					{	/*	do a direct free in the datapacket as it frees nothing when length == 0	*/
+						Ov_HeapFree(thisCh->v_inData.data);
+					}
+					/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+					if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+							&& !thisCh->v_inData.length)
+					{
+						KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+						Ov_DeleteObject(thisCh);
+
+					}
+					else
+					{
+						KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+						thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+					}
+					break;
 				}
 
 				//update data length
@@ -588,7 +573,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				datareceived = TRUE;
 			}
 
-		}while((err > 0) && FD_ISSET(socket, &read_flags));
+		}while((err != TCPBIND_SOCKET_ERROR) && FD_ISSET(socket, &read_flags));
 
 		if(datareceived)
 		{
@@ -741,7 +726,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)
 			{
 				KS_logfile_info(("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut));
-				CLOSE_SOCKET(socket);
+				TCPBIND_CLOSE_SOCKET(socket);
 				TCPbind_TCPChannel_socket_set(thisCh, -1);
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 			}
@@ -807,7 +792,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	thisTCPCh->v_hints.ai_socktype = SOCK_STREAM;
 	KS_logfile_debug(("file %s\nline %u:\tbefore ifdef", __FILE__, __LINE__));
 #ifdef _GNU_SOURCE
-KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __LINE__));
+	KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __LINE__));
 	pAddrinfoStruct = (struct gaicb*)ov_malloc(sizeof(struct gaicb));
 	if(pAddrinfoStruct){
 		if(thisTCPCh->v_addrInfoReq){
@@ -822,7 +807,7 @@ KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __L
 		pAddrinfoStruct->ar_result = NULL;
 		KS_logfile_debug(("file %s\nline %u:\tissuing getaddrinfo_a", __FILE__, __LINE__));
 
-		if ((ret = getaddrinfo_a(GAI_NOWAIT, ((struct gaicb**) &(thisTCPCh->v_addrInfoReq)), 1, NULL))!=0)
+		if ((ret = getaddrinfo_a(GAI_NOWAIT, ((struct gaicb**) &(thisTCPCh->v_addrInfoReq)), 1, NULL)) != 0)
 		{
 			KS_logfile_error(("%s: getaddrinfo_a failed", this->v_identifier));
 			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -846,7 +831,7 @@ KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __L
 	}
 #else
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &(thisTCPCh->v_hints), &(thisTCPCh->v_addrInfo)))!=0)
+	if ((ret = getaddrinfo(host, port, &(thisTCPCh->v_hints), &(thisTCPCh->v_addrInfo))) != 0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;

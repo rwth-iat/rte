@@ -77,14 +77,14 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPListener_port_set(
 ) {
 	if(pobj->v_socket[0] != -1)
 	{
-		CLOSE_SOCKET(pobj->v_socket[0]);
+		TCPBIND_CLOSE_SOCKET(pobj->v_socket[0]);
 		pobj->v_SocketState = 0;
 		pobj->v_socket[0] = -1;
 	}
 
 	if(pobj->v_socket[1] != -1)
 	{
-		CLOSE_SOCKET(pobj->v_socket[1]);
+		TCPBIND_CLOSE_SOCKET(pobj->v_socket[1]);
 		pobj->v_SocketState = 0;
 		pobj->v_socket[1] = -1;
 	}
@@ -129,13 +129,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_shutdown(
 	//close socket
 	if(pinst->v_socket[0] != -1)
 	{
-		CLOSE_SOCKET(pinst->v_socket[0]);
+		TCPBIND_CLOSE_SOCKET(pinst->v_socket[0]);
 		pinst->v_socket[0] = -1;
 	}
 
 	if(pinst->v_socket[1] != -1)
 	{
-		CLOSE_SOCKET(pinst->v_socket[1]);
+		TCPBIND_CLOSE_SOCKET(pinst->v_socket[1]);
 		pinst->v_socket[1] = -1;
 	}
 	pinst->v_SocketState = 0;
@@ -185,16 +185,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	int ret;
 	#define NUMPROT 2
 	TCPBIND_PROT Protocolfamily[NUMPROT] = {PROTUNDEFINED, PROTUNDEFINED};
-	int sockfds[NUMPROT]={-1,-1};
-#if OV_SYSTEM_NT
-	char opt_on = 1;
-	SOCKET fd = 0;
-	SOCKET cfd = 0;
-	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
-#else
+	TCPBIND_SOCKET sockfds[NUMPROT]={TCPBIND_INVALID_SOCKET, TCPBIND_INVALID_SOCKET};
+	TCPBIND_SOCKET fd = 0;
+	TCPBIND_SOCKET cfd = 0;
 	int opt_on = 1;
-	int fd = 0;
-	int cfd = -1;
+#if OV_SYSTEM_NT
+	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
 #endif
 	struct sockaddr_storage sa_stor;
 	socklen_t sockaddsize;
@@ -203,7 +199,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	char portbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	fd_set fds;
-	int highest;
+	TCPBIND_SOCKET highest;
 	int i;
 	struct timeval waitd;
 	struct sockaddr_storage peer;
@@ -261,11 +257,9 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//create an endpoint for communication
 			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
+			if(fd == TCPBIND_INVALID_SOCKET){
 #if OV_SYSTEM_NT
-			if(fd==INVALID_SOCKET){
 				errno = WSAGetLastError();
-#else
-			if (fd == -1) {
 #endif
 				//error. Try next protocol
 				freeaddrinfo(resultingaddrinfo);
@@ -287,13 +281,13 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			} else {
 				//Blacklisting other than IPv4 and IPv6, should not get hit
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
-				CLOSE_SOCKET(fd);
+				TCPBIND_CLOSE_SOCKET(fd);
 				freeaddrinfo(resultingaddrinfo);
 				resultingaddrinfo = NULL;
 				continue;
 			}
 
-			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on))) {
+			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt_on, sizeof(opt_on))) {
 				KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
 				KS_logfile_print_sysMsg();
 			}
@@ -357,7 +351,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		//End of loop --> sockets are open
 		}
 
-		if(sockfds[0] == -1 && sockfds[1] == -1){
+		if(sockfds[0] == TCPBIND_INVALID_SOCKET && sockfds[1] == TCPBIND_INVALID_SOCKET){
 			KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
 			ks_logfile_print_sysMsg();
 			thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -367,9 +361,11 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			TCPbind_TCPListener_port_set(thisLi, atoi(portbuf));
 		}
 		//remembering IPv4 socket
-		thisLi->v_socket[0] = sockfds[0];
+		TCPBIND_SETSOCKET2INT(sockfds[0], thisLi->v_socket[0]);
+
 		//remembering IPv6 socket
-		thisLi->v_socket[1] = sockfds[1];
+		TCPBIND_SETSOCKET2INT(sockfds[1], thisLi->v_socket[1]);
+
 		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1) {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
@@ -381,15 +377,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	 * Socket is open now
 	 */
 	if(thisLi->v_SocketState == TCPbind_CONNSTATE_OPEN) {
-
-		sockfds[0] = thisLi->v_socket[0];
-		sockfds[1] = thisLi->v_socket[1];
+		OV_TCPBIND_SETINT2SOCKET(thisLi->v_socket[0], sockfds[0]);
+		OV_TCPBIND_SETINT2SOCKET(thisLi->v_socket[1], sockfds[1]);
 		highest = 0;
 		FD_ZERO(&fds);
-		for (i = 0; i < 2; i++) {
-			//this variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
-			if(sockfds[i] != -1)
-			{
+		for (i = 0; i < NUMPROT; i++) {
+			if(sockfds[i] != TCPBIND_INVALID_SOCKET){
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
 			}
@@ -398,14 +391,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		waitd.tv_sec = 0;     // Set Timeout
 		waitd.tv_usec = 0;    //  do not wait
 		ret = select(highest+1, &fds, NULL, NULL, &waitd);
-		if(ret) {
+		if(ret == TCPBIND_SOCKET_ERROR) {
 			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
-		}
 #if OV_SYSTEM_NT
-		if(ret == SOCKET_ERROR) {
 			errno = WSAGetLastError();
-#else
-		if(ret == -1) {
 #endif
 			KS_logfile_error(("%s: select returned error %d", this->v_identifier, errno));
 			KS_logfile_print_sysMsg();
@@ -414,16 +403,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 		if(ret>0)	//data arrived on the socket(s)
 		{
 			for (i = 0; (i < 2); i++) {
-				if ((sockfds[i] < 0) || (!FD_ISSET(sockfds[i], &fds)))
+				if ((sockfds[i] == TCPBIND_INVALID_SOCKET) || (!FD_ISSET(sockfds[i], &fds))){
 					continue;
+				}
 
 				cfd = accept(sockfds[i], (struct sockaddr*)&peer, &peers);
-#if OV_SYSTEM_NT
-				if(cfd != INVALID_SOCKET)
-#else
-				if(cfd != -1)
-#endif
-				{
+				if(cfd != TCPBIND_INVALID_SOCKET){
 					if (getnameinfo((struct sockaddr*)&peer, peers, buf, sizeof(buf), NULL, 0, NI_NUMERICHOST))
 					{
 						KS_logfile_error(("%s: getnameinfo for newly connected client failed", this->v_identifier));
