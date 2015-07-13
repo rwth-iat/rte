@@ -126,11 +126,6 @@ LIBRARY iec62541
 		connsToCloseCount	:	INT
 			COMMENT		=	"Number of Connections to close"
 			INITIALVALUE	=	0;
-		connsToDelete	:	C_TYPE <UA_ConnectionPTRPTR>
-			COMMENT		=	"List of Connections to delete";
-		connsToDeleteCount	:	INT
-			COMMENT		=	"Number of Connections to delete"
-			INITIALVALUE	=	0;
 	/*	messageBuffer	:	C_TYPE	<UA_ByteString>
 			COMMENT		=	"Receive buffer for messages (central buffer minimizes allocations)";*/
 		sendBuffer		:	C_TYPE	<UA_ByteString>

@@ -74,8 +74,6 @@ static void ov_ua_connection_closeConnection(UA_Connection *connection) {
 			Ov_DeleteObject(pChannel);
 		}
 	}
-	/*	add to delete list	*/
-	iec62541_ovNetworklayer_addConnToDelete(connection);
 	connection = NULL;
 }
 

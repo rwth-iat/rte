@@ -28,28 +28,13 @@
 
 static OV_INSTPTR_iec62541_ovNetworkLayer pOVNetworkLayer	=	NULL;
 
-void iec62541_ovNetworklayer_addConnToDelete(UA_Connection* connection){
-	UA_ConnectionPTRPTR tempPtr = NULL;
-	if(pOVNetworkLayer){
-		pOVNetworkLayer->v_connsToDeleteCount++;
-		tempPtr = Ov_HeapRealloc((pOVNetworkLayer->v_connsToDelete), (pOVNetworkLayer->v_connsToDeleteCount * sizeof(UA_ConnectionPTR)));
-		if(!(tempPtr)){
-			ov_logfile_error("addConnToDelete: could not realloc delete list -- this item will be lost");
-			pOVNetworkLayer->v_connsToDeleteCount--;
-			return;
-		}
-		pOVNetworkLayer->v_connsToDelete = tempPtr;
-		pOVNetworkLayer->v_connsToDelete[pOVNetworkLayer->v_connsToDeleteCount - 1] = connection;
-	}
-}
-
 void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection){
 	UA_ConnectionPTRPTR tempPtr = NULL;
 	if(pOVNetworkLayer){
 		pOVNetworkLayer->v_connsToCloseCount++;
 		tempPtr = Ov_HeapRealloc((pOVNetworkLayer->v_connsToClose), (pOVNetworkLayer->v_connsToCloseCount * sizeof(UA_ConnectionPTR)));
 		if(!(tempPtr)){
-			ov_logfile_error("addConnToClose: could not realloc delete list -- this item will be lost");
+			ov_logfile_error("addConnToClose: could not realloc close list -- this item will be lost");
 			pOVNetworkLayer->v_connsToCloseCount--;
 			return;
 		}
@@ -58,14 +43,8 @@ void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection){
 	}
 }
 
-static void freeConnsToDelete(UA_Server *server, OV_INSTPTR_iec62541_ovNetworkLayer pNetworkLayer) {
-    OV_INT i;
-	for(i=0;i < pNetworkLayer->v_connsToDeleteCount; i++) {
-		Ov_HeapFree(pNetworkLayer->v_connsToDelete[i]);
-    }
-	pNetworkLayer->v_connsToDeleteCount = 0;
-	Ov_HeapFree(pNetworkLayer->v_connsToDelete);
-	pNetworkLayer->v_connsToDelete = NULL;
+static void FreeConnection(UA_Server *server, UA_Connection *pConn) {
+   	Ov_HeapFree(pConn);
 }
 
 OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer(){
@@ -186,8 +165,6 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_startup(
 
     /* do what */
     pOVNetworkLayer = pinst;
-    pinst->v_connsToDelete = NULL;
-    pinst->v_connsToDeleteCount = 0;
     pinst->v_connsToClose = NULL;
     pinst->v_connsToCloseCount = 0;
     return;
@@ -268,10 +245,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 
 	}
 
-	counter += this->v_connsToCloseCount;
-	if(this->v_connsToDeleteCount > 0){
-		counter++;
-	}
+	counter += this->v_connsToCloseCount * 2;
 
 	newJobs = malloc(sizeof(UA_Job)*(counter+1));
 	if(!newJobs){
@@ -294,20 +268,16 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 	}
 
 	for(closeConnCounter = 0; closeConnCounter < this->v_connsToCloseCount; closeConnCounter++){
-		newJobs[counter].type = UA_JOBTYPE_CLOSECONNECTION;
+		newJobs[counter].type = UA_JOBTYPE_DETACHCONNECTION;
 		newJobs[counter].job.closeConnection = this->v_connsToClose[closeConnCounter];
 		counter++;
+		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;
+		newJobs[counter].job.methodCall.method = FreeConnection;
+		newJobs[counter].job.methodCall.data = this->v_connsToClose[closeConnCounter];
 	}
 	Ov_HeapFree(this->v_connsToClose);
 	this->v_connsToClose = NULL;
 	this->v_connsToCloseCount = 0;
-	/* add the delayed job that frees the connections */
-	if(this->v_connsToDeleteCount > 0) {
-		newJobs[counter].type = UA_JOBTYPE_DELAYEDMETHODCALL;
-		newJobs[counter].job.methodCall.data = this;
-		newJobs[counter].job.methodCall.method = (void (*)(UA_Server *server, void *data))freeConnsToDelete;
-		counter++;
-	}
 
 	if(counter == 0) {
 		free(newJobs);
