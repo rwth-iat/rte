@@ -26,20 +26,6 @@
 #include "ks_logfile.h"
 #include <stdio.h>
 
-
-
-OV_DLLFNCEXPORT OV_STRING ksbase_ClientHandler_sourceAdr_get(
-    OV_INSTPTR_ksbase_ClientHandler          pobj
-) {
-    return pobj->v_sourceAdr;
-}
-
-
-OV_DLLFNCEXPORT OV_INT ksbase_ClientHandler_receivedCalls_get(
-    OV_INSTPTR_ksbase_ClientHandler          pobj
-) {
-    return pobj->v_receivedCalls;
-}
 /**
  * set actimode to 0 as a default.
  * When a packet is received the Channel calls the ClientHandlers HandleRequest function. Only in some cases a ClientHandler needs to act proactively.

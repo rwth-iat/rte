@@ -70,9 +70,9 @@ LIBRARY ksbase
 		FLAGS	=	"v";
 		COMMENT = "General clienthandler";
 	 	VARIABLES
-			sourceAdr : 	STRING HAS_GET_ACCESSOR 
-				COMMENT	=	"Source adr of client (e.g. IP)";
-			receivedCalls : INT HAS_GET_ACCESSOR
+			sourceAdr : 	STRING
+				COMMENT	=	"Source address of client (e.g. IP)";
+			receivedCalls : INT
 				COMMENT	=	"Number of received calls from this client"; 
 		END_VARIABLES;
 		OPERATIONS
