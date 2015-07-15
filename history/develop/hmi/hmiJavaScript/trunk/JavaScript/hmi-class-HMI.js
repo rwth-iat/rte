@@ -1668,30 +1668,26 @@ HMI.prototype = {
 	 * checks if a svg element is instanceOf a class
 	 */
 	instanceOf: function (Node, ClassName) {
-		
-		//trace log deactivated, causes too much noise and performanceproblem in a production system
-//		this.hmi_log_trace("HMI.prototype.instanceOf - Start");
-		
 		//html5 classList saves us much work
 		if (Node.classList && Node.classList.contains){
 			return Node.classList.contains(ClassName);
+		}else if(!Node.getAttribute){
+			//this object can be for example a text node
+			return false;
 		}
 		
 		var idx;
 		var Classes = Node.getAttribute("class");
-		//conform to the standard would be "", but browser return null. not tested both because of speed
+		//conform to the standard would be "", but browser return null. not tested both because of speed and split can live without it
 		if (Classes === null){
 			return false;
 		}
 		Classes = Classes.split(" ");
 		for (idx = Classes.length -1; idx >= 0; idx--){
 			if (ClassName === Classes[idx]){
-//				this.hmi_log_trace("HMI.prototype._instanceOf - Endt");
 				return true;
 			}
 		}
-		
-//		this.hmi_log_trace("HMI.prototype.instanceOf - Endf");
 		
 		return false;
 	},

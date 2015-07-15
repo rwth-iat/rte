@@ -105,9 +105,9 @@ function cshmi() {
 	this.cshmiBlackboxClass = "cshmi-blackbox";
 	this.cshmiTemplateClass = "cshmi-template";
 	this.cshmiTemplateActionClass = "cshmi-fromTemplateAction";
-	this.cshmiTemplateHideableClass = "cshmi-hideabletemplate";
-	this.cshmiObjectHasHideableChildren = "cshmi-ObjectHasHideableChildren";
-	this.cshmiObjectVisibleChildrenNotLoaded = "cshmi-ObjectVisibleChildrenNotLoaded";
+	this.cshmiGroupHideableClass = "cshmi-hideablegroup";
+	this.cshmiGroupHasHideableChildrenClass = "cshmi-GroupHasHideableChildren";
+	this.cshmiGroupVisibleChildrenNotLoadedClass = "cshmi-VisibleChildrenNotLoaded";
 	
 	this.cshmiOperatorClickClass = "cshmi-click";
 	this.cshmiOperatorDoubleclickClass = "cshmi-doubleclick";
@@ -333,9 +333,9 @@ cshmi.prototype = {
 				
 				// mark objects incomplete AFTER initialisation
 				// the event registering require this to prevent duplicate registration
-				HMI.addClass(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded);
+				HMI.addClass(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass);
 			}else if (VisualObject.hasAttribute("display") === true){
-				this._loadChildren(VisualObject, ObjectPath, false);
+				this._loadChildren(VisualObject, ObjectPath, preventNetworkRequest);
 			}
 		}
 		
@@ -355,11 +355,10 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
-		
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
 			//interprete Action later, so remember this
@@ -412,7 +411,7 @@ cshmi.prototype = {
 			//the active cshmi display is not "our" one
 			return true;
 		}
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
@@ -528,7 +527,7 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteOperatorEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//this is the run that fills the objects with content, the Events were already armed
 			return true;
 		}
@@ -555,7 +554,7 @@ cshmi.prototype = {
 				HMI.displaygestureReactionMarker(VisualObject);
 				
 				//toggle visibility of hideable childtemplates
-				HMI.cshmi.toggleChildTemplates(VisualObject);
+				HMI.cshmi.toggleChildGroups(VisualObject);
 				
 				//get and execute all actions
 				HMI.cshmi._interpreteAction(VisualObject, ObjectPath, null, null);
@@ -1132,7 +1131,7 @@ cshmi.prototype = {
 			}else if (ParameterValue === "rotate"){
 				return getRotationFromObject(VisualObject).toString();
 			}else if (ParameterValue === "previousTemplateCount"){
-				if (HMI.instanceOf(VisualObject, this.cshmiTemplateClass) !== true){
+				if (HMI.instanceOf(VisualObject, this.cshmiTemplateClass) === false){
 					return 0;
 				}
 				var previousTemplateCount = 0;
@@ -4421,6 +4420,7 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiTemplateClass);
 			VisualObject.setAttribute("data-TemplateModelSource", PathOfTemplateDefinition);
 		}else{
+			//some internal functions are happy if this attribute exists
 			VisualObject.setAttribute("data-TemplateModelSource", "");
 		}
 		
@@ -4673,7 +4673,7 @@ cshmi.prototype = {
 			VisualChildObject.setAttribute("overflow", "visible");
 			VisualChildObject.setAttribute("x", "0");
 			VisualChildObject.setAttribute("y", "0");
-			var rotation = ((requestList[ObjectPath]["rotate"]%360)+360)%360;
+			var rotation = ((parseFloat(requestList[ObjectPath]["rotate"])%360)+360)%360;
 			VisualChildObject.setAttribute("transform", "rotate("+rotation.toString()+","+requestList[ObjectPath]["x"]+","+requestList[ObjectPath]["y"]+")");
 			VisualChildObject.appendChild(VisualObject);
 			VisualObject.removeAttribute("transform");
@@ -4719,8 +4719,31 @@ cshmi.prototype = {
 			}
 		}
 		
-		//start magic with "hidable" attribute
-		this._armToggleChildVisibility(VisualParentObject, VisualObject, ObjectPath, requestList);
+		// test if the parent should get a click event and register for this
+		// for magic with "hidable" attribute
+		if (VisualParentObject !== null && requestList[ObjectPath]["hideable"] === "TRUE"){
+			HMI.addClass(VisualObject, this.cshmiGroupHideableClass);
+			VisualParentObject.setAttribute("cursor", "pointer");
+			
+			//make the parent clickable, if we can be hidden and no sibling has done this before
+			if (HMI.instanceOf(VisualParentObject, this.cshmiGroupHasHideableChildrenClass) === false){
+				//toggle visibility of hideable childtemplates onclick
+				VisualParentObject.addEventListener("click", function(evt){
+					//quit propagation of event in any case. We do not want the parent template to handle the click
+					if (evt.stopPropagation) evt.stopPropagation();
+					
+					if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
+						//we have an clickgesture on the same VisualObject, so this handled all action in mouse up
+						return;
+					}
+					
+					HMI.cshmi.toggleChildGroups(VisualParentObject);
+				}, false);
+				
+				//prevent multiple events on this
+				HMI.addClass(VisualParentObject, this.cshmiGroupHasHideableChildrenClass);
+			}
+		}
 		
 		//instance order is lost on zindex manipulation (dom reordering)
 		//so build a second childNodes-like collection for preserving ordering
@@ -6034,7 +6057,7 @@ cshmi.prototype = {
 		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 			//object has already an g parent
 			var rotationObject = VisualObject.parentNode;
-		}else if (rotate !== null && VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g"){
+		}else if (rotate !== null && parseFloat(rotate) !== 0 && VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.parentNode.tagName === "svg" ){
 			//element has to be shifted into an g element, as we change rotation
 			rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 			rotationObject.setAttribute("overflow", "visible");
@@ -6201,11 +6224,11 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualParentObject Object to manipulate the visualisation
 	 */
 	_loadHiddenChildrenElements: function(VisualParentObject){
-		if (HMI.instanceOf(VisualParentObject, this.cshmiObjectVisibleChildrenNotLoaded)){
+		if (HMI.instanceOf(VisualParentObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//dim the full sheet to show the progress
 			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
 			
-			//test if we have an template
+			//test if we have a template
 			if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateClass)){
 				//load the elements of the template, allow all network request
 				this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-TemplateModelSource"), false);
@@ -6223,7 +6246,7 @@ cshmi.prototype = {
 			
 			// mark the class as complete
 			// the event registering requires the removing after loadChildren!
-			HMI.removeClass(VisualParentObject, this.cshmiObjectVisibleChildrenNotLoaded);
+			HMI.removeClass(VisualParentObject, this.cshmiGroupVisibleChildrenNotLoadedClass);
 			
 			//deactivate the dim of the sheet, as we are ready
 			HMI.Playground.firstChild.removeAttribute("opacity");
@@ -6254,55 +6277,16 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * tests if the parent should get a click event and register for this
-	 */
-	_armToggleChildVisibility: function(VisualParentObject, VisualObject, ObjectPath, requestList){
-		if(VisualParentObject === null){
-			return;
-		}
-		if (requestList[ObjectPath]["hideable"] === "TRUE"){
-			HMI.addClass(VisualObject, this.cshmiTemplateHideableClass);
-			VisualParentObject.setAttribute("cursor", "pointer");
-			
-			//make the parent clickable, if we can be hidden and no sibling has done this before
-			if (HMI.instanceOf(VisualParentObject, this.cshmiObjectHasHideableChildren) === false){
-				//toggle visibility of hideable childtemplates onclick
-				VisualParentObject.addEventListener("click", function(evt){
-					//quit propagation of event in any case. We do not want the parent template to handle the click
-					if (evt.stopPropagation) evt.stopPropagation();
-					
-					if(HMI.instanceOf(VisualParentObject, HMI.cshmi.cshmiOperatorClickClass)){
-						//we have an clickgesture on the same VisualObject, so this handled all action in mouse up
-						return;
-					}
-					
-					HMI.cshmi.toggleChildTemplates(VisualParentObject);
-				}, false);
-				
-				//prevent multiple events on this
-				HMI.addClass(VisualParentObject, this.cshmiObjectHasHideableChildren);
-			}
-		}
-	},
-	
-	/**
 	 * toggles visibility of child Templates
 	 * @param {Node} VisualParentObject Node which childs are toggled
 	 * @return void
 	 */
-	toggleChildTemplates: function(VisualParentObject){
+	toggleChildGroups: function(VisualParentObject){
 		var childTemplates = VisualParentObject.childNodes;
 		
 		for (var i=0; i < childTemplates.length; i++) {
 			var VisualObject = childTemplates[i];
-			if(VisualObject.getAttribute === undefined){
-				//this children can be for example a text node
-				continue;
-			}
-			var Classes = VisualObject.getAttribute("class");
-			if (Classes === null){
-				continue;
-			}else if (Classes.indexOf(this.cshmiTemplateHideableClass) === -1){
+			if (HMI.instanceOf(VisualObject, this.cshmiGroupHideableClass) === false){
 				continue;
 			}else if (VisualObject.getAttribute("display") == "block"){
 				VisualObject.setAttribute("display", "none");
@@ -6314,7 +6298,7 @@ cshmi.prototype = {
 				
 				//doku depth of moving to top
 				
-				//Move Faceplate-Container after every other, so it is fully visible
+				//Move Faceplate-Container after every other, so it is fully visible. This does not work in all cases...
 				if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateActionClass) === false){
 					//hideable childtemplate in a normal template
 					VisualParentObject.parentNode.appendChild(VisualParentObject);
