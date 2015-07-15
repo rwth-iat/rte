@@ -181,7 +181,7 @@ cshmi.prototype = {
 		this.initStage = true;
 		
 		//build the selected sheet aka group. This includes all containing elements
-		var VisualObject = this.BuildDomain(null, ObjectPath, "/cshmi/Group", false);
+		var VisualObject = this._interpreteElementOrEventRecursive(null, ObjectPath, "/cshmi/Group", false);
 		
 		if (VisualObject === null){
 			if(HMI.InfoOutput.firstChild === null){
@@ -257,13 +257,13 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * Main iteration loop for visualisation, finds and arms Actions as well
+	 * Iterprete one Element or Event for visualisation. This is recursive for Elements
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 * @return {SVGElement} VisualObject the new constructed element or null
 	 */
-	BuildDomain: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
+	_interpreteElementOrEventRecursive: function(VisualParentObject, ObjectPath, ObjectType, preventNetworkRequest){
 		var VisualObject = null;
 		var Result = true;
 		if (ObjectType.indexOf("/cshmi/Group") !== -1 || ObjectType.indexOf("/cshmi/Template") !== -1){
@@ -329,13 +329,13 @@ cshmi.prototype = {
 			// special handling for invisible objects
 			if (VisualObject.getAttribute("display") === "none"){
 				//we are not visible, so we should not contact network
-				this._loadChildren(VisualObject, ObjectPath, true);
+				this._interpreteChildrensRecursive(VisualObject, ObjectPath, true);
 				
 				// mark objects incomplete AFTER initialisation
 				// the event registering require this to prevent duplicate registration
 				HMI.addClass(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass);
 			}else if (VisualObject.hasAttribute("display") === true){
-				this._loadChildren(VisualObject, ObjectPath, preventNetworkRequest);
+				this._interpreteChildrensRecursive(VisualObject, ObjectPath, preventNetworkRequest);
 			}
 		}
 		
@@ -1838,7 +1838,7 @@ cshmi.prototype = {
 					VisualObject.setAttribute("display", "block");
 					
 					//load hidden elements now
-					this._loadHiddenChildrenElements(VisualObject);
+					this._interpreteHiddenChildrenElements(VisualObject);
 				}
 			}else if (ParameterValue === "rotate"){
 				if(!isNumeric(NewValue)){
@@ -4148,7 +4148,7 @@ cshmi.prototype = {
 			this.ResourceList.newRebuildObject.x = VisualObject.getAttribute("x");
 			this.ResourceList.newRebuildObject.y = VisualObject.getAttribute("y");
 		}
-		var newVisualObject = this.BuildDomain(VisualParentObject, ObjectPath, ObjectType, false);
+		var newVisualObject = this._interpreteElementOrEventRecursive(VisualParentObject, ObjectPath, ObjectType, false);
 		this.ResourceList.newRebuildObject = Object();
 		
 		//find references to the old VisualObject in cshmiOriginalOrderList of the VisualParentObject and change to new
@@ -4685,7 +4685,7 @@ cshmi.prototype = {
 		requestList[ObjectPath]["x"] = xTemplate;
 		requestList[ObjectPath]["y"] = yTemplate;
 		
-		if(PathOfTemplateDefinition !== null){
+		if(PathOfTemplateDefinition){
 			//width and height comes from the TemplateDefinition
 			VisualObject.setAttribute("width", requestListTemplate[PathOfTemplateDefinition]["width"]);
 			VisualObject.setAttribute("height", requestListTemplate[PathOfTemplateDefinition]["height"]);
@@ -4760,19 +4760,17 @@ cshmi.prototype = {
 			VisualParentObject.cshmiOriginalOrderList[PathOfTemplateDefinition].push(VisualObject);
 		}
 		
+		//////////////////////////////////////////////////////////////////////////
+		//get children (graphics and actions) from the TemplateDefinition
+		//our children will be fetched later
 		if(PathOfTemplateDefinition !== null){
-			//////////////////////////////////////////////////////////////////////////
-			//get childs (graphics and actions) from the TemplateDefinition
-			//our child will be fetched later
-			
-			// special handling for invisible objects
-			if (VisualObject !== null && VisualObject.getAttribute("display") === "none"){
+			if(VisualObject.getAttribute("display") === "none"){
 				//we are not visible, so we should not contact network
 				
 				//the marking of the class will be done in the caller of our function
-				this._loadChildren(VisualObject, PathOfTemplateDefinition, true);
-			}else if (VisualObject !== null){
-				this._loadChildren(VisualObject, PathOfTemplateDefinition, false);
+				this._interpreteChildrensRecursive(VisualObject, PathOfTemplateDefinition, true);
+			}else{
+				this._interpreteChildrensRecursive(VisualObject, PathOfTemplateDefinition, preventNetworkRequest);
 			}
 		}
 		
@@ -6192,16 +6190,13 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * loads all children and appends them to the Parent
+	 * iterprets all children recursive and appends them to the parent
 	 * @param {SVGElement} VisualParentObject visual Object which is parent to active Object
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {bool} preventNetworkRequest the function should prevent network requests if possible
 	 */
-	_loadChildren: function(VisualParentObject, ObjectPath, preventNetworkRequest){
+	_interpreteChildrensRecursive: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, this);
-		
-		//newwrite
-		//fetch config from all childrens via this.ResourceList.ModellVariables.*
 		
 		for (var i=0; i < responseArray.length; i++) {
 			var varName = responseArray[i].split(" ");
@@ -6211,7 +6206,7 @@ cshmi.prototype = {
 			}else{
 				realComponent = VisualParentObject;
 			}
-			var ChildComponent = this.BuildDomain(realComponent, ObjectPath+"/"+varName[0], varName[1], preventNetworkRequest);
+			var ChildComponent = this._interpreteElementOrEventRecursive(realComponent, ObjectPath+"/"+varName[0], varName[1], preventNetworkRequest);
 			//children could be already in DOM
 			if (ChildComponent !== null && ChildComponent.parentNode === null){
 				realComponent.appendChild(ChildComponent);
@@ -6223,7 +6218,8 @@ cshmi.prototype = {
 	 * tests if we have to load children, dims the sheet and loads all graphical elements
 	 * @param {SVGElement} VisualParentObject Object to manipulate the visualisation
 	 */
-	_loadHiddenChildrenElements: function(VisualParentObject){
+	_interpreteHiddenChildrenElements: function(VisualParentObject){
+		//todo this has to load ClientEvent, too
 		if (HMI.instanceOf(VisualParentObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//dim the full sheet to show the progress
 			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
@@ -6231,10 +6227,10 @@ cshmi.prototype = {
 			//test if we have a template
 			if (HMI.instanceOf(VisualParentObject, this.cshmiTemplateClass)){
 				//load the elements of the template, allow all network request
-				this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-TemplateModelSource"), false);
+				this._interpreteChildrensRecursive(VisualParentObject, VisualParentObject.getAttribute("data-TemplateModelSource"), false);
 			}
 			//load all graphical children of the object, allow all network request
-			this._loadChildren(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
+			this._interpreteChildrensRecursive(VisualParentObject, VisualParentObject.getAttribute("data-ModelSource"), false);
 			
 			//we want to have offset parameter on all new visual elements
 			HMI.saveAbsolutePosition(VisualParentObject);
@@ -6294,7 +6290,7 @@ cshmi.prototype = {
 				VisualObject.setAttribute("display", "block");
 				
 				//load hidden elements now
-				this._loadHiddenChildrenElements(VisualObject);
+				this._interpreteHiddenChildrenElements(VisualObject);
 				
 				//doku depth of moving to top
 				
