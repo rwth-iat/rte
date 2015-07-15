@@ -1329,7 +1329,7 @@ ERRORMSG:
 	if(configBasePath && *configBasePath){
 		if(commandline_options)
 		{
-			tempstr = malloc(strlen(commandline_options) + 9 + strlen(configBasePath) + 1); // "CONFDIR=" + strlen(configbasepath) + '\0'
+			tempstr = malloc(8 + strlen(configBasePath) + 1 + strlen(commandline_options) + 1); // "CONFDIR=" + ... + " " + ... + '\0'
 			if(tempstr)
 			{
 				sprintf(tempstr, "CONFDIR=%s %s", configBasePath, commandline_options);
@@ -1339,15 +1339,42 @@ ERRORMSG:
 		}
 		else
 		{
-			commandline_options = malloc(9 + strlen(configBasePath) + 1);
+			commandline_options = malloc(8 + strlen(configBasePath) + 1); // "CONFDIR=" + ... + '\0'
 			if(commandline_options)
 			{
 				sprintf(commandline_options, "CONFDIR=%s", configBasePath);
 			}
 		}
+	}else{
+		if(commandline_options)
+		{
+			tempstr = malloc(8 + 3 + strlen(commandline_options) + 1); // "CONFDIR=" + "./ " + ... + '\0'
+			if(tempstr)
+			{
+#if OV_SYSTEM_UNIX
+				sprintf(tempstr, "CONFDIR=./ %s", configBasePath, commandline_options);
+#else
+				sprintf(tempstr, "CONFDIR=.\\ %s", configBasePath, commandline_options);
+#endif
+
+				free(commandline_options);
+				commandline_options = tempstr;
+			}
+		}
+		else
+		{
+			commandline_options = malloc(8 + 2 + 1); // "CONFDIR=" + "./" + '\0'
+			if(commandline_options)
+			{
+#if OV_SYSTEM_UNIX
+				sprintf(commandline_options, "CONFDIR=./");
+#else
+				sprintf(commandline_options, "CONFDIR=.\\");
+#endif
+			}
+		}
 	}
-	if(commandline_options)
-		ov_vendortree_setcmdlineoptions(commandline_options);
+	ov_vendortree_setcmdlineoptions(commandline_options);
 
 
 	/*
