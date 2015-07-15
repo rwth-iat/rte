@@ -1326,7 +1326,7 @@ ERRORMSG:
 		}
 	}
 	/*	set config basPath	*/
-	if(configBasePath || *configBasePath){
+	if(configBasePath && *configBasePath){
 		if(commandline_options)
 		{
 			tempstr = malloc(strlen(commandline_options) + 9 + strlen(configBasePath) + 1); // "CONFDIR=" + strlen(configbasepath) + '\0'
