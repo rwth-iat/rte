@@ -1449,7 +1449,7 @@ HMIJavaScriptKSClient.prototype = {
 			return Array();
 		}else if (response === "{{}}"){
 			return Array("");
-		}else if (ignoreError === false && response.indexOf("KS_ERR") !== -1){
+		}else if (ignoreError !== true && response.indexOf("KS_ERR") !== -1){
 			return Array();
 		}
 
