@@ -361,6 +361,10 @@ cshmi.prototype = {
 		}
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
+			if(preventNetworkRequest === true){
+				//onload events will be called later in this._interpreteHiddenChildrenElements
+				return true;
+			}
 			//interprete Action later, so remember this
 			var EventObjItem = Object();
 			EventObjItem["VisualObject"] = VisualObject;
@@ -6219,7 +6223,6 @@ cshmi.prototype = {
 	 * @param {SVGElement} VisualParentObject Object to manipulate the visualisation
 	 */
 	_interpreteHiddenChildrenElements: function(VisualParentObject){
-		//todo this has to load ClientEvent, too
 		if (HMI.instanceOf(VisualParentObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
 			//dim the full sheet to show the progress
 			HMI.Playground.firstChild.setAttribute("opacity", "0.6");
