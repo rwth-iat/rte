@@ -190,7 +190,8 @@ static OV_RESULT  ksxdr_xdrManagerCom_getOwnPort(OV_INSTPTR_ksxdr_xdrManagerCom 
 								|| (ov_string_compare(pClIterator->v_identifier, "UDPListener") == OV_STRCMP_EQUAL))
 							break;
 						pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
-					} if(!pClIterator) {
+					}
+					if(!pClIterator) {
 						KS_logfile_error(("%s: typemethod: OwnPort not set and Listener class (TCP or UDP) not found. retry in 2 minutes.", thisMngCom->v_identifier));
 						thisMngCom->v_cycInterval = 120000;	/*	retry in 2 minutes	*/
 						ov_memstack_unlock();
@@ -519,13 +520,15 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 							if((ov_string_compare(pClIterator->v_identifier, "UDPChannel") == OV_STRCMP_EQUAL))
 								break;
 							pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
-						} if(!pClIterator) {
+						}
+						if(!pClIterator) {
 							pClIterator = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_Channel);
 							while(pClIterator) {
 								if((ov_string_compare(pClIterator->v_identifier, "TCPChannel") == OV_STRCMP_EQUAL))
 									break;
 								pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
-							} if(!pClIterator) {
+							}
+							if(!pClIterator) {
 								KS_logfile_info(("%s: typemethod: Neither UDPChannel nor TCPChannel found. Not registering at portmapper", this->v_identifier));
 								thisMngCom->v_PmRegister = FALSE;
 							}
@@ -559,7 +562,7 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 								//check for UDP
 								pClIterator = Ov_GetFirstChild(ov_inheritance, pclass_ksbase_Channel);
 								while(pClIterator) {
-									if((ov_string_compare(pClIterator->v_identifier, "TCPChannel") == OV_STRCMP_EQUAL))
+									if((ov_string_compare(pClIterator->v_identifier, "UDPChannel") == OV_STRCMP_EQUAL))
 										break;
 									pClIterator = Ov_GetNextChild(ov_inheritance, pClIterator);
 								}
