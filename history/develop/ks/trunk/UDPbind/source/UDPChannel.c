@@ -29,30 +29,34 @@
 #include "ks_logfile.h"
 
 OV_DLLFNCEXPORT OV_INT UDPbind_UDPChannel_socket_get(
-    OV_INSTPTR_UDPbind_UDPChannel          pobj
+		OV_INSTPTR_UDPbind_UDPChannel          pobj
 ) {
-    return pobj->v_socket;
+	return pobj->v_socket;
 }
 
 OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_socket_set(
     OV_INSTPTR_UDPbind_UDPChannel          pobj,
     const OV_INT  value
 ) {
-	OV_INT socket;
+	OV_INT activesocket;
+	UDPBIND_SOCKET socket = UDPBIND_INVALID_SOCKET;
 
-	socket = UDPbind_UDPChannel_socket_get(pobj);
-	if(socket >= 0 && socket != value)
+	activesocket = UDPbind_UDPChannel_socket_get(pobj);
+	if(activesocket >= 0 && activesocket != value)
 	{
-		CLOSE_SOCKET(socket);
-		KS_logfile_debug(("UDPChannel/socket %s closing socket %d", pobj->v_identifier, socket));
+		OV_UDPBIND_SETINT2SOCKET(activesocket, socket);
+		UDPBIND_CLOSE_SOCKET(socket);
+		KS_logfile_debug(("UDPChannel/socket %s closing socket %d", pobj->v_identifier, activesocket));
 	}
 	pobj->v_socket = value;
-	if(pobj->v_socket < 0)
+	if(pobj->v_socket < 0){
 		pobj->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
+	}
 
 	//activate typemethod if a socket is there
-	if(value >= 0)
+	if(value >= 0){
 		pobj->v_actimode = 1;
+	}
 
 	return OV_ERR_OK;
 }
@@ -67,10 +71,8 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_SendData(
 			ret = sendto(pChannel->v_socket, (char*) pChannel->v_outData.readPT,
 					pChannel->v_outData.length - (pChannel->v_outData.readPT - pChannel->v_outData.data),
 					0, (struct sockaddr*) &pChannel->v_remoteAddress, pChannel->v_remoteAddrLen);
-#if !OV_SYSTEM_NT
-			if (ret == -1) {
-#else
-			if (ret == SOCKET_ERROR) {
+			if (ret == UDPBIND_SOCKET_ERROR) {
+#if OV_SYSTEM_NT
 				errno = WSAGetLastError();
 #endif
 				KS_logfile_error(("%s: error sending data (errno is %d)", this->v_identifier, errno));
@@ -139,7 +141,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_shutdown(
 	socket = UDPbind_UDPChannel_socket_get(this);
 	if(socket >= 0)
 	{
-		CLOSE_SOCKET(socket);
+		UDPBIND_CLOSE_SOCKET(socket);
 		KS_logfile_debug(("UDPChannel/shutdown %s closing socket %d", pobj->v_identifier, socket));
 		UDPbind_UDPChannel_socket_set(this, -1);
 		this->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
@@ -179,7 +181,8 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 	OV_VTBLPTR_ksbase_ClientHandler pVTBLClientHandler = NULL;
 	OV_INSTPTR_ksbase_DataHandler pDataHandler = NULL;
 	OV_VTBLPTR_ksbase_DataHandler pVTBLDataHandler = NULL;
-	OV_INT socket = -1;
+	UDPBIND_SOCKET socket = UDPBIND_INVALID_SOCKET;
+	int intsocket = -1;
 	fd_set read_flags;
 	struct timeval waitd;
 	int err = 0;
@@ -200,9 +203,10 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 	 *	Handle incoming data
 	 **********************************************************************************************************************************************************************************/
 
-	socket = UDPbind_UDPChannel_socket_get(thisCh);
+	intsocket = UDPbind_UDPChannel_socket_get(thisCh);
+	OV_UDPBIND_SETINT2SOCKET(intsocket, socket);
 
-	if (socket >= 0 && thisCh->v_ConnectionState == UDPbind_CONNSTATE_OPEN)		//if socket ok
+	if (socket != UDPBIND_INVALID_SOCKET && thisCh->v_ConnectionState == UDPbind_CONNSTATE_OPEN)		//if socket ok
 	{
 		//receive data in chunks (we dont know how much it will be)
 		do
@@ -212,7 +216,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 			waitd.tv_sec = 0;     // Set Timeout
 			waitd.tv_usec = 0;    //  do not wait
 			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
-			if(err) {
+			if(err == UDPBIND_SOCKET_ERROR){
 				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
 			}
 
@@ -245,35 +249,27 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 				}
 
 				err = recvfrom(socket, (char*) thisCh->v_inData.writePT, UDPbind_CHUNKSIZE, 0, (struct sockaddr*) &thisCh->v_remoteAddress, &thisCh->v_remoteAddrLen);		//receive data
-				if(err < UDPbind_CHUNKSIZE) {
-#if !OV_SYSTEM_NT
-					if (err == -1)
-#else
-					if (err == SOCKET_ERROR)
-#endif
+				if (err == UDPBIND_SOCKET_ERROR){
+					KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
+					UDPBIND_CLOSE_SOCKET(socket);
+					UDPbind_UDPChannel_socket_set(thisCh, -1);
+					thisCh->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
+					if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
 					{
-						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
-						CLOSE_SOCKET(socket);
-						UDPbind_UDPChannel_socket_set(thisCh, -1);
-						thisCh->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
-						if(!thisCh->v_inData.length)	/*	nothing was received --> free memory	*/
-						{
-							ksbase_free_KSDATAPACKET(&thisCh->v_inData);
-						}
-						/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
-						if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
-								&& !thisCh->v_inData.length) {
-							KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
-							Ov_DeleteObject(thisCh);
-						} else {
-							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
-							thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
-							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-						}
-
-						return;
+						ksbase_free_KSDATAPACKET(&thisCh->v_inData);
+					}
+					/*	if we need a client handler and our inData buffer is empty --> delete channel (prevents lots of dead serverside channels in the database)	*/
+					if(thisCh->v_ClientHandlerAssociated != KSBASE_CH_NOTNEEDED
+							&& !thisCh->v_inData.length) {
+						KS_logfile_debug(("%s: we are on the server side and have no data --> deleting channel", this->v_identifier));
+						Ov_DeleteObject(thisCh);
+					} else {
+						KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisCh->v_UnusedDataTimeOut));
+						thisCh->v_ConnectionTimeOut = thisCh->v_UnusedDataTimeOut;
+						Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 					}
 
+					return;
 				}
 
 				//update data length
@@ -408,7 +404,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 		if(thisCh->v_ClientHandlerAssociated == KSBASE_CH_NOTNEEDED) {
 			if(thisCh->v_ConnectionState == UDPbind_CONNSTATE_OPEN) {
 				KS_logfile_info(("%s: received nothing for %u seconds. Closing connection.", this->v_identifier, thisCh->v_ConnectionTimeOut));
-				CLOSE_SOCKET(socket);
+				UDPBIND_CLOSE_SOCKET(socket);
 				UDPbind_UDPChannel_socket_set(thisCh, -1);
 				thisCh->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
 			}
@@ -446,7 +442,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_OpenConnection(
 	struct addrinfo hints;
 	struct addrinfo *res;
 	int ret;
-	int sockfd = -1;
+	UDPBIND_SOCKET sockfd = UDPBIND_INVALID_SOCKET;
 	OV_INSTPTR_UDPbind_UDPChannel thisUDPCh = Ov_StaticPtrCast(UDPbind_UDPChannel, this);
 
 	if(!host || !(*host) || !port || !(*port))
@@ -461,14 +457,14 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_OpenConnection(
 	hints.ai_socktype = SOCK_DGRAM;
 
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &hints, &res))!=0) {
+	if ((ret = getaddrinfo(host, port, &hints, &res)) != 0) {
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisUDPCh->v_ConnectionState = UDPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
 
 	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-	if (sockfd < 0){
+	if (sockfd == UDPBIND_INVALID_SOCKET){
 		KS_logfile_debug(("%s:could not open socket", this->v_identifier));
 		//free structures
 		freeaddrinfo(res);

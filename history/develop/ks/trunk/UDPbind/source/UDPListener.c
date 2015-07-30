@@ -75,14 +75,14 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_port_set(
 ) {
 	if(pobj->v_socket[0] != -1)
 	{
-		CLOSE_SOCKET(pobj->v_socket[0]);
+		UDPBIND_CLOSE_SOCKET(pobj->v_socket[0]);
 		pobj->v_SocketState = 0;
 		pobj->v_socket[0] = -1;
 	}
 
 	if(pobj->v_socket[1] != -1)
 	{
-		CLOSE_SOCKET(pobj->v_socket[1]);
+		UDPBIND_CLOSE_SOCKET(pobj->v_socket[1]);
 		pobj->v_SocketState = 0;
 		pobj->v_socket[1] = -1;
 	}
@@ -124,13 +124,13 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_shutdown(
 	//close socket
 	if(pinst->v_socket[0] != -1)
 	{
-		CLOSE_SOCKET(pinst->v_socket[0]);
+		UDPBIND_CLOSE_SOCKET(pinst->v_socket[0]);
 		pinst->v_socket[0] = -1;
 	}
 
 	if(pinst->v_socket[1] != -1)
 	{
-		CLOSE_SOCKET(pinst->v_socket[1]);
+		UDPBIND_CLOSE_SOCKET(pinst->v_socket[1]);
 		pinst->v_socket[1] = -1;
 	}
 	pinst->v_SocketState = 0;
@@ -160,14 +160,10 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 	int ret;
 	#define NUMPROT 2
 	UDPBIND_PROT Protocolfamily[NUMPROT] = {PROTUNDEFINED, PROTUNDEFINED};
-	int sockfds[NUMPROT]={-1,-1};
-#if OV_SYSTEM_NT
-	SOCKET fd = 0;
-	char opt_on = 1;
-#else
-	int fd = 0;
+	UDPBIND_SOCKET sockfds[NUMPROT]={UDPBIND_INVALID_SOCKET, UDPBIND_INVALID_SOCKET};
+	UDPBIND_SOCKET fd = 0;
 	int opt_on = 1;
-#endif
+
 	struct sockaddr_storage sa_stor;
 	socklen_t sockaddsize;
 	struct sockaddr* sockaddress = (struct sockaddr*) &sa_stor;
@@ -175,10 +171,9 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 	char portbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	fd_set fds;
-	int highest;
+	UDPBIND_SOCKET highest;
 	int i;
 	struct timeval waitd;
-	int on = 1;
 	OV_BYTE* tempdata = NULL;
 	OV_BOOL datareceived = FALSE;
 	OV_RESULT result;
@@ -233,14 +228,14 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			//create an endpoint for communication
 			//setting protocol type
 			fd = socket(resultingaddrinfo->ai_family, resultingaddrinfo->ai_socktype, resultingaddrinfo->ai_protocol);
+			if(fd == UDPBIND_INVALID_SOCKET){
 #if OV_SYSTEM_NT
-			if(fd==INVALID_SOCKET){
 				errno = WSAGetLastError();
-#else
-			if (fd == -1) {
 #endif
 				//error. Try next protocol
-				freeaddrinfo(resultingaddrinfo);				continue;
+				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
+				continue;
 			}
 
 			if(resultingaddrinfo->ai_family == AF_INET) {
@@ -248,19 +243,22 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			} else if (resultingaddrinfo->ai_family == AF_INET6) {
 				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
-				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
+				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&opt_on, sizeof(opt_on)) == -1) {
 					//error. Try next protocol
-					freeaddrinfo(resultingaddrinfo);					continue;
+					freeaddrinfo(resultingaddrinfo);
+					resultingaddrinfo = NULL;
+					continue;
 				}
 			} else {
 				//Blacklisting other than IPv4 and IPv6, should not get hit
 				KS_logfile_debug(("%s: found non INET-socket: %d. closing socket", thisLi->v_identifier, fd));
-				CLOSE_SOCKET(fd);
+				UDPBIND_CLOSE_SOCKET(fd);
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
-			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt_on, sizeof(opt_on))) {
+			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt_on, sizeof(opt_on))) {
 				KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
 				KS_logfile_print_sysMsg();
 			}
@@ -268,6 +266,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 			//setting source address and port
 			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen)) {
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				continue;
 			}
 
@@ -279,6 +278,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = UDPbind_CONNSTATE_COULDNOTOPEN;
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				return;
 			}
 
@@ -288,6 +288,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = UDPbind_CONNSTATE_COULDNOTOPEN;
 				freeaddrinfo(resultingaddrinfo);
+				resultingaddrinfo = NULL;
 				return;
 			}
 
@@ -302,19 +303,22 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 		}
 		freeaddrinfo(resultingaddrinfo);
 
-		if(sockfds[0] == -1 && sockfds[1] == -1){
+		if(sockfds[0] == UDPBIND_INVALID_SOCKET && sockfds[1] == UDPBIND_INVALID_SOCKET){
 			KS_logfile_error(("%s: failed to open socket: %d", thisLi->v_identifier, errno));
 			ks_logfile_print_sysMsg();
 			thisLi->v_SocketState = UDPbind_CONNSTATE_COULDNOTOPEN;
 			return;
 		}
+
 		if(UDPbind_UDPListener_port_get(thisLi) == -1) {
 			UDPbind_UDPListener_port_set(thisLi, atoi(portbuf));
 		}
 		//remembering IPv4 socket
-		thisLi->v_socket[0] = sockfds[0];
+		OV_UDPBIND_SETSOCKET2INT(sockfds[0], thisLi->v_socket[0]);
+
 		//remembering IPv6 socket
-		thisLi->v_socket[1] = sockfds[1];
+		OV_UDPBIND_SETSOCKET2INT(sockfds[1], thisLi->v_socket[1]);
+
 		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1) {
 			thisLi->v_SocketState = KSBASE_CONNSTATE_OPEN;
@@ -326,15 +330,13 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 	 * Socket is open now
 	 */
 	if(thisLi->v_SocketState == UDPbind_CONNSTATE_OPEN) {
+		OV_UDPBIND_SETINT2SOCKET(thisLi->v_socket[0], sockfds[0]);
+		OV_UDPBIND_SETINT2SOCKET(thisLi->v_socket[1], sockfds[1]);
 
-		sockfds[0] = thisLi->v_socket[0];
-		sockfds[1] = thisLi->v_socket[1];
 		highest = 0;
 		FD_ZERO(&fds);
-		for (i = 0; i < 2; i++) {
-			//this variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
-			if(sockfds[i] != -1)
-			{
+		for (i = 0; i < NUMPROT; i++) {
+			if(sockfds[i] != UDPBIND_INVALID_SOCKET){
 				FD_SET(sockfds[i], &fds);
 				highest = (sockfds[i] > highest ? sockfds[i] : highest);
 			}
@@ -347,11 +349,9 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 		if(ret) {
 			KS_logfile_debug(("%s: select returned: %d; line %d",this->v_identifier, ret, __LINE__));
 		}
+		if(ret == UDPBIND_SOCKET_ERROR) {
 #if OV_SYSTEM_NT
-		if(ret == SOCKET_ERROR) {
 			errno = WSAGetLastError();
-#else
-		if(ret == -1) {
 #endif
 			KS_logfile_error(("%s: select returned error %d", this->v_identifier, errno));
 			KS_logfile_print_sysMsg();
@@ -359,9 +359,10 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 
 		if(ret>0)	//data arrived on the socket(s)
 		{
-			for (i = 0; (i < 2); i++) {
-				if ((sockfds[i] < 0) || (!FD_ISSET(sockfds[i], &fds)))
+			for (i = 0; (i < NUMPROT); i++) {
+				if ((sockfds[i] == UDPBIND_INVALID_SOCKET) || (!FD_ISSET(sockfds[i], &fds))){
 					continue;
+				}
 				//receive data in chunks (we dont know how much it will be)
 				do
 				{
@@ -393,15 +394,10 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 					ret = recvfrom(sockfds[i], (char*) thisLi->v_inData.writePT, UDPbind_CHUNKSIZE, 0,
 							(struct sockaddr *)&thisLi->v_remoteAddress, &thisLi->v_remoteAddrLen);
 					if(ret < UDPbind_CHUNKSIZE) {
-#if !OV_SYSTEM_NT
-						if (ret == -1)
-#else
-						if (ret == SOCKET_ERROR)
-#endif
-						{
+						if (ret == UDPBIND_SOCKET_ERROR){
 							KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
 							for (i = 0; i < NUMPROT; i++){
-								CLOSE_SOCKET(sockfds[i]);
+								UDPBIND_CLOSE_SOCKET(sockfds[i]);
 								thisLi->v_socket[i] = -1;
 							}
 							thisLi->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
@@ -506,11 +502,9 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_SendData(
 			ret = sendto(pListener->v_lastRecvSocket, (char*) pListener->v_outData.readPT,
 					pListener->v_outData.length - (pListener->v_outData.readPT - pListener->v_outData.data),
 					0, (struct sockaddr*) &pListener->v_remoteAddress, pListener->v_remoteAddrLen);
+			if (ret == UDPBIND_SOCKET_ERROR) {
 #if !OV_SYSTEM_NT
-			if (ret == -1) {
 				errno = WSAGetLastError();
-#else
-			if (ret == SOCKET_ERROR) {
 #endif
 				KS_logfile_error(("%s: error sending data (errno is %d)", this->v_identifier, errno));
 				KS_logfile_print_sysMsg();

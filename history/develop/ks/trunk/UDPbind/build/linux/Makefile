@@ -9,7 +9,7 @@ lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(s
 SERVERSTARTKEYS = -w ksbase -w UDPbind
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = 
-EXTRA_CC_FLAGS =  -Wextra -Wno-unused-parameter
+EXTRA_CC_FLAGS =  -Wextra -Wno-unused-parameter -Werror
 EXTRA_LIBS = 
 LD_FLAGS = 
 COMPILER = GCC
