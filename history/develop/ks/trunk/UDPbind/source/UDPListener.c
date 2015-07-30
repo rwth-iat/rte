@@ -514,7 +514,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_SendData(
 			}
 			pListener->v_outData.readPT += ret;
 			} while(pListener->v_outData.readPT < (pListener->v_outData.data + pListener->v_outData.length));
-			if((pListener->v_outData.readPT - pListener->v_outData.data) >= pListener->v_outData.length)
+			if((pListener->v_outData.readPT - pListener->v_outData.data) >= (OV_INT) pListener->v_outData.length)
 			{
 				ksbase_free_KSDATAPACKET(&(pListener->v_outData));
 				KS_logfile_debug(("%s: everything sent", pListener->v_identifier));

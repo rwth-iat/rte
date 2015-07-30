@@ -84,7 +84,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_SendData(
 			KS_logfile_debug(("UDPCHannel: sent %d bytes.", ret));
 			pChannel->v_outData.readPT += ret;
 		} while(pChannel->v_outData.readPT < (pChannel->v_outData.data + pChannel->v_outData.length));
-		if((pChannel->v_outData.readPT - pChannel->v_outData.data) >= pChannel->v_outData.length)
+		if((pChannel->v_outData.readPT - pChannel->v_outData.data) >= (OV_INT) pChannel->v_outData.length)
 		{
 			ksbase_free_KSDATAPACKET(&(pChannel->v_outData));
 			KS_logfile_debug(("%s: everything sent", pChannel->v_identifier));
@@ -315,7 +315,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 						} else {
 							UDPbind_UDPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
 								Ov_DeleteObject(thisCh);
 							}
@@ -348,7 +348,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 						} else {
 							UDPbind_UDPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
 							Ov_Unlink(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
-							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+							if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 							{/*	channel should close after send and everything is sent	*/
 								Ov_DeleteObject(thisCh);
 							}
@@ -367,7 +367,7 @@ OV_DLLFNCEXPORT void UDPbind_UDPChannel_typemethod (
 		 ****************************************************************************************************************************************************************************/
 		if(thisCh->v_outData.length) {
 			UDPbind_UDPChannel_SendData(Ov_StaticPtrCast(ksbase_Channel, thisCh));
-			if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= thisCh->v_outData.length))
+			if((thisCh->v_CloseAfterSend == TRUE) && ((thisCh->v_outData.readPT - thisCh->v_outData.data) >= (OV_INT) thisCh->v_outData.length))
 			{/*	channel should close after send and everything is sent	*/
 				Ov_DeleteObject(thisCh);
 				return;
