@@ -13,7 +13,7 @@
  #define TCPBIND_CLOSE_SOCKET close
 #endif
 
-#define TCPBIND_SETSOCKET2INT(varsocket, varint)\
+#define OV_TCPBIND_SETSOCKET2INT(varsocket, varint)\
 	if(varsocket == TCPBIND_INVALID_SOCKET)	\
 		varint = -1;	\
 	else	\

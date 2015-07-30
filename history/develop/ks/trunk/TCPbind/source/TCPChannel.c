@@ -80,7 +80,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 		const OV_INT  value
 ) {
 	OV_INT activesocket;
-	TCPBIND_SOCKET socket;
+	TCPBIND_SOCKET socket = TCPBIND_INVALID_SOCKET;
 
 	activesocket = TCPbind_TCPChannel_socket_get(pobj);
 	if(activesocket >= 0 && activesocket != value)

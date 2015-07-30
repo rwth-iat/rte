@@ -205,7 +205,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 	struct sockaddr_storage peer;
 	socklen_t peers = sizeof(struct sockaddr_storage);
 	char buf[NI_MAXHOST];
-	int on = 1;
 
 	/*
 	 * If no socket is open, open one and start listening.
@@ -272,7 +271,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			} else if (resultingaddrinfo->ai_family == AF_INET6) {
 				KS_logfile_debug(("%s: found IPv6 socket: %d", thisLi->v_identifier, fd));
 				//restricting this port to V6 only, not IPv4 mapped address like ::ffff:10.1.1.1
-				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&on, sizeof(on)) == -1) {
+				if (setsockopt(fd, IPPROTO_IPV6, IPV6_V6ONLY, (char*)&opt_on, sizeof(opt_on)) == -1) {
 					//error. Try next protocol
 					freeaddrinfo(resultingaddrinfo);
 					resultingaddrinfo = NULL;
@@ -287,7 +286,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 				continue;
 			}
 
-			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&opt_on, sizeof(opt_on))) {
+			if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&opt_on, sizeof(opt_on))) {
 				KS_logfile_warning(("%s: could not set option SO_REUSEADDR for socket: %d", thisLi->v_identifier, fd));
 				KS_logfile_print_sysMsg();
 			}
@@ -305,7 +304,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 #define SIO_LOOPBACK_FAST_PATH 0x98000010
 #endif
 			//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
-			(void)WSAIoctl(cfd, SIO_LOOPBACK_FAST_PATH, &on, sizeof(on), NULL, 0, &NumberOfBytesReturned, 0, 0);
+			(void)WSAIoctl(cfd, SIO_LOOPBACK_FAST_PATH, &opt_on, sizeof(opt_on), NULL, 0, &NumberOfBytesReturned, 0, 0);
 #endif
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
@@ -361,10 +360,10 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			TCPbind_TCPListener_port_set(thisLi, atoi(portbuf));
 		}
 		//remembering IPv4 socket
-		TCPBIND_SETSOCKET2INT(sockfds[0], thisLi->v_socket[0]);
+		OV_TCPBIND_SETSOCKET2INT(sockfds[0], thisLi->v_socket[0]);
 
 		//remembering IPv6 socket
-		TCPBIND_SETSOCKET2INT(sockfds[1], thisLi->v_socket[1]);
+		OV_TCPBIND_SETSOCKET2INT(sockfds[1], thisLi->v_socket[1]);
 
 		//the OV variable can hold only a valid socket or -1 (no INVALID_SOCKET even on windows)
 		if(thisLi->v_socket[0] != -1 || thisLi->v_socket[1] != -1) {
@@ -418,7 +417,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 					KS_logfile_debug(("%s: new client connected: %s", this->v_identifier, buf));
 
 					//disable nagle for the receivesocket
-					(void)setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char *) &on, sizeof(on));
+					(void)setsockopt(cfd, IPPROTO_TCP, TCP_NODELAY, (char*) &opt_on, sizeof(opt_on));
 
 					//create receiving TCPChannel
 					if (Ov_OK(Ov_CreateIDedObject(TCPbind_TCPChannel, pNewChannel, Ov_StaticPtrCast(ov_domain, this), "TCPChannel"))){
