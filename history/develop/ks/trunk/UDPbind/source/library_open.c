@@ -155,7 +155,7 @@ OV_RESULT ov_library_setglobalvars_UDPbind_new(void) {
 		}
 		//read out port and print it
 		KS_logfile_info(("UDPbind library open: listening on port %d", pListener->v_port));
-
+		pListener->v_cycInterval = 1;
 	}
 	ov_memstack_unlock();
 
