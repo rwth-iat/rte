@@ -73,13 +73,3 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Polyline_points_set(
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
 	return ov_string_setvalue(&pobj->v_points,value);
 }
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Polyline_strokeWidth_set(
-		OV_INSTPTR_cshmi_Polyline          pobj,
-		const OV_SINGLE  value
-) {
-	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
-	pobj->v_strokeWidth = value;
-	return OV_ERR_OK;
-}
-

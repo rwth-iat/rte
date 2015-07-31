@@ -248,7 +248,18 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS Line : CLASS cshmi/Element
+	CLASS Shape : CLASS cshmi/Element
+		COMMENT = "class for shape elements";
+		VARIABLES
+			strokeWidth : SINGLE
+				HAS_SET_ACCESSOR
+				UNIT = "pixel"
+				COMMENT = "stroke width of the line"
+				INITIALVALUE = 1.0;
+		END_VARIABLES;
+	END_CLASS;
+	
+	CLASS Line : CLASS cshmi/Shape
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a line";
@@ -273,15 +284,10 @@ LIBRARY cshmi
 				UNIT = "pixel"
 				COMMENT = "y-axis coordinate of ending point"
 				INITIALVALUE = 0.0;
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Rectangle : CLASS cshmi/Element
+	CLASS Rectangle : CLASS cshmi/Shape
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a rectangle";
@@ -306,15 +312,10 @@ LIBRARY cshmi
 				UNIT = "pixel"
 				COMMENT = "height of the rectangle"
 				INITIALVALUE = 100.0;
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Circle : CLASS cshmi/Element
+	CLASS Circle : CLASS cshmi/Shape
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a circle";
@@ -334,15 +335,10 @@ LIBRARY cshmi
 				UNIT = "pixel"
 				COMMENT = "radius of the circle"
 				INITIALVALUE = 10.0;
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Ellipse : CLASS cshmi/Element
+	CLASS Ellipse : CLASS cshmi/Shape
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "an ellipse";
@@ -367,15 +363,10 @@ LIBRARY cshmi
 				UNIT = "pixel"
 				COMMENT = "y-axis radius of the ellipse"
 				INITIALVALUE = 10.0;
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Path : CLASS cshmi/Element
+	CLASS Path : CLASS cshmi/Shape
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a path";
@@ -383,26 +374,16 @@ LIBRARY cshmi
 			d : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "definition of the outline of a shape";
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Polyline : CLASS cshmi/Element
+	CLASS Polyline : CLASS cshmi/Shape
 		IS_INSTANTIABLE;
 		COMMENT = "a polyline";
 		VARIABLES
 			points : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "points that make up the visual object (alternating x and y position, split with comma and spaces, for example '0,0 10,10 20,20')";
-			strokeWidth : SINGLE
-				HAS_SET_ACCESSOR
-				UNIT = "pixel"
-				COMMENT = "stroke width of the line"
-				INITIALVALUE = 1.0;
 		END_VARIABLES;
 	END_CLASS;
 

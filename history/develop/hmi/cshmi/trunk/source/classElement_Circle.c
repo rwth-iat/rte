@@ -91,12 +91,3 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_r_set(
 	pobj->v_r = value;
 	return OV_ERR_OK;
 }
-
-OV_DLLFNCEXPORT OV_RESULT cshmi_Circle_strokeWidth_set(
-		OV_INSTPTR_cshmi_Circle          pobj,
-		const OV_SINGLE  value
-) {
-	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
-	pobj->v_strokeWidth = value;
-	return OV_ERR_OK;
-}
