@@ -471,8 +471,10 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPChannel_OpenConnection(
 		thisUDPCh->v_ConnectionState = UDPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
-	memcpy(&thisUDPCh->v_remoteAddress, res->ai_addr, sizeof(OV_SOCKADDR_IN));
-	thisUDPCh->v_remoteAddrLen = res->ai_addrlen;
+	if(res->ai_addrlen <= sizeof(OV_SOCKADDR)){
+		memcpy(&thisUDPCh->v_remoteAddress, res->ai_addr, res->ai_addrlen);
+		thisUDPCh->v_remoteAddrLen = res->ai_addrlen;
+	}
 	//free structures
 	freeaddrinfo(res);
 

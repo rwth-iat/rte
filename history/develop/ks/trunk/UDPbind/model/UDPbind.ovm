@@ -20,10 +20,10 @@ LIBRARY UDPbind
 			socket	:	INT	HAS_ACCESSORS
 				COMMENT	=	"Socket to receive and send data"
 				INITIALVALUE	=	-1;
-			remoteAddress	:	C_TYPE <OV_SOCKADDR_IN>
+			remoteAddress	:	C_TYPE <OV_SOCKADDR>
 				COMMENT	=	"Remote address";
 			remoteAddrLen	:	C_TYPE <socklen_t>
-				COMMENT	=	"Length of remote Address Sturcture";
+				COMMENT	=	"Length of remote Address Structure";
 		END_VARIABLES;
 		OPERATIONS
 			//real sending of data
@@ -60,10 +60,10 @@ LIBRARY UDPbind
 			port	:	INT	HAS_ACCESSORS
 				COMMENT	=	"port listening on"
 				INITIALVALUE	=	-1;
-			remoteAddress	:	C_TYPE <OV_SOCKADDR_IN>
+			remoteAddress	:	C_TYPE <OV_SOCKADDR>
 				COMMENT	=	"Remote address";
 			remoteAddrLen	:	C_TYPE <socklen_t>
-				COMMENT	=	"Length of remote Address Sturcture";
+				COMMENT	=	"Length of remote Address Structure";
 			lastRecvSocket	:	INT
 				COMMENT	=	"Socket that received data last"
 				INITIALVALUE	=	-1;

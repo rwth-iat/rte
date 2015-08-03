@@ -15,8 +15,8 @@
 #endif
 
 /* 
-	Define your data types here. 
+	sockaddr_storage is large enough for ipv4 and ipv6
 */
-typedef struct sockaddr_in OV_SOCKADDR_IN;
+typedef struct sockaddr_storage OV_SOCKADDR;
 
 #endif

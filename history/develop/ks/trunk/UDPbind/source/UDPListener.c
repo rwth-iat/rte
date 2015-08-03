@@ -389,27 +389,25 @@ OV_DLLFNCEXPORT void UDPbind_UDPListener_typemethod (
 					} else {
 						thisLi->v_inData.writePT = thisLi->v_inData.data + thisLi->v_inData.length;
 					}
-					thisLi->v_remoteAddrLen = sizeof(thisLi->v_remoteAddress); /* length of addresses */
+					thisLi->v_remoteAddrLen = sizeof(thisLi->v_remoteAddress); /* init length of addresses */
 					//receive data
 					ret = recvfrom(sockfds[i], (char*) thisLi->v_inData.writePT, UDPbind_CHUNKSIZE, 0,
 							(struct sockaddr *)&thisLi->v_remoteAddress, &thisLi->v_remoteAddrLen);
-					if(ret < UDPbind_CHUNKSIZE) {
-						if (ret == UDPBIND_SOCKET_ERROR){
-							KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
-							for (i = 0; i < NUMPROT; i++){
-								UDPBIND_CLOSE_SOCKET(sockfds[i]);
-								thisLi->v_socket[i] = -1;
-							}
-							thisLi->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
-							if(!thisLi->v_inData.length)	/*	nothing was received --> free memory	*/
-							{
-								ov_free(thisLi->v_inData.data);
-								thisLi->v_inData.data = NULL;
-							}
-							KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisLi->v_UnusedDataTimeOut));
-							thisLi->v_ConnectionTimeOut = thisLi->v_UnusedDataTimeOut;
-							return;
+					if (ret == UDPBIND_SOCKET_ERROR){
+						KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
+						for (i = 0; i < NUMPROT; i++){
+							UDPBIND_CLOSE_SOCKET(sockfds[i]);
+							thisLi->v_socket[i] = -1;
 						}
+						thisLi->v_ConnectionState = UDPbind_CONNSTATE_CLOSED;
+						if(!thisLi->v_inData.length)	/*	nothing was received --> free memory	*/
+						{
+							ov_free(thisLi->v_inData.data);
+							thisLi->v_inData.data = NULL;
+						}
+						KS_logfile_debug(("%s: Setting ConnectionTimeOut to %u.", this->v_identifier, thisLi->v_UnusedDataTimeOut));
+						thisLi->v_ConnectionTimeOut = thisLi->v_UnusedDataTimeOut;
+						return;
 					}
 
 					//update data length
