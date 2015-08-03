@@ -501,7 +501,7 @@ OV_DLLFNCEXPORT OV_RESULT UDPbind_UDPListener_SendData(
 					pListener->v_outData.length - (pListener->v_outData.readPT - pListener->v_outData.data),
 					0, (struct sockaddr*) &pListener->v_remoteAddress, pListener->v_remoteAddrLen);
 			if (ret == UDPBIND_SOCKET_ERROR) {
-#if !OV_SYSTEM_NT
+#if OV_SYSTEM_NT
 				errno = WSAGetLastError();
 #endif
 				KS_logfile_error(("%s: error sending data (errno is %d)", this->v_identifier, errno));

@@ -3,6 +3,14 @@
 
 #include "ksbase_helper.h"
 
+#if !OV_SYSTEM_NT
+#include <unistd.h>
+#include <sys/select.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#endif
+
 //Size of data received per chunk
 #define UDPbind_CHUNKSIZE			1460	/*	maximum size of tcp segment over ethernet IP 	*/
 
