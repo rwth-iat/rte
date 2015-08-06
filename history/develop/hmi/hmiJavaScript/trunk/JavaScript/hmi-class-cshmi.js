@@ -542,7 +542,7 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
-				//quit propagation of event in any case. We do not want the parent template to handle the click
+				//quit propagation of event in any case. We do not want the parent object to handle the click
 				if (evt.stopPropagation) evt.stopPropagation();
 				
 				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
@@ -735,7 +735,7 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * stops propagation of event
+	 * stops propagation of event. Used in aftermove and route polyline
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {DOMEvent} evt event object
@@ -815,28 +815,21 @@ cshmi.prototype = {
 		/*	if we have an movegesture and an click on one object, and a child with an click this feature will fire both events
 		 *	it seems to be ok, if this code is not used (august 2013) TODO remove?
 		 */
-		var ClickTarget = null;
+		var x;
+		var y;
 		if(VisualObject.hasAttribute("x")){	//svg, rect
-			var x = parseFloat(VisualObject.getAttribute("x"));
-			var y = parseFloat(VisualObject.getAttribute("y"));
+			x = parseFloat(VisualObject.getAttribute("x"));
+			y = parseFloat(VisualObject.getAttribute("y"));
 		}else if(VisualObject.hasAttribute("x1")){	//lines
 			x = parseFloat(VisualObject.getAttribute("x1"));
 			y = parseFloat(VisualObject.getAttribute("y1"));
 		}else if(VisualObject.hasAttribute("cx")){	//circles
 			x = parseFloat(VisualObject.getAttribute("cx"));
 			y = parseFloat(VisualObject.getAttribute("cy"));
-		}else{
-			x = undefined;
-			y= undefined;
 		}
 		
-		if(x !== undefined && (Math.abs(this.ResourceList.EventInfos.startXObj - x) < 5)
-			&& (Math.abs(this.ResourceList.EventInfos.startYObj - y) < 5)){
-			
-			//no movement detected, so interprete the click on the right Target
-			//search the firstchild which has a click event
-			ClickTarget = HMI.getComponent(evt, this.cshmiOperatorClickClass);
-		}
+		var movementX = Math.abs(this.ResourceList.EventInfos.startXObj - x);
+		var movementY = Math.abs(this.ResourceList.EventInfos.startYObj - y);
 		
 		if(typeof VisualObject.savingPolylinePoints === "function"){
 			//we manipulating a routed polyline
@@ -849,9 +842,15 @@ cshmi.prototype = {
 		
 		if (canceled === true){
 			//no action
-		}else if(ClickTarget !== null){
-			this.ResourceList.EventInfos.mouseRelativePosition = null;
-			this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"), null, null);
+		}else if(isNumeric(movementX) && isNumeric(movementY) && movementX < 5 && movementY < 5){
+			//no movement detected, so interprete the click on the right Target
+			//search the firstchild which has a click event
+			var ClickTarget = HMI.getComponent(evt, this.cshmiOperatorClickClass);
+			
+			if(ClickTarget !== null){
+				this.ResourceList.EventInfos.mouseRelativePosition = null;
+				this._interpreteAction(ClickTarget, ClickTarget.getAttribute("data-clickpath"), null, null);
+			}
 		}else{
 			//get and execute all actions
 			this._interpreteAction(VisualObject, ObjectPath, null, null);
