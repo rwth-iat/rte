@@ -191,7 +191,7 @@ LIBRARY cshmi
 	CLASS csContainer : CLASS cshmi/ContainerElement
 		IS_FINAL;
 		IS_INSTANTIABLE;
-		COMMENT = "internal class for container elements as parts of ifThenElse";
+		COMMENT = "internal class for container elements as parts of ifThenElse and ChildrenIterator";
 	END_CLASS;
 	
 	
@@ -248,7 +248,7 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS Shape : CLASS cshmi/Element
+	CLASS ShapeElement : CLASS cshmi/Element
 		COMMENT = "class for shape elements";
 		VARIABLES
 			strokeWidth : SINGLE
@@ -259,7 +259,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 	
-	CLASS Line : CLASS cshmi/Shape
+	CLASS Line : CLASS cshmi/ShapeElement
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a line";
@@ -287,7 +287,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Rectangle : CLASS cshmi/Shape
+	CLASS Rectangle : CLASS cshmi/ShapeElement
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a rectangle";
@@ -315,7 +315,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Circle : CLASS cshmi/Shape
+	CLASS Circle : CLASS cshmi/ShapeElement
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a circle";
@@ -338,7 +338,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Ellipse : CLASS cshmi/Shape
+	CLASS Ellipse : CLASS cshmi/ShapeElement
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "an ellipse";
@@ -366,18 +366,7 @@ LIBRARY cshmi
 		END_VARIABLES;
 	END_CLASS;
 
-	CLASS Path : CLASS cshmi/Shape
-		IS_FINAL;
-		IS_INSTANTIABLE;
-		COMMENT = "a path";
-		VARIABLES
-			d : STRING
-				HAS_SET_ACCESSOR
-				COMMENT = "definition of the outline of a shape";
-		END_VARIABLES;
-	END_CLASS;
-
-	CLASS Polyline : CLASS cshmi/Shape
+	CLASS Polyline : CLASS cshmi/ShapeElement
 		IS_INSTANTIABLE;
 		COMMENT = "a polyline";
 		VARIABLES
@@ -391,6 +380,17 @@ LIBRARY cshmi
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "a polygon";
+	END_CLASS;
+
+	CLASS Path : CLASS cshmi/ShapeElement
+		IS_FINAL;
+		IS_INSTANTIABLE;
+		COMMENT = "a path";
+		VARIABLES
+			d : STRING
+				HAS_SET_ACCESSOR
+				COMMENT = "definition of the outline of a shape as a list of pen movement commands (same as SVG standard)";
+		END_VARIABLES;
 	END_CLASS;
 
 	CLASS Text : CLASS cshmi/Element

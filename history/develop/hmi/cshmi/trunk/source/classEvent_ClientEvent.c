@@ -66,7 +66,7 @@
 #include "cshmilib.h"
 
 
-OV_RESULT cshmi_ClientEvent_typeSetAndCheck(
+static OV_RESULT cshmi_ClientEvent_typeSetAndCheck(
 	OV_INSTPTR_cshmi_ClientEvent          pobj,
 	const OV_STRING  value,
 	const OV_BOOL calledFromConstructor

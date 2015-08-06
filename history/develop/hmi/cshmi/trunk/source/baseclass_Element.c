@@ -147,8 +147,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Element_opacity_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT cshmi_Shape_strokeWidth_set(
-	OV_INSTPTR_cshmi_Shape          pobj,
+OV_DLLFNCEXPORT OV_RESULT cshmi_ShapeElement_strokeWidth_set(
+	OV_INSTPTR_cshmi_ShapeElement          pobj,
 	const OV_SINGLE  value
 ) {
 	cshmi_Object_resetCache(Ov_PtrUpCast(cshmi_Object, pobj));
