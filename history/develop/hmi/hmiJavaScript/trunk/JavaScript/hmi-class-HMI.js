@@ -82,7 +82,9 @@ function HMI(debug, error, warning, info, trace) {
 	this.HMI_Constants.NAMESPACE_XHTML = "http://www.w3.org/1999/xhtml";
 	this.HMI_Constants.NAMESPACE_XLINK = "http://www.w3.org/1999/xlink";
 	this.HMI_Constants.NAMESPACE_SVG = "http://www.w3.org/2000/svg";
+	//used to mark a visual feedback after a click for example
 	this.HMI_Constants.NODE_NAME_REACTIONMARKER = "HMI_REACTIONMARKER";
+	//used to mark an object while moving (old hmi!)
 	this.HMI_Constants.NODE_NAME_CLONE = "HMI_CLONE";
 	
 	this.HMI_Constants.HMIdate = null;

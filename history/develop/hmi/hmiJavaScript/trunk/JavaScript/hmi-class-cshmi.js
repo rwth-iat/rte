@@ -4918,6 +4918,7 @@ cshmi.prototype = {
 				 */
 				var HTML = "<foreignObject x='0' y='0' width='"+SVGWidth+"' height='"+SVGHeight+"'>"+
 					"<body xmlns='http://www.w3.org/1999/xhtml'>"+HTMLcontent+"</body></foreignObject>";
+				
 				var svgContent =	"<svg:svg xmlns:svg='"+HMI.HMI_Constants.NAMESPACE_SVG+"' xmlns='"+HMI.HMI_Constants.NAMESPACE_SVG+"' "
 				+"xmlns:xlink='"+HMI.HMI_Constants.NAMESPACE_XLINK+"'>"
 				+HTML
@@ -4938,7 +4939,7 @@ cshmi.prototype = {
 				HMI.Playground.style.position = "relative";
 				HTMLcontentNode.style.position = "absolute";
 				
-				//append node to document
+				//append node to HTML document
 				parentObject = HMI.Playground;
 			}
 			
@@ -5166,6 +5167,14 @@ cshmi.prototype = {
 		if(sourceListSplitted.length === 1 && sourceListSplitted[0] === ""){
 			//remove the entry
 			sourceListSplitted.pop();
+		}
+		for(var iterator = 0; iterator < sourceListSplitted.length; iterator++){
+			if(sourceListSplitted[iterator].indexOf("CSHMIModelHost") !== -1){
+				var hostnameWithPort = HMI.KSClient.getCommunicationPoint(HMI.KSClient.ResourceList.ModelHost + "/" + HMI.KSClient.ResourceList.ModelServer);
+				if(hostnameWithPort){
+					sourceListSplitted[iterator] = sourceListSplitted[iterator].replace("CSHMIModelHost", "http://"+hostnameWithPort);
+				}
+			}
 		}
 		
 		//load scripts and call jsonload script on load (or direct, if no source was requested)
