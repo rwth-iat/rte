@@ -100,8 +100,8 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_GetValue_constructor(
 		pParent = NULL;
 	OV_RESULT    result;
 
-	/* general placement check is done here */
-	result = cshmi_Action_constructor(pobj);
+	/* do what the base class does first */
+	result = cshmi_Object_constructor(pobj);
 	if(Ov_Fail(result))
 		return result;
 

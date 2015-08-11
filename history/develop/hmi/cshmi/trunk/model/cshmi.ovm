@@ -67,8 +67,9 @@
 
 #include "ov.ovm"
 
-LIBRARY cshmi
+/* TODO implement a clean checkPosition method which is called with the constructor */
 
+LIBRARY cshmi
 	VERSION		= "0.3";
 	AUTHOR		= "Gustavo Quiros, Holger Jeromin, Stefan Schmitz";
 	COPYRIGHT	= "Copyright (C) 2015 Lehrstuhl fuer Prozessleittechnik, RWTH Aachen University";
@@ -498,7 +499,7 @@ LIBRARY cshmi
 				COMMENT = "height of the Blackbox"
 				INITIALVALUE = 100.0;
 			sourceOfLibrary[] : STRING
-				COMMENT = "exact link of the libraries (optional)";
+				COMMENT = "exact link of the libraries (optional); CSHMIModelHost/foo.js will be loaded from this KS Server";
 			HTMLcontent : STRING
 				COMMENT = "insert your HTML-Code here (optional)"
 				INITIALVALUE = "";
@@ -520,7 +521,7 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS GetValue : CLASS cshmi/Action
+	CLASS GetValue : CLASS cshmi/Object
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "get a value, either constant or from a variable";
@@ -562,7 +563,7 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 	
-	CLASS SetConcatValue : CLASS cshmi/Action
+	CLASS SetValueBase : CLASS cshmi/Action
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a concatenated value";
 		VARIABLES
@@ -596,13 +597,7 @@ LIBRARY cshmi
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS SetMathValue : CLASS cshmi/SetConcatValue
-		IS_FINAL;
-		IS_INSTANTIABLE;
-		COMMENT = "set a variable with a calculated value, add getValues with correct prefixed name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue; ran* adds a random number with newValue as maximum value";
-	END_CLASS;
-
-	CLASS SetValue : CLASS cshmi/SetConcatValue
+	CLASS SetValue : CLASS cshmi/SetValueBase
 		IS_FINAL;
 		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a (perhaps translated) value";
@@ -614,6 +609,18 @@ LIBRARY cshmi
 		PARTS
 			value : CLASS cshmi/GetValue;
 		END_PARTS;
+	END_CLASS;
+
+	CLASS SetConcatValue : CLASS cshmi/SetValueBase
+		IS_FINAL;
+		IS_INSTANTIABLE;
+		COMMENT = "set a variable with a concatenated value";
+	END_CLASS;
+
+	CLASS SetMathValue : CLASS cshmi/SetValueBase
+		IS_FINAL;
+		IS_INSTANTIABLE;
+		COMMENT = "set a variable with a calculated value, add getValues with correct prefixed name: add*, sub*, mul*, div*; The following adds the result: abs*, acos*, asin*, atan*, cos*, exp*, log*, sin*, sqrt*, tan*; pow* is oldValue power newValue; ran* adds a random number with newValue as maximum value";
 	END_CLASS;
 
 	CLASS TranslationSource : CLASS cshmi/Object
