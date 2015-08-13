@@ -3,9 +3,9 @@
 
 LIBRARY iec62541
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
-	AUTHOR    = "";
+	AUTHOR    = "Lars Evertz, Florian Palm";
 	COPYRIGHT = "";
-	COMMENT   = "Implements an OPC-UA server with access to the models in the ov system. Commandline Options: UA_CertPath - Path to the server certificate file. Absolute or relative to the config file; UA_Port - specify the portNumber on which the UA-Server will listen.";
+	COMMENT   = "Implements an OPC UA server with access to the models in the ov system. Commandline Options: UA_CertPath - Path to the server certificate file. Absolute or relative to the config file; UA_Port - specify the portNumber on which the UA-Server will listen.";
 	
 	CLASS uaServer		:	CLASS ksbase/ComTask
 		IS_INSTANTIABLE;
@@ -66,7 +66,7 @@ LIBRARY iec62541
 				COMMENT			= "Minimum size of a valid message"
 				INITIALVALUE	= 32;
 			highestOPCVersion	: UINT
-				COMMENT			= "Highest specified OPC uA Version number"
+				COMMENT			= "Highest specified OPC UA Version number"
 				INITIALVALUE	= 0;
 		END_VARIABLES;
 		OPERATIONS
@@ -123,7 +123,7 @@ LIBRARY iec62541
 			COMMENT		=	"Configuration of connection";
 		connsToClose	:	C_TYPE <UA_ConnectionPTRPTR>
 			COMMENT		=	"List of Connections to close";
-		connsToCloseCount	:	INT
+		connsToCloseCount	:	UINT
 			COMMENT		=	"Number of Connections to close"
 			INITIALVALUE	=	0;
 	/*	messageBuffer	:	C_TYPE	<UA_ByteString>
