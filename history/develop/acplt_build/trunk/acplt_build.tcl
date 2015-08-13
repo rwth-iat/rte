@@ -244,7 +244,7 @@ proc get_revision {} {
 	
 	execute svn info
 	#set logfile "logfile.txt"
-	set in  [open $logfile r]
+	set in [open $logfile r]
 	set first 0
 	while {[gets $in line] != -1} {
 		if {[regexp "Ausgecheckt, Revision" $line] } then {
@@ -275,7 +275,7 @@ proc checkout_dir {prefix module {dirname ""} {notrunk ""}} {
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
 	}
 }
-proc checkout_better {module {notrunk ""}}  {
+proc checkout_better {module {notrunk ""}} {
 	global notrunklist
 	set temp [split $module "/"]
 	foreach x $temp {
@@ -757,11 +757,11 @@ proc separate_dev {} {
 		set temp [split $x "/"]
 		set x [lindex $temp end]
 		if { [file exists $releasedir/dev/$x] } then {
-			file copy $releasedir/dev/$x  $releasedir/system/sysdevbase/$x 
+			file copy $releasedir/dev/$x $releasedir/system/sysdevbase/$x 
 			file delete -force $releasedir/dev/$x 
 		}
 		if { [file exists $releasedir/system/addonlibs/${x}$libsuffix] } then {
-			file copy $releasedir/system/addonlibs/${x}$libsuffix   $releasedir/system/syslibs/${x}$libsuffix 
+			file copy $releasedir/system/addonlibs/${x}$libsuffix $releasedir/system/syslibs/${x}$libsuffix 
 			file delete -force $releasedir/system/addonlibs/${x}$libsuffix
 		}
 	}
@@ -833,7 +833,7 @@ proc compress {archivename dir} {
 
 # ============== MAIN STARTS HERE ==================
 if { $bleedingedge == 1 } then {
-	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/UDPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp  develop/ks/trunk/ksapi develop/fb develop/shutdown}
+	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/UDPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp develop/ks/trunk/ksapi develop/ks/trunk/iec62541 develop/fb develop/shutdown}
 	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/fieldcommunication/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc develop/ks/trunk/fbcomlib}
 	print_msg "checking out trunk of acplt system"
 } else {
@@ -1007,20 +1007,20 @@ if {$release == 1} {
 	
 	#temporaly move tclsh.exe so it is not stripped
 	if { [file exists $releasedir/system/sysbin/tclsh.exe] } then {
-		file copy  $releasedir/system/sysbin/tclsh.exe $releasedir/system/tclsh.exe
+		file copy $releasedir/system/sysbin/tclsh.exe $releasedir/system/tclsh.exe
 		file delete -force $releasedir/system/sysbin/tclsh.exe
 	}
 
 	set stripfiles [glob -nocomplain $releasedir/system/sysbin/*.*]
 
 	foreach x $stripfiles {
-		# execute  "strip --strip-debug" $x
-		execute  "strip" "-g" "-S" "-d" $x
+		# execute "strip --strip-debug" $x
+		execute "strip" "-g" "-S" "-d" $x
 	}
 	
 	#restore tclsh.exe so it is not stripped
 	if { [file exists $releasedir/system/tclsh.exe] } then {
-		file copy  $releasedir/system/tclsh.exe $releasedir/system/sysbin/tclsh.exe 
+		file copy $releasedir/system/tclsh.exe $releasedir/system/sysbin/tclsh.exe 
 		file delete -force $releasedir/system/tclsh.exe
 	}
 
