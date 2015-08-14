@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-05-26 14:13:29
+* Erstellt: 2015-08-14 12:54:06
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -19,7 +19,7 @@
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2789;
+      idL : INPUT UINT = 6423;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -41,7 +41,7 @@
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2790;
+      idL : INPUT UINT = 6424;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -52,7 +52,7 @@
       y : INPUT SINGLE = 250.000000;
       width : INPUT SINGLE = 500.000000;
       height : INPUT SINGLE = 2000.000000;
-      sourceOfLibrary[6] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js"};
+      sourceOfLibrary[7] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.js"};
       HTMLcontent : INPUT STRING = "<div id='placeholder'></div>
 <div id='overview'></div>";
       jsOnload : INPUT STRING = "$(\"<div id ='tooltip'></div>\").css({
@@ -64,6 +64,7 @@
     		}).appendTo('body');
 var data, datax, datay, datatemp, datatemp2, dataxtemp, j, option, optionsOverview, chart, overview, len, stringtemp, pointplot, lineplot, barplot, fillplot, stepplot, offsetx, offsety, directory, datestr, maxnumpoints, updateTime, enableOverview;
 var  figlegend, figlegend2, figlegend3, figlegend4, figlegend5, figlegend6, figlegend7, figlegend8, figlegend9, figlegend10, placeholderwidth, placeholderheight, overviewwidth, overviewheight, temp;
+var data1symbol, data2symbol, data3symbol, data4symbol, data5symbol, data6symbol, data7symbol, data8symbol, data9symbol, data10symbol;
 pointplot = cshmimodel.variables.PointsPlot.getValue()== 'TRUE' ? true : false;
 lineplot = cshmimodel.variables.LinePlot.getValue()== 'TRUE' ? true : false;
 barplot = cshmimodel.variables.BarPlot.getValue()== 'TRUE' ? true : false;
@@ -73,7 +74,46 @@ enableOverview = cshmimodel.variables.enableOverview.getValue()== 'FALSE' ? fals
 offsetx=parseInt(cshmimodel.VisualObject.getAttribute('absolutex'));
 offsety=parseInt(cshmimodel.VisualObject.getAttribute('absolutey'));
 directory=cshmimodel.VisualObject.getAttribute('data-ModelSource');
-
+data1symbol =  cshmimodel.variables.data1symbol.getValue();
+data2symbol =  cshmimodel.variables.data2symbol.getValue();
+data3symbol =  cshmimodel.variables.data3symbol.getValue();
+data4symbol =  cshmimodel.variables.data4symbol.getValue();
+data5symbol =  cshmimodel.variables.data5symbol.getValue();
+data6symbol =  cshmimodel.variables.data6symbol.getValue();
+data7symbol =  cshmimodel.variables.data7symbol.getValue();
+data8symbol =  cshmimodel.variables.data8symbol.getValue();
+data9symbol =  cshmimodel.variables.data9symbol.getValue();
+data10symbol =  cshmimodel.variables.data10symbol.getValue();
+if (data1symbol == '') {
+	data1symbol = 'circle';
+}
+if (data2symbol == '') {
+	data2symbol = 'circle';
+}
+if (data3symbol == '') {
+	data3symbol = 'circle';
+}
+if (data4symbol == '') {
+	data4symbol = 'circle';
+}
+if (data5symbol == '') {
+	data5symbol = 'circle';
+}
+if (data6symbol == '') {
+	data6symbol = 'circle';
+}
+if (data7symbol == '') {
+	data7symbol = 'circle';
+}
+if (data8symbol == '') {
+	data8symbol = 'circle';
+}
+if (data9symbol == '') {
+	data9symbol = 'circle';
+}
+if (data10symbol == '') {
+	data10symbol = 'circle';
+}
 maxnumpoints =  cshmimodel.variables.DataPointsNum.getValue();
 if (maxnumpoints == '') {
 	maxnumpoints = 500;
@@ -145,7 +185,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data1symbol
 		},
 		bars : {
 			show : barplot
@@ -160,7 +201,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data2symbol
 		},
 		bars : {
 			show : barplot
@@ -175,7 +217,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data3symbol
 		},
 		bars : {
 			show : barplot
@@ -190,7 +233,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data4symbol
 		},
 		bars : {
 			show : barplot
@@ -205,7 +249,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data5symbol
 		},
 		bars : {
 			show : barplot
@@ -220,7 +265,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data6symbol
 		},
 		bars : {
 			show : barplot
@@ -235,7 +281,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data7symbol
 		},
 		bars : {
 			show : barplot
@@ -250,7 +297,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data8symbol
 		},
 		bars : {
 			show : barplot
@@ -265,7 +313,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data9symbol
 		},
 		bars : {
 			show : barplot
@@ -280,7 +329,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data10symbol
 		},
 		bars : {
 			show : barplot
@@ -471,7 +521,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2791;
+      idL : INPUT UINT = 6425;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -489,7 +539,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2792;
+      idL : INPUT UINT = 6426;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -508,7 +558,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2793;
+      idL : INPUT UINT = 6427;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -526,7 +576,7 @@ return xmlDoc;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2794;
+      idL : INPUT UINT = 6428;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -545,7 +595,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2795;
+      idL : INPUT UINT = 6429;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -563,7 +613,7 @@ return xmlDoc;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2796;
+      idL : INPUT UINT = 6430;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -582,7 +632,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2797;
+      idL : INPUT UINT = 6431;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -600,7 +650,7 @@ return xmlDoc;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2798;
+      idL : INPUT UINT = 6432;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -619,7 +669,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2799;
+      idL : INPUT UINT = 6433;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -637,7 +687,7 @@ return xmlDoc;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2800;
+      idL : INPUT UINT = 6434;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -656,7 +706,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2801;
+      idL : INPUT UINT = 6435;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -674,7 +724,7 @@ return xmlDoc;
       zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2802;
+      idL : INPUT UINT = 6436;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -693,7 +743,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2803;
+      idL : INPUT UINT = 6437;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -711,7 +761,7 @@ return xmlDoc;
       zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2804;
+      idL : INPUT UINT = 6438;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -730,7 +780,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2805;
+      idL : INPUT UINT = 6439;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -748,7 +798,7 @@ return xmlDoc;
       zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2806;
+      idL : INPUT UINT = 6440;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -767,7 +817,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2807;
+      idL : INPUT UINT = 6441;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -785,7 +835,7 @@ return xmlDoc;
       zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2808;
+      idL : INPUT UINT = 6442;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -804,7 +854,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2809;
+      idL : INPUT UINT = 6443;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -822,7 +872,7 @@ return xmlDoc;
       zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2810;
+      idL : INPUT UINT = 6444;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -841,7 +891,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2811;
+      idL : INPUT UINT = 6445;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -859,7 +909,7 @@ return xmlDoc;
       zindex : INPUT UINT = 10;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2812;
+      idL : INPUT UINT = 6446;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -878,7 +928,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2813;
+      idL : INPUT UINT = 6447;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -896,7 +946,7 @@ return xmlDoc;
       zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2814;
+      idL : INPUT UINT = 6448;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -915,7 +965,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2815;
+      idL : INPUT UINT = 6449;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -933,7 +983,7 @@ return xmlDoc;
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2816;
+      idL : INPUT UINT = 6450;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -952,7 +1002,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2817;
+      idL : INPUT UINT = 6451;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -970,7 +1020,7 @@ return xmlDoc;
       zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2818;
+      idL : INPUT UINT = 6452;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -989,7 +1039,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2819;
+      idL : INPUT UINT = 6453;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1007,7 +1057,7 @@ return xmlDoc;
       zindex : INPUT UINT = 14;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2820;
+      idL : INPUT UINT = 6454;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1026,7 +1076,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2821;
+      idL : INPUT UINT = 6455;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1044,7 +1094,7 @@ return xmlDoc;
       zindex : INPUT UINT = 15;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2822;
+      idL : INPUT UINT = 6456;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1063,7 +1113,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2823;
+      idL : INPUT UINT = 6457;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1081,7 +1131,7 @@ return xmlDoc;
       zindex : INPUT UINT = 16;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2824;
+      idL : INPUT UINT = 6458;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1100,7 +1150,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2825;
+      idL : INPUT UINT = 6459;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1118,7 +1168,7 @@ return xmlDoc;
       zindex : INPUT UINT = 17;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2826;
+      idL : INPUT UINT = 6460;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1137,7 +1187,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2827;
+      idL : INPUT UINT = 6461;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1155,7 +1205,7 @@ return xmlDoc;
       zindex : INPUT UINT = 18;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2828;
+      idL : INPUT UINT = 6462;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1174,7 +1224,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2829;
+      idL : INPUT UINT = 6463;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1192,7 +1242,7 @@ return xmlDoc;
       zindex : INPUT UINT = 19;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2830;
+      idL : INPUT UINT = 6464;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1211,7 +1261,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2831;
+      idL : INPUT UINT = 6465;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1229,7 +1279,7 @@ return xmlDoc;
       zindex : INPUT UINT = 20;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2832;
+      idL : INPUT UINT = 6466;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1248,7 +1298,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2833;
+      idL : INPUT UINT = 6467;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1266,7 +1316,7 @@ return xmlDoc;
       zindex : INPUT UINT = 21;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2834;
+      idL : INPUT UINT = 6468;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1285,7 +1335,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2835;
+      idL : INPUT UINT = 6469;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1303,7 +1353,7 @@ return xmlDoc;
       zindex : INPUT UINT = 22;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2836;
+      idL : INPUT UINT = 6470;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1322,7 +1372,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2837;
+      idL : INPUT UINT = 6471;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1340,7 +1390,7 @@ return xmlDoc;
       zindex : INPUT UINT = 23;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2838;
+      idL : INPUT UINT = 6472;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1359,7 +1409,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2839;
+      idL : INPUT UINT = 6473;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1377,7 +1427,7 @@ return xmlDoc;
       zindex : INPUT UINT = 24;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2840;
+      idL : INPUT UINT = 6474;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1396,7 +1446,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2841;
+      idL : INPUT UINT = 6475;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1414,7 +1464,7 @@ return xmlDoc;
       zindex : INPUT UINT = 25;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2842;
+      idL : INPUT UINT = 6476;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1433,7 +1483,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2843;
+      idL : INPUT UINT = 6477;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1451,7 +1501,7 @@ return xmlDoc;
       zindex : INPUT UINT = 26;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2844;
+      idL : INPUT UINT = 6478;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1470,7 +1520,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2845;
+      idL : INPUT UINT = 6479;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1488,7 +1538,7 @@ return xmlDoc;
       zindex : INPUT UINT = 27;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2846;
+      idL : INPUT UINT = 6480;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1507,7 +1557,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2847;
+      idL : INPUT UINT = 6481;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1525,7 +1575,7 @@ return xmlDoc;
       zindex : INPUT UINT = 28;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2848;
+      idL : INPUT UINT = 6482;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1544,7 +1594,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2849;
+      idL : INPUT UINT = 6483;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1562,7 +1612,7 @@ return xmlDoc;
       zindex : INPUT UINT = 29;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2850;
+      idL : INPUT UINT = 6484;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1581,7 +1631,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2851;
+      idL : INPUT UINT = 6485;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1599,7 +1649,7 @@ return xmlDoc;
       zindex : INPUT UINT = 30;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2852;
+      idL : INPUT UINT = 6486;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1618,7 +1668,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2853;
+      idL : INPUT UINT = 6487;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1636,7 +1686,7 @@ return xmlDoc;
       zindex : INPUT UINT = 31;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2854;
+      idL : INPUT UINT = 6488;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1655,7 +1705,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2855;
+      idL : INPUT UINT = 6489;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1673,7 +1723,7 @@ return xmlDoc;
       zindex : INPUT UINT = 32;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2856;
+      idL : INPUT UINT = 6490;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1692,7 +1742,377 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2857;
+      idL : INPUT UINT = 6491;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data1symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 33;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6492;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data1symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data1symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6493;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data2symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 34;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6494;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data2symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data2symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6495;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data3symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 35;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6496;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data3symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data3symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6497;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data4symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 36;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6498;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data4symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data4symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6499;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data5symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 37;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6500;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data5symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data5symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6501;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data6symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 38;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6502;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data6symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data6symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6503;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data7symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 39;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6504;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data7symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data7symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6505;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data8symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 40;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6506;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data8symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data8symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6507;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data9symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 41;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6508;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data9symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data9symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6509;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data10symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 42;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6510;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstamp/GroupGUI/BlackboxGUI/data10symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data10symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6511;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1705,7 +2125,7 @@ return xmlDoc;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7371;
+      idL : INPUT UINT = 6512;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1727,7 +2147,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7372;
+      idL : INPUT UINT = 6513;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -1738,7 +2158,7 @@ return xmlDoc;
       y : INPUT SINGLE = 250.000000;
       width : INPUT SINGLE = 500.000000;
       height : INPUT SINGLE = 2000.000000;
-      sourceOfLibrary[6] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js"};
+      sourceOfLibrary[7] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.js"};
       HTMLcontent : INPUT STRING = "<div id='placeholder'></div>
 <div id='overview'></div>
 Data 1:  <input name='TextIn1' type='text' maxlength='512' id='textin1' />
@@ -1772,6 +2192,7 @@ X Input:  <input name='TextInx' type='text' maxlength='512' id='textinx' />
     		}).appendTo('body');
 var data, datax, datay, datatemp, datatemp2, dataxtemp, j, option, optionsOverview, chart, overview, len, stringtemp, pointplot, lineplot, barplot, fillplot, stepplot, offsetx, offsety, directory, datestr, maxnumpoints, updateTime, enableOverview;
 var  figlegend, figlegend2, figlegend3, figlegend4, figlegend5, figlegend6, figlegend7, figlegend8, figlegend9, figlegend10, placeholderwidth, placeholderheight, overviewwidth, overviewheight, xtimestamp, temp;
+var data1symbol, data2symbol, data3symbol, data4symbol, data5symbol, data6symbol, data7symbol, data8symbol, data9symbol, data10symbol;
 pointplot = cshmimodel.variables.PointsPlot.getValue()== 'TRUE' ? true : false;
 lineplot = cshmimodel.variables.LinePlot.getValue()== 'TRUE' ? true : false;
 barplot = cshmimodel.variables.BarPlot.getValue()== 'TRUE' ? true : false;
@@ -1782,7 +2203,46 @@ var buttonflag=false;
 offsetx=parseInt(cshmimodel.VisualObject.getAttribute('absolutex'));
 offsety=parseInt(cshmimodel.VisualObject.getAttribute('absolutey'));
 directory=cshmimodel.VisualObject.getAttribute('data-ModelSource');
-
+data1symbol =  cshmimodel.variables.data1symbol.getValue();
+data2symbol =  cshmimodel.variables.data2symbol.getValue();
+data3symbol =  cshmimodel.variables.data3symbol.getValue();
+data4symbol =  cshmimodel.variables.data4symbol.getValue();
+data5symbol =  cshmimodel.variables.data5symbol.getValue();
+data6symbol =  cshmimodel.variables.data6symbol.getValue();
+data7symbol =  cshmimodel.variables.data7symbol.getValue();
+data8symbol =  cshmimodel.variables.data8symbol.getValue();
+data9symbol =  cshmimodel.variables.data9symbol.getValue();
+data10symbol =  cshmimodel.variables.data10symbol.getValue();
+if (data1symbol == '') {
+	data1symbol = 'circle';
+}
+if (data2symbol == '') {
+	data2symbol = 'circle';
+}
+if (data3symbol == '') {
+	data3symbol = 'circle';
+}
+if (data4symbol == '') {
+	data4symbol = 'circle';
+}
+if (data5symbol == '') {
+	data5symbol = 'circle';
+}
+if (data6symbol == '') {
+	data6symbol = 'circle';
+}
+if (data7symbol == '') {
+	data7symbol = 'circle';
+}
+if (data8symbol == '') {
+	data8symbol = 'circle';
+}
+if (data9symbol == '') {
+	data9symbol = 'circle';
+}
+if (data10symbol == '') {
+	data10symbol = 'circle';
+}
 maxnumpoints =  cshmimodel.variables.DataPointsNum.getValue();
 if (maxnumpoints == '') {
 	maxnumpoints = 500;
@@ -1858,6 +2318,8 @@ document.getElementById('textin7').value = datainy7d;
 document.getElementById('textin8').value = datainy8d;
 document.getElementById('textin9').value = datainy9d;
 document.getElementById('textin10').value = datainy10d;
+
+
 $(document).ready(function () {
 	var series1 = {
 		label : figlegend,
@@ -1867,7 +2329,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data1symbol
 		},
 		bars : {
 			show : barplot
@@ -1882,7 +2345,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data2symbol
 		},
 		bars : {
 			show : barplot
@@ -1897,7 +2361,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data3symbol
 		},
 		bars : {
 			show : barplot
@@ -1912,7 +2377,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data4symbol
 		},
 		bars : {
 			show : barplot
@@ -1927,7 +2393,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data5symbol
 		},
 		bars : {
 			show : barplot
@@ -1942,7 +2409,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data6symbol
 		},
 		bars : {
 			show : barplot
@@ -1957,7 +2425,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data7symbol
 		},
 		bars : {
 			show : barplot
@@ -1972,7 +2441,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data8symbol
 		},
 		bars : {
 			show : barplot
@@ -1987,7 +2457,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data9symbol
 		},
 		bars : {
 			show : barplot
@@ -2002,7 +2473,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data10symbol
 		},
 		bars : {
 			show : barplot
@@ -2222,7 +2694,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7373;
+      idL : INPUT UINT = 6514;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2240,7 +2712,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7374;
+      idL : INPUT UINT = 6515;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2259,7 +2731,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7375;
+      idL : INPUT UINT = 6516;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2277,7 +2749,7 @@ return xmlDoc;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7376;
+      idL : INPUT UINT = 6517;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2296,7 +2768,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7377;
+      idL : INPUT UINT = 6518;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2314,7 +2786,7 @@ return xmlDoc;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7378;
+      idL : INPUT UINT = 6519;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2333,7 +2805,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7379;
+      idL : INPUT UINT = 6520;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2351,7 +2823,7 @@ return xmlDoc;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7380;
+      idL : INPUT UINT = 6521;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2370,7 +2842,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7381;
+      idL : INPUT UINT = 6522;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2388,7 +2860,7 @@ return xmlDoc;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7382;
+      idL : INPUT UINT = 6523;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2407,7 +2879,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7383;
+      idL : INPUT UINT = 6524;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2425,7 +2897,7 @@ return xmlDoc;
       zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7384;
+      idL : INPUT UINT = 6525;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2444,7 +2916,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7385;
+      idL : INPUT UINT = 6526;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2462,7 +2934,7 @@ return xmlDoc;
       zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7386;
+      idL : INPUT UINT = 6527;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2481,7 +2953,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7387;
+      idL : INPUT UINT = 6528;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2499,7 +2971,7 @@ return xmlDoc;
       zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7388;
+      idL : INPUT UINT = 6529;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2518,7 +2990,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7389;
+      idL : INPUT UINT = 6530;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2536,7 +3008,7 @@ return xmlDoc;
       zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7390;
+      idL : INPUT UINT = 6531;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2555,7 +3027,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7391;
+      idL : INPUT UINT = 6532;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2573,7 +3045,7 @@ return xmlDoc;
       zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7392;
+      idL : INPUT UINT = 6533;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2592,7 +3064,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7393;
+      idL : INPUT UINT = 6534;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2610,7 +3082,7 @@ return xmlDoc;
       zindex : INPUT UINT = 10;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7394;
+      idL : INPUT UINT = 6535;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2629,7 +3101,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7395;
+      idL : INPUT UINT = 6536;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2647,7 +3119,7 @@ return xmlDoc;
       zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7396;
+      idL : INPUT UINT = 6537;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2666,7 +3138,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7397;
+      idL : INPUT UINT = 6538;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2684,7 +3156,7 @@ return xmlDoc;
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7398;
+      idL : INPUT UINT = 6539;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2703,7 +3175,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7399;
+      idL : INPUT UINT = 6540;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2721,7 +3193,7 @@ return xmlDoc;
       zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7400;
+      idL : INPUT UINT = 6541;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2740,7 +3212,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7401;
+      idL : INPUT UINT = 6542;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2758,7 +3230,7 @@ return xmlDoc;
       zindex : INPUT UINT = 14;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7402;
+      idL : INPUT UINT = 6543;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2777,7 +3249,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7403;
+      idL : INPUT UINT = 6544;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2795,7 +3267,7 @@ return xmlDoc;
       zindex : INPUT UINT = 15;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7404;
+      idL : INPUT UINT = 6545;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2814,7 +3286,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7405;
+      idL : INPUT UINT = 6546;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2832,7 +3304,7 @@ return xmlDoc;
       zindex : INPUT UINT = 16;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7406;
+      idL : INPUT UINT = 6547;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2851,7 +3323,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7407;
+      idL : INPUT UINT = 6548;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2869,7 +3341,7 @@ return xmlDoc;
       zindex : INPUT UINT = 17;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7408;
+      idL : INPUT UINT = 6549;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2888,7 +3360,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7409;
+      idL : INPUT UINT = 6550;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2906,7 +3378,7 @@ return xmlDoc;
       zindex : INPUT UINT = 18;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7410;
+      idL : INPUT UINT = 6552;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2925,7 +3397,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7411;
+      idL : INPUT UINT = 6553;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2943,7 +3415,7 @@ return xmlDoc;
       zindex : INPUT UINT = 19;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7412;
+      idL : INPUT UINT = 6554;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2962,7 +3434,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7413;
+      idL : INPUT UINT = 6555;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2980,7 +3452,7 @@ return xmlDoc;
       zindex : INPUT UINT = 20;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7414;
+      idL : INPUT UINT = 6556;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -2999,7 +3471,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7415;
+      idL : INPUT UINT = 6557;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3017,7 +3489,7 @@ return xmlDoc;
       zindex : INPUT UINT = 21;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7416;
+      idL : INPUT UINT = 6558;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3036,7 +3508,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7417;
+      idL : INPUT UINT = 6559;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3054,7 +3526,7 @@ return xmlDoc;
       zindex : INPUT UINT = 22;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7418;
+      idL : INPUT UINT = 6560;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3073,7 +3545,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7419;
+      idL : INPUT UINT = 6561;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3091,7 +3563,7 @@ return xmlDoc;
       zindex : INPUT UINT = 23;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7420;
+      idL : INPUT UINT = 6562;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3110,7 +3582,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7421;
+      idL : INPUT UINT = 6563;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3128,7 +3600,7 @@ return xmlDoc;
       zindex : INPUT UINT = 24;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7422;
+      idL : INPUT UINT = 6564;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3147,7 +3619,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7423;
+      idL : INPUT UINT = 6565;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3165,7 +3637,7 @@ return xmlDoc;
       zindex : INPUT UINT = 25;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7424;
+      idL : INPUT UINT = 6566;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3184,7 +3656,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7425;
+      idL : INPUT UINT = 6567;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3202,7 +3674,7 @@ return xmlDoc;
       zindex : INPUT UINT = 26;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7426;
+      idL : INPUT UINT = 6568;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3221,7 +3693,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7427;
+      idL : INPUT UINT = 6569;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3239,7 +3711,7 @@ return xmlDoc;
       zindex : INPUT UINT = 27;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7428;
+      idL : INPUT UINT = 6570;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3258,7 +3730,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7429;
+      idL : INPUT UINT = 6571;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3276,7 +3748,7 @@ return xmlDoc;
       zindex : INPUT UINT = 28;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7430;
+      idL : INPUT UINT = 6572;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3295,7 +3767,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7431;
+      idL : INPUT UINT = 6573;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3313,7 +3785,7 @@ return xmlDoc;
       zindex : INPUT UINT = 29;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7432;
+      idL : INPUT UINT = 6574;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3332,7 +3804,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7433;
+      idL : INPUT UINT = 6575;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3350,7 +3822,7 @@ return xmlDoc;
       zindex : INPUT UINT = 30;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7434;
+      idL : INPUT UINT = 6576;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3369,7 +3841,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7435;
+      idL : INPUT UINT = 6577;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3387,7 +3859,7 @@ return xmlDoc;
       zindex : INPUT UINT = 31;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7436;
+      idL : INPUT UINT = 6578;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3406,7 +3878,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7437;
+      idL : INPUT UINT = 6579;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3424,7 +3896,7 @@ return xmlDoc;
       zindex : INPUT UINT = 32;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7438;
+      idL : INPUT UINT = 6580;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3443,7 +3915,377 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 7439;
+      idL : INPUT UINT = 6581;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data1symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 33;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6582;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data1symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data1symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6583;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data2symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 34;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6584;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data2symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data2symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6585;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data3symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 35;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6586;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data3symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data3symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6587;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data4symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 36;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6588;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data4symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data4symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6589;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data5symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 37;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6590;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data5symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data5symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6591;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data6symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 38;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6592;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data6symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data6symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6593;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data7symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 39;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6594;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data7symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data7symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6595;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data8symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 40;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6596;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data8symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data8symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6597;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data9symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 41;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6598;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data9symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data9symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6599;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data10symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 42;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6600;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTstampTxtIn/GroupGUI/BlackboxGUI/data10symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data10symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6601;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3456,7 +4298,7 @@ return xmlDoc;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2580;
+      idL : INPUT UINT = 6602;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3478,7 +4320,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2581;
+      idL : INPUT UINT = 6603;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3489,7 +4331,7 @@ return xmlDoc;
       y : INPUT SINGLE = 250.000000;
       width : INPUT SINGLE = 500.000000;
       height : INPUT SINGLE = 2000.000000;
-      sourceOfLibrary[6] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js"};
+      sourceOfLibrary[7] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.js"};
       HTMLcontent : INPUT STRING = "<div id='placeholder'></div>
 <div id='overview'></div>
 Data 1:  <input name='TextIn1' type='text' maxlength='512' id='textin1' />
@@ -3575,7 +4417,7 @@ document.getElementById('placeholder').style.width = placeholderwidth;
 document.getElementById('placeholder').style.height = placeholderheight;
 document.getElementById('overview').style.width = overviewwidth;
 document.getElementById('overview').style.height = overviewheight;
-
+var data1symbol, data2symbol, data3symbol, data4symbol, data5symbol, data6symbol, data7symbol, data8symbol, data9symbol, data10symbol;
 var datainxd, datainy1d, datainy2d, datainy3d, datainy4d, datainy5d, datainy6d, datainy7d, datainy8d, datainy9d, datainy10d, legend1d, legend2d ,legend3d, legend4d, legend5d, legend6d, legend7d, legend8d, legend9d, legend10d;
 datainxd =  cshmimodel.variables.DataInxPath.getValue();
 datainy1d =  cshmimodel.variables.DataInyPath.getValue();
@@ -3589,6 +4431,47 @@ datainy8d =  cshmimodel.variables.DataIny8Path.getValue();
 datainy9d =  cshmimodel.variables.DataIny9Path.getValue();
 datainy10d =  cshmimodel.variables.DataIny10Path.getValue();
 
+
+data1symbol =  cshmimodel.variables.data1symbol.getValue();
+data2symbol =  cshmimodel.variables.data2symbol.getValue();
+data3symbol =  cshmimodel.variables.data3symbol.getValue();
+data4symbol =  cshmimodel.variables.data4symbol.getValue();
+data5symbol =  cshmimodel.variables.data5symbol.getValue();
+data6symbol =  cshmimodel.variables.data6symbol.getValue();
+data7symbol =  cshmimodel.variables.data7symbol.getValue();
+data8symbol =  cshmimodel.variables.data8symbol.getValue();
+data9symbol =  cshmimodel.variables.data9symbol.getValue();
+data10symbol =  cshmimodel.variables.data10symbol.getValue();
+if (data1symbol == '') {
+	data1symbol = 'circle';
+}
+if (data2symbol == '') {
+	data2symbol = 'circle';
+}
+if (data3symbol == '') {
+	data3symbol = 'circle';
+}
+if (data4symbol == '') {
+	data4symbol = 'circle';
+}
+if (data5symbol == '') {
+	data5symbol = 'circle';
+}
+if (data6symbol == '') {
+	data6symbol = 'circle';
+}
+if (data7symbol == '') {
+	data7symbol = 'circle';
+}
+if (data8symbol == '') {
+	data8symbol = 'circle';
+}
+if (data9symbol == '') {
+	data9symbol = 'circle';
+}
+if (data10symbol == '') {
+	data10symbol = 'circle';
+}
 legend1d =  cshmimodel.variables.Legend1.getValue();
 legend2d =  cshmimodel.variables.Legend2.getValue();
 legend3d =  cshmimodel.variables.Legend3.getValue();
@@ -3619,7 +4502,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data1symbol
 		},
 		bars : {
 			show : barplot
@@ -3634,7 +4518,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data2symbol
 		},
 		bars : {
 			show : barplot
@@ -3649,7 +4534,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data3symbol
 		},
 		bars : {
 			show : barplot
@@ -3664,7 +4550,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data4symbol
 		},
 		bars : {
 			show : barplot
@@ -3679,7 +4566,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data5symbol
 		},
 		bars : {
 			show : barplot
@@ -3694,7 +4582,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data6symbol
 		},
 		bars : {
 			show : barplot
@@ -3709,7 +4598,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data7symbol
 		},
 		bars : {
 			show : barplot
@@ -3724,7 +4614,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data8symbol
 		},
 		bars : {
 			show : barplot
@@ -3739,7 +4630,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data9symbol
 		},
 		bars : {
 			show : barplot
@@ -3754,7 +4646,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data10symbol
 		},
 		bars : {
 			show : barplot
@@ -3969,7 +4862,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2582;
+      idL : INPUT UINT = 6604;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -3987,7 +4880,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2583;
+      idL : INPUT UINT = 6605;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4006,7 +4899,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2584;
+      idL : INPUT UINT = 6606;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4024,7 +4917,7 @@ return xmlDoc;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2585;
+      idL : INPUT UINT = 6607;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4043,7 +4936,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2586;
+      idL : INPUT UINT = 6608;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4061,7 +4954,7 @@ return xmlDoc;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2587;
+      idL : INPUT UINT = 6609;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4080,7 +4973,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2588;
+      idL : INPUT UINT = 6610;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4098,7 +4991,7 @@ return xmlDoc;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2589;
+      idL : INPUT UINT = 6611;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4117,7 +5010,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2590;
+      idL : INPUT UINT = 6612;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4135,7 +5028,7 @@ return xmlDoc;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2591;
+      idL : INPUT UINT = 6613;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4154,7 +5047,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2592;
+      idL : INPUT UINT = 6614;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4172,7 +5065,7 @@ return xmlDoc;
       zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2593;
+      idL : INPUT UINT = 6615;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4191,7 +5084,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2594;
+      idL : INPUT UINT = 6616;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4209,7 +5102,7 @@ return xmlDoc;
       zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2595;
+      idL : INPUT UINT = 6617;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4228,7 +5121,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2596;
+      idL : INPUT UINT = 6618;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4246,7 +5139,7 @@ return xmlDoc;
       zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2597;
+      idL : INPUT UINT = 6619;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4265,7 +5158,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2598;
+      idL : INPUT UINT = 6620;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4283,7 +5176,7 @@ return xmlDoc;
       zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2599;
+      idL : INPUT UINT = 6621;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4302,7 +5195,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2600;
+      idL : INPUT UINT = 6622;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4320,7 +5213,7 @@ return xmlDoc;
       zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2601;
+      idL : INPUT UINT = 6623;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4339,7 +5232,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2602;
+      idL : INPUT UINT = 6624;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4357,7 +5250,7 @@ return xmlDoc;
       zindex : INPUT UINT = 10;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2603;
+      idL : INPUT UINT = 6625;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4376,7 +5269,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2604;
+      idL : INPUT UINT = 6626;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4394,7 +5287,7 @@ return xmlDoc;
       zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2605;
+      idL : INPUT UINT = 6627;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4413,7 +5306,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2606;
+      idL : INPUT UINT = 6628;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4431,7 +5324,7 @@ return xmlDoc;
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2607;
+      idL : INPUT UINT = 6629;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4450,7 +5343,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2608;
+      idL : INPUT UINT = 6630;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4468,7 +5361,7 @@ return xmlDoc;
       zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2609;
+      idL : INPUT UINT = 6631;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4487,7 +5380,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2610;
+      idL : INPUT UINT = 6632;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4505,7 +5398,7 @@ return xmlDoc;
       zindex : INPUT UINT = 14;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2611;
+      idL : INPUT UINT = 6633;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4524,7 +5417,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2612;
+      idL : INPUT UINT = 6634;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4542,7 +5435,7 @@ return xmlDoc;
       zindex : INPUT UINT = 15;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2613;
+      idL : INPUT UINT = 6635;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4561,7 +5454,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2614;
+      idL : INPUT UINT = 6636;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4579,7 +5472,7 @@ return xmlDoc;
       zindex : INPUT UINT = 16;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2615;
+      idL : INPUT UINT = 6637;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4598,7 +5491,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2616;
+      idL : INPUT UINT = 6638;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4616,7 +5509,7 @@ return xmlDoc;
       zindex : INPUT UINT = 17;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2617;
+      idL : INPUT UINT = 6639;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4635,7 +5528,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2618;
+      idL : INPUT UINT = 6640;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4653,7 +5546,7 @@ return xmlDoc;
       zindex : INPUT UINT = 18;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2619;
+      idL : INPUT UINT = 6641;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4672,7 +5565,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2620;
+      idL : INPUT UINT = 6642;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4690,7 +5583,7 @@ return xmlDoc;
       zindex : INPUT UINT = 19;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2621;
+      idL : INPUT UINT = 6643;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4709,7 +5602,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2622;
+      idL : INPUT UINT = 6644;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4727,7 +5620,7 @@ return xmlDoc;
       zindex : INPUT UINT = 20;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2623;
+      idL : INPUT UINT = 6645;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4746,7 +5639,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2624;
+      idL : INPUT UINT = 6646;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4764,7 +5657,7 @@ return xmlDoc;
       zindex : INPUT UINT = 21;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2625;
+      idL : INPUT UINT = 6647;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4783,7 +5676,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2626;
+      idL : INPUT UINT = 6648;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4801,7 +5694,7 @@ return xmlDoc;
       zindex : INPUT UINT = 22;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2627;
+      idL : INPUT UINT = 6649;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4820,7 +5713,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2628;
+      idL : INPUT UINT = 6650;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4838,7 +5731,7 @@ return xmlDoc;
       zindex : INPUT UINT = 23;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2629;
+      idL : INPUT UINT = 6651;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4857,7 +5750,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2630;
+      idL : INPUT UINT = 6652;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4875,7 +5768,7 @@ return xmlDoc;
       zindex : INPUT UINT = 24;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2631;
+      idL : INPUT UINT = 6653;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4894,7 +5787,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2632;
+      idL : INPUT UINT = 6654;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4912,7 +5805,7 @@ return xmlDoc;
       zindex : INPUT UINT = 25;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2633;
+      idL : INPUT UINT = 6655;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4931,7 +5824,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2634;
+      idL : INPUT UINT = 6656;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4949,7 +5842,7 @@ return xmlDoc;
       zindex : INPUT UINT = 26;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2635;
+      idL : INPUT UINT = 6657;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4968,7 +5861,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2636;
+      idL : INPUT UINT = 6658;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -4986,7 +5879,7 @@ return xmlDoc;
       zindex : INPUT UINT = 27;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2637;
+      idL : INPUT UINT = 6659;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5005,7 +5898,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2638;
+      idL : INPUT UINT = 6660;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5023,7 +5916,7 @@ return xmlDoc;
       zindex : INPUT UINT = 28;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2639;
+      idL : INPUT UINT = 6661;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5042,7 +5935,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2640;
+      idL : INPUT UINT = 6662;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5060,7 +5953,7 @@ return xmlDoc;
       zindex : INPUT UINT = 29;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2641;
+      idL : INPUT UINT = 6663;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5079,7 +5972,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2642;
+      idL : INPUT UINT = 6664;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5097,7 +5990,7 @@ return xmlDoc;
       zindex : INPUT UINT = 30;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2643;
+      idL : INPUT UINT = 6665;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5116,7 +6009,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2644;
+      idL : INPUT UINT = 6666;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5134,7 +6027,7 @@ return xmlDoc;
       zindex : INPUT UINT = 31;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2645;
+      idL : INPUT UINT = 6667;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5153,7 +6046,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2646;
+      idL : INPUT UINT = 6668;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5171,7 +6064,7 @@ return xmlDoc;
       zindex : INPUT UINT = 32;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2647;
+      idL : INPUT UINT = 6669;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5190,7 +6083,377 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2648;
+      idL : INPUT UINT = 6670;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data1symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 33;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6671;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data1symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data1symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6672;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data2symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 34;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6673;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data2symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data2symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6674;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data3symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 35;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6675;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data3symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data3symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6676;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data4symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 36;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6677;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data4symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data4symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6678;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data5symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 37;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6679;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data5symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data5symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6680;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data6symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 38;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6681;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data6symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data6symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6682;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data7symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 39;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6683;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data7symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data7symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6684;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data8symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 40;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6685;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data8symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data8symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6686;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data9symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 41;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6687;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data9symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data9symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6688;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data10symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 42;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6689;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/DynamicTxtIn/GroupGUI/BlackboxGUI/data10symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data10symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6690;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5203,7 +6466,7 @@ return xmlDoc;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2649;
+      idL : INPUT UINT = 6691;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5225,7 +6488,7 @@ return xmlDoc;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2650;
+      idL : INPUT UINT = 6692;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5236,7 +6499,7 @@ return xmlDoc;
       y : INPUT SINGLE = 250.000000;
       width : INPUT SINGLE = 500.000000;
       height : INPUT SINGLE = 2000.000000;
-      sourceOfLibrary[6] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js"};
+      sourceOfLibrary[7] : INPUT STRING = {"http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.time.js" , "http://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.selection.js" , "http://cdnjs.cloudflare.com/ajax/libs/jquery-resize/1.1/jquery.ba-resize.min.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.navigate.js" , "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.symbol.js"};
       HTMLcontent : INPUT STRING = "<div id='placeholder'></div>
 <div id='overview'></div>";
       jsOnload : INPUT STRING = "$(\"<div id ='tooltip'></div>\").css({
@@ -5297,6 +6560,47 @@ document.getElementById('placeholder').style.height = placeholderheight;
 document.getElementById('overview').style.width = overviewwidth;
 document.getElementById('overview').style.height = overviewheight;
 var datainxd, datainy1d, datainy2d, datainy3d, datainy4d, datainy5d, datainy6d, datainy7d, datainy8d, datainy9d, datainy10d, legend1d, legend2d ,legend3d, legend4d, legend5d, legend6d, legend7d, legend8d, legend9d, legend10d;
+var data1symbol, data2symbol, data3symbol, data4symbol, data5symbol, data6symbol, data7symbol, data8symbol, data9symbol, data10symbol;
+data1symbol =  cshmimodel.variables.data1symbol.getValue();
+data2symbol =  cshmimodel.variables.data2symbol.getValue();
+data3symbol =  cshmimodel.variables.data3symbol.getValue();
+data4symbol =  cshmimodel.variables.data4symbol.getValue();
+data5symbol =  cshmimodel.variables.data5symbol.getValue();
+data6symbol =  cshmimodel.variables.data6symbol.getValue();
+data7symbol =  cshmimodel.variables.data7symbol.getValue();
+data8symbol =  cshmimodel.variables.data8symbol.getValue();
+data9symbol =  cshmimodel.variables.data9symbol.getValue();
+data10symbol =  cshmimodel.variables.data10symbol.getValue();
+if (data1symbol == '') {
+	data1symbol = 'circle';
+}
+if (data2symbol == '') {
+	data2symbol = 'circle';
+}
+if (data3symbol == '') {
+	data3symbol = 'circle';
+}
+if (data4symbol == '') {
+	data4symbol = 'circle';
+}
+if (data5symbol == '') {
+	data5symbol = 'circle';
+}
+if (data6symbol == '') {
+	data6symbol = 'circle';
+}
+if (data7symbol == '') {
+	data7symbol = 'circle';
+}
+if (data8symbol == '') {
+	data8symbol = 'circle';
+}
+if (data9symbol == '') {
+	data9symbol = 'circle';
+}
+if (data10symbol == '') {
+	data10symbol = 'circle';
+}
 datainxd =  cshmimodel.variables.DataInxPath.getValue();
 datainy1d =  cshmimodel.variables.DataInyPath.getValue();
 datainy2d =  cshmimodel.variables.DataIny2Path.getValue();
@@ -5328,8 +6632,10 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
-		},		bars : {
+			show : pointplot,
+			symbol: data1symbol
+		},
+		bars : {
 			show : barplot
 		},
 		data : []
@@ -5342,7 +6648,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data2symbol
 		},
 		bars : {
 			show : barplot
@@ -5357,7 +6664,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data3symbol
 		},
 		bars : {
 			show : barplot
@@ -5372,7 +6680,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data4symbol
 		},
 		bars : {
 			show : barplot
@@ -5387,7 +6696,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data5symbol
 		},
 		bars : {
 			show : barplot
@@ -5402,7 +6712,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data6symbol
 		},
 		bars : {
 			show : barplot
@@ -5417,7 +6728,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data7symbol
 		},
 		bars : {
 			show : barplot
@@ -5432,7 +6744,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data8symbol
 		},
 		bars : {
 			show : barplot
@@ -5447,7 +6760,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data9symbol
 		},
 		bars : {
 			show : barplot
@@ -5462,7 +6776,8 @@ $(document).ready(function () {
 			steps : stepplot
 		},
 		points : {
-			show : pointplot
+			show : pointplot,
+			symbol: data10symbol
 		},
 		bars : {
 			show : barplot
@@ -5636,7 +6951,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2651;
+      idL : INPUT UINT = 6693;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5654,7 +6969,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2652;
+      idL : INPUT UINT = 6694;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5673,7 +6988,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2653;
+      idL : INPUT UINT = 6695;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5691,7 +7006,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2654;
+      idL : INPUT UINT = 6696;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5710,7 +7025,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2655;
+      idL : INPUT UINT = 6697;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5728,7 +7043,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2656;
+      idL : INPUT UINT = 6698;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5747,7 +7062,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2657;
+      idL : INPUT UINT = 6699;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5765,7 +7080,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2658;
+      idL : INPUT UINT = 6700;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5784,7 +7099,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2659;
+      idL : INPUT UINT = 6701;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5802,7 +7117,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2660;
+      idL : INPUT UINT = 6702;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5821,7 +7136,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2661;
+      idL : INPUT UINT = 6703;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5839,7 +7154,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 5;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2662;
+      idL : INPUT UINT = 6704;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5858,7 +7173,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2663;
+      idL : INPUT UINT = 6705;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5876,7 +7191,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 6;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2664;
+      idL : INPUT UINT = 6706;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5895,7 +7210,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2665;
+      idL : INPUT UINT = 6707;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5913,7 +7228,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 7;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2666;
+      idL : INPUT UINT = 6708;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5932,7 +7247,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2667;
+      idL : INPUT UINT = 6709;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5950,7 +7265,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 8;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2668;
+      idL : INPUT UINT = 6710;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5969,7 +7284,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2669;
+      idL : INPUT UINT = 6711;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -5987,7 +7302,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 9;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2670;
+      idL : INPUT UINT = 6712;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6006,7 +7321,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2671;
+      idL : INPUT UINT = 6713;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6024,7 +7339,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 10;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2672;
+      idL : INPUT UINT = 6714;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6043,7 +7358,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2673;
+      idL : INPUT UINT = 6715;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6061,7 +7376,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 11;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2674;
+      idL : INPUT UINT = 6716;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6080,7 +7395,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2675;
+      idL : INPUT UINT = 6717;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6098,7 +7413,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 12;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2676;
+      idL : INPUT UINT = 6718;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6117,7 +7432,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2677;
+      idL : INPUT UINT = 6719;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6135,7 +7450,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 13;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2678;
+      idL : INPUT UINT = 6720;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6154,7 +7469,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2679;
+      idL : INPUT UINT = 6721;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6172,7 +7487,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 14;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2680;
+      idL : INPUT UINT = 6722;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6191,7 +7506,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2681;
+      idL : INPUT UINT = 6723;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6209,7 +7524,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 15;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2682;
+      idL : INPUT UINT = 6724;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6228,7 +7543,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2683;
+      idL : INPUT UINT = 6725;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6246,7 +7561,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 16;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2684;
+      idL : INPUT UINT = 6726;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6265,7 +7580,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2685;
+      idL : INPUT UINT = 6727;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6283,7 +7598,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 17;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2686;
+      idL : INPUT UINT = 6728;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6302,7 +7617,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2687;
+      idL : INPUT UINT = 6729;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6320,7 +7635,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 18;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2688;
+      idL : INPUT UINT = 6730;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6339,7 +7654,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2689;
+      idL : INPUT UINT = 6731;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6357,7 +7672,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 19;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2690;
+      idL : INPUT UINT = 6732;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6376,7 +7691,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2691;
+      idL : INPUT UINT = 6733;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6394,7 +7709,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 20;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2692;
+      idL : INPUT UINT = 6734;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6413,7 +7728,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2693;
+      idL : INPUT UINT = 6735;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6431,7 +7746,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 21;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2694;
+      idL : INPUT UINT = 6736;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6450,7 +7765,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2695;
+      idL : INPUT UINT = 6737;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6468,7 +7783,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 22;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2696;
+      idL : INPUT UINT = 6738;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6487,7 +7802,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2697;
+      idL : INPUT UINT = 6739;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6505,7 +7820,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 23;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2698;
+      idL : INPUT UINT = 6740;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6524,7 +7839,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2699;
+      idL : INPUT UINT = 6741;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6542,7 +7857,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 24;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2700;
+      idL : INPUT UINT = 6742;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6561,7 +7876,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2701;
+      idL : INPUT UINT = 6743;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6579,7 +7894,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 25;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2702;
+      idL : INPUT UINT = 6744;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6598,7 +7913,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2703;
+      idL : INPUT UINT = 6745;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6616,7 +7931,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 26;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2704;
+      idL : INPUT UINT = 6746;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6635,7 +7950,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2705;
+      idL : INPUT UINT = 6747;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6653,7 +7968,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 27;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2706;
+      idL : INPUT UINT = 6748;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6672,7 +7987,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2707;
+      idL : INPUT UINT = 6749;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6690,7 +8005,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 28;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2708;
+      idL : INPUT UINT = 6750;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6709,7 +8024,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2709;
+      idL : INPUT UINT = 6751;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6727,7 +8042,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 29;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2710;
+      idL : INPUT UINT = 6752;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6746,7 +8061,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2711;
+      idL : INPUT UINT = 6753;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6764,7 +8079,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 30;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2712;
+      idL : INPUT UINT = 6754;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6783,7 +8098,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2713;
+      idL : INPUT UINT = 6755;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6801,7 +8116,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 31;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2714;
+      idL : INPUT UINT = 6756;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6820,7 +8135,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2715;
+      idL : INPUT UINT = 6757;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6838,7 +8153,7 @@ $(document).ready(function () {
       zindex : INPUT UINT = 32;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2716;
+      idL : INPUT UINT = 6758;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
@@ -6857,7 +8172,377 @@ $(document).ready(function () {
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2717;
+      idL : INPUT UINT = 6759;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data1symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 33;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6760;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data1symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data1symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6761;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data2symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 34;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6762;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data2symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data2symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6763;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data3symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 35;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6764;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data3symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data3symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6765;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data4symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 36;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6766;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data4symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data4symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6767;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data5symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 37;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6768;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data5symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data5symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6769;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data6symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 38;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6770;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data6symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data6symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6771;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data7symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 39;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6772;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data7symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data7symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6773;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data8symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 40;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6774;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data8symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data8symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6775;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data9symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 41;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6776;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data9symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data9symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6777;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data10symbol :
+    CLASS /Libraries/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 42;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6778;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/GraphPlotter/Dynamic/GroupGUI/BlackboxGUI/data10symbol.value :
+    CLASS /Libraries/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "data10symbol";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+      idH : INPUT UINT = 0;
+      idL : INPUT UINT = 6779;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 

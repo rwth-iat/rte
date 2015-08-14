@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-05-26 13:38:40
+* Erstellt: 2015-08-14 11:09:07
 * 
 * HOST   : LOCALHOST:7509
 * SERVER : MANAGER
@@ -20,11 +20,11 @@
       TemplateDefinition : INPUT STRING = "GraphPlotter/DynamicTstampTxtIn";
       FBReference[0] : INPUT STRING = {};
       FBVariableReference[0] : INPUT STRING = {};
-      ConfigValues[9] : INPUT STRING = {"legend1:data" , "legend2:data" , "legend2:data2" , "figureHeight:500" , "zoomHeight:200" , "enableOverview:TRUE" , "zoomWidth:500", "updateTime:1000" , "pointsNum:500"};
+      ConfigValues[8] : INPUT STRING = {"legend1:data" , "figureHeight:500" , "zoomHeight:200" , "zoomWidth:500" , "enableOverview:TRUE" , "updateTime:1000" , "pointsNum:500" , "data1symbol:cross"};
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
       idH : INPUT UINT = 0;
-      idL : INPUT UINT = 2720;
+      idL : INPUT UINT = 5265;
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
