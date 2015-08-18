@@ -280,9 +280,16 @@ HMI.prototype = {
 				}
 			};
 		}
+		
+		this.Throbber = document.getElementById('idThrobber');
+		
 		if(ErrorDetail !== ""){
 			if (this.Throbber !== null){
-				this.Throbber.style.display = "none";
+				if(this.Throbber.style){
+					this.Throbber.style.display = "none";
+				}else if(this.Throbber.setAttribute){
+					this.Throbber.setAttribute("display", "none");
+				}
 			}
 			window.alert ("Error initialising HMI Website: "+ErrorDetail);
 			return false;
@@ -309,7 +316,6 @@ HMI.prototype = {
 		if ((this.InfoOutput = document.getElementById('idInfoOutput'))){
 			deleteChilds(HMI.InfoOutput);
 		}
-		this.Throbber = document.getElementById('idThrobber');
 		
 		// prepare smooth hiding
 		HMI.HideableHeader.style.overflow = "hidden";
@@ -359,7 +365,11 @@ HMI.prototype = {
 					this.hmi_log_error("HMI.prototype.init - Communication to Server failed. This website has to be transfered via HTTP. ");
 					this.hmi_log_onwebsite("This Browser does not support synchronous XMLHttpRequest, which is required for ACPLT/HMI. Please use another Browser");
 					if (this.Throbber !== null){
-						this.Throbber.style.display = "none";
+						if(this.Throbber.style){
+							this.Throbber.style.display = "none";
+						}else if(this.Throbber.setAttribute){
+							this.Throbber.setAttribute("display", "none");
+						}
 					}
 					return false;
 				}else if (ResponseServerString && -1 !== ResponseServerString.indexOf('Tcl-Webserver')){
@@ -380,7 +390,11 @@ HMI.prototype = {
 				this.hmi_log_error("HMI.prototype.init - Gatewaydetection failed: "+e.message);
 				this.hmi_log_onwebsite('Could not detect type of HTTP/KS-Gateway. Please configure in hmi-class-HMI.js');
 				if (this.Throbber !== null){
-					this.Throbber.style.display = "none";
+					if(this.Throbber.style){
+						this.Throbber.style.display = "none";
+					}else if(this.Throbber.setAttribute){
+						this.Throbber.setAttribute("display", "none");
+					}
 				}
 				return false;
 			}
@@ -434,7 +448,11 @@ HMI.prototype = {
 			}
 			ErrorNode = null;
 			if (this.Throbber !== null){
-				this.Throbber.style.display = "none";
+				if(this.Throbber.style){
+					this.Throbber.style.display = "none";
+				}else if(this.Throbber.setAttribute){
+					this.Throbber.setAttribute("display", "none");
+				}
 			}
 			return false;
 		}
@@ -521,42 +539,6 @@ HMI.prototype = {
 		
 		//make deep links work
 		this.interpreteUrlParameter();
-		
-		/*	TODO reimplement event handling based on document with this code
-		if (this.svgDocument.addEventListener) {  // Firefox, Google Chrome, Safari, Opera, ie9
-			this.svgDocument.addEventListener ("mousedown", 
-				function(evt){
-					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
-					if (myDragger !== null){
-						HMI.hmi_log_info("document ### found: "+myDragger.id);
-					}
-					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
-				}
-			, true);
-			this.svgDocument.addEventListener ("click", 
-				function(evt){
-					//HMI.ProtoClick._sendCommand(evt, HMI.getComponent(evt, 'hmi-component-gesture-click'));
-				}
-			, true);
-			alert("events registered on document");
-		}else if (typeof HMI.Playground.addEventListener == "unknown"){
-			//adobe plugin
-			HMI.Playground.addEventListener ("mousedown", 
-				function(evt){
-					var myDragger = HMI.getComponent(evt, 'hmi-component-gesture-move');
-					if (myDragger !== null){
-						HMI.hmi_log_info("document ### found: "+myDragger.id);
-					}
-					//HMI.ProtoDragger.startDrag(evt, HMI.getComponent(evt, 'hmi-component-gesture-move'));
-				}
-			, false);
-			alert("event registered on playground");
-		}
-		*/
-		
-		if (this.Throbber !== null){
-			this.Throbber.style.display = "none";
-		}
 		
 		this.hmi_log_trace("HMI.prototype.init - End");
 		return true;
@@ -693,7 +675,11 @@ HMI.prototype = {
 		}
 		
 		if (this.Throbber !== null){
-			this.Throbber.style.display = "none";
+			if(this.Throbber.style){
+				this.Throbber.style.display = "none";
+			}else if(this.Throbber.setAttribute){
+				this.Throbber.setAttribute("display", "none");
+			}
 		}
 		
 		this.hmi_log_trace("HMI.prototype.interpreteUrlParameter - End");
@@ -822,6 +808,7 @@ HMI.prototype = {
 	 * @param {boolean} show hide header if false, hide if false, toggle if null
 	 */
 	hideHeader: function(hide){
+		var arrowdown1 = document.getElementById("arrowdown1");
 		if (hide === true || (hide === null && HMI.HeaderIsVisible === true)){
 			//hide menu
 			
@@ -829,25 +816,25 @@ HMI.prototype = {
 			//transition from an height="auto" is not supported, so we change maxHeight
 			//internet explorer never used this with a prefix
 			if(HMI.HideableHeader.style.transitionDuration !== undefined){
-				HMI.HideableHeader.style.transitionProperty = "all";
+				HMI.HideableHeader.style.transitionProperty = "max-height";
 				HMI.HideableHeader.style.transitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.transitionDuration = "0.6s";
 				HMI.HideableHeader.style.maxHeight = '0px';
 				HMI.HeaderIsVisible = false;
 			}else if(HMI.HideableHeader.style.MozTransitionDuration !== undefined){
-				HMI.HideableHeader.style.MozTransitionProperty = "all";
+				HMI.HideableHeader.style.MozTransitionProperty = "max-height";
 				HMI.HideableHeader.style.MozTransitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.MozTransitionDuration = "0.6s";
 				HMI.HideableHeader.style.maxHeight = '0px';
 				HMI.HeaderIsVisible = false;
 			}else if(HMI.HideableHeader.style.WebkitTransitionDuration !== undefined){
-				HMI.HideableHeader.style.WebkitTransitionProperty = "all";
+				HMI.HideableHeader.style.WebkitTransitionProperty = "max-height";
 				HMI.HideableHeader.style.WebkitTransitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.WebkitTransitionDuration = "0.6s";
 				HMI.HideableHeader.style.maxHeight = '0px';
 				HMI.HeaderIsVisible = false;
 			}else if(HMI.HideableHeader.style.OTransitionDuration !== undefined){
-				HMI.HideableHeader.style.OTransitionProperty = "all";
+				HMI.HideableHeader.style.OTransitionProperty = "max-height";
 				HMI.HideableHeader.style.OTransitionTimingFunction = "ease-in-out";
 				HMI.HideableHeader.style.OTransitionDuration = "0.6s";
 				HMI.HideableHeader.style.maxHeight = '0px';
@@ -862,7 +849,7 @@ HMI.prototype = {
 			
 			//switch arrow orientation
 			//
-			if (document.getElementById("arrowdown1") !== null){
+			if (arrowdown1 && arrowdown1.style){
 				document.getElementById("arrowdown1").style.visibility="visible";
 				document.getElementById("arrowdown2").style.visibility="visible";
 				document.getElementById("arrowup1").style.visibility="hidden";
@@ -879,7 +866,7 @@ HMI.prototype = {
 			
 			//switch arrow orientation
 			//
-			if (document.getElementById("arrowdown1") !== null){
+			if (arrowdown1 && arrowdown1.style){
 				document.getElementById("arrowdown1").style.visibility="hidden";
 				document.getElementById("arrowdown2").style.visibility="hidden";
 				document.getElementById("arrowup1").style.visibility="visible";
@@ -981,13 +968,17 @@ HMI.prototype = {
 		this.hmi_log_trace("HMI.prototype.showServers - Start");
 		
 		//flush cache of tcl handles
-		HMI.KSClient.destroy();
+		this.KSClient.destroy();
 		
 		//disable double click by user
-		HMI.ButShowServers.disabled = true;
-		HMI.ButShowServers.value = "Please wait...";
-		if (HMI.Throbber !== null){
-			HMI.Throbber.style.display = "inline";
+		this.ButShowServers.disabled = true;
+		this.ButShowServers.value = "Please wait...";
+		if (this.Throbber !== null){
+			if(this.Throbber.style){
+				this.Throbber.style.display = "inline";
+			}else if(this.Throbber.setAttribute){
+				this.Throbber.setAttribute("display", "inline");
+			}
 		}
 		
 		window.clearTimeout(HMI.RefreshTimeoutID);
@@ -1009,8 +1000,8 @@ HMI.prototype = {
 		this.cshmi = null;
 		
 		//deactivate the Select-Boxes, because there is no usefull content
-		HMI.PossServers.disabled = true;
-		HMI.PossSheets.disabled = true;
+		this.PossServers.disabled = true;
+		this.PossSheets.disabled = true;
 		
 		//Set a neutral title
 		document.title = "Startcenter - ACPLT/HMI";
@@ -1021,10 +1012,14 @@ HMI.prototype = {
 		//todo move this to call back
 		
 		//reenable click by user
-		HMI.ButShowServers.disabled = false;
-		HMI.ButShowServers.value = "Reload Serverlist";
-		if (HMI.Throbber !== null){
-			HMI.Throbber.style.display = "none";
+		this.ButShowServers.disabled = false;
+		this.ButShowServers.value = "Reload Serverlist";
+		if (this.Throbber !== null){
+			if(this.Throbber.style){
+				this.Throbber.style.display = "none";
+			}else if(this.Throbber.setAttribute){
+				this.Throbber.setAttribute("display", "none");
+			}
 		}
 		
 		//present a "deep link" to the state
@@ -1158,8 +1153,12 @@ HMI.prototype = {
 		HMI.PossServers.blur();
 		
 		HMI.ButShowServers.value = "Reload Serverlist";
-		if (HMI.Throbber !== null){
-			HMI.Throbber.style.display = "none";
+		if (this.Throbber !== null){
+			if(this.Throbber.style){
+				this.Throbber.style.display = "none";
+			}else if(this.Throbber.setAttribute){
+				this.Throbber.setAttribute("display", "none");
+			}
 		}
 		
 		this.hmi_log_trace("HMI.prototype.showOneSheet - End");

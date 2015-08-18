@@ -440,8 +440,8 @@ cshmi.prototype = {
 		var cyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
-			if (cyctime === 0 ){
-				//zero disables
+			if (cyctime <= 0){
+				//negative values are not valid, zero disables the event
 				return true;
 			}else if (this.initStage === true && cyctime > 1 ){
 				//we dont want to wait too long for the first action
@@ -2634,6 +2634,7 @@ cshmi.prototype = {
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["ignoreError"] = null;
 			requestList[ObjectPath]["comptype"] = null;
+			requestList[ObjectPath]["ignoreCase"] = null;
 			if (CompareIteratedChild === true){
 				requestList[ObjectPath]["childValue"] = null;
 			}
@@ -2646,9 +2647,14 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath] = new Object();
 			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 		}
+		if(requestList[ObjectPath]["ignoreCase"] === undefined){
+			//old cshmi servers with Turbo
+			requestList[ObjectPath]["ignoreCase"] = "FALSE";
+		}
 		
 		var ignoreError = requestList[ObjectPath]["ignoreError"];
 		var comptype = requestList[ObjectPath]["comptype"];
+		var ignoreCase = requestList[ObjectPath]["ignoreCase"];
 		var childValue;
 		var Value1;
 		var Value2;
@@ -2657,7 +2663,7 @@ cshmi.prototype = {
 		checkConditionObserver.triggerActivity = function(){
 			this.cshmiObject._checkConditionResult(this.VisualObject, this.ObjectPath, IfThenElseObserver, checkConditionObserver);
 		};
-		checkConditionObserver.customInformation = {"ignoreError":ignoreError, "comptype":comptype};
+		checkConditionObserver.customInformation = {"ignoreError":ignoreError, "comptype":comptype, "ignoreCase":ignoreCase};
 		
 		var thisObserverEntry;
 		if (CompareIteratedChild === true){
@@ -2743,6 +2749,7 @@ cshmi.prototype = {
 	_checkConditionResult: function(VisualObject, ObjectPath, IfThenElseObserver, checkConditionObserver){
 		var ignoreError = checkConditionObserver.customInformation.ignoreError;
 		var comptype = checkConditionObserver.customInformation.comptype;
+		var ignoreCase = checkConditionObserver.customInformation.ignoreCase;
 		
 		var Value1 = checkConditionObserver.ObserverEntryArray[0].value;
 		var Value2 = checkConditionObserver.ObserverEntryArray[1].value;
@@ -2785,6 +2792,8 @@ cshmi.prototype = {
 		//force proper numerical comparision for numbers, since "" < "0" is true in EcmaScript
 		if(isNumeric(Value1)){
 			Value1 = parseFloat(Value1);
+		}else if(ignoreCase === "TRUE"){
+			Value1 = Value1.toLowerCase();
 		}
 		if (Value2 === ""){
 			Value2 = [""];
@@ -2795,6 +2804,8 @@ cshmi.prototype = {
 			for (var i=0; i<Value2.length; i++){
 				if(isNumeric(Value2[i])){
 					Value2[i] = parseFloat(Value2[i]);
+				}else if(ignoreCase === "TRUE"){
+					Value2[i] = Value2[i].toLowerCase();
 				}
 			}
 		}
@@ -4977,7 +4988,7 @@ cshmi.prototype = {
 			parentObject.appendChild(HTMLcontentNode);
 		}
 		
-		if(sourceList !== "" || jsOnload  !== ""){
+		if(sourceList !== "" || jsOnload  !== "" || requestList[ObjectPath]["jsOnglobalvarchanged"] !== ""){
 			//create object 'cshmimodel'
 			var responseArray = HMI.KSClient.getChildObjArray(ObjectPath, HMI.cshmi);
 			var varNames = new Array();
