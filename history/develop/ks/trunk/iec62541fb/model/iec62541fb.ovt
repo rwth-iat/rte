@@ -1,0 +1,24 @@
+#ifndef iec62541fb_OVT_INCLUDED
+#define iec62541fb_OVT_INCLUDED
+
+/* 
+	Define your data types here. 
+*/
+
+typedef enum UAIdentifierType {
+	UAIdentifierType_String = 1,
+	UAIdentifierType_Numeric = 2,
+	UAIdentifierType_GUID = 3,
+	UAIdentifierType_Opaque = 4
+} UAIdentifierType;
+
+struct UA_NodeID {
+	OV_UINT				NamespaceIndex;
+	OV_STRING			Identifier;
+	UAIdentifierType	IdentifierType;
+};
+
+struct UANodeAdditionalInfo {
+	UA_AttributeId	AttributeId;		//get this from the stack
+	OV_UINT			IndexRangeCount;
+};
