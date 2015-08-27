@@ -61,12 +61,12 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		penv = getenv(ACPLT_HOME_ENVPATH);
 		env = 1;
 	}else{
-		//fprintf(stderr,"No environment variable found, exporing current working dir\n");
+		//fprintf(stderr,"No environment variable found, exploring current working dir\n");
 		env = 0;
 	}
 
 
-	//2ND TRY: try to follow the ACPLT_HOME envionment variable (older structure): take $ACPLT_HOME/user
+	//2ND TRY: try to follow the ACPLT_HOME environment variable (older structure): take $ACPLT_HOME/user
 	if(strlen(libPath)==0 && env == 1){
 		sprintf(help, "%s/user/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
@@ -79,7 +79,7 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 		}
 	}
 
-	//3ND TRY: try to follow the ACPLT_HOME envionment variable: take $ACPLT_HOME/dev
+	//3ND TRY: try to follow the ACPLT_HOME environment variable: take $ACPLT_HOME/dev
 	if(strlen(libPath)==0 && env == 1){
 		sprintf(help, "%s/dev/%s/model/%s.ovm", penv, libname, libname);
 		compatiblePath(help);
@@ -90,6 +90,32 @@ int locateLibrary(const char* libname, char* libPath, char *devModelPath, char* 
 			sprintf(devBinPath, "%s/addonlibs/", penv);
 			sprintf(sysModelPath, "%s/system/sysdevbase/", penv);
 			sprintf(sysBinPath, "%s/system/sysbin/", penv);
+		}
+	}
+
+	//4th TRY: search in current working dir
+	if(strlen(libPath)==0){
+		sprintf(help, "%s/%s/model/%s.ovm", cCurrentPath, libname, libname);
+		compatiblePath(help);
+		if(stat(help, &st) == 0){
+			sprintf(libPath, "%s/%s", cCurrentPath, libname);
+			//newDirStructure or old structure?
+			sprintf(help, "%s/../../user", libPath);
+			compatiblePath(help);
+			if(stat(help, &st) == 0){
+				//old
+				*newDirStructure = 0;
+				sprintf(devModelPath, "%s/../../user/", libPath);
+				sprintf(devBinPath, "%s/../../user/libs/", libPath);
+				//sysModelPath and sysBinPath are empty
+			}else{
+				//newDirStructure
+				*newDirStructure = 1;
+				sprintf(devModelPath, "%s/../../dev/", libPath);
+				sprintf(devBinPath, "%s/../../addonlibs/", libPath);
+				sprintf(sysModelPath, "%s/../../system/sysdevbase/", libPath);
+				sprintf(sysBinPath, "%s/../../system/sysbin/", libPath);
+			}
 		}
 	}
 
