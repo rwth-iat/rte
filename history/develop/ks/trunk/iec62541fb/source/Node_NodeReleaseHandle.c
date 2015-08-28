@@ -48,7 +48,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_Execute_set(
 		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pobj,
 		const OV_BOOL  value
 ) {
-	pobj->v_Execute = value;
-	return OV_ERR_OK;
+	return OV_ERR_NOTIMPLEMENTED;
 }
 
