@@ -42,12 +42,37 @@
 
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
+#include "fb_namedef.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_Execute_set(
-		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pobj,
+		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pinst,
 		const OV_BOOL  value
 ) {
-	return OV_ERR_NOTIMPLEMENTED;
+	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
+	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "NodeHdl"));
+
+	UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
+	pinst->v_Done = TRUE;
+	return OV_ERR_OK;
+}
+
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_ConnectionHdl_set(
+		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_Done = FALSE;
+	pinst->v_ConnectionHdl = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_NodeHdl_set(
+		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_Done = FALSE;
+	pinst->v_NodeHdl = value;
+	return OV_ERR_OK;
 }
 

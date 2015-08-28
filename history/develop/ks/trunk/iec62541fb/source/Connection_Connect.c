@@ -54,6 +54,7 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_startup(
 	fb_functionblock_startup(pobj);
 
 	pinst->v_ConnectionHdl = 0;
+	pinst->v_Client = NULL;
 
 	return;
 }
@@ -64,9 +65,11 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_shutdown(
 	/*
 	 *   local variables
 	 */
-	//OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pobj);
+	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pobj);
 
-	//TODO make a clean disconnect?
+	UA_Client_disconnect(pinst->v_Client);
+	UA_Client_delete(pinst->v_Client);
+	pinst->v_Client = NULL;
 
 	/* set the object's state to "shut down" */
 	fb_functionblock_shutdown(pobj);
@@ -76,9 +79,51 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_shutdown(
 
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
-		OV_INSTPTR_iec62541fb_Connect          pobj,
+		OV_INSTPTR_iec62541fb_Connect          pinst,
 		const OV_BOOL  value
 ) {
-	return OV_ERR_NOTIMPLEMENTED;
+	UA_StatusCode retval = UA_STATUSCODE_GOOD;
+
+	pinst->v_Client = UA_Client_new(UA_ClientConfig_standard, NULL);
+	retval = UA_Client_connect(pinst->v_Client, ClientNetworkLayerTCP_connect, pinst->v_ServerEndpointUrl);
+	if(retval != UA_STATUSCODE_GOOD) {
+		UA_Client_delete(pinst->v_Client);
+		pinst->v_Client = NULL;
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1;	//todo
+		pinst->v_Done = FALSE;
+		return OV_ERR_BADPARAM;
+	}
+	pinst->v_Done = TRUE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
+	return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_ServerEndpointUrl_set(
+		OV_INSTPTR_iec62541fb_Connect          pinst,
+		const OV_STRING  value
+) {
+	pinst->v_Done = FALSE;
+	return ov_string_setvalue(&pinst->v_ServerEndpointUrl,value);
+}
+
+OV_DLLFNCEXPORT void iec62541fb_Connect_typemethod(
+		OV_INSTPTR_fb_functionblock	pfb,
+		OV_TIME						*pltc
+) {
+	/*
+	 *   local variables
+	 */
+	//OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pfb);
+
+	/* fixme does not compile...
+	if(pinst->v_Client.scExpiresAt - UA_DateTime_now() <= pinst->v_Client.config.timeToRenewSecureChannel * 10000 ){
+		UA_Client_renewSecureChannel(pinst->v_Client);
+	}
+	*/
+
+	return;
+}
+
 

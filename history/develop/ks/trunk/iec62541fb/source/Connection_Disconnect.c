@@ -42,12 +42,28 @@
 
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
+#include "fb_namedef.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_Execute_set(
-		OV_INSTPTR_iec62541fb_Disconnect          pobj,
+		OV_INSTPTR_iec62541fb_Disconnect          pinst,
 		const OV_BOOL  value
 ) {
-	return OV_ERR_NOTIMPLEMENTED;
+	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
+	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "ConnectionHdl"));
+
+	UA_Client_disconnect(pConnect->v_Client);
+	UA_Client_delete(pConnect->v_Client);
+	pConnect->v_Client = NULL;
+	pConnect->v_Done = TRUE;
+	return OV_ERR_OK;
 }
 
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_ConnectionHdl_set(
+		OV_INSTPTR_iec62541fb_Disconnect          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_Done = FALSE;
+	pinst->v_ConnectionHdl = value;
+	return OV_ERR_OK;
+}

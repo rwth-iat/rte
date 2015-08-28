@@ -54,9 +54,13 @@ typedef struct {
 	UAIdentifierType	IdentifierType;
 } UANodeID;
 
+/* unused right now
 typedef struct {
 	UA_AttributeId	AttributeId;		//get this from the stack
 	OV_UINT			IndexRangeCount;
 } UANodeAdditionalInfo;
+*/
 
+typedef UA_Client* OV_PTR_UA_Client;
+	
 #endif

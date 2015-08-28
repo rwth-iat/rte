@@ -50,21 +50,16 @@ LIBRARY iec62541fb
 	COPYRIGHT = "";
 	COMMENT   = "OPC-UA Client FUNCTION BLOCKS for IEC61131-3";
 	
-	/**
-		Documentation of UA_Connect.
-		@note Javadoc syntax is allowed here.
-		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
-	*/
-
 	CLASS object : CLASS fb/functionblock
 		COMMENT = "baseclass for communication";
 		VARIABLES
 			Done				:	BOOL	FLAGS = "o" COMMENT="Signals a connection has been initially established.";
 			Busy				:	BOOL	FLAGS = "o" COMMENT="The FB is not finished and new output values are to be expected.";
 			Error				:	BOOL	FLAGS = "o" COMMENT="Signals that an error has occurred within the FB.";
-			ErrorID				:	UINT	FLAGS = "o" COMMENT="Error code.";
+			ErrorID				:	UINT	FLAGS = "o" COMMENT="Error code."; /* DWORD in the standard*/
 		END_VARIABLES;
 		OPERATIONS
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;
 			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
@@ -75,11 +70,13 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to create a (optional secure) transport connection and an OPC-UA session. The connection shall be terminated by calling the UA_Disconnect after establishing the connection.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is started.";
-			ServerEndpointUrl	:	STRING	FLAGS = "i" COMMENT="URL";
-/* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="URL"; 	*/
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
+			ServerEndpointUrl	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)";
+/* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="URL";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
 
-			ConnectionHdl		: 	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called."; /* DWORD in the standard*/
+			Client				:	C_TYPE <OV_PTR_UA_Client>	COMMENT="Client pointer.";
+
+			ConnectionHdl		:	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called  (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
 		END_VARIABLES;
 		PARTS
 			channel : CLASS TCPbind/TCPChannel;
@@ -87,6 +84,7 @@ LIBRARY iec62541fb
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
 		END_OPERATIONS;
 	END_CLASS;
 
@@ -95,8 +93,8 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to close a transport connection and an OPC-UA session.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is terminated.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle of connection to be closed."; /* DWORD in the standard*/
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to close the connection.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle of connection to be closed."; /* DWORD in the standard*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to close the connection.";
 		END_VARIABLES;
 	END_CLASS;
  
@@ -108,11 +106,13 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to get the node handle.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
-			NodeID				: 	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Connection handle.";
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeID				:	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Connection handle.";
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
-			NodeHdl		: 	UINT	FLAGS = "o" COMMENT="Node handle."; /* DWORD in the standard*/
+			ReadRequest			:	C_TYPE	<UA_ReadRequest>;
+			
+			NodeHdl				:	UINT	FLAGS = "o" COMMENT="Node handle (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
@@ -128,9 +128,9 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to release the node handle.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle to be released."; /* DWORD in the standard*/
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle to be released."; /* DWORD in the standard*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 		END_VARIABLES;
 	END_CLASS;
 	
@@ -149,10 +149,10 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be read.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
-			NodeAddInfo			: 	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
+/*			NodeAddInfo			:	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
 			TimeStamp			:	TIME	FLAGS = "o"	COMMENT="Timestamp";
 			
@@ -170,10 +170,10 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be written.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
-			NodeAddInfo			: 	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
+/*			NodeAddInfo			:	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";	*/
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
 			Variable			:	ANY		FLAGS = "i" COMMENT="write value";
 		END_VARIABLES;

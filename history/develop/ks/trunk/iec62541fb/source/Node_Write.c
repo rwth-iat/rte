@@ -51,19 +51,40 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	return OV_ERR_NOTIMPLEMENTED;
 }
 
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_ConnectionHdl_set(
+		OV_INSTPTR_iec62541fb_Write          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_Done = FALSE;
+	pinst->v_ConnectionHdl = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_NodeHdl_set(
+		OV_INSTPTR_iec62541fb_Write          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_Done = FALSE;
+	pinst->v_NodeHdl = value;
+	return OV_ERR_OK;
+}
+
 OV_DLLFNCEXPORT void iec62541fb_Write_startup(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_Write pinst = Ov_StaticPtrCast(iec62541fb_Write, pobj);
+	//OV_INSTPTR_iec62541fb_Write pinst = Ov_StaticPtrCast(iec62541fb_Write, pobj);
 
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);
 
+	/*
 	pinst->v_NodeAddInfo.IndexRangeCount = 0;
 	pinst->v_NodeAddInfo.AttributeId = 0;
+	*/
 
 	return;
 }

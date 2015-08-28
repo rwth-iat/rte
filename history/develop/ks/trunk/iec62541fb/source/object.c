@@ -41,6 +41,26 @@
 
 
 #include "iec62541fb.h"
+#include "libov/ov_macros.h"
+
+OV_DLLFNCEXPORT void iec62541fb_object_startup(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_iec62541fb_object pinst = Ov_StaticPtrCast(iec62541fb_object, pobj);
+
+	/* do what the base class does first */
+	fb_functionblock_startup(pobj);
+
+	pinst->v_Done = FALSE;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
+
+	return;
+}
 
 OV_DLLFNCEXPORT OV_ACCESS iec62541fb_object_getaccess(
 	OV_INSTPTR_ov_object	pobj,
