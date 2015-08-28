@@ -42,13 +42,68 @@
 
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
-
+#include "fb_namedef.h"
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
-		OV_INSTPTR_iec62541fb_Write          pobj,
+		OV_INSTPTR_iec62541fb_Write          pinst,
 		const OV_BOOL  value
 ) {
-	return OV_ERR_NOTIMPLEMENTED;
+	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
+	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
+	UA_WriteResponse WriteResponse;
+
+	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "ConnectionHdl"));
+	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "NodeHdl"));
+
+	UA_WriteRequest_init(&pNodeGetHandle->v_WriteRequest);
+	pNodeGetHandle->v_WriteRequest.nodesToWrite = UA_WriteValue_new();
+	pNodeGetHandle->v_WriteRequest.nodesToWriteSize = 1;
+	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(1, pNodeGetHandle->v_NodeID.Identifier); /* assume this node exists */
+	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].attributeId = UA_ATTRIBUTEID_VALUE;
+	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.hasValue = UA_TRUE;
+	switch (pinst->v_Variable.value.vartype & OV_VT_KSMASK){
+	case OV_VT_INT:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_INT32];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_int;
+		break;
+	case OV_VT_UINT:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_UINT32];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_uint;
+		break;
+	case OV_VT_SINGLE:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_FLOAT];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_single;
+		break;
+	case OV_VT_DOUBLE:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DOUBLE];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_double;
+		break;
+	case OV_VT_STRING:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_STRING];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = UA_String_new();
+		//fixme does not compile
+		//pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = (void*)UA_String_fromChars(pinst->v_Variable.value.valueunion.val_string);
+		break;
+	default:
+		break;
+	}
+
+	WriteResponse = UA_Client_write(pConnect->v_Client, &pNodeGetHandle->v_WriteRequest);
+	if(WriteResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){
+		pinst->v_Error = FALSE;
+		pinst->v_ErrorID = 0;
+	}else{
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; // fixme
+	}
+	UA_WriteResponse_deleteMembers(&WriteResponse);
+
+	return OV_ERR_OK;
 }
 
 

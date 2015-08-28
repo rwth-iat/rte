@@ -111,6 +111,7 @@ LIBRARY iec62541fb
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
 			ReadRequest			:	C_TYPE	<UA_ReadRequest>;
+			WriteRequest		:	C_TYPE	<UA_WriteRequest>;
 			
 			NodeHdl				:	UINT	FLAGS = "o" COMMENT="Node handle (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
 		END_VARIABLES;

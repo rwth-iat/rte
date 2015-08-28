@@ -48,17 +48,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_Execute_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_BOOL  value
 ) {
-	UA_ReadRequest_init(&pinst->v_ReadRequest);
-	pinst->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
-	pinst->v_ReadRequest.nodesToReadSize = 1;
-	if(pinst->v_NodeID.IdentifierType == UAIdentifierType_String){
-		pinst->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(1, pinst->v_NodeID.Identifier);
-	}else{
-		UA_ReadRequest_deleteMembers(&pinst->v_ReadRequest);
-		return OV_ERR_BADPARAM;
-	}
-	pinst->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-
 	return OV_ERR_OK;
 }
 
@@ -98,6 +87,7 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
 	OV_INSTPTR_iec62541fb_NodeGetHandle pinst = Ov_StaticPtrCast(iec62541fb_NodeGetHandle, pobj);
 
 	UA_ReadRequest_deleteMembers(&pinst->v_ReadRequest);
+	UA_WriteRequest_deleteMembers(&pinst->v_WriteRequest);
 
 	ov_string_setvalue(&pinst->v_NodeID.Identifier, NULL);
 	pinst->v_NodeID.NamespaceIndex = 0;
