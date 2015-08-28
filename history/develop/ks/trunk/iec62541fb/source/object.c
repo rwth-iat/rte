@@ -34,29 +34,43 @@
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
-#ifndef iec62541fb_OVT_INCLUDED
-#define iec62541fb_OVT_INCLUDED
 
-/* 
-	Define your data types here. 
-*/
-
-typedef enum UAIdentifierType {
-	UAIdentifierType_String = 1,
-	UAIdentifierType_Numeric = 2,
-	UAIdentifierType_GUID = 3,
-	UAIdentifierType_Opaque = 4
-} UAIdentifierType;
-
-typedef struct {
-	OV_UINT				NamespaceIndex;
-	OV_STRING			Identifier;
-	UAIdentifierType	IdentifierType;
-} UANodeID;
-
-typedef struct {
-	UA_AttributeId	AttributeId;		//get this from the stack
-	OV_UINT			IndexRangeCount;
-} UANodeAdditionalInfo;
-
+#ifndef OV_COMPILE_LIBRARY_iec62541fb
+#define OV_COMPILE_LIBRARY_iec62541fb
 #endif
+
+
+#include "iec62541fb.h"
+
+OV_DLLFNCEXPORT OV_ACCESS iec62541fb_object_getaccess(
+	OV_INSTPTR_ov_object	pobj,
+	const OV_ELEMENT		*pelem,
+	const OV_TICKET			*pticket
+) {
+	//we have nothing to hide, so all our normal variables can be read and written
+
+	switch (pelem->elemtype){
+		case OV_ET_VARIABLE :
+			//prevent "special variables" from being read/write
+			if (pelem->elemunion.pvar->v_offset >= offsetof(OV_INST_ov_object, __classinfo)){
+				if (pelem->elemunion.pvar->v_vartype == OV_VT_CTYPE || pelem->elemunion.pvar->v_vartype == OV_VT_POINTER){
+					return OV_AC_NONE;
+				}else{
+					return OV_AC_READWRITE;
+				}
+			}
+			break;
+		default:
+			break;
+	};
+	return ov_object_getaccess(pobj, pelem, pticket);
+}
+
+
+OV_DLLFNCEXPORT void iec62541fb_object_typemethod(
+		OV_INSTPTR_fb_functionblock	pfb,
+		OV_TIME						*pltc
+) {
+	//we need no cyclic operation
+	return;
+}

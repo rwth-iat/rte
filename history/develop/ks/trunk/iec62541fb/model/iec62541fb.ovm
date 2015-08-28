@@ -1,13 +1,47 @@
+/*
+*	Copyright (C) 2015
+*	Chair of Process Control Engineering,
+*	Aachen University of Technology.
+*	All rights reserved.
+*
+*	Redistribution and use in source and binary forms, with or without
+*	modification, are permitted provided that the following conditions
+*	are met:
+*	1. Redistributions of source code must retain the above copyright
+*	   notice, this list of conditions and the following disclaimer.
+*	2. Redistributions in binary form must print or display the above
+*	   copyright notice either during startup or must have a means for
+*	   the user to view the copyright notice.
+*	3. Redistributions in binary form must reproduce the above copyright
+*	   notice, this list of conditions and the following disclaimer in
+*		the documentation and/or other materials provided with the
+*		distribution.
+*	4. Neither the name of the Chair of Process Control Engineering nor
+*		the name of the Aachen University of Technology may be used to
+*		endorse or promote products derived from this software without
+*		specific prior written permission.
+*
+*	THIS SOFTWARE IS PROVIDED BY THE CHAIR OF PROCESS CONTROL ENGINEERING
+*	``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+*	A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE CHAIR OF
+*	PROCESS CONTROL ENGINEERING BE LIABLE FOR ANY DIRECT, INDIRECT,
+*	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+*	OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+*	AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+*	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*	POSSIBILITY OF SUCH DAMAGE.
+***********************************************************************/
+
 #include "ov.ovm"
 #include "fb.ovm"
 #include "iec62541.ovm"
+#include "TCPbind.ovm"
 
 /**
 This Library implements the OPC-UA Client FUNCTION BLOCKS for IEC61131-3 Release 1.0 published by PLCopen and OPC Foundation
-
-- DWORD is mapped to UINT in the OV world
-- 
-
 */
 
 LIBRARY iec62541fb
@@ -22,17 +56,21 @@ LIBRARY iec62541fb
 		@attention Changes in this file will only generate new code in ./source/sourcetemplates/. Code in ./source/ is not overwritten. 
 	*/
 
-	CLASS Communication : CLASS fb/functionblock
+	CLASS object : CLASS fb/functionblock
 		COMMENT = "baseclass for communication";
 		VARIABLES
-			Done				: 	BOOL	FLAGS = "o" COMMENT="Signals a connection has been initially established.";
-			Busy				: 	BOOL	FLAGS = "o" COMMENT="The FB is not finished and new output values are to be expected.";
-			Error				: 	BOOL	FLAGS = "o" COMMENT="Signals that an error has occurred within the FB.";
-			ErrorID				: 	UINT	FLAGS = "o" COMMENT="Error code.";
+			Done				:	BOOL	FLAGS = "o" COMMENT="Signals a connection has been initially established.";
+			Busy				:	BOOL	FLAGS = "o" COMMENT="The FB is not finished and new output values are to be expected.";
+			Error				:	BOOL	FLAGS = "o" COMMENT="Signals that an error has occurred within the FB.";
+			ErrorID				:	UINT	FLAGS = "o" COMMENT="Error code.";
 		END_VARIABLES;
+		OPERATIONS
+			getaccess			:	C_FUNCTION <OV_FNC_GETACCESS>;
+			typemethod			:	C_FUNCTION <FB_FNC_TYPEMETHOD>;
+		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS Connect : CLASS iec62541fb/Communication
+	CLASS Connect : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to create a (optional secure) transport connection and an OPC-UA session. The connection shall be terminated by calling the UA_Disconnect after establishing the connection.";
 		VARIABLES
@@ -41,81 +79,63 @@ LIBRARY iec62541fb
 /* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="URL"; 	*/
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
 
-			ConnectionHdl		: 	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called.";
+			ConnectionHdl		: 	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called."; /* DWORD in the standard*/
 		END_VARIABLES;
+		PARTS
+			channel : CLASS TCPbind/TCPChannel;
+		END_PARTS;
 		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS Disconnect : CLASS iec62541fb/Communication
+	CLASS Disconnect : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to close a transport connection and an OPC-UA session.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is terminated.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle of connection to be closed.";
+			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle of connection to be closed."; /* DWORD in the standard*/
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to close the connection.";
 		END_VARIABLES;
-		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-		END_OPERATIONS;
 	END_CLASS;
  
 	/*	NamespaceGetIndex	*/
 	/*	TranslatePath	*/
 	
-	CLASS NodeGetHandle : CLASS iec62541fb/Communication
+	CLASS NodeGetHandle : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node handle.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle.";
-			NodeID				: 	C_TYPE <NodeID>	FLAGS = "i" COMMENT="Connection handle.";
+			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeID				: 	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Connection handle.";
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
-			NodeHdl		: 	UINT	FLAGS = "o" COMMENT="Node handle.";
+			NodeHdl		: 	UINT	FLAGS = "o" COMMENT="Node handle."; /* DWORD in the standard*/
 		END_VARIABLES;
 		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
+			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
 	/*TODO add a NodeGetHandleSimple with KS available inputs? */
 	
 	/*	NodeGetHandleList	*/
 	
-	CLASS NodeReleaseHandle : CLASS iec62541fb/Communication
+	CLASS NodeReleaseHandle : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to release the node handle.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle.";
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle to be released.";
+			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle to be released."; /* DWORD in the standard*/
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 		END_VARIABLES;
-		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-		END_OPERATIONS;
 	END_CLASS;
 	
 	/*	NodeReleaseHandleList	*/
-	
-	/*
-	CLASS NodeGetInfo : CLASS iec62541fb/Communication
-		IS_INSTANTIABLE;
-		COMMENT = "This Function Block is used to get the node information.";
-		VARIABLES
-			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle.";
-			NodeID				: 	C_TYPE <NodeID>	FLAGS = "i" COMMENT="Connection handle.";
-			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
-			
-			todo
-		END_VARIABLES;
-		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
-		END_OPERATIONS;
-	END_CLASS;
-	*/
+	/*	NodeGetInfo	*/
 	
 	/*	SubscriptionCreate	*/
 	/*	SubscriptionDelete	*/
@@ -124,44 +144,41 @@ LIBRARY iec62541fb
 	/*	MonitoredItemRemove	*/
 	/*	MonitoredItemOperate	*/
 
-	CLASS Read : CLASS iec62541fb/Communication
+	CLASS Read : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be read.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle.";
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle.";
+			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
 			NodeAddInfo			: 	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
-			Done				:	BOOL	FLAGS = "i" COMMENT="FB has completed its task.";
 			TimeStamp			:	TIME	FLAGS = "o"	COMMENT="Timestamp";
 			
 			Variable			:	ANY		FLAGS = "o" COMMENT="read value";
 		END_VARIABLES;
 		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 		END_OPERATIONS;
 	END_CLASS;
 	
 	/*	ReadList	*/
 
-	CLASS Write : CLASS iec62541fb/Communication
+	CLASS Write : CLASS iec62541fb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge node information will be written.";
-			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle.";
-			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle.";
+			ConnectionHdl		: 	UINT	FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NodeHdl				: 	UINT	FLAGS = "i" COMMENT="Node handle."; /* DWORD in the standard*/
 			NodeAddInfo			: 	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";
 			Timeout				: 	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
-			
-			Done				:	BOOL	FLAGS = "i" COMMENT="FB has completed its task.";
 			
 			Variable			:	ANY		FLAGS = "i" COMMENT="write value";
 		END_VARIABLES;
 		OPERATIONS
-			typemethod  : C_FUNCTION <FB_FNC_TYPEMETHOD>;
+			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 		END_OPERATIONS;
 	END_CLASS;
 	

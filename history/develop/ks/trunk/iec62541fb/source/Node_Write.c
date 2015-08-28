@@ -34,29 +34,36 @@
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
-#ifndef iec62541fb_OVT_INCLUDED
-#define iec62541fb_OVT_INCLUDED
 
-/* 
-	Define your data types here. 
-*/
-
-typedef enum UAIdentifierType {
-	UAIdentifierType_String = 1,
-	UAIdentifierType_Numeric = 2,
-	UAIdentifierType_GUID = 3,
-	UAIdentifierType_Opaque = 4
-} UAIdentifierType;
-
-typedef struct {
-	OV_UINT				NamespaceIndex;
-	OV_STRING			Identifier;
-	UAIdentifierType	IdentifierType;
-} UANodeID;
-
-typedef struct {
-	UA_AttributeId	AttributeId;		//get this from the stack
-	OV_UINT			IndexRangeCount;
-} UANodeAdditionalInfo;
-
+#ifndef OV_COMPILE_LIBRARY_iec62541fb
+#define OV_COMPILE_LIBRARY_iec62541fb
 #endif
+
+
+#include "iec62541fb.h"
+#include "libov/ov_macros.h"
+
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
+		OV_INSTPTR_iec62541fb_Write          pobj,
+		const OV_BOOL  value
+) {
+	return OV_ERR_NOTIMPLEMENTED;
+}
+
+OV_DLLFNCEXPORT void iec62541fb_Write_startup(
+		OV_INSTPTR_ov_object 	pobj
+) {
+	/*
+	 *   local variables
+	 */
+	OV_INSTPTR_iec62541fb_Write pinst = Ov_StaticPtrCast(iec62541fb_Write, pobj);
+
+	/* do what the base class does first */
+	fb_functionblock_startup(pobj);
+
+	pinst->v_NodeAddInfo.IndexRangeCount = 0;
+	pinst->v_NodeAddInfo.AttributeId = 0;
+
+	return;
+}
