@@ -109,7 +109,11 @@ LIBRARY iec62541fb
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
 			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
-			NodeID				:	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Connection handle.";
+			NodeID				:	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Node Identification.";
+			NodeIDIdentifier	:	STRING	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="Identifier for the node"; /*	mapping for KS manipulation	*/
+			NodeIDNSindex		:	UINT	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="Namespace index for the node"; /*	mapping for KS manipulation	*/
+			NodeIDIdType		:	UINT	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="IdentifierType for the node (supported is String: 1, Numeric: 2, GUID: 3, Opaque: 4)"; /*	mapping for KS manipulation	*/
+
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
 			ReadRequest			:	C_TYPE	<UA_ReadRequest>;
@@ -122,7 +126,6 @@ LIBRARY iec62541fb
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;
 		END_OPERATIONS;
 	END_CLASS;
-	/*TODO add a NodeGetHandleSimple with KS available inputs? */
 	
 	/*	NodeGetHandleList	*/
 	

@@ -121,3 +121,51 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
 	return;
 }
 
+OV_DLLFNCEXPORT OV_STRING iec62541fb_NodeGetHandle_NodeIDIdentifier_get(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
+) {
+	return pinst->v_NodeID.Identifier;
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdentifier_set(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+		const OV_STRING  value
+) {
+	return ov_string_setvalue(&pinst->v_NodeID.Identifier, value);
+}
+
+OV_DLLFNCEXPORT OV_UINT iec62541fb_NodeGetHandle_NodeIDNSindex_get(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
+) {
+	return pinst->v_NodeID.NamespaceIndex;
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDNSindex_set(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+		const OV_UINT  value
+) {
+	pinst->v_NodeID.NamespaceIndex = value;
+	return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT OV_UINT iec62541fb_NodeGetHandle_NodeIDIdType_get(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
+) {
+	return (OV_UINT)pinst->v_NodeID.IdentifierType;
+}
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdType_set(
+		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+		const OV_UINT  value
+) {
+	switch (value) {
+		case UAIdentifierType_String:
+		case UAIdentifierType_Numeric:
+		case UAIdentifierType_GUID:
+		case UAIdentifierType_Opaque:
+			pinst->v_NodeID.IdentifierType = value;
+			return OV_ERR_OK;
+		default:
+			return OV_ERR_NOTIMPLEMENTED;
+	}
+}

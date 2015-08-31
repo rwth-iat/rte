@@ -92,14 +92,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 	UA_ReadRequest_init(&pNodeGetHandle->v_ReadRequest);
 	pNodeGetHandle->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
 	pNodeGetHandle->v_ReadRequest.nodesToReadSize = 1;
-	if(pNodeGetHandle->v_NodeID.IdentifierType == UAIdentifierType_String){
-		pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(1, pNodeGetHandle->v_NodeID.Identifier);
-	}else{
-		UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
-		pNodeGetHandle->v_Error = TRUE;
-		pNodeGetHandle->v_ErrorID = 1; // todo
-		return OV_ERR_BADPARAM;
-	}
+	pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(1, pNodeGetHandle->v_NodeID.Identifier);
 	pNodeGetHandle->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
 
 	//free memory of old ANY var
