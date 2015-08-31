@@ -608,8 +608,6 @@ if(new == 0){
 	fprintf(fd,"CC		= $(GCC_BIN_PREFIX)gcc\n");
 	fprintf(fd,"ifneq ($(TARGET), debug)\n");
 	fprintf(fd,"\tOPT = -O2 -fno-strict-aliasing\n");
-	fprintf(fd,"else\n");
-	fprintf(fd,"\tOPT = -fno-omit-frame-pointer\n");
 	fprintf(fd,"endif\n");
 	fprintf(fd,"CC_FLAGS	= -g -std=c99");
 #if !__arm__

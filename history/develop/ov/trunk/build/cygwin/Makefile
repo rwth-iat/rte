@@ -80,7 +80,7 @@ CPP 			= cpp
 #CC				= gcc -mno-cygwin -I$(MINGWINCLUDEPATH)
 CC				= gcc 
 #-I$(MINGWINCLUDEPATH)
-CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -fno-omit-frame-pointer -O0
+CC_FLAGS		= -g $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -Wno-attributes -Wstrict-aliasing=2 -fno-strict-aliasing -O0
 #-fstrict-aliasing 
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
