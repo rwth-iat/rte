@@ -355,11 +355,11 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
-			//this is the run that fills the objects with content, the Events were already armed
+		var command = ObjectPath.split("/");
+		if (command[command.length-1] === "globalvarchanged" && VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
+			//this is the run that fills the objects with content, the globalvarchanged Event is already armed
 			return true;
 		}
-		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "onload"){
 			if(preventNetworkRequest === true){
 				//onload events will be called later in this._interpreteHiddenChildrenElements
