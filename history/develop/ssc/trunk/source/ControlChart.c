@@ -93,7 +93,7 @@ OV_DLLFNCEXPORT OV_RESULT ssc_controlchart_CMD_set(
 			}
 
 		}
-		pFbObject = fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pvar), TRUE, NULL);
+		pFbObject = fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pvar), TRUE, TRUE, NULL);
 		pOccupystatusHolder = Ov_DynamicPtrCast(fb_functionblock, pFbObject);
 		if(pOccupystatusHolder != NULL){
 			elemOccupyVar.elemtype = OV_ET_NONE;

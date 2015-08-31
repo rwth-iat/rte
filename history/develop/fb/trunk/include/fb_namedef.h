@@ -193,11 +193,13 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
  *
  * @param this: functionblock or port to start the search
  * @param getTarget: set to TRUE if you want a TargetObject (where the connection sets values), otherwise you get a Source (where the connection gets values from)
+ * @param skipInactiveCons: set to TRUE if you want to test only active connections
  * @param variableName name of variable of an functionblock where the connection is connected
  */
 OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
 		const OV_INSTPTR_fb_object this,
 		const OV_BOOL getTarget,
+		const OV_BOOL skipInactiveCons,
 		const OV_STRING variableName
 );
 

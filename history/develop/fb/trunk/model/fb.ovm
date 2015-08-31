@@ -102,9 +102,9 @@ LIBRARY fb
 		VARIABLES
 			actimode    : INT       HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object activity mode (OFF: 0; ON: 1; UNLINK 2; ONCE 3; CATCHUP 10)";
 			proctime    : TIME      HAS_SET_ACCESSOR  FLAGS = "hi"              COMMENT = "object time counter";
-			cyctime     : TIME_SPAN HAS_SET_ACCESSOR  FLAGS = "hi" UNIT = "sec" COMMENT = "object cycle time";
-			ErrState    : INT                         FLAGS = "ho"              COMMENT = "object state";
-			calctime    : TIME_SPAN                   FLAGS = "ho" UNIT = "sec" COMMENT = "calculation time";
+			cyctime     : TIME_SPAN HAS_SET_ACCESSOR  FLAGS = "hi" UNIT = "sec" COMMENT = "object cycle time (fastest needed execution. depends on task parent)";
+			ErrState    : INT                         FLAGS = "ho"              COMMENT = "object state (0 no error, 1 error)";
+			calctime    : TIME_SPAN                   FLAGS = "ho" UNIT = "sec" COMMENT = "calculation time of last execution";
 			Xpos        : INT                         FLAGS = "hp"              COMMENT = "X-position for visualisation";
 			Ypos        : INT                         FLAGS = "hp"              COMMENT = "Y-position for visualisation";
 		END_VARIABLES;
@@ -121,7 +121,7 @@ LIBRARY fb
 
 	CLASS functionblock : CLASS fb/task
 		VARIABLES
-			iexreq      : BOOL      FLAGS = "hp"              COMMENT = "internal execution request";
+			iexreq      : BOOL      FLAGS = "hp"              COMMENT = "internal execution request";	/*	will be set true in fb_functionblock_startup, if class has flag=i, like functionchart	*/
 			eexreq      : BOOL      FLAGS = "hn"              COMMENT = "external execution request";
 			maxcalctime : TIME_SPAN FLAGS = "hp" UNIT = "sec" COMMENT = "maximum calculation time";
 			methcount   : UINT      FLAGS = "hn"              COMMENT = "method counter";
@@ -169,7 +169,7 @@ LIBRARY fb
     
     CLASS functionchart : CLASS fb/functionblock
         IS_INSTANTIABLE;
-        FLAGS = "i";
+        FLAGS = "i";	/*	activates iexreq in fb_functionblock_startup	*/
     	COMMENT = "function chart";
         PARTS
             intask : CLASS fb/task;

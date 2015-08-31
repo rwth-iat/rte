@@ -668,11 +668,13 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
  *
  * @param this: functionblock or port to start the search
  * @param getTarget: set to TRUE if you want a TargetObject (where the connection sets values), otherwise you get a Source (where the connection gets values from)
+ * @param skipInactiveCons: set to TRUE if you want to test only active connections
  * @param variableName name of variable of an functionblock where the connection is connected
  */
 OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
 		const OV_INSTPTR_fb_object this,
 		const OV_BOOL getTarget,
+		const OV_BOOL skipInactiveCons,
 		const OV_STRING variableName
 ) {
 	OV_INSTPTR_fb_object targetObject = NULL;
@@ -696,7 +698,9 @@ OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
 		//Gets the targetObject
 		Ov_ForEachChildEx(fb_outputconnections, this, conObject, fb_connection){
 			if(ov_string_compare(conObject->v_sourceport, variableNameCopy) == OV_STRCMP_EQUAL){
-				break;
+				if(conObject->v_on == TRUE || !skipInactiveCons){
+					break;
+				}
 			}
 		}
 		targetObject = Ov_GetParent(fb_inputconnections, conObject);
@@ -704,7 +708,9 @@ OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
 		//Gets the sourceObject
 		Ov_ForEachChildEx(fb_inputconnections, this, conObject, fb_connection){
 			if(ov_string_compare(conObject->v_targetport, variableNameCopy) == OV_STRCMP_EQUAL){
-				break;
+				if(conObject->v_on == TRUE || !skipInactiveCons){
+					break;
+				}
 			}
 		}
 		targetObject = Ov_GetParent(fb_outputconnections, conObject);
