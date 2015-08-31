@@ -50,10 +50,32 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_Execute_set(
 		const OV_BOOL  value
 ) {
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
-	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "NodeHdl"));
+
+	if(value == FALSE || pinst->v_Execute == TRUE){
+		//only react on the rising edge
+		pinst->v_Execute = value;
+		return OV_ERR_OK;
+	}
+
+	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "NodeHdl"));
+	if(pNodeGetHandle == NULL){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pNodeGetHandle->v_NodeHdl == 0){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+
+	//todo deregister the node at the server
 
 	UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
+	pNodeGetHandle->v_NodeHdl = 0;
 	pinst->v_Done = TRUE;
+
+	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
@@ -62,8 +84,15 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_ConnectionHdl_set(
 		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
 	pinst->v_ConnectionHdl = value;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	return OV_ERR_OK;
 }
 
@@ -71,7 +100,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_NodeHdl_set(
 		OV_INSTPTR_iec62541fb_NodeReleaseHandle          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	pinst->v_NodeHdl = value;
 	return OV_ERR_OK;
 }

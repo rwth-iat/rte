@@ -38,7 +38,7 @@
 #include "ov.ovm"
 #include "fb.ovm"
 #include "iec62541.ovm"
-#include "TCPbind.ovm"
+// # include "TCPbind.ovm"
 
 /**
 This Library implements the OPC-UA Client FUNCTION BLOCKS for IEC61131-3 Release 1.0 published by PLCopen and OPC Foundation
@@ -70,7 +70,7 @@ LIBRARY iec62541fb
 		COMMENT = "This Function Block is used to create a (optional secure) transport connection and an OPC-UA session. The connection shall be terminated by calling the UA_Disconnect after establishing the connection.";
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is started.";
-			ServerEndpointUrl	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)";
+			ServerEndpointUrl	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
 /* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="URL";	*/
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
 
@@ -78,9 +78,11 @@ LIBRARY iec62541fb
 
 			ConnectionHdl		:	UINT	FLAGS = "o" COMMENT="Connection handle – is valid until UA_Disconnect is called  (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
 		END_VARIABLES;
+/*
 		PARTS
 			channel : CLASS TCPbind/TCPChannel;
 		END_PARTS;
+*/
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;
 			shutdown			:	C_FUNCTION <OV_FNC_SHUTDOWN>;

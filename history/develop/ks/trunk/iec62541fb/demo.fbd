@@ -1,0 +1,343 @@
+/************************************************************
+* Sicherung der Datenbasis
+* Erstellt: 2015-08-31 12:47:30
+* 
+* HOST   : 134.130.125.43:7509
+* SERVER : MANAGER
+************************************************************/
+
+ INSTANCE  /TechUnits/UAtest :
+    CLASS /acplt/ov/domain;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/UAtest/Connect1 :
+    CLASS /acplt/iec62541fb/Connect;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ServerEndpointUrl : INPUT STRING = "opc.tcp://localhost:16664";
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      ConnectionHdl : OUTPUT UINT = 0;
+      Done : OUTPUT BOOL = FALSE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2015-08-31 12:13:00.450146;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 150;
+      Ypos : INPUT INT = 114;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/UAtest/NodeGetHandle1 :
+    CLASS /acplt/iec62541fb/NodeGetHandle;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ConnectionHdl : INPUT UINT = 0;
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      NodeHdl : OUTPUT UINT = 0;
+      Done : OUTPUT BOOL = TRUE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2015-08-31 12:10:10.624432;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 216;
+      Ypos : INPUT INT = 399;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/UAtest/Disconnect1 :
+    CLASS /acplt/iec62541fb/Disconnect;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ConnectionHdl : INPUT UINT = 0;
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      Done : OUTPUT BOOL = FALSE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = FALSE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2015-08-31 12:11:06.858649;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 576;
+      Ypos : INPUT INT = 108;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/UAtest/Read1 :
+    CLASS /acplt/iec62541fb/Read;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ConnectionHdl : INPUT UINT = 0;
+      NodeHdl : INPUT UINT = 0;
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      TimeStamp : OUTPUT TIME = 1970-01-01 01:00:00.000000;
+      Variable : OUTPUT VOID = ;
+      Done : OUTPUT BOOL = TRUE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = FALSE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2015-08-31 12:11:17.353249;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 577;
+      Ypos : INPUT INT = 291;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/UAtest/NodeReleaseHandle1 :
+    CLASS /acplt/iec62541fb/NodeReleaseHandle;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ConnectionHdl : INPUT UINT = 0;
+      NodeHdl : INPUT UINT = 0;
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      Done : OUTPUT BOOL = FALSE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = FALSE;
+      eexreq : OUTPUT BOOL = TRUE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 0;
+      actimode : INPUT INT = 0;
+      proctime : INPUT TIME = 2015-08-31 12:14:15.776454;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 201;
+      Ypos : INPUT INT = 535;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAtest/Connect1};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAtest/NodeGetHandle1};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAtest/Disconnect1};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAtest/Read1};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAtest/NodeReleaseHandle1};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconConnect2GetNode :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "ConnectionHdl";
+      targetport : INPUT STRING = "ConnectionHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/NodeGetHandle1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2GetNode};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/Connect1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2GetNode};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconConnect2Disconnect :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "ConnectionHdl";
+      targetport : INPUT STRING = "ConnectionHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/Disconnect1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2Disconnect};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/Connect1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2Disconnect};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconConnect2Read :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "ConnectionHdl";
+      targetport : INPUT STRING = "ConnectionHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/Read1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2Read};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/Connect1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2Read};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconGetNode2Read :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "NodeHdl";
+      targetport : INPUT STRING = "NodeHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/Read1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconGetNode2Read};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/NodeGetHandle1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconGetNode2Read};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconConnect2ReleaseNode :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "ConnectionHdl";
+      targetport : INPUT STRING = "ConnectionHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/NodeReleaseHandle1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2ReleaseNode};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/Connect1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconConnect2ReleaseNode};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAtest/hconNodeGet2NodeRelease :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "NodeHdl";
+      targetport : INPUT STRING = "NodeHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAtest/NodeReleaseHandle1;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAtest/hconNodeGet2NodeRelease};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAtest/NodeGetHandle1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAtest/hconNodeGet2NodeRelease};
+ END_LINK;
+
+ LIBRARY
+    /acplt/iec62541fb
+ END_LIBRARY;

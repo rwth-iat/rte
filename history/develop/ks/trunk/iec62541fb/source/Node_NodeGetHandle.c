@@ -48,6 +48,20 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_Execute_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_BOOL  value
 ) {
+	if(value == FALSE || pinst->v_Execute == TRUE){
+		//only react on the rising edge
+		pinst->v_Execute = value;
+		return OV_ERR_OK;
+	}
+
+	//todo register the node at the server
+
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
+
+	pinst->v_NodeHdl = pinst->v_idL;
+	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
@@ -55,8 +69,15 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_ConnectionHdl_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
 	pinst->v_ConnectionHdl = value;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	return OV_ERR_OK;
 }
 
@@ -72,6 +93,7 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_startup(
 	fb_functionblock_startup(pobj);
 
 	pinst->v_NodeID.Identifier = NULL;
+	ov_string_setvalue(&pinst->v_NodeID.Identifier, "the.answer");
 	pinst->v_NodeID.NamespaceIndex = 0;
 	pinst->v_NodeID.IdentifierType = UAIdentifierType_String;
 

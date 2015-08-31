@@ -50,20 +50,63 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_Execute_set(
 		const OV_BOOL  value
 ) {
 	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
-	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "ConnectionHdl"));
 
-	UA_Client_disconnect(pConnect->v_Client);
-	UA_Client_delete(pConnect->v_Client);
+	if(value == FALSE || pinst->v_Execute == TRUE){
+		//only react on the rising edge
+		pinst->v_Execute = value;
+		return OV_ERR_OK;
+	}
+
+	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
+	if(pConnect == NULL){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pConnect->v_ConnectionHdl == 0){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pConnect->v_Client == NULL){
+		//internal error
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+
+	if(pConnect->v_Client != NULL){
+		UA_Client_disconnect(pConnect->v_Client);
+		UA_Client_delete(pConnect->v_Client);
+	}
 	pConnect->v_Client = NULL;
-	pConnect->v_Done = TRUE;
+	pConnect->v_Done = FALSE;
+	pConnect->v_ConnectionHdl = 0;
+	pConnect->v_Busy = FALSE;
+	pConnect->v_Error = FALSE;
+	pConnect->v_ErrorID = 0;
+
+	pinst->v_Done = TRUE;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
+
+	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_ConnectionHdl_set(
 		OV_INSTPTR_iec62541fb_Disconnect          pinst,
-		const OV_UINT  value
+		const OV_UINT value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
 	pinst->v_ConnectionHdl = value;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	return OV_ERR_OK;
 }

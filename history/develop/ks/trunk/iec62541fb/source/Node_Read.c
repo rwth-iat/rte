@@ -47,14 +47,47 @@
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		OV_INSTPTR_iec62541fb_Read          pinst,
-		const OV_BOOL  setvalue
+		const OV_BOOL  value
 ) {
 	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
 	UA_ReadResponse ReadResponse;
 
-	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "ConnectionHdl"));
-	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, "NodeHdl"));
+	if(value == FALSE || pinst->v_Execute == TRUE){
+		//only react on the rising edge
+		pinst->v_Execute = value;
+		return OV_ERR_OK;
+	}
+
+	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
+	if(pConnect == NULL){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pConnect->v_ConnectionHdl == 0){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pConnect->v_Client == NULL){
+		//internal error
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+
+	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "NodeHdl"));
+	if(pNodeGetHandle == NULL){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
+	if(pNodeGetHandle->v_NodeHdl == 0){
+		pinst->v_Error = TRUE;
+		pinst->v_ErrorID = 1; //todo
+		return OV_ERR_BADVALUE;
+	}
 
 	UA_ReadRequest_init(&pNodeGetHandle->v_ReadRequest);
 	pNodeGetHandle->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
@@ -64,7 +97,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 	}else{
 		UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
 		pNodeGetHandle->v_Error = TRUE;
-		pNodeGetHandle->v_ErrorID = 1; // fixme
+		pNodeGetHandle->v_ErrorID = 1; // todo
 		return OV_ERR_BADPARAM;
 	}
 	pNodeGetHandle->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
@@ -109,17 +142,19 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		}else{
 			pinst->v_Done = FALSE;
 			pinst->v_Error = TRUE;
-			pinst->v_ErrorID = 1; //fixme
+			pinst->v_ErrorID = 1; //todo
 		}
 	}else{
 		pinst->v_Done = FALSE;
 		pinst->v_Error = TRUE;
-		pinst->v_ErrorID = 1; //fixme
+		pinst->v_ErrorID = 1; //todo
 	}
 	pinst->v_Error = FALSE;
 	pinst->v_ErrorID = 0;
 
 	UA_ReadResponse_deleteMembers(&ReadResponse);
+
+	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
@@ -128,8 +163,15 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_ConnectionHdl_set(
 		OV_INSTPTR_iec62541fb_Read          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
 	pinst->v_ConnectionHdl = value;
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	return OV_ERR_OK;
 }
 
@@ -137,7 +179,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_NodeHdl_set(
 		OV_INSTPTR_iec62541fb_Read          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_Done = FALSE;
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		pinst->v_Done = FALSE;
+	}
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
 	pinst->v_NodeHdl = value;
 	return OV_ERR_OK;
 }

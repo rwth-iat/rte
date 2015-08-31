@@ -67,8 +67,10 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_shutdown(
 	 */
 	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pobj);
 
-	UA_Client_disconnect(pinst->v_Client);
-	UA_Client_delete(pinst->v_Client);
+	if(pinst->v_Client != NULL){
+		UA_Client_disconnect(pinst->v_Client);
+		UA_Client_delete(pinst->v_Client);
+	}
 	pinst->v_Client = NULL;
 
 	/* set the object's state to "shut down" */
@@ -84,19 +86,31 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
 
+	if(value == FALSE || pinst->v_Execute == TRUE){
+		//only react on the rising edge
+		pinst->v_Execute = value;
+		return OV_ERR_OK;
+	}
+
 	pinst->v_Client = UA_Client_new(UA_ClientConfig_standard, NULL);
+	//todo use TCPchannel which is a part of us
 	retval = UA_Client_connect(pinst->v_Client, ClientNetworkLayerTCP_connect, pinst->v_ServerEndpointUrl);
 	if(retval != UA_STATUSCODE_GOOD) {
-		UA_Client_delete(pinst->v_Client);
+		if(pinst->v_Client != NULL){
+			UA_Client_delete(pinst->v_Client);
+		}
 		pinst->v_Client = NULL;
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1;	//todo
 		pinst->v_Done = FALSE;
-		return OV_ERR_BADPARAM;
+		return OV_ERR_BADVALUE;
 	}
+	pinst->v_ConnectionHdl = pinst->v_idL;
 	pinst->v_Done = TRUE;
 	pinst->v_Error = FALSE;
 	pinst->v_ErrorID = 0;
+
+	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
