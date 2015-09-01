@@ -82,6 +82,7 @@ OV_DLLFNCEXPORT OV_INT ov_time_compare(
 /**
 *	Convert a time into an ASCII string (utc, backward compatibility function)
 *	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
+*	no need to worry about memstack allocation. memory is from a static variable
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 	const OV_TIME		*ptime
@@ -90,6 +91,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii(
 /**
 *	Convert a time into an ASCII string (utc)
 *	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
+*	no need to worry about memstack allocation. memory is from a static variable
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_utc(
 	const OV_TIME		*ptime
@@ -98,6 +100,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_utc(
 /**
 *	Convert a time into an ASCII string (local time)
 *	the format is YYYY/MM/DD hh:mm:ss.uuuuuu
+*	no need to worry about memstack allocation. memory is from a static variable
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_local(
 	const OV_TIME		*ptime
@@ -106,6 +109,7 @@ OV_DLLFNCEXPORT OV_STRING ov_time_timetoascii_local(
 /**
 *	Convert a time span into an ASCII string
 *	the format is hhhh:mm:ss.uuuuuu
+*	no need to worry about memstack allocation. memory is from a static variable
 */
 OV_DLLFNCEXPORT OV_STRING ov_time_timespantoascii(
              const OV_TIME_SPAN  *ptimespan
