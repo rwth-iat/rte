@@ -92,10 +92,11 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_startup(
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);
 
-	pinst->v_NodeID.Identifier = NULL;
-	ov_string_setvalue(&pinst->v_NodeID.Identifier, "the.answer");
-	pinst->v_NodeID.NamespaceIndex = 0;
-	pinst->v_NodeID.IdentifierType = UAIdentifierType_String;
+	//fill the NodeID struct with the correct data.
+	//the database pointers (for the string) are corrected on a database load, so we have to correct them in the struct
+	pinst->v_NodeID.Identifier = pinst->v_NodeIDIdentifier;		//the pointer should be the same, no copy of the string
+	pinst->v_NodeID.NamespaceIndex = pinst->v_NodeIDNSindex;	//this is probably the same even after a db reload, but overwrite it to be sure
+	pinst->v_NodeID.IdentifierType = pinst->v_NodeIDIdType;		//this is probably the same even after a db reload, but overwrite it to be sure
 
 	return;
 }
@@ -111,47 +112,30 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
 	UA_ReadRequest_deleteMembers(&pinst->v_ReadRequest);
 	UA_WriteRequest_deleteMembers(&pinst->v_WriteRequest);
 
-	ov_string_setvalue(&pinst->v_NodeID.Identifier, NULL);
-	pinst->v_NodeID.NamespaceIndex = 0;
-	pinst->v_NodeID.IdentifierType = 0;
-
 	/* set the object's state to "shut down" */
 	fb_functionblock_shutdown(pobj);
 
 	return;
 }
 
-OV_DLLFNCEXPORT OV_STRING iec62541fb_NodeGetHandle_NodeIDIdentifier_get(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
-) {
-	return pinst->v_NodeID.Identifier;
-}
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdentifier_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_STRING  value
 ) {
-	return ov_string_setvalue(&pinst->v_NodeID.Identifier, value);
-}
-
-OV_DLLFNCEXPORT OV_UINT iec62541fb_NodeGetHandle_NodeIDNSindex_get(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
-) {
-	return pinst->v_NodeID.NamespaceIndex;
+	OV_RESULT fr = OV_ERR_OK;
+	fr = ov_string_setvalue(&pinst->v_NodeIDIdentifier, value);
+	pinst->v_NodeID.Identifier = pinst->v_NodeIDIdentifier;	//the pointer should be the same, no copy of the string
+	return fr;
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDNSindex_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
-	pinst->v_NodeID.NamespaceIndex = value;
+	pinst->v_NodeIDNSindex = value;
+	pinst->v_NodeID.NamespaceIndex = pinst->v_NodeIDNSindex;
 	return OV_ERR_OK;
-}
-
-OV_DLLFNCEXPORT OV_UINT iec62541fb_NodeGetHandle_NodeIDIdType_get(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst
-) {
-	return (OV_UINT)pinst->v_NodeID.IdentifierType;
 }
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdType_set(
@@ -159,11 +143,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdType_set(
 		const OV_UINT  value
 ) {
 	switch (value) {
-		case UAIdentifierType_String:
-		case UAIdentifierType_Numeric:
-		case UAIdentifierType_GUID:
-		case UAIdentifierType_Opaque:
-			pinst->v_NodeID.IdentifierType = value;
+		case UA_IDTYPE_STRING:
+		case UA_IDTYPE_NUMERIC:
+		case UA_IDTYPE_GUID:
+		case UA_IDTYPE_OPAQUE:
+			pinst->v_NodeIDIdType = value;
+			pinst->v_NodeID.IdentifierType = pinst->v_NodeIDIdType;
 			return OV_ERR_OK;
 		default:
 			return OV_ERR_NOTIMPLEMENTED;

@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-08-31 12:47:30
+* Erstellt: 2015-09-01 17:27:47
 * 
 * HOST   : 134.130.125.43:7509
 * SERVER : MANAGER
@@ -22,11 +22,11 @@
       Error : OUTPUT BOOL = FALSE;
       ErrorID : OUTPUT UINT = 0;
       iexreq : INPUT BOOL = TRUE;
-      eexreq : OUTPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
-      actimode : INPUT INT = 0;
-      proctime : INPUT TIME = 2015-08-31 12:13:00.450146;
+      methcount : OUTPUT UINT = 12;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-01 17:27:35.124167;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -40,6 +40,9 @@
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
+      NodeIDIdentifier : INPUT STRING = "the.answer";
+      NodeIDNSindex : INPUT UINT = 1;
+      NodeIDIdType : INPUT UINT = 1;
       Timeout : INPUT TIME_SPAN = 0.000000;
       NodeHdl : OUTPUT UINT = 0;
       Done : OUTPUT BOOL = TRUE;
@@ -47,11 +50,11 @@
       Error : OUTPUT BOOL = FALSE;
       ErrorID : OUTPUT UINT = 0;
       iexreq : INPUT BOOL = TRUE;
-      eexreq : OUTPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
-      actimode : INPUT INT = 0;
-      proctime : INPUT TIME = 2015-08-31 12:10:10.624432;
+      methcount : OUTPUT UINT = 9;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-01 17:27:37.964329;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -66,16 +69,16 @@
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
       Timeout : INPUT TIME_SPAN = 0.000000;
-      Done : OUTPUT BOOL = FALSE;
+      Done : OUTPUT BOOL = TRUE;
       Busy : OUTPUT BOOL = FALSE;
       Error : OUTPUT BOOL = FALSE;
       ErrorID : OUTPUT UINT = 0;
-      iexreq : INPUT BOOL = FALSE;
-      eexreq : OUTPUT BOOL = TRUE;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
-      actimode : INPUT INT = 0;
-      proctime : INPUT TIME = 2015-08-31 12:11:06.858649;
+      methcount : OUTPUT UINT = 10;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-01 17:27:36.314235;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -97,12 +100,12 @@
       Busy : OUTPUT BOOL = FALSE;
       Error : OUTPUT BOOL = FALSE;
       ErrorID : OUTPUT UINT = 0;
-      iexreq : INPUT BOOL = FALSE;
-      eexreq : OUTPUT BOOL = TRUE;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
-      actimode : INPUT INT = 0;
-      proctime : INPUT TIME = 2015-08-31 12:11:17.353249;
+      methcount : OUTPUT UINT = 10;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-01 17:27:36.936271;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -118,16 +121,16 @@
       ConnectionHdl : INPUT UINT = 0;
       NodeHdl : INPUT UINT = 0;
       Timeout : INPUT TIME_SPAN = 0.000000;
-      Done : OUTPUT BOOL = FALSE;
+      Done : OUTPUT BOOL = TRUE;
       Busy : OUTPUT BOOL = FALSE;
       Error : OUTPUT BOOL = FALSE;
       ErrorID : OUTPUT UINT = 0;
-      iexreq : INPUT BOOL = FALSE;
-      eexreq : OUTPUT BOOL = TRUE;
+      iexreq : INPUT BOOL = TRUE;
+      eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 0;
-      actimode : INPUT INT = 0;
-      proctime : INPUT TIME = 2015-08-31 12:14:15.776454;
+      methcount : OUTPUT UINT = 8;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-01 17:27:38.810378;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;

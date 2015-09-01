@@ -73,8 +73,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_Execute_set(
 
 	UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
 	pNodeGetHandle->v_NodeHdl = 0;
-	pinst->v_Done = TRUE;
+	pNodeGetHandle->v_Busy = FALSE;
+	pNodeGetHandle->v_Error = FALSE;
+	pNodeGetHandle->v_ErrorID = 0;
+	pNodeGetHandle->v_Execute = FALSE;
 
+	pinst->v_Done = TRUE;
 	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }

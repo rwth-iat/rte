@@ -85,6 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_Execute_set(
 	pConnect->v_Busy = FALSE;
 	pConnect->v_Error = FALSE;
 	pConnect->v_ErrorID = 0;
+	pConnect->v_Execute = FALSE;
 
 	pinst->v_Done = TRUE;
 	pinst->v_Busy = FALSE;

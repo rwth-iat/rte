@@ -89,13 +89,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		return OV_ERR_BADVALUE;
 	}
 
-	UA_ReadRequest_init(&pNodeGetHandle->v_ReadRequest);
-	pNodeGetHandle->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
-	pNodeGetHandle->v_ReadRequest.nodesToReadSize = 1;
-	pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(1, pNodeGetHandle->v_NodeID.Identifier);
-	pNodeGetHandle->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-
-	//free memory of old ANY var
+	//free memory of old ANY variable
 	if(pinst->v_Variable.value.vartype == OV_VT_STRING){
 		ov_string_setvalue(&pinst->v_Variable.value.valueunion.val_string, NULL);
 		pinst->v_Variable.value.vartype = OV_VT_VOID;
@@ -103,37 +97,64 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		Ov_SetAnyValue(&pinst->v_Variable, NULL);
 	}
 
+	UA_ReadRequest_init(&pNodeGetHandle->v_ReadRequest);
+	pNodeGetHandle->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
+	pNodeGetHandle->v_ReadRequest.nodesToReadSize = 1;
+	pNodeGetHandle->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
+	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
+		pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
+		pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
+//	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
+		//todo
+		//pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+	}else{
+		return OV_ERR_BADVALUE;
+	}
+
 	ReadResponse = UA_Client_read(pConnect->v_Client, &pNodeGetHandle->v_ReadRequest);
 	if(ReadResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD &&
 			ReadResponse.resultsSize > 0 && ReadResponse.results[0].hasValue){
-		if(UA_Variant_isScalar(&ReadResponse.results[0].value) &&
-			ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_INT32])
-		{
-			pinst->v_Variable.value.vartype = OV_VT_INT;
-			pinst->v_Variable.value.valueunion.val_int = (OV_INT)*(UA_Int32*)ReadResponse.results[0].value.data;
-		}else if(UA_Variant_isScalar(&ReadResponse.results[0].value) &&
-				ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_UINT32])
-		{
-			pinst->v_Variable.value.vartype = OV_VT_UINT;
-			pinst->v_Variable.value.valueunion.val_uint = (OV_UINT)*(UA_UInt32*)ReadResponse.results[0].value.data;
-		}else if(UA_Variant_isScalar(&ReadResponse.results[0].value) &&
-				ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_FLOAT])
-		{
-			pinst->v_Variable.value.vartype = OV_VT_SINGLE;
-			pinst->v_Variable.value.valueunion.val_single = (OV_SINGLE)*(UA_Float*)ReadResponse.results[0].value.data;
-		}else if(UA_Variant_isScalar(&ReadResponse.results[0].value) &&
-				ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_DOUBLE])
-		{
-			pinst->v_Variable.value.vartype = OV_VT_DOUBLE;
-			pinst->v_Variable.value.valueunion.val_double = (OV_DOUBLE)*(UA_Double*)ReadResponse.results[0].value.data;
-		}else if(UA_Variant_isScalar(&ReadResponse.results[0].value) &&
-				ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_STRING])
-		{
-			pinst->v_Variable.value.vartype = OV_VT_STRING;
-			pinst->v_Variable.value.valueunion.val_string = Ov_DbMalloc(((UA_String*)ReadResponse.results[0].value.data)->length);
-			memcpy(((UA_String*)ReadResponse.results[0].value.data)->data, pinst->v_Variable.value.valueunion.val_string, ((UA_String*)ReadResponse.results[0].value.data)->length);
+		pinst->v_Error = FALSE;
+		pinst->v_ErrorID = 0;
+		if(UA_Variant_isScalar(&ReadResponse.results[0].value)){
+			if(ReadResponse.results[0].hasSourceTimestamp){
+				pinst->v_TimeStamp = ov_1601nsTimeToOvTime(ReadResponse.results[0].sourceTimestamp);
+//todo		}else if(ReadResponse.results[0].hasSourcePicoseconds){
+			}else if(ReadResponse.results[0].hasServerTimestamp){
+				pinst->v_TimeStamp = ov_1601nsTimeToOvTime(ReadResponse.results[0].sourceTimestamp);
+//todo		}else if(ReadResponse.results[0].hasServerPicoseconds){
+			}else{
+				ov_time_gettime(&pinst->v_TimeStamp);
+			}
+
+			if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_INT32]){
+				pinst->v_Variable.value.vartype = OV_VT_INT;
+				pinst->v_Variable.value.valueunion.val_int = (OV_INT)*(UA_Int32*)ReadResponse.results[0].value.data;
+			}else if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_UINT32]){
+				pinst->v_Variable.value.vartype = OV_VT_UINT;
+				pinst->v_Variable.value.valueunion.val_uint = (OV_UINT)*(UA_UInt32*)ReadResponse.results[0].value.data;
+			}else if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_FLOAT]){
+				pinst->v_Variable.value.vartype = OV_VT_SINGLE;
+				pinst->v_Variable.value.valueunion.val_single = (OV_SINGLE)*(UA_Float*)ReadResponse.results[0].value.data;
+			}else if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_DOUBLE]){
+				pinst->v_Variable.value.vartype = OV_VT_DOUBLE;
+				pinst->v_Variable.value.valueunion.val_double = (OV_DOUBLE)*(UA_Double*)ReadResponse.results[0].value.data;
+			}else if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_STRING]){
+				pinst->v_Variable.value.vartype = OV_VT_STRING;
+				pinst->v_Variable.value.valueunion.val_string = Ov_DbMalloc(((UA_String*)ReadResponse.results[0].value.data)->length);
+				if(pinst->v_Variable.value.valueunion.val_string != NULL){
+					memcpy(((UA_String*)ReadResponse.results[0].value.data)->data, pinst->v_Variable.value.valueunion.val_string, ((UA_String*)ReadResponse.results[0].value.data)->length);
+				}
+			}else{
+				//not implemented
+				pinst->v_Done = TRUE;
+				pinst->v_Error = TRUE;
+				pinst->v_ErrorID = 1; //todo
+			}
 		}else{
-			pinst->v_Done = FALSE;
+			//not implemented
+			pinst->v_Done = TRUE;
 			pinst->v_Error = TRUE;
 			pinst->v_ErrorID = 1; //todo
 		}
@@ -142,8 +163,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
 	}
-	pinst->v_Error = FALSE;
-	pinst->v_ErrorID = 0;
 
 	UA_ReadResponse_deleteMembers(&ReadResponse);
 

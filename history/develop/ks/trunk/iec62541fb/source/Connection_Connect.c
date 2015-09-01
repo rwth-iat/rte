@@ -119,6 +119,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_ServerEndpointUrl_set(
 		const OV_STRING  value
 ) {
 	pinst->v_Done = FALSE;
+	pinst->v_Execute = FALSE;
 	return ov_string_setvalue(&pinst->v_ServerEndpointUrl,value);
 }
 

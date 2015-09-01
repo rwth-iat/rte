@@ -92,9 +92,20 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	UA_WriteRequest_init(&pNodeGetHandle->v_WriteRequest);
 	pNodeGetHandle->v_WriteRequest.nodesToWrite = UA_WriteValue_new();
 	pNodeGetHandle->v_WriteRequest.nodesToWriteSize = 1;
-	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(1, pNodeGetHandle->v_NodeID.Identifier); /* assume this node exists */
 	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].attributeId = UA_ATTRIBUTEID_VALUE;
 	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.hasValue = UA_TRUE;
+	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
+//	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
+		//todo
+		//pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+	}else{
+		return OV_ERR_BADVALUE;
+	}
+
+
 	switch (pinst->v_Variable.value.vartype & OV_VT_KSMASK){
 	case OV_VT_INT:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_INT32];

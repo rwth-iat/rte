@@ -110,9 +110,9 @@ LIBRARY iec62541fb
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
 			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
 			NodeID				:	C_TYPE <UANodeID>	FLAGS = "i" COMMENT="Node Identification.";
-			NodeIDIdentifier	:	STRING	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="Identifier for the node"; /*	mapping for KS manipulation	*/
-			NodeIDNSindex		:	UINT	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="Namespace index for the node"; /*	mapping for KS manipulation	*/
-			NodeIDIdType		:	UINT	HAS_ACCESSORS IS_DERIVED FLAGS = "i" COMMENT="IdentifierType for the node (supported is String: 1, Numeric: 2, GUID: 3, Opaque: 4)"; /*	mapping for KS manipulation	*/
+			NodeIDIdentifier	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Identifier for the node" INITIALVALUE="the.answer"; /*	mapping for KS manipulation and database consistency on startup	*/
+			NodeIDNSindex		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Namespace index for the node" INITIALVALUE=1; /*	mapping for KS manipulation and database consistency on startup	*/
+			NodeIDIdType		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="IdentifierType for the node (supported is String: 1, Numeric: 2, GUID: 3, Opaque: 4)" INITIALVALUE=1; /*	mapping for KS manipulation and database consistency on startup	*/
 
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
