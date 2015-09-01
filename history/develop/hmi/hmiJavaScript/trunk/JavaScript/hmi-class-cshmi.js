@@ -4208,10 +4208,11 @@ cshmi.prototype = {
 				i++;
 			}
 		}
-		//we want to have offset parameter on all visual elements
-		HMI.saveAbsolutePosition(newVisualObject);
 		
 		VisualObject.parentNode.replaceChild(newVisualObject, VisualObject);
+		
+		//we want to have offset parameter on all visual elements
+		HMI.saveAbsolutePosition(newVisualObject);
 		
 		if(this.trashDocument && this.trashDocument.adoptNode){
 			//move old node out of document, to make clear it is not used anymore (HACK)

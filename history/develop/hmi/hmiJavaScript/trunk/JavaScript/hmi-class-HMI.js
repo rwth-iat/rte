@@ -751,7 +751,7 @@ HMI.prototype = {
 		
 		//warning: This function is called after the refresh, so this Component is NOT displayed anymore! (but probably another similar Component)
 		
-		var gestureReactionMarker;
+		var gestureReactionMarker = null;
 		
 		//find old marker and remove from dom
 		if (HMI.Playground.firstChild.lastChild.id == HMI.HMI_Constants.NODE_NAME_REACTIONMARKER){
@@ -764,16 +764,16 @@ HMI.prototype = {
 			//build new marker
 			gestureReactionMarker = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 			gestureReactionMarker.id = HMI.HMI_Constants.NODE_NAME_REACTIONMARKER;
-			gestureReactionMarker.setAttributeNS(null, 'fill', '#D1E1FA');
-			gestureReactionMarker.setAttributeNS(null, 'opacity', '0.6');
+			gestureReactionMarker.setAttribute('fill', '#D1E1FA');
+			gestureReactionMarker.setAttribute('opacity', '0.6');
 			
 			//disable pointer Events
 			gestureReactionMarker.setAttributeNS(null, 'pointer-events', 'none');
 		}
-		gestureReactionMarker.setAttributeNS(null, "x", Component.getAttribute("absolutex"));
-		gestureReactionMarker.setAttributeNS(null, "y", Component.getAttribute("absolutey"));
-		gestureReactionMarker.setAttributeNS(null, "width", Component.getAttribute("width"));
-		gestureReactionMarker.setAttributeNS(null, "height", Component.getAttribute("height"));
+		gestureReactionMarker.setAttribute("x", Component.getAttribute("absolutex"));
+		gestureReactionMarker.setAttribute("y", Component.getAttribute("absolutey"));
+		gestureReactionMarker.setAttribute("width", Component.getAttribute("width"));
+		gestureReactionMarker.setAttribute("height", Component.getAttribute("height"));
 		
 		//append this rect into svg
 		HMI.Playground.firstChild.appendChild(gestureReactionMarker);
