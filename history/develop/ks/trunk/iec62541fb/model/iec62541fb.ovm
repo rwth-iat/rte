@@ -181,7 +181,7 @@ LIBRARY iec62541fb
 /*			NodeAddInfo			:	C_TYPE <UANodeAdditionalInfo>	FLAGS = "i" COMMENT="Specifies the attribute and IndexRange.";	*/
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
 			
-			Variable			:	ANY		FLAGS = "i" COMMENT="write value";
+			Variable			:	ANY		HAS_SET_ACCESSOR FLAGS = "i" COMMENT="write value";
 		END_VARIABLES;
 		OPERATIONS
 			startup				:	C_FUNCTION <OV_FNC_STARTUP>;

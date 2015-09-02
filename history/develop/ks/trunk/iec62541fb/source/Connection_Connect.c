@@ -41,6 +41,7 @@
 
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
+#include "fb_namedef.h"
 
 OV_DLLFNCEXPORT void iec62541fb_Connect_startup(
 		OV_INSTPTR_ov_object 	pobj
@@ -99,6 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
 		if(pinst->v_Client != NULL){
 			UA_Client_delete(pinst->v_Client);
 		}
+		pinst->v_ConnectionHdl = 0;
 		pinst->v_Client = NULL;
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1;	//todo
@@ -110,6 +112,9 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
 	pinst->v_Error = FALSE;
 	pinst->v_ErrorID = 0;
 
+	//keep session renew active
+	pinst->v_actimode = FB_AM_ON;
+
 	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
@@ -119,7 +124,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_ServerEndpointUrl_set(
 		const OV_STRING  value
 ) {
 	pinst->v_Done = FALSE;
-	pinst->v_Execute = FALSE;
+	if(ov_string_compare(pinst->v_ServerEndpointUrl, value) != OV_STRCMP_EQUAL){
+		iec62541fb_Connect_Execute_set(pinst, FALSE);
+		pinst->v_ConnectionHdl = 0;
+	}
 	return ov_string_setvalue(&pinst->v_ServerEndpointUrl,value);
 }
 
@@ -130,13 +138,17 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_typemethod(
 	/*
 	 *   local variables
 	 */
-	//OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pfb);
-
-	/* fixme does not compile...
-	if(pinst->v_Client.scExpiresAt - UA_DateTime_now() <= pinst->v_Client.config.timeToRenewSecureChannel * 10000 ){
-		UA_Client_renewSecureChannel(pinst->v_Client);
+	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pfb);
+	if(pinst->v_ConnectionHdl == 0){
+		//no active connection
+		return;
 	}
-	*/
+	if(pinst->v_Client == NULL){
+		//internal error
+		return;
+	}
+
+	UA_Client_renewSecureChannel(pinst->v_Client);
 
 	return;
 }

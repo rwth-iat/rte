@@ -44,6 +44,28 @@
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 
+
+OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Variable_set(
+		OV_INSTPTR_iec62541fb_Write          pobj,
+		const OV_ANY*  value
+) {
+	switch (value->value.vartype & OV_VT_KSMASK){
+	case OV_VT_INT:
+	case OV_VT_UINT:
+	case OV_VT_SINGLE:
+	case OV_VT_DOUBLE:
+	case OV_VT_STRING:
+	case OV_VT_TIME:
+		//white list
+		break;
+	default:
+		return OV_ERR_BADTYPE;
+		break;
+	}
+
+	return ov_variable_setanyvalue(&pobj->v_Variable, value);
+}
+
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		OV_INSTPTR_iec62541fb_Write          pinst,
 		const OV_BOOL  value
@@ -52,6 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
 	UA_WriteResponse WriteResponse;
 	UA_String tempString;
+	UA_DateTime tempTime;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -109,30 +132,38 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	switch (pinst->v_Variable.value.vartype & OV_VT_KSMASK){
 	case OV_VT_INT:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_INT32];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_int;
 		break;
 	case OV_VT_UINT:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_UINT32];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_uint;
 		break;
 	case OV_VT_SINGLE:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_FLOAT];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_single;
 		break;
 	case OV_VT_DOUBLE:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DOUBLE];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_double;
 		break;
 	case OV_VT_STRING:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_STRING];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //do not free the integer on deletion
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = UA_String_new();
 		tempString = UA_String_fromChars(pinst->v_Variable.value.valueunion.val_string);
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &tempString;
+		break;
+	case OV_VT_TIME:
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DATETIME];
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
+		tempTime = (UA_DateTime)UA_DateTime_new();
+
+		tempTime = (UA_Int64)ov_ovTimeTo1601nsTime(pinst->v_Variable.value.valueunion.val_time);
+		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &tempTime;
 		break;
 	default:
 		break;
@@ -160,6 +191,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_ConnectionHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new connection and no connection on execute, so prepare for a new activation
+			iec62541fb_Write_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_ConnectionHdl = value;
@@ -176,6 +211,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_NodeHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_NodeHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new nodeID and no connection on execute, so prepare for a new activation
+			iec62541fb_Write_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_Busy = FALSE;

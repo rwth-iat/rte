@@ -146,6 +146,9 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 				if(pinst->v_Variable.value.valueunion.val_string != NULL){
 					memcpy(((UA_String*)ReadResponse.results[0].value.data)->data, pinst->v_Variable.value.valueunion.val_string, ((UA_String*)ReadResponse.results[0].value.data)->length);
 				}
+			}else if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_DATETIME]){
+				pinst->v_Variable.value.vartype = OV_VT_TIME;
+				pinst->v_Variable.value.valueunion.val_time = ov_1601nsTimeToOvTime((OV_INT64)*(UA_DateTime*)ReadResponse.results[0].value.data);
 			}else{
 				//not implemented
 				pinst->v_Done = TRUE;
@@ -178,6 +181,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_ConnectionHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new connection and no connection on execute, so prepare for a new activation
+			iec62541fb_Read_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_ConnectionHdl = value;
@@ -194,6 +201,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_NodeHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_NodeHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new nodeID and no connection on execute, so prepare for a new activation
+			iec62541fb_Read_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_Busy = FALSE;

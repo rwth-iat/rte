@@ -91,6 +91,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_ConnectionHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new connection and no connection on execute, so prepare for a new activation
+			iec62541fb_NodeReleaseHandle_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_ConnectionHdl = value;
@@ -107,6 +111,10 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_NodeHdl_set(
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
+		if(pinst->v_NodeHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new nodeID and no connection on execute, so prepare for a new activation
+			iec62541fb_NodeReleaseHandle_Execute_set(pinst, FALSE);
+		}
 		pinst->v_Done = FALSE;
 	}
 	pinst->v_Busy = FALSE;
