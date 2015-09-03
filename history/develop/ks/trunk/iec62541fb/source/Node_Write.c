@@ -179,6 +179,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	}
 	UA_WriteResponse_deleteMembers(&WriteResponse);
 
+	pinst->v_Done = TRUE;
 	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }

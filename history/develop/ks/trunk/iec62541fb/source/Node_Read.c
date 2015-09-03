@@ -117,6 +117,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 			ReadResponse.resultsSize > 0 && ReadResponse.results[0].hasValue){
 		pinst->v_Error = FALSE;
 		pinst->v_ErrorID = 0;
+		pinst->v_Done = TRUE;
 		if(UA_Variant_isScalar(&ReadResponse.results[0].value)){
 			if(ReadResponse.results[0].hasSourceTimestamp){
 				pinst->v_TimeStamp = ov_1601nsTimeToOvTime(ReadResponse.results[0].sourceTimestamp);
