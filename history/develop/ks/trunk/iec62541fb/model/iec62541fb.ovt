@@ -37,6 +37,13 @@
 #ifndef iec62541fb_OVT_INCLUDED
 #define iec62541fb_OVT_INCLUDED
 
+/*	Needed to prevent redefined warnings :-S	*/
+#ifdef WIN32
+#undef WIN32
+#endif
+
+#include "open62541.h"
+
 /* 
 	Define your data types here. 
 */
