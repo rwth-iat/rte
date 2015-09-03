@@ -74,7 +74,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
 	UA_WriteResponse WriteResponse;
 	UA_String tempString;
-	UA_DateTime tempTime;
+	UA_DateTime *tempTime;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -160,10 +160,14 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	case OV_VT_TIME:
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DATETIME];
 		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
-		tempTime = (UA_DateTime)UA_DateTime_new();
-
-		tempTime = (UA_Int64)ov_ovTimeTo1601nsTime(pinst->v_Variable.value.valueunion.val_time);
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &tempTime;
+		tempTime = UA_DateTime_new();
+		if(tempTime){
+			*tempTime = ov_ovTimeTo1601nsTime(pinst->v_Variable.value.valueunion.val_time);
+			pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = tempTime;
+		}else{
+			pinst->v_Error = TRUE;
+			pinst->v_ErrorID = 1; // todo
+		}
 		break;
 	default:
 		break;
