@@ -356,15 +356,14 @@ cshmi.prototype = {
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
 		var command = ObjectPath.split("/");
-		if (command[command.length-1] === "globalvarchanged" && VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
-			//this is the run that fills the objects with content, the globalvarchanged Event is already armed
-			return true;
+		if(VisualObject.ResourceList === undefined){
+			VisualObject.ResourceList = new Object();
 		}
 		if (command[command.length-1] === "onload"){
-			if(preventNetworkRequest === true){
-				//onload events will be called later in this._interpreteHiddenChildrenElements
+			if(VisualObject.ResourceList.onloadDone === true){
 				return true;
 			}
+			VisualObject.ResourceList.onloadDone = true;
 			//interprete Action later, so remember this
 			var EventObjItem = Object();
 			EventObjItem["VisualObject"] = VisualObject;
@@ -389,6 +388,11 @@ cshmi.prototype = {
 			}, false);
 			*/
 		}else if (command[command.length-1] === "globalvarchanged"){
+			if(VisualObject.ResourceList.globalvarchangedDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.globalvarchangedDone = true;
+			
 			//remember Action to be called after a globalVar is changed
 			var EventObjItem = Object();
 			EventObjItem["VisualObject"] = VisualObject;
@@ -415,10 +419,13 @@ cshmi.prototype = {
 			//the active cshmi display is not "our" one
 			return true;
 		}
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
-			//this is the run that fills the objects with content, the Events were already armed
+		if(VisualObject.ResourceList === undefined){
+			VisualObject.ResourceList = new Object();
+		}
+		if(VisualObject.ResourceList.TimeeventDone === true){
 			return true;
 		}
+		VisualObject.ResourceList.TimeeventDone = true;
 		
 		var requestList = new Object();
 		//get the information if the config of the object is known through the turbo
@@ -531,10 +538,13 @@ cshmi.prototype = {
 	 * @return {Boolean} true
 	 */
 	_interpreteOperatorEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
-		if (VisualObject !== null && HMI.instanceOf(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass)){
-			//this is the run that fills the objects with content, the Events were already armed
+		if(VisualObject.ResourceList === undefined){
+			VisualObject.ResourceList = new Object();
+		}
+		if(VisualObject.ResourceList.OperatoreventDone === true){
 			return true;
 		}
+		VisualObject.ResourceList.OperatoreventDone = true;
 		
 		var command = ObjectPath.split("/");
 		if (command[command.length-1] === "click"){
@@ -4318,16 +4328,16 @@ cshmi.prototype = {
 	 */
 	_buildSvgGroup: function(VisualParentObject, ObjectPath, calledFromInstantiateTemplate, ChildrenIterator, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined)){
+		if(preventNetworkRequest === true && (calledFromInstantiateTemplate === true && ChildrenIterator && ChildrenIterator.currentChild !== undefined)){
 			//not possible if called from action under a childrenIterator. There is the same ObjectPath, but different Objects under the same domain
 			
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["x"] = null;
@@ -4784,6 +4794,10 @@ cshmi.prototype = {
 				
 				//the marking of the class will be done in the caller of our function
 				this._interpreteChildrensRecursive(VisualObject, PathOfTemplateDefinition, true);
+				
+				// mark objects incomplete AFTER initialisation
+				// the event registering require this to prevent duplicate registration
+				HMI.addClass(VisualObject, this.cshmiGroupVisibleChildrenNotLoadedClass);
 			}else{
 				this._interpreteChildrensRecursive(VisualObject, PathOfTemplateDefinition, preventNetworkRequest);
 			}
@@ -4806,14 +4820,14 @@ cshmi.prototype = {
 	 */
 	_buildBlackbox: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'svg');
 			VisualObject.id= ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["x"] = null;
@@ -5243,14 +5257,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgLine: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'line');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5315,14 +5329,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgPolyline: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polyline');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5381,14 +5395,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgPolygon: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'polygon');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5447,14 +5461,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgPath: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'path');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5556,14 +5570,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgText: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'text');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5643,14 +5657,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgCircle: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'circle');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5710,14 +5724,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgEllipse: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'ellipse');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5785,14 +5799,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgRect: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'rect');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
@@ -5852,14 +5866,14 @@ cshmi.prototype = {
 	 */
 	_buildSvgImage: function(VisualParentObject, ObjectPath, preventNetworkRequest){
 		var requestList = new Object();
-		//get the information if the config of the object is known through the turbo
-		if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
-			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
-		}else if(preventNetworkRequest === true){
+		if(preventNetworkRequest === true){
 			//build a skeleton to preserve zindex/sequence
 			var VisualObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'image');
 			VisualObject.id = ObjectPath;
 			return VisualObject;
+		}else if (this.ResourceList.Elements && this.ResourceList.Elements[ObjectPath] !== undefined){
+			//get the information if the config of the object is known through the turbo
+			requestList[ObjectPath] = this.ResourceList.Elements[ObjectPath].Parameters;
 		}else{
 			requestList[ObjectPath] = new Object();
 			requestList[ObjectPath]["visible"] = null;
