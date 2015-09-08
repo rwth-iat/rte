@@ -356,10 +356,12 @@ cshmi.prototype = {
 	 */
 	_interpreteClientEvent: function(VisualObject, ObjectPath, preventNetworkRequest){
 		var command = ObjectPath.split("/");
+		command = command[command.length-1];
+
 		if(VisualObject.ResourceList === undefined){
 			VisualObject.ResourceList = new Object();
 		}
-		if (command[command.length-1] === "onload"){
+		if (command === "onload"){
 			if(VisualObject.ResourceList.onloadDone === true){
 				return true;
 			}
@@ -387,7 +389,7 @@ cshmi.prototype = {
 				}
 			}, false);
 			*/
-		}else if (command[command.length-1] === "globalvarchanged"){
+		}else if (command === "globalvarchanged"){
 			if(VisualObject.ResourceList.globalvarchangedDone === true){
 				return true;
 			}
@@ -398,10 +400,10 @@ cshmi.prototype = {
 			EventObjItem["VisualObject"] = VisualObject;
 			EventObjItem["ObjectPath"] = ObjectPath;
 			this.ResourceList.globalvarChangedCallStack.push(EventObjItem);
-		}else if (command[command.length-1] === "unconfigured"){
+		}else if (command === "unconfigured"){
 			//ignore an unconfigured Event
 		}else{
-			HMI.hmi_log_info_onwebsite("ClientEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
+			HMI.hmi_log_info_onwebsite("ClientEvent ("+command+") "+ObjectPath+" not supported");
 		}
 		return true;
 	},
@@ -421,11 +423,8 @@ cshmi.prototype = {
 		}
 		if(VisualObject.ResourceList === undefined){
 			VisualObject.ResourceList = new Object();
+			VisualObject.ResourceList.Times = new Object();
 		}
-		if(VisualObject.ResourceList.TimeeventDone === true){
-			return true;
-		}
-		VisualObject.ResourceList.TimeeventDone = true;
 		
 		var requestList = new Object();
 		//get the information if the config of the object is known through the turbo
@@ -445,6 +444,13 @@ cshmi.prototype = {
 			this.ResourceList.Actions[ObjectPath].Parameters = requestList[ObjectPath];
 		}
 		var cyctime = parseFloat(requestList[ObjectPath]["cyctime"]);
+		
+		var command = ObjectPath.split("/");
+		command = command[command.length-1];
+		if(VisualObject.ResourceList.Times[command] === true){
+			return true;
+		}
+		VisualObject.ResourceList.Times[command] = true;
 		
 		if(this.ResourceList.TimeeventCallStack[cyctime] === undefined){
 			if (cyctime <= 0){
@@ -541,13 +547,15 @@ cshmi.prototype = {
 		if(VisualObject.ResourceList === undefined){
 			VisualObject.ResourceList = new Object();
 		}
-		if(VisualObject.ResourceList.OperatoreventDone === true){
-			return true;
-		}
-		VisualObject.ResourceList.OperatoreventDone = true;
 		
 		var command = ObjectPath.split("/");
-		if (command[command.length-1] === "click"){
+		command = command[command.length-1];
+		if (command === "click"){
+			if(VisualObject.ResourceList.OperatorClickeventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorClickeventDone = true;
+			
 			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
@@ -576,7 +584,12 @@ cshmi.prototype = {
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 			}, false);
-		}else if (command[command.length-1] === "doubleclick"){
+		}else if (command === "doubleclick"){
+			if(VisualObject.ResourceList.OperatorDoubleClickeventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorDoubleClickeventDone = true;
+			
 			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
 			VisualObject.setAttribute("data-doubleclickpath", ObjectPath);
@@ -592,7 +605,12 @@ cshmi.prototype = {
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
-		}else if (command[command.length-1] === "rightclick"){
+		}else if (command === "rightclick"){
+			if(VisualObject.ResourceList.OperatorRightClickeventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorRightClickeventDone = true;
+			
 			VisualObject.setAttribute("cursor", "pointer");
 			HMI.addClass(VisualObject, this.cshmiOperatorRightclickClass);
 			VisualObject.setAttribute("data-rightclickpath", ObjectPath);
@@ -610,7 +628,12 @@ cshmi.prototype = {
 				if (evt.stopPropagation) evt.stopPropagation();
 				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
-		}else if (command[command.length-1] === "mouseover"){
+		}else if (command === "mouseover"){
+			if(VisualObject.ResourceList.OperatorMouseOvereventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorMouseOvereventDone = true;
+			
 			var Eventname = "mouseover";
 			if ('onmouseenter' in HMI.svgDocument.documentElement){
 				//mouseenter is far better, than mouseover
@@ -628,7 +651,12 @@ cshmi.prototype = {
 				
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
-		}else if (command[command.length-1] === "mouseout"){
+		}else if (command === "mouseout"){
+			if(VisualObject.ResourceList.OperatorMouseouteventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorMouseouteventDone = true;
+			
 			//mouseleave is far better, than mouseout
 			var Eventname = "mouseout";
 			if ('onmouseleave' in HMI.svgDocument.documentElement){
@@ -647,7 +675,12 @@ cshmi.prototype = {
 				
 				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
-		}else if (command[command.length-1] === "aftermove"){
+		}else if (command === "aftermove"){
+			if(VisualObject.ResourceList.OperatorAftermoveeventDone === true){
+				return true;
+			}
+			VisualObject.ResourceList.OperatorAftermoveeventDone = true;
+			
 			VisualObject.setAttribute("cursor", "move");
 			HMI.addClass(VisualObject, this.cshmiOperatorAftermoveClass);
 			VisualObject.setAttribute("data-aftermovepath", ObjectPath);
@@ -677,10 +710,10 @@ cshmi.prototype = {
 			VisualObject.addEventListener("touchstart", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("mousedown", VisualObject._moveStartDragThunk, false);
 			VisualObject.addEventListener("MSPointerDown", VisualObject._moveStartDragThunk, false);
-		}else if (command[command.length-1] === "unconfigured"){
+		}else if (command === "unconfigured"){
 			//ignore an unconfigured Event
 		}else{
-			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command[command.length-1]+") "+ObjectPath+" not supported");
+			HMI.hmi_log_info_onwebsite("OperatorEvent ("+command+") "+ObjectPath+" not supported");
 		}
 		return true;
 	},
@@ -3126,7 +3159,7 @@ cshmi.prototype = {
 		
 		//if the Object was routed earlier, get the cached information (could be the case with templates or repeated/cyclic calls to the same object)
 		//Not the config is cached here, but the result! So caching VisualObject specific, not ObjectPath
-		var reuseConnection = true;
+		var reuseConnection = false;
 		if(VisualObject.ResourceList === undefined){
 			reuseConnection = false;
 		}else if (VisualObject.ResourceList && VisualObject.ResourceList.RoutePolyline !== undefined){
@@ -3147,6 +3180,8 @@ cshmi.prototype = {
 				TargetVariablename = VisualObject.ResourceList.RoutePolyline.TargetVariablename;
 				SourceConnectionPoint = null;
 				TargetConnectionPoint = null;
+			}else{
+				reuseConnection = true;
 			}
 		}
 		if(reuseConnection == true){
