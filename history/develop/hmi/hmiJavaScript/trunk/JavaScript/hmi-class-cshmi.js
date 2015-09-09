@@ -5055,8 +5055,6 @@ cshmi.prototype = {
 			}
 			
 			function cshmimodelVariable(VisualObject, ObjectPath, varName) {
-				this.VisualObject = VisualObject;
-				this.ObjectPath = ObjectPath;
 				this.varName = varName;
 				this.getValue = function () {
 					var getValueObjectPath = ObjectPath+"/"+varName+".value";
@@ -5073,6 +5071,7 @@ cshmi.prototype = {
 			 */
 			var cshmimodel = new Object();
 			cshmimodel.SvgElement = VisualObject;
+			cshmimodel.Modelpath = ObjectPath;
 			cshmimodel.document = HMI.svgDocument;
 			cshmimodel.window = window;
 			cshmimodel.variables = new Object();
