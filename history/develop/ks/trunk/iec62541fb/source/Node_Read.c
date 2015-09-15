@@ -51,6 +51,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 ) {
 	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
+	UA_ReadRequest ReadRequest;
 	UA_ReadResponse ReadResponse;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
@@ -97,22 +98,23 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 		Ov_SetAnyValue(&pinst->v_Variable, NULL);
 	}
 
-	UA_ReadRequest_init(&pNodeGetHandle->v_ReadRequest);
-	pNodeGetHandle->v_ReadRequest.nodesToRead = UA_ReadValueId_new();
-	pNodeGetHandle->v_ReadRequest.nodesToReadSize = 1;
-	pNodeGetHandle->v_ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
+	UA_ReadRequest_init(&ReadRequest);
+	ReadRequest.nodesToRead = UA_ReadValueId_new();
+	ReadRequest.nodesToReadSize = 1;
+	ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
 	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
-		pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+		ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
-		pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
+		ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
 //	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
 		//todo
-		//pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+		//ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else{
+		UA_ReadRequest_deleteMembers(&ReadRequest);
 		return OV_ERR_BADVALUE;
 	}
 
-	ReadResponse = UA_Client_read(pConnect->v_Client, &pNodeGetHandle->v_ReadRequest);
+	ReadResponse = UA_Client_read(pConnect->v_Client, &ReadRequest);
 	if(ReadResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD &&
 			ReadResponse.resultsSize > 0 && ReadResponse.results[0].hasValue){
 		pinst->v_Error = FALSE;
@@ -169,6 +171,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 	}
 
 	UA_ReadResponse_deleteMembers(&ReadResponse);
+	UA_ReadRequest_deleteMembers(&ReadRequest);
 
 	pinst->v_Execute = value;
 	return OV_ERR_OK;

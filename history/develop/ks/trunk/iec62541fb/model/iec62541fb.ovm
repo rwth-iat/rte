@@ -35,8 +35,8 @@
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#include "ov.ovm"
 #include "fb.ovm"
+#include "iec62541.ovm"
 // # include "TCPbind.ovm"
 
 /**
@@ -114,9 +114,6 @@ LIBRARY iec62541fb
 			NodeIDIdType		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="IdentifierType for the node (supported is String: 1, Numeric: 2, GUID: 3, Opaque: 4)" INITIALVALUE=1; /*	mapping for KS manipulation and database consistency on startup	*/
 
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Time to response.";
-			
-			ReadRequest			:	C_TYPE	<UA_ReadRequest>;
-			WriteRequest		:	C_TYPE	<UA_WriteRequest>;
 			
 			NodeHdl				:	UINT	FLAGS = "o" COMMENT="Node handle (the value is not important, the connection itself is used)."; /* DWORD in the standard*/
 		END_VARIABLES;

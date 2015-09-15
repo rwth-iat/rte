@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>fb</project>
+		<project>iec62541</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

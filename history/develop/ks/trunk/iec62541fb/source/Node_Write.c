@@ -72,6 +72,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 ) {
 	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
+	UA_WriteRequest WriteRequest;
 	UA_WriteResponse WriteResponse;
 	UA_String tempString;
 	UA_DateTime *tempTime;
@@ -112,58 +113,59 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		return OV_ERR_BADVALUE;
 	}
 
-	UA_WriteRequest_init(&pNodeGetHandle->v_WriteRequest);
-	pNodeGetHandle->v_WriteRequest.nodesToWrite = UA_WriteValue_new();
-	pNodeGetHandle->v_WriteRequest.nodesToWriteSize = 1;
-	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].attributeId = UA_ATTRIBUTEID_VALUE;
-	pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.hasValue = UA_TRUE;
+	UA_WriteRequest_init(&WriteRequest);
+	WriteRequest.nodesToWrite = UA_WriteValue_new();
+	WriteRequest.nodesToWriteSize = 1;
+	WriteRequest.nodesToWrite[0].attributeId = UA_ATTRIBUTEID_VALUE;
+	WriteRequest.nodesToWrite[0].value.hasValue = UA_TRUE;
 	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+		WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
+		WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
 //	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
 		//todo
-		//pNodeGetHandle->v_ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
+		//WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else{
+		UA_WriteRequest_deleteMembers(&WriteRequest);
 		return OV_ERR_BADVALUE;
 	}
 
 
 	switch (pinst->v_Variable.value.vartype & OV_VT_KSMASK){
 	case OV_VT_INT:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_INT32];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_int;
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_INT32];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_int;
 		break;
 	case OV_VT_UINT:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_UINT32];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_uint;
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_UINT32];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_uint;
 		break;
 	case OV_VT_SINGLE:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_FLOAT];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_single;
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_FLOAT];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_single;
 		break;
 	case OV_VT_DOUBLE:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DOUBLE];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_double;
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DOUBLE];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA_NODELETE; //do not free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.data = &pinst->v_Variable.value.valueunion.val_double;
 		break;
 	case OV_VT_STRING:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_STRING];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = UA_String_new();
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_STRING];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.data = UA_String_new();
 		tempString = UA_String_fromChars(pinst->v_Variable.value.valueunion.val_string);
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = &tempString;
+		WriteRequest.nodesToWrite[0].value.value.data = &tempString;
 		break;
 	case OV_VT_TIME:
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DATETIME];
-		pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
+		WriteRequest.nodesToWrite[0].value.value.type = &UA_TYPES[UA_TYPES_DATETIME];
+		WriteRequest.nodesToWrite[0].value.value.storageType = UA_VARIANT_DATA; //free the data on deletion
 		tempTime = UA_DateTime_new();
 		if(tempTime){
 			*tempTime = ov_ovTimeTo1601nsTime(pinst->v_Variable.value.valueunion.val_time);
-			pNodeGetHandle->v_WriteRequest.nodesToWrite[0].value.value.data = tempTime;
+			WriteRequest.nodesToWrite[0].value.value.data = tempTime;
 		}else{
 			pinst->v_Error = TRUE;
 			pinst->v_ErrorID = 1; // todo
@@ -173,7 +175,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		break;
 	}
 
-	WriteResponse = UA_Client_write(pConnect->v_Client, &pNodeGetHandle->v_WriteRequest);
+	WriteResponse = UA_Client_write(pConnect->v_Client, &WriteRequest);
 	if(WriteResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){
 		pinst->v_Error = FALSE;
 		pinst->v_ErrorID = 0;
@@ -182,6 +184,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		pinst->v_ErrorID = 1; // todo
 	}
 	UA_WriteResponse_deleteMembers(&WriteResponse);
+	UA_WriteRequest_deleteMembers(&WriteRequest);
 
 	pinst->v_Done = TRUE;
 	pinst->v_Execute = value;

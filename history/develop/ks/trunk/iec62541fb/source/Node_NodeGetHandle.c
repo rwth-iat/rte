@@ -113,10 +113,7 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_NodeGetHandle pinst = Ov_StaticPtrCast(iec62541fb_NodeGetHandle, pobj);
-
-	UA_ReadRequest_deleteMembers(&pinst->v_ReadRequest);
-	UA_WriteRequest_deleteMembers(&pinst->v_WriteRequest);
+	//OV_INSTPTR_iec62541fb_NodeGetHandle pinst = Ov_StaticPtrCast(iec62541fb_NodeGetHandle, pobj);
 
 	/* set the object's state to "shut down" */
 	fb_functionblock_shutdown(pobj);

@@ -71,7 +71,6 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeReleaseHandle_Execute_set(
 
 	//todo deregister the node at the server
 
-	UA_ReadRequest_deleteMembers(&pNodeGetHandle->v_ReadRequest);
 	pNodeGetHandle->v_NodeHdl = 0;
 	pNodeGetHandle->v_Busy = FALSE;
 	pNodeGetHandle->v_Error = FALSE;
