@@ -1,5 +1,5 @@
 /*
-*	Copyright (C) 2014
+*	Copyright (C) 2015
 *	Chair of Process Control Engineering,
 *	Aachen University of Technology.
 *	All rights reserved.
@@ -107,7 +107,7 @@ OV_DLLFNCEXPORT OV_RESULT cshmi_Text_fontSize_set(
 	}
 	fr = ov_string_setvalue(&pobj->v_fontSize, value);
 	if(Ov_OK(fr) && value != NULL){
-		strtod(value, &p);
+		(void)strtod(value, &p);
 		if(p != NULL && *p == '\0'){
 			//we had a numeric input
 			fr = ov_string_append(&pobj->v_fontSize, "px");
