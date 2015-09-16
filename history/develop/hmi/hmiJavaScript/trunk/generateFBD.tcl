@@ -68,6 +68,9 @@ proc processDir {ovpath} {
 			#ignore binary formats
 			puts "skipping binary or unwanted file"
 			continue
+		} elseif { $extension == ".bak" } {
+			puts "skipping backup file"
+			continue
 		}
 		
 		set percentfilename [string map {"." "%2E"} $filename]

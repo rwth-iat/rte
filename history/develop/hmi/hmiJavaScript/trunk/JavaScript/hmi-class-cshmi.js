@@ -561,7 +561,7 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorClickClass);
 			VisualObject.setAttribute("data-clickpath", ObjectPath);
 			VisualObject.addEventListener("click", function(evt){
-				//quit propagation of event in any case. We do not want the parent object to handle the click
+				//quit propagation of event in any case. We do not want the parent object to handle the event
 				if (evt.stopPropagation) evt.stopPropagation();
 				
 				if(HMI.getComponent(VisualObject, HMI.cshmi.cshmiOperatorAftermoveClass)){
@@ -595,6 +595,9 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorDoubleclickClass);
 			VisualObject.setAttribute("data-doubleclickpath", ObjectPath);
 			VisualObject.addEventListener("dblclick", function(evt){
+				//quit propagation of event in any case. We do not want the parent object to handle the event
+				if (evt.stopPropagation) evt.stopPropagation();
+				
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
@@ -604,7 +607,6 @@ cshmi.prototype = {
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
-				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command === "rightclick"){
 			if(VisualObject.ResourceList.OperatorRightClickeventDone === true){
@@ -616,6 +618,10 @@ cshmi.prototype = {
 			HMI.addClass(VisualObject, this.cshmiOperatorRightclickClass);
 			VisualObject.setAttribute("data-rightclickpath", ObjectPath);
 			VisualObject.addEventListener("contextmenu", function(evt){
+				//quit propagation of event in any case. We do not want the parent object to handle the event
+				if (evt.stopPropagation) evt.stopPropagation();
+				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
+				
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				//mark changed VisualObject for quick visual feedback (hidden after a second)
 				HMI.displaygestureReactionMarker(VisualObject);
@@ -625,9 +631,6 @@ cshmi.prototype = {
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
-				
-				if (evt.stopPropagation) evt.stopPropagation();
-				if (evt.preventDefault) evt.preventDefault();  //default is a context menu, so disable it
 			}, false);
 		}else if (command === "mouseover"){
 			if(VisualObject.ResourceList.OperatorMouseOvereventDone === true){
@@ -642,6 +645,9 @@ cshmi.prototype = {
 			}
 			
 			VisualObject.addEventListener(Eventname, function(evt){
+				//quit propagation of event in any case. We do not want the parent object to handle the event
+				if (evt.stopPropagation) evt.stopPropagation();
+				
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
@@ -649,8 +655,6 @@ cshmi.prototype = {
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
-				
-				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command === "mouseout"){
 			if(VisualObject.ResourceList.OperatorMouseouteventDone === true){
@@ -666,6 +670,9 @@ cshmi.prototype = {
 			}
 			
 			VisualObject.addEventListener(Eventname, function(evt){
+				//quit propagation of event in any case. We do not want the parent object to handle the event
+				if (evt.stopPropagation) evt.stopPropagation();
+				
 				HMI.cshmi.ResourceList.EventInfos.EventObj = evt;
 				
 				//get and execute all actions
@@ -673,8 +680,6 @@ cshmi.prototype = {
 				
 				//an later action should not interprete this event
 				HMI.cshmi.ResourceList.EventInfos.EventObj = null;
-				
-				if (evt.stopPropagation) evt.stopPropagation();
 			}, false);
 		}else if (command === "aftermove"){
 			if(VisualObject.ResourceList.OperatorAftermoveeventDone === true){
