@@ -1,6 +1,6 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-07-15 11:54:27
+* Erstellt: 2015-09-16 13:33:33
 * 
 * HOST   : 134.130.125.4:7509
 * SERVER : engineering
@@ -70,6 +70,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -342,6 +343,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -569,6 +571,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -787,6 +790,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -1296,6 +1300,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -1340,6 +1345,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -1384,6 +1390,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -1428,6 +1435,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
@@ -2163,6 +2171,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2584,6 +2593,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -2793,6 +2803,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -3313,6 +3324,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -3825,6 +3837,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -4034,6 +4047,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -4322,6 +4336,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -4890,6 +4905,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -5145,6 +5161,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -5433,6 +5450,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -5622,6 +5640,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -5831,6 +5850,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6105,6 +6125,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6257,6 +6278,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6358,6 +6380,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6526,6 +6549,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -6851,6 +6875,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7125,6 +7150,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7277,6 +7303,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7378,6 +7405,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7546,6 +7574,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7726,6 +7755,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7827,6 +7857,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -7946,6 +7977,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -8142,6 +8174,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_ACCESS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -8170,6 +8203,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -9130,6 +9164,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -9282,6 +9317,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -9326,6 +9362,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -9527,6 +9564,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -9745,6 +9783,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -9789,6 +9828,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -9997,6 +10037,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10149,6 +10190,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10193,6 +10235,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -10394,6 +10437,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10612,6 +10656,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10656,6 +10701,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -10841,6 +10887,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -10885,6 +10932,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -11461,6 +11509,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -11512,7 +11561,7 @@
  INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/CFCview/onload/ifSequentialControlChart.then/showHeader :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
-      TemplateDefinition : INPUT STRING = "Engineering/internal/SequentialControlChart";
+      TemplateDefinition : INPUT STRING = "Engineering/internal/SequentialControlChartHeader";
       x : INPUT SINGLE = 300.000000;
       y : INPUT SINGLE = 0.000000;
       xOffset : INPUT SINGLE = 0.000000;
@@ -11580,6 +11629,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -11608,6 +11658,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -11636,6 +11687,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -11664,6 +11716,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
@@ -11692,6 +11745,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
@@ -11777,6 +11831,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -11862,6 +11917,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -11915,6 +11971,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -11942,6 +11999,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -12012,6 +12070,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12097,6 +12156,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12182,6 +12242,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12307,6 +12368,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12408,6 +12470,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12509,6 +12572,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12553,6 +12617,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -12687,6 +12752,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12772,6 +12838,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12865,6 +12932,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -12909,6 +12977,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -13027,6 +13096,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13145,6 +13215,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13263,6 +13334,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13383,6 +13455,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13411,6 +13484,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -13439,6 +13513,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -13467,6 +13542,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
@@ -13495,6 +13571,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 4;
       baseKsPath : INPUT STRING = "";
@@ -13580,6 +13657,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13665,6 +13743,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13718,6 +13797,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13771,6 +13851,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13856,6 +13937,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -13941,6 +14023,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14033,6 +14116,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14134,6 +14218,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14235,6 +14320,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14279,6 +14365,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -14413,6 +14500,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14498,6 +14586,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -14628,6 +14717,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -15003,6 +15093,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -15155,6 +15246,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -15298,6 +15390,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -15617,6 +15710,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -15645,6 +15739,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -15698,6 +15793,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16120,6 +16216,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16255,6 +16352,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16390,6 +16488,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16584,6 +16683,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16628,6 +16728,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -16697,6 +16798,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -16991,6 +17093,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -17035,6 +17138,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -17368,7 +17472,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader :
     CLASS /acplt/cshmi/TemplateDefinition;
     VARIABLE_VALUES
       width : INPUT SINGLE = 200.000000;
@@ -17379,7 +17483,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -17397,7 +17501,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 2.000000;
@@ -17406,7 +17510,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -17415,7 +17519,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17423,17 +17527,18 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.if/compare :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.if/compare :
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.if/compare.value1 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.if/compare.value1 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17450,7 +17555,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.if/compare.value2 :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.if/compare.value2 :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17467,7 +17572,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17475,7 +17580,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.then/Set_red :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.then/Set_red :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17491,7 +17596,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.then/Set_red.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.then/Set_red.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17508,7 +17613,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.then/Set_Title :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.then/Set_Title :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17524,7 +17629,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.then/Set_Title.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.then/Set_Title.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17541,7 +17646,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17549,7 +17654,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.else/Set_black :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.else/Set_black :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17565,7 +17670,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.else/Set_black.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.else/Set_black.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17582,7 +17687,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.else/Reset_Title :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.else/Reset_Title :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17598,7 +17703,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/TitleBox/CheckError/If_True.else/Reset_Title.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/TitleBox/CheckError/If_True.else/Reset_Title.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17615,7 +17720,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/Title :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/Title :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 100.000000;
@@ -17638,7 +17743,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/Title/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/Title/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -17647,7 +17752,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/Title/onload/SetTitle :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/Title/onload/SetTitle :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -17663,7 +17768,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/Title/onload/SetTitle.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/Title/onload/SetTitle.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17680,7 +17785,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/Line :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/Line :
     CLASS /acplt/cshmi/Line;
     VARIABLE_VALUES
       x1 : INPUT SINGLE = 0.000000;
@@ -17698,7 +17803,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload :
     CLASS /acplt/cshmi/ClientEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "onload";
@@ -17707,7 +17812,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator :
     CLASS /acplt/cshmi/ChildrenIterator;
     VARIABLE_VALUES
       ChildrenType : INPUT STRING = "OT_VARIABLE";
@@ -17716,7 +17821,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17724,7 +17829,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -17733,7 +17838,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17741,18 +17846,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.if/Is_IN :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.if/Is_IN :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.if/Is_IN.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.if/Is_IN.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17769,18 +17875,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.if/Blacklist :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.if/Blacklist :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.if/Blacklist.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.if/Blacklist.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17797,7 +17904,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17805,7 +17912,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.then/addInputFBVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.then/addInputFBVar :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
       TemplateDefinition : INPUT STRING = "Engineering/internal/FBInputVariable";
@@ -17829,7 +17936,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCInputIterator.forEachChild/IN.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCInputIterator.forEachChild/IN.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17837,7 +17944,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator :
     CLASS /acplt/cshmi/ChildrenIterator;
     VARIABLE_VALUES
       ChildrenType : INPUT STRING = "OT_VARIABLE";
@@ -17846,7 +17953,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17854,7 +17961,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT :
     CLASS /acplt/cshmi/IfThenElse;
     VARIABLE_VALUES
       anycond : INPUT BOOL = FALSE;
@@ -17863,7 +17970,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.if :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.if :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17871,18 +17978,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.if/Is_OUT :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.if/Is_OUT :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.if/Is_OUT.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.if/Is_OUT.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17899,18 +18007,19 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.if/Blacklist :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.if/Blacklist :
     CLASS /acplt/cshmi/CompareIteratedChild;
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.if/Blacklist.withValue :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.if/Blacklist.withValue :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -17927,7 +18036,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.then :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.then :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17935,7 +18044,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.then/addOutputFBVar :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.then/addOutputFBVar :
     CLASS /acplt/cshmi/InstantiateTemplate;
     VARIABLE_VALUES
       TemplateDefinition : INPUT STRING = "Engineering/internal/FBOutputVariable";
@@ -17959,7 +18068,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/onload/FCOutputIterator.forEachChild/OUT.else :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/onload/FCOutputIterator.forEachChild/OUT.else :
     CLASS /acplt/cshmi/csContainer;
     VARIABLE_VALUES
       zindex : INPUT UINT = 0;
@@ -17967,7 +18076,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -17987,7 +18096,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/Header :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/Header :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -18005,7 +18114,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 20.000000;
@@ -18028,7 +18137,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -18037,7 +18146,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/actionCreate :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/actionCreate :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
       autoRenameIfExists : INPUT BOOL = FALSE;
@@ -18046,7 +18155,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/actionCreate.Name :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/actionCreate.Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18063,7 +18172,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/actionCreate.Place :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/actionCreate.Place :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18080,7 +18189,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/actionCreate.Library :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/actionCreate.Library :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18097,7 +18206,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/actionCreate.Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/actionCreate.Class :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18114,7 +18223,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/Set_RequestReloadSequentialControlChart :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/Set_RequestReloadSequentialControlChart :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -18130,7 +18239,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddStep/click/Set_RequestReloadSequentialControlChart.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddStep/click/Set_RequestReloadSequentialControlChart.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18147,7 +18256,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans :
     CLASS /acplt/cshmi/Group;
     VARIABLE_VALUES
       x : INPUT SINGLE = 160.000000;
@@ -18167,7 +18276,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/Header :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/Header :
     CLASS /acplt/cshmi/Rectangle;
     VARIABLE_VALUES
       x : INPUT SINGLE = 0.000000;
@@ -18185,7 +18294,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/Text :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/Text :
     CLASS /acplt/cshmi/Text;
     VARIABLE_VALUES
       x : INPUT SINGLE = 20.000000;
@@ -18208,7 +18317,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click :
     CLASS /acplt/cshmi/OperatorEvent;
     VARIABLE_VALUES
       type : INPUT STRING = "click";
@@ -18217,7 +18326,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/actionCreate :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/actionCreate :
     CLASS /acplt/cshmi/CreateObject;
     VARIABLE_VALUES
       autoRenameIfExists : INPUT BOOL = FALSE;
@@ -18226,7 +18335,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/actionCreate.Name :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/actionCreate.Name :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18243,7 +18352,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/actionCreate.Place :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/actionCreate.Place :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18260,7 +18369,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/actionCreate.Library :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/actionCreate.Library :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18277,7 +18386,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/actionCreate.Class :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/actionCreate.Class :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18294,7 +18403,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/Set_RequestReload :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/Set_RequestReload :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -18310,7 +18419,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/AddTrans/click/Set_RequestReload.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/AddTrans/click/Set_RequestReload.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18327,7 +18436,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/CyclicSave_activeStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/CyclicSave_activeStep :
     CLASS /acplt/cshmi/TimeEvent;
     VARIABLE_VALUES
       cyctime : INPUT SINGLE = 1.000000;
@@ -18336,7 +18445,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/CyclicSave_activeStep/Save_activeStep :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/CyclicSave_activeStep/Save_activeStep :
     CLASS /acplt/cshmi/SetValue;
     VARIABLE_VALUES
       translationSource : INPUT STRING = "";
@@ -18352,7 +18461,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChart/CyclicSave_activeStep/Save_activeStep.value :
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/CyclicSave_activeStep/Save_activeStep.value :
     CLASS /acplt/cshmi/GetValue;
     VARIABLE_VALUES
       ksVar : INPUT STRING = "";
@@ -18361,6 +18470,81 @@
       persistentGlobalVar : INPUT STRING = "";
       OperatorInput : INPUT STRING = "";
       TemplateFBReferenceVariable : INPUT STRING = "activeStep";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/aftermove :
+    CLASS /acplt/cshmi/OperatorEvent;
+    VARIABLE_VALUES
+      type : INPUT STRING = "aftermove";
+      zindex : INPUT UINT = 7;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/aftermove/setX :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutex";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/aftermove/setX.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "mousex";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      value : INPUT VOID = ;
+      zindex : INPUT UINT = 0;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/aftermove/setY :
+    CLASS /acplt/cshmi/SetValue;
+    VARIABLE_VALUES
+      translationSource : INPUT STRING = "";
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "absolutey";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      TemplateFBReferenceVariable : INPUT STRING = "";
+      TemplateFBVariableReferenceName : INPUT STRING = "";
+      TemplateConfigValues : INPUT STRING = "";
+      zindex : INPUT UINT = 1;
+      baseKsPath : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ INSTANCE  /TechUnits/cshmi/Templates/Engineering/internal/SequentialControlChartHeader/aftermove/setY.value :
+    CLASS /acplt/cshmi/GetValue;
+    VARIABLE_VALUES
+      ksVar : INPUT STRING = "";
+      elemVar : INPUT STRING = "";
+      globalVar : INPUT STRING = "";
+      persistentGlobalVar : INPUT STRING = "";
+      OperatorInput : INPUT STRING = "mousey";
+      TemplateFBReferenceVariable : INPUT STRING = "";
       TemplateFBVariableReferenceName : INPUT STRING = "";
       TemplateConfigValues : INPUT STRING = "";
       value : INPUT VOID = ;
@@ -18476,6 +18660,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -18520,6 +18705,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -18765,6 +18951,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -18917,6 +19104,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -20245,6 +20433,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -20289,6 +20478,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -20441,6 +20631,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -20485,6 +20676,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -20892,6 +21084,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21011,6 +21204,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21129,6 +21323,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21310,6 +21505,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21462,6 +21658,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21680,6 +21877,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -21982,6 +22180,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -22348,6 +22547,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -22392,6 +22592,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -23748,6 +23949,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -23792,6 +23994,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -23944,6 +24147,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -24265,6 +24469,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -24309,6 +24514,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -24428,6 +24634,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -24702,6 +24909,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -24887,6 +25095,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -24931,6 +25140,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -25000,6 +25210,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -25210,6 +25421,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -25428,6 +25640,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -25546,6 +25759,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -25924,6 +26138,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26165,6 +26380,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26308,6 +26524,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26451,6 +26668,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26715,6 +26933,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26825,6 +27044,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -26869,6 +27089,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -26988,6 +27209,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27032,6 +27254,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -27076,6 +27299,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -27228,6 +27452,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27338,6 +27563,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27382,6 +27608,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -27562,6 +27789,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27672,6 +27900,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27791,6 +28020,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -27835,6 +28065,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -27879,6 +28110,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -27998,6 +28230,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28108,6 +28341,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28227,6 +28461,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28416,6 +28651,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28535,6 +28771,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28579,6 +28816,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -28623,6 +28861,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -28742,6 +28981,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -28786,6 +29026,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -28905,6 +29146,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -29125,6 +29367,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -29295,6 +29538,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -29603,6 +29847,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -30757,6 +31002,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -31008,6 +31254,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -31311,6 +31558,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -31380,6 +31628,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = ">";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -31798,6 +32047,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -31983,6 +32233,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32085,6 +32336,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32129,6 +32381,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -32298,6 +32551,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32326,6 +32580,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -32354,6 +32609,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -32382,6 +32638,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 3;
       baseKsPath : INPUT STRING = "";
@@ -32467,6 +32724,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32495,6 +32753,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -32580,6 +32839,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32608,6 +32868,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -32661,6 +32922,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32714,6 +32976,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32799,6 +33062,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32891,6 +33155,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -32992,6 +33257,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -33102,6 +33368,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -33130,6 +33397,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -33223,6 +33491,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -33447,6 +33716,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -33516,6 +33786,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -33784,6 +34055,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = ">";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -34035,6 +34307,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -34605,6 +34878,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -34633,6 +34907,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -34661,6 +34936,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -34746,6 +35022,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_SEMANTICS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -34774,6 +35051,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -34859,6 +35137,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -34887,6 +35166,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -34915,6 +35195,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -35000,6 +35281,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_CLASS";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
@@ -35028,6 +35310,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_NAME";
       comptype : INPUT STRING = "!=";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = TRUE;
       zindex : INPUT UINT = 1;
       baseKsPath : INPUT STRING = "";
@@ -35056,6 +35339,7 @@
     VARIABLE_VALUES
       childValue : INPUT STRING = "OP_TYPE";
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 2;
       baseKsPath : INPUT STRING = "";
@@ -35149,6 +35433,7 @@
     CLASS /acplt/cshmi/Compare;
     VARIABLE_VALUES
       comptype : INPUT STRING = "==";
+      ignoreCase : INPUT BOOL = FALSE;
       ignoreError : INPUT BOOL = FALSE;
       zindex : INPUT UINT = 0;
       baseKsPath : INPUT STRING = "";
