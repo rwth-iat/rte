@@ -127,6 +127,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdentifier_set(
 		const OV_STRING  value
 ) {
 	OV_RESULT fr = OV_ERR_OK;
+	pinst->v_Done = FALSE;
 	fr = ov_string_setvalue(&pinst->v_NodeIDIdentifier, value);
 	pinst->v_NodeID.Identifier = pinst->v_NodeIDIdentifier;	//the pointer should be the same, no copy of the string
 	return fr;
@@ -136,6 +137,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDNSindex_set(
 		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
+	pinst->v_Done = FALSE;
 	pinst->v_NodeIDNSindex = value;
 	pinst->v_NodeID.NamespaceIndex = pinst->v_NodeIDNSindex;
 	return OV_ERR_OK;
@@ -150,6 +152,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdType_set(
 		case UA_IDTYPE_NUMERIC:
 		case UA_IDTYPE_GUID:
 		case UA_IDTYPE_OPAQUE:
+			pinst->v_Done = FALSE;
 			pinst->v_NodeIDIdType = value;
 			pinst->v_NodeID.IdentifierType = pinst->v_NodeIDIdType;
 			return OV_ERR_OK;

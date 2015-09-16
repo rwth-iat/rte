@@ -54,6 +54,12 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_startup(
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);
 
+	if(fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+		//we have no connection on execute, so prepare for a new activation
+		iec62541fb_Connect_Execute_set(pinst, FALSE);
+	}
+	pinst->v_Done = FALSE;
+
 	pinst->v_ConnectionHdl = 0;
 	pinst->v_Client = NULL;
 

@@ -70,7 +70,7 @@ LIBRARY iec62541fb
 		VARIABLES
 			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="On rising edge connection is started.";
 			ServerEndpointUrl	:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="URL (for example opc.tcp://localhost:16664)" INITIALVALUE= "opc.tcp://localhost:16664";
-/* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="URL";	*/
+/* NOT IMPLEMENTED			SessionConnectInfo :	STRING	FLAGS = "i" COMMENT="";	*/
 			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to establish the connection.";
 
 			Client				:	C_TYPE <OV_PTR_UA_Client>	COMMENT="Client pointer.";
@@ -99,7 +99,23 @@ LIBRARY iec62541fb
 		END_VARIABLES;
 	END_CLASS;
  
-	/*	NamespaceGetIndex	*/
+	CLASS NamespaceGetIndex : CLASS iec62541fb/object
+		IS_INSTANTIABLE;
+		COMMENT = "This Function Block is used to get the namespace-index of a namespace-URI.";
+		VARIABLES
+			Execute				:	BOOL	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="FB performs its task on rising edge on this input.";
+			ConnectionHdl		:	UINT	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Connection handle."; /* DWORD in the standard*/
+			NamespaceUri		:	STRING	HAS_SET_ACCESSOR FLAGS = "i" COMMENT="Namespace URI.";
+
+			Timeout				:	TIME_SPAN	FLAGS = "i" COMMENT="Maximum time to response.";
+			
+			NamespaceIndex		:	UINT	FLAGS = "o" COMMENT="Namespace Index";
+		END_VARIABLES;
+		OPERATIONS
+			constructor				:	C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		END_OPERATIONS;
+	END_CLASS;
+	
 	/*	TranslatePath	*/
 	
 	CLASS NodeGetHandle : CLASS iec62541fb/object

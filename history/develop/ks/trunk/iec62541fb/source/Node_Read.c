@@ -153,10 +153,23 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 				pinst->v_Variable.value.vartype = OV_VT_TIME;
 				pinst->v_Variable.value.valueunion.val_time = ov_1601nsTimeToOvTime((OV_INT64)*(UA_DateTime*)ReadResponse.results[0].value.data);
 			}else{
-				//not implemented
-				pinst->v_Done = TRUE;
-				pinst->v_Error = TRUE;
-				pinst->v_ErrorID = 1; //todo
+				if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_STRING]){
+					//free memory
+					Ov_SetAnyValue(&pinst->v_Variable, NULL);
+					//set length and type
+					Ov_SetDynamicVectorLength(&pinst->v_Variable.value.valueunion.val_string_vec, ReadResponse.results[0].value.arrayLength, STRING);
+					for(UA_Int32 iterator = 0; iterator < ReadResponse.results[0].value.arrayLength;iterator++){
+						pinst->v_Variable.value.valueunion.val_string = Ov_DbMalloc(((UA_String*)ReadResponse.results[0].value.data)[iterator].length);
+						if(pinst->v_Variable.value.valueunion.val_string != NULL){
+							memcpy(((UA_String*)ReadResponse.results[0].value.data)[iterator].data, pinst->v_Variable.value.valueunion.val_string_vec.value[iterator], ((UA_String*)ReadResponse.results[0].value.data)[iterator].length);
+						}
+					}
+				}else{
+					//not implemented
+					pinst->v_Done = TRUE;
+					pinst->v_Error = TRUE;
+					pinst->v_ErrorID = 1; //todo
+				}
 			}
 		}else{
 			//not implemented

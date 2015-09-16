@@ -1,16 +1,16 @@
 /************************************************************
 * Sicherung der Datenbasis
-* Erstellt: 2015-09-01 17:27:47
+* Erstellt: 2015-09-16 15:05:03
 * 
 * HOST   : 134.130.125.43:7509
 * SERVER : MANAGER
 ************************************************************/
 
- INSTANCE  /TechUnits/UAtest :
+ INSTANCE  /TechUnits/UAdemo :
     CLASS /acplt/ov/domain;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/UAtest/Connect1 :
+ INSTANCE  /TechUnits/UAdemo/Connect1 :
     CLASS /acplt/iec62541fb/Connect;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
@@ -24,9 +24,9 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 12;
+      methcount : OUTPUT UINT = 81;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2015-09-01 17:27:35.124167;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.470243;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -35,7 +35,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/UAtest/NodeGetHandle1 :
+ INSTANCE  /TechUnits/UAdemo/NodeGetHandle1 :
     CLASS /acplt/iec62541fb/NodeGetHandle;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
@@ -52,9 +52,9 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 9;
+      methcount : OUTPUT UINT = 81;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2015-09-01 17:27:37.964329;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.473243;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -63,7 +63,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/UAtest/Disconnect1 :
+ INSTANCE  /TechUnits/UAdemo/Disconnect1 :
     CLASS /acplt/iec62541fb/Disconnect;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
@@ -76,9 +76,9 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 10;
+      methcount : OUTPUT UINT = 81;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2015-09-01 17:27:36.314235;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.476243;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -87,7 +87,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/UAtest/Read1 :
+ INSTANCE  /TechUnits/UAdemo/Read1 :
     CLASS /acplt/iec62541fb/Read;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
@@ -103,9 +103,9 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 10;
+      methcount : OUTPUT UINT = 81;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2015-09-01 17:27:36.936271;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.478243;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -114,7 +114,7 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
- INSTANCE  /TechUnits/UAtest/NodeReleaseHandle1 :
+ INSTANCE  /TechUnits/UAdemo/NodeReleaseHandle1 :
     CLASS /acplt/iec62541fb/NodeReleaseHandle;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
@@ -128,9 +128,9 @@
       iexreq : INPUT BOOL = TRUE;
       eexreq : OUTPUT BOOL = FALSE;
       maxcalctime : INPUT TIME_SPAN = 0.000000;
-      methcount : OUTPUT UINT = 8;
+      methcount : OUTPUT UINT = 81;
       actimode : INPUT INT = 1;
-      proctime : INPUT TIME = 2015-09-01 17:27:38.810378;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.480243;
       cyctime : INPUT TIME_SPAN = 0.000000;
       ErrState : OUTPUT INT = 0;
       calctime : OUTPUT TIME_SPAN = 0.000000;
@@ -139,12 +139,38 @@
     END_VARIABLE_VALUES;
  END_INSTANCE;
 
+ INSTANCE  /TechUnits/UAdemo/NamespaceGetIndex :
+    CLASS /acplt/iec62541fb/NamespaceGetIndex;
+    VARIABLE_VALUES
+      Execute : INPUT BOOL = FALSE;
+      ConnectionHdl : INPUT UINT = 0;
+      NamespaceUri : INPUT STRING = "iec62541-ov.acplt.org";
+      Timeout : INPUT TIME_SPAN = 0.000000;
+      NamespaceIndex : OUTPUT UINT = 0;
+      Done : OUTPUT BOOL = TRUE;
+      Busy : OUTPUT BOOL = FALSE;
+      Error : OUTPUT BOOL = FALSE;
+      ErrorID : OUTPUT UINT = 0;
+      iexreq : INPUT BOOL = FALSE;
+      eexreq : OUTPUT BOOL = FALSE;
+      maxcalctime : INPUT TIME_SPAN = 0.000000;
+      methcount : OUTPUT UINT = 2;
+      actimode : INPUT INT = 1;
+      proctime : INPUT TIME = 2015-09-16 15:03:42.484244;
+      cyctime : INPUT TIME_SPAN = 0.000000;
+      ErrState : OUTPUT INT = 0;
+      calctime : OUTPUT TIME_SPAN = 0.000000;
+      Xpos : INPUT INT = 203;
+      Ypos : INPUT INT = 648;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
  LINK
      OF_ASSOCIATION tasklist;
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/UAtest/Connect1};
+           = {/TechUnits/UAdemo/Connect1};
  END_LINK;
 
  LINK
@@ -152,7 +178,7 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/UAtest/NodeGetHandle1};
+           = {/TechUnits/UAdemo/NodeGetHandle1};
  END_LINK;
 
  LINK
@@ -160,7 +186,7 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/UAtest/Disconnect1};
+           = {/TechUnits/UAdemo/Disconnect1};
  END_LINK;
 
  LINK
@@ -168,7 +194,7 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/UAtest/Read1};
+           = {/TechUnits/UAdemo/Read1};
  END_LINK;
 
  LINK
@@ -176,10 +202,18 @@
      PARENT taskparent : CLASS unknown
            = /Tasks/UrTask;
      CHILDREN taskchild : CLASS unknown
-           = {/TechUnits/UAtest/NodeReleaseHandle1};
+           = {/TechUnits/UAdemo/NodeReleaseHandle1};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconConnect2GetNode :
+ LINK
+     OF_ASSOCIATION tasklist;
+     PARENT taskparent : CLASS unknown
+           = /Tasks/UrTask;
+     CHILDREN taskchild : CLASS unknown
+           = {/TechUnits/UAdemo/NamespaceGetIndex};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAdemo/hconConnect2GetNode :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -193,20 +227,20 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/NodeGetHandle1;
+           = /TechUnits/UAdemo/NodeGetHandle1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2GetNode};
+           = {/TechUnits/UAdemo/hconConnect2GetNode};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/Connect1;
+           = /TechUnits/UAdemo/Connect1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2GetNode};
+           = {/TechUnits/UAdemo/hconConnect2GetNode};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconConnect2Disconnect :
+ INSTANCE  /TechUnits/UAdemo/hconConnect2Disconnect :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -220,20 +254,20 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/Disconnect1;
+           = /TechUnits/UAdemo/Disconnect1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2Disconnect};
+           = {/TechUnits/UAdemo/hconConnect2Disconnect};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/Connect1;
+           = /TechUnits/UAdemo/Connect1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2Disconnect};
+           = {/TechUnits/UAdemo/hconConnect2Disconnect};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconConnect2Read :
+ INSTANCE  /TechUnits/UAdemo/hconConnect2Read :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -247,20 +281,20 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/Read1;
+           = /TechUnits/UAdemo/Read1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2Read};
+           = {/TechUnits/UAdemo/hconConnect2Read};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/Connect1;
+           = /TechUnits/UAdemo/Connect1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2Read};
+           = {/TechUnits/UAdemo/hconConnect2Read};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconGetNode2Read :
+ INSTANCE  /TechUnits/UAdemo/hconGetNode2Read :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -274,20 +308,20 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/Read1;
+           = /TechUnits/UAdemo/Read1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconGetNode2Read};
+           = {/TechUnits/UAdemo/hconGetNode2Read};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/NodeGetHandle1;
+           = /TechUnits/UAdemo/NodeGetHandle1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconGetNode2Read};
+           = {/TechUnits/UAdemo/hconGetNode2Read};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconConnect2ReleaseNode :
+ INSTANCE  /TechUnits/UAdemo/hconConnect2ReleaseNode :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -301,20 +335,20 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/NodeReleaseHandle1;
+           = /TechUnits/UAdemo/NodeReleaseHandle1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2ReleaseNode};
+           = {/TechUnits/UAdemo/hconConnect2ReleaseNode};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/Connect1;
+           = /TechUnits/UAdemo/Connect1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconConnect2ReleaseNode};
+           = {/TechUnits/UAdemo/hconConnect2ReleaseNode};
  END_LINK;
 
- INSTANCE  /TechUnits/UAtest/hconNodeGet2NodeRelease :
+ INSTANCE  /TechUnits/UAdemo/hconNodeGet2NodeRelease :
     CLASS /acplt/fb/connection;
     VARIABLE_VALUES
       on : INPUT BOOL = TRUE;
@@ -328,17 +362,44 @@
  LINK
      OF_ASSOCIATION inputconnections;
      PARENT targetfb : CLASS unknown
-           = /TechUnits/UAtest/NodeReleaseHandle1;
+           = /TechUnits/UAdemo/NodeReleaseHandle1;
      CHILDREN inputcon : CLASS connection
-           = {/TechUnits/UAtest/hconNodeGet2NodeRelease};
+           = {/TechUnits/UAdemo/hconNodeGet2NodeRelease};
  END_LINK;
 
  LINK
      OF_ASSOCIATION outputconnections;
      PARENT sourcefb : CLASS unknown
-           = /TechUnits/UAtest/NodeGetHandle1;
+           = /TechUnits/UAdemo/NodeGetHandle1;
      CHILDREN outputcon : CLASS connection
-           = {/TechUnits/UAtest/hconNodeGet2NodeRelease};
+           = {/TechUnits/UAdemo/hconNodeGet2NodeRelease};
+ END_LINK;
+
+ INSTANCE  /TechUnits/UAdemo/hcon :
+    CLASS /acplt/fb/connection;
+    VARIABLE_VALUES
+      on : INPUT BOOL = TRUE;
+      sourceport : INPUT STRING = "ConnectionHdl";
+      targetport : INPUT STRING = "ConnectionHdl";
+      sourcetrig : INPUT BOOL = FALSE;
+      visuallayout : INPUT STRING = "";
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
+
+ LINK
+     OF_ASSOCIATION inputconnections;
+     PARENT targetfb : CLASS unknown
+           = /TechUnits/UAdemo/NamespaceGetIndex;
+     CHILDREN inputcon : CLASS connection
+           = {/TechUnits/UAdemo/hcon};
+ END_LINK;
+
+ LINK
+     OF_ASSOCIATION outputconnections;
+     PARENT sourcefb : CLASS unknown
+           = /TechUnits/UAdemo/Connect1;
+     CHILDREN outputcon : CLASS connection
+           = {/TechUnits/UAdemo/hcon};
  END_LINK;
 
  LIBRARY
