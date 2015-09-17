@@ -246,8 +246,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			} else {
 				//reuse port from the last protocol
 			}
-
-			if((ret = getaddrinfo(NULL, portbuf, &hints, &resultingaddrinfo)) != 0) {
+			ret = getaddrinfo(NULL, portbuf, &hints, &resultingaddrinfo);
+			if(ret != 0) {
 				KS_logfile_error(("%s: getaddrinfo failed: %d", this->v_identifier, ret));
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
 				return;
@@ -292,7 +292,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			//setting source address and port
-			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen)) {
+			if (bind(fd, resultingaddrinfo->ai_addr, resultingaddrinfo->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
 				freeaddrinfo(resultingaddrinfo);
 				resultingaddrinfo = NULL;
 				continue;
@@ -309,7 +309,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 
 			//mark the socket as a passive socket, to be able to accept incoming connections to it
 			//second parameter is the maximum length to which the queue of pending connections for fd may grow
-			if (listen(fd, 5) == -1) {
+			if (listen(fd, 5) == TCPBIND_SOCKET_ERROR) {
 				freeaddrinfo(resultingaddrinfo);
 				resultingaddrinfo = NULL;
 				continue;
@@ -318,7 +318,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			//sockaddsize should indicate the amount of space of addr (in bytes) but could be actual size of the last socket address.
 			sockaddsize = sizeof(sa_stor);
 			//get the current address to which we are bound
-			if(getsockname(fd, sockaddress, &sockaddsize)) {
+			if(getsockname(fd, sockaddress, &sockaddsize) == TCPBIND_SOCKET_ERROR) {
 				KS_logfile_error(("%s: getsockname failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -328,7 +328,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPListener_typemethod (
 			}
 
 			//convert the socket address to a corresponding host and service
-			if(getnameinfo( sockaddress, sockaddsize, hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf), flags)) {
+			if(getnameinfo(sockaddress, sockaddsize, hostbuf, sizeof(hostbuf), portbuf, sizeof(portbuf), flags) != 0) {
 				KS_logfile_error(("%s: getnameinfo failed", this->v_identifier));
 				KS_logfile_print_sysMsg();
 				thisLi->v_SocketState = TCPbind_CONNSTATE_COULDNOTOPEN;

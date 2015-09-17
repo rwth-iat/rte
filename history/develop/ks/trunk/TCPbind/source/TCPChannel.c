@@ -213,8 +213,12 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	TCPBIND_SOCKET socket = TCPBIND_INVALID_SOCKET;
 	fd_set write_flags;
 	struct timeval waitd;
-	int err = 0;
-	OV_INT sentChunkSize;
+	int err_select = 0;
+#ifdef OV_SYSTEM_NT
+	int sentChunkSize;
+#else
+	ssize_t sentChunkSize;
+#endif
 	OV_UINT sendlength = 0;
 #ifdef _GNU_SOURCE
 	OV_INT	gaiRes = 0;
@@ -261,10 +265,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 			FD_SET(socket, &write_flags); // get write flags
 			waitd.tv_sec = 0;     // Set Timeout
 			waitd.tv_usec = 0;    //  do not wait
-			err = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
+			err_select = select(socket + 1, (fd_set*) 0,&write_flags, (fd_set*)0,&waitd);
 
-			if (err == TCPBIND_SOCKET_ERROR) {
-				KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+			if (err_select == TCPBIND_SOCKET_ERROR) {
+				KS_logfile_error(("%s: SendData: select returned: %d; line %d", thisCh->v_identifier, err_select, __LINE__));
 				thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
 				return OV_ERR_GENERIC;
 			}
@@ -415,7 +419,12 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	int intsocket = -1;
 	fd_set read_flags;
 	struct timeval waitd;
-	int err = 0;
+	int err_select = 0;
+#ifdef OV_SYSTEM_NT
+	int err_recv = 0;
+#else
+	ssize_t err_recv = 0;
+#endif
 	OV_TIME now;
 	OV_TIME_SPAN tstemp;
 	OV_TIME ttemp;
@@ -469,14 +478,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 			waitd.tv_sec = 0;     // Set Timeout
 
 			waitd.tv_usec = 0;    //  do not wait
-			err = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
-			if(err == TCPBIND_SOCKET_ERROR)
+			err_select = select(socket + 1, &read_flags, (fd_set*) 0, (fd_set*)0, &waitd);
+			if(err_select == TCPBIND_SOCKET_ERROR)
 			{
-				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err, __LINE__));
+				KS_logfile_debug(("%s typemethod: select returned: %d; line %d", thisCh->v_identifier, err_select, __LINE__));
 			}
 
 			//check if data arrived
-			if((err > 0) && FD_ISSET(socket, &read_flags))
+			if((err_select > 0) && FD_ISSET(socket, &read_flags))
 			{
 				KS_logfile_debug(("%s: typemethod: realloc %u bytes", this->v_identifier, thisCh->v_inData.length + TCPbind_CHUNKSIZE));
 				//Data arrived
@@ -512,8 +521,8 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 					thisCh->v_inData.writePT = thisCh->v_inData.data + thisCh->v_inData.length;
 				}
 
-				err = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
-				if (err == TCPBIND_SOCKET_ERROR){
+				err_recv = recv(socket, (char*) thisCh->v_inData.writePT, TCPbind_CHUNKSIZE, 0);		//receive data
+				if (err_recv == TCPBIND_SOCKET_ERROR){
 					KS_logfile_debug(("%s: error receiving. Closing socket.", this->v_identifier));
 					TCPBIND_CLOSE_SOCKET(socket);
 					TCPbind_TCPChannel_socket_set(thisCh, -1);
@@ -539,7 +548,7 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				}
 
 				//last part received or closed
-				if(err == 0)
+				if(err_recv == 0)
 				{	// connection closed (0 bytes received and there is nothing in the buffer)
 					KS_logfile_debug(("%s: nothing received. connection was gracefully closed", this->v_identifier));
 					thisCh->v_ConnectionState = TCPbind_CONNSTATE_CLOSED;
@@ -566,14 +575,14 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 				}
 
 				//update data length
-				thisCh->v_inData.length += err;
+				thisCh->v_inData.length += err_recv;
 				//move writept to end of data
-				thisCh->v_inData.writePT += err;
+				thisCh->v_inData.writePT += err_recv;
 
 				datareceived = TRUE;
 			}
 
-		}while((err != TCPBIND_SOCKET_ERROR) && FD_ISSET(socket, &read_flags));
+		}while((err_select != TCPBIND_SOCKET_ERROR) && (err_recv != TCPBIND_SOCKET_ERROR) && FD_ISSET(socket, &read_flags));
 
 		if(datareceived)
 		{
