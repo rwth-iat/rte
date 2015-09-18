@@ -127,18 +127,18 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		if(port <0)	//no port number set --> check if we are MANAGER. If so, set port to 7509.
 		{
 			result = ov_vendortree_getservername(&tempAny, NULL);
-				if(Ov_Fail(result))
-				{
-					KS_logfile_error(("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result)));
-					ov_memstack_unlock();
-					return result;
-				}
+			if(Ov_Fail(result))
+			{
+				KS_logfile_error(("TCPbind library open: could not get servername: %s", ov_result_getresulttext(result)));
+				ov_memstack_unlock();
+				return result;
+			}
 
-				if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL){
-					port = 7509;
-				}else{
-					KS_logfile_info(("TCPbind library open: No port set and not manager. Using random port."));
-				}
+			if(ov_string_compare(tempAny.value.valueunion.val_string, "MANAGER") == OV_STRCMP_EQUAL){
+				port = 7509;
+			}else{
+				KS_logfile_info(("TCPbind library open: No port set and not manager. Using random port."));
+			}
 		}
 
 		/*

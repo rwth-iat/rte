@@ -880,29 +880,31 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_AssociateClientHandler(
 		pProtIdent = Ov_StaticPtrCast(ksbase_ProtocolIdentificator, Ov_GetFirstChild(ov_instantiation, pClassProtIdent));
 		while(pProtIdent)
 		{
-			//get VTable of protocol identificator
-			Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
-			if(!pVTBLProtIdent)
-			{
-				KS_logfile_error(("Could not determine VTable of ProtocolIdentificator %s - Cancelling operation.", pProtIdent->v_identifier));
-				return OV_ERR_NOTIMPLEMENTED;
-			}
-			else
-			{
-				//check if protocol is recognized by this Identificator
-				if(pVTBLProtIdent->m_identify(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this)) == TRUE)
-				{	//if so, create ClientHandler
-					KS_logfile_debug(("Protocol identified by %s (Class %s). Creating Clienthandler", pProtIdent->v_identifier, Ov_GetParent(ov_instantiation, pProtIdent)->v_identifier));
-					result = pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this));
-					if(Ov_Fail(result))
-					{
-						KS_logfile_error(("ClientHandler could not be created. Reason: %s", ov_result_getresulttext(result)));
-						return result;
+			if(Ov_GetParent(TCPbind_AssocSpecificClientHandler, pProtIdent) == NULL){
+				//get VTable of protocol identificator
+				Ov_GetVTablePtr(ksbase_ProtocolIdentificator, pVTBLProtIdent, pProtIdent);
+				if(!pVTBLProtIdent)
+				{
+					KS_logfile_error(("Could not determine VTable of ProtocolIdentificator %s - Cancelling operation.", pProtIdent->v_identifier));
+					return OV_ERR_NOTIMPLEMENTED;
+				}
+				else
+				{
+					//check if protocol is recognized by this Identificator
+					if(pVTBLProtIdent->m_identify(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this)) == TRUE)
+					{	//if so, create ClientHandler
+						KS_logfile_debug(("Protocol identified by %s (Class %s). Creating Clienthandler", pProtIdent->v_identifier, Ov_GetParent(ov_instantiation, pProtIdent)->v_identifier));
+						result = pVTBLProtIdent->m_createClientHandler(pProtIdent, Ov_StaticPtrCast(ksbase_Channel, this));
+						if(Ov_Fail(result))
+						{
+							KS_logfile_error(("ClientHandler could not be created. Reason: %s", ov_result_getresulttext(result)));
+							return result;
+						}
+						KS_logfile_debug(("ClientHandler created."));
+						this->v_ClientHandlerAssociated = KSBASE_CH_ASSOCIATED;
+						this->v_ConnectionTimeOut = TCPbind_TTL_AFTER_ASSOC;
+						break;
 					}
-					KS_logfile_debug(("ClientHandler created."));
-					this->v_ClientHandlerAssociated = KSBASE_CH_ASSOCIATED;
-					this->v_ConnectionTimeOut = TCPbind_TTL_AFTER_ASSOC;
-					break;
 				}
 			}
 			pProtIdent = Ov_StaticPtrCast(ksbase_ProtocolIdentificator, Ov_GetNextChild(ov_instantiation, pProtIdent));
