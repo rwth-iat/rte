@@ -5975,7 +5975,11 @@ cshmi.prototype = {
 		if (VisualObject.tagName === "svg" && VisualObject.parentNode.tagName === "g" && VisualObject.parentNode.id === ""){
 			//object has already an g parent
 			var rotationObject = VisualObject.parentNode;
-		}else if (rotate !== null && parseFloat(rotate) !== 0 && VisualObject.tagName === "svg" && VisualObject.parentNode.tagName !== "g" && VisualObject.parentNode.parentNode.tagName === "svg" ){
+		}else if (rotate !== null && parseFloat(rotate) !== 0 //we have to rotate
+				&& VisualObject.tagName === "svg" //svg are not rotatable itself
+				&& VisualObject.parentNode.tagName !== "g" //we have no g element above
+				&& VisualObject.parentNode.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG //but we are still in SVG
+		){
 			//element has to be shifted into an g element, as we change rotation
 			rotationObject = HMI.svgDocument.createElementNS(HMI.HMI_Constants.NAMESPACE_SVG, 'g');
 			rotationObject.setAttribute("overflow", "visible");
