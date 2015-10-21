@@ -45,13 +45,71 @@
 #include "fb_namedef.h"
 
 
+//remove the function if the open62541 files are updated!
+
+
+/**
+ * Get the namespace-index of a namespace-URI
+ *
+ * @param client The UA_Client struct for this connection
+ * @param namespaceUri The interested namespace URI
+ * @param namespaceIndex The namespace index of the URI. The value is unchanged in case of an error
+ * @return Indicates whether the operation succeeded or returns an error code
+ */
+UA_StatusCode UA_EXPORT UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespaceUri, UA_UInt16 *namespaceIndex);
+
+UA_StatusCode UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespaceUri, UA_UInt16 *namespaceIndex){
+	UA_ReadRequest ReadRequest;
+	UA_ReadResponse ReadResponse;
+	UA_StatusCode retval = UA_STATUSCODE_BADUNEXPECTEDERROR;
+
+	UA_ReadRequest_init(&ReadRequest);
+	ReadRequest.nodesToRead = UA_ReadValueId_new();
+	ReadRequest.nodesToReadSize = 1;
+	ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
+	ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
+
+	ReadResponse = UA_Client_read(client, &ReadRequest);
+	UA_ReadRequest_deleteMembers(&ReadRequest);
+
+	if(ReadResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD){
+		retval = ReadResponse.responseHeader.serviceResult;
+		goto cleanup;
+	}
+
+	if(ReadResponse.resultsSize != 1 || !ReadResponse.results[0].hasValue){
+		retval = UA_STATUSCODE_BADNODEATTRIBUTESINVALID;
+		goto cleanup;
+	}
+
+	if(ReadResponse.results[0].value.type != &UA_TYPES[UA_TYPES_STRING]){
+		retval = UA_STATUSCODE_BADTYPEMISMATCH;
+		goto cleanup;
+	}
+
+	retval = UA_STATUSCODE_BADNOTFOUND;
+	for(UA_UInt16 iterator = 0; iterator < ReadResponse.results[0].value.arrayLength; iterator++){
+		if(UA_String_equal(namespaceUri, &((UA_String*)ReadResponse.results[0].value.data)[iterator] )){
+			*namespaceIndex = iterator;
+			retval = UA_STATUSCODE_GOOD;
+			break;
+		}
+	}
+
+	cleanup:
+	UA_ReadResponse_deleteMembers(&ReadResponse);
+
+	return retval;
+}
+
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_Execute_set(
 		OV_INSTPTR_iec62541fb_NamespaceGetIndex          pinst,
 		const OV_BOOL  value
 ) {
 	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
-	UA_ReadRequest ReadRequest;
-	UA_ReadResponse ReadResponse;
+	UA_String namespaceUri;
+	UA_UInt16 NamespaceIndex = 0;
+	UA_StatusCode result = UA_STATUSCODE_GOOD;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -77,44 +135,21 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_Execute_set(
 		return OV_ERR_BADVALUE;
 	}
 
-	UA_ReadRequest_init(&ReadRequest);
-	ReadRequest.nodesToRead = UA_ReadValueId_new();
-	ReadRequest.nodesToReadSize = 1;
-	ReadRequest.nodesToRead[0].attributeId = UA_ATTRIBUTEID_VALUE;
-	ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
+	//reuse memory for this temp string
+	namespaceUri = UA_STRING(pinst->v_NamespaceUri);
 
-	ReadResponse = UA_Client_read(pConnect->v_Client, &ReadRequest);
-	if(ReadResponse.responseHeader.serviceResult == UA_STATUSCODE_GOOD &&
-			ReadResponse.resultsSize > 0 && ReadResponse.results[0].hasValue){
-		pinst->v_Error = TRUE;
+	result = UA_Client_NamespaceGetIndex(pConnect->v_Client, &namespaceUri, &NamespaceIndex);
+	if(result == UA_STATUSCODE_GOOD){
+		pinst->v_Error = FALSE;
 		pinst->v_ErrorID = 0;
 		pinst->v_Done = TRUE;
-		if(!UA_Variant_isScalar(&ReadResponse.results[0].value)){
-			if(ReadResponse.results[0].value.type == &UA_TYPES[UA_TYPES_STRING]){
-				UA_String tempstring = UA_String_fromChars(pinst->v_NamespaceUri);
-				for(UA_Int32 iterator = 0; iterator < ReadResponse.results[0].value.arrayLength;iterator++){
-					if(UA_String_equal(&tempstring, &((UA_String*)ReadResponse.results[0].value.data)[iterator] )){
-						pinst->v_NamespaceIndex = (OV_UINT)iterator;
-						pinst->v_Error = FALSE;
-					}
-				}
-				UA_String_delete(&tempstring);
-			}
-		}else{
-			//not implemented
-			pinst->v_Done = TRUE;
-			pinst->v_Error = TRUE;
-			pinst->v_ErrorID = 1; //todo
-		}
+
+		pinst->v_NamespaceIndex = (OV_UINT)NamespaceIndex;
 	}else{
 		pinst->v_Done = FALSE;
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
 	}
-
-	UA_ReadResponse_deleteMembers(&ReadResponse);
-	UA_ReadRequest_deleteMembers(&ReadRequest);
-
 
 	pinst->v_Execute = value;
 	return OV_ERR_OK;

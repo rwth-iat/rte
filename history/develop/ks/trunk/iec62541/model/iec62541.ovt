@@ -15,6 +15,7 @@
 #define WIN32
 #endif
 
+#define OV_UA_NAMESPACEURI "iec62541-ov.acplt.org"
 /* 
 	Define your data types here. 
 */

@@ -193,7 +193,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 
 	UA_Server_addNetworkLayer(pinst->v_serverData, ServerNetworkLayerOV_new(UA_ConnectionConfig_standard, port));
 
-	url = UA_String_fromChars("iec62541-ov.acplt.org");
+	url = UA_String_fromChars(OV_UA_NAMESPACEURI);
 
 	//Services on Namespace OV (1)
 	iec62541_pUaServer->v_nodeStoreNsOV.addNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_addNodes;
