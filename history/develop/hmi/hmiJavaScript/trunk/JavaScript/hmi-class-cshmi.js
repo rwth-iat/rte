@@ -424,6 +424,8 @@ cshmi.prototype = {
 		}
 		if(VisualObject.ResourceList === undefined){
 			VisualObject.ResourceList = new Object();
+		}
+		if(VisualObject.ResourceList.Times === undefined){
 			VisualObject.ResourceList.Times = new Object();
 		}
 		
