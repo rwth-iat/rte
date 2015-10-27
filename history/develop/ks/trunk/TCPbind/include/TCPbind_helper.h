@@ -7,8 +7,8 @@
  #define TCPBIND_SOCKET SOCKET
  #define TCPBIND_CLOSE_SOCKET closesocket
 #else
- #define TCPBIND_INVALID_SOCKET -1
- #define TCPBIND_SOCKET_ERROR -1
+ #define TCPBIND_INVALID_SOCKET (-1)
+ #define TCPBIND_SOCKET_ERROR (-1)
  #define TCPBIND_SOCKET int
  #define TCPBIND_CLOSE_SOCKET close
 #endif
