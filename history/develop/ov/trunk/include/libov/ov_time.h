@@ -42,7 +42,7 @@ extern "C" {
 */
 #define	OV_TIMECMP_EQUAL	0		/* t1 = t2 */
 #define	OV_TIMECMP_AFTER	1		/* t1 > t2 */
-#define	OV_TIMECMP_BEFORE	-1		/* t1 < t2 */
+#define	OV_TIMECMP_BEFORE	(-1)	/* t1 < t2 */
 
 /**
 *	Get the current system time

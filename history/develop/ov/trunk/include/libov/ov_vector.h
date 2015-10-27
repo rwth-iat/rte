@@ -42,7 +42,7 @@ extern "C" {
 */
 #define	OV_VECCMP_EQUAL	0		/* s1 = s2 */
 #define	OV_VECCMP_MORE		1		/* s1 > s2 */
-#define	OV_VECCMP_LESS		-1		/* s1 < s2 */
+#define	OV_VECCMP_LESS		(-1)	/* s1 < s2 */
 
 /**
 *	Set the value of a static vector variable

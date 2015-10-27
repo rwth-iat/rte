@@ -445,6 +445,8 @@
 *
 *	for example:
 *	Ov_SetDynamicVectorLength(&pObj->v_myDynamicStringvec, 42, STRING);
+*	will set the vec length and type but can not free the memory of the whole thing
+*	Ov_SetDynamicVectorLength(&pObj->v_MyAnyVariable.value.valueunion.val_string_vec, 1, STRING);
 *	will free the memory:
 *	Ov_SetDynamicVectorLength(&pObj->v_myDynamicStringvec, 0, STRING);
 */

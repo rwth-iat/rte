@@ -43,7 +43,7 @@ extern "C" {
 */
 #define	OV_STRCMP_EQUAL	0		/* s1 = s2 */
 #define	OV_STRCMP_MORE		1		/* s1 > s2 */
-#define	OV_STRCMP_LESS		-1		/* s1 < s2 */
+#define	OV_STRCMP_LESS		(-1)		/* s1 < s2 */
 
 /**
 *	Set value of a string in the database
