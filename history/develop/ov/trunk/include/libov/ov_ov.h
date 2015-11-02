@@ -180,6 +180,23 @@ typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
 
+/*
+*	limits of values
+*	----------------
+*/
+#define OV_VL_MAXINT	(((OV_INT)-1) >> 1)
+#define OV_VL_MAXUINT	((OV_UINT)-1)
+
+#define OV_VL_MAXINT64	(((OV_INT64)-1) >> 1)
+#define OV_VL_MAXUINT64	((OV_UINT64)-1)
+
+#define OV_VL_MININT	(-OV_VL_MAXINT - 1L)
+#define OV_VL_MININT64	(-OV_VL_MAXINT64 - 1LL)
+
+/*
+*	printf macros
+*	-------------
+*/
 #if !OV_SYSTEM_UNIX
 	#if OV_SYSTEM_MC164
 		#define	OV_PRINT_BOOL "l"
@@ -477,16 +494,6 @@ ENUMDEF(OV_AUTH_TYPE)
 #define OV_TT_SIMPLE  ENUMVAL(OV_AUTH_TYPE, 1) /* SIMPLE-A/V-Module */
 
 typedef OV_ENUM OV_TICKET_TYPE;
-
-/*
-*	limits of values
-*	----------------
-*/
-#define OV_VL_MAXINT	(((OV_UINT)-1) >> 1)
-#define OV_VL_MAXUINT	((OV_UINT)-1)
-
-#define OV_VL_MAXINT64	(((OV_UINT64)-1) >> 1)
-#define OV_VL_MAXUINT64	((OV_UINT64)-1)
 
 /*
 * 	OV_RESULT:
