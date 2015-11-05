@@ -169,29 +169,34 @@ typedef OV_ENUM OV_VAR_PROPS;
 	typedef uint32_t	OV_UINT;	/* unsigned integer value */
 	typedef int64_t		OV_INT64;			/* 64bit integer value -- internal use only -- */
 	typedef uint64_t	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
+
+	/*
+	*	limits of values
+	*	----------------
+	*/
+	#define OV_VL_MAXINT	INT32_MAX
+	#define OV_VL_MAXINT64	INT64_MAX
+	#define OV_VL_MAXUINT	UINT32_MAX
+	#define OV_VL_MAXUINT64	UINT64_MAX
+	#define OV_VL_MININT	INT32_MIN
+	#define OV_VL_MININT64	INT64_MIN
 #else
 	typedef	boot_t	OV_BOOL;		/* bool value */
 	typedef long	OV_INT;			/* integer value */
 	typedef u_long	OV_UINT;	/* unsigned integer value */
 	typedef __int64		OV_INT64;			/* 64bit integer value -- internal use only -- */
 	typedef __uint64	OV_UINT64;	/* 64bit unsigned integer value -- internal use only -- */
+
+	#define OV_VL_MAXINT 2147483647
+	#define OV_VL_MAXINT64 9223372036854775807LL
+	#define OV_VL_MAXUINT	0xffffffff
+	#define OV_VL_MAXUINT64	0xffffffffffffffffULL
+	#define OV_VL_MININT (-2147483647 - 1)
+	#define OV_VL_MININT64  (-9223372036854775807LL - 1)
 #endif
 typedef float	OV_SINGLE;		/* single precision floating value */
 typedef double	OV_DOUBLE;		/* double precision floating value */
 typedef char*	OV_STRING;		/* string value */
-
-/*
-*	limits of values
-*	----------------
-*/
-#define OV_VL_MAXINT	(((OV_INT)-1) >> 1)
-#define OV_VL_MAXUINT	((OV_UINT)-1)
-
-#define OV_VL_MAXINT64	(((OV_INT64)-1) >> 1)
-#define OV_VL_MAXUINT64	((OV_UINT64)-1)
-
-#define OV_VL_MININT	(-OV_VL_MAXINT - 1L)
-#define OV_VL_MININT64	(-OV_VL_MAXINT64 - 1LL)
 
 /*
 *	printf macros
