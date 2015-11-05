@@ -459,8 +459,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
-					}else if (((ULONG_MAX == tempUlong) && ERANGE == errno) ||
-							tempUlong > OV_VL_MAXUINT) {
+					}else if (ERANGE == errno || tempUlong > OV_VL_MAXUINT) {
 						//not in range
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in UINT range");
