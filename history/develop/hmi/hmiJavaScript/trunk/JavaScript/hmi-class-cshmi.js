@@ -1478,7 +1478,7 @@ cshmi.prototype = {
 	},
 	
 	/**
-	 * calls (multiple) getValue and after that calls _setVarExecute on success
+	 * calls (multiple) getValue and after that calls _setValueExecute on success
 	 * @param {SVGElement} VisualObject Object to manipulate the visualisation
 	 * @param {String} ObjectPath Path to this cshmi object containing the event/action/visualisation
 	 * @param {String} GetType "static" one static OV_PART, "concat" concat multiple getValues, "math" mathematics operation
@@ -1508,7 +1508,7 @@ cshmi.prototype = {
 					}
 					NewValue = thisObserverEntry.value;
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
+				this.cshmiObject._setValueExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			var thisObserverEntry = new ObserverEntry("value", ".");
@@ -1555,7 +1555,7 @@ cshmi.prototype = {
 					//force string to clean append
 					NewValue = NewValue + thisObserverEntry.value.toString();
 				}
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
+				this.cshmiObject._setValueExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			
@@ -1651,7 +1651,7 @@ cshmi.prototype = {
 				//force string format
 				NewValue = NewValue.toString();
 				
-				this.cshmiObject._setVarExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
+				this.cshmiObject._setValueExecute(this.VisualObject, this.ObjectPath, GetType, NewValue, ChildrenIterator, false);
 				return true;
 			};
 			
@@ -1694,7 +1694,7 @@ cshmi.prototype = {
 	 * @param {Boolean} ignoreError a unconfigured setvar should not trigger a warning
 	 * @return false on error, true on success
 	 */
-	_setVarExecute: function(VisualObject, ObjectPath, GetType, NewValue, ChildrenIterator, ignoreError){
+	_setValueExecute: function(VisualObject, ObjectPath, GetType, NewValue, ChildrenIterator, ignoreError){
 		//get info where to set the NewValue
 		
 		var ParameterName = "";
@@ -3692,7 +3692,7 @@ cshmi.prototype = {
 				VisualObject.correctAllLines(VisualObject);
 				
 				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
-					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), null, true);
+					HMI.cshmi._setValueExecute(VisualObject, ObjectPath+".RoutingString", "static", JSON.stringify(VisualObject.ResourceList.RoutePolyline.Coords), null, true);
 				}
 				VisualObject.ResourceList.RoutePolyline.LineWasManipulated = true;
 			};
@@ -4178,7 +4178,7 @@ cshmi.prototype = {
 			VisualObject.correctAllLines(VisualObject);
 			if(VisualObject.ResourceList.RoutePolyline.LineWasManipulated !== false){
 				if(JSON && JSON.stringify && VisualObject.ResourceList.RoutePolyline.savingDisabled !== true){
-					HMI.cshmi._setVarExecute(VisualObject, ObjectPath+".RoutingString", "static", "", null, true);
+					HMI.cshmi._setValueExecute(VisualObject, ObjectPath+".RoutingString", "static", "", null, true);
 				}
 			}
 			VisualObject.ResourceList.RoutePolyline.LineWasManipulated = false;
@@ -5029,7 +5029,7 @@ cshmi.prototype = {
 				};
 				this.setValue = function (newValue) {
 					var setValueObjectPath = ObjectPath+"/"+varName;
-					HMI.cshmi._setVarExecute(VisualObject, setValueObjectPath, newValue, null, false);
+					HMI.cshmi._setValueExecute(VisualObject, setValueObjectPath, newValue, null, false);
 				};
 			};
 			
