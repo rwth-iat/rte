@@ -174,7 +174,7 @@ typedef struct{
  */
 typedef struct{
 	OV_STRING httpVersion;		/* 1.1 */
-	OV_INT statusCode;			/* 200, hopefully */
+	OV_UINT statusCode;			/* 200, hopefully */
 	OV_UINT headerLength;		/* 1342 for example */
 	OV_STRING header;			/* the full http header */
 	OV_STRING contentString; 	/* convenience contentString will be moved to contentBinary in generateHttpHeader */

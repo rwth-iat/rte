@@ -63,7 +63,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestRegister(
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 
 	/*	generate Header	*/
-	ov_string_print(&requestUri, "/register?name=%s&port=%u&version=%u", servername, port, version);
+	ov_string_print(&requestUri, "/register?name=%s&port=%" OV_PRINT_UINT "&version=" OV_PRINT_UINT, servername, port, version);
 	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, FALSE, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
@@ -100,7 +100,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processRegister(
 			strContent = Ov_HeapMalloc(thisCl->v_ServerResponse.contentLength+1);
 			strncpy(strContent, (OV_STRING)pChannel->v_inData.readPT, thisCl->v_ServerResponse.contentLength);
 			strContent[thisCl->v_ServerResponse.contentLength] = '\0';
-			KS_logfile_debug(("Not registered at %s! Got http code: %i, with content: %s", pChannel->v_address, thisCl->v_httpStatusCode, strContent));
+			KS_logfile_debug(("Not registered at %s! Got http code: %" OV_PRINT_UINT ", with content: %s", pChannel->v_address, thisCl->v_httpStatusCode, strContent));
 			Ov_HeapFree(strContent);
 		#endif
 	}
@@ -128,7 +128,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_requestUnRegister(
 	OV_INSTPTR_kshttp_httpClient thisCl = Ov_StaticPtrCast(kshttp_httpClient, this);
 
 	/*	generate Header	*/
-	ov_string_print(&requestUri, "/unregister?server=%s&version=%u", servername, version);
+	ov_string_print(&requestUri, "/unregister?server=%s&version=%" OV_PRINT_UINT, servername, version);
 	result = kshttp_generateAndSendHttpMessage("GET", "localhost", thisCl->v_ManagerPort, NULL, NULL, FALSE, requestUri, 0, NULL, Ov_PtrUpCast(kshttp_httpClientBase, thisCl), callbackThat, callback);
 	return result;
 }
@@ -152,7 +152,7 @@ OV_DLLFNCEXPORT OV_RESULT kshttp_httpClient_processUnRegister(
 		KS_logfile_debug(("unregistered at %s!", pChannel->v_address));
 		return OV_ERR_OK;
 	}else{
-		KS_logfile_debug(("not unregistered at %s! Got http code: %i :-(", pChannel->v_address, thisCl->v_httpStatusCode));
+		KS_logfile_debug(("not unregistered at %s! Got http code: %" OV_PRINT_UINT " :-(", pChannel->v_address, thisCl->v_httpStatusCode));
 		return OV_ERR_GENERIC;
 	}
 

@@ -38,6 +38,7 @@
 
 #include "config.h"
 #include "urldecode.h"
+#include <errno.h>
 
 /**
  * This function will searches for matching varname(s) and returns a list of values
@@ -50,7 +51,7 @@
  */
 OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING varname, OV_STRING_VEC* re){
 	OV_UINT i = 0;
-	OV_INT varname_len = 0;
+	OV_UINT varname_len = 0;
 	Ov_SetDynamicVectorLength(re,0,STRING);	//initialize the return vector properly
 	if(urlQuery == NULL || varname == NULL){
 		return OV_ERR_OK;
@@ -60,7 +61,7 @@ OV_RESULT kshttp_find_arguments(const OV_STRING_VEC* urlQuery, const OV_STRING v
 		//simple match -> put value in the output list
 		varname_len = ov_string_getlength(varname);
 		if(strncmp(urlQuery->value[i], varname, varname_len) == OV_STRCMP_EQUAL){
-			if((int)ov_string_getlength(urlQuery->value[i]) == varname_len){
+			if(ov_string_getlength(urlQuery->value[i]) == varname_len){
 				//direct variablename in urlQuery
 				Ov_SetDynamicVectorLength(re,re->veclen+1,STRING);
 				ov_string_setvalue(&(re->value[re->veclen-1]), urlQuery->value[i+1]);
@@ -124,6 +125,8 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 	OV_BOOL httphostsend = FALSE;
 
 	OV_UINT i = 0, len = 0, len1 = 0;
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	//initialize return vector properly
 	Ov_SetDynamicVectorLength(&clientRequest->urlQuery, 0, STRING);
@@ -248,7 +251,13 @@ OV_RESULT kshttp_parse_http_header_from_client(HTTP_REQUEST *clientRequest, HTTP
 				plist = ov_string_split(pallheaderslist[i], "content-length: ", &len);
 			}
 			if(len > 1){
-				clientRequest->contentLength = atoi(plist[1]);
+				tempulong = strtoul(plist[1], &endPtr, 10);
+				if (ERANGE != errno &&
+					tempulong < OV_VL_MAXUINT &&
+					endPtr != plist[1])
+				{
+					clientRequest->contentLength = (OV_UINT)tempulong;
+				}
 			}
 		}else if(FALSE && ov_string_match(pallheaderslist[i], "Upgrade:*h2c*") == TRUE){
 			//perhaps this is a test if we support HTTP/2

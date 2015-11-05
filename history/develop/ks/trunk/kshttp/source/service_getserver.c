@@ -37,6 +37,7 @@
  ***********************************************************************/
 
 #include "config.h"
+#include <errno.h>
 
 #define EXEC_GETSERVER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&servername, NULL);\
@@ -58,7 +59,7 @@ OV_RESULT kshttp_exec_getserver(const HTTP_REQUEST request, HTTP_RESPONSE *respo
 	*	parameter and result objects
 	*/
 	OV_STRING servername = NULL;
-	OV_UINT serverversion;
+	OV_UINT serverversion = 2;
 	OV_INSTPTR_ksbase_Manager pManager = NULL;
 	OV_STRING_VEC protocols = {0, NULL};
 	OV_STRING_VEC ports = {0, NULL};
@@ -70,6 +71,9 @@ OV_RESULT kshttp_exec_getserver(const HTTP_REQUEST request, HTTP_RESPONSE *respo
 
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
+
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	//process path
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -87,10 +91,14 @@ OV_RESULT kshttp_exec_getserver(const HTTP_REQUEST request, HTTP_RESPONSE *respo
 
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	kshttp_find_arguments(&request.urlQuery, "serverversion", &match);
-	if(match.veclen<1){
-		serverversion = 2;
-	}else{
-		serverversion = atoi(match.value[0]);
+	if(match.veclen>0){
+		tempulong = strtoul(match.value[0], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != match.value[0])
+		{
+			serverversion = (OV_UINT)tempulong;
+		}
 	}
 
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
@@ -158,7 +166,7 @@ OV_RESULT kshttp_exec_getserver(const HTTP_REQUEST request, HTTP_RESPONSE *respo
 	kshttp_response_part_finalize(&response->contentString, request.response_format, "servername");
 
 	kshttp_response_part_begin(&response->contentString, request.response_format, "serverversion");
-	ov_string_print(&response->contentString, "%s%u", *&response->contentString, registeredVersion);
+	ov_string_print(&response->contentString, "%s%" OV_PRINT_UINT, *&response->contentString, registeredVersion);
 	kshttp_response_part_finalize(&response->contentString, request.response_format, "serverversion");
 
 	EXEC_GETSERVER_RETURN fr;

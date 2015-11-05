@@ -187,7 +187,7 @@ LIBRARY kshttp
 				FLAGS = "o"
 				COMMENT	=	"0 = new, 200 = accepted, 206 = headeraccepted, 400 = denied, 500 = out of memory, 507 = database out of memory"
 				INITIALVALUE = 0;
-			httpStatusCode	:	INT
+			httpStatusCode	:	UINT
 				FLAGS = "o"
 				COMMENT	=	"HTTP Statuscode"
 				INITIALVALUE = 0;

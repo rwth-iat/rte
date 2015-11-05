@@ -37,6 +37,7 @@
  ***********************************************************************/
 
 #include "config.h"
+#include <errno.h>
 
 #define EXEC_GETLOGFILE_RETURN	Ov_SetDynamicVectorLength(&frommatch,0,STRING);\
 		Ov_SetDynamicVectorLength(&tomatch,0,STRING);\
@@ -63,7 +64,7 @@ OV_RESULT kshttp_exec_getlogfile(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 	OV_STRING_VEC maxentriesmatch = {0,NULL};
 	OV_TIME		from;
 	OV_TIME		to;
-	OV_UINT		max_no_messages;
+	OV_UINT		max_no_messages = OV_LOGFILE_MAXMSGS;
 	OV_STRING	*logmessages;
 	OV_TIME		*times;
 	OV_UINT		no_messages = 0;
@@ -73,6 +74,9 @@ OV_RESULT kshttp_exec_getlogfile(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 	OV_STRING LoopEntryXmlString = NULL;
 	OV_STRING LoopEntryTimeString = NULL;
 	OV_RESULT fr = OV_ERR_OK;
+
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	//process from
 	Ov_SetDynamicVectorLength(&frommatch,0,STRING);
@@ -105,9 +109,13 @@ OV_RESULT kshttp_exec_getlogfile(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 	Ov_SetDynamicVectorLength(&maxentriesmatch,0,STRING);
 	kshttp_find_arguments(&request.urlQuery, "maxentries", &maxentriesmatch);
 	if(maxentriesmatch.veclen == 1){
-		max_no_messages = atoi(maxentriesmatch.value[0]);
-	}else{
-		max_no_messages = OV_LOGFILE_MAXMSGS;
+		tempulong = strtoul(maxentriesmatch.value[0], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != maxentriesmatch.value[0])
+		{
+			max_no_messages = (OV_UINT)tempulong;
+		}
 	}
 
 	ov_memstack_lock();

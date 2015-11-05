@@ -569,7 +569,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 			case OV_VT_STATE_VEC:
 	*/
 			default:
-	/*				ov_logfile_error("%s:%d - GestureReaction - target: %s, Userinput (%s), DataType %u not implemented.", __FILE__, __LINE__,
+	/*				ov_logfile_error("%s:%d - GestureReaction - target: %s, Userinput (%s), DataType %" OV_PRINT_UINT " not implemented.", __FILE__, __LINE__,
 					*varname,
 					newvaluematch.value[i],
 					addrp->var_current_props.value.vartype);

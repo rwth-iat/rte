@@ -188,12 +188,12 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 
 				case OV_VT_INT:
 					ov_string_setvalue(&LoopEntryTypeString, "int");
-					ov_string_print(&LoopEntryValue, "%i", Variable.value.valueunion.val_int);
+					ov_string_print(&LoopEntryValue, "%" OV_PRINT_INT, Variable.value.valueunion.val_int);
 					break;
 
 				case OV_VT_UINT:
 					ov_string_setvalue(&LoopEntryTypeString, "uint");
-					ov_string_print(&LoopEntryValue, "%u", Variable.value.valueunion.val_uint);
+					ov_string_print(&LoopEntryValue, "%" OV_PRINT_UINT, Variable.value.valueunion.val_uint);
 					break;
 
 				case OV_VT_SINGLE:
@@ -275,7 +275,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
 						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "int");
-						ov_string_print(&singleVecEntry, "%i", Variable.value.valueunion.val_int_vec.value[i]);
+						ov_string_print(&singleVecEntry, "%" OV_PRINT_INT, Variable.value.valueunion.val_int_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "int");
 					}
@@ -288,7 +288,7 @@ OV_RESULT kshttp_exec_getvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 							kshttp_response_parts_seperate(&LoopEntryValue, request.response_format);
 						}
 						kshttp_response_part_begin(&LoopEntryValue, request.response_format, "uint");
-						ov_string_print(&singleVecEntry, "%u", Variable.value.valueunion.val_uint_vec.value[i]);
+						ov_string_print(&singleVecEntry, "%" OV_PRINT_UINT, Variable.value.valueunion.val_uint_vec.value[i]);
 						ov_string_append(&LoopEntryValue, singleVecEntry);
 						kshttp_response_part_finalize(&LoopEntryValue, request.response_format, "uint");
 					}

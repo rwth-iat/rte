@@ -41,6 +41,7 @@
 
 #include "config.h"
 #include "base64_encode.h"
+#include <errno.h>
 
 /*******************************************************************************************************************************************************************************
  * 				Channel-handling
@@ -262,7 +263,7 @@ OV_RESULT kshttp_generateAndSendHttpMessage(
 	}
 	ov_string_print(&RequestAdditionalHeaders, "%sConnection: close\r\nUser-Agent: ACPLT/OV HTTP Client %s (compiled %s %s)\r\n", RequestAdditionalHeaders, OV_LIBRARY_DEF_kshttp.version, __TIME__, __DATE__);
 	if(contentLength != 0 && messageBody){
-		ov_string_print(&RequestAdditionalHeaders, "%sContent-Length: %u\r\n", RequestAdditionalHeaders, contentLength);
+		ov_string_print(&RequestAdditionalHeaders, "%sContent-Length: %" OV_PRINT_UINT "\r\n", RequestAdditionalHeaders, contentLength);
 	}
 	if(ov_string_compare(username, NULL) != OV_STRCMP_EQUAL || ov_string_compare(password, NULL) != OV_STRCMP_EQUAL || usernameProvided){
 		//concat username and password, both are valid to be NULL
@@ -331,6 +332,8 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESP
 	OV_UINT allheaderscount = 0;
 	OV_UINT len = 0, i = 0;
 	OV_BYTE *endOfHeader = NULL;
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	if(*httpParseStatus == HTTP_MSG_NEW){
 		endOfHeader = kshttp_strnstr(dataReceived->data, "\r\n\r\n", dataReceived->length);
@@ -367,7 +370,18 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESP
 			return OV_ERR_BADPARAM; //400
 		}
 		ov_string_setvalue(&responseStruct->httpVersion, plist[0]);
-		responseStruct->statusCode = atoi(plist[1]);
+		tempulong = strtoul(plist[1], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != plist[1])
+		{
+			responseStruct->statusCode = (OV_UINT)tempulong;
+		}else{
+			*httpParseStatus = HTTP_MSG_DENIED;
+			ov_string_freelist(pallheaderslist);
+			ov_string_freelist(plist);
+			return OV_ERR_BADPARAM; //400
+		}
 
 		//check all other headers
 		responseStruct->transferEncodingChunked = FALSE;
@@ -381,7 +395,13 @@ OV_RESULT kshttp_processServerReplyHeader(KS_DATAPACKET* dataReceived, HTTP_RESP
 					plist = ov_string_split(pallheaderslist[i], "content-length: ", &len);
 				}
 				if(len == 2){
-					responseStruct->contentLength = atoi(plist[1]);
+					tempulong = strtoul(plist[1], &endPtr, 10);
+					if (ERANGE != errno &&
+						tempulong < OV_VL_MAXUINT &&
+						endPtr != plist[1])
+					{
+						responseStruct->contentLength = (OV_UINT)tempulong;
+					}
 				}
 			}else if(ov_string_match(pallheaderslist[i], "content-type:*") == TRUE){
 				ov_string_freelist(plist);

@@ -37,6 +37,7 @@
  ***********************************************************************/
 
 #include "config.h"
+#include <errno.h>
 
 #define EXEC_REGISTER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&servername, NULL);\
@@ -59,9 +60,11 @@ OV_RESULT kshttp_exec_register(const HTTP_REQUEST request, HTTP_RESPONSE *respon
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
 	OV_STRING servername = NULL;
-	OV_UINT serverversion;
+	OV_UINT serverversion = 2;
 	OV_UINT serverport;
 	OV_STRING portstr = NULL;
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -85,15 +88,35 @@ OV_RESULT kshttp_exec_register(const HTTP_REQUEST request, HTTP_RESPONSE *respon
 		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable port not found");
 		EXEC_REGISTER_RETURN fr; //400
 	}else{
-		serverport = atoi(match.value[0]);
+		tempulong = strtoul(match.value[0], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != match.value[0]){
+			serverport = (OV_UINT)tempulong;
+		}else{
+			fr = OV_ERR_BADPARAM;
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable port not valid");
+			EXEC_REGISTER_RETURN fr; //400
+		}
 	}
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	kshttp_find_arguments(&request.urlQuery, "version", &match);
-	if(match.veclen<1 || match.value[0] == NULL){
-		serverversion = 2;
+	if(match.veclen>0){
+		tempulong = strtoul(match.value[0], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != match.value[0]){
+			serverversion = (OV_UINT)tempulong;
+		}else{
+			fr = OV_ERR_BADPARAM;
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable version not valid");
+			EXEC_REGISTER_RETURN fr; //400
+		}
 	}else{
-		serverversion = atoi(match.value[0]);
+		fr = OV_ERR_BADPARAM;
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable version not found");
+		EXEC_REGISTER_RETURN fr; //400
 	}
 
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));

@@ -37,6 +37,7 @@
  ***********************************************************************/
 
 #include "config.h"
+#include <errno.h>
 
 #define EXEC_UNREGISTER_RETURN	Ov_SetDynamicVectorLength(&match,0,STRING);\
 		ov_string_setvalue(&servername, NULL);\
@@ -58,7 +59,9 @@ OV_RESULT kshttp_exec_unregister(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 	OV_STRING_VEC match = {0,NULL};
 	OV_RESULT fr = OV_ERR_OK;
 	OV_STRING servername = NULL;
-	OV_UINT serverversion;
+	OV_UINT serverversion = 2;
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	//process name
 	Ov_SetDynamicVectorLength(&match,0,STRING);
@@ -77,10 +80,21 @@ OV_RESULT kshttp_exec_unregister(const HTTP_REQUEST request, HTTP_RESPONSE *resp
 	//process ksversion
 	Ov_SetDynamicVectorLength(&match,0,STRING);
 	kshttp_find_arguments(&request.urlQuery, "version", &match);
-	if(match.veclen<1 || match.value[0] == NULL){
-		serverversion = 2;
+	if(match.veclen>0){
+		tempulong = strtoul(match.value[0], &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < OV_VL_MAXUINT &&
+			endPtr != match.value[0]){
+			serverversion = (OV_UINT)tempulong;
+		}else{
+			fr = OV_ERR_BADPARAM;
+			kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable version not valid");
+			EXEC_UNREGISTER_RETURN fr; //400
+		}
 	}else{
-		serverversion = atoi(match.value[0]);
+		fr = OV_ERR_BADPARAM;
+		kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Variable version not found");
+		EXEC_UNREGISTER_RETURN fr; //400
 	}
 
 	pManager = Ov_StaticPtrCast(ksbase_Manager, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_Manager));
