@@ -262,8 +262,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
 					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
-				}else if (((LONG_MIN == tempLong || LONG_MAX == tempLong) && ERANGE == errno) ||
-					tempLong > OV_VL_MAXINT || tempLong < OV_VL_MININT) {
+				}else if (ERANGE == errno || tempLong > OV_VL_MAXINT || tempLong < OV_VL_MININT) {
 					//not in range
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in INT range");
@@ -280,8 +279,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not a number");
 					ov_memstack_unlock();
 					EXEC_SETVAR_RETURN fr;
-				}else if (((ULONG_MAX == tempUlong) && ERANGE == errno) ||
-						tempUlong > OV_VL_MAXUINT) {
+				}else if (ERANGE == errno || tempUlong > OV_VL_MAXUINT) {
 					//not in range
 					fr = OV_ERR_BADPARAM;
 					kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in UINT range");
@@ -435,8 +433,7 @@ OV_RESULT kshttp_exec_setvar(const HTTP_REQUEST request, HTTP_RESPONSE *response
 						ov_string_freelist(pArgumentList);
 						ov_memstack_unlock();
 						EXEC_SETVAR_RETURN fr;
-					}else if (((LONG_MIN == tempLong || LONG_MAX == tempLong) && ERANGE == errno) ||
-						tempLong > OV_VL_MAXINT || tempLong < OV_VL_MININT) {
+					}else if (ERANGE == errno || tempLong > OV_VL_MAXINT || tempLong < OV_VL_MININT) {
 						//not in range
 						fr = OV_ERR_BADPARAM;
 						kshttp_print_result_array(&response->contentString, request.response_format, &fr, 1, ": Input not in INT range");
