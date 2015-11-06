@@ -269,11 +269,22 @@
 						<input type="button" value="Initialising HMI..." id="idShowServers" tabindex="1" disabled="disabled"/>
 					</td>
 					<td>
-						<svg:svg id="idThrobber" width="16" height="16" viewBox="0 0 300 300" xmlns:svg="http://www.w3.org/2000/svg">
-							<svg:path d="M 150,0 a 150,150 0 0,1 106.066,256.066 l -35.355,-35.355 a -100,-100 0 0,0 -70.711,-170.711 z" fill="#00549f">
-								<svg:animateTransform attributeName="transform" attributeType="XML" type="rotate" from="0 150 150" to="360 150 150" begin="0s" dur="1s" fill="freeze" repeatCount="indefinite"/>
-							</svg:path>
-						</svg:svg>
+						<style type="text/css">
+						#idThrobber {
+							box-sizing: border-box;
+							width: 16px;
+							height: 16px;
+							border: 4px rgba(0, 0, 0, 0.25) solid;
+							border-top: 4px #00549f solid;
+							border-radius: 50%;
+							animation: rotateThrobber .6s infinite linear; /* not important enough for old browsers prefixes */
+						}
+						@keyframes rotateThrobber {
+							from { transform: rotate(0deg); }
+							to { transform: rotate(359deg); }
+						}
+						</style>
+						<div id="idThrobber"></div>
 <!--
 						<input type="button" id="idRefresh" value="Refresh Sheet Now"/>
 						<input type="button" id="idStopRefresh" value="Stop Autorefresh"/>
