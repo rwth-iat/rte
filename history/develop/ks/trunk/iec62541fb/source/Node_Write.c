@@ -43,7 +43,7 @@
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
-
+#include "errno.h"
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Variable_set(
 		OV_INSTPTR_iec62541fb_Write          pobj,
@@ -76,6 +76,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	UA_WriteResponse WriteResponse;
 	UA_String tempString;
 	UA_DateTime *tempTime;
+	char *endPtr = NULL;
+	unsigned long int tempulong = 0;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -121,6 +123,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
 		WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
+		tempulong = strtoul(pNodeGetHandle->v_NodeID.Identifier, &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < UINT16_MAX &&
+			endPtr != pNodeGetHandle->v_NodeID.Identifier)
+		{
+			WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, (UA_UInt16)tempulong);
+		}
 		WriteRequest.nodesToWrite[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
 //	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
 		//todo

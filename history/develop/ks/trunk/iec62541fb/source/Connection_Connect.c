@@ -153,7 +153,7 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_typemethod(
 		//internal error
 		return;
 	}
-
+	//will be UA_Client_manuallyRenewSecureChannel in a new release
 	UA_Client_renewSecureChannel(pinst->v_Client);
 
 	return;

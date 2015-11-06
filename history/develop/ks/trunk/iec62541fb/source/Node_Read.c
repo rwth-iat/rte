@@ -43,6 +43,7 @@
 #include "iec62541fb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
+#include "errno.h"
 
 
 OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
@@ -53,6 +54,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
 	UA_ReadRequest ReadRequest;
 	UA_ReadResponse ReadResponse;
+	unsigned long int tempulong = 0;
+	char *endPtr = NULL;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -105,7 +108,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Read_Execute_set(
 	if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_STRING){
 		ReadRequest.nodesToRead[0].nodeId = UA_NODEID_STRING_ALLOC(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
 	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_NUMERIC){
-		ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, atoi(pNodeGetHandle->v_NodeID.Identifier));
+		tempulong = strtoul(pNodeGetHandle->v_NodeID.Identifier, &endPtr, 10);
+		if (ERANGE != errno &&
+			tempulong < UINT16_MAX &&
+			endPtr != pNodeGetHandle->v_NodeID.Identifier)
+		{
+			ReadRequest.nodesToRead[0].nodeId = UA_NODEID_NUMERIC(pNodeGetHandle->v_NodeID.NamespaceIndex, (UA_UInt16)tempulong);
+		}
 //	}else if(pNodeGetHandle->v_NodeID.IdentifierType == UA_IDTYPE_GUID){
 		//todo
 		//ReadRequest.nodesToRead[0].nodeId = UA_NODEID_GUID(pNodeGetHandle->v_NodeID.NamespaceIndex, pNodeGetHandle->v_NodeID.Identifier);
