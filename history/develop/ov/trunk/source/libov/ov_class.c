@@ -740,6 +740,9 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	OV_BOOL					rename;
 	OV_STRING				newid;
 	OV_VTBLPTR_ov_object	pvtable;
+	OV_UINT					tempHierarchyDepth	=	0;
+	OV_UINT					hierarchyLevel	=	1;
+	OV_INSTPTR_ov_domain	pParentObject	=	NULL;
 	/*
 	*	check parameters
 	*/
@@ -793,6 +796,20 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 		) {
 			if(pcurrobj == pobj) {
 				return OV_ERR_CANTMOVE;
+			}
+		}
+		/*
+		 * 	check hierarchy levels
+		 */
+		tempHierarchyDepth = ov_vendortree_MaxHierarchyDepth();
+		if(tempHierarchyDepth){
+			pParentObject = (pparent->v_pouterobject ? pparent->v_pouterobject : Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pparent)));
+			while(pParentObject){
+				hierarchyLevel++;
+				pParentObject = (pParentObject->v_pouterobject ? pParentObject->v_pouterobject : Ov_PtrUpCast(ov_object, Ov_GetParent(ov_containment, pParentObject)));
+			}
+			if(hierarchyLevel > tempHierarchyDepth){
+				return OV_ERR_BADPLACEMENT;
 			}
 		}
 	}
