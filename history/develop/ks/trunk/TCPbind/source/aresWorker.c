@@ -35,8 +35,6 @@
 #include <windows.h>
 #elif OV_SYSTEM_UNIX
 #include <pthread.h>
-/* Note scope of variable and mutex are the same */
-pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
 #endif
 static struct getAddrInfoElemList elemList;
 
@@ -71,13 +69,7 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 	/*	last element is never deleted, so the pointer is always valid	*/
 	pNewElem->pPrevious = elemList.pLastElem;
 	/*	insert Element -> this is the only atomic action	*/
-#if OV_SYSTEM_NT
-	InterlockedExchangePointer(&(elemList.pLastElem->pNext), pNewElem);
-#elif OV_SYSTEM_UNIX
-	pthread_mutex_lock( &mutex1 );
 	elemList.pLastElem->pNext = pNewElem;
-	pthread_mutex_unlock( &mutex1 );
-#endif
 	/*	this one does not need to be atomic, as no other thread touches this value	*/
 	elemList.pLastElem = pNewElem;
 	return pNewElem;
@@ -88,14 +80,7 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 OV_DLLFNCEXPORT void TCPbind_aresWorker_delGetAddrInfoElem(
 		getAddrInfoElem *elem
 ) {
-#if OV_SYSTEM_NT
-	LONG statusOld;
-	statusOld =  InterlockedExchange(&(elem->delete), AIEDELETE_DO);
-#elif OV_SYSTEM_UNIX
-	pthread_mutex_lock( &mutex1 );
-	elem->delete = AIEDELETE_DO;
-	pthread_mutex_unlock( &mutex1 );
-#endif
+	elem->delete = AIEDELETE_DO;	//	a simple set is atomic
 	return;
 }
 
@@ -163,25 +148,19 @@ void* workerThread( void* lpParam ){
 				/*	get the next element	*/
 				pNextElem = pCurrElem->pNext;
 				/*	check if getAddrInfo is to be done, if so, do it	*/
-#if OV_SYSTEM_UNIX
-				pthread_mutex_lock( &mutex1 );
 				statusOld = pCurrElem->status;
 				if(statusOld == AIESTATUS_WAITING){
 					pCurrElem->status = AIESTATUS_WORKING;
 				}
-				pthread_mutex_unlock( &mutex1 );
-#else
-				statusOld =  InterlockedCompareExchange( &(pCurrElem->status), AIESTATUS_WORKING, AIESTATUS_WAITING);
-#endif
 				if(statusOld == AIESTATUS_WAITING){
 					//resolve address
-					KS_logfile_warning(("aresWorkerThread: issuing getaddrinfo"));
+					KS_logfile_debug(("aresWorkerThread: issuing getaddrinfo"));
 					pCurrElem->result = getaddrinfo(pCurrElem->host, pCurrElem->port, &(pCurrElem->hints), &(pCurrElem->addrInfo));
 					if (pCurrElem->result != 0)
 					{
 						KS_logfile_error(("aresWorkerThread: getaddrinfo failed"));
 					}
-					KS_logfile_warning(("aresWorkerThread: getaddrinfo done"));
+					KS_logfile_debug(("aresWorkerThread: getaddrinfo done"));
 #if OV_SYSTEM_NT
 					//opt in for faster localhost connections on new windows hosts. This has to be before connect
 					//old includes does not have this new define
@@ -212,13 +191,7 @@ void* workerThread( void* lpParam ){
 					//free structures
 					freeaddrinfo(pCurrElem->addrInfo);
 					pCurrElem->addrInfo = NULL;
-#if OV_SYSTEM_UNIX
-					pthread_mutex_lock( &mutex1 );
-					pCurrElem->status = AIESTATUS_DONE;
-					pthread_mutex_unlock( &mutex1 );
-#else
-					InterlockedExchange(&(pCurrElem->status), AIESTATUS_DONE);
-#endif
+					pCurrElem->status = AIESTATUS_DONE;	//	a simple set is atomic
 				}
 				/*	check if current element should be deleted	*/
 				if(pCurrElem->delete == AIEDELETE_DO){
@@ -255,7 +228,7 @@ void* workerThread( void* lpParam ){
 	pthread_cleanup_pop(1);
 #endif
 #endif
-	return NULL;
+	return 0;
 }
 #endif
 

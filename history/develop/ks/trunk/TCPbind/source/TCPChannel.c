@@ -728,10 +728,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	hints.ai_socktype = SOCK_STREAM;
 	KS_logfile_debug(("file %s\nline %u:\tbefore ifdef", __FILE__, __LINE__));
 #if OV_SYSTEM_NT || OV_SYSTEM_UNIX
-	KS_logfile_warning(("%s: inserting getaddrinfo-item", this->v_identifier));
+	KS_logfile_debug(("%s: inserting work-item", this->v_identifier));
 	thisTCPCh->v_addrInfoReq = TCPbind_aresWorker_insertGetAddrInfo(host, port, &(hints));
 	if(!thisTCPCh->v_addrInfoReq){
-		KS_logfile_error(("%s: could not insert getaddrinfo item", this->v_identifier));
+		KS_logfile_error(("%s: could not insert work item", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}

@@ -46,14 +46,15 @@ typedef struct getAddrInfoElem{
 #if OV_SYSTEM_NT
 	LONG status;
 	LONG delete;
+	unsigned int socket;
 #elif OV_SYSTEM_UNIX
 	unsigned int status;
 	unsigned int delete;
+	int socket;
 #endif
 	OV_STRING host;
 	OV_STRING port;
 	int	result;
-	int socket;
 	struct addrinfo hints;
 	struct addrinfo *addrInfo;
 	struct getAddrInfoElem *pPrevious;
