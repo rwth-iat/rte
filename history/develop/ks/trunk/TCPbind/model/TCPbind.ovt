@@ -11,6 +11,9 @@
 #include <ws2tcpip.h>
 #endif
 
+#if OV_SYSTEM_UNIX
+#include <pthread.h>
+#endif
 /* 
 	Define your data types here. 
 */
@@ -21,7 +24,7 @@ typedef struct addrinfo OV_addrinfo;
 #if OV_SYSTEM_NT
 typedef HANDLE TCPB_THREADHANDLE;
 #elif OV_SYSTEM_UNIX
-
+typedef pthread_t TCPB_THREADHANDLE;
 #else
 typedef OV_INT TCPB_THREADHANDLE;	
 #endif
@@ -44,12 +47,15 @@ typedef struct getAddrInfoElem{
 	LONG status;
 	LONG delete;
 #elif OV_SYSTEM_UNIX
-	
+	unsigned int status;
+	unsigned int delete;
 #endif
 	OV_STRING host;
 	OV_STRING port;
+	int	result;
+	int socket;
 	struct addrinfo hints;
-	struct addrinfo **addrInfo;
+	struct addrinfo *addrInfo;
 	struct getAddrInfoElem *pPrevious;
 	struct getAddrInfoElem *pNext;
 }getAddrInfoElem, *pGetAddrInfoElem;

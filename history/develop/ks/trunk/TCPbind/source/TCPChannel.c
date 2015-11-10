@@ -20,6 +20,7 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
+
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
@@ -103,89 +104,60 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_socket_set(
 OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 		OV_INSTPTR_TCPbind_TCPChannel thisTCPCh
 ) {
-	struct addrinfo *walk;
 	struct sockaddr_storage sa_stor;
 	socklen_t sas = sizeof(sa_stor);
 	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
 	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
 	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
 	int opt_on = 1;
-	TCPBIND_SOCKET sockfd = TCPBIND_INVALID_SOCKET;
-#if OV_SYSTEM_NT
-	DWORD NumberOfBytesReturned = 0;	//used for SIO_LOOPBACK_FAST_PATH
-#endif
 
 	KS_logfile_debug(("file %s\nline %u:\tentering OpenConnection_afterAddrinfo", __FILE__, __LINE__));
 
-#if OV_SYSTEM_NT
-	//opt in for faster localhost connections on new windows hosts. This has to be before connect
-//old includes does not have this new define
-#ifndef SIO_LOOPBACK_FAST_PATH
-#define SIO_LOOPBACK_FAST_PATH 0x98000010
-#endif
-	//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
-	(void)WSAIoctl(sockfd, SIO_LOOPBACK_FAST_PATH, &opt_on, sizeof(opt_on), NULL, 0, &NumberOfBytesReturned, 0, 0);
-#endif
 
-	for (walk = thisTCPCh->v_addrInfo; walk != NULL; walk = walk->ai_next) {
-		KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
-		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-		if (sockfd == TCPBIND_INVALID_SOCKET){
-			KS_logfile_debug(("%s: address not usable", thisTCPCh->v_identifier));
-			continue;
+	if(thisTCPCh->v_addrInfoReq){
+		if (thisTCPCh->v_addrInfoReq->socket == TCPBIND_INVALID_SOCKET)
+		{
+			KS_logfile_info(("%s: could not establish connection", thisTCPCh->v_identifier));
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
+			thisTCPCh->v_addrInfoReq = NULL;
+			return OV_ERR_GENERIC;
 		}
-		KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
-		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
-			TCPBIND_CLOSE_SOCKET(sockfd);
-			sockfd = TCPBIND_INVALID_SOCKET;
-			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
-			continue;
-		}
-		break;
-	}
+		TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
 
-	//free structures
-	freeaddrinfo(thisTCPCh->v_addrInfo);
-	if(thisTCPCh->v_addrInfoReq){
-		TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);
-	}
-	thisTCPCh->v_addrInfo = NULL;
-	if(thisTCPCh->v_addrInfoReq){
+		//resolve connected peer
+		if(getpeername(thisTCPCh->v_addrInfoReq->socket, sa, &sas) == TCPBIND_SOCKET_ERROR)
+		{
+			KS_logfile_error(("%s: could not resolve connected peer", thisTCPCh->v_identifier));
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
+			thisTCPCh->v_addrInfoReq = NULL;
+			return OV_ERR_GENERIC;
+		}
+
+		// resolve peername
+		if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags) != 0)
+		{
+			KS_logfile_error(("%s: could not resolve connected peer's address", thisTCPCh->v_identifier));
+			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+			TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
+			thisTCPCh->v_addrInfoReq = NULL;
+			return OV_ERR_GENERIC;
+		}
+
+		ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+		TCPbind_TCPChannel_socket_set(thisTCPCh, thisTCPCh->v_addrInfoReq->socket);
+
+		KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, thisTCPCh->v_address));
+		//set time of Opening the Connection
+		ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
+
+		//disable nagle for the receivesocket
+		(void)setsockopt(thisTCPCh->v_addrInfoReq->socket, IPPROTO_TCP, TCP_NODELAY, (char *)&opt_on, sizeof(opt_on));
+		TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);	//	deletion is scheduled, not done yet
 		thisTCPCh->v_addrInfoReq = NULL;
 	}
-	if (sockfd == TCPBIND_INVALID_SOCKET)
-	{
-		KS_logfile_info(("%s: could not establish connection", thisTCPCh->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	//resolve connected peer
-	if(getpeername(sockfd, sa, &sas) == TCPBIND_SOCKET_ERROR)
-	{
-		KS_logfile_error(("%s: could not resolve connected peer", thisTCPCh->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	// resolve peername
-	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags) != 0)
-	{
-		KS_logfile_error(("%s: could not resolve connected peer's address", thisTCPCh->v_identifier));
-		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-		return OV_ERR_GENERIC;
-	}
-
-	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
-	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
-	TCPbind_TCPChannel_socket_set(thisTCPCh, sockfd);
-
-	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, thisTCPCh->v_address));
-	//set time of Opening the Connection
-	ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
-
-	//disable nagle for the receivesocket
-	(void)setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char *)&opt_on, sizeof(opt_on));
 	return OV_ERR_OK;
 }
 
@@ -310,7 +282,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_startup(
 	}
 	if(this->v_actimode == 1)
 		this->v_actimode = 0;
-	this->v_addrInfo = NULL;
 	this->v_addrInfoReq = NULL;
 	//set time of creation of the connection
 	ov_time_gettime(&(Ov_StaticPtrCast(TCPbind_TCPChannel, pobj)->v_LastReceiveTime));
@@ -407,15 +378,18 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	if(RCTask)
 		Ov_Link(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
 
+#if OV_SYSTEM_NT || OV_SYSTEM_UNIX
 	/*	check connection state and set as open if needed	*/
 	if (thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
+		/*	this is an aligned variable. access should be atomic and even if not, we have no problem here as the set is atomic	*/
 		if(thisCh->v_addrInfoReq->status == AIESTATUS_DONE){
-			if(Ov_Fail(TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh))){
+			if(thisCh->v_addrInfoReq->result || Ov_Fail(TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh))){
 				thisCh->v_actimode = 0;
 				return;
 			}
 		}
 	}
+#endif
 
 	/***********************************************************************************************************************************************************************************
 	 *	Handle incoming data
@@ -754,7 +728,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	hints.ai_socktype = SOCK_STREAM;
 	KS_logfile_debug(("file %s\nline %u:\tbefore ifdef", __FILE__, __LINE__));
 #if OV_SYSTEM_NT || OV_SYSTEM_UNIX
-	thisTCPCh->v_addrInfoReq = TCPbind_aresWorker_insertGetAddrInfo(host, port, &(hints), &(thisTCPCh->v_addrInfo));
+	KS_logfile_warning(("%s: inserting getaddrinfo-item", this->v_identifier));
+	thisTCPCh->v_addrInfoReq = TCPbind_aresWorker_insertGetAddrInfo(host, port, &(hints));
 	if(!thisTCPCh->v_addrInfoReq){
 		KS_logfile_error(("%s: could not insert getaddrinfo item", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
@@ -764,6 +739,7 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	thisTCPCh->v_actimode = 1;
 	return OV_ERR_OK;
 #else
+	KS_logfile_warning(("%s: using blocking getaddrinfo", this->v_identifier));
 	//resolve address
 	if ((ret = getaddrinfo(host, port, &(hints), &(thisTCPCh->v_addrInfo))) != 0)
 	{

@@ -175,7 +175,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		KS_logfile_info(("TCPbind library open: listening on port %d", pListener->v_port));
 
 	}
-
+#if OV_SYSTEM_NT || OV_SYSTEM_UNIX
 	pNewAresWorker = Ov_StaticPtrCast(TCPbind_aresWorker, Ov_SearchChild(ov_containment, pTCPbindDom, "aresWorker"));
 	if(pNewAresWorker)
 		Ov_DeleteObject(pNewAresWorker);
@@ -187,7 +187,7 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		ov_memstack_unlock();
 		return result;
 	}
-
+#endif
 	ov_memstack_unlock();
 
 	KS_logfile_debug(("leaving TCPbind_open"));

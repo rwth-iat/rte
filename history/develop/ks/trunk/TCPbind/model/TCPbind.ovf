@@ -16,8 +16,7 @@ typedef OV_DLLFNCEXPORT OV_RESULT TCPBIND_FNC_ASSOCIATECLIENTHANDLER(
 typedef OV_DLLFNCEXPORT getAddrInfoElem *TCPBIND_ADDGETADDRINFO(
 	OV_STRING host,
 	OV_STRING port,
-	struct addrinfo *hints,
-	struct addrinfo **addrInfo
+	struct addrinfo *hints
 );
 
 typedef OV_DLLFNCEXPORT void TCPBIND_DELGETADDRINFO(
