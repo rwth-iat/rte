@@ -271,7 +271,7 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_startup(
 	}
 #elif OV_SYSTEM_UNIX
 	runWorkerThread = 1;
-	KS_logfile_warning(("%s: creating worker thread", pinst->v_identifier));
+	KS_logfile_debug(("%s: creating worker thread", pinst->v_identifier));
 	iret = pthread_create( &(pinst->v_threadHandle), NULL,  workerThread, (void*) NULL);
 	if(iret){
 		KS_logfile_error(("%s: creation of worker thread failed", pinst->v_identifier));
@@ -297,7 +297,7 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_shutdown(
 	/*	yes, here it waits until the thread is through....	*/
 	InterlockedExchange(&(runWorkerThread), 0);
 	if(WaitForSingleObject(pinst->v_threadHandle, 5000) != WAIT_OBJECT_0){
-		KS_logfile_warning(("%s: getaddrinfo thread did not terminate correctly and in time. some memory might be lost."));
+		KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost."));
 	}
 #elif OV_SYSTEM_UNIX
 	/*	we can leave out the atomic one here since it should be an atomic set anyways	*/
