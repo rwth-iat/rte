@@ -2,9 +2,6 @@
 #define TCPbind_OVT_INCLUDED
 
 #if !OV_SYSTEM_NT
-#if TCPBIND_USE_NONBLOCK_ADDRINFO
-#define _GNU_SOURCE         /* See feature_test_macros(7) */
-#endif
 #include <netdb.h>
 #include <sys/socket.h>
 #else
@@ -20,5 +17,46 @@
 
 typedef struct addrinfo *OV_addrinfoPointer;
 typedef struct addrinfo OV_addrinfo;
+
+#if OV_SYSTEM_NT
+typedef HANDLE TCPB_THREADHANDLE;
+#elif OV_SYSTEM_UNIX
+
+#else
+typedef OV_INT TCPB_THREADHANDLE;	
+#endif
+
+
+enum getAddrInfoElemStatus {
+	AIESTATUS_WAITING	=	0,
+	AIESTATUS_WORKING,
+	AIESTATUS_DONE,
+	AIESTATUS_DELETESCHEDULED
+};
+
+enum getAddrInfoElemDelete {
+	AIEDELETE_NO	=	0,
+	AIEDELETE_DO
+};
+
+typedef struct getAddrInfoElem{
+#if OV_SYSTEM_NT
+	LONG status;
+	LONG delete;
+#elif OV_SYSTEM_UNIX
+	
+#endif
+	OV_STRING host;
+	OV_STRING port;
+	struct addrinfo hints;
+	struct addrinfo **addrInfo;
+	struct getAddrInfoElem *pPrevious;
+	struct getAddrInfoElem *pNext;
+}getAddrInfoElem, *pGetAddrInfoElem;
+
+typedef struct getAddrInfoElemList{
+	struct getAddrInfoElem *pFirstElem;
+	struct getAddrInfoElem *pLastElem;
+}getAddrInfoElemList;
 
 #endif

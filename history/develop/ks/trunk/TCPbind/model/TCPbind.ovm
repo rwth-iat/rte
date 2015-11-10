@@ -22,10 +22,8 @@ LIBRARY TCPbind
 				INITIALVALUE	=	-1;
 			addrInfo	:	C_TYPE	<OV_addrinfoPointer>
 				COMMENT	=	"Pointer to addressinfo structure";
-			hints	:	C_TYPE	<OV_addrinfo>
-				COMMENT	=	"addressinfo structure to specify socket to be opened";
-			addrInfoReq	:	C_TYPE	<OV_POINTER>
-				COMMENT	=	"Pointer to addressinfo request structure - only used ";
+			addrInfoReq	:	C_TYPE	<pGetAddrInfoElem>
+				COMMENT	=	"Pointer to getAddrInfoElem structure";
 		END_VARIABLES;
 		OPERATIONS
 			//real sending of data
@@ -39,6 +37,26 @@ LIBRARY TCPbind
 			OpenConnection	:	C_FUNCTION	<KSBASE_FNC_OPENCONN>;
 			CloseConnection	:	C_FUNCTION	<KSBASE_FNC_CLOSECONN>;
 			AssociateClientHandler	:	C_FUNCTION	<TCPBIND_FNC_ASSOCIATECLIENTHANDLER>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	/**
+	*	
+	*/
+	CLASS aresWorker : CLASS ksbase/ComTask
+		IS_INSTANTIABLE;
+		FLAGS	=	"v";
+		VARIABLES
+			threadHandle	:	C_TYPE	<TCPB_THREADHANDLE>
+				COMMENT	=	"Handle to getAddrInfoThread";
+		END_VARIABLES;
+		OPERATIONS
+			constructor	:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;
+			startup		:	C_FUNCTION	<OV_FNC_STARTUP>;
+			shutdown	:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+			typemethod	:	C_FUNCTION	<KSBASE_FNC_TYPEMETHOD>;
+			insertGetAddrInfo	:	C_FUNCTION	<TCPBIND_ADDGETADDRINFO>;
+			delGetAddrInfoElem	:	C_FUNCTION	<TCPBIND_DELGETADDRINFO>;
 		END_OPERATIONS;
 	END_CLASS;
 	

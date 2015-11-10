@@ -56,7 +56,9 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pTCPbindDom = NULL;
 	OV_ANY tempAny = {{0,{0}}, 0, {0,0}};
-
+#if OV_SYSTEM_NT || OV_SYSTEM_UNIX
+	OV_INSTPTR_TCPbind_aresWorker pNewAresWorker = NULL;
+#endif
 
 	/*
 	 * set the global variables of the original version
@@ -173,6 +175,19 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 		KS_logfile_info(("TCPbind library open: listening on port %d", pListener->v_port));
 
 	}
+
+	pNewAresWorker = Ov_StaticPtrCast(TCPbind_aresWorker, Ov_SearchChild(ov_containment, pTCPbindDom, "aresWorker"));
+	if(pNewAresWorker)
+		Ov_DeleteObject(pNewAresWorker);
+
+	result = Ov_CreateObject(TCPbind_aresWorker, pNewAresWorker, pTCPbindDom, "aresWorker");
+	if(Ov_Fail(result))
+	{
+		KS_logfile_error(("TCPbind library open: could not create aresWorker"));
+		ov_memstack_unlock();
+		return result;
+	}
+
 	ov_memstack_unlock();
 
 	KS_logfile_debug(("leaving TCPbind_open"));

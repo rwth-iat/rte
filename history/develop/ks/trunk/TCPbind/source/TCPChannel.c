@@ -20,11 +20,6 @@
 #define OV_COMPILE_LIBRARY_TCPbind
 #endif
 
-#if TCPBIND_USE_NONBLOCK_ADDRINFO
-#define _GNU_SOURCE         /* See feature_test_macros(7) */
-#include <netdb.h>
-#endif
-
 #include "TCPbind.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_malloc.h"
@@ -121,10 +116,6 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 #endif
 
 	KS_logfile_debug(("file %s\nline %u:\tentering OpenConnection_afterAddrinfo", __FILE__, __LINE__));
-	//check addresses (if there are several ones) and connect
-#ifdef _GNU_SOURCE
-	thisTCPCh->v_addrInfo = ((struct gaicb*)thisTCPCh->v_addrInfoReq)->ar_result;
-#endif
 
 #if OV_SYSTEM_NT
 	//opt in for faster localhost connections on new windows hosts. This has to be before connect
@@ -155,9 +146,11 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection_afterAddrinfo(
 
 	//free structures
 	freeaddrinfo(thisTCPCh->v_addrInfo);
+	if(thisTCPCh->v_addrInfoReq){
+		TCPbind_aresWorker_delGetAddrInfoElem(thisTCPCh->v_addrInfoReq);
+	}
 	thisTCPCh->v_addrInfo = NULL;
 	if(thisTCPCh->v_addrInfoReq){
-		ov_free(thisTCPCh->v_addrInfoReq);
 		thisTCPCh->v_addrInfoReq = NULL;
 	}
 	if (sockfd == TCPBIND_INVALID_SOCKET)
@@ -220,33 +213,10 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_SendData(
 	ssize_t sentChunkSize;
 #endif
 	OV_UINT sendlength = 0;
-#ifdef _GNU_SOURCE
-	OV_INT	gaiRes = 0;
-	OV_RESULT result;
-#endif
 
 	if(thisCh->v_outData.length)	//check if there is data to send
 	{
-		if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
-#ifdef _GNU_SOURCE
-			if(thisCh->v_addrInfoReq){
-				gaiRes = gai_error((struct gaicb*)thisCh->v_addrInfoReq);
-				if(gaiRes == EAI_INPROGRESS){
-					thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
-				} else if(gaiRes != 0){
-					KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
-					thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-					return OV_ERR_GENERIC;
-				} else {
-					result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh);
-					if(Ov_Fail(result)){
-						return result;
-					}
-				}
-
-			}
-#endif
-		} else {
+		if(thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN){
 			if(!thisCh->v_outData.readPT)
 				thisCh->v_outData.readPT = thisCh->v_outData.data;
 			socket = TCPbind_TCPChannel_socket_get(thisCh);
@@ -431,15 +401,21 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 	OV_RESULT result;
 	OV_BYTE* tempdata = NULL;
 	OV_BOOL datareceived = FALSE;
-#ifdef _GNU_SOURCE
-	OV_INT gaiRes = 0;
-#endif
-
 	OV_INSTPTR_ksbase_RootComTask RCTask = NULL;
 
 	RCTask = Ov_StaticPtrCast(ksbase_RootComTask, Ov_GetFirstChild(ov_instantiation, pclass_ksbase_RootComTask));
 	if(RCTask)
 		Ov_Link(ksbase_AssocCurrentChannel, RCTask, Ov_StaticPtrCast(ksbase_Channel, thisCh));
+
+	/*	check connection state and set as open if needed	*/
+	if (thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
+		if(thisCh->v_addrInfoReq->status == AIESTATUS_DONE){
+			if(Ov_Fail(TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh))){
+				thisCh->v_actimode = 0;
+				return;
+			}
+		}
+	}
 
 	/***********************************************************************************************************************************************************************************
 	 *	Handle incoming data
@@ -447,27 +423,6 @@ OV_DLLFNCEXPORT void TCPbind_TCPChannel_typemethod (
 
 	intsocket = TCPbind_TCPChannel_socket_get(thisCh);
 	OV_TCPBIND_SETINT2SOCKET(intsocket, socket);
-	if (thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPENING){
-#ifdef _GNU_SOURCE
-		if(thisCh->v_addrInfoReq){
-			gaiRes = gai_error((struct gaicb*)thisCh->v_addrInfoReq);
-			if(gaiRes == EAI_INPROGRESS ){
-				thisCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
-				return;
-			} else if(gaiRes != 0){
-				KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
-				thisCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-				return;
-			} else {
-				result = TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisCh);
-				if(Ov_Fail(result)){
-					return;
-				}
-			}
-
-		}
-#endif
-	}
 	if (socket != TCPBIND_INVALID_SOCKET && thisCh->v_ConnectionState == TCPbind_CONNSTATE_OPEN)		//if socket ok
 	{
 		//receive data in chunks (we dont know how much it will be)
@@ -770,9 +725,8 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenLocalConn(
 }
 
 
-
 /**
- * The TCHChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
+ * The TCPChannel OpenConnection function is used to open a socket to another server. It takes a pointer to the channel itself, and two strings representing the host address and host port.
  * It furthermore takes a pointer to an int used to return the socket selector.
  * This functions is IPv6 compatible.
  * It returns OV_ERR_OK on success.
@@ -783,12 +737,11 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 		OV_STRING host,
 		OV_STRING port
 ) {
+#if !OV_SYSTEM_NT && !OV_SYSTEM_UNIX
 	int ret;
-	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
-#ifdef _GNU_SOURCE
-	struct gaicb *pAddrinfoStruct = NULL;
-	OV_INT	gaiRes;
 #endif
+	struct addrinfo hints;
+	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
 
 	if(!host || !(*host) || !port || !(*port))
 		return OV_ERR_BADPARAM;
@@ -796,58 +749,30 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 	/*	close old connection	*/
 	TCPbind_TCPChannel_CloseConnection(this);
 	//set connection information
-	memset(&(thisTCPCh->v_hints), 0, sizeof(struct addrinfo));
-	thisTCPCh->v_hints.ai_family = PF_UNSPEC;
-	thisTCPCh->v_hints.ai_socktype = SOCK_STREAM;
+	memset(&(hints), 0, sizeof(struct addrinfo));
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
 	KS_logfile_debug(("file %s\nline %u:\tbefore ifdef", __FILE__, __LINE__));
-#ifdef _GNU_SOURCE
-	KS_logfile_debug(("file %s\nline %u:\tallocating addrinfo struct", __FILE__, __LINE__));
-	pAddrinfoStruct = (struct gaicb*)ov_malloc(sizeof(struct gaicb));
-	if(pAddrinfoStruct){
-		if(thisTCPCh->v_addrInfoReq){
-			ov_free(thisTCPCh->v_addrInfoReq);
-			thisTCPCh->v_addrInfoReq = NULL;
-		}
-		KS_logfile_debug(("file %s\nline %u:\tfilling addrinfo struct", __FILE__, __LINE__));
-		thisTCPCh->v_addrInfoReq = pAddrinfoStruct;
-		pAddrinfoStruct->ar_name = host;
-		pAddrinfoStruct->ar_service = port;
-		pAddrinfoStruct->ar_request = &(thisTCPCh->v_hints);
-		pAddrinfoStruct->ar_result = NULL;
-		KS_logfile_debug(("file %s\nline %u:\tissuing getaddrinfo_a", __FILE__, __LINE__));
-
-		if ((ret = getaddrinfo_a(GAI_NOWAIT, ((struct gaicb**) &(thisTCPCh->v_addrInfoReq)), 1, NULL)) != 0)
-		{
-			KS_logfile_error(("%s: getaddrinfo_a failed", this->v_identifier));
-			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-			return OV_ERR_GENERIC;
-		}
-		KS_logfile_debug(("file %s\nline %u:\tchecking for completion", __FILE__, __LINE__));
-		gaiRes = gai_error((struct gaicb*)thisTCPCh->v_addrInfoReq);
-		if(gaiRes == EAI_INPROGRESS ){
-			KS_logfile_debug(("file %s\nline %u:\tgetaddrinfo_a in progress", __FILE__, __LINE__));
-			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
-			thisTCPCh->v_actimode = 1;
-			return OV_ERR_OK;
-		} else if(gaiRes != 0){
-			KS_logfile_error(("%s: getaddrinfo_a failed while running: %s", this->v_identifier, gai_strerror(gaiRes)));
-			thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
-			return OV_ERR_GENERIC;
-		}
-		KS_logfile_debug(("file %s\nline %u:\tgetaddrinfo_a run completely", __FILE__, __LINE__));
-	} else {
-		return OV_ERR_DBOUTOFMEMORY;
+#if OV_SYSTEM_NT || OV_SYSTEM_UNIX
+	thisTCPCh->v_addrInfoReq = TCPbind_aresWorker_insertGetAddrInfo(host, port, &(hints), &(thisTCPCh->v_addrInfo));
+	if(!thisTCPCh->v_addrInfoReq){
+		KS_logfile_error(("%s: could not insert getaddrinfo item", this->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
 	}
+	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPENING;
+	thisTCPCh->v_actimode = 1;
+	return OV_ERR_OK;
 #else
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &(thisTCPCh->v_hints), &(thisTCPCh->v_addrInfo))) != 0)
+	if ((ret = getaddrinfo(host, port, &(hints), &(thisTCPCh->v_addrInfo))) != 0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
-#endif
 	return TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+#endif
 }
 
 
