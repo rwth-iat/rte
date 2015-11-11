@@ -24,6 +24,7 @@
 #define _POSIX_C_SOURCE	199309L
 #include <time.h>
 #include <sys/socket.h>
+#include <unistd.h>
 #endif
 
 #include "TCPbind.h"
