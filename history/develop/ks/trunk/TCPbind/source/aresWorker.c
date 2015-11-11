@@ -60,9 +60,7 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 	pNewElem->hints = *hints;
 	pNewElem->host = calloc(ov_string_getlength(host)+1, sizeof(char));
 	pNewElem->port = calloc(ov_string_getlength(port)+1, sizeof(char));
-	if(!host || !port){
-		return 0;
-	}
+
 	strcpy(pNewElem->host, host);
 	strcpy(pNewElem->port, port);
 	pNewElem->status = AIESTATUS_WAITING;
