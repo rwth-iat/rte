@@ -60,7 +60,13 @@ OV_DLLFNCEXPORT getAddrInfoElem *TCPbind_aresWorker_insertGetAddrInfo(
 
 	pNewElem->hints = *hints;
 	pNewElem->host = calloc(ov_string_getlength(host)+1, sizeof(char));
+	if(!pNewElem->host){
+		return 0;
+	}
 	pNewElem->port = calloc(ov_string_getlength(port)+1, sizeof(char));
+	if(!pNewElem->port){
+		return 0;
+	}
 
 	strcpy(pNewElem->host, host);
 	strcpy(pNewElem->port, port);
@@ -223,9 +229,7 @@ void* workerThread( void* lpParam ){
 #endif
 	}
 #if OV_SYSTEM_UNIX
-#if OV_SYSTEM_UNIX
 	pthread_cleanup_pop(1);
-#endif
 #endif
 	return 0;
 }
