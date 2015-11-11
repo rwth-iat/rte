@@ -742,7 +742,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_class_renameobject(
 	OV_VTBLPTR_ov_object	pvtable;
 	OV_UINT					tempHierarchyDepth	=	0;
 	OV_UINT					hierarchyLevel	=	1;
-	OV_INSTPTR_ov_domain	pParentObject	=	NULL;
+	OV_INSTPTR_ov_object	pParentObject	=	NULL;
 	/*
 	*	check parameters
 	*/
