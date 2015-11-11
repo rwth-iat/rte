@@ -499,7 +499,7 @@ OV_DLLFNCEXPORT OV_RESULT ov_logfile_getmessages(
 		if(times) {
 			*times = NULL;
 		}
-		return;
+		return OV_ERR_OK;
 	}
 
 	/*
