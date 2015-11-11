@@ -1352,9 +1352,9 @@ ERRORMSG:
 			if(tempstr)
 			{
 #if OV_SYSTEM_UNIX
-				sprintf(tempstr, "CONFDIR=./ %s", configBasePath, commandline_options);
+				sprintf(tempstr, "CONFDIR=./ %s", commandline_options);
 #else
-				sprintf(tempstr, "CONFDIR=.\\ %s", configBasePath, commandline_options);
+				sprintf(tempstr, "CONFDIR=.\\ %s", commandline_options);
 #endif
 
 				free(commandline_options);
