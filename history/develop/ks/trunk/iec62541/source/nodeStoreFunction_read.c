@@ -585,7 +585,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_DATATYPE:
 		{
-			UA_NodeId *dataType;
+			UA_NodeId *dataType = NULL;
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -651,7 +651,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_VALUERANK:
 		{
-			UA_Int32 *valueRank;
+			UA_Int32 *valueRank = NULL;
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
@@ -747,7 +747,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_ARRAYDIMENSIONS:
 		{
 			UA_Int32 *arrayDimensions;
-			UA_Int32 arrayLength;
+			UA_Int32 arrayLength = 0;
 			ov_memstack_lock();
 			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
