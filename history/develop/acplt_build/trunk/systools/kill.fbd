@@ -1,13 +1,7 @@
-/************************************************************
-* Sicherung der Datenbasis
-* Erstellt: 2013-05-08 09:19:20
-* 
-* HOST   : LOCALHOST:7509
-* SERVER : MANAGER
-************************************************************/
 
- LIBRARY
-   shutdown
- END_LIBRARY;
-
- 
+ INSTANCE  /vendor :
+    CLASS /acplt/ov/domain;
+    VARIABLE_VALUES
+      server_run : INPUT BOOL = FALSE;
+    END_VARIABLE_VALUES;
+ END_INSTANCE;
