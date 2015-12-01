@@ -166,6 +166,14 @@ void* workerThread( void* lpParam ){
 						KS_logfile_error(("aresWorkerThread: getaddrinfo failed"));
 					}
 					KS_logfile_debug(("aresWorkerThread: getaddrinfo done"));
+					for (walk = pCurrElem->addrInfo; walk != NULL; walk = walk->ai_next) {
+						KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
+						pCurrElem->socket = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+						if (pCurrElem->socket == TCPBIND_INVALID_SOCKET){
+							KS_logfile_debug(("aresWorkerThread: address not usable"));
+							continue;
+						}
+						KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
 #if OV_SYSTEM_NT
 					//opt in for faster localhost connections on new windows hosts. This has to be before connect
 					//old includes does not have this new define
@@ -175,15 +183,6 @@ void* workerThread( void* lpParam ){
 					//we are not really interested in errors. Most would be WSAEOPNOTSUPP for pre Windows Server 2012 or Windows 8
 					(void)WSAIoctl(pCurrElem->socket, SIO_LOOPBACK_FAST_PATH, &opt_on, sizeof(opt_on), NULL, 0, &NumberOfBytesReturned, 0, 0);
 #endif
-
-					for (walk = pCurrElem->addrInfo; walk != NULL; walk = walk->ai_next) {
-						KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
-						pCurrElem->socket = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
-						if (pCurrElem->socket == TCPBIND_INVALID_SOCKET){
-							KS_logfile_debug(("aresWorkerThread: address not usable"));
-							continue;
-						}
-						KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
 						if (connect(pCurrElem->socket, walk->ai_addr, walk->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
 							TCPBIND_CLOSE_SOCKET(pCurrElem->socket);
 							pCurrElem->socket = TCPBIND_INVALID_SOCKET;
