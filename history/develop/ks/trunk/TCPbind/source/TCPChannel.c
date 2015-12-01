@@ -713,6 +713,15 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 ) {
 #if !OV_SYSTEM_NT && !OV_SYSTEM_UNIX
 	int ret;
+	struct addrinfo *res;
+	struct addrinfo *walk;
+	struct sockaddr_storage sa_stor;
+	socklen_t sas = sizeof(sa_stor);
+	struct sockaddr* sa = (struct sockaddr*) &sa_stor;
+	char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
+	int flags = NI_NUMERICHOST | NI_NUMERICSERV;
+	int opt_on = 1;
+	TCPBIND_SOCKET sockfd = TCPBIND_INVALID_SOCKET;
 #endif
 	struct addrinfo hints;
 	OV_INSTPTR_TCPbind_TCPChannel thisTCPCh = Ov_StaticPtrCast(TCPbind_TCPChannel, this);
@@ -741,13 +750,59 @@ OV_DLLFNCEXPORT OV_RESULT TCPbind_TCPChannel_OpenConnection(
 #else
 	KS_logfile_warning(("%s: using blocking getaddrinfo", this->v_identifier));
 	//resolve address
-	if ((ret = getaddrinfo(host, port, &(hints), &(thisTCPCh->v_addrInfo))) != 0)
+	if ((ret = getaddrinfo(host, port, &(hints), &(res))) != 0)
 	{
 		KS_logfile_error(("%s: getaddrinfo failed", this->v_identifier));
 		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
 		return OV_ERR_GENERIC;
 	}
-	return TCPbind_TCPChannel_OpenConnection_afterAddrinfo(thisTCPCh);
+	for (walk = res; walk != NULL; walk = walk->ai_next) {
+		KS_logfile_debug(("file %s\nline %u:\twalking...", __FILE__, __LINE__));
+		sockfd = socket(walk->ai_family, walk->ai_socktype, walk->ai_protocol);
+		if (sockfd == TCPBIND_INVALID_SOCKET){
+			KS_logfile_debug(("%s: address not usable", thisTCPCh->v_identifier));
+			continue;
+		}
+		KS_logfile_debug(("file %s\nline %u:\tconnectiong to %i", __FILE__, __LINE__, sockfd));
+		if (connect(sockfd, walk->ai_addr, walk->ai_addrlen) == TCPBIND_SOCKET_ERROR) {
+			TCPBIND_CLOSE_SOCKET(sockfd);
+			sockfd = TCPBIND_INVALID_SOCKET;
+			KS_logfile_debug(("%s: connect failed", thisTCPCh->v_identifier));
+			continue;
+		}
+		break;
+	}
+
+	//free structures
+	freeaddrinfo(res);
+	thisTCPCh->v_socket = sockfd;
+	//resolve connected peer
+	if(getpeername(sockfd, sa, &sas) == TCPBIND_SOCKET_ERROR)
+	{
+		KS_logfile_error(("%s: could not resolve connected peer", thisTCPCh->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
+	}
+
+	// resolve peername
+	if(getnameinfo( sa, sas, hbuf, sizeof(hbuf), sbuf, sizeof(sbuf), flags) != 0)
+	{
+		KS_logfile_error(("%s: could not resolve connected peer's address", thisTCPCh->v_identifier));
+		thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_COULDNOTOPEN;
+		return OV_ERR_GENERIC;
+	}
+
+	ov_string_setvalue(&(thisTCPCh->v_address), hbuf);
+	thisTCPCh->v_ConnectionState = TCPbind_CONNSTATE_OPEN;
+	TCPbind_TCPChannel_socket_set(thisTCPCh, thisTCPCh->v_socket);
+
+	KS_logfile_debug(("%s: connected to %s.", thisTCPCh->v_identifier, thisTCPCh->v_address));
+	//set time of Opening the Connection
+	ov_time_gettime(&(thisTCPCh->v_LastReceiveTime));
+
+	//disable nagle for the receivesocket
+	(void)setsockopt(thisTCPCh->v_socket, IPPROTO_TCP, TCP_NODELAY, (char *)&opt_on, sizeof(opt_on));
+	return OV_ERR_OK;
 #endif
 }
 
