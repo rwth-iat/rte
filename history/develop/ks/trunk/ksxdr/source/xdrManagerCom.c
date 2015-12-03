@@ -646,7 +646,9 @@ OV_DLLFNCEXPORT void ksxdr_xdrManagerCom_typemethod (
 				while(xdrClient && (Ov_GetClassPtr(xdrClient) != pclass_ksxdr_xdrClient))
 					xdrClient = Ov_StaticPtrCast(ksxdr_xdrClient, Ov_GetNextChild(ov_containment, xdrClient));
 			}
-			ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
+			if(xdrClient){
+				ksxdr_xdrClient_reset(Ov_StaticPtrCast(ksbase_ClientBase, xdrClient));
+			}
 			return;
 		}
 		break;
