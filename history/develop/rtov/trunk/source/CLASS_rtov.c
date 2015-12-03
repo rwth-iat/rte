@@ -181,7 +181,7 @@ OV_DLLFNCEXPORT void rtov_rtov_startup(
     	if(mlockall(MCL_CURRENT|MCL_FUTURE) == -1)
     	{
     		log_err("mlockall failed");
-    		return OV_ERR_GENERIC;
+    		return;
     	}
     	log_dbg("done");
 
