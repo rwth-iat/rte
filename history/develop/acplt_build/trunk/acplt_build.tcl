@@ -1,12 +1,11 @@
-
 # ACPLT Build Script
-# (c) 2014 Chair of Process Control Engineering, RWTH Aachen University
+# (c) 2015 Chair of Process Control Engineering, RWTH Aachen University
 # Author: Gustavo Quiros <g.quiros@plt.rwth-aachen.de>
 # Author: Sten Gruener   <s.gruener@plt.rwth-aachen.de>
 # Author: Constantin Wagner <c.wagner@plt.rwth-aachen.de>
 # Author: Holger Jeromin <h.jeromin@plt.rwth-aachen.de>
 #
-# Usage: tclsh acplt_build.tcl (release) (compileonly) (trunk)
+# Usage: tclsh acplt_build.tcl (release) (compileonly)
 set release 0
 set checkout 0
 set compileonly 0
@@ -14,7 +13,6 @@ set compileonly 0
 set build_dbcommands 1
 set libsuffix 0
 set exesuffix 0
-set bleedingedge 0
 set notbuildedlibs 0
 set ov_debug "OV_DEBUG=1"
 set ov_arch_bitwidth_str "OV_ARCH_BITWIDTH=32"
@@ -27,9 +25,6 @@ foreach arg $argv {
 	if {$arg == "release"} {
 		set release 1
 		set checkout 0
-	}
-	if {$arg == "trunk"} {
-		set bleedingedge 1
 	}
 	if {$arg == "compileonly"} {
 		set compileonly 1
@@ -279,9 +274,9 @@ proc checkout_better {module {notrunk ""}} {
 	global notrunklist
 	set temp [split $module "/"]
 	foreach x $temp {
-	foreach y $notrunklist {
-	if { [string equal $x $y ] } {
-			 set notrunk "bla"
+		foreach y $notrunklist {
+			if { [string equal $x $y ] } {
+				set notrunk "found"
 			}
 		}
 	}
@@ -295,16 +290,6 @@ proc checkout_better {module {notrunk ""}} {
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname	
 	}
 }
-
-proc checkout_lib {x} {
-	if { [string equal -length 2 $x ks] || [string equal $x fbcomlib] } {
-		checkout_dir develop/ks/trunk $x $x notrunk
-	} else {
-		checkout_dir develop $x
-	}
-}
-
-
 
 # Checkout sources
 proc checkout_acplt {} {
@@ -333,7 +318,7 @@ proc checkout_acplt {} {
 		file mkdir $builddir/base
 		cd $builddir/base
 	}
-	checkout_dir develop ov
+	checkout_dir "publish/core" ov "" notrunk
 
 	#get the number of the current release - $date is global
 	cd $basedir
@@ -555,7 +540,7 @@ proc release_lib_better {libname option} {
 	print_msg "$libnametemp"
 	#lib contains the list of the libs to build
 	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
-	#correct the paths... lifing libraries up from the "core" dir
+	#correct the paths... lifting libraries up from the "core" dir
 	foreach lib $libs {
 		#set libname $lib
 		if { [file exists $releasedir/dev/$libnametemp/$lib] && $lib != "ov" } {
@@ -832,17 +817,12 @@ proc compress {archivename dir} {
 }
 
 # ============== MAIN STARTS HERE ==================
-if { $bleedingedge == 1 } then {
-	set included_libs {develop/ks/trunk/ksbase develop/ks/trunk/TCPbind develop/ks/trunk/UDPbind develop/ks/trunk/ksxdr develop/ks/trunk/kshttp develop/ks/trunk/ksapi develop/ks/trunk/iec62541 develop/fb develop/ks/trunk/iec62541fb develop/shutdown}
-	set addon_libs { develop/hmi/cshmi develop/iec61131stdfb develop/fieldcommunication/IOdriverlib archive/vdivde3696 develop/ACPLTlab003lindyn develop/ssc develop/ks/trunk/fbcomlib}
-	print_msg "checking out trunk of acplt system"
-} else {
-	print_msg "checking out common of acplt system"
-	set addon_libs { common/user }
-	set included_libs {common/core}
-}
+set included_libs {publish/syslibs/comm/ksbase publish/syslibs/comm/TCPbind publish/syslibs/comm/UDPbind publish/syslibs/comm/ksxdr publish/syslibs/comm/kshttp publish/syslibs/comm/iec62541 publish/syslibs/functionblock/fb publish/syslibs/functionblock/ssc}
+set addon_libs {publish/addonlibs/hmi/cshmi publish/addonlibs/commclient/ksapi publish/addonlibs/commclient/fbcomlib publish/addonlibs/commclient/iec62541fb publish/addonlibs/functionblock/iec61131stdfb publish/addonlibs/functionblock/vdivde3696 publish/functionblock/ACPLTlab003lindyn publish/addonlibs/functionblock/IOdriverlib publish/addonlibs/field/modbusTcpLib publish/addonlibs/field/kbuslib publish/addonlibs/field/wagoFBKlib publish/addonlibs/field/wagoIPClib}
+set addon_libs {}
+print_msg "checking out all libraries of the acplt system"
 
-set notrunklist { ks common ServiceSystem }
+set notrunklist { core syslibs addonlibs }
 #iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
