@@ -818,7 +818,7 @@ proc compress {archivename dir} {
 
 # ============== MAIN STARTS HERE ==================
 set included_libs {publish/syslibs/comm/ksbase publish/syslibs/comm/TCPbind publish/syslibs/comm/UDPbind publish/syslibs/comm/ksxdr publish/syslibs/comm/kshttp publish/syslibs/comm/iec62541 publish/syslibs/functionblock/fb publish/syslibs/functionblock/ssc}
-set addon_libs {publish/addonlibs/hmi/cshmi publish/addonlibs/commclient/ksapi publish/addonlibs/commclient/fbcomlib publish/addonlibs/commclient/iec62541fb publish/addonlibs/functionblock/iec61131stdfb publish/addonlibs/functionblock/vdivde3696 publish/addonlibs/functionblock/ACPLTlab003lindyn publish/addonlibs/functionblock/IOdriverlib publish/addonlibs/field/modbusTcpLib publish/addonlibs/field/kbuslib publish/addonlibs/field/wagoFBKlib publish/addonlibs/field/wagoIPClib}
+set addon_libs {publish/addonlibs/hmi/cshmi publish/addonlibs/commclient/ksapi publish/addonlibs/commclient/fbcomlib publish/addonlibs/commclient/iec62541fb publish/addonlibs/functionblock/iec61131stdfb publish/addonlibs/functionblock/vdivde3696 publish/addonlibs/functionblock/ACPLTlab003lindyn publish/addonlibs/functionblock/IOdriverlib publish/addonlibs/field/modbusTcpLib}
 print_msg "checking out all libraries of the acplt system"
 
 set notrunklist { core syslibs addonlibs }
