@@ -260,18 +260,9 @@ proc get_revision {} {
 
 
 # Checkout a SVN module
-proc checkout_dir {prefix module {dirname ""} {notrunk ""}} {
-	print_msg "Checking out $module via checkout_dir"
-	if {$dirname == ""} then { set dirname $module }
-	#execute cvs checkout -P -d $dirname $module
-	if {$notrunk == ""} then {
-		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module/trunk $dirname	
-	} else {
-		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$prefix/$module $dirname	
-	}
-}
-proc checkout_better {module {notrunk ""}} {
+proc checkout_dir {module {notrunk ""} {dirname ""}} {
 	global notrunklist
+	print_msg "Checking out $module via checkout_dir"
 	set temp [split $module "/"]
 	foreach x $temp {
 		foreach y $notrunklist {
@@ -280,14 +271,13 @@ proc checkout_better {module {notrunk ""}} {
 			}
 		}
 	}
-	set dirname [lindex $temp end]
-	print_msg "Checking out $module via checkout_better"
-	if {$dirname == ""} then { set dirname $module }
-	#execute cvs checkout -P -d $dirname $module
+	if {$dirname == ""} then {
+		set dirname [lindex $temp end]
+	}
 	if {$notrunk == ""} then {
-		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname	
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname
 	} else {
-		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname	
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname
 	}
 }
 
@@ -296,29 +286,23 @@ proc checkout_acplt {} {
 	global builddir
 	global basedir
 	global os
-	global included_libs
+	global system_libs
 	global releasedir
 	global release
 	global date
 	global build_dbcommands
 	
 	cd $builddir
-	#for source release - checkout all
-	#if { $os == "nt" } then { 
 	if {$build_dbcommands == 1} {
-		checkout_dir archive oncrpc
-	}
-	#}
-	if {$build_dbcommands == 1} {
-		checkout_dir archive acplt base
+		checkout_dir "archive/oncrpc"
+		checkout_dir "archive/acplt" "" base
 		cd $builddir/base
-		#checkout libmpm
-		checkout_dir archive fbs_dienste "" notrunk
+		checkout_dir "archive/fbs_dienste" notrunk
 	} else {
 		file mkdir $builddir/base
 		cd $builddir/base
 	}
-	checkout_dir "publish/core" ov "" notrunk
+	checkout_dir "publish/core/ov" notrunk
 
 	#get the number of the current release - $date is global
 	cd $basedir
@@ -461,62 +445,6 @@ proc install_acplt { target } {
 	#install_dir $builddir/base/acplt_makmak/build/$target
 }
 
-#proc makmak {library opts} {
-#	global builddir
-#	global basedir
-#	global os
-#	set makmak $builddir/bin/ov_makmak
-#	cd $builddir/user/$library/build/$os
-#	eval [concat "execute \"$makmak\" -l $library -pu \"../../..\" -pa \"../../../../base\" -pb \"../../../../bin\"" $opts]
-#	cd $basedir
-#}
-
-#proc build_lib {libname deps patch baselibs} {
-#	global builddir
-#	global os
-#	file mkdir $builddir/user/$libname/build/$os
-#	set depopts ""
-#	foreach dep $deps { append depopts "-d $dep" }
-#	makmak $libname $depopts
-#	if $patch then {
-#	# Temporary solution for ov_library_open problem
-#	execute patch $builddir/user/fb/build/generic.mk library-open.patch
-#	}
-#	if { $os == "nt" } then { 
-#		set makefile "msvc.mk"
-#	set lib $libname.dll
-#	} else {
-#		set makefile "Makefile"
-#	set lib $libname.so
-#	}
-#	if { $baselibs != "" } then { set baselibs "BASELIBS=$baselibs" } 
-#	eval [concat "build_package $libname make -C \"$builddir/user/$libname/build/$os\" -f $makefile" $baselibs]
-#	file copy -force $builddir/user/$libname/build/$os/$lib $builddir/user/libs
-#}
-
-#proc dbutil {args} {
-#	global releasedir
-#	global os
-#	set dbutil $releasedir/bin/ov_dbutil
-#	eval "execute $dbutil $args"
-#}
-
-#proc start_server {} {
-#	global releasedir
-#	global os
-#	set database $releasedir/database/database.ovd
-#	if [file exists $database] then {
-#	} else {
-#		dbutil -f $database -c [expr 1024 * 1024]
-#	}
-#	execute $releasedir/bin/tmanager.exe &
-#	if { $os == "linux" } then {
-#		global env
-#		set env(LD_LIBRARY_PATH) $releasedir/bin
-#	}
-#	execute $releasedir/bin/ov_server -f $database -s fb_server -w fb -w iec61131stdfb 
-#}
-
 proc release_lib_better {libname option} {
 	global releasedir
 	global os
@@ -526,7 +454,7 @@ proc release_lib_better {libname option} {
 	cd $releasedir/dev/
 	if { $compileonly != 1 } then {
 		file delete -force $releasedir/dev/$libname/
-		checkout_better $libname
+		checkout_dir $libname
 	}
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
@@ -613,49 +541,6 @@ proc release_lib_better {libname option} {
 		append notbuildedlibs $not_yet_build
 		print_msg "Libraries $not_yet_build could not be built, giving up"
 	}
-
-	#foreach lib $libs {
-	#	set libname $lib
-	#	if { [file exists $releasedir/dev/$libnametemp/$libname] } {
-	#		file copy -force $releasedir/dev/$libnametemp/$libname $releasedir/dev/$libname
-	#		file delete -force $releasedir/dev/$libnametemp/$libname
-	#	}
-	#	cd $releasedir/dev/$libname/build/$os/
-	#	if { $option == "all" } then {
-	#		print_msg "Note: no debug symbols will be created"
-	#	}
-	#	build_package $libname $make $option
-	#	print_msg "Deploying $libname"
-	#	file delete -force $releasedir/dev/$libname.build/
-	#	file copy -force $releasedir/dev/$libname/ $releasedir/dev/$libname.build/
-	#	file delete -force $releasedir/dev/$libname/
-	#	file mkdir $releasedir/dev/$libname/
-	#	file mkdir $releasedir/dev/$libname/model/
-	#	copy_wildcard $releasedir/dev/$libname.build/model/*.ov? $releasedir/dev/$libname/model/
-	#	file mkdir $releasedir/dev/$libname/include/
-	#	copy_wildcard $releasedir/dev/$libname.build/include/*.h $releasedir/dev/$libname/include/
-	#	#export libname.a file for compiling under windows
-	#	if { $os == "nt" } then {
-	#		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-	#		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-	#		#}
-	#		if { [file exists $releasedir/dev/$libname.build/build/nt/$libname.lib] } then {
-	#			file mkdir $releasedir/dev/$libname/build/nt/
-	#			file copy -force $releasedir/dev/$libname.build/build/nt/$libname.lib $releasedir/dev/$libname/build/nt/
-	#		}
-	#	}
-	#	if { $os == "linux" } then {
-	#		#if { [file exists $releasedir/user/$libname.build/build/nt/$libname.a] } {
-	#		#		file copy -force $releasedir/user/$libname.build/build/nt/$libname.a $releasedir/user/$libname/build/nt/
-	#		#}
-	#		if { [file exists $releasedir/dev/$libname.build/build/linux/$libname.a] } then {
-	#			file mkdir $releasedir/dev/$libname/build/linux/
-	#			file copy -force $releasedir/dev/$libname.build/build/linux/$libname.a $releasedir/dev/$libname/build/linux/
-	#		}
-	#	}
-	#	file delete -force $releasedir/dev/$libname.build/
-	#}
-	#if {[lsearch $libs "source"] == -1 } { file delete -force $releasedir/dev/$libnametemp }
 }	
 
 proc create_release {} {
@@ -725,7 +610,7 @@ proc create_release {} {
 
 #switch ov file structure
 proc separate_dev {} {
-	global included_libs
+	global system_libs
 	global releasedir
 	global builddir
 	global addon_libs
@@ -811,13 +696,13 @@ proc compress {archivename dir} {
 	print_msg "Compressing"
 	if { $os == "linux" } then {
 		execute "tar -zcvf $archivename-linux$ov_arch_bitwidth_int.tar.gz $dir"
-} else {
+	} else {
 		execute "7z a $archivename-win$ov_arch_bitwidth_int.zip $dir"
 	}
 }
 
 # ============== MAIN STARTS HERE ==================
-set included_libs {publish/syslibs/comm/ksbase publish/syslibs/comm/TCPbind publish/syslibs/comm/UDPbind publish/syslibs/comm/ksxdr publish/syslibs/comm/kshttp publish/syslibs/comm/iec62541 publish/syslibs/functionblock/fb publish/syslibs/functionblock/ssc}
+set system_libs {publish/syslibs/comm/ksbase publish/syslibs/comm/TCPbind publish/syslibs/comm/UDPbind publish/syslibs/comm/ksxdr publish/syslibs/comm/kshttp publish/syslibs/comm/iec62541 publish/syslibs/functionblock/fb publish/syslibs/functionblock/ssc}
 set addon_libs {publish/addonlibs/hmi/cshmi publish/addonlibs/commclient/ksapi publish/addonlibs/commclient/fbcomlib publish/addonlibs/commclient/iec62541fb publish/addonlibs/functionblock/iec61131stdfb publish/addonlibs/functionblock/vdivde3696 publish/addonlibs/functionblock/ACPLTlab003lindyn publish/addonlibs/functionblock/IOdriverlib publish/addonlibs/field/modbusTcpLib}
 print_msg "checking out all libraries of the acplt system"
 
@@ -853,17 +738,16 @@ if {$release == 1} {
 	create_dirs
 	checkout_acplt
 
-
 	file mkdir $builddir/syslibs
 	cd $builddir/syslibs
-	foreach x $included_libs {
-		checkout_better $x
+	foreach libname $system_libs {
+		checkout_dir $libname
 	}
 
 	file mkdir $builddir/addonlibs
 	cd $builddir/addonlibs
-	foreach x $addon_libs {
-		checkout_better $x
+	foreach libname $addon_libs {
+		checkout_dir $libname
 	}
 
 	cd $basedir
@@ -918,13 +802,13 @@ if {$release == 1} {
 create_release
 create_systools_and_servers
 
-foreach x $included_libs {
-	release_lib_better $x debug
+foreach libname $system_libs {
+	release_lib_better $libname debug
 }
-#move included_libs to system
+#move system_libs to system
 separate_dev
-foreach x $addon_libs {
-	release_lib_better $x debug
+foreach libname $addon_libs {
+	release_lib_better $libname debug
 }
 
 if {$release == 1} {
@@ -960,12 +844,12 @@ if {$release == 1} {
 
 	create_release
 	create_systools_and_servers
-	foreach x $included_libs {
-		release_lib_better $x all
+	foreach libname $system_libs {
+		release_lib_better $libname all
 	}
 	separate_dev
-	foreach x $addon_libs {
-		release_lib_better $x all
+	foreach libname $addon_libs {
+		release_lib_better $libname all
 	}
 	if { [file exists $releasedir/dev/] } then {
 		file delete -force $releasedir/dev/
