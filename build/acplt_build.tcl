@@ -255,19 +255,22 @@ proc get_revision {} {
 
 
 # Checkout a SVN module
-proc checkout_dir {module {vcs_server "acpltpublish"} {dirname ""} } {
-	print_msg "Checking out $module via checkout_dir"
+proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
 	set temp [split $module "/"]
 	if {$dirname == ""} {
 		set dirname [lindex $temp end]
 	}
 	if {$vcs_server == "github"} {
-		execute svn co https://github.com/acplt/rte/$module $dirname
+		print_msg "Checking out $module from github"
+		execute svn co https://github.com/acplt/rte/trunk/$module $dirname
 	} elseif {$vcs_server == "acpltpublish"} {
+		print_msg "Checking out $module from acplt publish"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/publish/$module $dirname
 	} elseif {$vcs_server == "acpltroot"} {
+		print_msg "Checking out $module from acplt root"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname
 	} elseif {$vcs_server == "acpltrootnotrunk"} {
+		print_msg "Checking out $module from acplt root"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname
 	}
 }
@@ -470,7 +473,7 @@ proc release_lib_better {libname option} {
 
 	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } {
 		file delete -force $releasedir/dev/$libnametemp
-		#print_msg "BÄÄÄHM"
+		#print_msg "BÃ„Ã„Ã„HM"
 	}
 	
 	set not_yet_build $libs
