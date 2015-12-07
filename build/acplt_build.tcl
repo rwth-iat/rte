@@ -231,7 +231,10 @@ proc create_dirs {} {
 
 proc get_revision {} {
 	global logfile
-	
+	if {[file isdirectory "../.git"]} {
+		return [exec git describe --abbrev=7 --dirty --always --tags]
+	}
+
 	execute svn info
 	#set logfile "logfile.txt"
 	set in [open $logfile r]
@@ -254,8 +257,14 @@ proc get_revision {} {
 }
 
 
-# Checkout a SVN module
+# Checkout a SVN module or copy if the file are there (from git?)
 proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
+	global basedir
+	if {[file isdirectory $basedir/../$module]} {
+		file copy -force $basedir/../$module .
+		print_msg "reused directory $module"
+		return
+	}
 	set temp [split $module "/"]
 	if {$dirname == ""} {
 		set dirname [lindex $temp end]
