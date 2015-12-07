@@ -51,11 +51,6 @@ set releasedir $basedir/acplt
 set flag 0;
 set logfile $basedir/acplt_build.log
 
-#if {![info exists env(CVSROOT)]} then {
-#	puts stderr "Please set the environment variable CVSROOT and try again."
-#	exit 1
-#c}
-
 # Determine operating system
 if {$tcl_platform(os) == "Linux"} then { 
 	set os "linux" 
@@ -260,23 +255,19 @@ proc get_revision {} {
 
 
 # Checkout a SVN module
-proc checkout_dir {module {notrunk ""} {dirname ""}} {
-	global notrunklist
+proc checkout_dir {module {vcs_server "acpltpublish"} {dirname ""} } {
 	print_msg "Checking out $module via checkout_dir"
 	set temp [split $module "/"]
-	foreach x $temp {
-		foreach y $notrunklist {
-			if { [string equal $x $y ] } {
-				set notrunk "found"
-			}
-		}
-	}
-	if {$dirname == ""} then {
+	if {$dirname == ""} {
 		set dirname [lindex $temp end]
 	}
-	if {$notrunk == ""} then {
+	if {$vcs_server == "github"} {
+		execute svn co https://github.com/acplt/rte/$module $dirname
+	} elseif {$vcs_server == "acpltpublish"} {
+		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/publish/$module $dirname
+	} elseif {$vcs_server == "acpltroot"} {
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname
-	} else {
+	} elseif {$vcs_server == "acpltrootnotrunk"} {
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname
 	}
 }
@@ -294,15 +285,15 @@ proc checkout_acplt {} {
 	
 	cd $builddir
 	if {$build_dbcommands == 1} {
-		checkout_dir "archive/oncrpc"
-		checkout_dir "archive/acplt" "" base
+		checkout_dir "archive/oncrpc" "acpltroot" "oncrpc"
+		checkout_dir "archive/acplt" "acpltroot" "base"
 		cd $builddir/base
-		checkout_dir "archive/fbs_dienste" notrunk
+		checkout_dir "archive/fbs_dienste" "acpltrootnotrunk" "fbs_dienste"
 	} else {
 		file mkdir $builddir/base
 		cd $builddir/base
 	}
-	checkout_dir "publish/core/ov" notrunk
+	checkout_dir "core/ov"
 
 	#get the number of the current release - $date is global
 	cd $basedir
@@ -702,12 +693,10 @@ proc compress {archivename dir} {
 }
 
 # ============== MAIN STARTS HERE ==================
-set system_libs {publish/syslibs/comm/ksbase publish/syslibs/comm/TCPbind publish/syslibs/comm/UDPbind publish/syslibs/comm/ksxdr publish/syslibs/comm/kshttp publish/syslibs/comm/iec62541 publish/syslibs/functionblock/fb publish/syslibs/functionblock/ssc}
-set addon_libs {publish/addonlibs/hmi/cshmi publish/addonlibs/commclient/ksapi publish/addonlibs/commclient/fbcomlib publish/addonlibs/commclient/iec62541fb publish/addonlibs/functionblock/iec61131stdfb publish/addonlibs/functionblock/vdivde3696 publish/addonlibs/functionblock/ACPLTlab003lindyn publish/addonlibs/functionblock/IOdriverlib publish/addonlibs/field/modbusTcpLib}
+set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/iec62541 syslibs/functionblock/fb syslibs/functionblock/ssc}
+set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/iec62541fb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib}
 print_msg "checking out all libraries of the acplt system"
 
-set notrunklist { core syslibs addonlibs }
-#iec61131stdfb IOdriverlib fbcomlib develop/ks/trunk/MessageSys develop/ServiceSystem/trunk/ServiceProvider 
 if {$release != 1} {
 	puts "Running this script with 'release' option will create releases"
 }
