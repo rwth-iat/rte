@@ -10,6 +10,7 @@ addons:
     - bison
     - flex
     - gcc-multilib
+    - libc6-dev-i386
 
 env:
    - OV_ARCH_BITWIDTH=32
