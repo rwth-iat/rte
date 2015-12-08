@@ -1,0 +1,24 @@
+language: c
+compiler:
+  - gcc
+#  - clang
+sudo: false
+addons:
+  apt:
+    packages:
+    - tcl
+    - bison
+    - flex
+#    - gcc-multilib
+
+#env:
+#   - OV_ARCH_BITWIDTH=32
+#   - OV_ARCH_BITWIDTH=64
+
+script:
+   - cd ./build
+   - tclsh ./acplt_build.tcl no_dbcommands 64
+
+after_failure:
+   - tail -n 20 acplt_build.log
+   
