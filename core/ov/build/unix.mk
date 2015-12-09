@@ -87,7 +87,7 @@ CC			= gcc
 CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -g -shared -Wall -Winit-self -Wno-attributes -std=c99 -fno-strict-aliasing -fvisibility=hidden -fPIC -O0
 COMPILE_C		= $(CC) $(CC_FLAGS) $(DEFINES) $(INCLUDES) -c
 
-LINK			= $(CC)
+LINK			= $(CC) $(OV_ARCH_BITWIDTH_LDFLAGS) 
 C_LIBS			=
 
 LD				= $(CC) $(OV_ARCH_BITWIDTH_LDFLAGS) -shared
