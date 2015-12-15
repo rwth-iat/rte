@@ -274,14 +274,14 @@ proc get_revision {} {
 # Checkout a SVN module or copy if the file are there (from git?)
 proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
 	global basedir
-	if {[file isdirectory $basedir/../$module]} {
-		file copy -force $basedir/../$module .
-		print_msg "reused directory $module"
-		return
-	}
 	set temp [split $module "/"]
 	if {$dirname == ""} {
 		set dirname [lindex $temp end]
+	}
+	if {[file isdirectory $basedir/../$module]} {
+		file copy -force $basedir/../$module ./$dirname
+		print_msg "reused directory $module"
+		return
 	}
 	if {$vcs_server == "github"} {
 		print_msg "Checking out $module from github"
