@@ -57,6 +57,13 @@ include ../generic.mk
 
 all: $(TARGETS)
 
+ifdef OV_ARCH_BITWIDTH
+OV_ARCH_BITWIDTH_CFLAGS		=	-m$(OV_ARCH_BITWIDTH)
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m$(OV_ARCH_BITWIDTH)
+else
+OV_ARCH_BITWIDTH_CFLAGS		=	-m32
+OV_ARCH_BITWIDTH_LDFLAGS	=	-m32
+endif
 
 #	Compiler
 #	--------
@@ -67,7 +74,7 @@ BISON			= bison
 RPCGEN			= rpcgen
 
 CC				= gcc
-CC_FLAGS		= -Wall -DOV_DEBUG -O2
+CC_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -Wall -DOV_DEBUG -O2
 
 CC_DEFINES		= $(DEFINES)
 CC_INCLUDES		= $(INCLUDES)
@@ -78,7 +85,7 @@ C_LIBS			= $(GOV_GOVLIB_LIB)
 
 
 CXX				= g++
-CXX_FLAGS		= -DNDEBUG -Wall -O2 -fno-implicit-templates
+CXX_FLAGS		= $(OV_ARCH_BITWIDTH_CFLAGS) -DNDEBUG -Wall -O2 -fno-implicit-templates
 CXX_DEFINES		= $(CC_DEFINES)
 CXX_INCLUDES	= $(CC_INCLUDES)
 CXX_COMPILE		= $(CXX) $(CXX_FLAGS) $(CXX_DEFINES) $(CXX_INCLUDES) -c
@@ -89,7 +96,7 @@ CXX_LIBS		= $(C_LIBS) $(GOV_GOVLIB_LIB) $(ACPLTKSLIBS) -lstdc++
 AR				= ar
 RANLIB			= ranlib
 
-LD				= ld -shared
+LD				= ld $(OV_ARCH_BITWIDTH_LDFLAGS) -shared
 LD_LIB			= -ldl
 
 

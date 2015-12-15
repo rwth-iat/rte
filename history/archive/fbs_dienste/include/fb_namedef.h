@@ -34,7 +34,9 @@
 *                                                                             *
 ******************************************************************************/
 
+#ifndef IFBS_INC_NAMES_ONLY
 #include "libov/ov_config.h"
+#endif
 
 #ifndef _FB_NAMEDEF_H_
 #define _FB_NAMEDEF_H_
@@ -139,6 +141,7 @@ OV_DLLFNCEXPORT OV_RESULT fb_set_varvalue(
 
 /*
 *	Trigger input get connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerInpGetConnections(
 	OV_INSTPTR_fb_functionblock	pfb
@@ -149,6 +152,7 @@ OV_DLLFNCEXPORT void fb_object_triggerInpGetConnections(
 
 /*
 *	Trigger output send connections
+*	legacy function. could be called from derived libraries
 */
 OV_DLLFNCEXPORT void fb_functionblock_triggerOutSendConnections(
 	OV_INSTPTR_fb_functionblock	pfb
@@ -183,6 +187,22 @@ OV_DLLFNCEXPORT OV_RESULT fb_connection_create(
 	OV_STRING				  targetFB,           /* Path target FB "/TechUnits/sum2" */
 	OV_STRING				  targetPort,         /* Target port identifier "in1"     */
     OV_INSTPTR_fb_connection  *pcon               /* Pointer connection object        */
+);
+
+/**
+ * Gets the first connected fb_functionblock or fb_port from a given fb_functionblock / port and a variable name
+ * If a fb/port is given, the variableName will be ignored (aka can be NULL)
+ *
+ * @param this: functionblock or port to start the search
+ * @param getTarget: set to TRUE if you want a TargetObject (where the connection sets values), otherwise you get a Source (where the connection gets values from)
+ * @param skipInactiveCons: set to TRUE if you want to test only active connections
+ * @param variableName name of variable of an functionblock where the connection is connected
+ */
+OV_DLLFNCEXPORT OV_INSTPTR_fb_object fb_connection_getFirstConnectedObject(
+		const OV_INSTPTR_fb_object this,
+		const OV_BOOL getTarget,
+		const OV_BOOL skipInactiveCons,
+		const OV_STRING variableName
 );
 
 /*
