@@ -172,7 +172,7 @@ KS_RESULT Check_Vars_in_lib(KscServerBase* Server,
     
                     case KS_VT_SINGLE_VEC:
                     case KS_VT_SINGLE:
-                                    vt = OV_VT_SINGLE;
+                                    vt = KS_VT_SINGLE;
                                     break;
     
                     case KS_VT_DOUBLE_VEC:

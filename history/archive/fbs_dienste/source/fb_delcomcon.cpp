@@ -127,7 +127,7 @@ int verb_suchen(KscServerBase*    Server, ConData &verb, PltString &verb_name)
     {
       KsEngPropsHandle hpp = result.items.removeFirst();
       if(!hpp) {
-        err = OV_ERR_GENERIC;
+        err = KS_ERR_GENERIC;
         iFBS_SetLastError(1, err, log);
         return err;
       }

@@ -156,7 +156,7 @@ KS_RESULT IFBS_DIR(KscServerBase*         Server,
         KsEngPropsHandle hpp = result.items.removeFirst();
         if(!hpp) {
             delete Vpkg;
-            err = OV_ERR_GENERIC;
+            err = KS_ERR_GENERIC;
             iFBS_SetLastError(1, err, log);
             return err;
         }
@@ -279,7 +279,7 @@ KS_RESULT IFBS_DIR(KscServerBase*         Server,
         ObjProps itemv;
             KsEngPropsHandle pv = ListVars.removeFirst();
         if(!pv) {
-            err = OV_ERR_GENERIC;
+            err = KS_ERR_GENERIC;
             iFBS_SetLastError(1, err, log);
             return err;
         }

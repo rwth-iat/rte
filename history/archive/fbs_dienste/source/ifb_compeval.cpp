@@ -922,7 +922,7 @@ void put_variable(Variables* hpv, PltString& Out)
                 
                 while(pvi) {
                     switch(pv->var_typ) {
-                        case OV_VT_STRING:
+                        case KS_VT_STRING:
                                             Out += "\"";
                                                 Out += pvi->val;
                                                 Out += "\"";
