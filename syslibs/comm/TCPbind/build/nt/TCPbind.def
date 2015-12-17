@@ -1,0 +1,208 @@
+EXPORTS
+    TCPbind_AssocSpecificClientHandler_getaccess @1
+    TCPbind_AssocSpecificClientHandler_link @2
+    TCPbind_AssocSpecificClientHandler_unlink @3
+    TCPbind_TCPChannel_AssociateClientHandler @4
+    TCPbind_TCPChannel_CloseConnection @5
+    TCPbind_TCPChannel_OpenConnection @6
+    TCPbind_TCPChannel_OpenConnection_afterAddrinfo @7
+    TCPbind_TCPChannel_OpenLocalConn @8
+    TCPbind_TCPChannel_SendData @9
+    TCPbind_TCPChannel_shutdown @10
+    TCPbind_TCPChannel_socket_get @11
+    TCPbind_TCPChannel_socket_set @12
+    TCPbind_TCPChannel_startup @13
+    TCPbind_TCPChannel_typemethod @14
+    TCPbind_TCPListener_constructor @15
+    TCPbind_TCPListener_port_get @16
+    TCPbind_TCPListener_port_set @17
+    TCPbind_TCPListener_shutdown @18
+    TCPbind_TCPListener_typemethod @19
+    TCPbind_aresWorker_constructor @20
+    TCPbind_aresWorker_delGetAddrInfoElem @21
+    TCPbind_aresWorker_insertGetAddrInfo @22
+    TCPbind_aresWorker_shutdown @23
+    TCPbind_aresWorker_startup @24
+    TCPbind_aresWorker_typemethod @25
+    ov_library_open_TCPbind @26
+    ov_library_open_TCPbind_old @27
+    passoc_TCPbind_AssocSpecificClientHandler @28 DATA
+    pclass_TCPbind_TCPChannel @29 DATA
+    pclass_TCPbind_TCPListener @30 DATA
+    pclass_TCPbind_aresWorker @31 DATA
+
+IMPORTS
+
+    ksbase.dll.ks_isvalidname
+    ksbase.dll.ks_logfile_debug
+    ksbase.dll.ks_logfile_error
+    ksbase.dll.ks_logfile_info
+    ksbase.dll.ks_logfile_print_sysMsg
+    ksbase.dll.ks_logfile_warning
+    ksbase.dll.ks_splitOneStringPath
+    ksbase.dll.ksbase_AssocChannelClientHandler_getaccess
+    ksbase.dll.ksbase_AssocChannelClientHandler_link
+    ksbase.dll.ksbase_AssocChannelClientHandler_unlink
+    ksbase.dll.ksbase_AssocChannelDataHandler_getaccess
+    ksbase.dll.ksbase_AssocChannelDataHandler_link
+    ksbase.dll.ksbase_AssocChannelDataHandler_unlink
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_getaccess
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_link
+    ksbase.dll.ksbase_AssocClientToTicketGenerator_unlink
+    ksbase.dll.ksbase_AssocComTaskList_getaccess
+    ksbase.dll.ksbase_AssocComTaskList_link
+    ksbase.dll.ksbase_AssocComTaskList_unlink
+    ksbase.dll.ksbase_AssocCurrentChannel_getaccess
+    ksbase.dll.ksbase_AssocCurrentChannel_link
+    ksbase.dll.ksbase_AssocCurrentChannel_unlink
+    ksbase.dll.ksbase_Channel_shutdown
+    ksbase.dll.ksbase_Channel_startup
+    ksbase.dll.ksbase_ClientBase_processCreateObject
+    ksbase.dll.ksbase_ClientBase_processDeleteObject
+    ksbase.dll.ksbase_ClientBase_processGetCanonicalPath
+    ksbase.dll.ksbase_ClientBase_processGetEP
+    ksbase.dll.ksbase_ClientBase_processGetPP
+    ksbase.dll.ksbase_ClientBase_processGetServer
+    ksbase.dll.ksbase_ClientBase_processGetVar
+    ksbase.dll.ksbase_ClientBase_processLink
+    ksbase.dll.ksbase_ClientBase_processRegister
+    ksbase.dll.ksbase_ClientBase_processRenameObject
+    ksbase.dll.ksbase_ClientBase_processSetVar
+    ksbase.dll.ksbase_ClientBase_processUnLink
+    ksbase.dll.ksbase_ClientBase_processUnRegister
+    ksbase.dll.ksbase_ClientBase_requestCreateObject
+    ksbase.dll.ksbase_ClientBase_requestDeleteObject
+    ksbase.dll.ksbase_ClientBase_requestGetCanonicalPath
+    ksbase.dll.ksbase_ClientBase_requestGetEP
+    ksbase.dll.ksbase_ClientBase_requestGetPP
+    ksbase.dll.ksbase_ClientBase_requestGetServer
+    ksbase.dll.ksbase_ClientBase_requestGetVar
+    ksbase.dll.ksbase_ClientBase_requestLink
+    ksbase.dll.ksbase_ClientBase_requestRegister
+    ksbase.dll.ksbase_ClientBase_requestRenameObject
+    ksbase.dll.ksbase_ClientBase_requestSetVar
+    ksbase.dll.ksbase_ClientBase_requestUnLink
+    ksbase.dll.ksbase_ClientBase_requestUnRegister
+    ksbase.dll.ksbase_ClientBase_reset
+    ksbase.dll.ksbase_ClientBase_serverHost_set
+    ksbase.dll.ksbase_ClientBase_serverName_set
+    ksbase.dll.ksbase_ClientHandler_shutdown
+    ksbase.dll.ksbase_ClientHandler_startup
+    ksbase.dll.ksbase_ClientTicketGenerator_decodeReply
+    ksbase.dll.ksbase_ClientTicketGenerator_encodeTicket
+    ksbase.dll.ksbase_ComTask_actimode_get
+    ksbase.dll.ksbase_ComTask_actimode_set
+    ksbase.dll.ksbase_ComTask_calcExec
+    ksbase.dll.ksbase_ComTask_constructor
+    ksbase.dll.ksbase_ComTask_cycInterval_get
+    ksbase.dll.ksbase_ComTask_cycInterval_set
+    ksbase.dll.ksbase_ComTask_destructor
+    ksbase.dll.ksbase_ComTask_getaccess
+    ksbase.dll.ksbase_ComTask_typemethod
+    ksbase.dll.ksbase_KSDATAPACKET_append
+    ksbase.dll.ksbase_KSDATAPACKET_set
+    ksbase.dll.ksbase_Manager_getaccess
+    ksbase.dll.ksbase_Manager_getserverdata
+    ksbase.dll.ksbase_Manager_register
+    ksbase.dll.ksbase_Manager_shutdown
+    ksbase.dll.ksbase_Manager_unregister
+    ksbase.dll.ksbase_NoneAuth
+    ksbase.dll.ksbase_NoneTicketAuthenticator_TicketGetaccess
+    ksbase.dll.ksbase_NoneTicketAuthenticator_constructor
+    ksbase.dll.ksbase_NoneTicketAuthenticator_createticket
+    ksbase.dll.ksbase_NoneTicketAuthenticator_deleteticket
+    ksbase.dll.ksbase_NoneTicketAuthenticator_encodereply
+    ksbase.dll.ksbase_NoneTicketAuthenticator_startup
+    ksbase.dll.ksbase_NoneTicketGenerator_decodeReply
+    ksbase.dll.ksbase_NoneTicketGenerator_encodeTicket
+    ksbase.dll.ksbase_NoneTicketGenerator_startup
+    ksbase.dll.ksbase_ProtocolIdentificator_createClientHandler
+    ksbase.dll.ksbase_ProtocolIdentificator_getaccess
+    ksbase.dll.ksbase_ProtocolIdentificator_identify
+    ksbase.dll.ksbase_RootComTask_constructor
+    ksbase.dll.ksbase_RootComTask_cycsecs_get
+    ksbase.dll.ksbase_RootComTask_cycsecs_set
+    ksbase.dll.ksbase_RootComTask_cycusecs_get
+    ksbase.dll.ksbase_RootComTask_cycusecs_set
+    ksbase.dll.ksbase_RootComTask_getaccess
+    ksbase.dll.ksbase_RootComTask_shutdown
+    ksbase.dll.ksbase_RootComTask_startup
+    ksbase.dll.ksbase_ServerRep_constructor
+    ksbase.dll.ksbase_ServerRep_expirationtime_get
+    ksbase.dll.ksbase_ServerRep_expirationtime_set
+    ksbase.dll.ksbase_ServerRep_name_get
+    ksbase.dll.ksbase_ServerRep_name_set
+    ksbase.dll.ksbase_ServerRep_port_get
+    ksbase.dll.ksbase_ServerRep_port_set
+    ksbase.dll.ksbase_ServerRep_protocols_get
+    ksbase.dll.ksbase_ServerRep_protocols_set
+    ksbase.dll.ksbase_ServerRep_regtime_get
+    ksbase.dll.ksbase_ServerRep_regtime_set
+    ksbase.dll.ksbase_ServerRep_shutdown
+    ksbase.dll.ksbase_ServerRep_startup
+    ksbase.dll.ksbase_ServerRep_state_get
+    ksbase.dll.ksbase_ServerRep_state_set
+    ksbase.dll.ksbase_ServerRep_timetolive_get
+    ksbase.dll.ksbase_ServerRep_timetolive_set
+    ksbase.dll.ksbase_ServerRep_typemethod
+    ksbase.dll.ksbase_ServerRep_version_get
+    ksbase.dll.ksbase_ServerRep_version_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACDelete_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACDelete_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACInstantiate_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACInstantiate_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACLink_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACLink_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACRead_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACRead_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACRename_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACRename_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACUnlink_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACUnlink_set
+    ksbase.dll.ksbase_TicketAuthenticator_ACWrite_get
+    ksbase.dll.ksbase_TicketAuthenticator_ACWrite_set
+    ksbase.dll.ksbase_TicketAuthenticator_TicketGetaccess
+    ksbase.dll.ksbase_TicketAuthenticator_constructor
+    ksbase.dll.ksbase_TicketAuthenticator_createticket
+    ksbase.dll.ksbase_TicketAuthenticator_deleteticket
+    ksbase.dll.ksbase_TicketAuthenticator_encodereply
+    ksbase.dll.ksbase_TicketAuthenticator_shutdown
+    ksbase.dll.ksbase_TicketAuthenticator_startup
+    ksbase.dll.ksbase_free_KSDATAPACKET
+    ksbase.dll.noneticketvtbl
+    ksbase.dll.ov_ksserver_createobject
+    ksbase.dll.ov_ksserver_deleteobject
+    ksbase.dll.ov_ksserver_exgdata
+    ksbase.dll.ov_ksserver_getcanonicalpath
+    ksbase.dll.ov_ksserver_getep
+    ksbase.dll.ov_ksserver_gethist
+    ksbase.dll.ov_ksserver_getpp
+    ksbase.dll.ov_ksserver_getvar
+    ksbase.dll.ov_ksserver_link
+    ksbase.dll.ov_ksserver_renameobject
+    ksbase.dll.ov_ksserver_setvar
+    ksbase.dll.ov_ksserver_svclog_register
+    ksbase.dll.ov_ksserver_svclog_unregister
+    ksbase.dll.ov_ksserver_ticket_setnoneticketaccess
+    ksbase.dll.ov_ksserver_unlink
+    ksbase.dll.ov_library_open_ksbase
+    ksbase.dll.ov_library_open_ksbase_old
+    ksbase.dll.passoc_ksbase_AssocChannelClientHandler
+    ksbase.dll.passoc_ksbase_AssocChannelDataHandler
+    ksbase.dll.passoc_ksbase_AssocClientToTicketGenerator
+    ksbase.dll.passoc_ksbase_AssocComTaskList
+    ksbase.dll.passoc_ksbase_AssocCurrentChannel
+    ksbase.dll.pclass_ksbase_Channel
+    ksbase.dll.pclass_ksbase_ClientBase
+    ksbase.dll.pclass_ksbase_ClientHandler
+    ksbase.dll.pclass_ksbase_ClientTicketGenerator
+    ksbase.dll.pclass_ksbase_ComTask
+    ksbase.dll.pclass_ksbase_DataHandler
+    ksbase.dll.pclass_ksbase_Manager
+    ksbase.dll.pclass_ksbase_NoneTicketAuthenticator
+    ksbase.dll.pclass_ksbase_NoneTicketGenerator
+    ksbase.dll.pclass_ksbase_ProtocolIdentificator
+    ksbase.dll.pclass_ksbase_RootComTask
+    ksbase.dll.pclass_ksbase_ServerRep
+    ksbase.dll.pclass_ksbase_TicketAuthenticator
+    ksbase.dll.pclass_ksbase_baseClientHandlerExtension
