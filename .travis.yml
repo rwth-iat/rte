@@ -12,13 +12,14 @@ addons:
     - gcc-multilib
 
 env:
-   - OV_ARCH_BITWIDTH=32
-   - OV_ARCH_BITWIDTH=64
+   - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
+   - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
+#fb_dbcommands does not compile with 32 bit on the 64 bit travis
 
 script:
    - cd ./build
-   - tclsh ./acplt_build.tcl no_dbcommands $OV_ARCH_BITWIDTH
+   - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
 
 after_failure:
-   - tail -n 20 acplt_build.log
+   - tail -n 40 acplt_build.log
    
