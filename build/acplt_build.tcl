@@ -475,13 +475,10 @@ proc release_lib_better {libname option} {
 	set temp [split $libname "/"]
 	set libnametemp [lindex $temp end]
 	set libnamepraefix [lindex $temp end-1]
-	#print_msg "$libnamepraefix"
-	#print_msg "$releasedir/dev/$libnametemp"
-	
+
 	set libs [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] 
 	
-	#print_msg "$libs"
-	print_msg "$libnametemp"
+	print_msg "prepare $libnametemp with release_lib_better"
 	#lib contains the list of the libs to build
 	if {[lsearch $libs "source"] > -1 } { set libs $libnametemp }
 	#correct the paths... lifting libraries up from the "core" dir
