@@ -17,7 +17,7 @@ env:
 
 script:
    - cd ./build
-   - tclsh ./acplt_build.tcl no_dbcommands $OV_ARCH_BITWIDTH
+   - tclsh ./acplt_build.tcl $OV_ARCH_BITWIDTH
 
 after_failure:
    - tail -n 20 acplt_build.log
