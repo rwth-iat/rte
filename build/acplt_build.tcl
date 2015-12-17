@@ -231,43 +231,69 @@ proc create_dirs {} {
 
 proc get_revision {} {
 	global logfile
-	
-	execute svn info
-	#set logfile "logfile.txt"
+	if {[file isdirectory "../.git"]} {
+		return [exec git describe --abbrev=7 --dirty --always --tags]
+	}
+
+	#this one gets git commit id of the trunk = master branch
+	#a bit hacky due to hard-coded uri, but this is the only way I found
+	execute_ignore svn info svn info https://github.com/acplt/rte/trunk
+	set in [open $logfile r]
+	set first 0
+	set revision 0
+	#first we need to extract the revision of last change
+	while {[gets $in line] != -1} {
+		if {[regexp {.*Rev:\s+([0-9]+).*} $line] } then {
+				regexp {.*Rev:\s+([0-9]+).*} $line _ first 
+				set revision $first
+				break
+		   }
+	}
+	close $in
+	if {$revision != 0} {
+		execute_ignore svn propget git-commit --revprop -r $revision
+	}
 	set in [open $logfile r]
 	set first 0
 	while {[gets $in line] != -1} {
-		if {[regexp "Ausgecheckt, Revision" $line] } then {
-			print_msg $line
-			regexp {\s*Ausgecheckt, Revision\s+([0-9]+).*} $line _ first 
-			break
-		}
-		if {[regexp "Revision:" $line] } then {
-			print_msg $line
-			regexp {\s*Revision:\s+([0-9]+).*} $line _ first 
-			break
-		}
+		if {[regexp {([0-9a-z]{30})} $line] } then {
+				regexp {([0-9a-z]{30})} $line _ first 
+				set line [string range $line 0 6]
+				print_msg "Commit hash: $line"
+				break
+		   }
+		set line "unknown"
 	}
 	close $in
-	#file delete -force $logfile
-	return $first
+
+
+	return $line
 }
 
 
-# Checkout a SVN module
-proc checkout_dir {module {vcs_server "acpltpublish"} {dirname ""} } {
-	print_msg "Checking out $module via checkout_dir"
+# Checkout a SVN module or copy if the file are there (from git?)
+proc checkout_dir {module {vcs_server "github"} {dirname ""} } {
+	global basedir
 	set temp [split $module "/"]
 	if {$dirname == ""} {
 		set dirname [lindex $temp end]
 	}
+	if {[file isdirectory $basedir/../$module]} {
+		file copy -force $basedir/../$module ./$dirname
+		print_msg "reused directory $module"
+		return
+	}
 	if {$vcs_server == "github"} {
-		execute svn co https://github.com/acplt/rte/$module $dirname
+		print_msg "Checking out $module from github"
+		execute svn co https://github.com/acplt/rte/trunk/$module $dirname
 	} elseif {$vcs_server == "acpltpublish"} {
+		print_msg "Checking out $module from acplt publish"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/publish/$module $dirname
 	} elseif {$vcs_server == "acpltroot"} {
+		print_msg "Checking out $module from acplt root"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module/trunk $dirname
 	} elseif {$vcs_server == "acpltrootnotrunk"} {
+		print_msg "Checking out $module from acplt root"
 		execute svn co https://dev.plt.rwth-aachen.de/acplt-repo/$module $dirname
 	}
 }
@@ -298,7 +324,6 @@ proc checkout_acplt {} {
 	#get the number of the current release - $date is global
 	cd $basedir
 	set date [get_revision]
-	set date "r$date"
  }
 
 # Build in a directory
@@ -470,7 +495,7 @@ proc release_lib_better {libname option} {
 
 	if {[lsearch [glob -types d -tails -nocomplain -directory $releasedir/dev/$libnametemp "*"] "source"] == -1 } {
 		file delete -force $releasedir/dev/$libnametemp
-		#print_msg "BÄÄÄHM"
+		#print_msg "BÃ„Ã„Ã„HM"
 	}
 	
 	set not_yet_build $libs
@@ -763,7 +788,7 @@ create_dirs
 if { $compileonly != 1 } then {
 	checkout_acplt
 } else {
-	set date "rXXXX"
+	set date [get_revision]
 }
 cd $basedir
 
