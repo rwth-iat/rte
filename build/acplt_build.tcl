@@ -311,10 +311,10 @@ proc checkout_acplt {} {
 	
 	cd $builddir
 	if {$build_dbcommands == 1} {
-		checkout_dir "archive/oncrpc" "acpltroot" "oncrpc"
-		checkout_dir "archive/acplt" "acpltroot" "base"
+		checkout_dir "legacy/oncrpc"
+		checkout_dir "legacy/comm" "github" "base"
 		cd $builddir/base
-		checkout_dir "archive/fbs_dienste" "acpltrootnotrunk" "fbs_dienste"
+		checkout_dir "legacy/fbs_dienste"
 	} else {
 		file mkdir $builddir/base
 		cd $builddir/base
