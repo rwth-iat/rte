@@ -1236,6 +1236,41 @@ cshmi.prototype = {
 				return previousTemplateCount;
 			}else if (VisualObject.hasAttribute(ParameterValue)){
 				return VisualObject.getAttribute(ParameterValue);
+			}else if (ParameterValue === "getPolylineTotalLength" ||
+					ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1||
+					ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
+
+				//find a polyline with Coords in a parent group
+				var IteratorObj = VisualObject;
+				var Coords = null;
+				while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
+					for(var i = 0; i < IteratorObj.childNodes.length;i++){
+						if (Source.childNodes[i].tagName === "polyline" && Source.childNodes[i].Coords !== undefined){
+							Coords = Source.childNodes[i].Coords;
+							break;
+						}
+					}
+				}
+				if (ParameterValue === "OperatorInput"){
+					return getPolylineTotalLength(Coords).toString();
+				}
+				
+				//e.g. "getPolylinePointXAtFractionLength:TemplateFBReferenceVariable:fraction"
+				var splittedValueParameter = ParameterValue.split(":");
+				var fraction = 0;
+				if (splittedValueParameter.length > 2){
+					this.ResourceList.Actions["tempPath"] = new Object();
+					this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
+					this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
+					fraction = this._getValue(VisualObject, "tempPath", null, null, null, true);
+				}
+				var Point = getPolylineXPointFromFraction(Coords, fraction);
+				if(ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1){
+					return Point.x.toString();
+				}else if(ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
+					return Point.y.toString();
+				}
+				return "";
 			}else{
 				//unknown element variable
 				return "";

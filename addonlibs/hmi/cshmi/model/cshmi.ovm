@@ -49,8 +49,8 @@
 *
 *	SVN:
 *	----
-*	$Revision$
-*	$Date$
+*	$Revision: 9759 $
+*	$Date: 2015-08-11 15:32:12 +0200 (Di, 11 Aug 2015) $
 *
 *	History:
 *	--------
@@ -531,7 +531,7 @@ LIBRARY cshmi
 				COMMENT = "path of a remote KS variable";
 			elemVar : STRING
 				HAS_SET_ACCESSOR
-				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'previousTemplateCount')";
+				COMMENT = "variablename of the visual object; example 'fill', 'stroke', 'content' or 'absolutex', 'previousTemplateCount', for polyline length in a parent group 'getPolylineTotalLength', or a getPointAtFraction of a polyline in a parent group 'getPolylinePointXAtFractionLength:TemplateFBReferenceVariable:fraction')";
 			elemVarPath : STRING
 				HAS_SET_ACCESSOR
 				COMMENT = "NOT IMPLEMENTED and hidden! the (relative) path to the element"; //Name support like routePolyline
