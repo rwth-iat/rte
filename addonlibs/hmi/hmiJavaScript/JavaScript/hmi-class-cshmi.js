@@ -44,10 +44,6 @@
 *	--------
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
-*	CVS:
-*	----
-*	$Revision: 9848 $
-*	$Date: 2015-11-05 11:00:38 +0100 (Do, 05 Nov 2015) $
 *
 *	History:
 *	--------
@@ -1245,11 +1241,17 @@ cshmi.prototype = {
 				var Coords = null;
 				while( (IteratorObj = IteratorObj.parentNode) && IteratorObj !== null && IteratorObj.namespaceURI == HMI.HMI_Constants.NAMESPACE_SVG){
 					for(var i = 0; i < IteratorObj.childNodes.length;i++){
-						if (Source.childNodes[i].tagName === "polyline" && Source.childNodes[i].Coords !== undefined){
-							Coords = Source.childNodes[i].Coords;
+						if (IteratorObj.childNodes[i].tagName === "polyline" && IteratorObj.childNodes[i].ResourceList && IteratorObj.childNodes[i].ResourceList.RoutePolyline && IteratorObj.childNodes[i].ResourceList.RoutePolyline.Coords !== undefined){
+							Coords = IteratorObj.childNodes[i].ResourceList.RoutePolyline.Coords;
 							break;
 						}
 					}
+					if(Coords !== null){
+						break;
+					}
+				}
+				if(Coords === null){
+					return "";
 				}
 				if (ParameterValue === "getPolylineTotalLength"){
 					return getPolylineTotalLength(Coords).toString();
@@ -1260,14 +1262,14 @@ cshmi.prototype = {
 				var fraction = 0;
 				if (splittedValueParameter.length > 2){
 					this.ResourceList.Actions["tempPath"] = new Object();
-					this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[2];
-					this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[3];
+					this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[1];
+					this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[2];
 					fraction = this._getValue(VisualObject, "tempPath", null, null, null, true);
 				}
-				var Point = getPolylineXPointFromFraction(Coords, fraction);
-				if(ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1){
+				var Point = getPolylinePointFromFraction(Coords, fraction);
+				if(Point.x !== null && ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1){
 					return Point.x.toString();
-				}else if(ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
+				}else if(Point.y !== null && ParameterValue.indexOf("getPolylinePointYAtFractionLength") !== -1){
 					return Point.y.toString();
 				}
 				return "";
@@ -6455,12 +6457,4 @@ function ObserverEntry(ObjectName, delimiter){
 	}
 	this.ObjectName = ObjectName;
 	this.value = null;
-}
-
-var filedate = "$Date: 2015-11-05 11:00:38 +0100 (Do, 05 Nov 2015) $";
-filedate = filedate.substring(7, filedate.length-2);
-if ("undefined" == typeof HMIdate){
-	HMIdate = filedate;
-}else if (HMIdate < filedate){
-	HMIdate = filedate;
 }

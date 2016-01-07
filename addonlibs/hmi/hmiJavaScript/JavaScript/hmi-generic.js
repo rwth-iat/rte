@@ -46,10 +46,6 @@
 *
 *	Je							Holger Jeromin <Holger.Jeromin@plt.rwth-aachen.de>
 *
-*	CVS:
-*	----
-*	$Revision$
-*	$Date$
 *
 *	History:
 *	--------
@@ -200,13 +196,13 @@ function getRotationFromObject(VisualObject){
 	Coords.EndY; 
 */
 function getPolylineTotalLength(Coords){
-	return getPolylineXPointFromFraction(Coords, null);
+	return getPolylinePointFromFraction(Coords, null);
 }
 /**
 	gets the total length of an Polyline Coords Object
 
 */
-function getPolylineXPointFromFraction(Coords, Fraction){
+function getPolylinePointFromFraction(Coords, Fraction){
 	if(Coords === null || Coords === undefined){
 		return 0;
 	}
@@ -215,7 +211,7 @@ function getPolylineXPointFromFraction(Coords, Fraction){
 	sPosXY.y=null;
 	
 	var l1,l2,l3,l4,l5;
-	var total_length, sensorPosition;
+	var total_length, Position;
 	l1= Math.sqrt( Math.pow(Coords.StartX - Coords.OffsetPointSourceX , 2) + Math.pow(Coords.StartY - Coords.OffsetPointSourceY , 2)) ;
 	l2= Math.sqrt( Math.pow(Coords.OffsetPointSourceX - Coords.ContrlPointSourceX , 2) + Math.pow(Coords.OffsetPointSourceY - Coords.ContrlPointSourceY , 2) ) ;
 	l3= Math.sqrt( Math.pow(Coords.ContrlPointTargetX - Coords.OffsetPointSourceX , 2) + Math.pow(Coords.ContrlPointTargetY - Coords.OffsetPointSourceY , 2) ) ;
@@ -227,27 +223,27 @@ function getPolylineXPointFromFraction(Coords, Fraction){
 		return total_length;
 	}
 	
-	sensorPosition=total_length* Fraction;
-	if( sensorPosition<=l1 ){
+	Position=total_length * Fraction;
+	if( Position<=l1 ){
 		sPosXY.x= Coords.StartX+ Fraction* (Coords.OffsetPointSourceX-Coords.StartX);
-		sPosXY.y= Coords.Starty+ Fraction* (Coords.OffsetPointSourceY-Coords.StartY);
+		sPosXY.y= Coords.StartY+ Fraction* (Coords.OffsetPointSourceY-Coords.StartY);
 		return sPosXY;
-	}else if( sensorPosition<=(l1+l2) ){
+	}else if( Position<=(l1+l2) ){
 		Fraction= Fraction- (l1/total_length);
 		sPosXY.x= Coords.OffsetPointSourceX+ Fraction* (Coords.ContrlPointSourceX-Coords.OffsetPointSourceX);
 		sPosXY.y= Coords.OffsetPointSourceY+ Fraction* (Coords.ContrlPointSourceY-Coords.OffsetPointSourceY);
 		return sPosXY;
-	}else if ( sensorPosition<=(l1+l2+l3) ){
+	}else if ( Position<=(l1+l2+l3) ){
 		Fraction= Fraction- ((l1+l2)/total_length);
 		sPosXY.x= Coords.ContrlPointSourceX+ Fraction* (Coords.ContrlPointTargetX-Coords.ContrlPointSourceX);
 		sPosXY.y= Coords.ContrlPointSourceY+ Fraction* (Coords.ContrlPointTargetY-Coords.ContrlPointSourceY);
 		return sPosXY;
-	}else if ( sensorPosition<=(l1+l2+l3+l4) ){
+	}else if ( Position<=(l1+l2+l3+l4) ){
 		Fraction= Fraction- ((l1+l2+l3)/total_length);
 		sPosXY.x= Coords.ContrlPointTargetX+ Fraction* (Coords.OffsetPointTargetX-Coords.ContrlPointTargetX);
 		sPosXY.y= Coords.ContrlPointTargetY+ Fraction* (Coords.OffsetPointTargetY-Coords.ContrlPointTargetY);
 		return sPosXY;
-	}else if ( sensorPosition<=(l1+l2+l3+l4+l5) ){
+	}else if ( Position<=(l1+l2+l3+l4+l5) ){
 		Fraction= Fraction- ((l1+l2+l3+l4)/total_length);
 		sPosXY.x= Coords.OffsetPointTargetX+ Fraction* (Coords.EndX-Coords.OffsetPointTargetX);
 		sPosXY.y= Coords.OffsetPointTargetY+ Fraction* (Coords.EndY-Coords.OffsetPointTargetY);
@@ -255,12 +251,4 @@ function getPolylineXPointFromFraction(Coords, Fraction){
 	}else{
 		return sPosXY; 
 	} 
-}
-
-var filedate = "$Date$";
-filedate = filedate.substring(7, filedate.length-2);
-if ("undefined" == typeof HMIdate){
-	HMIdate = filedate;
-}else if (HMIdate < filedate){
-	HMIdate = filedate;
 }
