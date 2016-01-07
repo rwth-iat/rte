@@ -125,7 +125,7 @@ function cshmi() {
 /*#########################################################################################################################
 TODO:
 setvar type erlauben
-überall asyncrone requests nutzen
+ueberall asyncrone requests nutzen
 #########################################################################################################################*/
 
 /***********************************************************************
@@ -1251,7 +1251,7 @@ cshmi.prototype = {
 						}
 					}
 				}
-				if (ParameterValue === "OperatorInput"){
+				if (ParameterValue === "getPolylineTotalLength"){
 					return getPolylineTotalLength(Coords).toString();
 				}
 				
@@ -1653,6 +1653,8 @@ cshmi.prototype = {
 						NewValue = NewValue * parseFloat(NewValuePart);
 					}else if (thisObserverEntry.ObjectName.indexOf("div") === 0){
 						NewValue = NewValue / parseFloat(NewValuePart);
+					}else if (thisObserverEntry.ObjectName.indexOf("mod") === 0){
+						NewValue = NewValue%NewValuePart;
 					}else if (thisObserverEntry.ObjectName.indexOf("abs") === 0){
 						NewValue = NewValue + Math.abs(parseFloat(NewValuePart));
 					}else if (thisObserverEntry.ObjectName.indexOf("acos") === 0){
