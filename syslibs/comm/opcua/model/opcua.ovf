@@ -1,7 +1,7 @@
-#ifndef iec62541_OVF_INCLUDED
-#define iec62541_OVF_INCLUDED
+#ifndef opcua_OVF_INCLUDED
+#define opcua_OVF_INCLUDED
 
-#include "iec62541.ovt"
+#include "opcua.ovt"
 
 typedef UA_Int32 UA_FNC_ADDNODES(
 	void *ensHandle,

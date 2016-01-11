@@ -15,25 +15,25 @@
 *
 ******************************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
 #include "libov/ov_logfile.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_result.h"
-#ifdef ov_library_open_iec62541
-#undef ov_library_open_iec62541
+#ifdef ov_library_open_opcua
+#undef ov_library_open_opcua
 #endif
 
 /*
 * This function will be called, when the library is loaded.
 * It could generate components and initializes the startup procedure
 */
-OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
+OV_RESULT ov_library_setglobalvars_opcua_new(void) {
 	OV_RESULT result;
 	/*
 	 *    set the global variables of the original version
@@ -44,10 +44,10 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 	OV_INSTPTR_ov_domain pcommunication = NULL;
 	OV_INSTPTR_ov_domain pDomOpcUa = NULL;
 	OV_INSTPTR_ov_domain pDomTicketAuths = NULL;
-	OV_INSTPTR_iec62541_uaIdentificator pIdentificator = NULL;
-	OV_INSTPTR_iec62541_uaServer pServer = NULL;
+	OV_INSTPTR_opcua_uaIdentificator pIdentificator = NULL;
+	OV_INSTPTR_opcua_uaServer pServer = NULL;
 
-	result = ov_library_setglobalvars_iec62541();
+	result = ov_library_setglobalvars_opcua();
 	if(Ov_Fail(result)){
 		return result;
 	}
@@ -84,12 +84,12 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 	}
 
 	/*	create protocol identificator for OPCUA	*/
-	pIdentificator = Ov_StaticPtrCast(iec62541_uaIdentificator, Ov_SearchChild(ov_containment, pDomOpcUa, "Identificator"));
+	pIdentificator = Ov_StaticPtrCast(opcua_uaIdentificator, Ov_SearchChild(ov_containment, pDomOpcUa, "Identificator"));
 	if(pIdentificator)
 		Ov_DeleteObject(pIdentificator);
 	pIdentificator = NULL;
 
-	result = Ov_CreateObject(iec62541_uaIdentificator, pIdentificator, pDomOpcUa, "Identificator");
+	result = Ov_CreateObject(opcua_uaIdentificator, pIdentificator, pDomOpcUa, "Identificator");
 	if(Ov_Fail(result))
 	{
 		ov_logfile_error("Fatal: could not create Identificator object");
@@ -97,9 +97,9 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 	}
 
 	/*	create uaServer	*/
-	pServer = Ov_StaticPtrCast(iec62541_uaServer, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaServer));
+	pServer = Ov_StaticPtrCast(opcua_uaServer, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaServer));
 	if(!pServer){
-		result = Ov_CreateObject(iec62541_uaServer, pServer, pDomOpcUa, "uaServer");
+		result = Ov_CreateObject(opcua_uaServer, pServer, pDomOpcUa, "uaServer");
 		if(Ov_Fail(result))
 		{
 			ov_logfile_error("Fatal: could not create Identificator object - reason: %s", ov_result_getresulttext(result));
@@ -130,14 +130,14 @@ OV_RESULT ov_library_setglobalvars_iec62541_new(void) {
 *       previous one, which additionally creates instances.
 * 	This is called by the OV system upon library load.
 */
-OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_iec62541(void) {
+OV_DLLFNCEXPORT OV_LIBRARY_DEF *ov_library_open_opcua(void) {
 	/* local variables */
-	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_iec62541_new;
+	static OV_LIBRARY_DEF *OV_LIBRARY_DEF_opcua_new;
 	/*
 	*       replace the 'setglobalvars' function created by the code generator
 	*       with a new one.
 	*/
-	OV_LIBRARY_DEF_iec62541_new = ov_library_open_iec62541_old();
-	OV_LIBRARY_DEF_iec62541_new->setglobalvarsfnc = ov_library_setglobalvars_iec62541_new;
-	return OV_LIBRARY_DEF_iec62541_new;
+	OV_LIBRARY_DEF_opcua_new = ov_library_open_opcua_old();
+	OV_LIBRARY_DEF_opcua_new->setglobalvarsfnc = ov_library_setglobalvars_opcua_new;
+	return OV_LIBRARY_DEF_opcua_new;
 }

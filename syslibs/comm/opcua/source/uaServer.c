@@ -16,17 +16,17 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_vendortree.h"
 #include "libov/ov_memstack.h"
 #include "libov/ov_result.h"
-#include "iec62541_helpers.h"
+#include "opcua_helpers.h"
 #include "ks_logfile.h"
 #include "open62541.h"
 #include <errno.h>
@@ -49,7 +49,7 @@
 void UA_String_deleteMembers(UA_String *p);
 
 
-OV_INSTPTR_iec62541_uaServer iec62541_pUaServer = NULL;
+OV_INSTPTR_opcua_uaServer opcua_pUaServer = NULL;
 static UA_Boolean	UA_ServerRun = FALSE;
 
 
@@ -105,11 +105,11 @@ static UA_ByteString loadCertificate(void) {
     return certificate;
 }
 
-static UA_Int32 iec62541_uaServer_destroyNodeStore(void *ensHandle){
+static UA_Int32 opcua_uaServer_destroyNodeStore(void *ensHandle){
 	return 0;
 }
 
-static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
+static void opcua_uaServer_initServer(OV_INSTPTR_opcua_uaServer pinst){
 	UA_Logger logger;
 	UA_ByteString certificate;
 	UA_String url;
@@ -179,7 +179,7 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 				}
 				pAssoc = Ov_StaticPtrCast(ov_association, Ov_SearchChild(ov_containment, pLibrary, "AssocSpecificClientHandler"));
 				if(pAssoc){
-					result = ov_association_link(pAssoc, pListener, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaIdentificator), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
+					result = ov_association_link(pAssoc, pListener, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaIdentificator), OV_PMH_DEFAULT, NULL, OV_PMH_DEFAULT, NULL);
 				} else {
 					ov_logfile_error("%s: something went wrong while creating the specific Listener - could not find association class");
 				}
@@ -196,93 +196,93 @@ static void iec62541_uaServer_initServer(OV_INSTPTR_iec62541_uaServer pinst){
 	url = UA_String_fromChars(OV_UA_NAMESPACEURI);
 
 	//Services on Namespace OV (1)
-	iec62541_pUaServer->v_nodeStoreNsOV.addNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_addNodes;
-	iec62541_pUaServer->v_nodeStoreNsOV.addReferences = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_addReferences;
-	iec62541_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_browseNodes;
-	iec62541_pUaServer->v_nodeStoreNsOV.deleteNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_deleteNodes;
-	iec62541_pUaServer->v_nodeStoreNsOV.deleteReferences = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_deleteReferences;
-	iec62541_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_readNodes;
-	iec62541_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
-	iec62541_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_iec62541_nodeStoreFunctions)pclass_iec62541_nodeStoreFunctions->v_pvtable)->m_writeNodes;
-	iec62541_pUaServer->v_nodeStoreNsOV.destroy = iec62541_uaServer_destroyNodeStore;
-	UA_Server_addExternalNamespace(iec62541_pUaServer->v_serverData,1,&url,&iec62541_pUaServer->v_nodeStoreNsOV);
+	opcua_pUaServer->v_nodeStoreNsOV.addNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addNodes;
+	opcua_pUaServer->v_nodeStoreNsOV.addReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_addReferences;
+	opcua_pUaServer->v_nodeStoreNsOV.browseNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_browseNodes;
+	opcua_pUaServer->v_nodeStoreNsOV.deleteNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteNodes;
+	opcua_pUaServer->v_nodeStoreNsOV.deleteReferences = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_deleteReferences;
+	opcua_pUaServer->v_nodeStoreNsOV.readNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_readNodes;
+	opcua_pUaServer->v_nodeStoreNsOV.translateBrowsePathsToNodeIds = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_translateBrowsePathsToNodeIDs;
+	opcua_pUaServer->v_nodeStoreNsOV.writeNodes = ((OV_VTBLPTR_opcua_nodeStoreFunctions)pclass_opcua_nodeStoreFunctions->v_pvtable)->m_writeNodes;
+	opcua_pUaServer->v_nodeStoreNsOV.destroy = opcua_uaServer_destroyNodeStore;
+	UA_Server_addExternalNamespace(opcua_pUaServer->v_serverData,1,&url,&opcua_pUaServer->v_nodeStoreNsOV);
 	UA_String_deleteMembers(&url);
 	/*	add reference to ov root	*/
 	if(UA_Server_addReference(pinst->v_serverData, UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
 			UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES), UA_EXPANDEDNODEID_NUMERIC(1, 0)) != UA_STATUSCODE_GOOD){
 		ov_logfile_error("%s - init: could not create reference to ov-namespace", pinst->v_identifier);
 	}
-	UA_Server_run_startup(iec62541_pUaServer->v_serverData, 1, &UA_ServerRun);
+	UA_Server_run_startup(opcua_pUaServer->v_serverData, 1, &UA_ServerRun);
 
 	return;
 }
 
-static void iec62541_uaServer_stopServer(OV_INSTPTR_iec62541_uaServer pinst){
-	UA_Server_run_shutdown(iec62541_pUaServer->v_serverData, 1);
+static void opcua_uaServer_stopServer(OV_INSTPTR_opcua_uaServer pinst){
+	UA_Server_run_shutdown(opcua_pUaServer->v_serverData, 1);
 	UA_Server_delete(pinst->v_serverData);
 	return;
 }
 
-OV_DLLFNCEXPORT OV_BOOL iec62541_uaServer_LoginEnableAnonymous_get(
-    OV_INSTPTR_iec62541_uaServer          pobj
+OV_DLLFNCEXPORT OV_BOOL opcua_uaServer_LoginEnableAnonymous_get(
+    OV_INSTPTR_opcua_uaServer          pobj
 ) {
     return pobj->v_serverConfig.Login_enableAnonymous;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginEnableAnonymous_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableAnonymous_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
     if(value != pobj->v_serverConfig.Login_enableAnonymous){
     	if(pobj->v_objectstate >= OV_OS_STARTED){
-    		iec62541_uaServer_stopServer(pobj);
+    		opcua_uaServer_stopServer(pobj);
     	}
     	pobj->v_serverConfig.Login_enableAnonymous = value;
     	if(pobj->v_objectstate >= OV_OS_STARTED){
-    		iec62541_uaServer_initServer(pobj);
+    		opcua_uaServer_initServer(pobj);
     	}
     }
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_BOOL iec62541_uaServer_LoginEnableUsernamePassword_get(
-    OV_INSTPTR_iec62541_uaServer          pobj
+OV_DLLFNCEXPORT OV_BOOL opcua_uaServer_LoginEnableUsernamePassword_get(
+    OV_INSTPTR_opcua_uaServer          pobj
 ) {
     return pobj->v_serverConfig.Login_enableUsernamePassword;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginEnableUsernamePassword_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginEnableUsernamePassword_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_BOOL  value
 ) {
 	if(value != pobj->v_serverConfig.Login_enableUsernamePassword){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_stopServer(pobj);
+			opcua_uaServer_stopServer(pobj);
 		}
 		pobj->v_serverConfig.Login_enableUsernamePassword = value;
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_initServer(pobj);
+			opcua_uaServer_initServer(pobj);
 		}
 	}
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING* iec62541_uaServer_LoginUsernames_get(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_STRING* opcua_uaServer_LoginUsernames_get(
+    OV_INSTPTR_opcua_uaServer          pobj,
     OV_UINT *pveclen
 ) {
     *pveclen = pobj->v_serverConfig.Login_loginsCount;
     return pobj->v_serverConfig.Login_usernames;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginUsernames_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginUsernames_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_STRING*  value,
     const OV_UINT veclen
 ) {
 	OV_UINT iterator;
 	if(pobj->v_objectstate >= OV_OS_STARTED){
-		iec62541_uaServer_stopServer(pobj);
+		opcua_uaServer_stopServer(pobj);
 	}
 	if(veclen != pobj->v_serverConfig.Login_loginsCount){
 		if(veclen < pobj->v_serverConfig.Login_loginsCount){
@@ -304,21 +304,21 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginUsernames_set(
 		ov_string_setvalue(&(pobj->v_serverConfig.Login_passwords[iterator]), NULL);
 	}
 	if(pobj->v_objectstate >= OV_OS_STARTED){
-		iec62541_uaServer_initServer(pobj);
+		opcua_uaServer_initServer(pobj);
 	}
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_STRING* iec62541_uaServer_LoginPasswords_get(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_STRING* opcua_uaServer_LoginPasswords_get(
+    OV_INSTPTR_opcua_uaServer          pobj,
     OV_UINT *pveclen
 ) {
 	*pveclen = pobj->v_serverConfig.Login_loginsCount;
 	return pobj->v_serverConfig.Login_passwords;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginPasswords_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_LoginPasswords_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_STRING*  value,
     const OV_UINT veclen
 ) {
@@ -327,7 +327,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginPasswords_set(
 		return OV_ERR_BADVALUE;
 	}
 	if(pobj->v_objectstate >= OV_OS_STARTED){
-		iec62541_uaServer_stopServer(pobj);
+		opcua_uaServer_stopServer(pobj);
 	}
 	for(iterator = 0; iterator < veclen; iterator++){
 		if(Ov_Fail(ov_string_setvalue(&(pobj->v_serverConfig.Login_passwords[iterator]), value[iterator]))){
@@ -335,70 +335,70 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_LoginPasswords_set(
 		}
 	}
 	if(pobj->v_objectstate >= OV_OS_STARTED){
-		iec62541_uaServer_initServer(pobj);
+		opcua_uaServer_initServer(pobj);
 	}
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_UINT iec62541_uaServer_LoginLoginsCount_get(
-    OV_INSTPTR_iec62541_uaServer          pobj
+OV_DLLFNCEXPORT OV_UINT opcua_uaServer_LoginLoginsCount_get(
+    OV_INSTPTR_opcua_uaServer          pobj
 ) {
     return pobj->v_serverConfig.Login_loginsCount;
 }
 
-OV_DLLFNCEXPORT OV_STRING iec62541_uaServer_ApplicationURI_get(
-    OV_INSTPTR_iec62541_uaServer          pobj
+OV_DLLFNCEXPORT OV_STRING opcua_uaServer_ApplicationURI_get(
+    OV_INSTPTR_opcua_uaServer          pobj
 ) {
     return pobj->v_serverConfig.Application_applicationURI;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_ApplicationURI_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_ApplicationURI_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_STRING  value
 ) {
 	OV_RESULT result = OV_ERR_OK;
 	if(ov_string_compare(pobj->v_serverConfig.Application_applicationURI, value) != OV_STRCMP_EQUAL){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_stopServer(pobj);
+			opcua_uaServer_stopServer(pobj);
 		}
 		result = ov_string_setvalue(&(pobj->v_serverConfig.Application_applicationURI), value);
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_initServer(pobj);
+			opcua_uaServer_initServer(pobj);
 		}
 	}
     return result;
 }
 
-OV_DLLFNCEXPORT OV_STRING iec62541_uaServer_ApplicationName_get(
-    OV_INSTPTR_iec62541_uaServer          pobj
+OV_DLLFNCEXPORT OV_STRING opcua_uaServer_ApplicationName_get(
+    OV_INSTPTR_opcua_uaServer          pobj
 ) {
 	return pobj->v_serverConfig.Application_applicationName;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_ApplicationName_set(
-    OV_INSTPTR_iec62541_uaServer          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_ApplicationName_set(
+    OV_INSTPTR_opcua_uaServer          pobj,
     const OV_STRING  value
 ) {
 	OV_RESULT result = OV_ERR_OK;
 	if(ov_string_compare(pobj->v_serverConfig.Application_applicationName, value) != OV_STRCMP_EQUAL){
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_stopServer(pobj);
+			opcua_uaServer_stopServer(pobj);
 		}
 		result = ov_string_setvalue(&(pobj->v_serverConfig.Application_applicationName), value);
 		if(pobj->v_objectstate >= OV_OS_STARTED){
-			iec62541_uaServer_initServer(pobj);
+			opcua_uaServer_initServer(pobj);
 		}
 	}
 	return result;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
+OV_DLLFNCEXPORT OV_RESULT opcua_uaServer_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
     OV_RESULT    result;
     OV_INSTPTR_ov_object pOtherObject = NULL;
 
@@ -408,7 +408,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
          return result;
 
     /* do what */
-    Ov_ForEachChild(ov_instantiation, pclass_iec62541_uaServer, pOtherObject){
+    Ov_ForEachChild(ov_instantiation, pclass_opcua_uaServer, pOtherObject){
     	if(pOtherObject != pobj){
     		KS_logfile_error(("%s: cannot instantiate - ua instance already exists", pinst->v_identifier));
     		return OV_ERR_ALREADYEXISTS;
@@ -417,7 +417,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     pinst->v_serverConfig = UA_ServerConfig_standard;
     pinst->v_serverConfig.Application_applicationName = NULL;
     pinst->v_serverConfig.Application_applicationURI = NULL;
-    ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationName), "acplt-iec62541");
+    ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationName), "acplt-opcua");
     ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationURI), "urn:acplt:open62541:acplt-iec2541Server");
     pinst->v_serverConfig.Login_loginsCount = 2;
     pinst->v_serverConfig.Login_usernames = ov_database_malloc(2*sizeof(OV_STRING));
@@ -432,13 +432,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaServer_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void iec62541_uaServer_destructor(
+OV_DLLFNCEXPORT void opcua_uaServer_destructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*
     *   local variables
     */
-	OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+	OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
 	OV_UINT	iterator;
     /* do what */
 	ov_string_setvalue(&(pinst->v_serverConfig.Application_applicationName), NULL);
@@ -458,35 +458,35 @@ OV_DLLFNCEXPORT void iec62541_uaServer_destructor(
 }
 
 
-OV_DLLFNCEXPORT void iec62541_uaServer_startup(
+OV_DLLFNCEXPORT void opcua_uaServer_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
     /* do what the base class does first */
     ov_object_startup(pobj);
 
     /* do what */
-    iec62541_pUaServer = pinst;
+    opcua_pUaServer = pinst;
     UA_ServerRun = TRUE;
-    iec62541_uaServer_initServer(pinst);
+    opcua_uaServer_initServer(pinst);
     return;
 }
 
-OV_DLLFNCEXPORT void iec62541_uaServer_shutdown(
+OV_DLLFNCEXPORT void opcua_uaServer_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaServer pinst = Ov_StaticPtrCast(iec62541_uaServer, pobj);
+    OV_INSTPTR_opcua_uaServer pinst = Ov_StaticPtrCast(opcua_uaServer, pobj);
 
     /* do what */
     UA_ServerRun = FALSE;
-    iec62541_uaServer_stopServer(pinst);
-    iec62541_pUaServer = NULL;
+    opcua_uaServer_stopServer(pinst);
+    opcua_pUaServer = NULL;
     /* set the object's state to "shut down" */
     ov_object_shutdown(pobj);
 
@@ -494,7 +494,7 @@ OV_DLLFNCEXPORT void iec62541_uaServer_shutdown(
     return;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS iec62541_uaServer_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_uaServer_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -524,10 +524,10 @@ OV_DLLFNCEXPORT OV_ACCESS iec62541_uaServer_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
-OV_DLLFNCEXPORT void iec62541_uaServer_typemethod (
+OV_DLLFNCEXPORT void opcua_uaServer_typemethod (
 	OV_INSTPTR_ksbase_ComTask	this
 ) {
-	OV_INSTPTR_iec62541_uaServer thisServer = Ov_StaticPtrCast(iec62541_uaServer, this);
+	OV_INSTPTR_opcua_uaServer thisServer = Ov_StaticPtrCast(opcua_uaServer, this);
 	UA_Server_run_mainloop(thisServer->v_serverData, &UA_ServerRun);
     return;
 }

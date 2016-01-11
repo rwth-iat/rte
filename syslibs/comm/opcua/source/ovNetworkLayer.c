@@ -16,19 +16,19 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_macros.h"
 #include "ks_logfile.h"
 #include "ksbase_helper.h"
 
-static OV_INSTPTR_iec62541_ovNetworkLayer pOVNetworkLayer	=	NULL;
+static OV_INSTPTR_opcua_ovNetworkLayer pOVNetworkLayer	=	NULL;
 
-void iec62541_ovNetworklayer_addConnToClose(UA_Connection* connection){
+void opcua_ovNetworklayer_addConnToClose(UA_Connection* connection){
 	UA_ConnectionPTRPTR tempPtr = NULL;
 	if(pOVNetworkLayer){
 		pOVNetworkLayer->v_connsToCloseCount++;
@@ -47,18 +47,18 @@ static void FreeConnection(UA_Server *server, void *pConn) {
    	Ov_HeapFree(pConn);
 }
 
-OV_INSTPTR_iec62541_ovNetworkLayer getOvNetworkLayer(){
+OV_INSTPTR_opcua_ovNetworkLayer getOvNetworkLayer(){
 	return pOVNetworkLayer;
 }
 
 UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt32 port) {
-    OV_INSTPTR_iec62541_ovNetworkLayer	pNetworkLayer	=	NULL;
-    OV_VTBLPTR_iec62541_ovNetworkLayer	pVtblNetworkLayer	=	NULL;
+    OV_INSTPTR_opcua_ovNetworkLayer	pNetworkLayer	=	NULL;
+    OV_VTBLPTR_opcua_ovNetworkLayer	pVtblNetworkLayer	=	NULL;
     OV_RESULT							result;
 	UA_ServerNetworkLayer nl;
     memset(&nl, 0, sizeof(UA_ServerNetworkLayer));
 
-    result = Ov_CreateIDedObject(iec62541_ovNetworkLayer, pNetworkLayer, Ov_StaticPtrCast(ov_domain, Ov_GetFirstChild(ov_instantiation, pclass_iec62541_uaServer)), "ovNetworkLayer");
+    result = Ov_CreateIDedObject(opcua_ovNetworkLayer, pNetworkLayer, Ov_StaticPtrCast(ov_domain, Ov_GetFirstChild(ov_instantiation, pclass_opcua_uaServer)), "ovNetworkLayer");
     if(Ov_Fail(result)){
     	ov_logfile_error("ovNetworkLayer - ServerNetworkLayerOV_New: could not Create ov_NetworkLayer instance.");
     	return nl;
@@ -84,7 +84,7 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
     	return nl;
     }
     pNetworkLayer->v_localConfig = conf;
-    Ov_GetVTablePtr(iec62541_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
+    Ov_GetVTablePtr(opcua_ovNetworkLayer, pVtblNetworkLayer, pNetworkLayer);
     nl.handle = pNetworkLayer;
     nl.start = pVtblNetworkLayer->m_start;
     nl.getJobs = pVtblNetworkLayer->m_getJobs;
@@ -95,8 +95,8 @@ UA_ServerNetworkLayer ServerNetworkLayerOV_new(UA_ConnectionConfig conf, UA_UInt
 }
 
 
-OV_DLLFNCEXPORT OV_STRING iec62541_ovNetworkLayer_discoveryUrl_get(
-    OV_INSTPTR_iec62541_ovNetworkLayer          pobj
+OV_DLLFNCEXPORT OV_STRING opcua_ovNetworkLayer_discoveryUrl_get(
+    OV_INSTPTR_opcua_ovNetworkLayer          pobj
 ) {
 	OV_STRING tempString = NULL;
     if(pobj->v_discoveryUrlInternal.length > 0){
@@ -111,13 +111,13 @@ OV_DLLFNCEXPORT OV_STRING iec62541_ovNetworkLayer_discoveryUrl_get(
 	return tempString;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_ovNetworkLayer_constructor(
+OV_DLLFNCEXPORT OV_RESULT opcua_ovNetworkLayer_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+    OV_INSTPTR_opcua_ovNetworkLayer pinst = Ov_StaticPtrCast(opcua_ovNetworkLayer, pobj);
     OV_INSTPTR_ov_object	pOtherObject	=	NULL;
     OV_RESULT    result;
 
@@ -127,7 +127,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_ovNetworkLayer_constructor(
          return result;
 
     /* do what */
-    Ov_ForEachChild(ov_instantiation, pclass_iec62541_ovNetworkLayer, pOtherObject){
+    Ov_ForEachChild(ov_instantiation, pclass_opcua_ovNetworkLayer, pOtherObject){
     	if(pOtherObject != pobj){
     		KS_logfile_error(("%s: cannot instantiate - ovNetworkLayer instance already exists", pinst->v_identifier));
     		return OV_ERR_ALREADYEXISTS;
@@ -136,13 +136,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_ovNetworkLayer_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_destructor(
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_destructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+//    OV_INSTPTR_opcua_ovNetworkLayer pinst = Ov_StaticPtrCast(opcua_ovNetworkLayer, pobj);
 
     /* do what */
 
@@ -152,13 +152,13 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_destructor(
     return;
 }
 
-OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_startup(
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+    OV_INSTPTR_opcua_ovNetworkLayer pinst = Ov_StaticPtrCast(opcua_ovNetworkLayer, pobj);
 
     /* do what the base class does first */
     ov_object_startup(pobj);
@@ -170,13 +170,13 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_startup(
     return;
 }
 
-OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-//    OV_INSTPTR_iec62541_ovNetworkLayer pinst = Ov_StaticPtrCast(iec62541_ovNetworkLayer, pobj);
+//    OV_INSTPTR_opcua_ovNetworkLayer pinst = Ov_StaticPtrCast(opcua_ovNetworkLayer, pobj);
 
     /* do what */
     pOVNetworkLayer = NULL;
@@ -187,7 +187,7 @@ OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_shutdown(
     return;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS iec62541_ovNetworkLayer_getaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_ovNetworkLayer_getaccess(
 	OV_INSTPTR_ov_object	pobj,
 	const OV_ELEMENT		*pelem,
 	const OV_TICKET			*pticket
@@ -217,7 +217,7 @@ OV_DLLFNCEXPORT OV_ACCESS iec62541_ovNetworkLayer_getaccess(
 	return ov_object_getaccess(pobj, pelem, pticket);
 }
 
-OV_DLLFNCEXPORT UA_StatusCode iec62541_ovNetworkLayer_start(
+OV_DLLFNCEXPORT UA_StatusCode opcua_ovNetworkLayer_start(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Logger *logger
 ) {
@@ -225,20 +225,20 @@ OV_DLLFNCEXPORT UA_StatusCode iec62541_ovNetworkLayer_start(
     return (UA_StatusCode)0;
 }
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
+OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_getJobs(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs,
 	UA_UInt16 timeout
 ) {
 
-	OV_INSTPTR_iec62541_uaConnection	pConnection	=	NULL;
+	OV_INSTPTR_opcua_uaConnection	pConnection	=	NULL;
 	OV_UINT								counter		=	0;
 	OV_UINT								closeConnCounter	=	0;
 	UA_Job		 						*newJobs	=	NULL;
-	OV_INSTPTR_iec62541_ovNetworkLayer	this		=	Ov_StaticPtrCast(iec62541_ovNetworkLayer, nl->handle);
+	OV_INSTPTR_opcua_ovNetworkLayer	this		=	Ov_StaticPtrCast(opcua_ovNetworkLayer, nl->handle);
 
 	/*	count work items	*/
-	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
+	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
 			counter++;
 		}
@@ -255,7 +255,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 
 	/*	iterate and collect work	*/
 	counter = 0;
-	Ov_ForEachChild(iec62541_networkLayerToConnection, this, pConnection){
+	Ov_ForEachChild(opcua_networkLayerToConnection, this, pConnection){
 		if(pConnection->v_workNext == TRUE){
 			newJobs[counter].type = UA_JOBTYPE_BINARYMESSAGE;
 			UA_ByteString_newMembers(&(newJobs[counter].job.binaryMessage.message), pConnection->v_buffer.length);
@@ -290,7 +290,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_getJobs(
 	return counter;
 }
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
+OV_DLLFNCEXPORT UA_Int32 opcua_ovNetworkLayer_stop(
 	struct UA_ServerNetworkLayer *nl,
 	UA_Job** jobs
 ) {
@@ -298,7 +298,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_ovNetworkLayer_stop(
     return (UA_Int32)0;
 }
 
-OV_DLLFNCEXPORT void iec62541_ovNetworkLayer_delete(
+OV_DLLFNCEXPORT void opcua_ovNetworkLayer_delete(
 	struct UA_ServerNetworkLayer *nl
 ) {
 //	Ov_HeapFree(pOVNetworkLayer->v_messageBuffer.data);

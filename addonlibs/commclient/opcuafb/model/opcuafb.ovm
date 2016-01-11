@@ -36,7 +36,7 @@
 ***********************************************************************/
 
 #include "fb.ovm"
-#include "iec62541.ovm"
+#include "opcua.ovm"
 // # include "TCPbind.ovm"
 
 /**

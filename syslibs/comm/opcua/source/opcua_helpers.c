@@ -1,5 +1,5 @@
 /*
- * iec62541_helpers.c
+ * opcua_helpers.c
  *
  *  Created on: 21.10.2014
  *      Author: lars
@@ -7,7 +7,7 @@
 
 
 
-#include "iec62541_helpers.h"
+#include "opcua_helpers.h"
 #include "libov/ov_string.h"
 #include "libov/ov_time.h"
 #include "libov/ov_path.h"
@@ -642,7 +642,7 @@ UA_StatusCode ov_VariantToAny(const UA_Variant* pVariant, OV_ANY* pAny){
  * call ov_memstack_lock() /_unlock() around this one
  */
 
-UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
+UA_Int32 opcua_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PATH* pPath){
 	OV_STRING tmpString = NULL;
 	OV_RESULT result;
 	switch(nodeId.identifierType){
@@ -676,7 +676,7 @@ UA_Int32 iec62541_nodeStoreFunctions_resolveNodeIdToPath(UA_NodeId nodeId, OV_PA
 }
 
 
-UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
+UA_Int32 opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pelem, OV_TICKET* pTicket, OV_INSTPTR_ov_object *pInstance, OV_VTBLPTR_ov_object *ppVtblObj, OV_ACCESS *access){
 	switch(pelem->elemtype){
 	case OV_ET_OBJECT:
 	case OV_ET_OPERATION:
@@ -705,7 +705,7 @@ UA_Int32 iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(OV_ELEMENT *pe
 	return UA_STATUSCODE_GOOD;
 }
 
-UA_Int32 iec62541_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
+UA_Int32 opcua_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS* pAccess){
 	OV_VTBLPTR_ov_object	pVtbl	=	NULL;
 	if(pAccess){
 		if(!pElem->pobj){
@@ -739,8 +739,8 @@ UA_Int32 iec62541_nsOv_getNodeClassAndAccess(const OV_ELEMENT* pElem, OV_ACCESS*
 	}
 }
 
-OV_BOOL iec62541_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
-	UA_Int32 nodeClass = iec62541_nsOv_getNodeClassAndAccess(pElem, pAccess);
+OV_BOOL opcua_nsOv_nodeClassMaskMatchAndGetAccess(const OV_ELEMENT* pElem, UA_UInt32 mask, OV_ACCESS* pAccess){
+	UA_Int32 nodeClass = opcua_nsOv_getNodeClassAndAccess(pElem, pAccess);
 	if(mask == 0){
 		return TRUE; //if no bit is set, all attributes should be returned
 	}

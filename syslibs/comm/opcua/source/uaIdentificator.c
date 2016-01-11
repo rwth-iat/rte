@@ -16,16 +16,16 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_macros.h"
 #include "libov/ov_result.h"
-#include "iec62541_config.h"
-#include "iec62541_helpers.h"
+#include "opcua_config.h"
+#include "opcua_helpers.h"
 #include "ks_logfile.h"
 #include "open62541.h"
 #include "ksbase_helper.h"
@@ -94,13 +94,13 @@ OV_DLLFNCEXPORT OV_RESULT read_xdr_string_tomemstack(UA_ByteString data, OV_UINT
 	return OV_ERR_GENERIC;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_constructor(
+OV_DLLFNCEXPORT OV_RESULT opcua_uaIdentificator_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    OV_INSTPTR_iec62541_uaIdentificator pinst = Ov_StaticPtrCast(iec62541_uaIdentificator, pobj);
+    OV_INSTPTR_opcua_uaIdentificator pinst = Ov_StaticPtrCast(opcua_uaIdentificator, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -112,11 +112,11 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_constructor(
     return ov_string_setvalue(&(pinst->v_protocolID), KSOPC_IDENTIFIER);
 }
 
-OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
+OV_DLLFNCEXPORT OV_BOOL opcua_uaIdentificator_identify (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
-	OV_INSTPTR_iec62541_uaIdentificator thisId = Ov_StaticPtrCast(iec62541_uaIdentificator, this);
+	OV_INSTPTR_opcua_uaIdentificator thisId = Ov_StaticPtrCast(opcua_uaIdentificator, this);
 	UA_ByteString		msgSource = {.data = pchannel->v_inData.readPT, .length = ((pchannel->v_inData.data + pchannel->v_inData.length) - pchannel->v_inData.readPT)};
 	OV_UINT				offset = 4;
 	OV_UINT				msgLength;
@@ -191,19 +191,19 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaIdentificator_identify (
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_createClientHandler (
+OV_DLLFNCEXPORT OV_RESULT opcua_uaIdentificator_createClientHandler (
 	OV_INSTPTR_ksbase_ProtocolIdentificator this,
 	OV_INSTPTR_ksbase_Channel pchannel
 ) {
     /*    
     *   local variables
     */
-	OV_INSTPTR_iec62541_uaConnection pClientHandler = NULL;
+	OV_INSTPTR_opcua_uaConnection pClientHandler = NULL;
 
 	OV_RESULT result;
 	KS_logfile_debug(("%s: creating uaClientHandler...", this->v_identifier));
 
-	result = Ov_CreateIDedObject(iec62541_uaConnection, pClientHandler, this, "OPC_UAClientHandler");
+	result = Ov_CreateIDedObject(opcua_uaConnection, pClientHandler, this, "OPC_UAClientHandler");
 	if(Ov_OK(result))
 	{
 		KS_logfile_debug(("%s: ClientHandler created: %s", this->v_identifier, pClientHandler->v_identifier));
@@ -221,7 +221,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaIdentificator_createClientHandler (
 				KS_logfile_error(("%s: could not set ClientHandler %s's sourceAdr. reason: %s", this->v_identifier, pClientHandler->v_identifier, ov_result_getresulttext(result)));
 			}
 		}
-		result = Ov_Link(iec62541_networkLayerToConnection, getOvNetworkLayer(), pClientHandler);
+		result = Ov_Link(opcua_networkLayerToConnection, getOvNetworkLayer(), pClientHandler);
 		if(Ov_Fail(result))
 		{
 			KS_logfile_error(("%s: could not link ClientHandler %s to networkLayer %s", this->v_identifier, pClientHandler->v_identifier, getOvNetworkLayer()->v_identifier));

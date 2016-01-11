@@ -6,7 +6,7 @@
 lc = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
 
 #Project config parameters that are accessed by Eclipse
-SERVERSTARTKEYS = -w ksbase -w iec62541
+SERVERSTARTKEYS = -w ksbase -w opcua
 #/Project config parameters that are accessed by Eclipse
 MAKMAKOPTIONS = -o
 #  -I../../open62541/src_generated -I../../open62541/include -I../../open62541/deps -I../../open62541/src 
@@ -24,7 +24,7 @@ all:
 	
 #	cd ../../open62541 && cmake  -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE) all && $(MAKE) open62541-object
 #	cd ../../open62541 && cmake  -DENABLE_AMALGAMATION=ON -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE)
-	acplt_makmak -l iec62541 $(MAKMAKOPTIONS)
-	tclsh $(PREBUILD) iec62541 $(MAKMAKOPTIONS)
+	acplt_makmak -l opcua $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) opcua $(MAKMAKOPTIONS)
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	tclsh $(POSTBUILD) iec62541
+	tclsh $(POSTBUILD) opcua
