@@ -16,22 +16,22 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
-#include "iec62541.h"
-#include "iec62541_helpers.h"
+#include "opcua.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
 
-UA_StatusCode iec62541_nsOv_fillReferenceDescription(
+UA_StatusCode opcua_nsOv_fillReferenceDescription(
 		OV_ELEMENT* pElement, UA_UInt16 referenceTypeNamespaceIndex, UA_Int32 referenceType, UA_UInt32 resultMask, UA_ReferenceDescription* dst){
 	OV_INSTPTR_ov_object	pObject			=	NULL;
 	UA_StatusCode			result			=	UA_STATUSCODE_GOOD;
@@ -91,7 +91,7 @@ UA_StatusCode iec62541_nsOv_fillReferenceDescription(
 		dst->isForward = UA_TRUE;
 	}
 	if(resultMask & (1<<2)){
-		dst->nodeClass = iec62541_nsOv_getNodeClassAndAccess(pElement, NULL);
+		dst->nodeClass = opcua_nsOv_getNodeClassAndAccess(pElement, NULL);
 	}
 	if(resultMask & (1<<0)){	// in ov-namespace beware that numerical ids may change when the server restarts (but associations can change between /acplt/... and /Libraries/..., too)
 		dst->referenceTypeId.namespaceIndex = referenceTypeNamespaceIndex;
@@ -123,10 +123,10 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 		childPart.pobj = NULL;
 		ov_element_getnextchild(pNode, &childPart);
 		while(childPart.elemtype!=OV_ET_NONE){
-			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
+			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
-					*statusCode = iec62541_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
+					*statusCode = opcua_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
 				}
 				(*refCount)++;
 			}
@@ -137,11 +137,11 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 		childPart.pobj = NULL;
 		ov_element_getnextpart(pNode, &childPart, OV_ET_OBJECT | OV_ET_VARIABLE);
 		while(childPart.elemtype!=OV_ET_NONE){
-			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
+			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&childPart, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(childPart.elemtype == OV_ET_OBJECT || childPart.elemtype == OV_ET_VARIABLE || childPart.elemtype == OV_ET_MEMBER){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&childPart, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -155,10 +155,10 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 			if(pNode->pobj->v_idL || pNode->pobj->v_idH){	// don't do it for ov root object ("/")
 				parentElement.elemtype = OV_ET_OBJECT;
 				parentElement.pobj = (pNode->pobj->v_pouterobject ? pNode->pobj->v_pouterobject : Ov_StaticPtrCast(ov_object, Ov_GetParent(ov_containment, pNode->pobj)));
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&parentElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&parentElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&parentElement, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&parentElement, 0, UA_NODEID_Organizes, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -171,10 +171,10 @@ UA_Int32 getReferenceDescriptions_Organizes(const UA_BrowseDescription* browseDe
 		} else {
 			parentElement.elemtype = OV_ET_OBJECT;
 			parentElement.pobj = pNode->pobj;
-			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&parentElement, browseDescription->nodeClassMask, &access);
+			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&parentElement, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
-					*statusCode = iec62541_nsOv_fillReferenceDescription(&parentElement, 0, UA_NODEID_Organizes, resultMask, &(dst)[*refCount]);
+					*statusCode = opcua_nsOv_fillReferenceDescription(&parentElement, 0, UA_NODEID_Organizes, resultMask, &(dst)[*refCount]);
 				}
 				(*refCount)++;
 			}
@@ -211,21 +211,21 @@ UA_Int32 getReferenceDescriptions_HasTypeDefinition(const UA_BrowseDescription* 
 		//		and analog for links and variables
 		if(pNode->elemtype == OV_ET_OBJECT || pNode->elemtype == OV_ET_VARIABLE
 				|| pNode->elemtype == OV_ET_MEMBER || pNode->elemtype == OV_ET_CHILDLINK || pNode->elemtype == OV_ET_PARENTLINK){
-			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(pNode, browseDescription->nodeClassMask, &access);
+			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(pNode, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
 					if(pNode->elemtype == OV_ET_OBJECT){
 						parentTypeDefinition.elemtype = OV_ET_OBJECT;
 						parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, Ov_GetParent(ov_instantiation, pNode->pobj));
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
 					} else if (pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
 						parentTypeDefinition.elemtype = OV_ET_OBJECT;
 						parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.pvar);
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
 					}else if (pNode->elemtype == OV_ET_PARENTLINK || pNode->elemtype == OV_ET_CHILDLINK){
 						parentTypeDefinition.elemtype = OV_ET_OBJECT;
 						parentTypeDefinition.pobj = Ov_PtrUpCast(ov_object, pNode->elemunion.passoc);
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&parentTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
 					}
 				}
 				(*refCount)++;
@@ -239,10 +239,10 @@ UA_Int32 getReferenceDescriptions_HasTypeDefinition(const UA_BrowseDescription* 
 			Ov_ForEachChild(ov_instantiation, Ov_StaticPtrCast(ov_class, pNode->pobj), pChildObject){
 				childTypeDefinition.elemtype = OV_ET_OBJECT;
 				childTypeDefinition.pobj = pChildObject;
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&childTypeDefinition, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&childTypeDefinition, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&childTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&childTypeDefinition, 0, UA_NODEID_HasTypeDefinition, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -280,10 +280,10 @@ UA_Int32 getReferenceDescriptions_HasSubtype(const UA_BrowseDescription* browseD
 			Ov_ForEachChild(ov_inheritance, Ov_StaticPtrCast(ov_class, pNode->pobj), pChildClass){
 				referencedElement.elemtype = OV_ET_OBJECT;
 				referencedElement.pobj = Ov_PtrUpCast(ov_object, pChildClass);
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasSubtype, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasSubtype, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -297,10 +297,10 @@ UA_Int32 getReferenceDescriptions_HasSubtype(const UA_BrowseDescription* browseD
 			if(pParentClass){
 				referencedElement.elemtype = OV_ET_OBJECT;
 				referencedElement.pobj = Ov_PtrUpCast(ov_object, pParentClass);
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasSubtype, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasSubtype, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -335,10 +335,10 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 			referencedElement.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_VARIABLE || OV_ET_MEMBER);
 			while(referencedElement.elemtype != OV_ET_NONE){
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -351,10 +351,10 @@ UA_Int32 getReferenceDescriptions_HasProperty(const UA_BrowseDescription* browse
 		if(pNode->elemtype == OV_ET_VARIABLE || pNode->elemtype == OV_ET_MEMBER){
 			referencedElement.elemtype = OV_ET_OBJECT;
 			referencedElement.pobj = pNode->pobj;
-			maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+			maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 			if(maskMatch && (access & OV_AC_READ)){
 				if(fillDescription){
-					*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
+					*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasProperty, resultMask, &(dst[*refCount]));
 				}
 				(*refCount)++;
 			}
@@ -389,10 +389,10 @@ UA_Int32 getReferenceDescriptions_HasComponent(const UA_BrowseDescription* brows
 			referencedElement.elemtype = OV_ET_NONE;
 			ov_element_getnextpart(pNode, &referencedElement, OV_ET_OBJECT);
 			while(referencedElement.elemtype != OV_ET_NONE){
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -406,10 +406,10 @@ UA_Int32 getReferenceDescriptions_HasComponent(const UA_BrowseDescription* brows
 			if(pNode->pobj->v_pouterobject){
 				referencedElement.elemtype = OV_ET_OBJECT;
 				referencedElement.pobj = pNode->pobj->v_pouterobject;
-				maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+				maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 				if(maskMatch && (access & OV_AC_READ)){
 					if(fillDescription){
-						*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
+						*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 0, UA_NODEID_HasComponent, resultMask, &(dst[*refCount]));
 					}
 					(*refCount)++;
 				}
@@ -450,10 +450,10 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 						if(linkElement.elemunion.passoc->v_assoctype == OV_AT_ONE_TO_MANY){
 							referencedElement.elemtype = OV_ET_OBJECT;
 							Ov_Association_ForEachChild(linkElement.elemunion.passoc, pNode->pobj, referencedElement.pobj){
-								maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 1,
+										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 1,
 												linkElement.elemunion.passoc->v_idL, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -463,10 +463,10 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 							referencedElement.elemtype = OV_ET_OBJECT;
 							referencedElement.pobj = Ov_Association_GetChild(linkElement.elemunion.passoc, pNode->pobj);
 							if(referencedElement.pobj){
-								maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+								maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 								if(maskMatch && (access & OV_AC_READ)){
 									if(fillDescription){
-										*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 1,
+										*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 1,
 												linkElement.elemunion.passoc->v_idL, resultMask, &(dst[*refCount]));
 									}
 									(*refCount)++;
@@ -491,10 +491,10 @@ UA_Int32 getReferenceDescriptions_OvReferences(const UA_BrowseDescription* brows
 						referencedElement.elemtype = OV_ET_OBJECT;
 						referencedElement.pobj = Ov_Association_GetParent(linkElement.elemunion.passoc, pNode->pobj);
 						if(referencedElement.pobj){
-							maskMatch = iec62541_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
+							maskMatch = opcua_nsOv_nodeClassMaskMatchAndGetAccess(&referencedElement, browseDescription->nodeClassMask, &access);
 							if(maskMatch && (access & OV_AC_READ)){
 								if(fillDescription){
-									*statusCode = iec62541_nsOv_fillReferenceDescription(&referencedElement, 1,
+									*statusCode = opcua_nsOv_fillReferenceDescription(&referencedElement, 1,
 											linkElement.elemunion.passoc->v_idL, resultMask, &(dst[*refCount]));
 								}
 								(*refCount)++;
@@ -526,7 +526,7 @@ UA_Int32 fillReferenceDescriptions_OvReferences(const UA_BrowseDescription* brow
  * main browse function
  **********************************************************************/
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_browseNodes(
 		void *ensHandle,
 		const UA_RequestHeader *requestHeader,
 		UA_BrowseDescription *browseDescriptions,
@@ -563,7 +563,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
 
 	for(index = 0; index<indicesSize;index++){
 		ov_memstack_lock();
-		uaResult = iec62541_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].nodeId, &nodePath);
+		uaResult = opcua_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].nodeId, &nodePath);
 		if(uaResult != UA_STATUSCODE_GOOD){
 			KS_logfile_debug(("nodeStore_browseNodes: could not resolve node for index %u in list. Skipping.", index));
 			browseResults[indices[index]].statusCode = UA_STATUSCODE_BADNODEIDUNKNOWN;
@@ -648,7 +648,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_browseNodes(
 		}
 		// check ov-references
 		if(browseDescriptions[indices[index]].referenceTypeId.namespaceIndex == 1){
-			uaResult = iec62541_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].referenceTypeId, &assocPath);
+			uaResult = opcua_nodeStoreFunctions_resolveNodeIdToPath(browseDescriptions[indices[index]].referenceTypeId, &assocPath);
 			if(uaResult != UA_STATUSCODE_GOOD){
 				KS_logfile_debug(("nodeStore_browseNodes: could not resolve association for index %u in list. Skipping.", index));
 				browseResults[indices[index]].statusCode = UA_STATUSCODE_BADNODEIDUNKNOWN;

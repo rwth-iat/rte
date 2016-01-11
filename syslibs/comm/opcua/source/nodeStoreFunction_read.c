@@ -16,23 +16,23 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
-#include "iec62541.h"
-#include "iec62541_helpers.h"
+#include "opcua.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_readNodes(
 		void *ensHandle,
 		const UA_RequestHeader *requestHeader,
 		UA_ReadValueId *readValueIds,
@@ -60,12 +60,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		 *******************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_NODEID:
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -185,12 +185,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			 ***************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_NODECLASS:
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -248,12 +248,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		case UA_ATTRIBUTEID_BROWSENAME:
 		case UA_ATTRIBUTEID_DISPLAYNAME:
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -293,12 +293,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			 **********************************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_DESCRIPTION:
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -335,15 +335,15 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_UInt32 *writeMask;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
 			if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_WRITEMASK){
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), NULL, &pobj, &pVtblObj, &access);
+				readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), NULL, &pobj, &pVtblObj, &access);
 			} else {
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+				readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			}
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
@@ -383,12 +383,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Boolean *isAbstract;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -450,12 +450,12 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Boolean *isSymmetric;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -508,7 +508,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Byte *eventNotifer;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -536,7 +536,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		 *********************************************************************************************************************************************/
 		case UA_ATTRIBUTEID_VALUE:
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -587,7 +587,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_NodeId *dataType = NULL;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -653,7 +653,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Int32 *valueRank = NULL;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -749,7 +749,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 			UA_Int32 *arrayDimensions;
 			UA_Int32 arrayLength = 0;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -855,15 +855,15 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Byte *accessLevel;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
 			}
 			if(readValueIds[indices[i]].attributeId == UA_ATTRIBUTEID_ACCESSLEVEL){
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), NULL, &pobj, &pVtblObj, &access);
+				readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), NULL, &pobj, &pVtblObj, &access);
 			} else {
-				readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
+				readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_getVtblPointerAndCheckAccess(&(path.elements[path.size-1]), pTicket, &pobj, &pVtblObj, &access);
 			}
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
@@ -903,7 +903,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Double *interval;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -935,7 +935,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Boolean *historizing;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -968,7 +968,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		{
 			UA_Boolean *executable;
 			ov_memstack_lock();
-			readNodesResults[indices[i]].status = iec62541_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
+			readNodesResults[indices[i]].status = opcua_nodeStoreFunctions_resolveNodeIdToPath(readValueIds[indices[i]].nodeId, &path);
 			if(readNodesResults[indices[i]].status != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -1001,7 +1001,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_readNodes(
 		 * wtf???
 		 ****************************************************************************************************************************************************/
 		default:
-			KS_logfile_info(("iec62541: got a read-request with bad attributeid (%#08x)", readValueIds[indices[i]].attributeId));
+			KS_logfile_info(("opcua: got a read-request with bad attributeid (%#08x)", readValueIds[indices[i]].attributeId));
 			readNodesResults[indices[i]].status = UA_STATUSCODE_BADATTRIBUTEIDINVALID;
 			break;
 		}

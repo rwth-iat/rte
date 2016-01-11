@@ -1,7 +1,7 @@
 #include "ov.ovm"
 #include "ksbase.ovm"
 
-LIBRARY iec62541
+LIBRARY opcua
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
 	AUTHOR    = "Lars Evertz, Florian Palm";
 	COPYRIGHT = "";
@@ -51,7 +51,7 @@ LIBRARY iec62541
 	/**
 	 *	Checks whether received data complies with a OPC UA opening of a connection
 	 *	criteria are:	1.	"HEL" in first three bytes of message
-	 *					2.	ProtocolVersion is not larger than the highest specified version number of iec62541 				
+	 *					2.	ProtocolVersion is not larger than the highest specified version number of opcua 				
 	 *					3.	Message size (starting in byte 5) is larger than 32
 	 *					4.	Message size equals 32 + plus the given size in the EndpointUrl length field	
 	 */
@@ -182,8 +182,8 @@ LIBRARY iec62541
 	*/
 	
 	ASSOCIATION networkLayerToConnection : ONE_TO_MANY
-		PARENT networkLayer		: CLASS iec62541/ovNetworkLayer;
-		CHILD  connection	: CLASS iec62541/uaConnection;
+		PARENT networkLayer		: CLASS opcua/ovNetworkLayer;
+		CHILD  connection	: CLASS opcua/uaConnection;
 	END_ASSOCIATION;
 	
 

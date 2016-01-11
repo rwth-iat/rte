@@ -1,5 +1,5 @@
-#ifndef iec62541_OVT_INCLUDED
-#define iec62541_OVT_INCLUDED
+#ifndef opcua_OVT_INCLUDED
+#define opcua_OVT_INCLUDED
 
 
 /*	Needed to prevent redefined warnings :-S	*/

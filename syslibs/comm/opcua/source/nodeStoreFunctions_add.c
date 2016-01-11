@@ -16,39 +16,41 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
-#include "iec62541.h"
-#include "iec62541_helpers.h"
+#include "opcua.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteNodes(
+
+
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_addNodes(
 		void *ensHandle,
 		const UA_RequestHeader *requestHeader,
-		UA_DeleteNodesItem *nodesToDelete,
+		UA_AddNodesItem *nodesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
-		UA_StatusCode *deleteNodesResults,
+		UA_AddNodesResult* addNodesResults,
 		UA_DiagnosticInfo *diagnosticInfos
 ) {
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;
 }
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_deleteReferences(
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_addReferences(
 		void *ensHandle,
 		const UA_RequestHeader *requestHeader,
-		UA_DeleteReferencesItem *referenceToDelete,
+		UA_AddReferencesItem* referencesToAdd,
 		UA_UInt32 *indices,
 		UA_UInt32 indicesSize,
-		UA_StatusCode deleteReferencesresults,
+		UA_StatusCode *addReferencesResults,
 		UA_DiagnosticInfo *diagnosticInfos
 ) {
 	return UA_STATUSCODE_BADNOTIMPLEMENTED;

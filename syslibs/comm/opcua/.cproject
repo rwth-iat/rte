@@ -6,8 +6,8 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.so.debug.85272097" moduleId="org.eclipse.cdt.core.settings" name="Debug (Windows)">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="iec62541"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="iec62541/build/nt"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="opcua"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="opcua/build/nt"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -20,7 +20,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="so" artifactName="iec62541" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.85272097" name="Debug (Windows)" parent="cdt.managedbuild.config.gnu.so.debug">
+				<configuration artifactExtension="so" artifactName="opcua" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.85272097" name="Debug (Windows)" parent="cdt.managedbuild.config.gnu.so.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.so.debug.85272097." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.so.debug.85272097" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.so.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.so.debug.85272097" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.so.debug"/>
@@ -81,8 +81,8 @@
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.so.debug.68165169" moduleId="org.eclipse.cdt.core.settings" name="Debug (Linux)">
 				<externalSettings>
 					<externalSetting>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="iec62541"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="iec62541/build/linux"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="opcua"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="opcua/build/linux"/>
 					</externalSetting>
 				</externalSettings>
 				<extensions>
@@ -95,7 +95,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="so" artifactName="iec62541" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.68165169" name="Debug (Linux)" parent="cdt.managedbuild.config.gnu.so.debug">
+				<configuration artifactExtension="so" artifactName="opcua" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.so.debug.68165169" name="Debug (Linux)" parent="cdt.managedbuild.config.gnu.so.debug">
 					<folderInfo id="cdt.managedbuild.config.gnu.so.debug.68165169." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.so.debug.68165169" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.so.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.so.debug.68165169" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.so.debug"/>
@@ -147,7 +147,7 @@
 		</cconfiguration>
 		<!-- end linux profile -->
 		<storageModule moduleId="refreshScope" versionNumber="1">
-			<resource resourceType="PROJECT" workspacePath="/iec62541"/>
+			<resource resourceType="PROJECT" workspacePath="/opcua"/>
 		</storageModule>
 		<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	</storageModule>
@@ -161,9 +161,9 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="iec62541.null.978427406" name="iec62541"/>
+		<project id="opcua.null.978427406" name="opcua"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/iec62541"/>
+		<resource resourceType="PROJECT" workspacePath="/opcua"/>
 	</storageModule>
 </cproject>

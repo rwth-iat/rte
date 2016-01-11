@@ -16,17 +16,17 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_association.h"
 
 #include "libov/ov_macros.h"
 
-OV_IMPL_LINK(iec62541_networkLayerToConnection)
-OV_IMPL_UNLINK(iec62541_networkLayerToConnection)
-OV_IMPL_GETACCESS(iec62541_networkLayerToConnection)
+OV_IMPL_LINK(opcua_networkLayerToConnection)
+OV_IMPL_UNLINK(opcua_networkLayerToConnection)
+OV_IMPL_GETACCESS(opcua_networkLayerToConnection)
 

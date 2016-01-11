@@ -16,22 +16,22 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
-#include "iec62541.h"
-#include "iec62541_helpers.h"
+#include "opcua.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 #include "ks_logfile.h"
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_writeNodes(
 		void *ensHandle,
 		const UA_RequestHeader *requestHeader,
 		UA_WriteValue *writeValues,
@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
 
 		case UA_ATTRIBUTEID_VALUE:
 			ov_memstack_lock();
-			writeNodesResults[indices[index]] = iec62541_nodeStoreFunctions_resolveNodeIdToPath(writeValues[indices[index]].nodeId, &path);
+			writeNodesResults[indices[index]] = opcua_nodeStoreFunctions_resolveNodeIdToPath(writeValues[indices[index]].nodeId, &path);
 			if(writeNodesResults[indices[index]] != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -150,7 +150,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
 		case UA_ATTRIBUTEID_NODEID:
 			/*	for objects do a rename	*/
 			ov_memstack_lock();
-			writeNodesResults[indices[index]] = iec62541_nodeStoreFunctions_resolveNodeIdToPath(writeValues[indices[index]].nodeId, &path);
+			writeNodesResults[indices[index]] = opcua_nodeStoreFunctions_resolveNodeIdToPath(writeValues[indices[index]].nodeId, &path);
 			if(writeNodesResults[indices[index]] != UA_STATUSCODE_GOOD){
 				ov_memstack_unlock();
 				break;
@@ -225,7 +225,7 @@ OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_writeNodes(
 			break;
 
 		default:
-			KS_logfile_info(("iec62541: got a write-request with bad attributeid (%#08x)", writeValues[indices[index]].attributeId));
+			KS_logfile_info(("opcua: got a write-request with bad attributeid (%#08x)", writeValues[indices[index]].attributeId));
 			writeNodesResults[indices[index]] = UA_STATUSCODE_BADATTRIBUTEIDINVALID;
 			break;
 		}

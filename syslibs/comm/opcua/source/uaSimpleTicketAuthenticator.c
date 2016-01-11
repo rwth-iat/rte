@@ -16,22 +16,22 @@
 ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
-#include "iec62541.h"
+#include "opcua.h"
 #include "libov/ov_macros.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541_uaSimpleTicketAuthenticator_constructor(
+OV_DLLFNCEXPORT OV_RESULT opcua_uaSimpleTicketAuthenticator_constructor(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
- //   OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+ //   OV_INSTPTR_opcua_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(opcua_uaSimpleTicketAuthenticator, pobj);
     OV_RESULT    result;
 
     /* do what the base class does first */
@@ -45,13 +45,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541_uaSimpleTicketAuthenticator_constructor(
     return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_startup(
+OV_DLLFNCEXPORT void opcua_uaSimpleTicketAuthenticator_startup(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-    //OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+    //OV_INSTPTR_opcua_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(opcua_uaSimpleTicketAuthenticator, pobj);
 
     /* do what the base class does first */
     ksbase_TicketAuthenticator_startup(pobj);
@@ -62,13 +62,13 @@ OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_startup(
     return;
 }
 
-OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_shutdown(
+OV_DLLFNCEXPORT void opcua_uaSimpleTicketAuthenticator_shutdown(
 	OV_INSTPTR_ov_object 	pobj
 ) {
     /*    
     *   local variables
     */
-  //  OV_INSTPTR_iec62541_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(iec62541_uaSimpleTicketAuthenticator, pobj);
+  //  OV_INSTPTR_opcua_uaSimpleTicketAuthenticator pinst = Ov_StaticPtrCast(opcua_uaSimpleTicketAuthenticator, pobj);
 
     /* do what */
 
@@ -78,7 +78,7 @@ OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_shutdown(
     return;
 }
 
-OV_DLLFNCEXPORT OV_TICKET* iec62541_uaSimpleTicketAuthenticator_createticket(
+OV_DLLFNCEXPORT OV_TICKET* opcua_uaSimpleTicketAuthenticator_createticket(
 	void *data,
 	OV_TICKET_TYPE type
 ) {
@@ -89,7 +89,7 @@ OV_DLLFNCEXPORT OV_TICKET* iec62541_uaSimpleTicketAuthenticator_createticket(
     return (OV_TICKET*)0;
 }
 
-OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_deleteticket(
+OV_DLLFNCEXPORT void opcua_uaSimpleTicketAuthenticator_deleteticket(
 	OV_TICKET *pticket
 ) {
     /*    
@@ -99,7 +99,7 @@ OV_DLLFNCEXPORT void iec62541_uaSimpleTicketAuthenticator_deleteticket(
     return;
 }
 
-OV_DLLFNCEXPORT OV_BOOL iec62541_uaSimpleTicketAuthenticator_encodereply(
+OV_DLLFNCEXPORT OV_BOOL opcua_uaSimpleTicketAuthenticator_encodereply(
 	void *data, 
 	OV_TICKET *pticket
 ) {
@@ -110,7 +110,7 @@ OV_DLLFNCEXPORT OV_BOOL iec62541_uaSimpleTicketAuthenticator_encodereply(
     return (OV_BOOL)0;
 }
 
-OV_DLLFNCEXPORT OV_ACCESS iec62541_uaSimpleTicketAuthenticator_TicketGetaccess(
+OV_DLLFNCEXPORT OV_ACCESS opcua_uaSimpleTicketAuthenticator_TicketGetaccess(
 	const OV_TICKET *pticket
 ) {
     /*    

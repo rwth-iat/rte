@@ -16,21 +16,21 @@
  ******************************************************************************/
 
 
-#ifndef OV_COMPILE_LIBRARY_iec62541
-#define OV_COMPILE_LIBRARY_iec62541
+#ifndef OV_COMPILE_LIBRARY_opcua
+#define OV_COMPILE_LIBRARY_opcua
 #endif
 
 
 
 #include "libov/ov_macros.h"
 #include "ksbase.h"
-#include "iec62541.h"
-#include "iec62541_helpers.h"
+#include "opcua.h"
+#include "opcua_helpers.h"
 #include "NoneTicketAuthenticator.h"
 #include "libov/ov_path.h"
 #include "libov/ov_memstack.h"
 
-OV_DLLFNCEXPORT UA_Int32 iec62541_nodeStoreFunctions_translateBrowsePathsToNodeIDs(
+OV_DLLFNCEXPORT UA_Int32 opcua_nodeStoreFunctions_translateBrowsePathsToNodeIDs(
 	void *ensHandle,
 	const UA_RequestHeader *requestHeader,
 	UA_BrowsePath *browsePath,
