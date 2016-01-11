@@ -35,12 +35,12 @@
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_iec62541fb
-#define OV_COMPILE_LIBRARY_iec62541fb
+#ifndef OV_COMPILE_LIBRARY_opcuafb
+#define OV_COMPILE_LIBRARY_opcuafb
 #endif
 
 
-#include "iec62541fb.h"
+#include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 
@@ -102,11 +102,11 @@ UA_StatusCode UA_Client_NamespaceGetIndex(UA_Client *client, UA_String *namespac
 	return retval;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_Execute_set(
-		OV_INSTPTR_iec62541fb_NamespaceGetIndex          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NamespaceGetIndex_Execute_set(
+		OV_INSTPTR_opcuafb_NamespaceGetIndex          pinst,
 		const OV_BOOL  value
 ) {
-	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
+	OV_INSTPTR_opcuafb_Connect pConnect = NULL;
 	UA_String namespaceUri;
 	UA_UInt16 NamespaceIndex = 0;
 	UA_StatusCode result = UA_STATUSCODE_GOOD;
@@ -117,7 +117,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_Execute_set(
 		return OV_ERR_OK;
 	}
 
-	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
+	pConnect = Ov_DynamicPtrCast(opcuafb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
 	if(pConnect == NULL){
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
@@ -155,8 +155,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_Execute_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_ConnectionHdl_set(
-		OV_INSTPTR_iec62541fb_NamespaceGetIndex          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NamespaceGetIndex_ConnectionHdl_set(
+		OV_INSTPTR_opcuafb_NamespaceGetIndex          pinst,
 		const OV_UINT  value
 ) {
 	if(value == 0){
@@ -164,7 +164,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_ConnectionHdl_set(
 	}else{
 		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 			//we have a new connection and no connection on execute, so prepare for a new activation
-			iec62541fb_NamespaceGetIndex_Execute_set(pinst, FALSE);
+			opcuafb_NamespaceGetIndex_Execute_set(pinst, FALSE);
 		}
 		pinst->v_Done = FALSE;
 	}
@@ -175,21 +175,21 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_ConnectionHdl_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_NamespaceUri_set(
-		OV_INSTPTR_iec62541fb_NamespaceGetIndex          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NamespaceGetIndex_NamespaceUri_set(
+		OV_INSTPTR_opcuafb_NamespaceGetIndex          pinst,
 		const OV_STRING  value
 ) {
 	pinst->v_Done = FALSE;
 	return ov_string_setvalue(&pinst->v_NamespaceUri,value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NamespaceGetIndex_constructor(
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NamespaceGetIndex_constructor(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_NamespaceGetIndex pinst = Ov_StaticPtrCast(iec62541fb_NamespaceGetIndex, pobj);
+	OV_INSTPTR_opcuafb_NamespaceGetIndex pinst = Ov_StaticPtrCast(opcuafb_NamespaceGetIndex, pobj);
 	OV_RESULT    result;
 
 	/* do what the base class does first */

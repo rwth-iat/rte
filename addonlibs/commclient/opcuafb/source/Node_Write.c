@@ -35,18 +35,18 @@
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_iec62541fb
-#define OV_COMPILE_LIBRARY_iec62541fb
+#ifndef OV_COMPILE_LIBRARY_opcuafb
+#define OV_COMPILE_LIBRARY_opcuafb
 #endif
 
 
-#include "iec62541fb.h"
+#include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 #include "errno.h"
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Variable_set(
-		OV_INSTPTR_iec62541fb_Write          pobj,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Write_Variable_set(
+		OV_INSTPTR_opcuafb_Write          pobj,
 		const OV_ANY*  value
 ) {
 	switch (value->value.vartype & OV_VT_KSMASK){
@@ -66,12 +66,12 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Variable_set(
 	return ov_variable_setanyvalue(&pobj->v_Variable, value);
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
-		OV_INSTPTR_iec62541fb_Write          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Write_Execute_set(
+		OV_INSTPTR_opcuafb_Write          pinst,
 		const OV_BOOL  value
 ) {
-	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
-	OV_INSTPTR_iec62541fb_NodeGetHandle pNodeGetHandle = NULL;
+	OV_INSTPTR_opcuafb_Connect pConnect = NULL;
+	OV_INSTPTR_opcuafb_NodeGetHandle pNodeGetHandle = NULL;
 	UA_WriteRequest WriteRequest;
 	UA_WriteResponse WriteResponse;
 	UA_String tempString;
@@ -85,7 +85,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		return OV_ERR_OK;
 	}
 
-	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
+	pConnect = Ov_DynamicPtrCast(opcuafb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
 	if(pConnect == NULL){
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
@@ -103,7 +103,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 		return OV_ERR_BADVALUE;
 	}
 
-	pNodeGetHandle = Ov_DynamicPtrCast(iec62541fb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "NodeHdl"));
+	pNodeGetHandle = Ov_DynamicPtrCast(opcuafb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "NodeHdl"));
 	if(pNodeGetHandle == NULL){
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
@@ -201,8 +201,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_Execute_set(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_ConnectionHdl_set(
-		OV_INSTPTR_iec62541fb_Write          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Write_ConnectionHdl_set(
+		OV_INSTPTR_opcuafb_Write          pinst,
 		const OV_UINT  value
 ) {
 	if(value == 0){
@@ -210,7 +210,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_ConnectionHdl_set(
 	}else{
 		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 			//we have a new connection and no connection on execute, so prepare for a new activation
-			iec62541fb_Write_Execute_set(pinst, FALSE);
+			opcuafb_Write_Execute_set(pinst, FALSE);
 		}
 		pinst->v_Done = FALSE;
 	}
@@ -221,8 +221,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_ConnectionHdl_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_NodeHdl_set(
-		OV_INSTPTR_iec62541fb_Write          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Write_NodeHdl_set(
+		OV_INSTPTR_opcuafb_Write          pinst,
 		const OV_UINT  value
 ) {
 	if(value == 0){
@@ -230,7 +230,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_NodeHdl_set(
 	}else{
 		if(pinst->v_NodeHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 			//we have a new nodeID and no connection on execute, so prepare for a new activation
-			iec62541fb_Write_Execute_set(pinst, FALSE);
+			opcuafb_Write_Execute_set(pinst, FALSE);
 		}
 		pinst->v_Done = FALSE;
 	}
@@ -241,13 +241,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Write_NodeHdl_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void iec62541fb_Write_startup(
+OV_DLLFNCEXPORT void opcuafb_Write_startup(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	//OV_INSTPTR_iec62541fb_Write pinst = Ov_StaticPtrCast(iec62541fb_Write, pobj);
+	//OV_INSTPTR_opcuafb_Write pinst = Ov_StaticPtrCast(opcuafb_Write, pobj);
 
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);

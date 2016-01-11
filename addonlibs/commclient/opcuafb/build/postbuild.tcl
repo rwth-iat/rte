@@ -2,7 +2,7 @@ puts "== Begin moving FBDs to template folder =="
 
 set fbdfiles {"demo.fbd"}
 
-set targetfolder "$::env(ACPLT_HOME)/templates/iec62541fb"
+set targetfolder "$::env(ACPLT_HOME)/templates/opcuafb"
 file mkdir $targetfolder
 if {$targetfolder != "" && [file isdirectory $targetfolder]} {
 	foreach fbdfilefullname $fbdfiles {

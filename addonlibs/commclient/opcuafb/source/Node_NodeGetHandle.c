@@ -35,18 +35,18 @@
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_iec62541fb
-#define OV_COMPILE_LIBRARY_iec62541fb
+#ifndef OV_COMPILE_LIBRARY_opcuafb
+#define OV_COMPILE_LIBRARY_opcuafb
 #endif
 
 
-#include "iec62541fb.h"
+#include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_Execute_set(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeGetHandle_Execute_set(
+		OV_INSTPTR_opcuafb_NodeGetHandle          pinst,
 		const OV_BOOL  value
 ) {
 	if(value == FALSE || pinst->v_Execute == TRUE){
@@ -66,8 +66,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_Execute_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_ConnectionHdl_set(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeGetHandle_ConnectionHdl_set(
+		OV_INSTPTR_opcuafb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
 	if(value == 0){
@@ -75,7 +75,7 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_ConnectionHdl_set(
 	}else{
 		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 			//we have a new connection and no connection on execute, so prepare for a new activation
-			iec62541fb_NodeGetHandle_Execute_set(pinst, FALSE);
+			opcuafb_NodeGetHandle_Execute_set(pinst, FALSE);
 			pinst->v_NodeHdl = 0;
 		}
 		pinst->v_Done = FALSE;
@@ -87,13 +87,13 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_ConnectionHdl_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_startup(
+OV_DLLFNCEXPORT void opcuafb_NodeGetHandle_startup(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_NodeGetHandle pinst = Ov_StaticPtrCast(iec62541fb_NodeGetHandle, pobj);
+	OV_INSTPTR_opcuafb_NodeGetHandle pinst = Ov_StaticPtrCast(opcuafb_NodeGetHandle, pobj);
 
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);
@@ -107,13 +107,13 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_startup(
 	return;
 }
 
-OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
+OV_DLLFNCEXPORT void opcuafb_NodeGetHandle_shutdown(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	//OV_INSTPTR_iec62541fb_NodeGetHandle pinst = Ov_StaticPtrCast(iec62541fb_NodeGetHandle, pobj);
+	//OV_INSTPTR_opcuafb_NodeGetHandle pinst = Ov_StaticPtrCast(opcuafb_NodeGetHandle, pobj);
 
 	/* set the object's state to "shut down" */
 	fb_functionblock_shutdown(pobj);
@@ -122,8 +122,8 @@ OV_DLLFNCEXPORT void iec62541fb_NodeGetHandle_shutdown(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdentifier_set(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeGetHandle_NodeIDIdentifier_set(
+		OV_INSTPTR_opcuafb_NodeGetHandle          pinst,
 		const OV_STRING  value
 ) {
 	OV_RESULT fr = OV_ERR_OK;
@@ -133,8 +133,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdentifier_set(
 	return fr;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDNSindex_set(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeGetHandle_NodeIDNSindex_set(
+		OV_INSTPTR_opcuafb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
 	pinst->v_Done = FALSE;
@@ -143,8 +143,8 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDNSindex_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_NodeGetHandle_NodeIDIdType_set(
-		OV_INSTPTR_iec62541fb_NodeGetHandle          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeGetHandle_NodeIDIdType_set(
+		OV_INSTPTR_opcuafb_NodeGetHandle          pinst,
 		const OV_UINT  value
 ) {
 	switch (value) {

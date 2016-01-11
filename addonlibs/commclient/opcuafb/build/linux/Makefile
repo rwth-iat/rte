@@ -20,7 +20,7 @@ COMPILER_LO = $(call lc,$(COMPILER))
 all:
 
 %:
-	acplt_makmak -l iec62541fb $(MAKMAKOPTIONS)
-	tclsh $(PREBUILD) iec62541fb $(MAKMAKOPTIONS)
+	acplt_makmak -l opcuafb $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) opcuafb $(MAKMAKOPTIONS)
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
-	tclsh $(POSTBUILD) iec62541fb
+	tclsh $(POSTBUILD) opcuafb

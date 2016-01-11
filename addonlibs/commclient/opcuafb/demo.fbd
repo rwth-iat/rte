@@ -11,7 +11,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/Connect1 :
-    CLASS /acplt/iec62541fb/Connect;
+    CLASS /acplt/opcuafb/Connect;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ServerEndpointUrl : INPUT STRING = "opc.tcp://localhost:16664";
@@ -36,7 +36,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/NodeGetHandle1 :
-    CLASS /acplt/iec62541fb/NodeGetHandle;
+    CLASS /acplt/opcuafb/NodeGetHandle;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
@@ -64,7 +64,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/Disconnect1 :
-    CLASS /acplt/iec62541fb/Disconnect;
+    CLASS /acplt/opcuafb/Disconnect;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
@@ -88,7 +88,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/Read1 :
-    CLASS /acplt/iec62541fb/Read;
+    CLASS /acplt/opcuafb/Read;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
@@ -115,7 +115,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/NodeReleaseHandle1 :
-    CLASS /acplt/iec62541fb/NodeReleaseHandle;
+    CLASS /acplt/opcuafb/NodeReleaseHandle;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
@@ -140,7 +140,7 @@
  END_INSTANCE;
 
  INSTANCE  /TechUnits/UAdemo/NamespaceGetIndex :
-    CLASS /acplt/iec62541fb/NamespaceGetIndex;
+    CLASS /acplt/opcuafb/NamespaceGetIndex;
     VARIABLE_VALUES
       Execute : INPUT BOOL = FALSE;
       ConnectionHdl : INPUT UINT = 0;
@@ -403,5 +403,5 @@
  END_LINK;
 
  LIBRARY
-    /acplt/iec62541fb
+    /acplt/opcuafb
  END_LIBRARY;

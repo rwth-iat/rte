@@ -34,29 +34,29 @@
 *	WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
-#ifndef OV_COMPILE_LIBRARY_iec62541fb
-#define OV_COMPILE_LIBRARY_iec62541fb
+#ifndef OV_COMPILE_LIBRARY_opcuafb
+#define OV_COMPILE_LIBRARY_opcuafb
 #endif
 
 
-#include "iec62541fb.h"
+#include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 
-OV_DLLFNCEXPORT void iec62541fb_Connect_startup(
+OV_DLLFNCEXPORT void opcuafb_Connect_startup(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pobj);
+	OV_INSTPTR_opcuafb_Connect pinst = Ov_StaticPtrCast(opcuafb_Connect, pobj);
 
 	/* do what the base class does first */
 	fb_functionblock_startup(pobj);
 
 	if(fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 		//we have no connection on execute, so prepare for a new activation
-		iec62541fb_Connect_Execute_set(pinst, FALSE);
+		opcuafb_Connect_Execute_set(pinst, FALSE);
 	}
 	pinst->v_Done = FALSE;
 
@@ -66,13 +66,13 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_startup(
 	return;
 }
 
-OV_DLLFNCEXPORT void iec62541fb_Connect_shutdown(
+OV_DLLFNCEXPORT void opcuafb_Connect_shutdown(
 		OV_INSTPTR_ov_object 	pobj
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pobj);
+	OV_INSTPTR_opcuafb_Connect pinst = Ov_StaticPtrCast(opcuafb_Connect, pobj);
 
 	if(pinst->v_Client != NULL){
 		UA_Client_disconnect(pinst->v_Client);
@@ -87,8 +87,8 @@ OV_DLLFNCEXPORT void iec62541fb_Connect_shutdown(
 }
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
-		OV_INSTPTR_iec62541fb_Connect          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Connect_Execute_set(
+		OV_INSTPTR_opcuafb_Connect          pinst,
 		const OV_BOOL  value
 ) {
 	UA_StatusCode retval = UA_STATUSCODE_GOOD;
@@ -125,26 +125,26 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_Execute_set(
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Connect_ServerEndpointUrl_set(
-		OV_INSTPTR_iec62541fb_Connect          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_Connect_ServerEndpointUrl_set(
+		OV_INSTPTR_opcuafb_Connect          pinst,
 		const OV_STRING  value
 ) {
 	pinst->v_Done = FALSE;
 	if(ov_string_compare(pinst->v_ServerEndpointUrl, value) != OV_STRCMP_EQUAL){
-		iec62541fb_Connect_Execute_set(pinst, FALSE);
+		opcuafb_Connect_Execute_set(pinst, FALSE);
 		pinst->v_ConnectionHdl = 0;
 	}
 	return ov_string_setvalue(&pinst->v_ServerEndpointUrl,value);
 }
 
-OV_DLLFNCEXPORT void iec62541fb_Connect_typemethod(
+OV_DLLFNCEXPORT void opcuafb_Connect_typemethod(
 		OV_INSTPTR_fb_functionblock	pfb,
 		OV_TIME						*pltc
 ) {
 	/*
 	 *   local variables
 	 */
-	OV_INSTPTR_iec62541fb_Connect pinst = Ov_StaticPtrCast(iec62541fb_Connect, pfb);
+	OV_INSTPTR_opcuafb_Connect pinst = Ov_StaticPtrCast(opcuafb_Connect, pfb);
 	if(pinst->v_ConnectionHdl == 0){
 		//no active connection
 		return;

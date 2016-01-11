@@ -43,7 +43,7 @@
 This Library implements the OPC-UA Client FUNCTION BLOCKS for IEC61131-3 Release 1.0 published by PLCopen and OPC Foundation
 */
 
-LIBRARY iec62541fb
+LIBRARY opcuafb
 	VERSION   = "V0.1 (27-Aug-2015)";
 	AUTHOR    = "Holger Jeromin";
 	COPYRIGHT = "";
@@ -64,7 +64,7 @@ LIBRARY iec62541fb
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS Connect : CLASS iec62541fb/object
+	CLASS Connect : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to create a (optional secure) transport connection and an OPC-UA session. The connection shall be terminated by calling the UA_Disconnect after establishing the connection.";
 		VARIABLES
@@ -89,7 +89,7 @@ LIBRARY iec62541fb
 		END_OPERATIONS;
 	END_CLASS;
 
-	CLASS Disconnect : CLASS iec62541fb/object
+	CLASS Disconnect : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to close a transport connection and an OPC-UA session.";
 		VARIABLES
@@ -99,7 +99,7 @@ LIBRARY iec62541fb
 		END_VARIABLES;
 	END_CLASS;
  
-	CLASS NamespaceGetIndex : CLASS iec62541fb/object
+	CLASS NamespaceGetIndex : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the namespace-index of a namespace-URI.";
 		VARIABLES
@@ -118,7 +118,7 @@ LIBRARY iec62541fb
 	
 	/*	TranslatePath	*/
 	
-	CLASS NodeGetHandle : CLASS iec62541fb/object
+	CLASS NodeGetHandle : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node handle.";
 		VARIABLES
@@ -141,7 +141,7 @@ LIBRARY iec62541fb
 	
 	/*	NodeGetHandleList	*/
 	
-	CLASS NodeReleaseHandle : CLASS iec62541fb/object
+	CLASS NodeReleaseHandle : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to release the node handle.";
 		VARIABLES
@@ -162,7 +162,7 @@ LIBRARY iec62541fb
 	/*	MonitoredItemRemove	*/
 	/*	MonitoredItemOperate	*/
 
-	CLASS Read : CLASS iec62541fb/object
+	CLASS Read : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
@@ -183,7 +183,7 @@ LIBRARY iec62541fb
 	
 	/*	ReadList	*/
 
-	CLASS Write : CLASS iec62541fb/object
+	CLASS Write : CLASS opcuafb/object
 		IS_INSTANTIABLE;
 		COMMENT = "This Function Block is used to get the node information.";
 		VARIABLES
