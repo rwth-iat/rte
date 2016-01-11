@@ -35,21 +35,21 @@
 *	POSSIBILITY OF SUCH DAMAGE.
 ***********************************************************************/
 
-#ifndef OV_COMPILE_LIBRARY_iec62541fb
-#define OV_COMPILE_LIBRARY_iec62541fb
+#ifndef OV_COMPILE_LIBRARY_opcuafb
+#define OV_COMPILE_LIBRARY_opcuafb
 #endif
 
 
-#include "iec62541fb.h"
+#include "opcuafb.h"
 #include "libov/ov_macros.h"
 #include "fb_namedef.h"
 
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_Execute_set(
-		OV_INSTPTR_iec62541fb_Disconnect          pinst,
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeReleaseHandle_Execute_set(
+		OV_INSTPTR_opcuafb_NodeReleaseHandle          pinst,
 		const OV_BOOL  value
 ) {
-	OV_INSTPTR_iec62541fb_Connect pConnect = NULL;
+	OV_INSTPTR_opcuafb_NodeGetHandle pNodeGetHandle = NULL;
 
 	if(value == FALSE || pinst->v_Execute == TRUE){
 		//only react on the rising edge
@@ -57,55 +57,42 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_Execute_set(
 		return OV_ERR_OK;
 	}
 
-	pConnect = Ov_DynamicPtrCast(iec62541fb_Connect, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "ConnectionHdl"));
-	if(pConnect == NULL){
+	pNodeGetHandle = Ov_DynamicPtrCast(opcuafb_NodeGetHandle, fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "NodeHdl"));
+	if(pNodeGetHandle == NULL){
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
 		return OV_ERR_BADVALUE;
 	}
-	if(pConnect->v_ConnectionHdl == 0){
-		pinst->v_Error = TRUE;
-		pinst->v_ErrorID = 1; //todo
-		return OV_ERR_BADVALUE;
-	}
-	if(pConnect->v_Client == NULL){
-		//internal error
+	if(pNodeGetHandle->v_NodeHdl == 0){
 		pinst->v_Error = TRUE;
 		pinst->v_ErrorID = 1; //todo
 		return OV_ERR_BADVALUE;
 	}
 
-	if(pConnect->v_Client != NULL){
-		UA_Client_disconnect(pConnect->v_Client);
-		UA_Client_delete(pConnect->v_Client);
-	}
-	pConnect->v_Client = NULL;
-	pConnect->v_Done = FALSE;
-	pConnect->v_ConnectionHdl = 0;
-	pConnect->v_Busy = FALSE;
-	pConnect->v_Error = FALSE;
-	pConnect->v_ErrorID = 0;
-	pConnect->v_Execute = FALSE;
+	//todo deregister the node at the server
+
+	pNodeGetHandle->v_NodeHdl = 0;
+	pNodeGetHandle->v_Busy = FALSE;
+	pNodeGetHandle->v_Error = FALSE;
+	pNodeGetHandle->v_ErrorID = 0;
+	pNodeGetHandle->v_Execute = FALSE;
 
 	pinst->v_Done = TRUE;
-	pinst->v_Busy = FALSE;
-	pinst->v_Error = FALSE;
-	pinst->v_ErrorID = 0;
-
 	pinst->v_Execute = value;
 	return OV_ERR_OK;
 }
 
-OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_ConnectionHdl_set(
-		OV_INSTPTR_iec62541fb_Disconnect          pinst,
-		const OV_UINT value
+
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeReleaseHandle_ConnectionHdl_set(
+		OV_INSTPTR_opcuafb_NodeReleaseHandle          pinst,
+		const OV_UINT  value
 ) {
 	if(value == 0){
 		pinst->v_Done = TRUE;
 	}else{
 		if(pinst->v_ConnectionHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
 			//we have a new connection and no connection on execute, so prepare for a new activation
-			iec62541fb_Disconnect_Execute_set(pinst, FALSE);
+			opcuafb_NodeReleaseHandle_Execute_set(pinst, FALSE);
 		}
 		pinst->v_Done = FALSE;
 	}
@@ -115,3 +102,24 @@ OV_DLLFNCEXPORT OV_RESULT iec62541fb_Disconnect_ConnectionHdl_set(
 	pinst->v_ErrorID = 0;
 	return OV_ERR_OK;
 }
+
+OV_DLLFNCEXPORT OV_RESULT opcuafb_NodeReleaseHandle_NodeHdl_set(
+		OV_INSTPTR_opcuafb_NodeReleaseHandle          pinst,
+		const OV_UINT  value
+) {
+	if(value == 0){
+		pinst->v_Done = TRUE;
+	}else{
+		if(pinst->v_NodeHdl == 0 && fb_connection_getFirstConnectedObject(Ov_PtrUpCast(fb_object, pinst), FALSE, TRUE, "Execute") == NULL){
+			//we have a new nodeID and no connection on execute, so prepare for a new activation
+			opcuafb_NodeReleaseHandle_Execute_set(pinst, FALSE);
+		}
+		pinst->v_Done = FALSE;
+	}
+	pinst->v_Busy = FALSE;
+	pinst->v_Error = FALSE;
+	pinst->v_ErrorID = 0;
+	pinst->v_NodeHdl = value;
+	return OV_ERR_OK;
+}
+

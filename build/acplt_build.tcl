@@ -716,7 +716,7 @@ proc compress {archivename dir} {
 
 # ============== MAIN STARTS HERE ==================
 set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/iec62541 syslibs/functionblock/fb syslibs/functionblock/ssc}
-set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/iec62541fb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib}
+set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/opcuafb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib}
 print_msg "checking out all libraries of the acplt system"
 
 if {$release != 1} {
