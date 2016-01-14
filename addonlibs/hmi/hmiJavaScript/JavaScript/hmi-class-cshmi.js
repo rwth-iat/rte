@@ -3481,11 +3481,11 @@ cshmi.prototype = {
 			//get connection offsets
 			if (SourceBase === null){
 				//skip
-			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined){
+			}else if (SourceBase.ResourceList && SourceBase.ResourceList.ConnectionFromCount !== undefined && TargetConnectionPoint !== null){
 				//there is already an incoming connection for this Object
 				SourceBase.ResourceList.ConnectionFromCount += 1;
 				OffsetSource = SourceBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
-			}else{
+			}else if(TargetConnectionPoint !== null){
 				//remember the result
 				if (SourceBase.ResourceList === undefined){
 					SourceBase.ResourceList = new Object();
@@ -3495,11 +3495,11 @@ cshmi.prototype = {
 			}
 			if (TargetBase === null){
 				//skip
-			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined){
+			}else if (TargetBase.ResourceList && TargetBase.ResourceList.ConnectionFromCount !== undefined && SourceConnectionPoint !== null){
 				//there is already an incoming connection for this Object
 				TargetBase.ResourceList.ConnectionFromCount += 1;
 				OffsetTarget = TargetBase.ResourceList.ConnectionFromCount * parseFloat(requestList[ObjectPath]["gridWidth"]);
-			}else{
+			}else if(SourceConnectionPoint !== null){
 				//remember the result
 				if (TargetBase.ResourceList === undefined){
 					TargetBase.ResourceList = new Object();
