@@ -564,7 +564,6 @@ LIBRARY cshmi
 	END_CLASS;
 	
 	CLASS SetValueBase : CLASS cshmi/Action
-		IS_INSTANTIABLE;
 		COMMENT = "set a variable with a concatenated value";
 		VARIABLES
 			ksVar : STRING
