@@ -1264,7 +1264,10 @@ cshmi.prototype = {
 					this.ResourceList.Actions["tempPath"] = new Object();
 					this.ResourceList.Actions["tempPath"].ParameterName = splittedValueParameter[1];
 					this.ResourceList.Actions["tempPath"].ParameterValue = splittedValueParameter[2];
-					fraction = this._getValue(VisualObject, "tempPath", null, null, null, true);
+					var tempfraction = this._getValue(VisualObject, "tempPath", null, null, null, true);
+					if(tempfraction){
+						fraction = parseFloat(tempfraction);
+					}
 				}
 				var Point = getPolylinePointFromFraction(Coords, fraction);
 				if(Point.x !== null && ParameterValue.indexOf("getPolylinePointXAtFractionLength") !== -1){

@@ -212,11 +212,11 @@ function getPolylinePointFromFraction(Coords, Fraction){
 	
 	var l1,l2,l3,l4,l5;
 	var total_length, Position;
-	l1= Math.sqrt( Math.pow(Coords.StartX - Coords.OffsetPointSourceX , 2) + Math.pow(Coords.StartY - Coords.OffsetPointSourceY , 2)) ;
+	l1= Math.sqrt( Math.pow(Coords.StartX - Coords.OffsetPointSourceX , 2)             + Math.pow(Coords.StartY - Coords.OffsetPointSourceY , 2)) ;
 	l2= Math.sqrt( Math.pow(Coords.OffsetPointSourceX - Coords.ContrlPointSourceX , 2) + Math.pow(Coords.OffsetPointSourceY - Coords.ContrlPointSourceY , 2) ) ;
-	l3= Math.sqrt( Math.pow(Coords.ContrlPointTargetX - Coords.OffsetPointSourceX , 2) + Math.pow(Coords.ContrlPointTargetY - Coords.OffsetPointSourceY , 2) ) ;
-	l4= Math.sqrt( Math.pow(Coords.OffsetPointTargetX - Coords.ContrlPointTargetX , 2) + Math.pow(Coords.OffsetPointTargetY - Coords.ContrlPointTargetY , 2) ) ;
-	l5= Math.sqrt( Math.pow(Coords.EndX - Coords.OffsetPointTargetX , 2) + Math.pow(Coords.EndY - Coords.OffsetPointTargetY , 2) ) ;
+	l3= Math.sqrt( Math.pow(Coords.ContrlPointSourceX - Coords.ContrlPointTargetX , 2) + Math.pow(Coords.ContrlPointSourceY - Coords.ContrlPointTargetY , 2) ) ;
+	l4= Math.sqrt( Math.pow(Coords.ContrlPointTargetX - Coords.OffsetPointTargetX , 2) + Math.pow(Coords.ContrlPointTargetY - Coords.OffsetPointTargetY , 2) ) ;
+	l5= Math.sqrt( Math.pow(Coords.OffsetPointTargetX - Coords.EndX , 2)               + Math.pow(Coords.OffsetPointTargetY - Coords.EndY , 2) ) ;
 	total_length=l1+l2+l3+l4+l5;
 	
 	if(Fraction === null || Fraction === undefined){
@@ -225,26 +225,27 @@ function getPolylinePointFromFraction(Coords, Fraction){
 	
 	Position=total_length * Fraction;
 	if( Position<=l1 ){
+		Fraction= (l1 + l2+l3+l4+l5 -(1-Fraction)*total_length)/l1;
 		sPosXY.x= Coords.StartX+ Fraction* (Coords.OffsetPointSourceX-Coords.StartX);
 		sPosXY.y= Coords.StartY+ Fraction* (Coords.OffsetPointSourceY-Coords.StartY);
 		return sPosXY;
 	}else if( Position<=(l1+l2) ){
-		Fraction= Fraction- (l1/total_length);
+		Fraction= (l2 + l3+l4+l5 -(1-Fraction)*total_length)/l2;
 		sPosXY.x= Coords.OffsetPointSourceX+ Fraction* (Coords.ContrlPointSourceX-Coords.OffsetPointSourceX);
 		sPosXY.y= Coords.OffsetPointSourceY+ Fraction* (Coords.ContrlPointSourceY-Coords.OffsetPointSourceY);
 		return sPosXY;
 	}else if ( Position<=(l1+l2+l3) ){
-		Fraction= Fraction- ((l1+l2)/total_length);
+		Fraction= (l3 + l4+l5 -(1-Fraction)*total_length)/l3;
 		sPosXY.x= Coords.ContrlPointSourceX+ Fraction* (Coords.ContrlPointTargetX-Coords.ContrlPointSourceX);
 		sPosXY.y= Coords.ContrlPointSourceY+ Fraction* (Coords.ContrlPointTargetY-Coords.ContrlPointSourceY);
 		return sPosXY;
 	}else if ( Position<=(l1+l2+l3+l4) ){
-		Fraction= Fraction- ((l1+l2+l3)/total_length);
+		Fraction= (l4 + l5 -(1-Fraction)*total_length)/l4;
 		sPosXY.x= Coords.ContrlPointTargetX+ Fraction* (Coords.OffsetPointTargetX-Coords.ContrlPointTargetX);
 		sPosXY.y= Coords.ContrlPointTargetY+ Fraction* (Coords.OffsetPointTargetY-Coords.ContrlPointTargetY);
 		return sPosXY;
 	}else if ( Position<=(l1+l2+l3+l4+l5) ){
-		Fraction= Fraction- ((l1+l2+l3+l4)/total_length);
+		Fraction= (l5 + 0 -(1-Fraction)*total_length)/l5;
 		sPosXY.x= Coords.OffsetPointTargetX+ Fraction* (Coords.EndX-Coords.OffsetPointTargetX);
 		sPosXY.y= Coords.OffsetPointTargetY+ Fraction* (Coords.EndY-Coords.OffsetPointTargetY);
 		return sPosXY;
