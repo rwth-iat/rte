@@ -2,7 +2,7 @@ language: c
 compiler:
   - gcc
 #  - clang
-sudo: true
+sudo: false
 addons:
   apt:
     packages:
@@ -10,14 +10,11 @@ addons:
     - bison
     - flex
     - gcc-multilib
-
+    - texinfo
 env:
    - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
    - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
 #fb_dbcommands does not compile with 32 bit on the 64 bit travis
-before_install:
-  - sudo apt-get install -y texinfo
-
 install: 
   - wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
   - tar -xJvf texinfo-5.2.tar.xz
