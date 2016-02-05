@@ -31,6 +31,10 @@ after_success:
    - git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
    - cd rte-www
    - git rm -r -f ./doc/current/*
+   - mkdir doc
+   - cd doc
+   - mkdir current
+   - cd ..
    - cp -r ../rte/html/* ./doc/current/
    - git add -A ./doc/current
    - git config --global user.email "rte_bot@outlook.de"
