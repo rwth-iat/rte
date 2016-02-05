@@ -16,8 +16,8 @@ env:
    - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
 #fb_dbcommands does not compile with 32 bit on the 64 bit travis
 install: 
-  - wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
-  - tar -xJvf texinfo-5.2.tar.xz
+#  - wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
+#  - tar -xJvf texinfo-5.2.tar.xz
 #  - cd texinfo-5.2 && ./configure --prefix=/usr && make && sudo make install && cd ..
 
 script:
@@ -28,17 +28,17 @@ script:
    - makeinfo --html --force doc/libov.texi -o html/ --no-warn
    - cd ..
 after_success: 
-   -git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
-   -cd rte-www
-   -git rm -r -f ./doc/current/*
-   -cp -r ../rte/html/* ./doc/current/
-   -git add -A ./doc/current
-   -git config --global user.email "rte_bot@outlook.de"
-   -git config --global user.name "rte-bot"
-   -git config --global push.default simple
-   -git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
-   -git push https://$GH_API_TOKEN@github.com/rte-www
-   -cd .. && rm -rf rte-www
+   - git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
+   - cd rte-www
+   - git rm -r -f ./doc/current/*
+   - cp -r ../rte/html/* ./doc/current/
+   - git add -A ./doc/current
+   - git config --global user.email "rte_bot@outlook.de"
+   - git config --global user.name "rte-bot"
+   - git config --global push.default simple
+   - git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
+   - git push https://$GH_API_TOKEN@github.com/rte-www
+   - cd .. && rm -rf rte-www
 
 after_failure:
    - tail -n 40 acplt_build.log
