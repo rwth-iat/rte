@@ -24,13 +24,14 @@ script:
    - cd ./build
    - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
    - cd ..   
-   - makeinfo --html --force doc/libov.texi -o doc/
+   - mkdir html
+   - makeinfo --html --force doc/libov.texi -o html/
    - cd ..
 after_success: 
    -git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
    -cd rte-www
    -git rm -r -f ./doc/current/*
-   -cp -r ../rte/doc/* ./doc/current/
+   -cp -r ../rte/html/* ./doc/current/
    -git add -A ./doc/current
    -git config --global user.email "rte_bot@outlook.de"
    -git config --global user.name "rte-bot"
