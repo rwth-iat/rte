@@ -48,7 +48,7 @@ RWTH Aachen, D-52056 Aachen, Germany. All rights reserved.
 @c	Part 4: `Top' Node and Master Menu
 @c	==================================
 
-@node Top, License, (dir), (dir)
+@node Top, Index, (dir), (dir)
 @ifnotinfo
 @c@node Top, Index, (dir), (dir)
 @end ifnotinfo
@@ -58,20 +58,6 @@ RWTH Aachen, D-52056 Aachen, Germany. All rights reserved.
 Christian Poensgen @code{<christian@@plt.rwth-aachen.de>}
 @end ifnottex
 
-@ifnottex
-@ifnotinfo
-@node Index, License, Top, Top
-@chapter Index
-@end ifnotinfo
-@end ifnottex
-
-@ifinfo
-The following subjects are available:
-@end ifinfo
-
-@menu
-* License::               Legal terms and conditions.
-@end menu
 
 @menu
 * Preprocessor symbols::  Preprocessor symbols used in the library.
@@ -81,6 +67,10 @@ The following subjects are available:
 * Fundamental datatypes:: Fundamental datatypes used in the library.
 @end menu
 
+@menu
+* Index::		  Index
+* License::               Legal terms and conditions.
+@end menu
 @menu
 * Association::           Functions and macros associated with associations.
 * Class::                 Datatypes and functions associated with classes.
@@ -104,6 +94,53 @@ The following subjects are available:
 * Vector::                Functions associated with vector variables.
 * Vendortree::            Functions associated with the vendor tree.
 @end menu
+
+@ifnottex
+@ifnotinfo
+@node Index, License, Top, Top
+@chapter Index
+@end ifnotinfo
+@end ifnottex
+
+@ifinfo
+The following subjects are available:
+@end ifinfo
+
+@c @menu
+@c * License::               Legal terms and conditions.
+@c @end menu
+
+@c @menu
+@c * Preprocessor symbols::  Preprocessor symbols used in the library.
+@c * Import/Export::         Import and Export of functions and global variables.
+@c * Debugging macros::      Debugging macros used in the library.
+@c * Useful macros::         Useful macros easing the use of the library.
+@c * Fundamental datatypes:: Fundamental datatypes used in the library.
+@c @end menu
+
+@c @menu
+@c * Association::           Functions and macros associated with associations.
+@c * Class::                 Datatypes and functions associated with classes.
+@c * Database::              Functions associated with the database.
+@c * Element::               Datatypes and functions associated with elements.
+@c * Library::               Functions associated with libraries.
+@c * Logfile::               Functions associated with logfiles.
+@c * Malloc::                Memory management functions for the system heap memory.
+@c * Memstack::              Memory management functions for the memory stack.
+@c * Object::                Datatypes and functions associated with objects (top level class).
+@c * Operation::             Functions associated with operations.
+@c * Part::                  Functions associated with parts.
+@c * Path::                  Datatypes and functions associated with paths.
+@c * Result::                Functions associated with results of function calls.
+@c * Scheduler::             Datatypes and functions associated with the scheduler.
+@c * String::                Functions associated with string variables.
+@c * Structure::             Functions associated with structures.
+@c * Supervise::             Execution time supervision functions.
+@c * Time::                  Functions associated with time variables.
+@c * Variable::              Functions associated with variables.
+@c * Vector::                Functions associated with vector variables.
+@c * Vendortree::            Functions associated with the vendor tree.
+@c @end menu
 
 @c	================================
 @c	Part 5: The Body of the Document
