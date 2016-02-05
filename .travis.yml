@@ -16,7 +16,6 @@ env:
    - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
 #fb_dbcommands does not compile with 32 bit on the 64 bit travis
 before_install:
-  - sudo apt-get update -qq
   - sudo apt-get install -y texinfo
 
 install: 
