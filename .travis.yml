@@ -28,7 +28,7 @@ script:
    - makeinfo --html --force doc/libov.texi -o html/ --no-warn
    - cd ..
 after_success: 
-   - git clone -q --depth=5 -b gh-pages https://$GH_API_TOKEN@github.com/acplt/rte-www
+   - git clone -q --depth=5 -b gh-pages https://$GH_API_TOKEN:x-oauth-basic@github.com/acplt/rte-www
    - cd rte-www
    - git rm -r -f ./doc/current/*
    - mkdir doc
@@ -41,7 +41,7 @@ after_success:
    - git config --global user.name "rte-bot"
    - git config --global push.default simple
    - git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
-   - git push -f -q https://rte-bot:${GH_API_TOKEN}:x-oauth-basic@github.com/acplt/rte-www &2>/dev/null
+   - git push -f -q https://$GH_API_TOKEN:x-oauth-basic@github.com/acplt/rte-www &2>/dev/null
    - cd .. && rm -rf rte-www
 
 after_failure:
