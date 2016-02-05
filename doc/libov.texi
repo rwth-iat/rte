@@ -147,7 +147,7 @@ The following subjects are available:
 @c	License
 @c	-------
 
-@node License, Preprocessor symbols, License, Top
+@node License, Preprocessor symbols, Index, Top
 @chapter Legal terms and conditions
 
 Copyright @copyright{} 1998-1999@*
