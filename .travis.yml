@@ -28,13 +28,9 @@ script:
    - cd ./build
    - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
    - makeinfo --html doc/libov.texi -o web/
-after_success: |
-
-
-
+after_success:
 git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
 cd rte-www
-
 git rm -r -f ./doc/current/*
 cp -r ../../doc/* ./doc/current/
 git add -A ./doc/current
