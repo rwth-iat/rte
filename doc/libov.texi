@@ -50,7 +50,7 @@ RWTH Aachen, D-52056 Aachen, Germany. All rights reserved.
 
 @node Top, License, (dir), (dir)
 @ifnotinfo
-@node Top, Index, (dir), (dir)
+@c@node Top, Index, (dir), (dir)
 @end ifnotinfo
 @top LibOV API Reference (Version 1.2.1)
 @ifnottex
