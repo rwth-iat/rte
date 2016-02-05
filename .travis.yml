@@ -29,17 +29,17 @@ script:
    - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
    - makeinfo --html doc/libov.texi -o web/
 after_success:
-git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
-cd rte-www
-git rm -r -f ./doc/current/*
-cp -r ../../doc/* ./doc/current/
-git add -A ./doc/current
-git config --global user.email "rte_bot@outlook.de"
-git config --global user.name "rte-bot"
-git config --global push.default simple
-git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
-git push https://$GH_API_TOKEN@github.com/rte-www
-cd .. && rm -rf rte-www
+   -git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www
+   -cd rte-www
+   -git rm -r -f ./doc/current/*
+   -cp -r ../../doc/* ./doc/current/
+   -git add -A ./doc/current
+   -git config --global user.email "rte_bot@outlook.de"
+   -git config --global user.name "rte-bot"
+   -git config --global push.default simple
+   -git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
+   -git push https://$GH_API_TOKEN@github.com/rte-www
+   -cd .. && rm -rf rte-www
 
 after_failure:
    - tail -n 40 acplt_build.log
