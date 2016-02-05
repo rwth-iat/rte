@@ -16,21 +16,52 @@ env:
    - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
 #fb_dbcommands does not compile with 32 bit on the 64 bit travis
 before_install:
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
-    - chmod +x miniconda.sh
-    - "./miniconda.sh -b"
-    - export PATH=/home/travis/miniconda2/bin:$PATH
-    - conda update --yes conda
-    - sudo rm -rf /dev/shm
-    - sudo ln -s /run/shm /dev/shm
-install:
-    - conda install --yes python="2.7" sphinx
-    - pip install --user travis-sphinx
+  - sudo apt-get update -qq
+  - sudo apt-get install -y texinfo
+
+install: 
+  - wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
+  - tar -xJvf texinfo-5.2.tar.xz
+  - cd texinfo-5.2 && ./configure --prefix=/usr && make && sudo make install && cd ..
+
 script:
    - cd ./build
    - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
-   - travis-sphinx build
+   - makeinfo --html doc/libov.texi -o web/
+after_success: |
+
+
+
+git clone --depth=5 -b gh-pages https://$GITAUTH@github.com/acplt/rte-www
+cd rte-www
+
+git rm -r -f ./doc/current/*
+cp -r ../../doc/* ./doc/current/
+git add -A ./doc/current
+git config --global user.email "rte_bot@outlook.de"
+git config --global user.name "rte-bot"
+git config --global push.default simple
+git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
+git push https://$GH_API_TOKEN@github.com/rte-www
+cd .. && rm -rf rte-www
+
+
+  if [ -n "$GITHUB_API_KEY" ]; then
+    cd "$TRAVIS_BUILD_DIR"
+    # This generates a `web` directory containing the website.
+    make web
+    cd web
+    git init
+    git checkout -b gh-pages
+    git add .
+    git -c user.name='travis' -c user.email='travis'
+    git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
+    # Make sure to make the output quiet, or else the API token will leak!
+    # This works because the API key can replace your password.
+    git push -f -q https://$GITHUB_API_KEY@github.com/rte/rte-www
+    cd .. && rm -rf rte-www
+  fi
 
 after_failure:
    - tail -n 40 acplt_build.log
-   - travis-sphinx deploy   
+
