@@ -25,7 +25,7 @@ script:
    - tclsh ./acplt_build.tcl $DB_COMMANDS $OV_ARCH_BITWIDTH
    - cd ..   
    - mkdir html
-   - makeinfo --html --force doc/libov.texi -o html/
+   - makeinfo --html --force doc/libov.texi -o html/ --no-warn
    - cd ..
 after_success: 
    -git clone -q --depth=5 -b gh-pages https://$GH_API_KEY@github.com/acplt/rte-www

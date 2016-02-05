@@ -50,11 +50,11 @@ RWTH Aachen, D-52056 Aachen, Germany. All rights reserved.
 
 @node Top, Index, (dir), (dir)
 @ifnotinfo
-@c@node Top, Index, (dir), (dir)
+@c @node Top, Index, (dir), (dir)
 @end ifnotinfo
 @top LibOV API Reference (Version 1.2.1)
 @ifnottex
-@author Dirk Meyer @code{<dirk@@plt.rwth-aachen.de>}@*
+@c @author Dirk Meyer @code{<dirk@@plt.rwth-aachen.de>}@*
 Christian Poensgen @code{<christian@@plt.rwth-aachen.de>}
 @end ifnottex
 
@@ -65,13 +65,10 @@ Christian Poensgen @code{<christian@@plt.rwth-aachen.de>}
 * Debugging macros::      Debugging macros used in the library.
 * Useful macros::         Useful macros easing the use of the library.
 * Fundamental datatypes:: Fundamental datatypes used in the library.
-@end menu
 
-@menu
 * Index::		  Index
 * License::               Legal terms and conditions.
-@end menu
-@menu
+
 * Association::           Functions and macros associated with associations.
 * Class::                 Datatypes and functions associated with classes.
 * Database::              Functions associated with the database.
@@ -4916,10 +4913,10 @@ otherwise.
 
 @strong{Parameters}
 
-@table @code
-@item
+@c @table @code
+@c @item
 
-@end table
+@c @end table
 
 @strong{Return value}
 
