@@ -18,7 +18,7 @@ env:
 install: 
   - wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
   - tar -xJvf texinfo-5.2.tar.xz
-  - cd texinfo-5.2 && ./configure --prefix=/usr && make && sudo make install && cd ..
+#  - cd texinfo-5.2 && ./configure --prefix=/usr && make && sudo make install && cd ..
 
 script:
    - cd ./build
