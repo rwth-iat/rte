@@ -41,7 +41,7 @@ after_success:
    - git config --global user.name "rte-bot"
    - git config --global push.default simple
    - git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
-   - git push https://$GH_API_TOKEN@github.com/rte-www
+   - git push https://$GH_API_TOKEN@github.com/acplt/rte-www
    - cd .. && rm -rf rte-www
 
 after_failure:
