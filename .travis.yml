@@ -40,7 +40,7 @@ after_success:
    - git config --global user.email "rte_bot@outlook.de"
    - git config --global user.name "rte-bot"
    - git config --global push.default simple
-   - git commit -am "updated generated documentation on webpage by travis-ci [ci skip]"
+   - git commit -am "updated generated documentation (texinfo) on webpage by travis-ci [ci skip]"
    - git push -f -q https://$GH_API_TOKEN:x-oauth-basic@github.com/acplt/rte-www &2>/dev/null
    - cd .. && rm -rf rte-www
 
