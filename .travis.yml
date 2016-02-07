@@ -15,7 +15,8 @@ env:
   - OV_ARCH_BITWIDTH=32 DB_COMMANDS=no_dbcommands
   - OV_ARCH_BITWIDTH=64 DB_COMMANDS=dbcommands
   global:
-    secure: aV2zLmzVQf8bPo+m4Xiog5DZ0x4iSunLCdEL0Dhm2CqhBA/Hgxz64UC1Y0eit3cRGOyu3QxP3LdV5Dmc+xMk+uIs+dpVc0NZwnIckN+3mrcg0nr6an7ZbZ8nbKf/sRbsviFvqCNNA1zaYaZ1Ub7ljV75MfOY1McJt4D/ymWPeCA=
+  - secure: aV2zLmzVQf8bPo+m4Xiog5DZ0x4iSunLCdEL0Dhm2CqhBA/Hgxz64UC1Y0eit3cRGOyu3QxP3LdV5Dmc+xMk+uIs+dpVc0NZwnIckN+3mrcg0nr6an7ZbZ8nbKf/sRbsviFvqCNNA1zaYaZ1Ub7ljV75MfOY1McJt4D/ymWPeCA=
+  - secure: KSiHssC0QJMBpcp4RGl1rgZwEj+QFAFq443g4lpTB28hlcJfVYehA9SvaglBxn684nL6d84wwnzK7jXpwVm85mZQJpj9UcJYji5A/lGrtxow6ytnqhaTOhkbiBf3DNCrzpOVZPT7oIdFYthGTnDbn423MOBia/FOYeG5/cF7QeM=
 install: 
 script:
 - cd ./build
