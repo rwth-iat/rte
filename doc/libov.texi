@@ -21,10 +21,10 @@
 @c	=========================================
 
 @ifinfo
-This file is a reference to the ACPLT/OV Object Management Library LibOV (Version 1.2.1).
+This file is a reference to the ACPLT/OV Object Management Library LibOV (Version 2.0).
 
 Copyright @copyright{} 1998-1999 Lehrstuhl fuer Prozessleittechnik,
-RWTH Aachen, D-52056 Aachen, Germany. All rights reserved.
+RWTH Aachen, D-52064 Aachen, Germany. All rights reserved.
 @end ifinfo
 
 @c	===============================
