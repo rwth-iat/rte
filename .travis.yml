@@ -39,7 +39,7 @@ after_success:
 - git config --global push.default simple
 - git commit -am "updated generated documentation (texinfo) on webpage by travis-ci
   [ci skip]"
-- git push -f https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
+- git push -f https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www &2>/dev/null
 - cd .. && rm -rf rte-www
 after_failure:
 - tail -n 40 acplt_build.log
