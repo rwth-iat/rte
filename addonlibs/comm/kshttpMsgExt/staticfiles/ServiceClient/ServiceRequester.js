@@ -815,15 +815,18 @@ function handlecheckPCUoperations(evt){
 		}
 		// we will get a 404 since we check pflib PCUs and fc PCUs at the same time. Only one will work
 		if(req.status == 200 || req.status == 404){
+			// cut off everything before "<"
+			responseText = req.responseText.substring(req.responseText.indexOf("<"));
+			
 			emptySelect(PCUOperationSelect);
 			if (window.DOMParser) {
 				parser = new DOMParser();
-				xmlResponse = parser.parseFromString(req.responseText,"text/xml");
+				xmlResponse = parser.parseFromString(responseText,"text/xml");
 			} else // Internet Explorer
 			{
 				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
 				xmlResponse.async = false;
-				xmlResponse.loadXML(req.responseText);
+				xmlResponse.loadXML(responseText);
 			} 
 			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
 			if(baseGetVar){
