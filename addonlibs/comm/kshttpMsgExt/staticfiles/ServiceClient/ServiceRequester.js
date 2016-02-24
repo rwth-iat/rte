@@ -64,7 +64,7 @@ OperationList.onchange = displayOperationData;
 
 PCUSelect.onchange = function(){
 	getDataFromPfPCU();
-	checkPCUoperations();
+	checkPCUoperationsControlChart();
 	PCUCurrFM.disabled = true;
 	PCUCurrFM.value = "N/A";
 	PCUCurrError.disabled = true;
@@ -782,7 +782,7 @@ function handleResponsegetPCInboxes(evt){
 	}
 }
 
-function checkPCUoperations(){
+function checkPCUoperationsControlChart(){
 //test servers on url
 	Submitbutton.disabled = true;
 	if(HostUrl){
@@ -792,8 +792,8 @@ function checkPCUoperations(){
 		} else {// code for IE6, IE5
 			var req = new ActiveXObject("Microsoft.XMLHTTP");
 		}
-		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".PossibleCmds&path[1]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".ORDERLIST&format=ksx", true);
-		req.onreadystatechange = handlecheckPCUoperations;
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".ORDERLIST&format=ksx", true);
+		req.onreadystatechange = handlecheckPCUoperationsControlChart;
 		req.timeout = 10000;
 		try{
 			req.send(null);
@@ -803,7 +803,7 @@ function checkPCUoperations(){
 	}
 };
 
-function handlecheckPCUoperations(evt){
+function handlecheckPCUoperationsControlChart(evt){
 	if (!evt){
 		var req = this;
 	}else{
@@ -813,8 +813,149 @@ function handlecheckPCUoperations(evt){
 		if(req.status == 0){
 			ResponseOutput.innerHTML = "The request failed. Timeout?";
 		}
-		// we will get a 404 since we check pflib PCUs and fc PCUs at the same time. Only one will work
-		if(req.status == 200 || req.status == 404){
+		if(req.status == 200){
+			// cut off everything before "<"
+			responseText = req.responseText.substring(req.responseText.indexOf("<"));
+			
+			emptySelect(PCUOperationSelect);
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(responseText);
+			} 
+			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
+			if(baseGetVar){
+				var OperationStrings = baseGetVar.childNodes;
+				for (i in OperationStrings){
+					if(OperationStrings[i].tagName == "string"){
+						var option = document.createElement("option");
+						option.value = OperationStrings[i].textContent;
+						option.text = OperationStrings[i].textContent;
+						PCUOperationSelect.add(option);
+					}
+				}
+			}
+		} else if (req.status == 404){
+			checkPCUoperationsFC();
+		}
+	}
+}
+
+function checkPCUoperationsFC(){
+//test servers on url
+	Submitbutton.disabled = true;
+	if(HostUrl){
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + "/possibleCommands.value&format=ksx", true);
+		req.onreadystatechange = handlecheckPCUoperationsFC;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+	}
+};
+
+function handlecheckPCUoperationsFC(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+		}
+		if(req.status == 200){
+			// cut off everything before "<"
+			responseText = req.responseText.substring(req.responseText.indexOf("<"));
+			
+			emptySelect(PCUOperationSelect);
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlResponse = parser.parseFromString(responseText,"text/xml");
+			} else // Internet Explorer
+			{
+				xmlResponse = new ActiveXObject("Microsoft.XMLDOM");
+				xmlResponse.async = false;
+				xmlResponse.loadXML(responseText);
+			} 
+			var baseGetVar = xmlResponse.getElementsByTagName("stringvec")[0];
+			if(baseGetVar){
+				var OperationStrings = baseGetVar.childNodes;
+				for (i in OperationStrings){
+					if(OperationStrings[i].tagName == "string"){
+						var option = document.createElement("option");
+						option.value = OperationStrings[i].textContent;
+						option.text = OperationStrings[i].textContent;
+						PCUOperationSelect.add(option);
+					}
+				}
+				var option = document.createElement("option");
+				option.value = "START";
+				option.text = "START";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "STOP";
+				option.text = "STOP";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "OCCUPY";
+				option.text = "OCCUPY";
+				PCUOperationSelect.add(option);
+				option = document.createElement("option");
+				option.value = "FREE";
+				option.text = "FREE";
+				PCUOperationSelect.add(option);
+			}
+		} else if (req.status == 404) {
+			checkPCUoperationsPC();
+		}
+	}
+}
+
+function checkPCUoperationsPC(){
+//test servers on url
+	Submitbutton.disabled = true;
+	if(HostUrl){
+		if (window.XMLHttpRequest)
+		{// code for IE7+, Firefox, Chrome, Opera, Safari
+			var req = new XMLHttpRequest();
+		} else {// code for IE6, IE5
+			var req = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".PossibleCmds&format=ksx", true);
+		req.onreadystatechange = handlecheckPCUoperationsPC;
+		req.timeout = 10000;
+		try{
+			req.send(null);
+		}catch(e){
+			ResponseOutput.innerHTML = "transmit error: "+e;
+		};
+	}
+};
+
+function handlecheckPCUoperationsPC(evt){
+	if (!evt){
+		var req = this;
+	}else{
+		req = evt.target;
+	}
+	if( req.readyState == 4 ){
+		if(req.status == 0){
+			ResponseOutput.innerHTML = "The request failed. Timeout?";
+		}
+		if(req.status == 200){
 			// cut off everything before "<"
 			responseText = req.responseText.substring(req.responseText.indexOf("<"));
 			
