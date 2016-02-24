@@ -180,7 +180,8 @@ OV_DLLFNCEXPORT OV_RESULT kshttpMsgExt_MsgExt_HandleExtendedRequest(
 		if(Ov_GetChild(MessageSys_Message2Channel, pNewMessage) != pChannel){
 			/*	no need to hold the connection -->  return with ok Message	*/
 			pClientHandler->v_CommunicationStatus = HTTP_CS_RESPONSEBODYGENERATED;
-			pChannel->v_CloseAfterSend = TRUE;
+			response->keepAlive = FALSE;
+			pChannel->v_CloseAfterSend = FALSE;
 			ov_string_setvalue(&response->contentString, "Message delivered to inbox. Wait for effect. No further communication on this connection. Bye.\n");
 			return OV_ERR_OK;
 		}
