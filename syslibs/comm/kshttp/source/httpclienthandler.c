@@ -236,7 +236,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				Ov_Unlink(ksbase_AssocChannelClientHandler, pChannel, Ov_GetFirstChild(ksbase_AssocChannelClientHandler, pChannel));
 				result = Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pPushhandler);
 				if(Ov_Fail(result)){
-					KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pPushhandler->v_identifier, pchannel->v_identifier));
+					KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pPushhandler->v_identifier, pChannel->v_identifier));
 					return result;
 				}
 
@@ -370,7 +370,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 			ov_string_print(&filename, "%s%s", request.urlPath+1, "index.html");
 		}else{
 			//remove leading /
-			filename = request.urlPath + 1;
+			ov_string_setvalue(&filename, request.urlPath + 1);
 		}
 
 		ov_memstack_lock();
@@ -380,7 +380,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 		ov_memstack_unlock();
 		pStaticfile = Ov_DynamicPtrCast(kshttp_staticfile, ov_path_getobjectpointer(filepath, 2));
 		ov_string_setvalue(&filepath, NULL);
-		filename = NULL;	//usage is save here, as we had no memory in the database or heap
+		ov_string_setvalue(&filename, NULL);	//usage is save here, as we had no memory in the database or heap
 
 		if(pStaticfile != NULL){
 			ov_string_setvalue(&response->contentType, pStaticfile->v_mimetype);
