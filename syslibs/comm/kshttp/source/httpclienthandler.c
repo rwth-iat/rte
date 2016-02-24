@@ -236,7 +236,7 @@ DLLFNCEXPORT OV_RESULT kshttp_httpclienthandler_generateHttpBody(
 				Ov_Unlink(ksbase_AssocChannelClientHandler, pChannel, Ov_GetFirstChild(ksbase_AssocChannelClientHandler, pChannel));
 				result = Ov_Link(ksbase_AssocChannelClientHandler, pChannel, pPushhandler);
 				if(Ov_Fail(result)){
-					KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pPushhandler->v_identifier, pchannel->v_identifier));
+					KS_logfile_error(("%s: could not link ClientHandler %s to Channel %s", this->v_identifier, pPushhandler->v_identifier, pChannel->v_identifier));
 					return result;
 				}
 
