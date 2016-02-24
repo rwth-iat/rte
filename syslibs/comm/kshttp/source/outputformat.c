@@ -296,6 +296,9 @@ or
 		kshttp_response_part_finalize(&temp, response_format, "mixed");
 	}
 	ov_string_append(output, temp);
+	if(temp){
+		ov_string_setvalue(&temp, NULL);
+	}
 
 	return lasterror;
 }
