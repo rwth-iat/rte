@@ -459,6 +459,7 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_parseAndDeliverMsg(const OV_STRING	value, O
 	OV_STRING tempSrvName = NULL;
 	OV_STRING tempBody = NULL;
 	OV_STRING msgEnd = NULL;
+	OV_UINT	iterator = 0;
 
 	ov_memstack_lock();
 
@@ -564,10 +565,18 @@ OV_DLLFNCEXPORT OV_RESULT MessageSys_parseAndDeliverMsg(const OV_STRING	value, O
 	tempSrvName = strchr(msgHeader.rcvSysAdr, ':');
 	if(!tempSrvName)
 	{
-		Ov_DeleteObject((OV_INSTPTR_ov_object) message);
-		ov_logfile_info("MessageDelivery/retrieveMessage: servername not encoded in rcvSysAdr");
-		ov_memstack_unlock();
-		return OV_ERR_OK;
+		if(msgHeader.rcvSysAdr[0] == '/' && msgHeader.rcvSysAdr[1] == '/'){
+			for(iterator = 2; msgHeader.rcvSysAdr[iterator] != '\0' && msgHeader.rcvSysAdr[iterator] != '/'; iterator++)
+				;
+			if(msgHeader.rcvSysAdr[iterator] == '/'){
+				tempSrvName = &(msgHeader.rcvSysAdr[iterator]);
+			}
+		} else {
+			Ov_DeleteObject((OV_INSTPTR_ov_object) message);
+			ov_logfile_info("MessageDelivery/retrieveMessage: servername not encoded in rcvSysAdr");
+			ov_memstack_unlock();
+			return OV_ERR_OK;
+		}
 	}
 	*tempSrvName = '\0';
 	tempSrvName++;
