@@ -59,6 +59,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	OV_INSTPTR_ov_object	pNextMsgObj = NULL;
 	OV_INSTPTR_ov_domain	pParentDomain = NULL;
 	OV_INSTPTR_fb_functionchart pParentChart = NULL;
+	OV_INSTPTR_ssc_controlchart pParentControlChart = NULL;
 	OV_INSTPTR_cmdlib_processcontrol pProcessControl = NULL;
 	OV_BOOL parentIsPC = FALSE;
 	OV_UINT waitingMsgs = 0;
@@ -82,6 +83,7 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 	{
 		parentIsPC = FALSE;
 		pParentChart = Ov_StaticPtrCast(fb_functionchart, pParentDomain);
+		pParentControlChart = Ov_DynamicPtrCast(ssc_controlchart, pParentDomain);
 	}
 	else if(Ov_CanCastTo(cmdlib_processcontrol, pParentDomain))
 	{
@@ -236,35 +238,42 @@ OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
 			}
 			else
 			{
-				tempany.value.valueunion.val_string = order;
-				commandPort=Ov_DynamicPtrCast(fb_port, Ov_SearchChild(ov_containment,pParentChart,"CMD"));
-				if(commandPort)
-				{
-					if(IsFlagSet(commandPort->v_flags, 'i'))
+
+				if(pParentControlChart){
+					if(Ov_Fail(ssc_controlchart_CMD_set(pParentControlChart, order))){
+						ov_logfile_error("Could not set \"CMD\" of parent control chart.");
+					}
+				} else {
+					tempany.value.valueunion.val_string = order;
+					commandPort=Ov_DynamicPtrCast(fb_port, Ov_SearchChild(ov_containment,pParentChart,"CMD"));
+					if(commandPort)
 					{
-						if(Ov_CanCastTo(fb_stringport, commandPort))
+						if(IsFlagSet(commandPort->v_flags, 'i'))
 						{
-							ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
-							ov_string_setvalue(&((Ov_StaticPtrCast(fb_stringport, commandPort))->v_value), order);
-						}
-						else if(Ov_CanCastTo(fb_anyport, commandPort))
-						{
-							ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
-							Ov_SetAnyValue(&((Ov_StaticPtrCast(fb_anyport, commandPort))->v_value), &tempany);
+							if(Ov_CanCastTo(fb_stringport, commandPort))
+							{
+								ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
+								ov_string_setvalue(&((Ov_StaticPtrCast(fb_stringport, commandPort))->v_value), order);
+							}
+							else if(Ov_CanCastTo(fb_anyport, commandPort))
+							{
+								ov_logfile_debug("Setting port \"CMD\" to: \"%s\".", order);
+								Ov_SetAnyValue(&((Ov_StaticPtrCast(fb_anyport, commandPort))->v_value), &tempany);
+							}
+							else
+							{
+								ov_logfile_error("Port \"CMD\" is of wrong type.");
+							}
 						}
 						else
 						{
-							ov_logfile_error("Port \"CMD\" is of wrong type.");
+							ov_logfile_error("Port \"CMD\" not an input.");
 						}
 					}
 					else
 					{
-						ov_logfile_error("Port \"CMD\" not an input.");
+						ov_logfile_error("Port \"CMD\" not found.");
 					}
-				}
-				else
-				{
-					ov_logfile_error("Port \"CMD\" not found.");
 				}
 			}
 			/*	delete parsed message	*/

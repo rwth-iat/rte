@@ -7,7 +7,7 @@
 *
 *   History
 *   -------
-*   2013-05-07   File created
+*   2016-02-24   File created
 *
 *******************************************************************************
 *
@@ -35,7 +35,7 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgParser_PCInbox_constructor(
     OV_RESULT    result;
 
     /* do what the base class does first */
-    result = ov_object_constructor(pobj);
+    result = fb_functionblock_constructor(pobj);
     if(Ov_Fail(result))
          return result;
 
@@ -43,5 +43,17 @@ OV_DLLFNCEXPORT OV_RESULT PCMsgParser_PCInbox_constructor(
 
 
     return OV_ERR_OK;
+}
+
+OV_DLLFNCEXPORT void PCMsgParser_PCInbox_typemethod(
+	OV_INSTPTR_fb_functionblock	pfb,
+	OV_TIME						*pltc
+) {
+    /*    
+    *   local variables
+    */
+    OV_INSTPTR_PCMsgParser_PCInbox pinst = Ov_StaticPtrCast(PCMsgParser_PCInbox, pfb);
+
+    return;
 }
 

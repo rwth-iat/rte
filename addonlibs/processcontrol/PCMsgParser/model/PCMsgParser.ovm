@@ -2,6 +2,7 @@
 #include "fb.ovm"
 #include "cmdlib.ovm"
 #include "MessageSys.ovm"
+#include "ssc.ovm"
 
 LIBRARY PCMsgParser
 	VERSION   = "V0.1 (DD-Mon-YYYY)";
