@@ -792,7 +792,7 @@ function checkPCUoperations(){
 		} else {// code for IE6, IE5
 			var req = new ActiveXObject("Microsoft.XMLHTTP");
 		}
-		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".PossibleCmds&path[1]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + "/possibleCommands.value&format=ksx", true);
+		req.open("GET", HostName + ":" + ServerList.options[ServerList.options.selectedIndex].value + "/getVar?path[0]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".PossibleCmds&path[1]=" + PCUSelect.options[PCUSelect.options.selectedIndex].value + ".ORDERLIST&format=ksx", true);
 		req.onreadystatechange = handlecheckPCUoperations;
 		req.timeout = 10000;
 		try{
