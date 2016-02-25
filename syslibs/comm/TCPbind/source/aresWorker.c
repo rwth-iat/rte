@@ -301,10 +301,10 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_shutdown(
 	OV_INSTPTR_TCPbind_aresWorker pinst = Ov_StaticPtrCast(TCPbind_aresWorker, pobj);
 	struct getAddrInfoElem *pCurrElem, *pNextElem;
 	/* do what */
-#if OV_SYSTEM_NT
-	/*	yes, here it waits until the thread is through....	*/
-	InterlockedExchange(&(runWorkerThread), 0);
 	if(pinst->v_handleValid){
+#if OV_SYSTEM_NT
+		/*	yes, here it waits until the thread is through....	*/
+		InterlockedExchange(&(runWorkerThread), 0);
 		if(WaitForSingleObject(pinst->v_threadHandle, 5000) != WAIT_OBJECT_0){
 			KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost."));
 		}
