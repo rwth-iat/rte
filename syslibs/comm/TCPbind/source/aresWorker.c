@@ -268,16 +268,22 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_startup(
 	runWorkerThread = 1;
 	pinst->v_threadHandle = CreateThread(NULL, 0, workerThread, (void*) NULL, 0, &dwThreadId);
 	if(pinst->v_threadHandle == 0){
+		pinst->v_handleValid = FALSE;
 		KS_logfile_error(("%s: creation of worker thread failed", pinst->v_identifier));
 		return;
+	} else {
+		pinst->v_handleValid = TRUE;
 	}
 #elif OV_SYSTEM_UNIX
 	runWorkerThread = 1;
 	KS_logfile_debug(("%s: creating worker thread", pinst->v_identifier));
 	iret = pthread_create( &(pinst->v_threadHandle), NULL,  workerThread, (void*) NULL);
 	if(iret){
+		pinst->v_handleValid = FALSE;
 		KS_logfile_error(("%s: creation of worker thread failed", pinst->v_identifier));
 		return;
+	} else {
+		pinst->v_handleValid = TRUE;
 	}
 	workerThreadRunning = 1;
 #endif
@@ -298,40 +304,43 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_shutdown(
 #if OV_SYSTEM_NT
 	/*	yes, here it waits until the thread is through....	*/
 	InterlockedExchange(&(runWorkerThread), 0);
-	if(WaitForSingleObject(pinst->v_threadHandle, 5000) != WAIT_OBJECT_0){
-		KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost."));
-	}
-#elif OV_SYSTEM_UNIX
-	/*	we can leave out the atomic one here since it should be an atomic set anyways	*/
-	runWorkerThread = 0;
-	pthread_join(pinst->v_threadHandle, NULL);
-#endif
-	/*	delete the elements in the list	*/
-	if(elemList.pFirstElem){
-		pCurrElem = elemList.pFirstElem;
-		while(pCurrElem){
-			/*	get the next element	*/
-			pNextElem = pCurrElem->pNext;
-			if(pCurrElem->pNext){
-				if(pCurrElem->pPrevious){
-					pCurrElem->pPrevious->pNext = pCurrElem->pNext;
-				}else{
-					elemList.pFirstElem = pCurrElem->pNext;
-				}
-				pCurrElem->pNext->pPrevious = pCurrElem->pPrevious;
-				free(pCurrElem->host);
-				free(pCurrElem->port);
-				free(pCurrElem);
-			}
-			/*	go to the next element	*/
-			pCurrElem = pNextElem;
+	if(pinst->v_handleValid){
+		if(WaitForSingleObject(pinst->v_threadHandle, 5000) != WAIT_OBJECT_0){
+			KS_logfile_warning(("%s: worker thread did not terminate correctly and in time. some memory might be lost."));
 		}
+		pinst->v_handleValid = FALSE;
+#elif OV_SYSTEM_UNIX
+		/*	we can leave out the atomic one here since it should be an atomic set anyways	*/
+		runWorkerThread = 0;
+		pthread_join(pinst->v_threadHandle, NULL);
+		pinst->v_handleValid = FALSE;
+#endif
+		/*	delete the elements in the list	*/
+		if(elemList.pFirstElem){
+			pCurrElem = elemList.pFirstElem;
+			while(pCurrElem){
+				/*	get the next element	*/
+				pNextElem = pCurrElem->pNext;
+				if(pCurrElem->pNext){
+					if(pCurrElem->pPrevious){
+						pCurrElem->pPrevious->pNext = pCurrElem->pNext;
+					}else{
+						elemList.pFirstElem = pCurrElem->pNext;
+					}
+					pCurrElem->pNext->pPrevious = pCurrElem->pPrevious;
+					free(pCurrElem->host);
+					free(pCurrElem->port);
+					free(pCurrElem);
+				}
+				/*	go to the next element	*/
+				pCurrElem = pNextElem;
+			}
+		}
+		elemList.pFirstElem = NULL;
+		elemList.pLastElem = NULL;
 	}
-	elemList.pFirstElem = NULL;
-	elemList.pLastElem = NULL;
 	/* set the object's state to "shut down" */
 	ov_object_shutdown(pobj);
-
 	return;
 }
 
@@ -360,6 +369,7 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_typemethod (
 		KS_logfile_warning(("%s: worker thread exited -restarting it", pinst->v_identifier));
 		pinst->v_threadHandle = CreateThread(NULL, 0, workerThread, (void*) NULL, 0, &dwThreadId);
 		if(pinst->v_threadHandle == 0){
+			pinst->v_handleValid = FALSE;
 			KS_logfile_error(("%s: creation of worker thread failed", pinst->v_identifier));
 			return;
 		}
@@ -370,6 +380,7 @@ OV_DLLFNCEXPORT void TCPbind_aresWorker_typemethod (
 		KS_logfile_warning(("%s: creating worker thread", pinst->v_identifier));
 		iret = pthread_create( &(pinst->v_threadHandle), NULL,  workerThread, (void*) NULL);
 		if(iret){
+			pinst->v_handleValid = FALSE;
 			KS_logfile_error(("%s: creation of worker thread failed", pinst->v_identifier));
 			return;
 		}
