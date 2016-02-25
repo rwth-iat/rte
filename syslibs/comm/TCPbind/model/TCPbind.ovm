@@ -47,6 +47,8 @@ LIBRARY TCPbind
 		VARIABLES
 			threadHandle	:	C_TYPE	<TCPB_THREADHANDLE>
 				COMMENT	=	"Handle to getAddrInfoThread";
+			handleValid		:	BOOL
+				COMMENT	=	"TRUE states that the handle is created and usable";
 		END_VARIABLES;
 		OPERATIONS
 			constructor	:	C_FUNCTION	<OV_FNC_CONSTRUCTOR>;

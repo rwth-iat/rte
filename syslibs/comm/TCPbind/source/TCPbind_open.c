@@ -179,7 +179,6 @@ OV_RESULT ov_library_setglobalvars_TCPbind_new(void) {
 	pNewAresWorker = Ov_StaticPtrCast(TCPbind_aresWorker, Ov_SearchChild(ov_containment, pTCPbindDom, "aresWorker"));
 	if(pNewAresWorker)
 		Ov_DeleteObject(pNewAresWorker);
-
 	result = Ov_CreateObject(TCPbind_aresWorker, pNewAresWorker, pTCPbindDom, "aresWorker");
 	if(Ov_Fail(result))
 	{
