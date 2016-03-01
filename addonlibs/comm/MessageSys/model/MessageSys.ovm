@@ -1,0 +1,172 @@
+#include "ov.ovm"
+#include "ksapi.ovm"
+
+LIBRARY MessageSys
+	VERSION   = "V0.1 (DD-Mon-YYYY)";
+	AUTHOR    = "";
+	COPYRIGHT = "";
+	COMMENT   = "";
+	
+CLASS MsgDelivery : CLASS ksbase/ComTask
+	IS_INSTANTIABLE;
+	VARIABLES
+		retrieveMessage : STRING HAS_SET_ACCESSOR COMMENT="setVar called by ksapi";
+		regComponentPath	:	STRING
+			COMMENT	=	"Path to the Domain where the registered Services are located"
+			INITIALVALUE	=	"/communication/ServiceProvider/SystemServices";
+		sendTimeOut			:	UINT
+			COMMENT	=	"Time in seconds to wait for delivery of a message before it is deleted from the queue"
+			INITIALVALUE	=	5;
+		sendTime			:	TIME
+			COMMENT	=	"Time of last send process";	
+	END_VARIABLES;
+	PARTS
+		Channels	:	CLASS	ov/domain;
+	END_PARTS;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		typemethod : C_FUNCTION <KSBASE_FNC_TYPEMETHOD>;
+		sendMessage : C_FUNCTION <SENDMESSAGE_FNC>;
+		findService : C_FUNCTION <MSGSYS_FINDSERVICE_FNC>;
+	END_OPERATIONS;
+END_CLASS;
+	
+	
+CLASS Message : CLASS ov/object
+	IS_INSTANTIABLE;
+	VARIABLES
+		senderAddress : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Address of sender machine" 
+			INITIALVALUE	=	"127.0.0.1";
+		receiverAddress : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Address of receiver machine"
+			INITIALVALUE	=	"127.0.0.1";
+		senderName : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Servername of sender"
+			INITIALVALUE	=	"";
+		receiverName : STRING 
+			HAS_ACCESSORS
+			COMMENT	=	"Servername of receiver"
+			INITIALVALUE	=	"";
+		senderComponent : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Name of sender-component"
+			INITIALVALUE	=	"";
+		receiverComponent : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Name of receiver-component"
+			INITIALVALUE	=	"";
+		msgStatus : INT
+			HAS_ACCESSORS
+			COMMENT	=	"0=NEW, 1=READYFORSENDING, 2=WAITING, 3=DONE, 4=RECEIVERERROR, 5=FATALERROR, 10=NEWARRIVED, 11=DONERECEIVE"
+			INITIALVALUE	=	0 ;
+		msgID : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"ID of this Message"
+			INITIALVALUE="";
+		refMsgID	:	STRING
+			COMMENT	=	"ID of last Message in Conversation"
+			INITIALVALUE	=	"";
+		auth	:	STRING
+			COMMENT =	"Authentication Data in header"
+			INITIALVALUE	=	"";
+		msgBody : STRING
+			HAS_ACCESSORS
+			COMMENT	=	"Message Body";
+		sendBy	:	C_TYPE <MESSAGESYS_SENDBY>
+			COMMENT	=	"Determines sending behaviour: 0: directly; 2: ks-setvar; 16: extension";
+		expectAnswer	:	BOOL
+			COMMENT	=	"TRUE tells MsgDelivery to expect an answer message (keep connection open if possible with protocol)"
+			INITIALVALUE	=	FALSE;
+	END_VARIABLES;
+	OPERATIONS
+		constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+		getaccess	: C_FUNCTION <OV_FNC_GETACCESS>;
+	END_OPERATIONS;
+END_CLASS;
+
+CLASS	MsgSendExtension	:	CLASS	ksbase/DataHandler
+	COMMENT	=	"Baseclass for Send Extensions. Is a message should be send via an Extension the Message is linked to the Extension Object.";
+	OPERATIONS
+		sendMessage	:	C_FUNCTION <MSGSYS_SENDMSG> IS_ABSTRACT;
+	END_OPERATIONS;
+END_CLASS;
+
+CLASS	inbox	:	CLASS ov/domain
+	IS_INSTANTIABLE;
+	COMMENT	=	"generic inbox class. Basicly a domain without functionality";
+	VARIABLES
+		holdConnection	:	BOOL
+			COMMENT	=	"TRUE: tells the message sys to keep the connections for incoming messages open to send answers back"
+			INITIALVALUE	=	FALSE;
+	END_VARIABLES;
+END_CLASS;
+
+
+	/**
+	 *	Checks whether received data is a message
+	 *	Criteria are: data begins with "<msg "; hdrL and bdyL Attributes of msg-tag are set		
+	 */
+	CLASS msgIdentificator : CLASS ksbase/ProtocolIdentificator
+		IS_INSTANTIABLE;
+		COMMENT = "class for identifing MsgSys-messages";
+		OPERATIONS
+			constructor : C_FUNCTION <OV_FNC_CONSTRUCTOR>;
+			identify		:	C_FUNCTION	<KSBASE_FNC_IDENTIFY>;
+			createClientHandler	:	C_FUNCTION	<KSBASE_FNC_CREATECH>;
+		END_OPERATIONS;
+	END_CLASS;
+	
+	CLASS msgHandler	:	CLASS ksbase/ClientHandler
+	IS_INSTANTIABLE;
+	COMMENT	=	"Handler for MsgSys-messages. ";
+	VARIABLES
+		connectionTimeout	:	UINT
+			COMMENT	=	"Timeout in s for idle connections"
+			INITIALVALUE	=	120;
+		timeoutIncomplete	:	UINT
+			COMMENT	=	"Time in s to wait for the next part of an incomplete message"
+			INITIALVALUE	=	2;
+	END_VARIABLES;
+	OPERATIONS
+		startup			:	C_FUNCTION <OV_FNC_STARTUP>;
+		shutdown		:	C_FUNCTION	<OV_FNC_SHUTDOWN>;
+		/**
+		 *	The HandleRequest function is called by a Channel after some data has arrived for this ClientHandler. It gets the pointer to the Channel, a pointer to the received data, and a pointer to the outData variable.
+		 *	As this functions gets the pointers to the buffers of the Channel object it has to take care of a few things:
+		 *		1. If the input data could be processed or if it is invalid it should be freed.
+		 *		2. The Writeptr of the received data may not be altered.
+		 *		3. The answers always have to be appended to the answer structure (use the ksbase_KSDATAPACKET_append function).
+		 *		4. The readptr of the answer data may not be altered.
+		 */
+		HandleRequest	:	C_FUNCTION	<KSBASE_FNC_HANDLEREQUEST>;	
+	END_OPERATIONS;	
+	END_CLASS;
+	
+	/**
+	 * MessageSys Associations
+	 */
+ASSOCIATION MsgDelivery2CurrentMessage : ONE_TO_ONE
+ 	PARENT parMsgDelivery : CLASS MessageSys/MsgDelivery;
+  	CHILD chCurrentMessage : CLASS MessageSys/Message;
+END_ASSOCIATION;
+
+ASSOCIATION MsgDelivery2Message : ONE_TO_MANY
+    PARENT parMsgDelivery2 : CLASS MessageSys/MsgDelivery;
+ 	CHILD chMessage : CLASS MessageSys/Message;
+END_ASSOCIATION;
+
+ASSOCIATION Message2Channel : ONE_TO_ONE
+    PARENT parMsg : CLASS MessageSys/Message;
+ 	CHILD chChannel : CLASS ksbase/Channel;
+END_ASSOCIATION;
+	
+ASSOCIATION SendExtension2Message : ONE_TO_MANY
+    PARENT	parSendExt : CLASS MessageSys/MsgSendExtension;
+ 	CHILD	chMsg : CLASS MessageSys/Message;
+END_ASSOCIATION;	
+	
+END_LIBRARY;
