@@ -43,4 +43,5 @@ after_success:
 - git push -f -q https://$GH_TOKEN:x-oauth-basic@github.com/acplt/rte-www
 - cd .. && rm -rf rte-www
 after_failure:
+- cd ./build
 - tail -n 40 acplt_build.log

@@ -716,7 +716,7 @@ proc compress {archivename dir} {
 
 # ============== MAIN STARTS HERE ==================
 set system_libs {syslibs/comm/ksbase syslibs/comm/TCPbind syslibs/comm/UDPbind syslibs/comm/ksxdr syslibs/comm/kshttp syslibs/comm/opcua syslibs/functionblock/fb syslibs/functionblock/ssc}
-set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/opcuafb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib addonlibs/comm/MessageSys addonlibs/comm/kshttpMsgExt addonlibs/processcontrol/cmdlib addonlibs/processcontrol/PCMsgParser addonlibs/processcontrol/PCMsgCreator addonlibs/functionblock/SSCHelper}
+set addon_libs {addonlibs/hmi/cshmi addonlibs/commclient/ksapi addonlibs/commclient/fbcomlib addonlibs/commclient/opcuafb addonlibs/functionblock/iec61131stdfb addonlibs/functionblock/vdivde3696 addonlibs/functionblock/ACPLTlab003lindyn addonlibs/functionblock/IOdriverlib addonlibs/field/modbusTcpLib addonlibs/comm/MessageSys addonlibs/comm/kshttpMsgExt addonlibs/processcontrol/cmdlib addonlibs/processcontrol/PCMsgParser addonlibs/processcontrol/PCMsgCreator addonlibs/functionblock/SSChelper}
 print_msg "checking out all libraries of the acplt system"
 
 if {$release != 1} {
