@@ -25,8 +25,14 @@ all:
 
 %:
 #	cd ../../open62541 && cmake  -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE) all && $(MAKE) open62541-object
+<<<<<<< HEAD
 #	cd ../../open62541 && cmake  -DENABLE_AMALGAMATION=ON -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE)
 	acplt_makmak -l opcua $(MAKMAKOPTIONS) $(TARGETOS)
 	tclsh $(PREBUILD) opcua $(MAKMAKOPTIONS)
+=======
+#	cd ../../open62541 && cmake  -DENABLE_AMALGAMATION=ON -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE)
+	acplt_makmak -l opcua $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) opcua $(MAKMAKOPTIONS)
+>>>>>>> upstream/master
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) opcua

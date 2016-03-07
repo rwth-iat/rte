@@ -25,7 +25,14 @@ all:
 %:
 #	cd ../../open62541 && cmake -G "Eclipse CDT4 - Unix Makefiles" -DCMAKE_BUILD_TYPE=debug && $(MAKE) all && $(MAKE) open62541-objects
 #	ar rcs open62541.a ../../open62541/CMakeFiles/open62541-objects.dir/src/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src/server/*.o ../../open62541/CMakeFiles/open62541-objects.dir/src_generated/*.o
+<<<<<<< HEAD
 	acplt_makmak -l opcua $(MAKMAKOPTIONS) $(TARGETOS)
 	tclsh $(PREBUILD) opcua $(MAKMAKOPTIONS)
 	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
 	tclsh $(POSTBUILD) opcua
+=======
+	acplt_makmak -l opcua $(MAKMAKOPTIONS)
+	tclsh $(PREBUILD) opcua $(MAKMAKOPTIONS)
+	$(MAKE) MAKMAKOPTIONS='$(MAKMAKOPTIONS)' EXTRA_CC_FLAGS='$(EXTRA_CC_FLAGS)' EXTRA_LIBS='$(EXTRA_LIBS)' LD_FLAGS='$(LD_FLAGS)' TARGET='$*' -f $(call lc,$(COMPILER)).mk $*
+	tclsh $(POSTBUILD) opcua
+>>>>>>> upstream/master
